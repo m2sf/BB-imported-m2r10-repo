@@ -1,0 +1,56 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ComplexMath;
+
+IMPORT COMPLEX;
+
+(* Mathematical Constants and Functions for Type COMPLEX *)
+
+CONST
+  i =    { 0.0, 1.0 };
+  one =  { 1.0, 0.0 };
+  zero = { 0.0, 0.0 };
+
+PROCEDURE arg ( z : COMPLEX ) : REAL;
+(* Returns the argument of z. *)
+
+PROCEDURE conj ( z : COMPLEX ) : COMPLEX;
+(* Returns the complex conjugate of z. *)
+
+PROCEDURE power ( base : COMPLEX; exponent : REAL ) : COMPLEX;
+(* Returns the value of base raised to the power exponent. *)
+
+PROCEDURE sqrt ( z : COMPLEX ) : COMPLEX;
+(* Returns the square root of z. *)
+
+PROCEDURE ln ( z : COMPLEX ) : COMPLEX;
+(* Returns the natural logarithm of z. *)
+
+PROCEDURE log ( z : COMPLEX ) : COMPLEX;
+(* Returns the decimal logarithm of z. *)
+
+PROCEDURE sin ( z : COMPLEX ) : COMPLEX;
+(* Returns the sine of z. *)
+
+PROCEDURE cos ( z : COMPLEX ) : COMPLEX;
+(* Returns the cosine of z. *)
+
+PROCEDURE tan ( z : COMPLEX ) : COMPLEX;
+(* Returns the tangent of z. *)
+
+PROCEDURE arcsin ( z : COMPLEX ) : COMPLEX;
+(* Returns the arcsine of z. *)
+
+PROCEDURE arccos ( z : COMPLEX ) : COMPLEX;
+(* Returns the arccosine of z. *)
+
+PROCEDURE arctan ( z : COMPLEX ) : COMPLEX;
+(* Returns the arctangent of z. *)
+
+PROCEDURE polarToComplex ( abs, arg : REAL ) : COMPLEX;
+(* Returns the complex value with the specified polar coordinates. *)
+
+PROCEDURE scalarMult ( scalar : REAL; z : COMPLEX ) : COMPLEX;
+(* Returns the scalar product of scalar and z. *)
+
+END ComplexMath.

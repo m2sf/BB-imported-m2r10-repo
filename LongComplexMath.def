@@ -1,0 +1,56 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LongComplexMath;
+
+IMPORT LONCOMPLEX;
+
+(* Mathematical Constants and Functions for Type LONCOMPLEX *)
+
+CONST
+  i =    { 0.0, 1.0 };
+  one =  { 1.0, 0.0 };
+  zero = { 0.0, 0.0 };
+
+PROCEDURE arg ( z : LONCOMPLEX ) : LONGREAL;
+(* Returns the argument of z. *)
+
+PROCEDURE conj ( z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the complex conjugate of z. *)
+
+PROCEDURE power ( base : LONCOMPLEX; exponent : LONGREAL ) : LONCOMPLEX;
+(* Returns the value of base raised to the power exponent. *)
+
+PROCEDURE sqrt ( z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the square root of z. *)
+
+PROCEDURE ln ( z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the natural logarithm of z. *)
+
+PROCEDURE log ( z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the decimal logarithm of z. *)
+
+PROCEDURE sin ( z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the sine of z. *)
+
+PROCEDURE cos ( z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the cosine of z. *)
+
+PROCEDURE tan ( z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the tangent of z. *)
+
+PROCEDURE arcsin ( z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the arcsine of z. *)
+
+PROCEDURE arccos ( z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the arccosine of z. *)
+
+PROCEDURE arctan ( z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the arctangent of z. *)
+
+PROCEDURE polarToComplex ( abs, arg : LONGREAL ) : LONCOMPLEX;
+(* Returns the complex value with the specified polar coordinates. *)
+
+PROCEDURE scalarMult ( scalar : LONGREAL; z : LONCOMPLEX ) : LONCOMPLEX;
+(* Returns the scalar product of scalar and z. *)
+
+END LongComplexMath.
