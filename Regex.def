@@ -1,0 +1,200 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Regex;
+
+(* Regular Expression Library *)
+
+(* ---------------------------------------------------------------------------
+ * Regular expression syntax
+ * ---------------------------------------------------------------------------
+ * Characters and character sequences with special meanings:
+ * 
+ * Ignored
+ *  whitespace is ignored
+ *  control characters are ignored
+ *
+ * Alternative
+ *  |     preceding and following syntactic entities are alternative matches
+ *
+ * Inversion
+ *  ~     any character that does not match the syntactic entity that follows
+ *
+ * Range
+ *  -     specifies a range of digits or letters, eg.: 0-7, 0-9, a-Z, A-Z etc.
+ *
+ * Grouping
+ *  ( )   combines syntactic entities into a grouped syntactic entity
+ *  
+ * Quantifying
+ *  ?     the preceding syntactic entity may occur zero or one time
+ *  +     the preceding syntactic entity may occur one or more times
+ *  *     the preceding syntactic entity may occur zero or more times
+ *  {n}   the preceding syntactic entity may occur exactly n times
+ *  {n,m} the preceding syntactic entity may occur n to m times
+ *
+ * Synonyms
+ *  {start}       matches the start-of-input state
+ *  {end}         matches the end-of-input state
+ *  {any}         matches any character
+ *  {nul}         matches the null character
+ *  {sp}          matches space
+ *  {tab}         matches horizontal tab
+ *  {ws}          ( {sp} | {tab} )
+ *  {nl}          matches new line
+ *  {ret}         matches carriage return
+ *  {bar}         matches the vertical bar
+ *  {tilde}       matches the tilde
+ *  {lparen}      matches the left parenthesis
+ *  {rparen}      matches the right parenthesis
+ *  {lbrace}      matches the left curly brace
+ *  {rbrace}      matches the right curly brace
+ *  {question}    matches the question mark
+ *  {plus}        matches the plus sign
+ *  {minus}       matches the minus sign
+ *  {asterisk}    matches the asterisk
+ *  {q}           matches the single quote
+ *  {singlequote} same as {q}
+ *  {qq}          matches the double quote
+ *  {doublequote} same as {qq}
+ *  {sign}        ( {plus} | {minus} )
+ *  {bit}         ( 0|1 )
+ *  {binary}      same as {bit}
+ *  {lowerbool}   ( 0|1 | t|f | y|n )
+ *  {upperbool}   ( 0|1 | T|F | Y|N )
+ *  {bool}        ( 0|1 | t|f | y|n | T|F | Y|N ) 
+ *  {oct}         ( 0-7 )
+ *  {dec}         ( 0-9 )
+ *  {digit}       same as {dec}
+ *  {lowerhex}    ( 0-9 | a-f )
+ *  {upperhex}    ( 0-9 | A-F )
+ *  {hex}         ( 0-9 | a-f | A-F )
+ *  {loweralpha}  ( a-z )
+ *  {upperalpha}  ( A-Z )
+ *  {alpha}       ( a-z | A-Z )
+ *  {alphanum}    ( a-z | A-Z | 0-9 )
+ *  {control}     matches any control character
+ *  {printable}   matches any printable character
+ *  {punctuation} matches any printable character that is not alpha-numeric
+ *  {word}        ( {alpha}+ )
+ *  {int}         ( {digit}+ )
+ *  {real}        ( {digit}+ ((.|,){digit}+ ((e|E)({sign}{digit}+)? )? )
+ *  {identifier}  ( ( _ | {alpha} ) ( _ | {alpha} | {digit} )+ )
+ *  {aA}          matches any upper/lowercase variant of the following string
+ *  {#nn}         matches the character with the sedecimal character code nn
+ * ------------------------------------------------------------------------ *)
+
+
+TYPE
+    NFA = OPAQUE;
+
+    Status = (
+        success,
+        invalidExpr,
+        invalidString,
+        invalidNFA,
+        stackFull,
+        allocationFailed );
+
+
+(* ---------------------------------------------------------------------------
+ * Notification codes
+ * ---------------------------------------------------------------------------
+ * Notification codes indicate the following:
+ *
+ *  sizeInfo          notify the number of states of a new automaton
+ *  noMatchInfo       notify character and index at which matching failed
+ *  illegalChar       notify illegal character and index in expression
+ *  unknownSynonym    notify invalid synonym and index in expression
+ *  allocationFailed  notify failed allocation when creating an automaton  *)
+
+    Notification = (
+        sizeInfo,
+        noMatchInfo,
+        illegalChar,
+        unknownSynonym,
+        allocationFailed );
+
+
+(* ---------------------------------------------------------------------------
+ * Notification Handler type
+ * ---------------------------------------------------------------------------
+ * Automatons pass the following parameters to the handler:
+ *
+ *  notification code describing the notified event
+ *  the character at which the event occurred
+ *  the index at which the event occurred
+ *  the number of states of the automaton *)
+
+    NotificationHandler =
+        PROCEDURE ( VAR Notification, VAR CHAR, VAR CARDINAL, VAR CARDINAL );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  Regex.new( expr, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Creates  and returns  a new regular expression automaton object for regular
+ * expression string <expr>.  The function fails and returns NIL if the length
+ * of string <expr> is zero or if memory could not be allocated.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE new ( expr : ARRAY OF CHAR; VAR status : Status ) : NFA;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  Regex.installNotificationHandler( automaton, handler )
+ * ---------------------------------------------------------------------------
+ *
+ * Installs procedure <handler> as notification handler for regular expression
+ * automaton <automaton>.  If a notification handler is installed,  the  auto-
+ * maton calls the handler  whenever  a  notifiable event  occurs.  Notifiable
+ * events are either informational or warnings or errors.  By default no noti-
+ * fication handler is installed.
+ *
+ * A notification handler may be uninstalled by passing in NIL for <handler>.
+ *)
+
+PROCEDURE installNotificationHandler ( automaton : NFA;
+                                       handler : NotificationHandler );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  Regex.match( automaton, str, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Matches string <str> against regular expression automaton <automaton>.  Re-
+ * turns TRUE if <str> matches,  returns FALSE  otherwise.  The function fails
+ * and returns FALSE if NIL is passed in for <automaton>.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE match ( automaton : NFA; str : ARRAY OF CHAR;
+                  VAR status : Status ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  Regex.instantMatch( expr, str, handler, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Creates a regular expression automaton for regular expression <expr> on the
+ * fly,  matches string <str> against <expr>,  returns the result and disposes
+ * of the automaton.  Returns TRUE if <str> matches,  FALSE otherwise.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE instantMatch ( expr, str : ARRAY OF CHAR;
+                         handler : NotificationHandler;
+                         VAR status : Status ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  Regex.dispose( automaton )
+ * ---------------------------------------------------------------------------
+ *
+ * Disposes of regular expression automaton <automaton>.  Returns NIL. *)
+
+PROCEDURE dispose ( automaton : NFA ) : NFA;
+
+
+END Regex.
