@@ -1,0 +1,30 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CHAR;
+
+(* I/O Module for Type CHAR *)
+
+FROM FileIO IMPORT File;
+
+PROCEDURE Read ( infile : File; VAR ch : CHAR );
+(* Reads a CHAR value from stream infile
+   - any leading whitespace is skipped
+   - the character being read is removed from infile
+   - the code point of the character value read is assigned to ch
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   function is substituted for invocations of READ with a CHAR argument. *)
+
+PROCEDURE Write ( outfile : File; ch : CHAR );
+(* Writes the textual representation of CHAR ch to stream outfile. This
+   function is substituted for invocations of WRITE with a CHAR argument.*)
+
+PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
+                   items : CARDINAL; VARIADIC v[items] OF ch : CHAR );
+(* Writes a formatted textual representation of one or more CHAR values to
+   output stream outfile. The value of parameter items is calculated and
+   inserted automatically. The output format is determined by fmtStr.
+   This function is substituted for invocations of WRITEF with one or more
+   CHAR arguments. *)
+
+END CHAR.

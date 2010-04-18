@@ -1,0 +1,115 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE STRING;
+
+(* Dynamic ASCII Strings *)
+
+
+FROM FileIO IMPORT File; (* required for IO *)
+
+
+(* STRING type *)
+
+TYPE STRING = OPAQUE ("S-Type");
+
+
+(* S-Type bindings to operators and pervasives: *)
+
+
+(* allocator *)
+
+PROCEDURE [NEW] new ( VAR s : STRING );
+(* Allocates a new object of type STRING and returns a pointer to it in s.
+   This function is bound to pervasive procedure NEW for type STRING. *)
+
+
+(* accessor *)
+
+PROCEDURE [.] characterAtIndex ( s : STRING; index : LONGCARD ) : CHAR;
+(* Returns the character at the specified index in STRING s. This function
+   is bound to the array operator [ ] for rvalues of type STRING. *)
+
+
+(* mutators *)
+
+PROCEDURE [!] replaceCharAtIndex ( s : STRING; index : LONGCARD; ch : CHAR );
+(* Replaces the character at the specified index in STRING s with ch. This
+   function is bound to the array operator [ ] for lvalues of type STRING. *)
+
+PROCEDURE insertCharsAtIndex ( s : STRING; index : LONGCARD;
+                               characters : ARRAY OF CHAR );
+(* Inserts a character sequence into STRING s at the specified index. *)
+
+PROCEDURE removeCharsAtIndex ( s : STRING; index, n : LONGCARD);
+(* Removes n characters from STRING s at the specified index. *)
+
+
+(* length *)
+
+PROCEDURE [LENGTH] length ( s : STRING ) : LONGCARD;
+(* Returns the length of string s.
+   This function is bound to pervasive function LENGTH for type STRING. *)
+
+
+(* literal assignment *)
+
+PROCEDURE [:=] assign ( VAR s : STRING; literal : ARRAY OF CHAR );
+(* Converts string literal to a STRING value and assigns it to s.
+   This function is bound to the := operator for literal assignment. *)
+
+
+(* concatenation *)
+
+PROCEDURE [+] concatenate ( s1, s2 : STRING ) : STRING;
+(* Concatenates s1 and s2 and returns the result in a newly allocated string.
+   This function is bound to the concatenate operator + for type STRING. *)
+
+
+(* relational operations *)
+
+PROCEDURE [=] isEqual ( s1, s2 : STRING ) : BOOLEAN;
+(* Returns TRUE if the contents of s1 and s2 are equal, otherwise FALSE.
+   This function is bound to operators = and # for type STRING. *)
+
+PROCEDURE [<] isLess ( s1, s2 : STRING ) : BOOLEAN;
+(* Returns TRUE if s1 comes lexically before s2, otherwise FALSE.
+   This function is bound to operators < and >= for type STRING. *)
+
+PROCEDURE [>] isGreater ( s1, s2 : STRING ) : BOOLEAN;
+(* Returns TRUE if s1 comes lexically after s2, otherwise FALSE.
+   This function is bound to operators > and <= for type STRING. *)
+
+
+(* destructor *)
+
+PROCEDURE [DISPOSE] dispose ( VAR s : STRING );
+(* Deallocates STRING s and assigns NIL to s.
+   This function is bound to pervasive procedure DISPOSE for type STRING. *)
+
+
+(* IO procedures *)
+
+PROCEDURE Read ( infile : File; s : STRING );
+(* Reads the textual representation of a STRING value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the string being read are
+     removed from infile
+   - the textual representation of the string read is assigned to the variable
+     passed in for s
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   function is substituted for invocations of READ with a STRING argument. *)
+
+PROCEDURE Write ( outfile : File; s : STRING );
+(* Writes the textual representation of STRING s to stream outfile. This
+   function is substituted for invocations of WRITE with a STRING argument.*)
+
+PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
+                   items : CARDINAL; VARIADIC v[items] OF s : STRING );
+(* Writes a formatted textual representation of one or more STRING values to
+   output stream outfile. The value of parameter items is calculated and
+   inserted automatically. The output format is determined by fmtStr.
+   This function is substituted for invocations of WRITEF with one or more
+   STRING arguments. *)
+
+END STRING.

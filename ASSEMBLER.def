@@ -1,0 +1,37 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ASSEMBLER;
+
+(* Optional Pseudo-module for Access to Target Dependent Inline Assembler *)
+
+CONST
+ (* list of constants for unqualified opcode mnemonics, for example
+    mov = OPCODE.mov; *)
+
+ (* list of constants for unqualified register mnemonics, for example
+    eax = REGISTER.eax; *)
+
+TYPE
+    OPCODE = (
+     (* list of architecture defined opcode mnemonics *)
+    );
+
+    REGISTER = (
+     (* list of architecture defined register mnemonics *)
+    );
+
+(* The EBNF for assembly instructions is as follows:
+    instructionList : instruction ( ',' instruction )* ;
+    instruction : opcode operandList ;
+    opcode : <any of the identifiers defined by type OPCODE> ;
+    operandList : operand ( ',' operand ) ;
+    operand : constant | variable | register ;
+    constant : <any Modula-2 constant expression> ;
+    variable : <any Modula-2 variable identifier> ;
+    register : <any of the identifiers defined by type REGISTER> ; *)
+
+<*INLINE*> PROCEDURE CODE( <instructionList> );
+ (* Inserts the assembly code generated from instructionList,
+    usage example: FROM ASSEMBLER IMPORT *; ... CODE( mov, eax, foobar ); *)
+
+END ASSEMBLER.

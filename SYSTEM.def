@@ -1,0 +1,182 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE SYSTEM;
+
+(* Pseudo-module for Access to System Dependent Resources *)
+
+
+(* implementation defined types *)
+
+CONST
+    OctetsPerByte = <implementation defined value>;
+      (* size of a virtual byte *)
+
+    BytesPerWord = <implementation defined value>;
+      (* size of a virtual word *)
+
+
+TYPE
+    BYTE;  (* virtual byte with a bit width divisible by eight *)
+
+    WORD = ARRAY BytesPerWord OF BYTE;  (* virtual word *)
+
+
+(* target dependent machine types *)
+
+CONST
+    BitsPerMachineByte = <target dependent value>;
+      (* size of smallest addressable unit *)
+
+    MachineBytesPerMachineWord = <target dependent value>;
+      (* size of of a machine word *)
+
+    OctetsPerMachineWord = <target dependent value>;
+      (* number of octets required to store a machine word *)
+
+
+TYPE
+    MACHINEBYTE;  (* target dependent byte *)
+
+    MACHINEWORD = ARRAY MachineBytesPerMachineWord OF MACHINEBYTE;
+
+    ADDRESS; (* target dependent machine address *)
+
+
+(* information about the target architecture *)
+
+CONST
+    TargetName =  <target dependent string value>;
+      (* name of the target architecture *)
+
+    BigEndian = 03210H;
+      (* constant for 3-2-1-0 byte order *)
+
+    LittleEndian = 0123H;
+      (* constant for 0-1-2-3 byte order *)
+
+    BigLittleEndian = 02301H;
+      (* constant for 2-3-0-1 byte order *)
+
+    LittleBigEndian = 02103H;
+      (* constant for 2-1-0-3 byte order *)
+
+    TargetByteOrder = <target dependent value>;
+      (* byte order of the target architecture *)
+
+    TargetIsBiEndian = <target dependent boolean value>;
+      (* TRUE if the target is bi-endian, otherwise FALSE *)
+
+
+(* General system level facilities *)
+
+PROCEDURE ADR( var : <AnyType> ) : ADDRESS;
+(* Returns the address of variable var. *)
+
+PROCEDURE CAST( <AnyTargetType>; val : <AnyType> ) : <TargetType>;
+(* Returns the value of val, cast to the target type,
+   val may be a variable, a constant or a literal. *)
+
+
+(* Machine level operations *)
+
+CONST
+    MaxWordsPerOperand = <implementation defined value>; (* >= 4 *)
+      (* size of largest supported operand in machine level operations *)
+
+
+(* Machine level arithmetic *)
+
+PROCEDURE INC( VAR x : <AnyType>; n : OCTET );
+(* Increments the value of operand x by n, ignoring overflow. *)
+
+PROCEDURE DEC( VAR x : <AnyType>; n : OCTET );
+(* Decrements the value of operand x by n, ignoring overflow. *)
+
+PROCEDURE ADDC( VAR x : <AnyType>; y : <TypeOf(x)>; VAR c : BOOLEAN );
+(* adds operand y to operand x, adds 1 if TRUE is passed in for c,
+   then passes the result back in x and the carry bit back in c. *)
+
+PROCEDURE SUBC( VAR x : <AnyType>; y : <TypeOf(x)>; VAR c : BOOLEAN );
+(* subtracts operand y from operand x, adds 1 if TRUE is passed in for c,
+   then passes the result back in x and the carry bit back in c. *)
+
+
+(* Shift operations *)
+
+PROCEDURE SHL( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
+(* Returns the value of operand x shifted left by n bits. *)
+
+PROCEDURE SHR( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
+(* Returns the value of operand x logically shifted right by n bits. *)
+
+PROCEDURE ASHR( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
+(* Returns the value of operand x arithmetically shifted right by n bits. *)
+
+PROCEDURE ROTL( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
+(* Returns the value of operand x rotated left by n bits. *)
+
+PROCEDURE ROTR( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
+(* Returns the value of operand x rotated right by n bits. *)
+
+PROCEDURE ROTLC( x : <AnyType>; VAR c : <TypeOf(x)>; n : OCTET ) : <TypeOf(x)>;
+(* Returns the value of operand x rotated left by n bits,
+   rotating through n bits of c, passing the rotated out bits back in c. *)
+
+PROCEDURE ROTRC( x : <AnyType>; VAR c : <TypeOf(x)>; n : OCTET ) : <TypeOf(x)>;
+(* Returns the value of operand x rotated right by n bits,
+   rotating through n bits of c, passing the rotated out bits back in c. *)
+
+
+(* Bitwise operations *)
+
+PROCEDURE BWNOT( x : <AnyType> ) : <TypeOf(x)>;
+(* Returns the bitwise logical NOT of operand x. *)
+
+PROCEDURE BWAND( x, y : <AnyType> ) : <TypeOf(x)>;
+(* Returns the bitwise logical AND of operands x and y. *)
+
+PROCEDURE BWOR( x, y : <AnyType> ) : <TypeOf(x)>;
+(* Returns the bitwise logical OR of operands x and y. *)
+
+PROCEDURE BWXOR( x, y : <AnyType> ) : <TypeOf(x)>;
+(* Returns the bitwise logical exclusive OR of operands x and y. *)
+
+PROCEDURE BWNAND( x, y : <AnyType> ) : <TypeOf(x)>;
+(* Returns the inverted bitwise logical AND of operands x and y. *)
+
+PROCEDURE BWNOR( x, y : <AnyType> ) : <TypeOf(x)>;
+(* Returns the inverted bitwise logical OR of operands x and y. *)
+
+
+(* Single bit operations *)
+
+PROCEDURE SETBIT( VAR x : <AnyType>; n : OCTET; bitval : BOOLEAN );
+(* Sets bit n of x if bitval is TRUE, otherwise clears it. *)
+
+PROCEDURE TESTBIT( x : <AnyType>; n : OCTET ) : BOOLEAN;
+(* Returns TRUE if bit n of x is set, otherwise FALSE. *)
+
+
+(* Bit tests *)
+
+PROCEDURE LSBIT( x : <AnyType> ) : CARDINAL;
+(* Returns the position of the least significant set bit of x. *)
+
+PROCEDURE MSBIT( x : <AnyType> ) : CARDINAL;
+(* Returns the position of the most significant set bit of x. *)
+
+PROCEDURE CSBITS( x : <AnyType> ) : CARDINAL;
+(* Counts and returns the number of set bits in x. *)
+
+
+(* Miscellaneous *)
+
+PROCEDURE RETCC( x : <AnyType> );
+(* Returns program control to the caller of the calling procedure and
+   passes x as the return value, x must match the caller's return type. *)
+
+PROCEDURE HALT( status : <OrdinalType> );
+(* Immediately aborts the running program and passes a status code to the
+   operating environment, status codes are target platform dependent. *)
+
+END SYSTEM.

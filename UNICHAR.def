@@ -1,0 +1,30 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE UNICHAR;
+
+(* I/O Module for Type UNICHAR *)
+
+FROM FileIO IMPORT File;
+
+PROCEDURE Read ( infile : File; VAR ch : UNICHAR );
+(* Reads a UNICHAR value from stream infile
+   - any leading whitespace is skipped
+   - the character being read is removed from infile
+   - the code point of the character value read is assigned to ch
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   function is substituted for invocations of READ with a UNICHAR argument. *)
+
+PROCEDURE Write ( outfile : File; ch : UNICHAR );
+(* Writes the textual representation of UNICHAR ch to stream outfile. This
+   function is substituted for invocations of WRITE with a UNICHAR argument.*)
+
+PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
+                   items : CARDINAL; VARIADIC v[items] OF ch : UNICHAR );
+(* Writes a formatted textual representation of one or more UNICHAR values to
+   output stream outfile. The value of parameter items is calculated and
+   inserted automatically. The output format is determined by fmtStr.
+   This function is substituted for invocations of WRITEF with one or more
+   UNICHAR arguments. *)
+
+END UNICHAR.

@@ -1,0 +1,71 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE RUNTIME;
+
+(* Runtime System Interface *)
+
+FROM SYSTEM IMPORT ADDRESS;
+
+TYPE
+    Facility = ( StackTrace, PostMortem, SystemReset );
+
+    Exception = ( DivByZero, DerefNIL, TypeOverflow, IndexOutOfBounds,
+                  StackOverflow, OutOfMemory, UserAbort );
+
+    NotificationHandler = PROCEDURE ( ADDRESS, ADDRESS );
+    (* notification handler procedures must accept two parameters:
+       - the address of the PC at which the offending event occured
+       - the address of the SP at which the offending event occured *)
+
+
+(* Raising Runtime Exceptions *)
+
+(* MACRO *) PROCEDURE RaiseError( e : Exception );
+(* Raises runtime exception of type e. Never returns. *)
+
+
+(* Runtime System Notification services *)
+
+PROCEDURE InstallNotificationHandler( e : Exception; p : NotificationHandler );
+(* Installs handler p as notification handler for exceptions of type e. *)
+
+PROCEDURE InstallTerminationHandler( p : PROCEDURE );
+(* Installs handler p as termination handler, for ordinary termination. *)
+
+
+(* Runtime System Facilities *)
+
+PROCEDURE IsAvailable( f : Facility ) : BOOLEAN;
+(* Returns TRUE if the runtime system provides facility f, FALSE otherwise *)
+
+PROCEDURE InitiateStackTrace;
+(* Aborts the currently running program and writes a stack trace dump *)
+
+PROCEDURE SetStackTrace( enabled : BOOLEAN );
+(* Enables stack trace dumps on abort if enabled is TRUE, disables otherwise. *)
+
+PROCEDURE StackTraceEnabled : BOOLEAN;
+(* Returns the current stack trace mode, TRUE if enabled, FALSE otherwise. *)
+
+PROCEDURE InitiatePostMortem;
+(* Aborts the currently running program and writes a post mortem dump *)
+
+PROCEDURE SetPostMortem( enabled : BOOLEAN );
+(* Enables post mortem dumps on abort if enabled is TRUE, disables otherwise. *)
+
+PROCEDURE PostMortemEnabled : BOOLEAN;
+(* Returns the current post mortem mode, TRUE if enabled, FALSE otherwise. *)
+
+
+(* Runtime System Facilities for embedded and self-hosting platforms *)
+
+PROCEDURE InitiateSystemReset;
+(* Aborts the currently running system image and restarts *)
+
+PROCEDURE SetSystemReset( enabled : BOOLEAN );
+(* Enables system reset on abort if enabled is TRUE, disables otherwise. *)
+
+PROCEDURE SystemResetEnabled : BOOLEAN;
+(* Returns the current system reset mode, TRUE if enabled, FALSE otherwise. *)
+
+END RUNTIME.

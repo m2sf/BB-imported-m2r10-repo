@@ -1,0 +1,26 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Storage;
+
+(* Dynamic Memory Allocation and Management *)
+
+FROM SYSTEM IMPORT ADDRESS;
+
+CONST isGarbageCollected = <implementation defined constant>;
+(* TRUE if this implementation uses garbage collection, otherwise FALSE. *)
+
+(* Allocator *)
+
+PROCEDURE ALLOCATE( VAR p : ADDRESS; size : LONGCARD );
+(* Allocates a block of contiguous memory of the specified size and passes
+   its address back in p. Passes back NIL if memory could not be allocated.
+   This procedure is required by pervasive macro-procedure NEW. *)
+
+(* Deallocator *)
+
+PROCEDURE DEALLOCATE( p : ADDRESS; size : LONGCARD );
+(* Deallocates a previously allocated block of memory of at address p if the
+   value of isGarbageCollection in FALSE, otherwise returns without action.
+   This procedure is required by pervasive macro-procedure DISPOSE. *)
+
+END Storage.

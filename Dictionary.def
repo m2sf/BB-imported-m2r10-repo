@@ -1,0 +1,84 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Dictionary;
+
+(* Example of a collection library using operator bindings *)
+
+TYPE Dictionary = OPAQUE ("A-Type");
+
+
+(* key and value type *)
+
+TYPE KeyType IS CARDINAL; (* arbitrary type *)
+
+TYPE ValueType = ARRAY 255 OF CHAR; (* arbitrary type *)
+
+
+(* null key *)
+
+CONST [NIL] nullKey = 0;
+(* This value is declared as the null key for type Dictionary. *)
+
+
+(* allocator *)
+
+PROCEDURE [NEW] new ( VAR dict : Dictionary );
+(* Allocates a new collection and passes a reference to it back in dict *)
+
+
+(* accessor *)
+
+PROCEDURE [.] valueForKey ( dict : Dictionary;
+                            key : KeyType; VAR found : BOOLEAN ) : ValueType;
+(* Searches for key in dict, passes TRUE in found if the key is present
+   and returns its value, otherwise passes FALSE. This function is bound
+   to the array operator [ ] for rvalues of type Dictionary. *)
+
+
+(* mutators *)
+
+PROCEDURE [!] storeValue ( dict : Dictionary;
+                           key : KeyType; value : ValueType );
+(* Stores value for key in dict, overwrites the previous value if key is
+   already present in dict. This function is bound to the array operator [ ]
+   for lvalues of type Dictionary. *)
+
+PROCEDURE [-] removeValue ( dict : Dictionary; key : KeyType );
+(* Removes the entry whose key is key from dict. This function is bound
+   to the array operator [ ] for lvalues of type Dictionary in assignments
+   where the rvalue is the null key for type Dictionary. *)
+
+
+(* membership test *)
+
+PROCEDURE [IN] keyExists ( dict : Dictionary; key : KeyType ) : BOOLEAN;
+(* Returns TRUE if key is present in dict, otherwise returns FALSE. This
+   function is bound to the IN operator for type Dictionary. *)
+
+
+(* counter *)
+
+PROCEDURE [COUNT] entryCount ( dict : Dictionary ) : LONGCARD;
+(* Returns the number of entries stored in dict. This function is bound
+   to pervasive function COUNT for type Dictionary. *)
+
+
+(* iterator *)
+
+PROCEDURE [FOR] nextEntry ( dict : Dictionary;
+                            VAR key : KeyType; VAR value : ValueType );
+(* Finds the successor key of key in dict and passes its key/value pair back
+   in key and value. If the null key is passed in then the first key/value
+   pair is passed back in key and value. If no successor key is found then
+   the null key is passed back in key and value remain unmodified. This
+   function is bound to the FOR .. IN iterator for type Dictionary. *)
+
+
+(* destructor *)
+
+PROCEDURE [DISPOSE] dispose ( VAR dict : Dictionary );
+(* Deallocates dict and passes NIL back in dict. This function
+   is bound to pervasive procedure DISPOSE for type Dictionary. *)
+
+
+END Dictionary.

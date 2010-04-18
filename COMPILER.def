@@ -1,0 +1,61 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE COMPILER;
+
+(* Compile-Time System Interface *)
+
+(* All provided facilities are compile time expressions *)
+
+CONST
+
+(* Information about the compiler *)
+
+    name = "<short name of compiler>";
+    fullName = "<full name of compiler>";
+    editionName = "<name of compiler edition>";
+
+    majorVersion = <major version number>;
+    minorVersion = <minor version number>;
+    subMinorVersion = <sub-minor version number>;
+
+    releaseYear = <four digit year of release>;
+    releaseMonth = <two digit month of release>;
+    releaseDay = <two digit day of release>;
+
+(* Information about the compiler's lexical parameters *)
+
+    maxIdentLength = <implementation defined constant>;
+    maxStrLiteralLength = <implementation defined constant>;
+    maxNumLiteralLength = <implementation defined constant>;
+    maxCommentLength = <implementation defined constant>;
+
+
+(* Compile Time Macros *)
+
+
+(* information about the compiling source *)
+
+(* MACRO *) PROCEDURE MODNAME : ARRAY OF CHAR; 
+(* Expands to a string literal with the name of the enclosing module. *)
+
+(* MACRO *) PROCEDURE PROCNAME: ARRAY OF CHAR;
+(* Expands to a string literal with the name of the enclosing procedure.*)
+
+(* MACRO *) PROCEDURE LINENO : CARDINAL;
+(* Expands to a numeric value with the value of the current line number. *)
+
+(* MACRO *) PROCEDURE ROWNO : CARDINAL;
+(* Expands to a numeric value with the value of the current row number. *)
+
+
+(* interface to the compiler's built-in hash function *)
+
+(* MACRO *) PROCEDURE HASH ( literal : ARRAY OF CHAR ) : LONGCARD;
+(* Expands to the hash value of literal excluding quotation marks,
+   calculated by the compiler's internal hash function. *)
+
+(* MACRO *) PROCEDURE UPPERHASH ( literal : ARRAY OF CHAR ) : LONGCARD;
+(* Expands to the hash value of the uppercase representation of literal,
+   excluding quotation marks, using the compiler's internal hash function. *)
+
+END COMPILER.

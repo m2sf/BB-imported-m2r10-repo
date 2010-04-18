@@ -1,0 +1,47 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LONGINT;
+
+(* I/O Module for Type LONGINT *)
+
+FROM FileIO IMPORT File;
+
+(* EBNF of the textual representation of LONGINT values:
+    cardinalValue : simpleFormat |
+        cBase16Format | m2Base16Format | universalFormat ;
+    simpleFormat : decimalDigit+ ;
+    cBase16Format : "0x" base16Digit+ ;
+    m2Base16Format : "0" base16Digit+ "H" ;
+    universalFormat :  sign? fillChar* numeral ;
+    sign : "+" | "-" ;
+    fillChar : " " | "*" | "0" ;
+    numeral : leadDigitGroup ( separator? digitGroup )* ;
+    separator : " " | "." | "," ;
+    leadDigitGroup : decimalDigit decimalDigit? decimalDigit? ;
+    digitGroup : decimalDigit decimalDigit decimalDigit ;
+    decimalDigit  : "0" .. "9" ;
+    base16Digit : decimalDigit | "A" .. "F" ; *)
+
+PROCEDURE Read ( infile : File; VAR n : LONGINT );
+(* Reads the textual representation of an LONGINT value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the value being read are
+     removed from infile
+   - the textual representation of the value read is assigned to n
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   function is substituted for invocations of READ with a LONGINT argument. *)
+
+PROCEDURE Write ( outfile : File; n : LONGINT );
+(* Writes the value of LONGINT n in simple format to stream outfile. This
+   function is substituted for invocations of WRITE with a LONGINT argument.*)
+
+PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
+                   items : LONGINT; VARIADIC v[items] OF n : LONGINT );
+(* Writes a formatted textual representation of one or more LONGINT values to
+   output stream outfile. The value of parameter items is calculated and
+   inserted automatically. The output format is determined by fmtStr.
+   This function is substituted for invocations of WRITEF with one or more
+   LONGINT arguments. *)
+
+END LONGINT.

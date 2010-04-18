@@ -1,0 +1,30 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ARRAYOFCHAR;
+
+(* I/O Module for ARRAY OF CHAR Types *)
+
+FROM FileIO IMPORT File;
+
+PROCEDURE Read ( infile : File; VAR s : ARRAY OF CHAR );
+(* Reads a string value from stream infile
+   - any leading whitespace is skipped
+   - the character being read is removed from infile
+   - the code point of the character value read is assigned to s
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput.
+   This function is substituted for invocations of READ with an
+   ARRAY OF CHAR type argument. *)
+
+PROCEDURE Write ( outfile : File; s : ARRAY OF CHAR );
+(* Writes string s to stream outfile. This function is substituted
+   for invocations of WRITE with an ARRAY OF CHAR type argument.*)
+
+PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
+                   items : CARDINAL; VARIADIC v[items] OF s : ARRAY OF CHAR );
+(* Writes one or more strings to output stream outfile. The value of parameter
+   items is calculated and inserted automatically. The output format is deter-
+   mined by fmtStr. This function is substituted for invocations of WRITEF
+   with one or more ARRAY OF CHAR type arguments. *)
+
+END ARRAYOFCHAR.

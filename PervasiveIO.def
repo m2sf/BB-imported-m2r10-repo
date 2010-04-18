@@ -1,0 +1,39 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE PervasiveIO;
+
+(* Aggregator Module for Pervasive I/O Operations *)
+
+(* Import all pervasive IO modules into the importing module. *)
+
+IMPORT BOOLEAN+;
+(* Imports IO module for pervasive type BOOLEAN into the importing module. *)
+
+IMPORT CHAR+;
+(* Imports IO module for pervasive type CHAR into the importing module. *)
+
+IMPORT UNICHAR+;
+(* Imports IO module for pervasive type UNICHAR into the importing module. *)
+
+IMPORT OCTET+;
+(* Imports IO module for pervasive type OCTET into the importing module. *)
+
+IMPORT CARDINAL+;
+(* Imports IO module for pervasive type CARDINAL into the importing module. *)
+
+IMPORT LONGCARD+;
+(* Imports IO module for pervasive type LONGCARD into the importing module. *)
+
+IMPORT INTEGER+;
+(* Imports IO module for pervasive type INTEGER into the importing module. *)
+
+IMPORT LONGINT+;
+(* Imports IO module for pervasive type LONGINT into the importing module. *)
+
+IMPORT REAL+;
+(* Imports IO module for pervasive type REAL into the importing module. *)
+
+IMPORT LONGREAL+;
+(* Imports IO module for pervasive type LONGREAL into the importing module. *)
+
+END PervasiveIO.

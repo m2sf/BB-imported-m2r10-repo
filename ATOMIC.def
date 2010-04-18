@@ -1,0 +1,42 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ATOMIC;
+
+(* Pseudo-module for Atomic Intrinsics *)
+
+TYPE INTRINSIC = ( SWAP, CAS, INC, DEC, BWAND, BWNAND, BWOR, BWXOR );
+
+PROCEDURE AVAIL( intrinsic : INTRINSIC; bitwidth : CARDINAL ) : BOOLEAN;
+(* Returns TRUE if the given intrinsic is available for the given bitwidth,
+   otherwise FALSE. The value of bitwidth must be a compile time expression.*)
+
+PROCEDURE SWAP( VAR x, y : <Type> );
+(* Atomically swaps x and y. Type must be an 8, 16, 32 or 64 bit type. *)
+
+PROCEDURE CAS( VAR x : expectedValue, y : <Type> ) : Type;
+(* Atomically compares x and expectedValue, if they are equal, swaps x and y.
+   Returns original value of x. Type must be an 8, 16, 32 or 64 bit type. *)
+
+PROCEDURE INC( VAR x : <Type>; y : <Type> );
+(* Atomically increments x by y. Type must be an 8, 16, 32 or 64 bit type. *)
+
+PROCEDURE DEC( VAR x : <Type>; y : <Type> );
+(* Atomically decrements x by y. Type must be an 8, 16, 32 or 64 bit type. *)
+
+PROCEDURE BWAND( VAR x : <Type>; y : <Type> );
+(* Atomically performs bitwise AND of x and y, and passes the result in x.
+   Type must be an 8, 16, 32 or 64 bit type. *)
+
+PROCEDURE BWNAND( VAR x : <Type>; y : <Type> );
+(* Atomically performs bitwise NAND of x and y, and passes the result in x.
+   Type must be an 8, 16, 32 or 64 bit type. *)
+
+PROCEDURE BWOR( VAR x : <Type>; y : <Type> ) : <Type>;
+(* Atomically performs bitwise OR of x and y, and passes the result in x.
+   Type must be an 8, 16, 32 or 64 bit type. *)
+
+PROCEDURE BWXOR( VAR x : <Type>; y : <Type> ) : <Type>;
+(* Atomically performs bitwise XOR of x and y, and passes the result in x.
+   Type must be an 8, 16, 32 or 64 bit type. *)
+
+END ATOMIC.

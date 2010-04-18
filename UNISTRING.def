@@ -1,0 +1,116 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE UNISTRING;
+
+(* Dynamic Unicode Strings *)
+
+
+FROM FileIO IMPORT File; (* required for IO *)
+
+
+(* UNISTRING type *)
+
+TYPE UNISTRING = OPAQUE ("S-Type");
+
+
+(* S-Type bindings to operators and pervasives: *)
+
+
+(* allocator *)
+
+PROCEDURE [NEW] new ( VAR s : UNISTRING );
+(* Allocates a new object of type UNISTRING and returns a pointer to it in s.
+   This function is bound to pervasive procedure NEW for type UNISTRING. *)
+
+
+(* accessor *)
+
+PROCEDURE [.] characterAtIndex ( s : UNISTRING; index : LONGCARD ) : UNICHAR;
+(* Returns the character at the specified index in UNISTRING s. This
+   function is bound to the rvalue array operator [ ] for type UNISTRING. *)
+
+
+(* mutators *)
+
+PROCEDURE [!] replaceCharAtIndex ( s : UNISTRING; index : LONGCARD;
+                                   ch : UNICHAR );
+(* Replaces the character at the specified index in UNISTRING s with ch.
+   This function is bound to the lvalue array operator [ ] for type UNISTRING. *)
+
+PROCEDURE insertCharsAtIndex ( s : UNISTRING; index : LONGCARD;
+                               characters : ARRAY OF UNICHAR );
+(* Inserts a character sequence into UNISTRING s at the specified index. *)
+
+PROCEDURE removeCharsAtIndex ( s : UNISTRING; index, n : LONGCARD);
+(* Removes n characters from UNISTRING s at the specified index. *)
+
+
+(* length *)
+
+PROCEDURE [LENGTH] length ( s : UNISTRING ) : LONGCARD;
+(* Returns the length of string s.
+   This function is bound to pervasive function LENGTH for type UNISTRING. *)
+
+
+(* literal assignment *)
+
+PROCEDURE [:=] assign ( VAR s : UNISTRING; literal : ARRAY OF CHAR );
+(* Converts string literal to a UNISTRING value and assigns it to s.
+   This function is bound to the := operator for literal assignment. *)
+
+
+(* concatenation *)
+
+PROCEDURE [+] concatenate ( s1, s2 : UNISTRING ) : UNISTRING;
+(* Concatenates s1 and s2 and returns the result in a newly allocated string.
+   This function is bound to the concatenate operator + for type UNISTRING. *)
+
+
+(* relational operations *)
+
+PROCEDURE [=] isEqual ( s1, s2 : UNISTRING ) : BOOLEAN;
+(* Returns TRUE if the contents of s1 and s2 are equal, otherwise FALSE.
+   This function is bound to operators = and # for type UNISTRING. *)
+
+PROCEDURE [<] isLess ( s1, s2 : UNISTRING ) : BOOLEAN;
+(* Returns TRUE if s1 comes lexically before s2, otherwise FALSE.
+   This function is bound to operators < and >= for type UNISTRING. *)
+
+PROCEDURE [>] isGreater ( s1, s2 : UNISTRING ) : BOOLEAN;
+(* Returns TRUE if s1 comes lexically after s2, otherwise FALSE.
+   This function is bound to operators > and <= for type UNISTRING. *)
+
+
+(* destructor *)
+
+PROCEDURE [DISPOSE] dispose ( VAR s : UNISTRING );
+(* Deallocates UNISTRING s and assigns NIL to s.
+   This function is bound to pervasive procedure DISPOSE for type UNISTRING. *)
+
+
+(* IO procedures *)
+
+PROCEDURE Read ( infile : File; s : UNISTRING );
+(* Reads the textual representation of a UNISTRING value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the string being read are
+     removed from infile
+   - the textual representation of the string read is assigned to the variable
+     passed in for s
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This function
+   is substituted for invocations of READ with a UNISTRING argument. *)
+
+PROCEDURE Write ( outfile : File; s : UNISTRING );
+(* Writes the textual representation of UNISTRING s to stream outfile. This
+   function is substituted for invocations of WRITE with a UNISTRING argument.*)
+
+PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
+                   items : CARDINAL; VARIADIC v[items] OF s : UNISTRING );
+(* Writes a formatted textual representation of one or more UNISTRING values to
+   output stream outfile. The value of parameter items is calculated and
+   inserted automatically. The output format is determined by fmtStr.
+   This function is substituted for invocations of WRITEF with one or more
+   UNISTRING arguments. *)
+
+END UNISTRING.

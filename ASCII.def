@@ -1,0 +1,289 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ASCII;
+
+(*  Mnemonics and Macros for 7-bit-ASCII characters *)
+
+CONST
+
+(* Control characters *)
+
+    NUL =  0C;
+    SOH =  1C;
+    STX =  2C;
+    ETX =  3C;
+    EOT =  4C;
+    ENQ =  5C;
+    ACK =  6C;
+    BEL =  7C;
+    BS  =  8C;
+    HT  =  9C;
+    LF  = 0AC;
+    VT  = 0BC;
+    FF  = 0CC;
+    CR  = 0DC;
+    SO  = 0EC;
+    SI  = 0FC;
+    DLE = 10C;
+    DC1 = 11C;
+    DC2 = 12C;
+    DC3 = 13C;
+    DC4 = 14C;
+    NAK = 15C;
+    SYN = 16C;
+    ETB = 17C;
+    CAN = 18C;
+    EM  = 19C;
+    SUB = 1AC;
+    ESC = 1BC;
+    FS  = 1CC;
+    GS  = 1DC;
+    RS  = 1EC;
+    US  = 1FC;
+    DEL = 7FC;
+
+(* Whitespace *)
+
+    SP = 20C;
+
+(* Digits *)
+
+    DIGIT_ZERO = 30C;
+    DIGIT_ONE = 31C;
+    DIGIT_TWO = 32C;
+    DIGIT_THREE = 33C;
+    DIGIT_FOUR = 34C;
+    DIGIT_FIVE = 35C;
+    DIGIT_SIX = 36C;
+    DIGIT_SEVEN = 37C;
+    DIGIT_EIGHT = 38C;
+    DIGIT_NINE = 39C;
+
+(* Uppercase letters *)
+
+    UPPERCASE_A = 41C;
+    UPPERCASE_B = 42C;
+    UPPERCASE_C = 43C;
+    UPPERCASE_D = 44C;
+    UPPERCASE_E = 45C;
+    UPPERCASE_F = 46C;
+    UPPERCASE_G = 47C;
+    UPPERCASE_H = 48C;
+    UPPERCASE_I = 49C;
+    UPPERCASE_J = 4AC;
+    UPPERCASE_K = 4BC;
+    UPPERCASE_L = 4CC;
+    UPPERCASE_M = 4DC;
+    UPPERCASE_N = 4EC;
+    UPPERCASE_O = 4FC;
+    UPPERCASE_P = 50C;
+    UPPERCASE_Q = 51C;
+    UPPERCASE_R = 52C;
+    UPPERCASE_S = 53C;
+    UPPERCASE_T = 54C;
+    UPPERCASE_U = 55C;
+    UPPERCASE_V = 56C;
+    UPPERCASE_W = 57C;
+    UPPERCASE_X = 58C;
+    UPPERCASE_Y = 59C;
+    UPPERCASE_Z = 5AC;
+
+(* Lowercase letters *)
+
+    LOWERCASE_A = 61C;
+    LOWERCASE_B = 62C;
+    LOWERCASE_C = 63C;
+    LOWERCASE_D = 64C;
+    LOWERCASE_E = 65C;
+    LOWERCASE_F = 66C;
+    LOWERCASE_G = 67C;
+    LOWERCASE_H = 68C;
+    LOWERCASE_I = 69C;
+    LOWERCASE_J = 6AC;
+    LOWERCASE_K = 6BC;
+    LOWERCASE_L = 6CC;
+    LOWERCASE_M = 6DC;
+    LOWERCASE_N = 6EC;
+    LOWERCASE_O = 6FC;
+    LOWERCASE_P = 70C;
+    LOWERCASE_Q = 71C;
+    LOWERCASE_R = 72C;
+    LOWERCASE_S = 73C;
+    LOWERCASE_T = 74C;
+    LOWERCASE_U = 75C;
+    LOWERCASE_V = 76C;
+    LOWERCASE_W = 77C;
+    LOWERCASE_X = 78C;
+    LOWERCASE_Y = 79C;	
+    LOWERCASE_Z = 7AC;	
+
+(* All other printable characters *)
+
+    EXCLAMATION = 21C;
+    DOUBLEQUOTE = 22C;
+    OCTOTHORPE = 23C;
+    DOLLAR = 24C;
+    PERCENT = 25C;
+    AMPERSAND = 26C;
+    SINGLEQUOTE = 27C;
+    OPENING_PARENTHESIS = 28C;
+    CLOSING_PARENTHESIS = 29C;
+    ASTERISK = 2AC;
+    PLUS = 2BC;
+    COMMA = 2CC;
+    MINUS = 2DC;
+    DOT = 2EC;
+    SLASH = 2FC;
+    COLON = 3AC;
+    SEMICOLON = 3BC;
+    LESS_THAN = 3CC;
+    EQUAL_SIGN = 3DC;;
+    GREATER_THAN = 3EC;
+    QUESTION_MARK = 3FC;
+    AT_SIGN = 40C;
+    OPENING_BRACKET = 5BC;
+    BACKSLASH = 5CC;
+    CLOSING_BRACKET = 5DC;
+    CARET= 5EC;
+    LOWLINE = 5FC;
+    BACKQUOTE = 60C;
+    OPENING_BRACE = 7BC;
+    VERTICAL_BAR = 7CC;
+    CLOSING_BRACE = 7DC;
+    TILDE = 7EC;
+
+(* Aliases *)
+
+    ENDOFSTRING = NUL;
+    END_OF_STRING = NUL;
+    STRINGTERMINATOR = NUL;
+    STRING_TERMINATOR = NUL;
+    TAB = HT;
+    TABULATOR = HT;
+    EOL = LF;
+    ENDOFLINE = LF;
+    END_OF_LINE = LF;
+    NEWLINE = LF;
+    NEW_LINE = LF;
+    LINEFEED = LF;
+    LINE_FEED = LF;
+    FORMFEED = FF;
+    FORM_FEED = FF;
+    RET = CR;
+    XON = DC1;
+    XOFF = DC3;
+    ESCAPE = ESC;
+    WHITESPACE = SP;
+    HASH = OCTOTHORPE;
+    NUMBERSIGN = OCTOTHORPE;
+    NUMBER_SIGN = OCTOTHORPE;
+    APOSTROPHE = SINGLEQUOTE;
+    SINGLE_QUOTE = SINGLEQUOTE;
+    DASH = MINUS;
+    HYPHEN = MINUS;
+    DOUBLE_QUOTE = DOUBLEQUOTE;
+    OPENING_PAREN = OPENING_PARENTHESIS;
+    OPENINGPARENTHESIS = OPENING_PARENTHESIS;
+    CLOSING_PAREN = CLOSING_PARENTHESIS;
+    CLOSINGPARENTHESIS = CLOSING_PARENTHESIS;
+    FORWARDSLASH = SLASH;
+    FORWARD_SLASH = SLASH;
+    BACK_SLASH = BACKSLASH;
+    BACK_QUOTE = BACKQUOTE;
+    UNDERSCORE = LOWLINE;
+    OPENING_ANGULAR_BRACKET = LESS_THAN;
+    CLOSING_ANGULAR_BRACKET = GREATER_THAN;
+
+(* Macros *)
+
+<*INLINE*> PROCEDURE toUpper( ch : CHAR ) : CHAR;
+
+<*INLINE*> PROCEDURE toLower( ch : CHAR ) : CHAR;
+
+<*INLINE*> PROCEDURE isUpper( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isLower( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE is7bit( ch : UNICHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNot7bit( ch : UNICHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isControl( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotControl( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isWhitespaceOrTab( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotWhitespaceOrTab( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isPrintable( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotPrintable( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isBoolean( ch : CHAR ) : BOOLEAN;
+(* Tests if ch is any of "0", "1", "y", "n", "t", "f" *)
+
+<*INLINE*> PROCEDURE isNotBoolean( ch : CHAR ) : BOOLEAN;
+(* Tests if ch is not any of "0", "1", "y", "n", "t", "f" *)
+
+<*INLINE*> PROCEDURE isDigit( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotDigit( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isOctalDigit( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotOctalDigit( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isHexDigit( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotHexDigit( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isLowerHexDigit( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotLowerHexDigit( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isUpperHexDigit( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotUpperHexDigit( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isAtoF( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotAtoF( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isLowerAtoF( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotLowerAtoF( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isUpperAtoF( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotUpperAtoF( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isLowerCase( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotLowerCase( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isUpperCase( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotUpperCase( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isLetter( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotLetter( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isDTMF( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotDTMF( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isAlphaNumeric( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotAlphaNumeric( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isAlphaNumOrLowline( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotAlphaNumOrLowline( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isM2IdentChar( ch : CHAR ) : BOOLEAN;
+
+<*INLINE*> PROCEDURE isNotM2IdentChar( ch : CHAR ) : BOOLEAN;
+
+END ASCII.
