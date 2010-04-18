@@ -1,0 +1,42 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE RegexConv;
+
+(* Conversion of Regular Expressions *)
+
+TYPE
+    Status = (
+        success,
+        invalidAWKRegex,
+        invalidM2Regex,
+        targetStringFull,
+        allocationFailed );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  RegexConv.awkToM2Regex( awkExpr, m2Expr, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Converts string <awkExpr> in AWK regular expression syntax to target string
+ * <m2Expr> in Modula-2 regular expression syntax.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE awkToM2Regex ( awkExpr : ARRAY OF CHAR; VAR m2Expr : ARRAY OF CHAR;
+                         VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  RegexConv.m2RegexToAWK( m2Expr, awkExpr, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Converts string <m2Expr>  in Modula-2 regular expression syntax  to  target
+ * string <awkExpr> in AWK regular expression syntax.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE m2RegexToAWK ( m2Expr : ARRAY OF CHAR; VAR awkExpr : ARRAY OF CHAR;
+                         VAR status : Status );
+
+
+END RegexConv.
