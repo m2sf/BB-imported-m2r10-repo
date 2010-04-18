@@ -25,7 +25,7 @@ CONST [TMIN] minValue = -9.9999999999999E+99;
 (* Smallest value of type BCD. This value is bound to TMIN for type BCD. *) 
 
 CONST [TMAX] maxValue = +9.9999999999999E+99;
-(* Largest value of type BCD. This value if bound to TMAX for type BCD. *)
+(* Largest value of type BCD. This value is bound to TMAX for type BCD. *)
 
 
 (* Literal assignment *)

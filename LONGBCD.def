@@ -27,7 +27,7 @@ CONST [TMIN] minValue = -9.99999999999999999999999999E+999;
 
 CONST [TMAX] maxValue = +9.99999999999999999999999999E+999;
 (* Largest value of type LONGBCD.
-   This value if bound to TMAX for type LONGBCD. *)
+   This value is bound to TMAX for type LONGBCD. *)
 
 
 (* Literal assignment *)
