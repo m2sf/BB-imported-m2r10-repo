@@ -1,0 +1,55 @@
+EBNF for Scalar Exchange Format:
+
+serialisedScalarFormat :
+    version length encoding sigDigitCount expDigitCount
+    sigSign sigDigits ( expSign expDigits )? terminator ;
+
+version:
+    digitB32 ; protocol version, at present the value is always 1
+
+length :
+    digitB32 digitB32 ;    // allocated length, value between 8 and 1023
+
+encoding :
+    "D" | "H" ;    // radix system, D for base 10, H for base 16
+
+sigDigitCount :
+    digitB32 digitB32 ;    // digit count of significand, value between 1 and 999
+
+expDigitCount :
+    digitB32 ;    // digit count of exponent, value between 0 and 15
+
+sigSign :
+    "+" | "-" ;    // sign of significand
+
+sigDigits :
+    digitB10+ | digitB16+ ;    // digits of significand
+
+expSign :
+    "+" | "-" ;    // sign of exponent
+
+expDigits :
+    digitB10+ | digitB16+ ;    // digits of exponent
+
+digitB10 :
+    "0" .. "9" ;    // representing values between 0 and 9
+
+digitB16 :
+    "0" .. "?" ;    // representing values between 0 and 15
+
+digitB32 :
+    "0" .. "O" ;    // representing values between 0 and 31
+
+terminator :
+    ASCII(0) ;
+
+Scalar Exchange Conversion Primitives:
+
+PROCEDURE toSXF ( value : <ScalarType>; VAR s : ARRAY OF CHAR );
+(* Converts <value> to scalar exchange format and passes the result back in s.
+   The output is shortened if the size of the passed in character array
+   is insufficient to represent all available digits. *)
+
+PROCEDURE fromSXF ( VAR value : <ScalarType>; s : ARRAY OF CHAR );
+(* Converts character array s in scalar exchange format to a value of
+   type <ScalarType> and passes the result back in <value>. *)
