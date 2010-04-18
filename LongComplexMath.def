@@ -2,55 +2,55 @@
 
 DEFINITION MODULE LongComplexMath;
 
-IMPORT LONCOMPLEX;
+IMPORT LONGCOMPLEX;
 
-(* Mathematical Constants and Functions for Type LONCOMPLEX *)
+(* Mathematical Constants and Functions for Type LONGCOMPLEX *)
 
 CONST
   i =    { 0.0, 1.0 };
   one =  { 1.0, 0.0 };
   zero = { 0.0, 0.0 };
 
-PROCEDURE arg ( z : LONCOMPLEX ) : LONGREAL;
+PROCEDURE arg ( z : LONGCOMPLEX ) : LONGREAL;
 (* Returns the argument of z. *)
 
-PROCEDURE conj ( z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE conj ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the complex conjugate of z. *)
 
-PROCEDURE power ( base : LONCOMPLEX; exponent : LONGREAL ) : LONCOMPLEX;
+PROCEDURE power ( base : LONGCOMPLEX; exponent : LONGREAL ) : LONGCOMPLEX;
 (* Returns the value of base raised to the power exponent. *)
 
-PROCEDURE sqrt ( z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE sqrt ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the square root of z. *)
 
-PROCEDURE ln ( z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE ln ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the natural logarithm of z. *)
 
-PROCEDURE log ( z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE log ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the decimal logarithm of z. *)
 
-PROCEDURE sin ( z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE sin ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the sine of z. *)
 
-PROCEDURE cos ( z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE cos ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the cosine of z. *)
 
-PROCEDURE tan ( z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE tan ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the tangent of z. *)
 
-PROCEDURE arcsin ( z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE arcsin ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the arcsine of z. *)
 
-PROCEDURE arccos ( z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE arccos ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the arccosine of z. *)
 
-PROCEDURE arctan ( z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE arctan ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the arctangent of z. *)
 
-PROCEDURE polarToComplex ( abs, arg : LONGREAL ) : LONCOMPLEX;
+PROCEDURE polarToComplex ( abs, arg : LONGREAL ) : LONGCOMPLEX;
 (* Returns the complex value with the specified polar coordinates. *)
 
-PROCEDURE scalarMult ( scalar : LONGREAL; z : LONCOMPLEX ) : LONCOMPLEX;
+PROCEDURE scalarMult ( scalar : LONGREAL; z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the scalar product of scalar and z. *)
 
 END LongComplexMath.
