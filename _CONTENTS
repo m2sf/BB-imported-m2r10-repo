@@ -1,0 +1,64 @@
+M2R10StdLib
+
+Pseudo-modules:
+
+ATOMIC.def          provides atomic intrinsics
+SYSTEM.def          access to system dependent resources
+RUNTIME.def         interface to the Modula-2 runtime system
+COMPILER.def        interface to the Modula-2 compile-time system
+ASSEMBLER.def       access to target dependent inline assember (optional)
+
+Memory Management:
+
+Storage.def         dynamic memory allocator
+
+System Type IO:
+
+BYTE.def            IO module for type BYTE
+WORD.def            IO module for type WORD
+ADDRESS.def         IO module for type ADDRESS
+
+Pervasive Type IO:
+
+PervasiveIO.def     aggregator module to import all pervasive IO modules
+BOOLEAN.def         IO module for type BOOLEAN
+CHAR.def            IO module for type CHAR
+ARRAYOFCHAR.def     IO module for ARRAY OF CHAR types
+UNICHAR.def         IO module for type UNICHAR
+ARRAYOFUNICHAR.def  IO module for ARRAY OF CHAR types
+OCTET.def           IO module for type OCTET
+CARDINAL.def        IO module for type CARDINAL
+LONGCARD.def        IO module for type LONGCARD
+INTEGER.def         IO module for type INTEGER
+LONGINT.def         IO module for type LONGINT
+REAL.def            IO module for type REAL
+LONGREAL.def        IO module for type LONGREAL
+
+Library defined types:
+
+BCD.def             single precision binary coded decimals
+LONGBCD.def         double precision binary coded decimals
+COMPLEX.def         single precision complex number type
+LONGCOMPLEX.def     double precision complex number type
+SHORTCARD.def       16-bit unsigned integer type
+SHORTINT.def        16-bit signed integer type
+STRING.def          dynamic ASCII strings
+UNISTRING.def       dynamic unicode strings
+Dictionary.def      associative array of strings
+
+Math:
+
+REALMath.def        mathematic constants and functions for type REAL
+LONGREALMath.def    mathematic constants and functions for type LONGREAL
+BCDMath.def         mathematic constants and functions for type BCD
+LONGBCDMath.def     mathematic constants and functions for type LONGBCD
+ComplexMath.def     mathematic constants and functions for type COMPLEX
+LongComplexMath.def mathematic constants and functions for type LONGCOMPLEX
+
+Text:
+
+ASCII.def           mnemonics and macro-functions for ASCII characters
+Regex.def           Modula-2 regular expression library
+RegexConv.def       conversion library for regular expression syntax
+
+[status: April 15, 2010 -- further modules are being added]
