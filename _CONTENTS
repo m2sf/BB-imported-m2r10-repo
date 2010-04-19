@@ -61,4 +61,9 @@ ASCII.def           mnemonics and macro-functions for ASCII characters
 Regex.def           Modula-2 regular expression library
 RegexConv.def       conversion library for regular expression syntax
 
-[status: April 15, 2010 -- further modules are being added]
+Legacy:
+
+LegacyPIM.def       legacy interface to deprecated PIM functions and procedures
+LegacyISO.def       legacy interface to deprecated ISO functions and procedures
+
+[status: April 18, 2010 -- further modules are being added]

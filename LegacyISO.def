@@ -1,0 +1,79 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LegacyISO;
+
+(* Legacy Interface to Deprecated ISO 10514 Pervasives and IO Procedures *)
+
+PROCEDURE CAP ( ch : CHAR ) : CHAR;
+(* Returns ASCII.toUpper(ch) *)
+
+PROCEDURE TRUNC ( r : REAL ) : CARDINAL;
+(* Returns REALMath.trunc(r) :: CARDINAL *)
+
+PROCEDURE INT ( r : REAL ) : INTEGER;
+(* Returns REALMath.trunc(r) :: INTEGER *)
+
+PROCEDURE FLOAT ( i : INTEGER ) : REAL;
+(* Returns i :: REAL *)
+
+PROCEDURE LFLOAT ( i : INTEGER ) : LONGREAL;
+(* Returns i :: LONGREAL *)
+
+PROCEDURE CMPLX ( re, im : REAL ) : COMPLEX;
+(* Returns { re, im } :: COMPLEX *)
+
+PROCEDURE IM ( z : COMPLEX ) : REAL;
+(* Returns z.im *)
+
+PROCEDURE RE ( z : COMPLEX ) : REAL;
+(* Returns z.re *)
+
+PROCEDURE ReadChar ( VAR ch : CHAR );
+(* Invokes READ(stdIn, ch) to call CHAR.Read(stdIn, ch) *)
+
+PROCEDURE WriteChar ( ch : CHAR );
+(* Invokes WRITE(stdOut, ch) to call CHAR.Write(stdOut, ch) *)
+
+PROCEDURE ReadString ( VAR s : ARRAY OF CHAR );
+(* Invokes READ(stdIn, s) to call ARRAYOFCHAR.Read(stdIn, s) *)
+
+PROCEDURE WriteString ( s : ARRAY OF CHAR );
+(* Invokes WRITE(stdOut, ch) to call ARRAYOFCHAR.Write(stdOut, s) *)
+
+PROCEDURE ReadCard ( VAR c : CARDINAL );
+(* Invokes READ(stdIn, c) to call CARDINAL.Read(stdIn, c) *)
+
+PROCEDURE WriteCard ( c, width : CARDINAL );
+(* Invokes WRITEF(stdOut, ">n", c) to call CARDINAL.WriteF(stdOut, ">n", c)
+   n is replaced by the textual representation of the value of width *)
+
+PROCEDURE ReadInt ( VAR i : INTEGER );
+(* Invokes READ(stdIn, i) to call INTEGER.Read(stdIn, i) *)
+
+PROCEDURE WriteInt ( i, width : INTEGER );
+(* Invokes WRITE(stdOut, ">n", i) to call INTEGER.Write(stdOut, ">n", i)
+   n is replaced by the textual representation of the value of width *)
+
+PROCEDURE ReadReal ( r : REAL );
+(* Invokes READ(stdIn, r) to call REAL.Read(stdIn, r) *)
+
+PROCEDURE WriteReal ( r : REAL; width : CARDINAL );
+(* Invokes WRITEF(stdOut, ">n", r) to call REAL.WriteF(stdOut, ">n", r)
+   n is replaced by the textual representation of the value of width *)
+
+PROCEDURE WriteEng ( r : REAL; sigFigs, width : CARDINAL );
+(* Invokes WRITEF(stdOut, "En>m", r) to call REAL.WriteF(stdIn, "En>m", r)
+   n is replaced by textual representations of the value of sigFigs
+   m is replace by the textual represenation of the value of width *)
+
+PROCEDURE WriteFloat ( r : REAL; sigFigs, width : CARDINAL );
+(* Invokes WRITEF(stdOut, "1.n>m", r) to call REAL.WriteF(stdIn, "1.n>m", r)
+   n is replaced by the textual representation of the value of sigFigs,
+   m is replaced by the textual representation of width - sigFigs - 1 *)
+
+PROCEDURE WriteFixed ( r : REAL; place : INTEGER; width : CARDINAL );
+(* Invokes WRITEF(stdOut, "n.m", r) to call REAL.WriteF(stdIn, "n.m", r)
+   n is replaced by the textual representation of the value of places,
+   m is replaced by the textual representation of width - places - 1 *)
+
+END LegacyISO.
