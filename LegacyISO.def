@@ -4,6 +4,8 @@ DEFINITION MODULE LegacyISO;
 
 (* Legacy Interface to Deprecated ISO 10514 Pervasives and IO Procedures *)
 
+IMPORT COMPLEX;
+
 PROCEDURE CAP ( ch : CHAR ) : CHAR;
 (* Returns ASCII.toUpper(ch) *)
 
