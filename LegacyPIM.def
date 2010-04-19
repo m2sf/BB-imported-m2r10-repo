@@ -29,7 +29,7 @@ PROCEDURE ReadCard ( VAR x : CARDINAL );
 (* Invokes READ(stdIn, x) to call CARDINAL.Read(stdIn, x) *)
 
 PROCEDURE WriteCard ( x, n : CARDINAL );
-(* Invokes WRITEF(stdOut, ">n", x) to call CARDINAL.Write(stdOut, ">n", x) *)
+(* Invokes WRITEF(stdOut, ">n", x) to call CARDINAL.WriteF(stdOut, ">n", x) *)
 
 PROCEDURE WriteOct ( x, n : CARDINAL );
 (* Writes the value of x in base 8 representation to stdOut *)
@@ -42,7 +42,7 @@ PROCEDURE ReadInt ( VAR x : INTEGER );
 (* Invokes READ(stdIn, x) to call INTEGER.Read(stdIn, x) *)
 
 PROCEDURE WriteInt ( x : INTEGER; n : CARDINAL );
-(* Invokes WRITE(stdOut, ">n", x) to call INTEGER.Write(stdOut, ">n", x)
+(* Invokes WRITEF(stdOut, ">n", x) to call INTEGER.WriteF(stdOut, ">n", x)
    n is replaced by the textual representation of the value of parameter n *)
 
 PROCEDURE ReadWrd ( VAR x : WORD );

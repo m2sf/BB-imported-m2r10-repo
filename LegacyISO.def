@@ -51,7 +51,7 @@ PROCEDURE ReadInt ( VAR i : INTEGER );
 (* Invokes READ(stdIn, i) to call INTEGER.Read(stdIn, i) *)
 
 PROCEDURE WriteInt ( i, width : INTEGER );
-(* Invokes WRITE(stdOut, ">n", i) to call INTEGER.Write(stdOut, ">n", i)
+(* Invokes WRITEF(stdOut, ">n", i) to call INTEGER.WriteF(stdOut, ">n", i)
    n is replaced by the textual representation of the value of width *)
 
 PROCEDURE ReadReal ( r : REAL );
