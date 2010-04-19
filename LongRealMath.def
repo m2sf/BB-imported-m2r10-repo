@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGREALMath;
+DEFINITION MODULE LongRealMath;
 
 (* Mathematical Constants and Functions for Type LONGREAL *)
 
@@ -57,4 +57,4 @@ PROCEDURE arccos ( r : LONGREAL ) : LONGREAL;
 PROCEDURE arctan ( r : LONGREAL ) : LONGREAL;
 (* Returns the arctangent of r. *)
 
-END LONGREALMath.
+END LongRealMath.

@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE REALMath;
+DEFINITION MODULE RealMath;
 
 (* Mathematical Constants and Functions for Type REAL *)
 
@@ -57,4 +57,4 @@ PROCEDURE arccos ( r : REAL ) : REAL;
 PROCEDURE arctan ( r : REAL ) : REAL;
 (* Returns the arctangent of r. *)
 
-END REALMath.
+END RealMath.

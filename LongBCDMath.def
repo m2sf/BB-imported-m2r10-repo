@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGBCDMath;
+DEFINITION MODULE LongBCDMath;
 
 (* Mathematical Constants and Functions for Type LONGBCD *)
 
@@ -57,4 +57,4 @@ PROCEDURE arccos ( b : LONGBCD ) : LONGBCD;
 PROCEDURE arctan ( r : LONGBCD ) : LONGBCD;
 (* Returns the arctangent of b. *)
 
-END LONGBCDMath.
+END LongBCDMath.

@@ -48,10 +48,10 @@ Dictionary.def      associative array of strings
 
 Math:
 
-REALMath.def        mathematic constants and functions for type REAL
-LONGREALMath.def    mathematic constants and functions for type LONGREAL
+RealMath.def        mathematic constants and functions for type REAL
+LongRealMath.def    mathematic constants and functions for type LONGREAL
 BCDMath.def         mathematic constants and functions for type BCD
-LONGBCDMath.def     mathematic constants and functions for type LONGBCD
+LongBCDMath.def     mathematic constants and functions for type LONGBCD
 ComplexMath.def     mathematic constants and functions for type COMPLEX
 LongComplexMath.def mathematic constants and functions for type LONGCOMPLEX
 
