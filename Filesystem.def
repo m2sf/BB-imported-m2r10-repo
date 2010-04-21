@@ -47,9 +47,9 @@ PROCEDURE CreateEntryAtPath ( pathname : ARRAY OF CHAR;
                               VAR status : Status );
 (* Creates a new filesystem entry at <path> with <attributes>. *)
 
-PROCEDURE RenameEntryAtPath ( path, newFilename : ARRAY OF CHAR;
+PROCEDURE RenameEntryAtPath ( path, newName : ARRAY OF CHAR;
                               VAR status : Status );
-(* Changes the name of the entry at <pathname> to <newFilename>. *)
+(* Changes the name of the entry at <pathname> to <newName>. *)
 
 PROCEDURE MoveEntryAtPath ( path, newPath : ARRAY OF CHAR;
                             VAR status : Status );
@@ -67,8 +67,8 @@ PROCEDURE GetCurrentDir ( VAR path : ARRAY OF CHAR );
 PROCEDURE SetCurrentDir ( path : ARRAY OF CHAR; VAR status : Status );
 (* Sets the current directory to <path>. *)
 
-PROCEDURE FileExists ( name : ARRAY OF CHAR ) : BOOLEAN;
-(* Returns TRUE if file or directory <name> exists in current directory. *)
+PROCEDURE EntryExists ( name : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if filesystem entry <name> exists in current directory. *)
 
 PROCEDURE attrOf ( name       : ARRAY OF CHAR;
                    VAR status : Status ) : Attributes;
