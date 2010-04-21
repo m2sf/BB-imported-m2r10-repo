@@ -1,0 +1,94 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Filesystem;
+
+(* Filesystem operations *)
+
+TYPE
+    Status = ( success, invalidName, accessDenied, deviceError );
+    
+    Attribute = ( readable, writable, executable, directory );
+    
+    Attributes = SET OF Attributes;
+
+CONST
+    isReadable = { Attribute.readable };
+    isWritable = { Attribute.writable };
+    isExecutable = { Attribute.executable };
+    isDirectory = { Attribute.directory };
+    isReadableAndWritable = { Attribute.readable, Attribute.writable };
+
+
+(* filesystem parameters *)
+
+PROCEDURE maxFilenameLength : CARDINAL;
+(* Returns the maximum filename length *)
+
+PROCEDURE maxPathnameLength : CARDINAL;
+(* Returns the maximum pathname length *)
+
+
+(* operations on filesystem entries at paths *)
+
+PROCEDURE EntryExistsAtPath ( path : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if a filesystem entry exists at <path>. *)
+
+PROCEDURE attrAtPath ( path       : ARRAY OF CHAR;
+                       VAR status : Status ) : Attributes;
+(* Returns the file attributes of the filesystem entry at <pathname>. *)
+
+PROCEDURE SetAttrAtPath ( path       : ARRAY OF CHAR;
+                          attributes : Attributes;
+                          VAR status : Status );
+(* Sets the file attributes of the entry at <path> to <attributes>.*)
+
+PROCEDURE CreateEntryAtPath ( pathname : ARRAY OF CHAR;
+                              attributes : Attributes;
+                              VAR status : Status );
+(* Creates a new filesystem entry at <path> with <attributes>. *)
+
+PROCEDURE RenameEntryAtPath ( path, newFilename : ARRAY OF CHAR;
+                              VAR status : Status );
+(* Changes the name of the entry at <pathname> to <newFilename>. *)
+
+PROCEDURE MoveEntryAtPath ( path, newPath : ARRAY OF CHAR;
+                            VAR status : Status );
+(* Moves the entry at <path> to <newPath>. *)
+
+PROCEDURE RemoveEntryAtPath ( path : ARRAY OF CHAR; VAR status : Status );
+(* Removes the filesystem entry at <path>. *)
+
+
+(* operations on filesystem entries in current directory *)
+
+PROCEDURE GetCurrentDir ( VAR path : ARRAY OF CHAR );
+(* Passes the current directory's path in <path>. *)
+
+PROCEDURE SetCurrentDir ( path : ARRAY OF CHAR; VAR status : Status );
+(* Sets the current directory to <path>. *)
+
+PROCEDURE FileExists ( name : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if file or directory <name> exists in current directory. *)
+
+PROCEDURE attrOf ( name       : ARRAY OF CHAR;
+                   VAR status : Status ) : Attributes;
+(* Returns the file attributes of entry <name> in current directory. *)
+
+PROCEDURE SetAttr ( filename   : ARRAY OF CHAR;
+                    attributes : Attributes;
+                    VAR status : Status );
+(* Sets the attributes of entry <name> in current directory to <attributes>.*)
+
+PROCEDURE Rename ( name, newName : ARRAY OF CHAR; VAR status : Status );
+(* Renames entry <name> in current directory to <newName>. *)
+
+PROCEDURE Create ( name       : ARRAY OF CHAR;
+                   attributes : Attributes;
+                   VAR status : Status );
+(* Creates a new filesystem entry <name> with <attributes>
+   in current directory. *)
+
+PROCEDURE Remove ( name : ARRAY OF CHAR; VAR status : Status );
+(* Removes filesystem entry <name> from current directory. *)
+
+END Filesystem.
