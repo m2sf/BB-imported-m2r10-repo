@@ -15,6 +15,7 @@ Storage.def         dynamic memory allocator
 File IO:
 
 FileIO.def          file oriented input and output
+Terminal.def        terminal based input and output
 Filesystem.def      file system operations
 
 System Type IO:

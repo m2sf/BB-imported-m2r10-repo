@@ -1,0 +1,23 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Terminal;
+
+(* Basic Terminal-based IO *)
+
+PROCEDURE Read ( VAR ch : CHAR );
+(* Reads one character from stdIn and passes it back in <ch>. *)
+
+PROCEDURE Write ( ch : CHAR );
+(* Writes character <ch> to stdOut. *)
+
+PROCEDURE ReadString ( VAR s : ARRAY OF CHAR );
+(* Reads a character sequence terminated by Newline from stdIn
+   and passed it back in s. *)
+
+PROCEDURE WriteString ( s : ARRAY OF CHAR );
+(* Writes character string s to stdOut. *)
+
+PROCEDURE WriteLn;
+(* Writes Newline to stdOut. *)
+
+END Terminal.
