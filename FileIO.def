@@ -4,25 +4,31 @@ DEFINITION MODULE FileIO;
 
 (* File IO library *)
 
+
+(* File handle, file status and file mode *)
+
 TYPE
     File = OPAQUE;
         
-    Status = ( success,               (* operation completed successfully *)
-               invalidHandle,         (* the passed in handle is invalid *)
-               fileNotFound,          (* no file found with this filename *)
+    Status = ( success,               (* operation completed successfully   *)
+               invalidHandle,         (* the passed in handle is invalid    *)
+               fileNotFound,          (* no file found with this filename   *)
                nameTooLong,           (* the passed in filename is too long *)
-               invalidName,           (* the passed in filename is invalid *)
-               invalidMode,           (* the passed in mode is invalid *)
+               invalidName,           (* the passed in filename is invalid  *)
+               invalidMode,           (* the passed in mode is invalid      *)
                alreadyOpen,           (* the passed in file is already open *)
-               accessDenied,          (* the filesystem denied file access *)
-               accessBeyondEOF,       (* attempt to read past end of file *)
-               fileSizeLimitExceeded, (* attempt to write past size limit *)
-               openFileLimitExceeded, (* attempt to open too many files *)
-               deviceFull,            (* the device capacity is exceeded *)
-               deviceError );         (* the device reported a failure *)
+               accessDenied,          (* the filesystem denied file access  *)
+               accessBeyondEOF,       (* attempt to read past end of file   *)
+               fileSizeLimitExceeded, (* attempt to write past size limit   *)
+               openFileLimitExceeded, (* attempt to open too many files     *)
+               deviceFull,            (* the device capacity is exceeded    *)
+               deviceError );         (* the device reported a failure      *)
 
     Mode = SET OF ( read, write, append, nobuffer );
-    
+
+
+(* Predefined file modes *)
+
 CONST
     write = { Mode.write };
     readOnly = { Mode.read };
@@ -30,6 +36,12 @@ CONST
     append = { Mode.write, Mode.append };
     
     defaultBufferSize = <implementation defined value>;
+
+
+(* Predefined open file handles *)
+
+VAR
+    stdIn, stdOut, stdErr, nullFile : File;
 
 
 (* Opening files *)
