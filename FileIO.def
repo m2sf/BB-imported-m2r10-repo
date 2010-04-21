@@ -1,0 +1,125 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE FileIO;
+
+(* File IO library *)
+
+TYPE
+    File = OPAQUE;
+        
+    Status = ( success,
+               invalidHandle,
+               fileNotFound,
+               nameTooLong,
+               invalidName,
+               invalidMode,
+               alreadyOpen,
+               accessDenied,
+               accessBeyondEOF,
+               fileSizeLimitExceeded,
+               openFileLimitExceeded,
+               deviceFull,
+               deviceError );
+
+    Mode = SET OF ( read, write, append, nobuffer );
+    
+CONST
+    write = { Mode.write };
+    readOnly = { Mode.read };
+    readWrite = { Mode.read, Mode.write };
+    append = { Mode.write, Mode.append };
+    
+    defaultBufferSize = <implementation defined value>;
+
+
+(* Opening files *)
+
+PROCEDURE Open ( VAR file : File;
+                 filename : ARRAY OF CHAR; mode : Mode; VAR status : Status );
+(* Opens the file <filename> in file mode <mode>. If sucessful passes a file
+   handle back in <file>, otherwise passes NIL back in <file>. The status of
+   the operation is passed back in <status>. *)
+
+PROCEDURE OpenWithBuffer ( VAR file   : File;
+                           filename   : ARRAY OF CHAR;
+                           mode       : Mode;
+                           VAR buffer : ARRAY OF OCTET;
+                           VAR status : Status );
+(* Opens the file <filename> in file mode <mode> using <buffer> as a custom
+   file buffer. if successful passes a file handle back in <file>, otherwise
+   passes NIL back in <file>. The status is passed back in <status>. *)
+
+PROCEDURE ReOpen ( VAR file : File; mode : Mode );
+(* Closes the file associated with <file> and reopens it in mode <mode>.*)
+
+
+(* File mode, status and name *)
+
+PROCEDURE modeOf ( file : File ) : Mode;
+(* Returns the file mode of the file associated with file handle <file>. *)
+
+PROCEDURE lastStatus ( file : File ) : Status;
+(* Returns the status of the most recent operation for file handle <file>. *)
+
+PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
+(* Passes the name of the file associated with <file> back in <filename>.
+   Passes an empty string if <file> is invalid or <filename> too short. *)
+
+
+(* File position operations *)
+
+PROCEDURE reachedEOF ( file : File ) : BOOLEAN;
+(* Returns TRUE if the end of the file associated with file handle <file> has
+   been reached, otherwise FALSE. *)
+
+PROCEDURE currentPos ( file : File ) : LONGCARD;
+(* Returns the current read/write position for file handle <file>. *)
+
+PROCEDURE SetPos ( file : File; index : LONGCARD );
+(* Sets the read/write position for file handle <file> to <index>. *)
+
+PROCEDURE Advance ( file : File; offset : LONGCARD );
+(* Advances the read/write position for file handle <file> by <offset>. *)
+
+PROCEDURE Rewind ( file : File );
+(* Sets the read/write position for file handle <file> to the beginning of
+   the file and resets its end-of-file-reached status. *)
+
+
+(* Read and write operations *)
+
+PROCEDURE Read ( file : File; VAR data : OCTET );
+(* Reads one octet of data at the current position of <file>, passes it back
+   in <data> and advances the read/write position of <file> by one. *)
+
+PROCEDURE Write ( file : File; data : OCTET );
+(* Writes one octet passed in <data> to the current position of <file> and
+   advances the read/write position of <file> by one. *)
+
+PROCEDURE Lookahead ( file : File; VAR data : OCTET );
+(* Passes one octet of data at the current position of <file> back in <data>
+   without advancing the read/write position of <file>. *)
+
+PROCEDURE ReadBlock ( file : File;
+                      VAR data : ARRAY OF OCTET; VAR octetsRead : LONGCARD );
+(* Reads a block of data at the current position of <file>. Passes the block
+   of data back in <data> and the number of octets read in <octetsRead>.
+   The read/write position of <file> is advanced accordingly. *)
+
+PROCEDURE WriteBlock ( file : File;
+                       data : ARRAY OF OCTET; VAR octetsWritten : LONGCARD );
+(* Writes the block of data passed in <data> starting at the current position
+   of <file> and passed the number of octets written back in <octetsWritten>. 
+   The read/write position of <file> is advanced accordingly. *)
+
+PROCEDURE Flush ( file : File );
+(* Writes unwritten data in the buffer of <file> to its associated file. *)
+
+
+(* Closing files *)
+
+PROCEDURE Close ( VAR file : File; VAR status : Status );
+(* Closes the file associated with <file> and passes NIL back in <file>.
+   The status of the operation is passed back in <status>. *)
+
+END FileIO.

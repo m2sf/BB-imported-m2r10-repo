@@ -12,6 +12,10 @@ Memory Management:
 
 Storage.def         dynamic memory allocator
 
+File IO:
+
+FileIO.def          file oriented input and output
+
 System Type IO:
 
 BYTE.def            IO module for type BYTE
