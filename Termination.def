@@ -1,0 +1,19 @@
+DEFINITION MODULE Termination;
+
+(* Termination handling library *)
+
+
+TYPE Handler = PROCEDURE;
+
+
+PROCEDURE InstallHandler ( handler : Handler );
+(* Installs <handler> as a termination handler at the top of the termination
+   handler stack. Each module that requires termination should install its own
+   handler during module initialisation. *)
+
+PROCEDURE WindDown;
+(* Removes and calls each termination handler on the termination handler stack.
+   This procedure is automatically installed as the program's termination 
+   handler in the runtime system. *)
+
+END Termination.

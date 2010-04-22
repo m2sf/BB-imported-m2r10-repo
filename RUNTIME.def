@@ -29,8 +29,17 @@ TYPE
 PROCEDURE InstallNotificationHandler( e : Exception; p : NotificationHandler );
 (* Installs handler p as notification handler for exceptions of type e. *)
 
+PROCEDURE InstallInitHasFinishedHandler( p : PROCEDURE );
+(* Installs p as the program's post-initialisation handler. The installed
+   handler is called immediately after module initialisation has finished. *)
+
+PROCEDURE InstallWillTerminateHandler( p : PROCEDURE );
+(* Installs p as the program's pre-termination handler. The installed
+   handler is called immdediately before the program's termination handler. *)
+
 PROCEDURE InstallTerminationHandler( p : PROCEDURE );
-(* Installs handler p as termination handler, for ordinary termination. *)
+(* Installs p as the program's termination handler. The installed handler
+   is called immediately before the program terminates. *)
 
 
 (* Runtime System Facilities *)

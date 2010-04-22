@@ -12,6 +12,10 @@ Memory Management:
 
 Storage.def         dynamic memory allocator
 
+Termination:
+
+Termination.def     termination handling
+
 File IO:
 
 FileIO.def          file oriented input and output
@@ -72,4 +76,4 @@ Legacy:
 LegacyPIM.def       legacy interface to deprecated PIM functions and procedures
 LegacyISO.def       legacy interface to deprecated ISO functions and procedures
 
-[status: April 18, 2010 -- further modules are being added]
+[status: April 22, 2010 -- further modules are being added]
