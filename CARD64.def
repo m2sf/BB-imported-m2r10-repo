@@ -104,7 +104,7 @@ PROCEDURE [>] isGreater ( n1, n2 : CARD64 ) : BOOLEAN;
 
 (* Scalar conversion primitives *)
 
-CONST digitCapacity = 4; (* maximum digits in native format *)
+CONST digitCapacity = 16; (* maximum digits in native format *)
 
 PROCEDURE [TO] toSXF ( n : CARD64; VAR s : ARRAY OF CHAR );
 (* Converts CARD64 value n to a string in scalar exchange format.
