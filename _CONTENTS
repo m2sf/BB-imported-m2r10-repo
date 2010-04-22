@@ -50,7 +50,12 @@ BCD.def             single precision binary coded decimals
 LONGBCD.def         double precision binary coded decimals
 COMPLEX.def         single precision complex number type
 LONGCOMPLEX.def     double precision complex number type
-SHORTCARD.def       16-bit unsigned integer type
+CARD16.def          16-bit unsigned integer type
+CARD32.def          32-bit unsigned integer type
+CARD64.def          64-bit unsigned interger type
+SHORTCARD.def       alias type for CARD16
+LONGLONGCARD.def    alias type for CARD128
+
 SHORTINT.def        16-bit signed integer type
 STRING.def          dynamic ASCII strings
 UNISTRING.def       dynamic unicode strings
