@@ -1,0 +1,11 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LONGLONGINT;
+
+(* Alias type for 128-bit Signed Integer Numbers *) 
+
+IMPORT INT128;
+
+TYPE LONGLONGINT IS INT128; (* alias *)
+
+END LONGLONGINT.

@@ -54,10 +54,14 @@ CARD16.def          16-bit unsigned integer type
 CARD32.def          32-bit unsigned integer type
 CARD64.def          64-bit unsigned integer type
 CARD128.def         128-bit unsigned integer type
+INT16.def           16-bit signed integer type
+INT32.def           32-bit signed integer type
+INT64.def           64-bit signed integer type
+INT128.def          128-bit signed integer type
 SHORTCARD.def       alias type for CARD16
 LONGLONGCARD.def    alias type for CARD128
-
-SHORTINT.def        16-bit signed integer type
+SHORTINT.def        alias type for INT16
+LONGLONGINT.def     alias type for INT128
 STRING.def          dynamic ASCII strings
 UNISTRING.def       dynamic unicode strings
 Dictionary.def      associative array of strings
