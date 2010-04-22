@@ -52,7 +52,8 @@ COMPLEX.def         single precision complex number type
 LONGCOMPLEX.def     double precision complex number type
 CARD16.def          16-bit unsigned integer type
 CARD32.def          32-bit unsigned integer type
-CARD64.def          64-bit unsigned interger type
+CARD64.def          64-bit unsigned integer type
+CARD128.def         128-bit unsigned integer type
 SHORTCARD.def       alias type for CARD16
 LONGLONGCARD.def    alias type for CARD128
 
