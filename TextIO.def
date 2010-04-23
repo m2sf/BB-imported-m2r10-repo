@@ -1,0 +1,43 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE TextIO;
+
+(* Text File based IO *)
+
+
+FROM FileIO IMPORT File;
+
+
+(* Read text *)
+
+PROCEDURE ReadStrToLn ( file : File; VAR s : ARRAY OF CHAR );
+(* Reads a string from <file> and passes it back in <s>. Characters are read
+   until newline or end-of-file is reached or the capacity of s is exhausted.*)
+
+PROCEDURE ReadStrWithChars ( file : File; VAR s : ARRAY OF CHAR;
+                             CONST trimLeading, charsToRead : SET OF CHAR );
+(* Reads a string from <file> and passes it back in <s>. Any leading
+   characters in set <trimLeading> are ignored. Characters are read
+   until the first character not in set <charsToRead> is found. *)
+
+PROCEDURE ReadStrToDelim ( file : File; VAR s : ARRAY OF CHAR;
+                           CONST trimLeading, delimiterChars : SET OF CHAR );
+(* Reads a string from <file> and passes it back in <s>. Any leading
+   characters in set <trimLeading> are ignored. Characters are read
+   until the first delimiter character is found. Delimiter characters
+   are defined by set <delimiterChars>. *)
+
+
+
+(* Write text *)
+
+PROCEDURE WriteStrLn ( file : File; CONST s : ARRAY OF CHAR );
+(* Writes <s> and newline to <file>. *)
+
+
+(* Write line-end *)
+
+PROCEDURE WriteLn ( file : File );
+(* Writes newline to <file>. *)
+
+END TextIO.

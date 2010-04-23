@@ -20,6 +20,7 @@ Termination.def     termination handling
 File IO:
 
 FileIO.def          file oriented input and output
+TextIO.def          text file based input and output
 Terminal.def        terminal based input and output
 Filesystem.def      file system operations
 
@@ -92,4 +93,4 @@ Legacy:
 LegacyPIM.def       legacy interface to deprecated PIM functions and procedures
 LegacyISO.def       legacy interface to deprecated ISO functions and procedures
 
-[status: April 23, 2010 -- further modules are being added]
+[status: April 24, 2010 -- further modules are being added]
