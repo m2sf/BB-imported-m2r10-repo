@@ -18,12 +18,6 @@ TYPE Exception = ARRAY 32 OF CHAR;
 TYPE Handler = PROCEDURE;
 
 
-(* Null key *)
-
-CONST [NIL] nullKey = 0C;
-(* This value is declared as the null key for type Exceptions. *)
-
-
 (* Allocator *)
 
 PROCEDURE [NEW] new ( VAR dispatchTable : Exceptions );
@@ -47,14 +41,9 @@ PROCEDURE [.] handlerForException ( dispatchTable : Exceptions;
 PROCEDURE [!] AddHandler ( dispatchTable : Exceptions;
                 e : Exception; handler : Handler );
 (* Adds a new exception handler on top of the handler stack for exception <e>
-   in <dispatchTable>. This procedure is bound to the array operator [ ]
-   for lvalues of type Exceptions. *)
-
-PROCEDURE [-] RemoveHandler ( dispatchTable : Exceptions; e : Exception );
-(* Removes the topmost handler from the handler stack for exception <e>
-   in <dispatchTable>. This procedure is bound to the array operator [ ]
-   for lvalues of type Exceptions in assignments where the rvalue is the
-   null key for type Exceptions. *)
+   in <dispatchTable>. If NIL is passed in for <handler> then the topmost
+   handler for <e> is removed from <dispatchTable>. This procedure is
+   bound to the array operator [ ] for lvalues of type Exceptions. *)
 
 
 (* Membership test *)
