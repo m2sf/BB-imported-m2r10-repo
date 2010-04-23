@@ -1,0 +1,64 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Cardinals;
+
+(* Alias types for Unsigned Integer Numbers *) 
+
+
+IMPORT CARD16, CARD32, CARD64, CARD128;
+
+
+(* SHORTCARD - Alias for smallest cardinal type *)
+
+IMPORT SHORTCARD+; (* import into client module *)
+
+
+(* LONGLONGCARD - Alias for largest cardinal type *)
+
+IMPORT LONGLONGCARD+; (* import into client module *)
+
+
+TYPE
+
+(* CARDINAL16 - Alias type for 16-bit unsigned integers *)
+
+<* IF TSIZE(CARDINAL)*8 = 16 *>
+    CARDINAL16 IS CARDINAL;
+<* ELSE *>
+    CARDINAL16 IS CARD16;
+<* ENDIF *>
+
+
+(* CARDINAL32 - Alias type for 32-bit unsigned integers *)
+
+<* IF TSIZE(CARDINAL)*8 = 32 *>
+    CARDINAL32 IS CARDINAL;
+<* ELSIF TSIZE(LONGCARD)*8 = 32 *>
+    CARDINAL32 IS LONGCARD;
+<* ELSE *>
+    CARDINAL32 IS CARD32;
+<* ENDIF *>
+
+
+(* CARDINAL64 - Alias type for 64-bit unsigned integers *)
+
+<* IF TSIZE(CARDINAL)*8 = 64 *>
+    CARDINAL64 IS CARDINAL;
+<* ELSIF TSIZE(LONGCARD)*8 = 64 *>
+    CARDINAL64 IS LONGCARD;
+<* ELSE *>
+    CARDINAL64 IS CARD64;
+<* ENDIF *>
+
+
+(* CARDINAL128 - Alias type for 128-bit unsigned integers *)
+
+<* IF TSIZE(CARDINAL)*8 = 128 *>
+    CARDINAL128 IS CARDINAL;
+<* ELSIF TSIZE(LONGCARD)*8 = 128 *>
+    CARDINAL128 IS LONGCARD;
+<* ELSE *>
+    CARDINAL128 IS CARD128;
+<* ENDIF *>
+
+END Cardinals.
