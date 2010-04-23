@@ -28,6 +28,22 @@ PROCEDURE ReadStrToDelim ( file : File; VAR s : ARRAY OF CHAR;
    are defined by set <delimiterChars>. *)
 
 
+(* Skip text *)
+
+PROCEDURE SkipLine ( file : File );
+(* Read and ignore all characters up to and including the first newline. *)
+
+PROCEDURE SkipToLn ( file : File );
+(* Read and ignore all character up to but excluding the first newline. *)
+
+PROCEDURE SkipChars ( file : File; CONST skipChars : SET OF CHAR );
+(* Read and ignore any characters up to the first character
+   not in set <skipChars>. *)
+
+PROCEDURE SkipTo ( File : File; CONST skipToChar : SET OF CHAR );
+(* Read and ignore all characters up to but excluding the first
+   character that is a member of set <skipToChar>. *)
+
 
 (* Write text *)
 
