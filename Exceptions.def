@@ -1,0 +1,108 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Exceptions;
+
+(* Library based Exception Handling *)
+
+
+(* Dispatch Table *)
+
+TYPE Exceptions = OPAQUE;
+
+(* Exception Type *)
+
+TYPE Exception = ARRAY 32 OF CHAR;
+
+(* Exceotion Handler Type *)
+
+TYPE Handler = PROCEDURE;
+
+
+(* Null key *)
+
+CONST [NIL] nullKey = 0C;
+(* This value is declared as the null key for type Exceptions. *)
+
+
+(* Allocator *)
+
+PROCEDURE [NEW] new ( VAR dispatchTable : Exceptions );
+(* Allocates and initialises a new dispatch table and passes it back in
+   <dispatchTable>. Returns NIL if the allocation failed. This procedure
+   is bound to pervasive procedure NEW for arguments of type Exceptions. *)
+
+
+(* Accessor *)
+
+PROCEDURE [.] handlerForException ( dispatchTable : Exceptions;
+                e : Exception; VAR found : BOOLEAN ) : Handler;
+(* Searches for exception <e> in <dispatchTable>. If it is found then TRUE is
+   passed back in <found> and the topmost handler of <e> is returned, otherwise
+   FALSE is passed back in <found> and NIL is returned. This function is bound
+   to the array operator [ ] for rvalues of type Exceptions.*)
+
+
+(* Mutators *)
+
+PROCEDURE [!] AddHandler ( dispatchTable : Exceptions;
+                e : Exception; handler : Handler );
+(* Adds a new exception handler on top of the handler stack for exception <e>
+   in <dispatchTable>. This procedure is bound to the array operator [ ]
+   for lvalues of type Exceptions. *)
+
+PROCEDURE [-] RemoveHandler ( dispatchTable : Exceptions; e : Exception );
+(* Removes the topmost handler from the handler stack for exception <e>
+   in <dispatchTable>. This procedure is bound to the array operator [ ]
+   for lvalues of type Exceptions in assignments where the rvalue is the
+   null key for type Exceptions. *)
+
+
+(* Membership test *)
+
+PROCEDURE [IN] handlerExists ( dispatchTable : Exceptions;
+                                           e : Exception ) : BOOLEAN;
+(* Returns TRUE if a handler exists for exception <e> in <dispatchTable>,
+   returns FALSE otherwise. This function is bound to the IN operator
+   for type Exceptions. *)
+
+
+(* Raise an exception *)
+
+PROCEDURE Raise ( dispatchTable : Exceptions; e : Exception );
+(* Raises exception e by retrieving and calling the topmost handler for <e>
+   in <dispatchTable>. When the handler returns, the procedure will initiate
+   the runtime system's termination sequence to terminate the program. *)
+
+
+(* Resume from exception *)
+
+PROCEDURE Resume;
+(* Returns control to the procedure that raised the current exception. This
+   procedure is used to prevent procedure Raise to initiate termination. *)
+
+
+(* Exception counter *)
+
+PROCEDURE [COUNT] exceptionCount ( dispatchTable : Exceptions ) : LONGCARD;
+(* Returns the number of exceptions defined in <dispatchTable>. This function
+   is bound to pervasive function COUNT for type Exceptions. *)
+
+
+(* Iterator *)
+
+PROCEDURE [FOR] nextException ( dispatchTable : Exceptions;
+                    VAR e : Exception; VAR handler : Handler );
+(* Finds the successor of <e> and passes its exception/handler pair back in
+   <exception> and <handler>. If the null key is passed in then the first
+   exception/handler pair is passed back. If no successor is found then the
+   null key is passed back in <e> and <handler> is undefined. This procedure
+   is bound to the FOR .. IN iterator for type Exceptions. *)
+
+
+(* Destructor *)
+
+PROCEDURE [DISPOSE] dispose ( VAR dispatchTable : Exceptions );
+(* Deallocates <dispatchTable> and passes NIL back. This procedure is bound
+   to pervasive procedure DISPOSE for arguments of type Exceptions. *)
+
+END Exceptions.

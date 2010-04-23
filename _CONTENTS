@@ -12,8 +12,9 @@ Memory Management:
 
 Storage.def         dynamic memory allocator
 
-Termination:
+Exceptions and termination:
 
+Exceptions.def      exception handling
 Termination.def     termination handling
 
 File IO:
