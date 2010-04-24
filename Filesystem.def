@@ -5,7 +5,18 @@ DEFINITION MODULE Filesystem;
 (* Filesystem operations *)
 
 TYPE
-    Status = ( success, invalidName, accessDenied, deviceError );
+    Status = (
+               success,           (* operation completed successfully     *)
+               pathNotFound,      (* no path found with this pathname     *)
+               alreadExists,      (* attempt to create an existing entry  *)
+               pathTooLong,       (* the passed in pathname is too long   *)
+               nameTooLong,       (* the passed in filename is too long   *)
+               invalidPath,       (* the passed in pathname is invalid    *)
+               invalidName,       (* the passed in filename is invalid    *)
+               invalidAttributes, (* the passed in attributes are invalid *)
+               accessDenied,      (* the filesystem denied access         *)
+               deviceError );     (* the device reported a failure        *)
+
     
     Attribute = ( readable, writable, executable, directory );
     
