@@ -2,7 +2,7 @@
 
 DEFINITION MODULE Filesystem;
 
-(* Filesystem operations *)
+(* Filesystem Operations *)
 
 TYPE
     Status = (
@@ -39,7 +39,7 @@ PROCEDURE maxPathnameLength : CARDINAL;
 (* Returns the maximum pathname length *)
 
 
-(* operations on filesystem entries at paths *)
+(* operations on filesystem entries *)
 
 PROCEDURE EntryExistsAtPath ( path : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if a filesystem entry exists at <path>. *)
@@ -68,38 +68,5 @@ PROCEDURE MoveEntryAtPath ( path, newPath : ARRAY OF CHAR;
 
 PROCEDURE RemoveEntryAtPath ( path : ARRAY OF CHAR; VAR status : Status );
 (* Removes the filesystem entry at <path>. *)
-
-
-(* operations on filesystem entries in current directory *)
-
-PROCEDURE GetCurrentDir ( VAR path : ARRAY OF CHAR );
-(* Passes the current directory's path in <path>. *)
-
-PROCEDURE SetCurrentDir ( path : ARRAY OF CHAR; VAR status : Status );
-(* Sets the current directory to <path>. *)
-
-PROCEDURE EntryExists ( name : ARRAY OF CHAR ) : BOOLEAN;
-(* Returns TRUE if filesystem entry <name> exists in current directory. *)
-
-PROCEDURE attrOf ( name       : ARRAY OF CHAR;
-                   VAR status : Status ) : Attributes;
-(* Returns the file attributes of entry <name> in current directory. *)
-
-PROCEDURE SetAttr ( filename   : ARRAY OF CHAR;
-                    attributes : Attributes;
-                    VAR status : Status );
-(* Sets the attributes of entry <name> in current directory to <attributes>.*)
-
-PROCEDURE Create ( name       : ARRAY OF CHAR;
-                   attributes : Attributes;
-                   VAR status : Status );
-(* Creates a new filesystem entry <name> with <attributes>
-   in current directory. *)
-
-PROCEDURE Rename ( name, newName : ARRAY OF CHAR; VAR status : Status );
-(* Renames entry <name> in current directory to <newName>. *)
-
-PROCEDURE Remove ( name : ARRAY OF CHAR; VAR status : Status );
-(* Removes filesystem entry <name> from current directory. *)
 
 END Filesystem.

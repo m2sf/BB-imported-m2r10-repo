@@ -1,0 +1,47 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE WorkDir;
+
+(* Filesystem Operations relative to a Working Directory *)
+
+FROM Filesystem IMPORT Status, Attributes;
+
+
+(* Get and set working directory *)
+
+PROCEDURE GetCurrentDir ( VAR path : ARRAY OF CHAR );
+(* Passes the current directory's path in <path>. *)
+
+PROCEDURE SetCurrentDir ( path : ARRAY OF CHAR; VAR status : Status );
+(* Sets the current directory to <path>. *)
+
+
+(* Operations on filesystem entries *)
+
+PROCEDURE EntryExists ( filename : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if filesystem entry <filename> exists in current directory. *)
+
+PROCEDURE AttrOf ( filename   : ARRAY OF CHAR;
+                   VAR status : Status ) : Attributes;
+(* Returns the file attributes of filesystem entry <filename>
+   in current directory. *)
+
+PROCEDURE SetAttr ( filename   : ARRAY OF CHAR;
+                    attributes : Attributes;
+                    VAR status : Status );
+(* Sets the file attributes of file system entry <filename>
+   in current directory to <attributes>.*)
+
+PROCEDURE Create ( filename   : ARRAY OF CHAR;
+                   attributes : Attributes;
+                   VAR status : Status );
+(* Creates a new filesystem entry <filename> with <attributes>
+   in current directory. *)
+
+PROCEDURE Rename ( filename, newName : ARRAY OF CHAR; VAR status : Status );
+(* Renames filesystem entry <filename> in current directory to <newName>. *)
+
+PROCEDURE Remove ( filename : ARRAY OF CHAR; VAR status : Status );
+(* Removes filesystem entry <filename> in current directory. *)
+
+END WorkDir.

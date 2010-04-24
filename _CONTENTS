@@ -17,12 +17,16 @@ Exceptions and termination:
 Exceptions.def      exception handling
 Termination.def     termination handling
 
+Filesystem:
+
+Filesystem.def      file system operations using absolute paths
+WorkDir.def         file system operations relative to a working directory
+
 File IO:
 
 FileIO.def          file oriented input and output
 TextIO.def          text file based input and output
 Terminal.def        terminal based input and output
-Filesystem.def      file system operations
 
 System Type IO:
 
