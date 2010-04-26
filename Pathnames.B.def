@@ -4,6 +4,9 @@ DEFINITION MODULE Pathnames;
 
 (* Operations on Filesystem Pathnames - B version: dynamic ADT *)
 
+(* ===========================================================================
+ * !! This module uses new experimental syntax for variadic parameter lists !!
+ * ======================================================================== *)
 
 (* Terminology 
 
@@ -89,12 +92,13 @@ PROCEDURE isValidVersion ( CONST version : ARRAY OF CHAR ) : BOOLEAN;
 
 (* Path constructors *)
 
-PROCEDURE New ( VAR   path    : FSPath;
-                CONST volName : ARRAY OF CHAR;
-                      dirPath [OCTET] OF ( CONST component : ARRAY OF CHAR );
-                      filename [OCTET] OF ( CONST component : ARRAY OF CHAR );
-                      version : INTEGER;
-                VAR   status  : Status );
+PROCEDURE New
+            ( VAR   path    : FSPath;
+              CONST volName : ARRAY OF CHAR;
+              dirPath       : VARIADIC [OCTET] OF CONST cmpnt : ARRAY OF CHAR;
+              filename      : VARIADIC [OCTET] OF CONST cmpnt : ARRAY OF CHAR;
+              version       : INTEGER;
+              VAR   status  : Status );
 (* Allocates a new path object initialised with volume <volName>, directory
    path <dirPath>, filename <filename> and version number <version>, and
    passes the new object back in <path>. The procedure is called as:
@@ -103,20 +107,40 @@ PROCEDURE New ( VAR   path    : FSPath;
    New( p, "C", {"Users", username, "Documents"}, {file, "pdf"}, 0, status );
    New( p, "sys$user", {username, "Documents"}, {file, "pdf"}, 0, status ); *)
 
+(* ALTERNATIVELY ... *)
+
+PROCEDURE New
+            ( VAR   path    : FSPath;
+              CONST volName : ARRAY OF CHAR;
+              dirPath       : VARIADIC [OCTET] OF CONST cmpnt : ARRAY OF CHAR;
+              filename,
+              extension     : ARRAY OF CHAR;
+              version       : INTEGER;
+              VAR   status  : Status );
+(* Allocates a new path object initialised with volume <volName>, directory
+   path <dirPath>, filename <filename>, file extension <extenstion> and
+   version number <version>, and passes the new object back in <path>.
+   The procedure is called as:
+
+   New( p, "", {"Users", username, "Documents"}, file, "pdf", 0, status );
+   New( p, "C", {"Users", username, "Documents"}, file, "pdf", 0, status );
+   New( p, "sys$user", {username, "Documents"}, file, "pdf", 0, status ); *)
+
+
 PROCEDURE NewWithEmptyPath ( VAR path : FSPath; VAR status : Status );
 (* Allocates a new path object, initialised with empty path components
    and passes the new object back in <path>. The procedure is called as:
    
    NewWithEmptyPath( p, status ); *)
 
-PROCEDURE NewWithDirectories ( VAR path   : FSPath;
-                                   dirPath [CARDINAL] OF
-                                       ( CONST dirName : ARRAY OF CHAR );
-                               VAR status : Status );
+PROCEDURE NewWithDirectories
+            ( VAR path   : FSPath;
+              dirPath    : VARIADIC [OCTET] OF CONST dirName : ARRAY OF CHAR;
+              VAR status : Status );
 (* Allocates a new path object, initialised with directory path <dirPath>
    and passes the new object back in <path>. The procedure is called as:
    
-   NewWithEmptyPath( p, {"Users", username, "Documents"}, status ); *)
+   NewWithDirectories( p, {"Users", username, "Documents"}, status ); *)
 
 
 (* Path mutators *)
@@ -131,22 +155,21 @@ PROCEDURE SetVol ( VAR path      : FSPath;
    SetVol( p, "sys$user", status ); // on OpenVMS *)
 
 
-PROCEDURE SetDirPath ( VAR path   : FSPath;
-                           dirPath [OCTET] OF
-                               ( CONST dirName : ARRAY OF CHAR );
-                       VAR status : Status );
+PROCEDURE SetDirPath
+            ( VAR path   : FSPath;
+              dirPath    : VARIADIC [OCTET] OF CONST dirName : ARRAY OF CHAR;
+              VAR status : Status );
 (* Sets the directory path of <path> to direcotry path <dirPath>. The
    procedure is called as:
    
    SetDirPath( p, { "home", username, "documents" }, status ); *)
 
 
-
-PROCEDURE SetFilename ( VAR path      : FSPath;
-                        filename [CARDINAL] OF
-                            ( CONST component : ARRAY OF CHAR );
-                        version       : INTEGER;
-                        VAR status    : Status );
+PROCEDURE SetFilename
+            ( VAR path   : FSPath;
+              filename   : VARIADIC [OCTET] OF CONST component ARRAY OF CHAR;
+              version    : INTEGER;
+              VAR status : Status );
 (* Sets the filename of <path> to <filename>. The procedure is called as:
 
    SetFilename( p, { basename, "mod" }, 0, status ); *)
@@ -155,13 +178,20 @@ PROCEDURE SetFilename ( VAR path      : FSPath;
 PROCEDURE AppendDir ( VAR path      : FSPath;
                       CONST dirName : ARRAY OF CHAR;
                       VAR status    : Status );
-(* Appends the direcotry <dirName> to the directory path of <path>. *)
+(* Appends the direcotry <dirName> to the directory path of <path>. The
+   procedure is called as:
+   
+   AppendDir( p, "drafts", status ); *)
 
-PROCEDURE AppendDirPath ( VAR path   : FSPath;
-                              dirPath [OCTET] OF
-                                  ( CONST dirName : ARRAY OF CHAR );
-                          VAR status : Status );
-(* Appends the directory path <dirPath> to the directory path of <path>. *)
+
+PROCEDURE AppendDirPath
+            ( VAR path   : FSPath;
+              dirPath    : VARIADIC [OCTET] OF CONST dirName : ARRAY OF CHAR;
+              VAR status : Status );
+(* Appends the directory path <dirPath> to the directory path of <path>. The
+   procedure is called as:
+   
+   AppendDirPath( p, { "drafts", "pdf" }, status ); *)
 
 
 (* Path destructor *)
