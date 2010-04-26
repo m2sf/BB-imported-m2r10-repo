@@ -1,0 +1,257 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Pathnames;
+
+(* Operations on Filesystem Pathnames - B version: dynamic ADT *)
+
+
+(* Terminology 
+
+// to do: reconcile dir path and mid path with new API procedures
+
+ *
+ * Pathname
+ *  A name describing a path to a leaf-node in a file system tree. It consists
+ *  of a volume name, a mid path and a filename component. For file systems
+ *  that do not support volume names or directories the unsupported components
+ *  are not part of a pathname.
+ *
+ * Directory Path
+ *  A name describing a path to a branch node in a file system tree. It
+ *  consists of a volume name, a mid path component. For file systems that
+ *  do not support volumen names directory path and mid path are identical.
+ *
+ * Mid Path
+ *  A name describing a path between branch nodes in a file system tree.
+ *  It consists of one or more directory components.
+ *
+ * Volume Name
+ *  A name that identifies a container of a file system tree.
+ *
+ * Directory Name
+ *  A name that identifies a branch node within in a directory path.
+ *
+ * Filename
+ *  A name that identifies a leaf-node whose parent is the bottom node
+ *  in a directory path. It consists of a base name, a file extension and
+ *  a file version. For file systems that do not support file extensions or
+ *  file versions the respective components are not part of a filename.
+ *
+ * Base Name
+ *  The part of a filename that excludes extension and version components.
+ *
+ * Extension
+ *  The part of a filename that excludes base name and version components.
+ *
+ * Version
+ *  The part of a filename that specifies the version of the associated file.
+ *)
+
+TYPE
+    FSPath = OPAQUE;
+
+    Status =
+        ( success,            (* operation completed successfully         *)
+          inputTooLong,       (* input length exceeds filesystem limit    *)
+          inputMalformed,     (* input string contains illegal characters *)
+          capacityExceeded ); (* output exceeds capacity of VAR parameter *)
+
+
+(* Operations to verify the lexical correctness of pathname components *)
+
+PROCEDURE isValidPathname ( CONST pathname : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if <pathname> is a lexically valid pathname. *)
+
+PROCEDURE isValidVolName ( CONST volName : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if <volName> is a lexically valid volume name. *)
+
+PROCEDURE isValidDirPath ( CONST dirPath : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if <dirPath> is a lexically valid directory path. *)
+
+PROCEDURE isValidMidPath ( CONST midPath : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if <midPath> is a lexically valid mid path. *)
+
+PROCEDURE isValidDirName ( CONST dirName : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if <dirName> is a lexically valid directory name. *)
+
+PROCEDURE isValidFilename ( CONST filename : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if <filename> is a lexically valid filename. *)
+
+PROCEDURE isValidBaseName ( CONST baseName : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if <baseName> is a lexically valid base name. *)
+
+PROCEDURE isValidExtension ( CONST extension : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if <extension> is a lexically valid file extension. *)
+
+PROCEDURE isValidVersion ( CONST version : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if <version> is a lexically valid file version. *)
+
+
+(* Path constructors *)
+
+PROCEDURE New ( VAR   path    : FSPath;
+                CONST volName : ARRAY OF CHAR;
+                      dirPath [OCTET] OF ( CONST component : ARRAY OF CHAR );
+                      filename [OCTET] OF ( CONST component : ARRAY OF CHAR );
+                      version : INTEGER;
+                VAR   status  : Status );
+(* Allocates a new path object initialised with volume <volName>, directory
+   path <dirPath>, filename <filename> and version number <version>, and
+   passes the new object back in <path>. The procedure is called as:
+
+   New( p, "", {"Users", username, "Documents"}, {file, "pdf"}, 0, status );
+   New( p, "C", {"Users", username, "Documents"}, {file, "pdf"}, 0, status );
+   New( p, "sys$user", {username, "Documents"}, {file, "pdf"}, 0, status ); *)
+
+PROCEDURE NewWithEmptyPath ( VAR path : FSPath; VAR status : Status );
+(* Allocates a new path object, initialised with empty path components
+   and passes the new object back in <path>. The procedure is called as:
+   
+   NewWithEmptyPath( p, status ); *)
+
+PROCEDURE NewWithDirectories ( VAR path   : FSPath;
+                                   dirPath [CARDINAL] OF
+                                       ( CONST dirName : ARRAY OF CHAR );
+                               VAR status : Status );
+(* Allocates a new path object, initialised with directory path <dirPath>
+   and passes the new object back in <path>. The procedure is called as:
+   
+   NewWithEmptyPath( p, {"Users", username, "Documents"}, status ); *)
+
+
+(* Path mutators *)
+
+PROCEDURE SetVol ( VAR path      : FSPath;
+                   CONST volName : ARRAY OF CHAR;
+                   VAR status    : Status );
+(* Sets the volume name in <path> to <volName>. The procedure is called as:
+
+   SetVol( p, "", status ); // on Unix systems
+   SetVol( p, "C", status ); // on Windows/DOS
+   SetVol( p, "sys$user", status ); // on OpenVMS *)
+
+
+PROCEDURE SetDirPath ( VAR path   : FSPath;
+                           dirPath [OCTET] OF
+                               ( CONST dirName : ARRAY OF CHAR );
+                       VAR status : Status );
+(* Sets the directory path of <path> to direcotry path <dirPath>. The
+   procedure is called as:
+   
+   SetDirPath( p, { "home", username, "documents" }, status ); *)
+
+
+
+PROCEDURE SetFilename ( VAR path      : FSPath;
+                        filename [CARDINAL] OF
+                            ( CONST component : ARRAY OF CHAR );
+                        version       : INTEGER;
+                        VAR status    : Status );
+(* Sets the filename of <path> to <filename>. The procedure is called as:
+
+   SetFilename( p, { basename, "mod" }, 0, status ); *)
+
+
+PROCEDURE AppendDir ( VAR path      : FSPath;
+                      CONST dirName : ARRAY OF CHAR;
+                      VAR status    : Status );
+(* Appends the direcotry <dirName> to the directory path of <path>. *)
+
+PROCEDURE AppendDirPath ( VAR path   : FSPath;
+                              dirPath [OCTET] OF
+                                  ( CONST dirName : ARRAY OF CHAR );
+                          VAR status : Status );
+(* Appends the directory path <dirPath> to the directory path of <path>. *)
+
+
+(* Path destructor *)
+
+PROCEDURE Dispose ( VAR path : FSPath );
+(* Disposes of <path> and passes NIL back in <path>. *)
+
+
+(* The following procedures are taken verbatim from the A version.
+   They will probably need to be modified for the dynamic ADT model. *)
+
+PROCEDURE GetFilename ( CONST fullPath : ARRAY OF CHAR;
+                        VAR filename   : ARRAY OF CHAR;
+                        VAR status     : Status );
+(* Obtains the name of the filename in <fullPath> and passes it back in
+   <filename>. Passes the empty string if <fullPath> does not contain a
+   filename or if the name exceeds the capacity of <filename>. *)
+
+
+(* Accessors to components of a directory path *)
+
+PROCEDURE DirCountInPath ( CONST pathname : ARRAY OF CHAR ) : CARDINAL;
+(* Returns the number of directories in <pathname>. *)
+
+PROCEDURE GetSubPath ( CONST pathname : ARRAY OF CHAR;
+                       indexInDirPath : INTEGER;
+                       VAR subPath    : ARRAY OF CHAR;
+                       VAR status     : Status );
+(* Obtains the name of a sub-path within the directory path of <pathname> by
+   removing one or more consecutive directories from the directory path
+   starting with the directory name at index <indexInDirPath> and passes
+   the resulting sub-path back in <subPath>. An index of zero indicates the
+   root directory, positive values indicate a position relative to the root
+   directory in the directory path, negative values indicate a position
+   relative to the end of the directory path. When passing a zero value, no
+   directory path is removed and the sub-path is the entire directory path.
+   When passing a positive value, directories are removed from the root of
+   the directory path to the directory with the given index. When passing a
+   negative value, directories are removed from the end of the directory path
+   to the directory with the given index counting from the end. *)
+
+PROCEDURE GetDirName ( CONST pathname : ARRAY OF CHAR;
+                       indexInDirPath : INTEGER;
+                       VAR dirName    : ARRAY OF CHAR;
+                       VAR status     : Status );
+(* Obtains the name of the directory name at index <indexInDirPath> in the
+   directory path of <pathname> and passes it back in <dirName>. An index
+   of zero indicates the root directory, positive values indicate a position
+   relative to the root directory in the directory path, negative values
+   indicate a position relative to the end of the directory path.
+   The procedure passes empty string in <dirName> if no directory path is
+   present in <pathname> or if there is no directory with the specified index
+   or if the directory name exceeds the capacity of <dirName>. *)
+
+
+(* Accessors to components of a filename *)
+
+PROCEDURE GetFNComponents ( CONST pathname : ARRAY OF CHAR;
+                            VAR baseName   : ARRAY OF CHAR;
+                            VAR extension  : ARRAY OF CHAR;
+                            VAR version    : ARRAY OF CHAR;
+                            VAR status     : Status );
+(* Decomposes the filename in <pathname> into its components and passes the
+   base name back in <baseName>, the file extension in <extension> and the
+   version number in <version>. Passes the empty string if the respective
+   component is not present in <pathname> or if the respective value exceeds
+   the capacity of its VAR parameter. *)
+
+PROCEDURE GetBaseName ( CONST pathname : ARRAY OF CHAR;
+                        VAR baseName   : ARRAY OF CHAR;
+                        VAR status     : Status );
+(* Obtains the base name of the filename in <pathname> and passes it back
+   in <baseName>. Passes the empty string if <pathname> does not contain a
+   filename or if the filename does not contain a base name or if the base
+   name exceeds the capacity of <baseName>. *)
+
+PROCEDURE GetExtension ( CONST pathname : ARRAY OF CHAR;
+                         VAR extension  : ARRAY OF CHAR;
+                         VAR status     : Status );
+(* Obtains the extension name of the filename in <pathname> and passes it back
+   in <extension>. Passes the empty string if <pathname> does not contain a
+   filename or if the filename does not contain an extension of if the
+   extension exceeds the capacity of <extension>. *)
+
+PROCEDURE GetVersion ( CONST pathname : ARRAY OF CHAR;
+                       VAR version    : ARRAY OF CHAR;
+                       VAR status     : Status );
+(* Obtains the version string of the filename in <pathname> and passes it back
+   in <version>. Passes the empty string if <pathname> does not contain a
+   file name or if the filename does not contain a file version of if the
+   version string exceeds the capacity of <version>. *)
+
+END Pathnames.

@@ -21,6 +21,7 @@ Filesystem:
 
 Filesystem.def      file system operations using absolute paths
 WorkDir.def         file system operations relative to a working directory
+Pathnames.def       operating system independent pathname operations
 
 File IO:
 
