@@ -27,9 +27,9 @@ TYPE
     Mode = SET OF ( read, write, append, nobuffer );
 
 
-(* Alias type for implementation dependent file size. *)
+(* Alias types for implementation dependent file position and file size. *)
 
-    FileSize IS LONGCARD; (* assuming LONGCARD for 64-bit file systems *)
+    FilePos, FileSize IS LONGCARD; (* assuming 64-bit file systems *)
 
 
 (* Predefined file modes *)
@@ -90,13 +90,13 @@ PROCEDURE reachedEOF ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file handle <file> has
    been reached, otherwise FALSE. *)
 
-PROCEDURE currentPos ( file : File ) : FileSize;
+PROCEDURE currentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file handle <file>. *)
 
-PROCEDURE SetPos ( file : File; index : FileSize );
+PROCEDURE SetPos ( file : File; index : FilePos );
 (* Sets the read/write position for file handle <file> to <index>. *)
 
-PROCEDURE Advance ( file : File; offset : FileSize );
+PROCEDURE Advance ( file : File; offset : FilePos );
 (* Advances the read/write position for file handle <file> by <offset>. *)
 
 PROCEDURE Rewind ( file : File );
