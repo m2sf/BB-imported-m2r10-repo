@@ -8,6 +8,7 @@ DEFINITION MODULE RegexIO;
 IMPORT FileIO;
 FROM Regex IMPORT NFA;
 
+
 TYPE
     Status = ENUM ( FileIO.Status ) invalidNFA END;
     
