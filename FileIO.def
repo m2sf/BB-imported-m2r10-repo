@@ -72,11 +72,11 @@ PROCEDURE ReOpen ( VAR file : File; mode : Mode );
 
 (* File mode, status and name *)
 
-PROCEDURE modeOf ( file : File ) : Mode;
+PROCEDURE ModeOf ( file : File ) : Mode;
 (* Returns the file mode of the file associated with file handle <file>.
    Returns an empty set if <file> is invalid. *)
 
-PROCEDURE lastStatus ( file : File ) : Status;
+PROCEDURE StatusOf ( file : File ) : Status;
 (* Returns the status of the most recent operation for file handle <file>. *)
 
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
