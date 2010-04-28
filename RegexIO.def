@@ -5,8 +5,13 @@ DEFINITION MODULE RegexIO;
 (* Regular Expression based IO *)
 
 
-FROM FileIO IMPORT File;
-FROM Regex IMPORT NFA, Status;
+IMPORT FileIO;
+FROM Regex IMPORT NFA;
+
+TYPE
+    Status = ENUM ( FileIO.Status ) invalidNFA END;
+    
+    File IS FileIO.File;
 
 
 (* ---------------------------------------------------------------------------
