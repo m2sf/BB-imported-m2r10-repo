@@ -27,6 +27,7 @@ File IO:
 
 FileIO.def          file oriented input and output
 TextIO.def          text file based input and output
+RegexIO.def         regular expression based input and output
 Scanner.def         primitives for scanning text files
 Terminal.def        terminal based input and output
 

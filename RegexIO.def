@@ -1,0 +1,54 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE RegexIO;
+
+(* Regular Expression based IO *)
+
+
+FROM FileIO IMPORT File;
+FROM Regex IMPORT NFA, Status;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  RegexIO.ReadMatchingStr( file, automaton, str, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Matches the input stream at the current reading position of <file>  against
+ * regular expression automaton <automaton>  and passes the matched portion of
+ * the input back in <str>.  The reading position of <file> is updated and the
+ * status is passed back in <status>. *)
+
+PROCEDURE ReadMatchingStr ( file       : File;
+                            automaton  : NFA;
+                            VAR str    : ARRAY OF CHAR;
+                            VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  RegexIO.SkipMatchingStr( file, automaton, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Matches the input stream at the current reading position of <file>  against
+ * regular expression automaton <automaton>  and skips  the matched portion of
+ * the input.  The reading position  of <file>  is updated  and  the status is
+ * passed back in <status>. *)
+
+PROCEDURE SkipMatchingStr ( file       : File;
+                            automaton  : NFA;
+                            VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  RegexIO.WriteMatchingStr( file, automaton, str, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Matches string <str>  against regular expression automaton <automaton>  and
+ * writes <str> to file <file>  if it matches.  The writing position of <file>
+ * is updated and the status is passed back in <status>. *)
+
+PROCEDURE WriteMatchingStr ( file       : File;
+                             automaton  : NFA;
+                             CONST s    : ARRAY OF CHAR;
+                             VAR status : Status );
+
+END RegexIO.
