@@ -8,51 +8,27 @@ DEFINITION MODULE TextIO;
 FROM FileIO IMPORT File;
 
 
-(* Read text *)
+(* Read a line of text *)
 
 PROCEDURE ReadLine ( file : File; VAR s : ARRAY OF CHAR );
 (* Reads a string from <file> and passes it back in <s>. Characters are read
    until newline or end-of-file is reached or the capacity of <s> is
    exhausted.*)
 
-PROCEDURE ReadStrWithChars ( file : File; VAR s : ARRAY OF CHAR;
-                             CONST trimLeading, charsToRead : SET OF CHAR );
-(* Reads a string from <file> and passes it back in <s>. Any leading
-   characters in set <trimLeading> are ignored. Characters are read
-   until the first character not in set <charsToRead> is found. *)
 
-PROCEDURE ReadStrToDelim ( file : File; VAR s : ARRAY OF CHAR;
-                           CONST trimLeading, delimiterChars : SET OF CHAR );
-(* Reads a string from <file> and passes it back in <s>. Any leading
-   characters in set <trimLeading> are ignored. Characters are read
-   until the first delimiter character is found. Delimiter characters
-   are defined by set <delimiterChars>. *)
-
-
-(* Skip text *)
+(* Skip a line of text *)
 
 PROCEDURE SkipLine ( file : File );
 (* Read and ignore all characters up to and including the first newline. *)
 
-PROCEDURE SkipToLn ( file : File );
-(* Read and ignore all characters up to but excluding the first newline. *)
 
-PROCEDURE SkipChars ( file : File; CONST skipChars : SET OF CHAR );
-(* Read and ignore any characters up to the first character
-   not in set <skipChars>. *)
-
-PROCEDURE SkipTo ( File : File; CONST skipToChar : SET OF CHAR );
-(* Read and ignore all characters up to but excluding the first
-   character that is a member of set <skipToChar>. *)
-
-
-(* Write text *)
+(* Write a line of text *)
 
 PROCEDURE WriteLine ( file : File; CONST s : ARRAY OF CHAR );
 (* Writes <s> and newline to <file>. *)
 
 
-(* Write line-end *)
+(* Write a line-end *)
 
 PROCEDURE WriteLn ( file : File );
 (* Writes newline to <file>. *)
