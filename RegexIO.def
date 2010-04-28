@@ -12,8 +12,6 @@ FROM Regex IMPORT NFA;
 TYPE
     Status = ENUM ( FileIO.Status ) invalidNFA END;
     
-    File IS FileIO.File;
-
 
 (* ---------------------------------------------------------------------------
  * procedure:  RegexIO.ReadMatchingStr( file, automaton, str, status )
@@ -24,7 +22,7 @@ TYPE
  * the input back in <str>.  The reading position of <file> is updated and the
  * status is passed back in <status>. *)
 
-PROCEDURE ReadMatchingStr ( file       : File;
+PROCEDURE ReadMatchingStr ( file       : FileIO.File;
                             automaton  : NFA;
                             VAR str    : ARRAY OF CHAR;
                             VAR status : Status );
@@ -39,7 +37,7 @@ PROCEDURE ReadMatchingStr ( file       : File;
  * the input.  The reading position  of <file>  is updated  and  the status is
  * passed back in <status>. *)
 
-PROCEDURE SkipMatchingStr ( file       : File;
+PROCEDURE SkipMatchingStr ( file       : FileIO.File;
                             automaton  : NFA;
                             VAR status : Status );
 
@@ -52,7 +50,7 @@ PROCEDURE SkipMatchingStr ( file       : File;
  * writes <str> to file <file>  if it matches.  The writing position of <file>
  * is updated and the status is passed back in <status>. *)
 
-PROCEDURE WriteMatchingStr ( file       : File;
+PROCEDURE WriteMatchingStr ( file       : FileIO.File;
                              automaton  : NFA;
                              CONST s    : ARRAY OF CHAR;
                              VAR status : Status );
