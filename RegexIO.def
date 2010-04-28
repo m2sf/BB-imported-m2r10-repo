@@ -6,7 +6,7 @@ DEFINITION MODULE RegexIO;
 
 
 IMPORT FileIO;
-FROM Regex IMPORT NFA;
+IMPORT Regex;
 
 
 TYPE
@@ -23,7 +23,7 @@ TYPE
  * status is passed back in <status>. *)
 
 PROCEDURE ReadMatchingStr ( file       : FileIO.File;
-                            automaton  : NFA;
+                            automaton  : Regex.NFA;
                             VAR str    : ARRAY OF CHAR;
                             VAR status : Status );
 
@@ -38,7 +38,7 @@ PROCEDURE ReadMatchingStr ( file       : FileIO.File;
  * passed back in <status>. *)
 
 PROCEDURE SkipMatchingStr ( file       : FileIO.File;
-                            automaton  : NFA;
+                            automaton  : Regex.NFA;
                             VAR status : Status );
 
 
@@ -51,8 +51,8 @@ PROCEDURE SkipMatchingStr ( file       : FileIO.File;
  * is updated and the status is passed back in <status>. *)
 
 PROCEDURE WriteMatchingStr ( file       : FileIO.File;
-                             automaton  : NFA;
-                             CONST s    : ARRAY OF CHAR;
+                             automaton  : Regex.NFA;
+                             CONST str  : ARRAY OF CHAR;
                              VAR status : Status );
 
 END RegexIO.
