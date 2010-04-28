@@ -86,11 +86,11 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 
 (* File position operations *)
 
-PROCEDURE reachedEOF ( file : File ) : BOOLEAN;
+PROCEDURE EOF ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file handle <file> has
    been reached, otherwise FALSE. *)
 
-PROCEDURE currentPos ( file : File ) : FilePos;
+PROCEDURE CurrentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file handle <file>. *)
 
 PROCEDURE SetPos ( file : File; index : FilePos );
