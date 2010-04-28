@@ -2,13 +2,16 @@
 
 DEFINITION MODULE FileIO;
 
-(* File IO library *)
+(* Driver for File Based IO *)
+
+
+FROM Integers IMPORT CARDINAL64;
 
 
 (* File handle, file status and file mode *)
 
 TYPE
-    File = OPAQUE;
+    File = OPAQUE; (* implementation defined file handle *)
         
     Status = ( success,               (* operation completed successfully   *)
                invalidHandle,         (* the passed in handle is invalid    *)
@@ -24,12 +27,15 @@ TYPE
                deviceFull,            (* the device capacity is exceeded    *)
                deviceError );         (* the device reported a failure      *)
 
-    Mode = SET OF ( read, write, append, nobuffer );
+    Mode = SET OF ( read,             (* reading is permitted if set        *)
+                    write,            (* writing is permitted if set        *)
+                    append,           (* writing always appends if set      *)
+                    sync );           (* writing always flushes if set      *)
 
 
-(* Alias types for implementation dependent file position and file size. *)
+(* Alias types for implementation dependent file position and file size *)
 
-    FilePos, FileSize IS LONGCARD; (* assuming 64-bit file systems *)
+    FilePos, FileSize IS CARDINAL64; (* assuming 64-bit file systems *)
 
 
 (* Predefined file modes *)
@@ -73,7 +79,7 @@ PROCEDURE ReOpen ( VAR file : File; mode : Mode );
 (* File mode, status and name *)
 
 PROCEDURE ModeOf ( file : File ) : Mode;
-(* Returns the file mode of the file associated with file handle <file>.
+(* Returns the file mode of file handle <file>.
    Returns an empty set if <file> is invalid. *)
 
 PROCEDURE StatusOf ( file : File ) : Status;
@@ -81,7 +87,8 @@ PROCEDURE StatusOf ( file : File ) : Status;
 
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 (* Passes the name of the file associated with <file> back in <filename>.
-   Passes an empty string if <file> is invalid or <filename> too short. *)
+   Passes an empty string if <file> is invalid or if the name exceeds the
+   capacity of <filename>. *)
 
 
 (* File position operations *)
@@ -101,7 +108,7 @@ PROCEDURE Advance ( file : File; offset : FilePos );
 
 PROCEDURE Rewind ( file : File );
 (* Sets the read/write position for file handle <file> to the beginning of
-   the file and resets its end-of-file-reached status. *)
+   the file and resets its end-of-file status. *)
 
 
 (* Read and write operations *)
@@ -137,7 +144,7 @@ PROCEDURE Flush ( file : File );
 (* Closing files *)
 
 PROCEDURE Close ( VAR file : File; VAR status : Status );
-(* Closes the file associated with <file> and passes NIL back in <file>.
-   The status of the operation is passed back in <status>. *)
+(* Preforms Flush on <file> and closes the associated file. Passes NIL back
+   in <file>. The status of the operation is passed back in <status>. *)
 
 END FileIO.
