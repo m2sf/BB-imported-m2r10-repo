@@ -10,7 +10,7 @@ IMPORT Regex;
 
 
 TYPE
-    Status = ENUM ( FileIO.Status ) invalidNFA END;
+    Status = ( +FileIO.Status, invalidNFA );
     
 
 (* ---------------------------------------------------------------------------
