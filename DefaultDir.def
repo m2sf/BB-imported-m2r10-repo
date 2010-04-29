@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE WorkDir;
+DEFINITION MODULE DefaultDir;
 
 (* Filesystem Operations relative to a Working Directory *)
 
@@ -44,4 +44,4 @@ PROCEDURE Rename ( filename, newName : ARRAY OF CHAR; VAR status : Status );
 PROCEDURE Remove ( filename : ARRAY OF CHAR; VAR status : Status );
 (* Removes filesystem entry <filename> in current directory. *)
 
-END WorkDir.
+END DefaultDir.
