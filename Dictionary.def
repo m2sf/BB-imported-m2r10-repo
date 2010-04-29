@@ -9,15 +9,9 @@ TYPE Dictionary = OPAQUE ("A-Type");
 
 (* key and value type *)
 
-TYPE KeyType IS CARDINAL; (* arbitrary type *)
+TYPE KeyType = ALIAS OF CARDINAL; (* arbitrary type *)
 
 TYPE ValueType = ARRAY 255 OF CHAR; (* arbitrary type *)
-
-
-(* null key *)
-
-CONST [NIL] nullKey = 0;
-(* This value is declared as the null key for type Dictionary. *)
 
 
 (* allocator *)
