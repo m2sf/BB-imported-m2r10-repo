@@ -48,6 +48,13 @@ CONST
 (* Expands to a numeric value with the value of the current row number. *)
 
 
+(* introspection *)
+
+(* MACRO *) PROCEDURE IsCompatibleWithType( <T>; var : <AnyType> ) : BOOLEAN; 
+(* Expands to TRUE if the type of variable <var> is compatible with type <T>,
+   expands to FALSE otherwise. *)
+
+
 (* interface to the compiler's built-in hash function *)
 
 (* MACRO *) PROCEDURE HASH ( literal : ARRAY OF CHAR ) : LONGCARD;
