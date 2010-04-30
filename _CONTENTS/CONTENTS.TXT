@@ -108,5 +108,8 @@ DEQ.def             generic double ended queue template
 PriorityQueue.def   generic priority queue template
 AATree.def          generic AA tree template
 SplayTree.def       generic Splay tree template
+PatriciaTrie.def    generic Patricia trie template
+DynamicArray.def    generic dynamic array template
+KeyValueStore.def   generic key value storage template
 
 [status: April 30, 2010 -- further modules are being added]

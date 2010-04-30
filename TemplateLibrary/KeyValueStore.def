@@ -1,0 +1,328 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE @@module@@;
+
+(* Generic Key Valye Storage Template *)
+
+(* ---------------------------------------------------------------------------
+ * This template is expanded by the M2R10 template engine utility. Expansion
+ * can be invoked from within a compiling source file using the MAKE pragma:
+ * <* MAKE = "m2te KeyValueStore module:'FooHashTab' component:'FooRecord'" *>
+ * IMPORT FooHashTab;
+ * ------------------------------------------------------------------------ *)
+
+
+FROM Collections IMPORT Capacity, Status;
+
+
+CONST
+
+(* ---------------------------------------------------------------------------
+ * Default table size
+ * ------------------------------------------------------------------------ *)
+
+    defaultCapacity = 1031;  (* 1031 buckets *)
+
+
+(* ---------------------------------------------------------------------------
+ * Maximum table size
+ * ------------------------------------------------------------------------ *)
+
+    maximumCapacity = 16777259;  (* more than 16 million buckets *)
+
+
+(* ---------------------------------------------------------------------------
+ * Maximum number of entries
+ * ------------------------------------------------------------------------ *)
+
+    entryLimit = 1024*1024*1024;  (* more than 1 billion entries *)
+
+
+(* ---------------------------------------------------------------------------
+ * Synonyms for status codes
+ * ------------------------------------------------------------------------ *)
+ 
+    invalidTable = invalidCollection;
+    entryLimitReached = collectionFull;
+
+
+TYPE
+
+(* ---------------------------------------------------------------------------
+ * Opaque handle type:  @@module@@.Table
+ * ------------------------------------------------------------------------ *)
+
+    @@module@@ = OPAQUE;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.new ( size, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Creates  and returns a new table object  with a capacity of <size> buckets.
+ * Each bucket  can hold  multiple entries.  If  zero  is passed in for <size>
+ * then the table will be created  with defaultCapacity number of buckets.
+ * If the value passed in for <size> is greater than maximumCapacity or if
+ * memory could not be allocated then no table will be created and NIL will be
+ * returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE new ( size : Capacity; VAR status : Status ) : @@module@@;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.storeValue( table, key, val, size, zT, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Adds a new entry  for key <key>  to table <table>.  The new entry is stored
+ * by value.  Data is copied from the address passed in as <value>.  If <size>
+ * is not zero, then <size> number of bytes are copied.  If <size> is zero and
+ * <zeroTerminated> is true,  then data will be copied up to and including the
+ * first zero-value byte encountered.  If <size> is zero  and <zeroTerminated>
+ * is false,  then the operation will fail and no entry will be added.  If the
+ * operation succeeds,  then the initial reference count of the new entry will
+ * be set to one.  Keys must be unique.  Existing entries are not replaced.
+ * Duplicate entries are not added.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE storeValue ( table          : @@module@@;
+                       key            : Key;
+                       value          : ValueType;
+                       size           : CARDINAL;
+                       zeroTerminated : BOOLEAN;
+                   VAR status         : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.storeReference( table, key, val, size, zT, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Adds a new entry  for key <key>  to table <table>.  The new entry is stored
+ * by reference.  No data is copied.  If <size> is zero  and  <zeroTerminated>
+ * is true,  then  the size of the referenced data  is calculated  by counting
+ * up to  and including  the  first  zero-value byte.  The size of the data is
+ * then stored for faster retrieval by-copy of the entry.  Entries  stored  by
+ * reference  and for which  the size  is unknown cannot be retrieved by copy.
+ * The initial reference count of the new entry will be set to one.  Keys must
+ * be unique.  Existing  entries  are  not  replaced.  Duplicate  entries  are
+ * not added.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE storeReference ( table          : @@module@@;
+                           key            : Key;
+                           value          : ValueType;
+                           size           : CARDINAL;
+                           zeroTerminated : BOOLEAN;
+                       VAR status         : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.entryExists( table, key, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns  TRUE  if a  valid entry  for <key>  is stored in <table>,  returns
+ * FALSE otherwise.  If an entry is found,  valid or invalid,  then it will be
+ * cached internally  and a  subsequent search request  for the same key  will
+ * check the cached entry first,  which is  slighly faster  than a lookup of a
+ * non-cached entry.  The reference count of the entry is  not  modified.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE entryExists ( table   : @@module@@;
+                        key    : Key;
+                    VAR status : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.getEntry( table, copy, key, size, zT, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Retrieves the table entry stored in <table> for <key>  either by copy or by
+ * reference.  If  TRUE  is passed in for <copy>,  then  the  function returns
+ * the entry's data by-copy,  otherwise it returns the data by-reference.
+ *
+ * For by-copy retrieval,  if the entry exists,  a newly allocated copy of its
+ * value is created,  and a pointer to it is returned as function result.  The
+ * size of the entry's data (in bytes)  is passed back in <size>.  However, if
+ * the size of the entry's data is unknown,  then  no copy is made and  NIL is
+ * returned.  The entry's reference count is never incremented when retrieving
+ * by copy.
+ *
+ * For by-reference retrieval,  if the entry exists,  a pointer to the entry's
+ * data  is returned as function result  and  the  entry's reference count  is
+ * incremented.  The size of the  entry's data  (in bytes)  is  passed back in
+ * <size>.  However,  if the size of the entry's data is  unknown,  then  zero
+ * is passed back in <size>.
+ *
+ * If the entry's data is zero-terminated,  then  TRUE  will be passed back in
+ * <zeroTerminated>,  otherwise  FALSE  will be passed back.
+ *
+ * If the entry has been successfully retrieved,  then it is cached within the
+ * table,  regardless of whether it was returned by copy or by reference.
+ *
+ * If the entry does not exist,  or,  if it has been marked for removal,  then
+ * no data is copied,  no table meta data is modified,  no entry meta data  is
+ * modified  and NIL is returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE getEntry ( table          : @@module@@;
+                     copy           : BOOLEAN;
+                     key            : Key;
+                 VAR size           : Capacity;
+                 VAR zeroTerminated : BOOLEAN;
+                 VAR status         : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.valueForKey( table, key, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Retrieves the entry stored in table <table> for <key> and returns a pointer
+ * to a  newly  allocated  copy  of the  entry's value.  The entry's reference
+ * count is NOT incremented.  Entries that have been stored  by reference  and
+ * are not zero-terminated can  only  be retrieved by value if their data size
+ * was  explicitly  passed in  when  they  were  stored.  If  no entry  exists
+ * for <key>  or if the entry is pending removal  or  if the size of the entry
+ * is unknown,  then  NIL  is  returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE valueForKey ( table  : @@module@@;
+                        key    : Key;
+                    VAR status : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.referenceForKey( table, key, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Retrieves the entry stored in table <table> for <key> and returns a pointer
+ * to the  entry's value  in the table  and  increments the  entry's reference
+ * count.  If  no entry exists  for <key>  or if the entry is pending removal,
+ * is unknown then NIL is returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE referenceForKey ( table  : @@module@@;
+                            key    : Key;
+                        VAR status : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.sizeForKey( table, key, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns  the size of the data of the entry stored in <table> for <key>.  If
+ * no entry exists for <key> then zero is returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE sizeForKey ( table  : @@module@@;
+                       key    : Key;
+                   VAR status : Status ) : CARDINAL;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.dataForKeyIsZeroTerminated( table, key, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the zero-terminated flag of the entry stored in <table>  for <key>.
+ * If no entry exists for <key> in <table> then FALSE is returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE dataForKeyIsZeroTerminated ( table  : @@module@@;
+                                       key    : Key;
+                                   VAR status : Status ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.referenceCountForKey( table, key, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the  reference count  of the entry stored in <table> for <key>.  If
+ * no entry exists for <key> in <table> then zero is returned.  Valid  entries
+ * always have a reference count greater than zero.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE referenceCountForKey ( table  : @@module@@;
+                                 key    : Key;
+                             VAR status : Status ) : CARDINAL;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.releaseEntry( table, key, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Decrements  the reference count  of the entry stored in <table>  for <key>.
+ * If the entry has previously been marked for removal and its reference count
+ * reaches one as a result of this release then the entry will be removed.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE releaseEntry ( table  : @@module@@;
+                         key    : Key;
+                     VAR status : Status );
+
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.removeEntry( table, key, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Marks the entry stored in <table> for <key> as removed.  An entry which has
+ * been marked as removed can no longer be retrieved  and will be removed when
+ * its reference count reaches zero.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE removeEntry ( table  : @@module@@;
+                        key    : Key;
+                    VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.capacity( table )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the number of buckets of <table>,  returns zero if NIL is passed in
+ * for <table>. *)
+
+PROCEDURE capacity ( table : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.entryCount( table )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the number of entries stored in table <table>,  returns zero if NIL
+ * is passed in for <table>. *)
+
+PROCEDURE entryCount ( table : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.isResizable( table )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if the number of buckets of <table> can change  after <table>
+ * has been instatiated,  returns FALSE otherwise. *)
+
+PROCEDURE isResizable ( table : @@module@@ ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.dispose( table )
+ * ---------------------------------------------------------------------------
+ *
+ * Disposes of table object <table> and returns NIL. *)
+
+PROCEDURE dispose ( table : @@module@@ ) : @@module@@;
+
+
+END @@module@@.
