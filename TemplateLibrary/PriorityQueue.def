@@ -1,0 +1,178 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE @@module@@;
+
+(* Generic Priority Queue Template *)
+
+(* ---------------------------------------------------------------------------
+ * This template is expanded by the M2R10 template engine utility. Expansion
+ * can be invoked from within a compiling source file using the MAKE pragma:
+ * <* MAKE = "m2te PriorityQueue module:'FooPQ' component:'FooRecord'" *>
+ * IMPORT FooPQ;
+ * ------------------------------------------------------------------------ *)
+
+
+FROM Collections IMPORT Capacity, Status;
+
+
+CONST
+
+(* ---------------------------------------------------------------------------
+ * Default queue size
+ * ------------------------------------------------------------------------ *)
+
+    defaultCapacity = 256;  (* 256 entries *)
+
+
+(* ---------------------------------------------------------------------------
+ * Maximum queue size
+ * ------------------------------------------------------------------------ *)
+
+    maximumCapacity = 1024*1024*1024;  (* more than 1 billion entries *)
+
+
+(* ---------------------------------------------------------------------------
+ * Synonyms for status codes
+ * ------------------------------------------------------------------------ *)
+
+    invalidQueue = invalidCollection;
+    queueEmpty = collectionEmpty;
+    queueFull = collectionFull;
+
+
+TYPE
+
+(* ---------------------------------------------------------------------------
+ * Opaque handle type:  @@module@@
+ * ------------------------------------------------------------------------ *)
+
+    @@module@@ = OPAQUE;
+    
+    ValueType = @@component@@;
+
+
+(* ---------------------------------------------------------------------------
+ * Priority Comparison Handler type
+ * ---------------------------------------------------------------------------
+ *
+ * Priority comparison handlers  are called by  priority queues  whenever  the
+ * priority  of a value needs to be determined.  The handler associated with a
+ * priority queue is authoritative to determine priority for the queue.
+ *
+ * Handlers take two arguments of type DataPtr and return:
+ *
+ *  o  TRUE to indicate <value1> has higher than or equal priority to <value2>
+ *  o  FALSE to indicate <value1> has lower priority than <value2> *)
+
+    ComparisonHandler =
+        PROCEDURE ( (* value1 *) ValueType, (* value2 *) ValueType ) : BOOLEAN ;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.new ( size, handler, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Creates and returns a new priority queue object.  The capacity of the queue
+ * depends on the value passed in for <size>.  If <size> is less than or equal
+ * to defaultCapacity,  the capacity will be defaultCapacity.  If <size>
+ * is greater than maximumCapacity or if memory could not be allocated then
+ * no queue will be created  and NIL will be returned.  Otherwise the capacity
+ * of the new queue will be equal to the value of <size>.
+ *
+ * The  capacity of a queue  is the number of entries it can hold.  The under-
+ * lying implementation uses a binomial queue (a set of power-of-two heaps) as
+ * its internal storage structure.  Whilst storage for entries  are  allocated
+ * dynamically,  pointers for the  power-of-two heaps  are allocated  when the
+ * queue is created.  The number of heap pointers is determined by the queue's
+ * capacity using the formula:  heap count = log2 ( capacity + 1).
+ *
+ * The  priority  of entries to be added to the queue is determined by calling
+ * the priority comparison handler  passed in for <handler>.  If NIL is passed
+ * in for handler, no queue will be created and NIL will be returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE new ( size       : Capacity;
+                handler    : ComparisonHandler;
+                VAR status : Status ) : @@module@@;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.enqueue( queue, value, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Adds a new entry <value> to priority queue <queue>.  The new entry is added
+ * by reference, no data is copied.  No entry is added if the queue's capacity
+ * is insufficient to hold the new entry,  if memory could not be allocated or
+ * if NIL is passed in for <queue> or <value>.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE enqueue ( queue : @@module@@; value : ValueType; VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.inspectNext( queue, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Retrieves the entry with the highest priority from <queue>  and  returns it
+ * without removing the entry.  If the queue is empty  or if  NIL is passed in
+ * for <queue> then NIL is returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE inspectNext ( queue : @@module@@; VAR status : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.dequeue( queue, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Removes  the entry with the highest priority  from <queue>  and returns it.
+ * If the queue is empty or NIL is passed in for <queue> then NIL is returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE dequeue ( queue : @@module@@; VAR status : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.capacity( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the total capacity of queue <queue>,  returns zero if NIL is passed
+ * in for <queue>. *)
+
+PROCEDURE capacity ( queue : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.entryCount( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the number of entries stored in queue <queue>,  returns zero if NIL
+ * is passed in for <queue>. *)
+
+PROCEDURE entryCount ( queue : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.isResizable( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if the  capacity of <queue> can change after <queue> has been
+ * instatiated,  returns FALSE otherwise. *)
+
+PROCEDURE isResizable ( queue : @@module@@ ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.dispose( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Disposes of priority queue object <queue> and returns NIL. *)
+
+PROCEDURE dispose ( VAR queue : @@module@@ ) : @@module@@;
+
+
+END @@module@@.

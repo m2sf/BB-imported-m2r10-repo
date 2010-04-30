@@ -1,0 +1,133 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE @@module@@;
+
+(* Generic Splay Tree Template *)
+
+(* ---------------------------------------------------------------------------
+ * This template is expanded by the M2R10 template engine utility. Expansion
+ * can be invoked from within a compiling source file using the MAKE pragma:
+ * <* MAKE = "m2te SplayTree module:'FooSplay' component:'FooRecord'" *>
+ * IMPORT FooSplay;
+ * ------------------------------------------------------------------------ *)
+
+
+FROM Collections IMPORT Capacity, Status;
+
+
+CONST
+
+(* ---------------------------------------------------------------------------
+ * Synonyms for status codes
+ * ------------------------------------------------------------------------ *)
+
+    invalidTree = invalidCollection;
+
+
+TYPE
+
+(* ---------------------------------------------------------------------------
+ * Opaque handle type:  @@module@@
+ * ------------------------------------------------------------------------ *)
+
+    @@module@@ = OPAQUE;
+    
+    ValueType = @@component@@;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.new ( status )
+ * ---------------------------------------------------------------------------
+ *
+ * Creates  and  returns  a  new  splay tree object.  Returns NIL  if the tree
+ * object could not be created.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE new ( VAR status : Status ) : @@module@@;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.storeEntry( tree, key, value, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Stores <value> for <key>  in <tree>.  The new entry is added  by reference,
+ * NO data is copied.  The function fails  if NIL is passed in  for <tree>  or
+ * <value> or if zero is passed in for <key>.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE storeEntry ( tree   : @@module@@;
+                       key    : Key;
+                       value  : ValueType;
+                   VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.valueForKey( tree, key, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the value stored for <key< in <tree>.  If no value for <key> exists
+ * in <tree> or if NIL is passed in for <tree> then NIL is returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE valueForKey ( tree   : @@module@@;
+                        key    : Key;
+                    VAR status : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.removeEntry( tree, key, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Removes the entry stored for <key> from <tree>.  The function fails  if NIL
+ * is passed in for <tree> or if no entry for <key> is stored in <tree>.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE removeEntry ( tree   : @@module@@;
+                        key    : Key;
+                    VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.capacity( tree )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the total capacity of tree <tree>,  returns  zero  if NIL is passed
+ * in for <tree>. *)
+
+PROCEDURE capacity ( tree : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.entryCount( tree )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the number of entries stored in tree <tree>,  returns  zero  if NIL
+ * is passed in for <tree>. *)
+
+PROCEDURE entryCount ( tree : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.isResizable( tree )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if the  capacity of <tree>  can change  after <tree> has been
+ * instatiated,  returns FALSE otherwise. *)
+
+PROCEDURE isResizable ( tree : @@module@@ ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.dispose( tree )
+ * ---------------------------------------------------------------------------
+ *
+ * Disposes of tree object <tree> and returns NIL. *)
+
+PROCEDURE dispose ( VAR tree : @@module@@ ) : @@module@@;
+
+
+END @@module@@.
