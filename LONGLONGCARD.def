@@ -1,0 +1,11 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LONGLONGCARD;
+
+(* Alias type for 128-bit Unsigned Integer Numbers *) 
+
+IMPORT CARD128;
+
+TYPE LONGLONGCARD = ALIAS OF CARD128; (* alias *)
+
+END LONGLONGCARD.
