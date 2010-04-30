@@ -100,4 +100,10 @@ Legacy:
 LegacyPIM.def       legacy interface to deprecated PIM functions and procedures
 LegacyISO.def       legacy interface to deprecated ISO functions and procedures
 
-[status: April 24, 2010 -- further modules are being added]
+Template Library:
+
+Stack.def           generic stack template
+Queue.def           generic queue template
+DEQ.def             generic double ended queue template
+
+[status: April 30, 2010 -- further modules are being added]
