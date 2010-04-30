@@ -1,0 +1,145 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE @@module@@;
+
+(* Generic Stack Template *)
+
+(* ---------------------------------------------------------------------------
+ * This template is expanded by the M2R10 template engine utility. Expansion
+ * can be invoked from within a compiling source file using the MAKE pragma:
+ * <* MAKE = "m2te Stack module:'FooStack' component:'FooRecord'" *>
+ * IMPORT FooStack;
+ * ------------------------------------------------------------------------ *)
+
+
+FROM Collections IMPORT Capacity, Status;
+
+
+CONST
+
+(* ---------------------------------------------------------------------------
+ * Default stack size
+ * ------------------------------------------------------------------------ *)
+
+    defaultCapacity = 256;  (* 256 entries *)
+
+
+(* ---------------------------------------------------------------------------
+ * Maximum stack size
+ * ------------------------------------------------------------------------ *)
+
+    maximumCapacity = 1024*1024*1024;  (* more than 1 billion entries *)
+
+
+(* ---------------------------------------------------------------------------
+ * Synonyms for status codes
+ * ------------------------------------------------------------------------ *)
+
+    invalidStack = invalidCollection;
+    stackEmpty = collectionEmpty;
+    stackFull = collectionFull;
+
+
+TYPE
+
+(* ---------------------------------------------------------------------------
+ * Opaque handle type:  @@module@@
+ * ------------------------------------------------------------------------ *)
+
+    @@module@@ = OPAQUE;
+    
+    ValueType = @@component@@;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.new( initialSize, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Creates and returns a new @@module@@ object  with an initial capacity of
+ * <initialSize>.  If  zero  is passed in  for <initialSize>,  then  the stack
+ * will be created with an initial capacity of @@module@@.defaultStackSize.
+ * The function fails if a value greater than @@module@@.maximumStackSize
+ * is  passed in for <initialSize> or if memory could not be allocated.
+ *
+ * The initial capacity of a stack is the number of entries that can be stored
+ * in the stack without enlargement.
+ *
+ * The status of the operation  is passed back in <status>. *)
+
+PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : @@module@@;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.push( stack, value, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Adds a  new entry <value>  to the top of stack <stack>.  The  new entry  is
+ * added by reference,  no data is copied.  However,  no entry is added if the
+ * the stack is full,  that is  when the number of entries stored in the stack
+ * has reached maximumStackSize.  The function fails if NIL is passed in
+ * for <stack> or <value>,  or if memory could not be allocated.
+ *
+ * New entries are allocated dynamically  if the number of entries exceeds the
+ * initial capacity of the stack.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE push ( VAR stack : @@module@@; value : ValueType; VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.pop( stack, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Removes the top most value from stack <stack> and returns it.  If the stack
+ * is empty,  that  is  when the  number  of  entries  stored in the stack has
+ * reached zero,  then NIL is returned.
+ *
+ * Entries which were allocated dynamically (above the initial capacity) are
+ * deallocated when their values are popped.
+ *
+ * The status of the operation  is passed back in <status>. *)
+
+PROCEDURE pop ( VAR stack : @@module@@; VAR status : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.capacity( stack )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the current capacity of <stack>.  The current capacity is the total
+ * number of allocated entries.  Returns zero if NIL is passed in for <stack>.
+ *)
+PROCEDURE capacity ( VAR stack : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.entryCount( stack )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns  the  number of entries  stored in stack <stack>,  returns  zero if
+ * NIL is passed in for <stack>. *)
+
+PROCEDURE entryCount ( VAR stack : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.isResizable( stack )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if the  capacity of <stack> can change after <stack> has been
+ * instatiated,  returns FALSE otherwise. *)
+
+PROCEDURE isResizable ( stack : @@module@@ ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.dispose( stack )
+ * ---------------------------------------------------------------------------
+ *
+ * Disposes of stack object <stack> and returns NIL. *)
+
+PROCEDURE dispose ( VAR stack : @@module@@ ) : @@module@@;
+
+
+END @@module@@.

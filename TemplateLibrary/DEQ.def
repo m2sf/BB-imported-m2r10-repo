@@ -1,0 +1,197 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE @@module@@;
+
+(* Generic Double Ended Queue Template *)
+
+(* ---------------------------------------------------------------------------
+ * This template is expanded by the M2R10 template engine utility. Expansion
+ * can be invoked from within a compiling source file using the MAKE pragma:
+ * <* MAKE = "m2te DEQ module:'FooDEQ' component:'FooRecord'" *>
+ * IMPORT FooDEQ;
+ * ------------------------------------------------------------------------ *)
+
+
+FROM Collections IMPORT Capacity, Status;
+
+
+CONST
+
+(* ---------------------------------------------------------------------------
+ * Default queue size
+ * ------------------------------------------------------------------------ *)
+
+    defaultCapacity = 0;
+
+
+(* ---------------------------------------------------------------------------
+ * Maximum queue size
+ * ------------------------------------------------------------------------ *)
+
+    maximumCapacity = 1024*1024*1024;  (* more than 1 billion entries *)
+
+
+(* ---------------------------------------------------------------------------
+ * Synonyms for status codes
+ * ------------------------------------------------------------------------ *)
+
+    invalidQueue = invalidCollection;
+    queueEmpty = collectionEmpty;
+    queueFull = collectionFull;
+
+
+TYPE
+
+(* ---------------------------------------------------------------------------
+ * Opaque handle type:  @@module@@
+ * ------------------------------------------------------------------------ *)
+
+    @@module@@ = OPAQUE;
+    
+    ValueType = @@component@@;
+
+
+(* ---------------------------------------------------------------------------
+ * Opaque handle type:  @@module@@.Iterator
+ * ------------------------------------------------------------------------ *)
+ 
+    Iterator = OPAQUE;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.new ( status )
+ * ---------------------------------------------------------------------------
+ *
+ * Creates  and returns a new queue object.  Returns  NIL  if the queue object
+ * could not be created.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE new ( VAR status : Status ) : Queue;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.prepend( queue, value, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Prepends  a new  entry <value>  at  the  head of <queue>.  The new entry is
+ * added by reference,  no data is copied.  No entry is added if NIL is passed
+ * in for <queue> or <value>.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE prepend ( queue : @@module@@; value : ValueType; VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.append( queue, value, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Appends  a  new  entry <value>  at  the  tail of <queue>.  The new entry is
+ * added by reference,  no data is copied.  No entry is added if NIL is passed
+ * in for <queue> or <value>.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE append ( queue : @@module@@; value : ValueType; VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.firstEntry( queue, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Removes  the first entry  from the head of <queue>  and returns it.  If the
+ * queue is empty or NIL is passed in for <queue>,  then NIL is returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE firstEntry ( queue : @@module@@; VAR status : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.lastEntry( queue, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Removes  the last entry  from the tail of <queue>  and  returns it.  If the
+ * queue is empty or NIL is passed in for <queue>,  then NIL is returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE lastEntry ( queue : @@module@@; VAR status : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.capacity( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the total capacity of queue <queue>,  returns zero if NIL is passed
+ * in for <queue>. *)
+
+PROCEDURE capacity ( queue : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.entryCount( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the number of entries stored in queue <queue>,  returns zero if NIL
+ * is passed in for <queue>. *)
+
+PROCEDURE entryCount ( queue : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.isResizable( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if the  capacity of <queue> can change after <queue> has been
+ * instatiated,  returns FALSE otherwise. *)
+
+PROCEDURE isResizable ( queue : @@module@@ ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.newIterator ( queue, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Creates and returns  a new iterator object  for iterating entries  in queue
+ * <queue>.  Returns NIL if <queue> is NIL or empty.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE newIterator ( queue : @@module@@; VAR status : Status ) : Iterator;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.iterateNext( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * The  first  call  to this function  returns the  first  entry  of the queue
+ * associated with <iterator>.  Subsequent calls return the queue's respective
+ * successor entries.  Returns  NIL  if  any preceding call  returned the last
+ * entry of the queue or if NIL is passed in for <iterator>.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE iterateNext ( iterator : Iterator; VAR statusStatus ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.disposeIterator ( iterator )
+ * ---------------------------------------------------------------------------
+ *
+ * Disposes of iterator object <iterator> and returns NIL. *)
+
+PROCEDURE disposeIterator ( VAR iterator : Iterator ) : Iterator;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.dispose ( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Disposes of queue object <queue> and returns NIL. *)
+
+PROCEDURE dispose ( VAR queue : @@module@@ ) : @@module@@;
+
+
+END @@module@@.

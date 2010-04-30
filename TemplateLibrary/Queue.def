@@ -1,0 +1,133 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE @@module@@;
+
+(* Generic Stack Template *)
+
+(* ---------------------------------------------------------------------------
+ * This template is expanded by the M2R10 template engine utility. Expansion
+ * can be invoked from within a compiling source file using the MAKE pragma:
+ * <* MAKE = "m2te Queue module:'FooQueue' component:'FooRecord'" *>
+ * IMPORT FooQueue;
+ * ------------------------------------------------------------------------ *)
+
+
+FROM Collections IMPORT Capacity, Status;
+
+
+CONST
+
+(* ---------------------------------------------------------------------------
+ * Default queue size
+ * ------------------------------------------------------------------------ *)
+
+    defaultCapacity = 256;  (* 256 entries *)
+
+
+(* ---------------------------------------------------------------------------
+ * Maximum queue size
+ * ------------------------------------------------------------------------ *)
+
+    maximumCapacity = 1024*1024*1024;  (* more than 1 billion entries *)
+
+
+(* ---------------------------------------------------------------------------
+ * Synonyms for status codes
+ * ------------------------------------------------------------------------ *)
+
+    invalidQueue = invalidCollection;
+    queueEmpty = collectionEmpty;
+    queueFull = collectionFull;
+
+
+TYPE
+
+(* ---------------------------------------------------------------------------
+ * Opaque handle type:  @@module@@
+ * ------------------------------------------------------------------------ *)
+
+    @@module@@ = OPAQUE;
+    
+    ValueType = @@component@@;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.new ( size, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Creates and returns  a new queue object  with a storage capacity of <size>.
+ * If zero is passed in for <size>,  then the new queue object will be created
+ * with a capacity of  @@module@@.defaultQueueSize.
+ * Returns NIL if the queue object could not be created.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : @@module@@;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.enqueue( queue, value, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Adds a new entry <value> to the head of queue <queue>  and returns <queue>.
+ * The new entry  is added  by reference,  NO data is copied.  If the queue is
+ * full,  then  NO  new entry is added to <queue>.  The function fails  if NIL
+ * is passed in for <queue> or <value>.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE enqueue ( queue : @@module@@; value : ValueType; VAR status : Status );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.dequeue( queue, status )
+ * ---------------------------------------------------------------------------
+ *
+ * Removes the oldest value from the tail of queue <queue> and returns it.  If
+ * the queue is empty or if NIL is passed in for <queue>,  NIL is returned.
+ *
+ * The status of the operation is passed back in <status>. *)
+
+PROCEDURE dequeue ( queue : @@module@@; VAR status : Status ) : ValueType;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.capacity( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the total capacity of queue <queue>,  returns zero if NIL is passed
+ * in for <queue>. *)
+
+PROCEDURE capacity ( queue : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.entryCount( stack )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns  the  number of entries  stored in stack <stack>,  returns  zero if
+ * NIL is passed in for <stack>. *)
+
+PROCEDURE entryCount ( VAR stack : @@module@@ ) : Capacity;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.isResizable( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if the  capacity of <queue> can change after <queue> has been
+ * instatiated,  returns FALSE otherwise. *)
+
+PROCEDURE isResizable ( queue : @@module@@ ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  @@module@@.dispose ( queue )
+ * ---------------------------------------------------------------------------
+ *
+ * Disposes of queue object <queue> and returns NIL. *)
+
+PROCEDURE dispose ( VAR queue : @@module@@ ) : @@module@@;
+
+
+END @@module@@.
