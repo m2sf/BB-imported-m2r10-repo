@@ -67,7 +67,7 @@ TYPE
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE new ( VAR status : Status ) : Queue;
+PROCEDURE new ( VAR status : Status ) : @@module@@;
 
 
 (* ---------------------------------------------------------------------------

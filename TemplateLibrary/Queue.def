@@ -2,7 +2,7 @@
 
 DEFINITION MODULE @@module@@;
 
-(* Generic Stack Template *)
+(* Generic Queue Template *)
 
 (* ---------------------------------------------------------------------------
  * This template is expanded by the M2R10 template engine utility. Expansion
