@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status April 30, 2010 */
+/* M2R10 grammar in ANTLR EBNF notation -- status May 1, 2010 */
 
 
 options {
@@ -98,7 +98,7 @@ tokens {
 // ---------------------------------------------------------------------------
 // N O N - T E R M I N A L   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 63 productions
+// 64 productions
 
 // *** Compilation Units ***
 
@@ -301,47 +301,53 @@ receiverType : ident ;
 
 // production #28
 formalParamList :
-	formalParams ( ';' ( formalParams | variadicParams ) )*
+	formalParams ( ';' formalParams )*
 	;
 
 // production #29
 formalParams :
+	simpleFormalParams | variadicFormalParams
+    ;
+
+// production #30
+simpleFormalParams :
 	( CONST | VAR {})? identList ':' formalType
 	;
 
-// production 30
-variadicParams :
-	VARIADIC handle ( '[' indexParam ']' )? OF
-	( CONST | VAR )? ident ( ( '.' ident )* | ( ',' ident )* ':' formalType )
+// production #31
+variadicFormalParams :
+	VARIADIC ( counterParam | '[' variadicTerminator ']' )? OF
+	( simpleFormalParams |
+	  '(' simpleFormalParams ( ';' simpleFormalParams )* ')' )
 	;
-	
-// alias
-handle : ident ;
 
 // alias
-indexParam : ident ;
+counterParam : ident ;
+
+// alias
+variadicTerminator : constExpression ;
 
 // *** Statements ***
 
-// production #31
+// production #32
 statement :
 	( assignmentOrProcedureCall | ifStatement | caseStatement |
 	  whileStatement | repeatStatement | loopStatement |
 	  forStatement | RETURN expression? | EXIT )?
 	;
 
-// production #32
+// production #33
 statementSequence :
 	statement ( ';' statement )*
 	;
 
-// production #33
+// production #34
 assignmentOrProcedureCall :
 	designator
 	( ':=' ( expression | structuredValue ) | '++' | '--' | actualParameters )?
 	;
 
-// production #34
+// production #35
 ifStatement :
 	IF expression THEN statementSequence
 	( ELSIF expression THEN statementSequence )*
@@ -349,44 +355,44 @@ ifStatement :
 	END
 	;
 
-// production #35
+// production #36
 caseStatement :
 	CASE expression OF case ( '|' case )*
 	( ELSE statementSequence )?
 	END
 	;
 
-// production #36
+// production #37
 case :
 	caseLabelList ':' statementSequence
 	;
 
-// production #37
+// production #38
 caseLabelList :
 	caseLabels ( ',' caseLabels )*
 	;
 
-// production #38
+// production #39
 caseLabels :
 	constExpression ( '..' constExpression )?
 	;
 
-// production #39
+// production #40
 whileStatement :
 	WHILE expression DO statementSequence END
 	;
 
-// production #40
+// production #41
 repeatStatement :
 	REPEAT statementSequence UNTIL expression
 	;
 
-// production #41
+// production #42
 loopStatement :
 	LOOP statementSequence END
 	;
 
-// production #42
+// production #43
 forStatement :
 	FOR ident
 	( ':=' expression TO expression ( BY constExpression )? | IN expression )
@@ -395,76 +401,76 @@ forStatement :
 
 // *** Expressions ***
 
-// production #43
+// production #44
 constExpression :
 	simpleConstExpr ( relation simpleConstExpr | '::' namedType )?
 	;
 
-// production #44
+// production #45
 relation :
 	'=' | '#' | '<' | '<=' | '>' | '>=' | IN
 	{} // make ANTLRworks display separate branches
 	;
 
-// production #45
+// production #46
 simpleConstExpr :
 	( '+' | '-' {})? constTerm ( addOperator constTerm )*
 	;
 
-// production #46
+// production #47
 addOperator :
 	'+' | '-' | OR
 	{} // make ANTLRworks display separate branches
 	;
 
-// production #47
+// production #48
 constTerm :
 	constFactor ( mulOperator constFactor )*
 	;
 
-// production #48
+// production #49
 mulOperator :
 	'*' | '/' | DIV | MOD | AND | '&'
 	{} // make ANTLRworks display separate branches
 	;
 
-// production #49
+// production #50
 constFactor :
 	number | string | qualident |
 	'(' constExpression ')' | ( NOT | '~' {}) constFactor
 	;
 
-// production #50
+// production #51
 designator :
 	qualident ( designatorTail )?
 	;
 
-// production #51
+// production #52
 designatorTail :
 	( ( '[' expressionList ']' | '^' ) ( '.' ident )* )+
 	;
 
-// production #52
+// production #53
 expressionList :
 	expression ( ',' expression )*
 	;
 
-// production #53
+// production #54
 expression :
 	simpleExpression ( relation simpleExpression | '::' namedType )?
 	;
 
-// production #54
+// production #55
 simpleExpression :
 	( '+' | '-' {})? term ( addOperator term )*
 	;
 
-// production #55
+// production #56
 term :
 	factor ( mulOperator factor )*
 	;
 
-// production #56
+// production #57
 factor :
 	number |
 	string |
@@ -472,24 +478,24 @@ factor :
 	'(' expression ')' | ( NOT | '~' {}) factor
 	;
 
-// production #57
+// production #58
 designatorOrProcedureCall :
 	qualident ( designatorTail? actualParameters? )
 	;
 
-// production #58
+// production #59
 actualParameters :
 	'(' expressionList? ')'
 	;
 
 // *** Value Constructors ***
 
-// production #59
+// production #60
 structuredValue :
 	'{' ( valueComponent ( ',' valueComponent )* )? '}'	
 	;
 
-// production #60
+// production #61
 valueComponent :
 	expression ( ( BY | '..' {}) constExpression  )? |
 	structuredValue
@@ -497,12 +503,12 @@ valueComponent :
 
 // *** Identifiers ***
 
-// production #61
+// production #62
 qualident :
 	ident ( '.' ident )*
 	;
 
-// production #62
+// production #63
 identList :
 	ident ( ',' ident )*
 	;
@@ -520,7 +526,7 @@ string : STRING ;
 
 // *** Pragmas ***
 
-// production #63
+// production #64
 pragma :
 	'<*' (
 	
