@@ -317,7 +317,7 @@ simpleFormalParams :
 // production #31
 variadicFormalParams :
 	VARIADIC ( counterParam | '[' variadicTerminator ']' )? OF
-	( simpleFormalParams |
+	( ( CONST | VAR {})? formalType |
 	  '(' simpleFormalParams ( ';' simpleFormalParams )* ')' )
 	;
 
