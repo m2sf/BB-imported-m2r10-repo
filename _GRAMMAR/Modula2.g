@@ -485,7 +485,7 @@ designatorOrProcedureCall :
 
 // production #59
 actualParameters :
-	'(' expressionList ')'
+	'(' expressionList? ')'
 	;
 
 // *** Value Constructors ***
