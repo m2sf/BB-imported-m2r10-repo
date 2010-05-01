@@ -8,13 +8,13 @@ DEFINITION MODULE FileIO;
 FROM Integers IMPORT CARDINAL64;
 
 
-(* File handle, file status and file mode *)
+(* File accessor, file status and file mode *)
 
 TYPE
-    File = OPAQUE; (* implementation defined file handle *)
+    File = OPAQUE; (* implementation defined file accessor *)
         
     Status = ( success,               (* operation completed successfully   *)
-               invalidHandle,         (* the passed in handle is invalid    *)
+               invalidAccessor,       (* the passed in accessor is invalid  *)
                fileNotFound,          (* no file found with this filename   *)
                nameTooLong,           (* the passed in filename is too long *)
                invalidName,           (* the passed in filename is invalid  *)
@@ -49,7 +49,7 @@ CONST
     defaultBufferSize = <implementation defined value>;
 
 
-(* Predefined open file handles *)
+(* Predefined open file accessors *)
 
 VAR
     stdIn, stdOut, stdErr, nullFile : File;
@@ -60,7 +60,7 @@ VAR
 PROCEDURE Open ( VAR file : File;
                  filename : ARRAY OF CHAR; mode : Mode; VAR status : Status );
 (* Opens the file <filename> in file mode <mode>. If sucessful passes a file
-   handle back in <file>, otherwise passes NIL back in <file>. The status of
+   accessor back in <file>, otherwise passes NIL back in <file>. The status of
    the operation is passed back in <status>. *)
 
 PROCEDURE OpenWithBuffer ( VAR file   : File;
@@ -69,7 +69,7 @@ PROCEDURE OpenWithBuffer ( VAR file   : File;
                            VAR buffer : ARRAY OF OCTET;
                            VAR status : Status );
 (* Opens the file <filename> in file mode <mode> using <buffer> as a custom
-   file buffer. If successful passes a file handle back in <file>, otherwise
+   file buffer. If successful passes a file accessor back in <file>, otherwise
    passes NIL back in <file>. The status is passed back in <status>. *)
 
 PROCEDURE ReOpen ( VAR file : File; mode : Mode );
@@ -79,11 +79,11 @@ PROCEDURE ReOpen ( VAR file : File; mode : Mode );
 (* File mode, status and name *)
 
 PROCEDURE ModeOf ( file : File ) : Mode;
-(* Returns the file mode of file handle <file>.
+(* Returns the file mode of file accessor <file>.
    Returns an empty set if <file> is invalid. *)
 
 PROCEDURE StatusOf ( file : File ) : Status;
-(* Returns the status of the most recent operation for file handle <file>. *)
+(* Returns the status of the most recent operation for file accessor <file>.*)
 
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 (* Passes the name of the file associated with <file> back in <filename>.
@@ -94,20 +94,20 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 (* File position operations *)
 
 PROCEDURE EOF ( file : File ) : BOOLEAN;
-(* Returns TRUE if the end of the file associated with file handle <file> has
-   been reached, otherwise FALSE. *)
+(* Returns TRUE if the end of the file associated with file accessor <file>
+   has been reached, otherwise FALSE. *)
 
 PROCEDURE CurrentPos ( file : File ) : FilePos;
-(* Returns the current read/write position for file handle <file>. *)
+(* Returns the current read/write position for file accessor <file>. *)
 
 PROCEDURE SetPos ( file : File; index : FilePos );
-(* Sets the read/write position for file handle <file> to <index>. *)
+(* Sets the read/write position for file accessor <file> to <index>. *)
 
 PROCEDURE Advance ( file : File; offset : FilePos );
-(* Advances the read/write position for file handle <file> by <offset>. *)
+(* Advances the read/write position for file accessor <file> by <offset>. *)
 
 PROCEDURE Rewind ( file : File );
-(* Sets the read/write position for file handle <file> to the beginning of
+(* Sets the read/write position for file accessor <file> to the beginning of
    the file and resets its end-of-file status. *)
 
 
