@@ -98,7 +98,7 @@ tokens {
 // ---------------------------------------------------------------------------
 // N O N - T E R M I N A L   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 64 productions
+// 65 productions
 
 // *** Compilation Units ***
 
@@ -165,7 +165,7 @@ definition :
 
 // production #9
 constantDeclaration :	
-	ident '=' ( constExpression | structuredValue )
+	ident '=' constExpression
 	;
 
 // *** Type Declarations ***
@@ -214,7 +214,6 @@ recordType :
 	;
 
 // alias
-
 baseType : ident ;
 
 // production #16
@@ -316,13 +315,13 @@ simpleFormalParams :
 
 // production #31
 variadicFormalParams :
-	VARIADIC ( counterParam | '[' variadicTerminator ']' )? OF
+	VARIADIC ( variadicCounter | '[' variadicTerminator ']' )? OF
 	( ( CONST | VAR {})? formalType |
 	  '(' simpleFormalParams ( ';' simpleFormalParams )* ')' )
 	;
 
 // alias
-counterParam : ident ;
+variadicCounter : ident ;
 
 // alias
 variadicTerminator : constExpression ;
@@ -344,7 +343,7 @@ statementSequence :
 // production #34
 assignmentOrProcedureCall :
 	designator
-	( ':=' ( expression | structuredValue ) | '++' | '--' | actualParameters )?
+	( ':=' expression | '++' | '--' | actualParameters )?
 	;
 
 // production #35
@@ -436,7 +435,7 @@ mulOperator :
 
 // production #50
 constFactor :
-	number | string | qualident |
+	number | string | qualident | constStructuredValue |
 	'(' constExpression ')' | ( NOT | '~' {}) constFactor
 	;
 
@@ -474,6 +473,7 @@ term :
 factor :
 	number |
 	string |
+	structuredValue |
 	designatorOrProcedureCall |
 	'(' expression ')' | ( NOT | '~' {}) factor
 	;
@@ -485,30 +485,39 @@ designatorOrProcedureCall :
 
 // production #59
 actualParameters :
-	'(' expressionList? ')'
+	'(' expressionList ')'
 	;
 
 // *** Value Constructors ***
 
 // production #60
+constStructuredValue :
+	'{' ( constValueComponent ( ',' constValueComponent )* )? '}'	
+	;
+
+// production #61
+constValueComponent :
+	constExpression ( ( BY | '..' {}) constExpression  )?
+	;
+
+// production #62
 structuredValue :
 	'{' ( valueComponent ( ',' valueComponent )* )? '}'	
 	;
 
-// production #61
+// production #63
 valueComponent :
-	expression ( ( BY | '..' {}) constExpression  )? |
-	structuredValue
+	expression ( ( BY | '..' {}) constExpression  )?
 	;
 
 // *** Identifiers ***
 
-// production #62
+// production #64
 qualident :
 	ident ( '.' ident )*
 	;
 
-// production #63
+// production #65
 identList :
 	ident ( ',' ident )*
 	;
@@ -524,33 +533,49 @@ number : NUMBER ;
 // alias
 string : STRING ;
 
+
+// ---------------------------------------------------------------------------
+// P R A G M A   S Y M B O L S
+// ---------------------------------------------------------------------------
+// 5 productions
+
+
 // *** Pragmas ***
 
-// production #64
+// production #1
 pragma :
-	'<*' (
-	
-	// conditional compilation pragmas
-	( IF | ELSIF {}) constExpression | ELSE | ENDIF |
-	
-	// console message pragmas
-	( INFO | WARN | ERROR | FATAL {}) compileTimeMessage |
-	
-	// other language defined pragmas
-	 ALIGN '=' constExpression | FOREIGN ( '=' string )? | MAKE '=' string |
-	 INLINE | NOINLINE | VOLATILE |
-	
-	// implementation defined pragmas
-	implementationDefinedPragma ( '+' | '-' | '=' ( ident | number ) )?
-	
-	) '*>'
+	'<*'
+	( conditionalPragma | consoleMessagePragma | codeGenerationPragma |	
+	  implementationDefinedPragma )
+	'*>'
+	;
+
+// production #2
+conditionalPragma :
+	( IF | ELSIF {}) constExpression | ELSE | ENDIF
+	;
+
+// production #3
+consoleMessagePragma :
+	( INFO | WARN | ERROR | FATAL {}) compileTimeMessage
+	;
+
+// production #4
+codeGenerationPragma :
+	ALIGN '=' constExpression | FOREIGN ( '=' string )? | MAKE '=' string |
+	INLINE | NOINLINE | VOLATILE
+	;
+
+// production #5
+implementationDefinedPragma :
+	pragmaName ( '+' | '-' | '=' ( ident | number ) )?
 	;
 
 // alias
 compileTimeMessage : string ;
 
 // alias
-implementationDefinedPragma : ident ;
+pragmaName : ident ;
 
 
 // ---------------------------------------------------------------------------
