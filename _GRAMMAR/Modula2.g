@@ -172,7 +172,7 @@ constantDeclaration :
 
 // production #10
 type :
-	( ALIAS OF )? namedType | anonymousType | enumerationType | setType
+	( ALIAS OF )? namedType | anonymousType | enumerationType | recordType
 	;
 
 // alias
@@ -199,7 +199,7 @@ enumerationType :
 // production #14
 arrayType :
 	( ARRAY arrayIndex ( ',' arrayIndex )* | ASSOCIATIVE ARRAY )
-	OF ( namedType |setType | pointerType | procedureType )
+	OF ( namedType | setType | pointerType | procedureType )
 	;
 
 // alias
@@ -229,8 +229,11 @@ fieldList :
 
 // production #18
 setType :
-	SET ( OF namedType | '[' constExpression ']' )
+	SET ( OF ordinalType | '[' constExpression ']' )
 	;
+
+// alias
+ordinalType : namedType ;
 
 // production #19
 pointerType :
