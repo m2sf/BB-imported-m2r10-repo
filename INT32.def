@@ -137,12 +137,12 @@ PROCEDURE Write( outfile : File; n : INT32 );
 (* Writes the textual representation of value n to stream outfile. This
    function is substituted for invocations of WRITE with an INT32 argument.*)
 
-PROCEDURE WriteF( outfile : File; fmtStr : ARRAY OF CHAR;
-                  items : CARDINAL; VARIADIC v[items] OF n : INT32 );
+PROCEDURE WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : VARIADIC OF INT32 );
 (* Writes a formatted textual representation of one or more INT32 values to
-   output stream outfile. The value of parameter items is calculated and
-   inserted automatically. The output format is determined by fmtStr.
-   This function is substituted for invocations of WRITEF with one or more
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
    INT32 arguments. *)
 
 END INT32.

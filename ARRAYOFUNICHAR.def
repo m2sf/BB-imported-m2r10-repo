@@ -20,12 +20,12 @@ PROCEDURE Write ( outfile : File; s : ARRAY OF UNICHAR );
 (* Writes string s to stream outfile. This function is substituted
    for invocations of WRITE with an ARRAY OF UNICHAR type argument.*)
 
-PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
-                   items : CARDINAL;
-                   VARIADIC v[items] OF s : ARRAY OF UNICHAR );
-(* Writes one or more strings to output stream outfile. The value of parameter
-   items is calculated and inserted automatically. The output format is deter-
-   mined by fmtStr. This function is substituted for invocations of WRITEF
-   with one or more ARRAY OF UNICHAR type arguments. *)
+PROCEDURE WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : VARIADIC OF CONST ARRAY OF UNICHAR );
+(* Writes a formatted textual representation of one or more ARRAY OF UNICHAR
+   values to output stream outfile. The output format is determined by fmtStr.
+   This procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF UNICHAR arguments. *)
 
 END ARRAYOFUNICHAR.

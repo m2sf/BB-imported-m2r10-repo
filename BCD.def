@@ -127,12 +127,12 @@ PROCEDURE Write( outfile : File; b : BCD );
 (* Writes the textual representation of value b to output stream outfile.
    This function is substituted for invocations of WRITE with a BCD argument.*)
 
-PROCEDURE WriteF( outfile : File; fmtStr : ARRAY OF CHAR;
-                  items : CARDINAL; VARIADIC v[items] OF b : BCD );
+PROCEDURE WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : VARIADIC OF CONST BCD );
 (* Writes a formatted textual representation of one or more BCD values to
-   output stream outfile. The value of parameter items is calculated and
-   inserted automatically. The output format is determined by fmtStr.
-   This function is substituted for invocations of WRITEF with one or more
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
    BCD arguments. *)
 
 END BCD.

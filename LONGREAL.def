@@ -58,12 +58,12 @@ PROCEDURE Write ( outfile : File; n : LONGREAL );
 (* Writes the value of LONGREAL r in simple format to stream outfile. This
    function is substituted for invocations of WRITE with a LONGREAL argument.*)
 
-PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
-                   items : LONGREAL; VARIADIC v[items] OF n : LONGREAL );
+PROCEDURE WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : VARIADIC OF LONGREAL );
 (* Writes a formatted textual representation of one or more LONGREAL values to
-   output stream outfile. The value of parameter items is calculated and
-   inserted automatically. The output format is determined by fmtStr.
-   This function is substituted for invocations of WRITEF with one or more
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
    LONGREAL arguments. *)
 
 END LONGREAL.

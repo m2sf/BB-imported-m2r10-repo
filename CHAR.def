@@ -19,12 +19,12 @@ PROCEDURE Write ( outfile : File; ch : CHAR );
 (* Writes the textual representation of CHAR ch to stream outfile. This
    function is substituted for invocations of WRITE with a CHAR argument.*)
 
-PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
-                   items : CARDINAL; VARIADIC v[items] OF ch : CHAR );
+PROCEDURE WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : VARIADIC OF CHAR );
 (* Writes a formatted textual representation of one or more CHAR values to
-   output stream outfile. The value of parameter items is calculated and
-   inserted automatically. The output format is determined by fmtStr.
-   This function is substituted for invocations of WRITEF with one or more
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
    CHAR arguments. *)
 
 END CHAR.

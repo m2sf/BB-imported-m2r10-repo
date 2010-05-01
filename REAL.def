@@ -58,12 +58,12 @@ PROCEDURE Write ( outfile : File; n : REAL );
 (* Writes the value of REAL r in simple format to stream outfile. This
    function is substituted for invocations of WRITE with a REAL argument.*)
 
-PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
-                   items : REAL; VARIADIC v[items] OF n : REAL );
+PROCEDURE WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : VARIADIC OF REAL );
 (* Writes a formatted textual representation of one or more REAL values to
-   output stream outfile. The value of parameter items is calculated and
-   inserted automatically. The output format is determined by fmtStr.
-   This function is substituted for invocations of WRITEF with one or more
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
    REAL arguments. *)
 
 END REAL.

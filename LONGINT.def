@@ -36,12 +36,12 @@ PROCEDURE Write ( outfile : File; n : LONGINT );
 (* Writes the value of LONGINT n in simple format to stream outfile. This
    function is substituted for invocations of WRITE with a LONGINT argument.*)
 
-PROCEDURE WriteF ( outfile : File; fmtStr : ARRAY OF CHAR;
-                   items : LONGINT; VARIADIC v[items] OF n : LONGINT );
+PROCEDURE WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : VARIADIC OF LONGINT );
 (* Writes a formatted textual representation of one or more LONGINT values to
-   output stream outfile. The value of parameter items is calculated and
-   inserted automatically. The output format is determined by fmtStr.
-   This function is substituted for invocations of WRITEF with one or more
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
    LONGINT arguments. *)
 
 END LONGINT.
