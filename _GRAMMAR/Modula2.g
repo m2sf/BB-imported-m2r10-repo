@@ -188,7 +188,7 @@ semanticType : string ;
 
 // production #12
 anonymousType :
-	arrayType | recordType | pointerType | procedureType
+	arrayType | setType | pointerType | procedureType
 	;
 
 // production #13
@@ -199,7 +199,7 @@ enumerationType :
 // production #14
 arrayType :
 	( ARRAY arrayIndex ( ',' arrayIndex )* | ASSOCIATIVE ARRAY )
-	OF ( namedType | recordType | procedureType )
+	OF ( namedType |setType | pointerType | procedureType )
 	;
 
 // alias
@@ -229,7 +229,7 @@ fieldList :
 
 // production #18
 setType :
-	SET ( OF ( namedType | '(' identList ')' ) | '[' constExpression ']' )
+	SET ( OF namedType | '[' constExpression ']' )
 	;
 
 // production #19
