@@ -290,8 +290,8 @@ procedureHeader :
 
 // production #27
 boundToOperator :
-	':=' | '::' | '.' | '!' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
-	DIV | MOD | IN | FOR | TO | FROM 
+	DIV | MOD | IN | FOR | TO | FROM |
+	':=' | '::' | '.' | '!' | '+' | '-' | '*' | '/' | '=' | '<' | '>'
 	{} // make ANTLRworks display separate branches
 	;
 
@@ -441,7 +441,7 @@ constFactor :
 
 // production #51
 designator :
-	qualident ( designatorTail )?
+	qualident designatorTail?
 	;
 
 // production #52
@@ -507,7 +507,7 @@ structuredValue :
 
 // production #63
 valueComponent :
-	expression ( ( BY | '..' {}) constExpression  )?
+	expression ( ( BY | '..' {}) constExpression )?
 	;
 
 // *** Identifiers ***
@@ -538,7 +538,6 @@ string : STRING ;
 // P R A G M A   S Y M B O L S
 // ---------------------------------------------------------------------------
 // 5 productions
-
 
 // *** Pragmas ***
 
