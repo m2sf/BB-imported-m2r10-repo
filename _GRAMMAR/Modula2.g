@@ -345,8 +345,7 @@ statementSequence :
 
 // production #34
 assignmentOrProcedureCall :
-	designator
-	( ':=' expression | '++' | '--' | actualParameters )?
+	designator ( ':=' expression | '++' | '--' | actualParameters )?
 	;
 
 // production #35
@@ -483,7 +482,7 @@ factor :
 
 // production #58
 designatorOrProcedureCall :
-	qualident ( designatorTail? actualParameters? )
+	qualident designatorTail? actualParameters?
 	;
 
 // production #59
@@ -547,7 +546,7 @@ string : STRING ;
 // production #1
 pragma :
 	'<*'
-	( conditionalPragma | consoleMessagePragma | codeGenerationPragma |	
+	( conditionalPragma | compileTimeMessagePragma | codeGenerationPragma |
 	  implementationDefinedPragma )
 	'*>'
 	;
@@ -558,7 +557,7 @@ conditionalPragma :
 	;
 
 // production #3
-consoleMessagePragma :
+compileTimeMessagePragma :
 	( INFO | WARN | ERROR | FATAL {}) compileTimeMessage
 	;
 
@@ -577,7 +576,7 @@ implementationDefinedPragma :
 compileTimeMessage : string ;
 
 // alias
-pragmaName : ident ;
+pragmaName : ident ; // lowercase or camelcase only
 
 
 // ---------------------------------------------------------------------------
