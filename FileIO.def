@@ -5,7 +5,7 @@ DEFINITION MODULE FileIO;
 (* Driver for File Based IO *)
 
 
-FROM Integers IMPORT CARDINAL64;
+FROM Integers IMPORT CARDINAL64; (* assuming 64-bit file systems *)
 
 
 (* File accessor, file status and file mode *)
@@ -35,7 +35,8 @@ TYPE
 
 (* Alias types for implementation dependent file position and file size *)
 
-    FilePos, FileSize = ALIAS OF CARDINAL64; (* for 64-bit file systems *)
+    FilePos = ALIAS OF CARDINAL64;
+    FileSize = ALIAS OF CARDINAL64;
 
 
 (* Predefined file modes *)
