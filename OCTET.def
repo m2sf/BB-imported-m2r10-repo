@@ -17,18 +17,18 @@ FROM FileIO IMPORT File;
     bit : "0" | "1" ; *)
 
 PROCEDURE Read ( infile : File; VAR n : OCTET );
-(* Reads the textual representation of a OCTET value from stream infile
+(* Reads the textual representation of an OCTET value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
      removed from infile
    - the textual representation of the value read is assigned to n
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with a OCTET argument. *)
+   procedure is substituted for invocations of READ with an OCTET argument. *)
 
 PROCEDURE Write ( outfile : File; n : OCTET );
 (* Writes the value of OCTET n in simple format to stream outfile. This
-   procedure is substituted for invocations of WRITE with a OCTET argument.*)
+   procedure is substituted for invocations of WRITE with an OCTET argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
