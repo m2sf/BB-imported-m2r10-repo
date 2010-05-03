@@ -13,7 +13,7 @@ IMPORT BS16, BS32, BS64, BS128;
 IMPORT SHORTBITSET+; (* import into client module *)
 
 
-(* LONGLONGCARD - Alias for largest bitset type *)
+(* LONGLONGBITSET - Alias for largest bitset type *)
 
 IMPORT LONGLONGBITSET+; (* import into client module *)
 

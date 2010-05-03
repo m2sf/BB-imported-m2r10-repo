@@ -13,11 +13,11 @@ PROCEDURE Read ( infile : File; VAR ch : CHAR );
    - the code point of the character value read is assigned to ch
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a CHAR argument. *)
+   procedure is substituted for invocations of READ with a CHAR argument. *)
 
 PROCEDURE Write ( outfile : File; ch : CHAR );
 (* Writes the textual representation of CHAR ch to stream outfile. This
-   function is substituted for invocations of WRITE with a CHAR argument.*)
+   procedure is substituted for invocations of WRITE with a CHAR argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

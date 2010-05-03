@@ -22,8 +22,9 @@ TYPE
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE awkToM2Regex ( awkExpr : ARRAY OF CHAR; VAR m2Expr : ARRAY OF CHAR;
-                         VAR status : Status );
+PROCEDURE awkToM2Regex ( CONST awkExpr : ARRAY OF CHAR;
+                         VAR m2Expr    : ARRAY OF CHAR;
+                         VAR status    : Status );
 
 
 (* ---------------------------------------------------------------------------
@@ -35,8 +36,9 @@ PROCEDURE awkToM2Regex ( awkExpr : ARRAY OF CHAR; VAR m2Expr : ARRAY OF CHAR;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE m2RegexToAWK ( m2Expr : ARRAY OF CHAR; VAR awkExpr : ARRAY OF CHAR;
-                         VAR status : Status );
+PROCEDURE m2RegexToAWK ( CONST m2Expr : ARRAY OF CHAR;
+                         VAR awkExpr  : ARRAY OF CHAR;
+                         VAR status   : Status );
 
 
 END RegexConv.

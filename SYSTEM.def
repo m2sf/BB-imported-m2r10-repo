@@ -16,7 +16,7 @@ CONST
 
 
 TYPE
-    BYTE;  (* virtual byte with a bit width divisible by eight *)
+    BYTE = ARRAY OctetsPerByte OF OCTET;  (* virtual byte *)
 
     WORD = ARRAY BytesPerWord OF BYTE;  (* virtual word *)
 

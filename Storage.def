@@ -19,7 +19,7 @@ PROCEDURE ALLOCATE( VAR p : ADDRESS; size : LONGCARD );
 (* Deallocator *)
 
 PROCEDURE DEALLOCATE( p : ADDRESS; size : LONGCARD );
-(* Deallocates a previously allocated block of memory of at address p if the
+(* Deallocates a previously allocated block of memory at address p if the
    value of isGarbageCollection in FALSE, otherwise returns without action.
    This procedure is required by pervasive macro-procedure DISPOSE. *)
 

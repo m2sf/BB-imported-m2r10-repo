@@ -13,7 +13,7 @@ TYPE Exceptions = OPAQUE;
 
 TYPE Exception = ARRAY 32 OF CHAR;
 
-(* Exceotion Handler Type *)
+(* Exception Handler Type *)
 
 TYPE Handler = PROCEDURE;
 
@@ -82,9 +82,9 @@ PROCEDURE [COUNT] exceptionCount ( dispatchTable : Exceptions ) : LONGCARD;
 PROCEDURE [FOR] nextException ( dispatchTable : Exceptions;
                     VAR e : Exception; VAR handler : Handler );
 (* Finds the successor of <e> and passes its exception/handler pair back in
-   <exception> and <handler>. If the null key is passed in then the first
-   exception/handler pair is passed back. If no successor is found then the
-   null key is passed back in <e> and <handler> is undefined. This procedure
+   <exception> and <handler>. If the empty string is passed in for e then the
+   first exception/handler pair is passed back. If no successor is found then
+   the empty string is passed back in <e> and NIL in <handler>. This procedure
    is bound to the FOR .. IN iterator for type Exceptions. *)
 
 

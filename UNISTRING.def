@@ -20,7 +20,7 @@ TYPE UNISTRING = OPAQUE ("S-Type");
 
 PROCEDURE [NEW] new ( VAR s : UNISTRING );
 (* Allocates a new object of type UNISTRING and returns a pointer to it in s.
-   This function is bound to pervasive procedure NEW for type UNISTRING. *)
+   This procedure is bound to pervasive procedure NEW for type UNISTRING. *)
 
 
 (* accessor *)
@@ -34,8 +34,8 @@ PROCEDURE [.] characterAtIndex ( s : UNISTRING; index : LONGCARD ) : UNICHAR;
 
 PROCEDURE [!] replaceCharAtIndex ( s : UNISTRING; index : LONGCARD;
                                    ch : UNICHAR );
-(* Replaces the character at the specified index in UNISTRING s with ch.
-   This function is bound to the lvalue array operator [ ] for type UNISTRING. *)
+(* Replaces the character at the specified index in UNISTRING s with ch. This
+   procedure is bound to the lvalue array operator [ ] for type UNISTRING. *)
 
 PROCEDURE insertCharsAtIndex ( s : UNISTRING; index : LONGCARD;
                                characters : ARRAY OF UNICHAR );
@@ -56,7 +56,7 @@ PROCEDURE [LENGTH] length ( s : UNISTRING ) : LONGCARD;
 
 PROCEDURE [:=] assign ( VAR s : UNISTRING; literal : ARRAY OF CHAR );
 (* Converts string literal to a UNISTRING value and assigns it to s.
-   This function is bound to the := operator for literal assignment. *)
+   This procedure is bound to the := operator for literal assignment. *)
 
 
 (* concatenation *)
@@ -85,7 +85,7 @@ PROCEDURE [>] isGreater ( s1, s2 : UNISTRING ) : BOOLEAN;
 
 PROCEDURE [DISPOSE] dispose ( VAR s : UNISTRING );
 (* Deallocates UNISTRING s and assigns NIL to s.
-   This function is bound to pervasive procedure DISPOSE for type UNISTRING. *)
+   This procedure is bound to pervasive procedure DISPOSE for type UNISTRING.*)
 
 
 (* IO procedures *)
@@ -98,16 +98,18 @@ PROCEDURE Read ( infile : File; s : UNISTRING );
    - the textual representation of the string read is assigned to the variable
      passed in for s
    - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This function
-   is substituted for invocations of READ with a UNISTRING argument. *)
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+     procedure is substituted for invocations of READ with a UNISTRING
+     argument. *)
 
 PROCEDURE Write ( outfile : File; s : UNISTRING );
 (* Writes the textual representation of UNISTRING s to stream outfile. This
-   function is substituted for invocations of WRITE with a UNISTRING argument.*)
+   procedure is substituted for invocations of WRITE with a UNISTRING
+   argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST UNISTRING );
+                   items        : VARIADIC OF UNISTRING );
 (* Writes a formatted textual representation of one or more UNISTRING values
    to output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more

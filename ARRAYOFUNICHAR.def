@@ -13,11 +13,11 @@ PROCEDURE Read ( infile : File; VAR s : ARRAY OF UNICHAR );
    - the code point of the character value read is assigned to s
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput.
-   This function is substituted for invocations of READ with an
+   This procedure is substituted for invocations of READ with an
    ARRAY OF UNICHAR type argument. *)
 
-PROCEDURE Write ( outfile : File; s : ARRAY OF UNICHAR );
-(* Writes string s to stream outfile. This function is substituted
+PROCEDURE Write ( outfile : File; CONST s : ARRAY OF UNICHAR );
+(* Writes string s to stream outfile. This procedure is substituted
    for invocations of WRITE with an ARRAY OF UNICHAR type argument.*)
 
 PROCEDURE WriteF ( outfile      : File;

@@ -14,7 +14,7 @@ PROCEDURE ReadString ( VAR s : ARRAY OF CHAR );
 (* Reads a character sequence terminated by Newline from stdIn
    and passed it back in s. *)
 
-PROCEDURE WriteString ( s : ARRAY OF CHAR );
+PROCEDURE WriteString ( CONST s : ARRAY OF CHAR );
 (* Writes character string s to stdOut. *)
 
 PROCEDURE WriteLn;

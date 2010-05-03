@@ -6,18 +6,19 @@ DEFINITION MODULE Scanner;
 
 
 FROM FileIO IMPORT File;
+IMPORT CHARSET;
 
 
 (* Read text *)
 
 PROCEDURE ReadStrWithChars ( file : File; VAR s : ARRAY OF CHAR;
-                             CONST trimLeading, charsToRead : SET OF CHAR );
+                             CONST trimLeading, charsToRead : CHARSET );
 (* Reads a string from <file> and passes it back in <s>. Any leading
    characters in set <trimLeading> are ignored. Characters are read
    until the first character not in set <charsToRead> is found. *)
 
 PROCEDURE ReadStrToDelim ( file : File; VAR s : ARRAY OF CHAR;
-                           CONST trimLeading, delimiterChars : SET OF CHAR );
+                           CONST trimLeading, delimiterChars : CHARSET );
 (* Reads a string from <file> and passes it back in <s>. Any leading
    characters in set <trimLeading> are ignored. Characters are read
    until the first delimiter character is found. Delimiter characters
@@ -26,11 +27,11 @@ PROCEDURE ReadStrToDelim ( file : File; VAR s : ARRAY OF CHAR;
 
 (* Skip text *)
 
-PROCEDURE SkipChars ( file : File; CONST skipChars : SET OF CHAR );
+PROCEDURE SkipChars ( file : File; CONST skipChars : CHARSET );
 (* Read and ignore any characters up to the first character
    not in set <skipChars>. *)
 
-PROCEDURE SkipTo ( File : File; CONST skipToChar : SET OF CHAR );
+PROCEDURE SkipTo ( File : File; CONST skipToChar : CHARSET );
 (* Read and ignore all characters up to but excluding the first
    character that is a member of set <skipToChar>. *)
 

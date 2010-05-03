@@ -139,7 +139,7 @@ TYPE
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE new ( expr : ARRAY OF CHAR; VAR status : Status ) : NFA;
+PROCEDURE new ( CONST expr : ARRAY OF CHAR; VAR status : Status ) : NFA;
 
 
 (* ---------------------------------------------------------------------------
@@ -169,7 +169,7 @@ PROCEDURE installNotificationHandler ( automaton : NFA;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE match ( automaton : NFA; str : ARRAY OF CHAR;
+PROCEDURE match ( automaton : NFA; CONST str : ARRAY OF CHAR;
                   VAR status : Status ) : BOOLEAN;
 
 
@@ -183,7 +183,7 @@ PROCEDURE match ( automaton : NFA; str : ARRAY OF CHAR;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE instantMatch ( expr, str : ARRAY OF CHAR;
+PROCEDURE instantMatch ( CONST expr, str : ARRAY OF CHAR;
                          handler : NotificationHandler;
                          VAR status : Status ) : BOOLEAN;
 
@@ -192,9 +192,9 @@ PROCEDURE instantMatch ( expr, str : ARRAY OF CHAR;
  * function:  Regex.dispose( automaton )
  * ---------------------------------------------------------------------------
  *
- * Disposes of regular expression automaton <automaton>.  Returns NIL. *)
+ * Disposes of regular expression automaton <automaton>.  Passes back NIL. *)
 
-PROCEDURE dispose ( automaton : NFA ) : NFA;
+PROCEDURE dispose ( VAR automaton : NFA );
 
 
 END Regex.

@@ -52,11 +52,11 @@ PROCEDURE Read ( infile : File; VAR r : LONGREAL );
    - the textual representation of the value read is assigned to r
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a LONGREAL argument. *)
+   procedure is substituted for invocations of READ with a LONGREAL argument.*)
 
-PROCEDURE Write ( outfile : File; n : LONGREAL );
-(* Writes the value of LONGREAL r in simple format to stream outfile. This
-   function is substituted for invocations of WRITE with a LONGREAL argument.*)
+PROCEDURE Write ( outfile : File; r : LONGREAL );
+(* Writes the value of LONGREAL r in simple format to stream outfile. This pro-
+   cedure is substituted for invocations of WRITE with a LONGREAL argument. *)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

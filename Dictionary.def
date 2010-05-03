@@ -34,11 +34,11 @@ PROCEDURE [.] valueForKey ( dict : Dictionary;
 PROCEDURE [!] storeValue ( dict : Dictionary;
                            key : KeyType; value : ValueType );
 (* Stores value for key in dict, overwrites the previous value if key is
-   already present in dict. This function is bound to the array operator [ ]
+   already present in dict. This procedure is bound to the array operator [ ]
    for lvalues of type Dictionary. *)
 
 PROCEDURE [-] removeValue ( dict : Dictionary; key : KeyType );
-(* Removes the entry whose key is key from dict. This function is bound
+(* Removes the entry whose key is key from dict. This procedure is bound
    to the array operator [ ] for lvalues of type Dictionary in assignments
    where the rvalue is the null key for type Dictionary. *)
 
@@ -65,13 +65,13 @@ PROCEDURE [FOR] nextEntry ( dict : Dictionary;
    in key and value. If the null key is passed in then the first key/value
    pair is passed back in key and value. If no successor key is found then
    the null key is passed back in key and value remain unmodified. This
-   function is bound to the FOR .. IN iterator for type Dictionary. *)
+   procedure is bound to the FOR .. IN iterator for type Dictionary. *)
 
 
 (* destructor *)
 
 PROCEDURE [DISPOSE] dispose ( VAR dict : Dictionary );
-(* Deallocates dict and passes NIL back in dict. This function
+(* Deallocates dict and passes NIL back in dict. This procedure
    is bound to pervasive procedure DISPOSE for type Dictionary. *)
 
 

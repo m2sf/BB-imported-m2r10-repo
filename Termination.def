@@ -10,8 +10,8 @@ TYPE Handler = PROCEDURE;
 
 PROCEDURE InstallHandler ( handler : Handler );
 (* Installs <handler> as a termination handler at the top of the termination
-   handler stack. Each module that requires termination should install its own
-   handler during module initialisation. *)
+   handler stack. Each module that requires termination should use this
+   procedure to install its own handler during module initialisation. *)
 
 PROCEDURE WindDown;
 (* Removes and calls each termination handler on the termination handler stack.

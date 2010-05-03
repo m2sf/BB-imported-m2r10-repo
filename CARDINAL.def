@@ -30,11 +30,11 @@ PROCEDURE Read ( infile : File; VAR n : CARDINAL );
    - the textual representation of the value read is assigned to n
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a CARDINAL argument. *)
+   procedure is substituted for invocations of READ with a CARDINAL argument.*)
 
 PROCEDURE Write ( outfile : File; n : CARDINAL );
 (* Writes the value of CARDINAL n in simple format to stream outfile. This
-   function is substituted for invocations of WRITE with a CARDINAL argument.*)
+   procedure is substituted for invocations of WRITE with a CARDINAL argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

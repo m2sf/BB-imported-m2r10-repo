@@ -30,11 +30,11 @@ PROCEDURE Read ( infile : File; VAR n : INTEGER );
    - the textual representation of the value read is assigned to n
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a INTEGER argument. *)
+   procedure is substituted for invocations of READ with a INTEGER argument.*)
 
 PROCEDURE Write ( outfile : File; n : INTEGER );
-(* Writes the value of INTEGER n in simple format to stream outfile. This
-   function is substituted for invocations of WRITE with a INTEGER argument.*)
+(* Writes the value of INTEGER n in simple format to stream outfile. This pro-
+   cedure is substituted for invocations of WRITE with an INTEGER argument. *)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

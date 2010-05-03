@@ -24,7 +24,7 @@ PROCEDURE Read ( infile : File; VAR set : BITSET );
    - the textual representation of the value read is assigned to set
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a BITSET argument. *)
+   procedure is substituted for invocations of READ with a BITSET argument. *)
 
 PROCEDURE Write ( outfile : File; CONST set : BITSET );
 (* Writes the value of BITSET set in simple format to stream outfile. This

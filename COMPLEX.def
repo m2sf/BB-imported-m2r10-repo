@@ -67,11 +67,11 @@ PROCEDURE Read( infile : File; VAR z : COMPLEX );
      passed in for z
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a COMPLEX argument. *)
+   procedure is substituted for invocations of READ with a COMPLEX argument. *)
 
-PROCEDURE Write( outfile : File; z : COMPLEX );
+PROCEDURE Write( outfile : File; CONST z : COMPLEX );
 (* Writes the textual representation of value z to output stream outfile. This
-   function is substituted for invocations of WRITE with a COMPLEX argument.*)
+   procedure is substituted for invocations of WRITE with a COMPLEX argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

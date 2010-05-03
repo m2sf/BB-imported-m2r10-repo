@@ -30,11 +30,11 @@ PROCEDURE Read ( infile : File; VAR n : LONGCARD );
    - the textual representation of the value read is assigned to n
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a LONGCARD argument. *)
+   procedure is substituted for invocations of READ with a LONGCARD argument.*)
 
 PROCEDURE Write ( outfile : File; n : LONGCARD );
 (* Writes the value of LONGCARD n in simple format to stream outfile. This
-   function is substituted for invocations of WRITE with a LONGCARD argument.*)
+   procedure is substituted for invocations of WRITE with a LONGCARD argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

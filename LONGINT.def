@@ -34,7 +34,7 @@ PROCEDURE Read ( infile : File; VAR n : LONGINT );
 
 PROCEDURE Write ( outfile : File; n : LONGINT );
 (* Writes the value of LONGINT n in simple format to stream outfile. This
-   function is substituted for invocations of WRITE with a LONGINT argument.*)
+   procedure is substituted for invocations of WRITE with a LONGINT argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

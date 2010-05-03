@@ -34,7 +34,7 @@ CONST [TMAX] maxValue = 65535;
 
 PROCEDURE [:=] assign ( VAR assignTo : CARD16; literal : ARRAY OF CHAR );
 (* Converts string literal to a CARD16 value and assigns it to assignTo.
-   This function is bound to the := operator for literal assignment. *)
+   This procedure is bound to the := operator for literal assignment. *)
 
 
 (* Type conversions *)
@@ -107,12 +107,12 @@ CONST digitCapacity = 4; (* maximum digits in native format *)
 
 PROCEDURE [TO] toSXF ( n : CARD16; VAR s : ARRAY OF CHAR );
 (* Converts CARD16 value n to a string in scalar exchange format.
-   This function is used to synthesise conversions to other scalar types
+   This procedure is used to synthesise conversions to other scalar types
    when no direct conversion path exists. *)
 
-PROCEDURE [FROM] fromSXF ( VAR n : CARD16; s : ARRAY OF CHAR );
+PROCEDURE [FROM] fromSXF ( VAR n : CARD16; CONST s : ARRAY OF CHAR );
 (* Converts a string in scalar exchange format to a CARD16 value.
-   This function is used to synthesise conversions from other scalar types
+   This procedure is used to synthesise conversions from other scalar types
    when no direct conversion path exists. *)
 
 
@@ -127,11 +127,11 @@ PROCEDURE Read( infile : File; VAR n : CARD16 );
      passed in for n
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a CARD16 argument. *)
+   procedure is substituted for invocations of READ with a CARD16 argument. *)
 
 PROCEDURE Write( outfile : File; n : CARD16 );
 (* Writes the textual representation of value n to stream outfile. This
-   function is substituted for invocations of WRITE with a CARD16 argument.*)
+   procedure is substituted for invocations of WRITE with a CARD16 argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

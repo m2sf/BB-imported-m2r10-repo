@@ -20,7 +20,7 @@ TYPE STRING = OPAQUE ("S-Type");
 
 PROCEDURE [NEW] new ( VAR s : STRING );
 (* Allocates a new object of type STRING and returns a pointer to it in s.
-   This function is bound to pervasive procedure NEW for type STRING. *)
+   This procedure is bound to pervasive procedure NEW for type STRING. *)
 
 
 (* accessor *)
@@ -34,7 +34,7 @@ PROCEDURE [.] characterAtIndex ( s : STRING; index : LONGCARD ) : CHAR;
 
 PROCEDURE [!] replaceCharAtIndex ( s : STRING; index : LONGCARD; ch : CHAR );
 (* Replaces the character at the specified index in STRING s with ch. This
-   function is bound to the array operator [ ] for lvalues of type STRING. *)
+   procedure is bound to the array operator [ ] for lvalues of type STRING. *)
 
 PROCEDURE insertCharsAtIndex ( s : STRING; index : LONGCARD;
                                characters : ARRAY OF CHAR );
@@ -55,7 +55,7 @@ PROCEDURE [LENGTH] length ( s : STRING ) : LONGCARD;
 
 PROCEDURE [:=] assign ( VAR s : STRING; literal : ARRAY OF CHAR );
 (* Converts string literal to a STRING value and assigns it to s.
-   This function is bound to the := operator for literal assignment. *)
+   This procedure is bound to the := operator for literal assignment. *)
 
 
 (* concatenation *)
@@ -84,7 +84,7 @@ PROCEDURE [>] isGreater ( s1, s2 : STRING ) : BOOLEAN;
 
 PROCEDURE [DISPOSE] dispose ( VAR s : STRING );
 (* Deallocates STRING s and assigns NIL to s.
-   This function is bound to pervasive procedure DISPOSE for type STRING. *)
+   This procedure is bound to pervasive procedure DISPOSE for type STRING. *)
 
 
 (* IO procedures *)
@@ -98,15 +98,15 @@ PROCEDURE Read ( infile : File; s : STRING );
      passed in for s
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a STRING argument. *)
+   procedure is substituted for invocations of READ with a STRING argument. *)
 
 PROCEDURE Write ( outfile : File; s : STRING );
 (* Writes the textual representation of STRING s to stream outfile. This
-   function is substituted for invocations of WRITE with a STRING argument.*)
+   procedure is substituted for invocations of WRITE with a STRING argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST STRING );
+                   items        : VARIADIC OF STRING );
 (* Writes a formatted textual representation of one or more STRING values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more

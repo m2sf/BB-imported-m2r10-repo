@@ -20,7 +20,7 @@ TYPE
 PROCEDURE [:=] assign ( VAR assignTo : BS128;
                         elements     : VARIADIC OF CARDINAL );
 (* Assigns a variadic list of values of type CARDINAL to BS128 assignTo.
-   This function is bound to the := operator for literal assignment. *)
+   This procedure is bound to the := operator for literal assignment. *)
 
 
 (* accessor *)
@@ -37,7 +37,7 @@ PROCEDURE [!] storeValue ( CONST set : BS128;
                            element   : CARDINAL;
                            value     : BOOLEAN );
 (* Includes character element in BS128 set if value is TRUE, otherwise
-   removes it from set. This function is bound to the array operator [ ]
+   removes it from set. This procedure is bound to the array operator [ ]
    for lvalues of type BS128. *)
 
 
@@ -102,7 +102,7 @@ PROCEDURE Read ( infile : File; VAR set : BS128 );
    - the textual representation of the value read is assigned to set
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a BS128 argument. *)
+   procedure is substituted for invocations of READ with a BS128 argument. *)
 
 PROCEDURE Write ( outfile : File; CONST set : BS128 );
 (* Writes the value of CHARSET set in simple format to stream outfile. This

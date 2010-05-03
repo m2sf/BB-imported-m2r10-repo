@@ -38,7 +38,7 @@ CONST [TMAX] maxValue =
 
 PROCEDURE [:=] assign ( VAR assignTo : INT128; literal : ARRAY OF CHAR );
 (* Converts string literal to an INT128 value and assigns it to assignTo.
-   This function is bound to the := operator for literal assignment. *)
+   This procedure is bound to the := operator for literal assignment. *)
 
 
 (* Type conversions *)
@@ -115,12 +115,12 @@ CONST digitCapacity = 16; (* maximum digits in native format *)
 
 PROCEDURE [TO] toSXF ( n : INT128; VAR s : ARRAY OF CHAR );
 (* Converts INT128 value n to a string in scalar exchange format.
-   This function is used to synthesise conversions to other scalar types
+   This procedure is used to synthesise conversions to other scalar types
    when no direct conversion path exists. *)
 
-PROCEDURE [FROM] fromSXF ( VAR n : INT128; s : ARRAY OF CHAR );
+PROCEDURE [FROM] fromSXF ( VAR n : INT128; CONST s : ARRAY OF CHAR );
 (* Converts a string in scalar exchange format to an INT128 value.
-   This function is used to synthesise conversions from other scalar types
+   This procedure is used to synthesise conversions from other scalar types
    when no direct conversion path exists. *)
 
 
@@ -135,11 +135,11 @@ PROCEDURE Read( infile : File; VAR n : INT128 );
      passed in for n
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with an INT128 argument. *)
+   procedure is substituted for invocations of READ with an INT128 argument. *)
 
-PROCEDURE Write( outfile : File; n : INT128 );
+PROCEDURE Write( outfile : File; CONST n : INT128 );
 (* Writes the textual representation of value n to stream outfile. This
-   function is substituted for invocations of WRITE with an INT128 argument.*)
+   procedure is substituted for invocations of WRITE with an INT128 argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

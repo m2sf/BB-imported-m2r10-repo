@@ -10,7 +10,8 @@ TYPE
     Facility = ( StackTrace, PostMortem, SystemReset );
 
     Exception = ( DivByZero, DerefNIL, TypeOverflow, IndexOutOfBounds,
-                  StackOverflow, OutOfMemory, UserAbort );
+                  StringCapacityExceeded, StackOverflow, OutOfMemory,
+                  UserAbort );
 
     NotificationHandler = PROCEDURE ( ADDRESS, ADDRESS );
     (* notification handler procedures must accept two parameters:

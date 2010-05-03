@@ -58,17 +58,19 @@ VAR
 
 (* Opening files *)
 
-PROCEDURE Open ( VAR file : File;
-                 filename : ARRAY OF CHAR; mode : Mode; VAR status : Status );
+PROCEDURE Open ( VAR file       : File;
+                 CONST filename : ARRAY OF CHAR;
+                 mode           : Mode;
+                 VAR status     : Status );
 (* Opens the file <filename> in file mode <mode>. If sucessful passes a file
    accessor back in <file>, otherwise passes NIL back in <file>. The status of
    the operation is passed back in <status>. *)
 
-PROCEDURE OpenWithBuffer ( VAR file   : File;
-                           filename   : ARRAY OF CHAR;
-                           mode       : Mode;
-                           VAR buffer : ARRAY OF OCTET;
-                           VAR status : Status );
+PROCEDURE OpenWithBuffer ( VAR file         : File;
+                           CONST filename   : ARRAY OF CHAR;
+                           mode             : Mode;
+                           VAR buffer       : ARRAY OF OCTET;
+                           VAR status       : Status );
 (* Opens the file <filename> in file mode <mode> using <buffer> as a custom
    file buffer. If successful passes a file accessor back in <file>, otherwise
    passes NIL back in <file>. The status is passed back in <status>. *)
@@ -135,7 +137,7 @@ PROCEDURE ReadBlock ( file : File;
 PROCEDURE WriteBlock ( file : File;
                        data : ARRAY OF OCTET; VAR octetsWritten : FileSize );
 (* Writes the block of data passed in <data> starting at the current position
-   of <file> and passed the number of octets written back in <octetsWritten>. 
+   of <file> and passes the number of octets written back in <octetsWritten>. 
    The read/write position of <file> is advanced accordingly. *)
 
 PROCEDURE Flush ( file : File );
@@ -145,7 +147,7 @@ PROCEDURE Flush ( file : File );
 (* Closing files *)
 
 PROCEDURE Close ( VAR file : File; VAR status : Status );
-(* Preforms Flush on <file> and closes the associated file. Passes NIL back
+(* Performs Flush on <file> and closes the associated file. Passes NIL back
    in <file>. The status of the operation is passed back in <status>. *)
 
 END FileIO.

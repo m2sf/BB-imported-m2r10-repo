@@ -20,19 +20,19 @@ FROM FileIO IMPORT File;
     WORD values are always left padded with zeroes to the length
     required to represent the maximum value of type WORD. *)
 
-PROCEDURE Read ( infile : File; VAR n : WORD );
+PROCEDURE Read ( infile : File; VAR w : WORD );
 (* Reads the textual representation of a WORD value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
      removed from infile
-   - the textual representation of the value read is assigned to n
+   - the textual representation of the value read is assigned to w
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a WORD argument. *)
+   procedure is substituted for invocations of READ with a WORD argument. *)
 
-PROCEDURE Write ( outfile : File; n : WORD );
-(* Writes the value of WORD n in standard format to stream outfile. This
-   function is substituted for invocations of WRITE with a WORD argument.*)
+PROCEDURE Write ( outfile : File; w : WORD );
+(* Writes the value of WORD w in standard format to stream outfile. This
+   procedure is substituted for invocations of WRITE with a WORD argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

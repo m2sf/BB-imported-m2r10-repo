@@ -66,12 +66,12 @@ PROCEDURE Read( infile : File; VAR z : LONGCOMPLEX );
    - the numeric value of the numeral string read is assigned to the variable
      passed in for z
    - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This function
-   is substituted for invocations of READ with a LONGCOMPLEX argument. *)
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This procedure
+     is substituted for invocations of READ with a LONGCOMPLEX argument. *)
 
-PROCEDURE Write( outfile : File; z : LONGCOMPLEX );
-(* Writes the textual representation of value z to stream outfile. This func-
-   tion is substituted for invocations of WRITE with a LONGCOMPLEX argument.*)
+PROCEDURE Write( outfile : File; CONST z : LONGCOMPLEX );
+(* Writes the textual representation of value z to stream outfile. This pro-
+   cedure is substituted for invocations of WRITE with a LONGCOMPLEX argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

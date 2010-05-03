@@ -20,19 +20,19 @@ FROM FileIO IMPORT File;
     ADDRESS values are always left padded with zeroes to the length
     required to represent the maximum value of type ADDRESS. *)
 
-PROCEDURE Read ( infile : File; VAR n : ADDRESS );
+PROCEDURE Read ( infile : File; VAR adr : ADDRESS );
 (* Reads the textual representation of an ADDRESS value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
      removed from infile
-   - the textual representation of the value read is assigned to n
+   - the textual representation of the value read is assigned to adr
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a ADDRESS argument. *)
+   procedure is substituted for invocations of READ with a ADDRESS argument.*)
 
-PROCEDURE Write ( outfile : File; n : ADDRESS );
-(* Writes the value of ADDRESS n in standard format to stream outfile. This
-   function is substituted for invocations of WRITE with a ADDRESS argument.*)
+PROCEDURE Write ( outfile : File; adr : ADDRESS );
+(* Writes the value of ADDRESS adr in standard format to stream outfile. This
+   procedure is substituted for invocations of WRITE with an ADDRESS argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

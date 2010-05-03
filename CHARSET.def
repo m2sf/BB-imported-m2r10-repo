@@ -20,7 +20,7 @@ TYPE
 PROCEDURE [:=] assign ( VAR assignTo : CHARSET;
                         elements     : VARIADIC OF CHAR );
 (* Assigns a variadic list of values of type CHAR to CHARSET assignTo.
-   This function is bound to the := operator for literal assignment. *)
+   This procedure is bound to the := operator for literal assignment. *)
 
 
 (* accessor *)
@@ -37,7 +37,7 @@ PROCEDURE [!] storeValue ( CONST set : CHARSET;
                            element   : CHAR;
                            value     : BOOLEAN );
 (* Includes character element in CHARSET set if value is TRUE, otherwise
-   removes it from set. This function is bound to the array operator [ ]
+   removes it from set. This procedure is bound to the array operator [ ]
    for lvalues of type CHARSET. *)
 
 
@@ -112,7 +112,7 @@ PROCEDURE Read ( infile : File; VAR set : CHARSET );
    - the textual representation of the value read is assigned to set
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   function is substituted for invocations of READ with a CHARSET argument. *)
+   procedure is substituted for invocations of READ with a CHARSET argument.*)
 
 PROCEDURE Write ( outfile : File; CONST set : CHARSET );
 (* Writes the value of CHARSET set in simple format to stream outfile. This

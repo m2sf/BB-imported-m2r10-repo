@@ -32,7 +32,7 @@ CONST [TMAX] maxValue = +9.9999999999999E+99;
 
 PROCEDURE [:=] assign ( VAR assignTo : BCD; literal : ARRAY OF CHAR );
 (* Converts string literal to a BCD value and assigns it to assignTo.
-   This function is bound to the := operator for literal assignment. *)
+   This procedure is bound to the := operator for literal assignment. *)
 
 
 (* Type conversions *)
@@ -101,12 +101,12 @@ CONST digitCapacity = 15; (* maximum digits *)
 
 PROCEDURE [TO] toSXF ( b : BCD; VAR s : ARRAY OF CHAR );
 (* Converts a BCD value to a string in scalar exchange format.
-   This function is used to synthesise conversions to other scalar types
+   This procedure is used to synthesise conversions to other scalar types
    when no direct conversion path exists. *)
 
-PROCEDURE [FROM] fromSXF ( VAR b : BCD; s : ARRAY OF CHAR );
+PROCEDURE [FROM] fromSXF ( VAR b : BCD; CONST s : ARRAY OF CHAR );
 (* Converts a string in scalar exchange format to a BCD value.
-   This function is used to synthesise conversions from other scalar types
+   This procedure is used to synthesise conversions from other scalar types
    when no direct conversion path exists. *)
 
 
@@ -120,12 +120,12 @@ PROCEDURE Read( infile : File; VAR b : BCD );
    - the numeric value of the numeral string read is assigned to the variable
      passed in for b
    - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput.
-   This function is substituted for invocations of READ with a BCD argument. *)
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+     procedure is substituted for invocations of READ with a BCD argument. *)
 
-PROCEDURE Write( outfile : File; b : BCD );
-(* Writes the textual representation of value b to output stream outfile.
-   This function is substituted for invocations of WRITE with a BCD argument.*)
+PROCEDURE Write( outfile : File; CONST b : BCD );
+(* Writes the textual representation of value b to output stream outfile. This
+   procedure is substituted for invocations of WRITE with a BCD argument. *)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

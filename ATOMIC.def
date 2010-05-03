@@ -31,11 +31,11 @@ PROCEDURE BWNAND( VAR x : <Type>; y : <Type> );
 (* Atomically performs bitwise NAND of x and y, and passes the result in x.
    Type must be an 8, 16, 32 or 64 bit type. *)
 
-PROCEDURE BWOR( VAR x : <Type>; y : <Type> ) : <Type>;
+PROCEDURE BWOR( VAR x : <Type>; y : <Type> );
 (* Atomically performs bitwise OR of x and y, and passes the result in x.
    Type must be an 8, 16, 32 or 64 bit type. *)
 
-PROCEDURE BWXOR( VAR x : <Type>; y : <Type> ) : <Type>;
+PROCEDURE BWXOR( VAR x : <Type>; y : <Type> );
 (* Atomically performs bitwise XOR of x and y, and passes the result in x.
    Type must be an 8, 16, 32 or 64 bit type. *)
 

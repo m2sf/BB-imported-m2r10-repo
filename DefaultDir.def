@@ -7,7 +7,7 @@ DEFINITION MODULE DefaultDir;
 FROM Filesystem IMPORT Status, Attributes;
 
 
-(* Get and set working directory *)
+(* Get and set current directory *)
 
 PROCEDURE GetCurrentDir ( VAR path : ARRAY OF CHAR );
 (* Passes the current directory's path in <path>. *)
