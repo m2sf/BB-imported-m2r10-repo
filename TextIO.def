@@ -2,7 +2,7 @@
 
 DEFINITION MODULE TextIO;
 
-(* Text File based IO *)
+(* Line Oriented Text IO *)
 
 
 FROM FileIO IMPORT File;
@@ -10,10 +10,9 @@ FROM FileIO IMPORT File;
 
 (* Read a line of text *)
 
-PROCEDURE ReadLine ( file : File; VAR s : ARRAY OF CHAR );
-(* Reads a string from <file> and passes it back in <s>. Characters are read
-   until newline or end-of-file is reached or the capacity of <s> is
-   exhausted.*)
+PROCEDURE ReadLine ( file : File; VAR str : ARRAY OF CHAR );
+(* Reads a line of text from <file> and passes it back in <str>. A runtime
+   error is raised if the line exceeds the capacity of <str>. *)
 
 
 (* Skip a line of text *)
@@ -24,13 +23,14 @@ PROCEDURE SkipLine ( file : File );
 
 (* Write a line of text *)
 
-PROCEDURE WriteLine ( file : File; CONST s : ARRAY OF CHAR );
-(* Writes <s> and newline to <file>. *)
+PROCEDURE WriteLine ( file : File; str : VARIADIC OF CONST ARRAY OF CHAR );
+(* Writes a sequence of character strings as a line to <file>. The line is
+   terminated by newline. *)
 
 
-(* Write a line-end *)
+(* Write an empty line of text *)
 
 PROCEDURE WriteLn ( file : File );
-(* Writes newline to <file>. *)
+(* Writes an empty line to <file>. The line is terminated by newline. *)
 
 END TextIO.
