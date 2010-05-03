@@ -28,7 +28,7 @@ PROCEDURE Read ( infile : File; VAR adr : ADDRESS );
    - the textual representation of the value read is assigned to adr
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with a ADDRESS argument.*)
+   procedure is substituted for invocations of READ with an ADDRESS argument.*)
 
 PROCEDURE Write ( outfile : File; adr : ADDRESS );
 (* Writes the value of ADDRESS adr in standard format to stream outfile. This
