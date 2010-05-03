@@ -183,7 +183,7 @@ opaqueType :
 	OPAQUE ( '(' semanticType ')' | recordType )?
 	;
 
-// "A-Type", "S-Type", "Z-Type", "R-Type", "C-Type", "V-Type"
+// "A-Type", "B-Type", "S-Type", "Z-Type", "R-Type", "C-Type", "V-Type"
 semanticType : string ;
 
 // production #12
@@ -229,11 +229,11 @@ fieldList :
 
 // production #18
 setType :	
-	SET OF ( ordinalType | '(' identList ')' | '[' constExpression ']' )
+	SET OF ( namedEnumType | '(' identList ')' )
 	;
 
 // alias
-ordinalType : namedType ;
+namedEnumType : namedType ;
 
 // production #19
 pointerType :

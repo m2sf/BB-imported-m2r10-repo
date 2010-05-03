@@ -41,6 +41,8 @@ Pervasive Type IO:
 
 PervasiveIO.def     aggregator module to import all pervasive IO modules
 BOOLEAN.def         IO module for type BOOLEAN
+BITSET.def          IO module for type BITSET
+LONGBITSET.def      IO module for type LONGBITSET
 CHAR.def            IO module for type CHAR
 ARRAYOFCHAR.def     IO module for ARRAY OF CHAR types
 UNICHAR.def         IO module for type UNICHAR
@@ -55,10 +57,10 @@ LONGREAL.def        IO module for type LONGREAL
 
 Library defined types:
 
-BCD.def             single precision binary coded decimals
-LONGBCD.def         double precision binary coded decimals
-COMPLEX.def         single precision complex number type
-LONGCOMPLEX.def     double precision complex number type
+BS16.def            16-bit bitset type
+BS32.def            32-bit bitset type
+BS64.def            64-bit bitset type
+BS128.def           128-bit bitset type
 CARD16.def          16-bit unsigned integer type
 CARD32.def          32-bit unsigned integer type
 CARD64.def          64-bit unsigned integer type
@@ -67,8 +69,10 @@ INT16.def           16-bit signed integer type
 INT32.def           32-bit signed integer type
 INT64.def           64-bit signed integer type
 INT128.def          128-bit signed integer type
-BITSET.def          bitset type of same size as CARDINAL
-LONGBITSET.def      bitset type of same size as LONGCARDINAL
+BCD.def             single precision binary coded decimals
+LONGBCD.def         double precision binary coded decimals
+COMPLEX.def         single precision complex number type
+LONGCOMPLEX.def     double precision complex number type
 CHARSET.def         character set type
 STRING.def          dynamic ASCII strings
 UNISTRING.def       dynamic unicode strings
@@ -76,8 +80,11 @@ Dictionary.def      associative array of strings
 
 Alias types:
 
+Bitsets.def         alias types for bitsets with guaranteed widths
 Cardinals.def       alias types for unsigned integers with guaranteed widths
 Integers.def        alias types for signed integers with guaranteed widths
+SHORTBITSET.def     alias type for bitset with smallest width
+LONGLONGBITSET.def  alias type for bitset with largest width
 SHORTCARD.def       alias type for unsigned integers with smallest width
 LONGLONGCARD.def    alias type for unsigned integers with largest width
 SHORTINT.def        alias type for signed integers with smallest width
@@ -115,4 +122,4 @@ PatriciaTrie.def    generic Patricia trie template
 DynamicArray.def    generic dynamic array template
 KeyValueStore.def   generic key value storage template
 
-[status: April 30, 2010 -- further modules are being added]
+[status: May 2, 2010 -- further modules are being added]

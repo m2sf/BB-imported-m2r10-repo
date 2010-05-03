@@ -1,0 +1,19 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE SHORTBITSET;
+
+(* Alias type for 16-bit bitset type *) 
+
+<* IF TSIZE(BITSET)*8 = 16 *>
+
+TYPE SHORTBITSET = ALIAS OF BITSET;
+
+<* ELSE *>
+
+IMPORT BS16;
+
+TYPE SHORTBITSET = ALIAS OF BS16;
+
+<* ENDIF *>
+
+END SHORTBITSET.

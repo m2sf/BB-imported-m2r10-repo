@@ -11,6 +11,8 @@ FALSE       boolean value, BOOLEAN.FALSE
 2) Predefined Types
 
 BOOLEAN     boolean type
+BITSET      bitset type of same size as CARDINAL
+LONGBITSET  bitset type of same size as LONGCARD
 CHAR        7-bit character type, first 128 code points of UTF-8
 UNICHAR     4-octet character type, full character set of UTF-32
 OCTET       unsigned 8-bit integer type
@@ -42,7 +44,7 @@ PRED(x, n)  returns the n-th predecessor of x
 SUCC(x, n)  returns the n-th successor of x
 ORD(x)      returns the ordinal value of x
 CHR(x)      returns the charactef for code point x
-COUNT(c)    returns the item count of collection c
+COUNT(c)    returns the item count of set/collection
 SIZE(v)     returns the allocated size of variable v
 HIGH(a)     returns the highest subscript of array or indexed variadic list
 LENGTH(s)   returns the length of character string s
@@ -57,4 +59,4 @@ VAL(T, x)   equivalent of type conversion expression x :: T
 MIN(c1, c2, c3, ...) inserts smallest constant in argument list
 MAX(c1, c2, c3, ...) inserts largest constant in argument list
 
-[status: April 30, 2010]
+[status: May 2, 2010]

@@ -2,11 +2,87 @@
 
 DEFINITION MODULE CHARSET;
 
-(* Standard Name and I/O for Type SET OF CHAR *)
+(* CHAR based 128-bit Bitset *)
 
-FROM FileIO IMPORT File;
+FROM FileIO IMPORT File; (* required for IO *)
 
-TYPE CHARSET = SET OF CHAR;
+
+(* CHARSET type *)
+
+TYPE
+    CHARSET = OPAQUE RECORD ("B-Type")
+        ARRAY 16 OF OCTET; (* 128 bits *)
+    END; (* CHARSET *)
+
+
+(* Literal assignment *)
+
+PROCEDURE [:=] assign ( VAR assignTo : CHARSET;
+                        elements     : VARIADIC OF CHAR );
+(* Assigns a variadic list of values of type CHAR to CHARSET assignTo.
+   This function is bound to the := operator for literal assignment. *)
+
+
+(* accessor *)
+
+PROCEDURE [.] isElement ( CONST set : CHARSET; ch : CHAR ) : BOOLEAN;
+(* Returns TRUE if character ch is an element of CHARSET set, otherwise FALSE.
+   This function is bound to the array operator [ ] and the IN operator
+   for rvalues of type CHARSET. *)
+
+
+(* mutator *)
+
+PROCEDURE [!] storeValue ( CONST set : CHARSET;
+                           element   : CHAR;
+                           value     : BOOLEAN );
+(* Includes character element in CHARSET set if value is TRUE, otherwise
+   removes it from set. This function is bound to the array operator [ ]
+   for lvalues of type CHARSET. *)
+
+
+(* counter *)
+
+PROCEDURE [COUNT] elementCount ( CONST set : CHARSET ) : CARDINAL;
+(* Returns the number of elements in CHARSET set. This function is bound
+   to pervasive function COUNT for type CHARSET. *)
+
+
+(* Dyadic set operations *) 
+
+PROCEDURE [+] union ( CONST set1, set2 : CHARSET ) : CHARSET;
+(* Returns the union of CHARSET values set1 and set2.
+   This function is bound to the + operator for type CHARSET. *)
+
+PROCEDURE [-] diff ( CONST set1, set2 : CHARSET ) : CHARSET;
+(* Returns the set difference of CHARSET values set1 and set2.
+   This function is bound to the - operator for type CARD16. *)
+
+PROCEDURE [*] intersection ( set1, set2 : CHARSET ) : CHARSET;
+(* Returns the intersection of CHARSET values set1 and set2.
+   This function it bound to the * operator for type CARD16. *)
+
+PROCEDURE [/] symdiff ( set1, set2 : CHARSET ) : CHARSET;
+(* Returns the symmetric set difference of CHARSET values set1 and set2.
+   This function is bound to the / operator for type CHARSET. *)
+
+
+(* Relational operations *)
+
+PROCEDURE [=] isEqual ( set1, set2 : CHARSET ) : BOOLEAN;
+(* Returns TRUE if CHARSET values set1 and set2 are equal, otherwise FALSE.
+   This function is bound to operators = and # for type CHARSET. *)
+
+PROCEDURE [<] isSubset ( set1, set2 : CHARSET ) : BOOLEAN;
+(* Returns TRUE if CHARSET set1 is a true subset of set2, otherwise FALSE.
+   This function is bound to operators < and >= for type CHARSET. *)
+
+PROCEDURE [>] isSuperset ( set1, set2 : CARD16 ) : BOOLEAN;
+(* Returns TRUE if CHARSET set1 is a true superset of set2, otherwise FALSE.
+   This function is bound to operators > and <= for type CHARSET. *)
+
+
+(* IO operations *)
 
 (* EBNF of the textual representation of CHARSET values:
     charsetValue : simpleFormat | quotedCharFormat | mixedFormat ;

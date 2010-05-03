@@ -2,11 +2,9 @@
 
 DEFINITION MODULE BITSET;
 
-(* Type BITSET *)
+(* I/O Module for Type BITSET *)
 
 FROM FileIO IMPORT File;
-
-TYPE BITSET = SET OF [TSIZE(CARDINAL)];
 
 (* The EBNF for the textual representation of BITSET values is:
     bitsetValue : simpleFormat | compactFormat | bitGroupFormat ;

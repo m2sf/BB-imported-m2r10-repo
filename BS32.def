@@ -1,0 +1,119 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE BS32;
+
+(* 32-bit Bitset *)
+
+FROM FileIO IMPORT File; (* required for IO *)
+
+
+(* BS32 type *)
+
+TYPE
+    BS32 = OPAQUE RECORD ("B-Type")
+        ARRAY 4 OF OCTET; (* 32 bits *)
+    END; (* BS32 *)
+
+
+(* Literal assignment *)
+
+PROCEDURE [:=] assign ( VAR assignTo : BS32;
+                        elements     : VARIADIC OF CARDINAL );
+(* Assigns a variadic list of values of type CARDINAL to BS32 assignTo.
+   This function is bound to the := operator for literal assignment. *)
+
+
+(* accessor *)
+
+PROCEDURE [.] isElement ( CONST set : BS32; element : CARDINAL ) : BOOLEAN;
+(* Returns TRUE if element is an element of BS32 set, otherwise FALSE.
+   This function is bound to the array operator [ ] and the IN operator
+   for rvalues of type BS32. *)
+
+
+(* mutator *)
+
+PROCEDURE [!] storeValue ( CONST set : BS32;
+                           element   : CARDINAL;
+                           value     : BOOLEAN );
+(* Includes character element in BS32 set if value is TRUE, otherwise
+   removes it from set. This function is bound to the array operator [ ]
+   for lvalues of type BS32. *)
+
+
+(* counter *)
+
+PROCEDURE [COUNT] elementCount ( CONST set : BS32 ) : CARDINAL;
+(* Returns the number of elements in BS32 set. This function is bound
+   to pervasive function COUNT for type BS32. *)
+
+
+(* Dyadic set operations *) 
+
+PROCEDURE [+] union ( CONST set1, set2 : BS32 ) : BS32;
+(* Returns the union of BS32 values set1 and set2.
+   This function is bound to the + operator for type BS32. *)
+
+PROCEDURE [-] diff ( CONST set1, set2 : BS32 ) : BS32;
+(* Returns the set difference of BS32 values set1 and set2.
+   This function is bound to the - operator for type BS32. *)
+
+PROCEDURE [*] intersection ( set1, set2 : BS32 ) : BS32;
+(* Returns the intersection of BS32 values set1 and set2.
+   This function it bound to the * operator for type BS32. *)
+
+PROCEDURE [/] symdiff ( set1, set2 : BS32 ) : BS32;
+(* Returns the symmetric set difference of BS32 values set1 and set2.
+   This function is bound to the / operator for type BS32. *)
+
+
+(* Relational operations *)
+
+PROCEDURE [=] isEqual ( set1, set2 : BS32 ) : BOOLEAN;
+(* Returns TRUE if BS32 values set1 and set2 are equal, otherwise FALSE.
+   This function is bound to operators = and # for type BS32. *)
+
+PROCEDURE [<] isSubset ( set1, set2 : BS32 ) : BOOLEAN;
+(* Returns TRUE if BS32 set1 is a true subset of set2, otherwise FALSE.
+   This function is bound to operators < and >= for type BS32. *)
+
+PROCEDURE [>] isSuperset ( set1, set2 : BS32 ) : BOOLEAN;
+(* Returns TRUE if BS32 set1 is a true superset of set2, otherwise FALSE.
+   This function is bound to operators > and <= for type BS32. *)
+
+
+(* IO operations *)
+
+(* The EBNF for the textual representation of BS32 values is:
+    bitsetValue : simpleFormat | compactFormat | bitGroupFormat ;
+    simpleFormat : bit+ ;
+    compactFormat : base16Digit+ ;
+    bitGroupFormat : "{" bit+ ( groupSeparator? bit+ )* "}" ;
+    groupSeparator : " " | "." ;
+    bit  : "0" | "1" ;
+    base16Digit : "0" .. "9" | "A" .. "F" ;
+   The number of bits shown is equal to the bitwidth of the BS32 type. *)
+
+PROCEDURE Read ( infile : File; VAR set : BS32 );
+(* Reads the textual representation of a BS32 value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the value being read are
+     removed from infile
+   - the textual representation of the value read is assigned to set
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   function is substituted for invocations of READ with a BS32 argument. *)
+
+PROCEDURE Write ( outfile : File; CONST set : BS32 );
+(* Writes the value of CHARSET set in simple format to stream outfile. This
+   procedure is substituted for invocations of WRITE with a BS32 argument.*)
+
+PROCEDURE WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : VARIADIC OF CONST BS32 );
+(* Writes a formatted textual representation of one or more BS32 values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   BS32 arguments. *)
+
+END BS32.

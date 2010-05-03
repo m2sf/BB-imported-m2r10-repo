@@ -2,11 +2,9 @@
 
 DEFINITION MODULE LONGBITSET;
 
-(* Type LONGBITSET *)
+(* I/O Module for Type LONGBITSET *)
 
 FROM FileIO IMPORT File;
-
-TYPE LONGBITSET = SET OF [TSIZE(LONGCARD)];
 
 (* The EBNF for the textual representation of LONGBITSET values is:
     bitsetValue : simpleFormat | compactFormat | bitGroupFormat ;
@@ -42,4 +40,4 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    LONGBITSET arguments. *)
 
-END BITSET.
+END LONGBITSET.
