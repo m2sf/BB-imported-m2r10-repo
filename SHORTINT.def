@@ -4,8 +4,16 @@ DEFINITION MODULE SHORTINT;
 
 (* Alias type for 16-bit Signed Integer Numbers *) 
 
+<* IF TSIZE(INTEGER)*8 = 16 *>
+
+TYPE SHORTINT = ALIAS OF INTEGER;
+
+<* ELSE *>
+
 IMPORT INT16;
 
-TYPE SHORTINT = ALIAS OF INT16; (* alias *)
+TYPE SHORTINT = ALIAS OF INT16;
+
+<* ENDIF *>
 
 END SHORTINT.
