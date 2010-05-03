@@ -67,6 +67,9 @@ INT16.def           16-bit signed integer type
 INT32.def           32-bit signed integer type
 INT64.def           64-bit signed integer type
 INT128.def          128-bit signed integer type
+BITSET.def          bitset type of same size as CARDINAL
+LONGBITSET.def      bitset type of same size as LONGCARDINAL
+CHARSET.def         character set type
 STRING.def          dynamic ASCII strings
 UNISTRING.def       dynamic unicode strings
 Dictionary.def      associative array of strings
