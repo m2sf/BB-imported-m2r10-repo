@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status May 1, 2010 */
+/* M2R10 grammar in ANTLR EBNF notation -- status May 2, 2010 */
 
 
 options {
@@ -172,7 +172,7 @@ constantDeclaration :
 
 // production #10
 type :
-	( ALIAS OF )? namedType | anonymousType | enumerationType | recordType
+	( ALIAS OF )? namedType | anonymousType | enumerationType | recordType | setType
 	;
 
 // alias
@@ -188,7 +188,7 @@ semanticType : string ;
 
 // production #12
 anonymousType :
-	arrayType | setType | pointerType | procedureType
+	arrayType | pointerType | procedureType
 	;
 
 // production #13
@@ -199,7 +199,7 @@ enumerationType :
 // production #14
 arrayType :
 	( ARRAY arrayIndex ( ',' arrayIndex )* | ASSOCIATIVE ARRAY )
-	OF ( namedType | setType | pointerType | procedureType )
+	OF ( namedType | pointerType | procedureType )
 	;
 
 // alias
@@ -224,12 +224,12 @@ fieldListSequence :
 // production #17
 fieldList :
 	identList ':'
-	( namedType | arrayType | recordType | procedureType )
+	( namedType | arrayType | pointerType | procedureType )
 	;
 
 // production #18
-setType :
-	SET ( OF ordinalType | '[' constExpression ']' )
+setType :	
+	SET OF ( ordinalType | '(' identList ')' | '[' constExpression ']' )
 	;
 
 // alias

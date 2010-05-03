@@ -1,0 +1,53 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CHARSET;
+
+(* Standard Name and I/O for Type SET OF CHAR *)
+
+FROM FileIO IMPORT File;
+
+TYPE CHARSET = SET OF CHAR;
+
+(* EBNF of the textual representation of CHARSET values:
+    charsetValue : simpleFormat | quotedCharFormat | mixedFormat ;
+    simpleFormat : "{" ( codePoint  ( "," codePoint )* )? "}" ; 
+    mnemonicFormat : "{" ( quotedChar ( "," quotedChar )* )? "}" ;
+    mixedFormat : "{" ( codeOrChar ( "," codeOrChar )* )? "}" ;
+    codePoint : "0" base16Digit base16Digit "C" ;
+    quotedChar : mnemonic | '"' character '"' ;
+    codeOrChar : codePoint | '"' character '"' ;
+    mnemonic : "NUL" | "SOH" | "STX" | "ETX" | "EOT" | "ENQ" | "ACK" |
+        "BEL" | "BS" | "HT" | "LF" | "VT" | "FF" | "CR" | "SO" | "SI" |
+        "DLE" | "DC1" | "DC2" | "DC3" | "DC4" | "NAK" | "SYN" | "ETB" |
+        "CAN" | "EM" | "SUB" | "ESC" | "FS" | "GS" | "RS" | "US" | "DEL" ;
+    character : digit | letter |
+        " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" |
+        "," | "-" | "." | "/" | ":" | ";" | "<" | "=" | ">" | "?" |
+        "@" | "[" | "]" | "^" | "_" | "`" | "{" | "|" | "}" | "~" ;
+    digit : "0" .. "9" ;
+    letter : "A" .. "Z" | "a" .. "z" ;
+    base16Digit : "0" .. "9" | "A" .. "F" ; *)
+
+PROCEDURE Read ( infile : File; VAR set : CHARSET );
+(* Reads the textual representation of a CHARSET value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the value being read are
+     removed from infile
+   - the textual representation of the value read is assigned to set
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   function is substituted for invocations of READ with a CHARSET argument. *)
+
+PROCEDURE Write ( outfile : File; CONST set : CHARSET );
+(* Writes the value of CHARSET set in simple format to stream outfile. This
+   procedure is substituted for invocations of WRITE with a CHARSET argument.*)
+
+PROCEDURE WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : VARIADIC OF CONST CHARSET );
+(* Writes a formatted textual representation of one or more CHARSET values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   CHARSET arguments. *)
+
+END CHARSET.
