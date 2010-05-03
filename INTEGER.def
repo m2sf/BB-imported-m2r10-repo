@@ -30,7 +30,7 @@ PROCEDURE Read ( infile : File; VAR n : INTEGER );
    - the textual representation of the value read is assigned to n
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with a INTEGER argument.*)
+   procedure is substituted for invocations of READ with an INTEGER argument.*)
 
 PROCEDURE Write ( outfile : File; n : INTEGER );
 (* Writes the value of INTEGER n in simple format to stream outfile. This pro-
