@@ -77,7 +77,6 @@ CHARSET.def         character set type
 STRING.def          dynamic ASCII strings
 UNISTRING.def       dynamic unicode strings
 Dictionary.def      associative array of strings
-Time.def            compound time with day, hour, minute, sec/msec components
 Unsigned24.def      unsigned integer subrange type with values from 0 to 23
 Unsigned60.def      unsigned integer subrange type with values from 0 to 59
 UnsignedReal60.def  unsigned real subrange type with values from 0.0 to 59.999
@@ -108,6 +107,13 @@ Text:
 ASCII.def           mnemonics and macro-functions for ASCII characters
 Regex.def           Modula-2 regular expression library
 RegexConv.def       conversion library for regular expression syntax
+
+Date & Time:
+
+TZ.def              time zone offsets and abbreviations
+Time.def            compound time with day, hour, minute, sec/msec components
+DateTime.def        compound calendar date and time
+TimeUnits.def       date and time base units
 
 Legacy:
 

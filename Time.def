@@ -5,16 +5,18 @@ DEFINITION MODULE Time;
 (* Compound Time ADT *)
 
 
-FROM FileIO IMPORT File;
-IMPORT CARDINAL32, Unsigned24, Unsigned60, UnsignedReal60;
+FROM FileIO IMPORT File; (* required for IO *)
 
+FROM TimeUnits IMPORT
+    Days,    (*    0   .. 4294967295 days *)
+    Hours,   (*    0   .. 23     hours    *)
+    Minutes, (*    0   .. 59     minutes  *)
+    Seconds; (*    0.0 .. 59.999 seconds  *)
+
+
+(* Time Type *)
 
 TYPE
-    Days = CARDINAL32;        (* 0   .. 4294967295 days    *)
-    Hours = Unsigned24;       (* 0   .. 23         hours   *)
-    Minutes = Unsigned60;     (* 0   .. 59         minutes *)
-    Seconds = UnsignedReal60; (* 0.0 .. 59.999     seconds *)
-
     Time = RECORD ("V-Type")
         days   : Days;
         hours  : Hours;
