@@ -43,7 +43,7 @@ ODD(x)      returns TRUE if x is an odd number
 PRED(x, n)  returns the n-th predecessor of x
 SUCC(x, n)  returns the n-th successor of x
 ORD(x)      returns the ordinal value of x
-CHR(x)      returns the charactef for code point x
+CHR(x)      returns the character for code point x
 COUNT(c)    returns the item count of set/collection
 SIZE(v)     returns the allocated size of variable v
 HIGH(a)     returns the highest subscript of array or indexed variadic list

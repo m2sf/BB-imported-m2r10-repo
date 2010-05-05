@@ -86,7 +86,7 @@ PROCEDURE [/] divide ( a, b : LONGBCD ) : LONGBCD;
 
 PROCEDURE [=] isEqual ( a, b : LONGBCD ) : BOOLEAN;
 (* Returns TRUE if LONGBCD values a and b are equal, otherwise FALSE.
-   This function is bound to operators = and # for tyep LONGBCD. *)
+   This function is bound to operators = and # for type LONGBCD. *)
 
 PROCEDURE [<] isLess ( a, b : LONGBCD ) : BOOLEAN;
 (* Returns TRUE if LONGBCD value a is less than b, otherwise FASLE.

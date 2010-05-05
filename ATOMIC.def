@@ -13,7 +13,7 @@ PROCEDURE AVAIL( intrinsic : INTRINSIC; bitwidth : CARDINAL ) : BOOLEAN;
 PROCEDURE SWAP( VAR x, y : <Type> );
 (* Atomically swaps x and y. Type must be an 8, 16, 32 or 64 bit type. *)
 
-PROCEDURE CAS( VAR x : expectedValue, y : <Type> ) : Type;
+PROCEDURE CAS( VAR expectedValue, y : <Type> ) : Type;
 (* Atomically compares x and expectedValue, if they are equal, swaps x and y.
    Returns original value of x. Type must be an 8, 16, 32 or 64 bit type. *)
 

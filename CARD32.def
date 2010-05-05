@@ -90,7 +90,7 @@ PROCEDURE [/] divide ( n1, n2 : CARD32 ) : CARD32;
 
 PROCEDURE [=] isEqual ( n1, n2 : CARD32 ) : BOOLEAN;
 (* Returns TRUE if CARD32 values n1 and n2 are equal, otherwise FALSE.
-   This function is bound to operators = and # for tyep CARD32. *)
+   This function is bound to operators = and # for type CARD32. *)
 
 PROCEDURE [<] isLess ( n1, n2 : CARD32 ) : BOOLEAN;
 (* Returns TRUE if CARD32 value n1 is less than n2, otherwise FASLE.
