@@ -34,15 +34,15 @@ TYPE
 
 (* Range *)
 
-CONST zero = { 0, Month.Jan, 1, 0, 0, 0.0 };
+CONST zero = { 0, Month.Jan, 1, 0, 0, 0.0, TZ.UTC };
 
-CONST unixZero = { 1970, Month.Jan, 1, 0, 0, 0.0 };
+CONST unixZero = { 1970, Month.Jan, 1, 0, 0, 0.0, TZ.UTC };
 
-CONST [TMIN] minValue = { TMIN(Year), Month.Dec, 31, 23, 59, 59.999 };
+CONST [TMIN] minValue = { TMIN(Year), Month.Dec, 31, 23, 59, 59.999, TZ.IDLE };
 (* Smallest value of type DateTime.
    This value is bound to TMIN for type DateTime. *) 
 
-CONST [TMAX] maxValue = { TMAX(Year), Month.Dec, 31, 23, 59, 59.999 };
+CONST [TMAX] maxValue = { TMAX(Year), Month.Dec, 31, 23, 59, 59.999, TZ.IDLE };
 (* Largest value of type DateTime.
    This value is bound to TMAX for type DateTime. *) 
 
