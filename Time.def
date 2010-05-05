@@ -1,0 +1,112 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Time;
+
+(* Compound Time ADT *)
+
+
+FROM FileIO IMPORT File;
+IMPORT CARDINAL32, Unsigned24, Unsigned60, UnsignedReal60;
+
+
+TYPE
+    Days = CARDINAL32;        (* 0   .. 4294967295 days    *)
+    Hours = Unsigned24;       (* 0   .. 23         hours   *)
+    Minutes = Unsigned60;     (* 0   .. 59         minutes *)
+    Seconds = UnsignedReal60; (* 0.0 .. 59.999     seconds *)
+
+    Time = RECORD ("V-Type")
+        days   : Days;
+        hours  : Hours;
+        mins   : Minutes;
+        secs   : Seconds;
+    END; (* Time *)
+    
+(* Example: 100 days, 23 hours, 45 mins => time := { 100, 23, 45, 0.000 }; *)
+
+
+(* Range *)
+
+CONST zero = { 0, 0, 0, 0.0 };
+
+CONST [TMIN] minValue = zero;
+
+CONST [TMAX] maxValue = { TMAX(Days), 0, 0, 0.0 };
+
+
+(* Monadic arithmetic operations *)
+
+PROCEDURE inMilliSeconds ( t : Time ) : REAL;
+(* Returns the value of t in milli-seconds. *)
+
+PROCEDURE inSeconds ( t : Time ) : REAL;
+(* Returns the value of t in fractional seconds. *)
+
+PROCEDURE inMinutes ( t : Time ) : REAL;
+(* Returns the value of t in fractional minutes. *)
+
+PROCEDURE inHours ( t : Time ) : REAL;
+(* Returns the value of t in fractional hours. *)
+
+PROCEDURE inDays ( t : Time ) : REAL;
+(* Returns the value of t in fractional days. *)
+
+
+(* Dyadic arithmetic operations *) 
+
+PROCEDURE [+] add ( t1, t2 : Time ) : Time;
+(* Adds Time values t1 and t2 and returns the result.
+   This function is bound to the + operator for type Time. *)
+
+PROCEDURE [-] sub ( t1, t2 : Time ) : Time;
+(* Subtracts Time value t2 from t1 and returns the result.
+   This function is bound to the - operator for type Time. *)
+
+PROCEDURE multiply ( t : Time; n : CARDINAL ) : Time;
+(* Multiplies Time value t by scalar n and returns the result. *)
+
+PROCEDURE divide ( t : Time; n : CARDINAL ) : Time;
+(* Divives Time value t by scalar n and returns the result. *)
+
+
+(* Relational operations *) 
+
+PROCEDURE [=] isEqual ( t1, t2 : Time ) : BOOLEAN;
+(* Returns TRUE if Time values t1 and t2 are equal, otherwise FALSE.
+   This function is bound to operators = and # for type Time. *)
+
+PROCEDURE [<] isLess ( t1, t2 : Time ) : BOOLEAN;
+(* Returns TRUE if Time value t1 is less than t2, otherwise FASLE.
+   This function is bound to operators < and >= for type Time. *)
+
+PROCEDURE [>] isGreater ( t1, t2 : Time ) : BOOLEAN;
+(* Returns TRUE if Time value t1 is greater than t2, otherwise FALSE.
+   This function is bound to operators > and <= for type Time. *)
+
+
+(* IO operations *)
+
+PROCEDURE Read( infile : File; VAR t : Time );
+(* Reads the textual representation of a Time value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the numeral being read are
+     removed from infile
+   - the numeric value of the numeral string read is assigned to the variable
+     passed in for t
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with a Time argument. *)
+
+PROCEDURE Write( outfile : File; t : Time );
+(* Writes the textual representation of value n to stream outfile. This
+   procedure is substituted for invocations of WRITE with a Time argument.*)
+
+PROCEDURE WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : VARIADIC OF Time );
+(* Writes a formatted textual representation of one or more Time values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   Time arguments. *)
+
+END Time.

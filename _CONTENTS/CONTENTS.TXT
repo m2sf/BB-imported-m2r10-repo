@@ -77,6 +77,10 @@ CHARSET.def         character set type
 STRING.def          dynamic ASCII strings
 UNISTRING.def       dynamic unicode strings
 Dictionary.def      associative array of strings
+Time.def            compound time with day, hour, minute, sec/msec components
+Unsigned24.def      unsigned integer subrange type with values from 0 to 23
+Unsigned60.def      unsigned integer subrange type with values from 0 to 59
+UnsignedReal60.def  unsigned real subrange type with values from 0.0 to 59.999
 
 Alias types:
 
