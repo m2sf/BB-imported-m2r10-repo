@@ -30,8 +30,10 @@ TYPE
 CONST zero = { 0, 0, 0, 0.0 };
 
 CONST [TMIN] minValue = zero;
+(* Smallest value of type Time. This value is bound to TMIN for type Time. *) 
 
 CONST [TMAX] maxValue = { TMAX(Days), 0, 0, 0.0 };
+(* Largest value of type Time. This value is bound to TMAX for type Time. *) 
 
 
 (* Monadic arithmetic operations *)
