@@ -1,0 +1,55 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE SysClock;
+
+(* Interface to the System's Clock *)
+
+
+IMPORT CARDINAL64;
+
+
+TYPE
+    MilliSecs = ALIAS OF CARDINAL64;
+    
+    Status = ( success, invalidValue, invalidOffset, accessDenied );
+
+
+(* Constants defining the start reference value of the system's clock *)
+
+CONST
+    startYear = <target system dependent value>;  (* any integer value *)
+    startMonth = <target system dependent value>; (*      1 .. 12      *)
+    startDay = <target system dependent value>;   (*      1 .. 31      *)
+    startHour = <target system dependent value>;  (*      0 .. 23      *)
+    startMin = <target system dependent value>;   (*      0 .. 59      *)
+    startSecs = <target system dependent value>;  (*    0.0 .. 59.999  *)
+
+
+(* Read the Clock *)
+
+PROCEDURE GetClock ( VAR elapsed  : MilliSecs;
+                     VAR tzOffset : INTEGER;
+                     VAR status   : Status );
+(* Reads the value of the system clock. Passes the elapsed time since the
+   system clock's start value back in elapsed and the time zone offset in
+   tzOffset. The value of elapsed is measured in milli-seconds, the value
+   of the time zone offset in minutes in the range of -720 to 720. *)
+
+
+(* Write to the Clock *)
+
+PROCEDURE SetClock ( newValue   : MilliSecs;
+                     tzOffset   : INTEGER;
+                     VAR status : Status );
+(* Sets the value of the system clock. NewValue is a value of elapsed time
+   since the system clock's defined start value in milli-seconds and tzOffset
+   is the time zone offset in minutes in the range of -720 to 720. *)
+
+
+(* Check Writing Privilege *)
+
+PROCEDURE ProcessMaySetClock : BOOLEAN;
+(* Returns TRUE if the current process is privileged to set the system clock,
+   otherwise FALSE. *)
+
+END SysClock.

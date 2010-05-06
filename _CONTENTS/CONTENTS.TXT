@@ -114,6 +114,7 @@ TZ.def              time zone offsets and abbreviations
 Time.def            compound time with day, hour, minute, sec/msec components
 DateTime.def        compound calendar date and time
 TimeUnits.def       date and time base units
+SysClock.def        interface to the system clock
 
 Legacy:
 
@@ -137,4 +138,4 @@ Examples:
 Dictionary.def      example of a library defined associative array of strings
 
 
-[status: May 2, 2010 -- further modules are being added]
+[status: May 6, 2010 -- further modules are being added]
