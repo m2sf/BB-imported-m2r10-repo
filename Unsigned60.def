@@ -62,10 +62,6 @@ PROCEDURE [::] fromINT  ( n : INTEGER ) : Unsigned60;
 
 (* Monadic arithmetic operations *) 
 
-PROCEDURE [ABS] abs ( n : Unsigned60 ) : Unsigned60;
-(* Returns the absolute value of Unsigned60 value n.
-   This function is bound to pervasive function ABS for type Unsigned60. *)
-
 PROCEDURE [ODD] odd ( n : Unsigned60 ) : BOOLEAN;
 (* Returns TRUE if Unsigned60 value n is odd, otherwise FALSE.
    This function is bound to pervasive function ODD for type Unsigned60. *)

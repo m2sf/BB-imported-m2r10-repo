@@ -57,9 +57,14 @@ PROCEDURE [::] toREAL ( r : UnsignedReal60 ) : REAL;
 
 (* Monadic arithmetic operations *) 
 
-PROCEDURE [ABS] abs ( r : UnsignedReal60 ) : UnsignedReal60;
-(* Returns the absolute value of UnsignedReal60 value r.
-   This function is bound to pervasive function ABS for type UnsignedReal60.*)
+PROCEDURE floor ( r : UnsignedReal60 ) : UnsignedReal60;
+(* Returns the floor value of r. *)
+
+PROCEDURE ceil ( r : UnsignedReal60 ) : UnsignedReal60;
+(* Returns the ceiling value of r. *)
+
+PROCEDURE frac ( r : UnsignedReal60 ) : UnsignedReal60;
+(* Returns the fractional part of r. *)
 
 
 (* Dyadic arithmetic operations *) 
@@ -77,6 +82,12 @@ PROCEDURE multiply ( r : UnsignedReal60; n : CARDINAL ) : UnsignedReal60;
 
 PROCEDURE divide ( r : UnsignedReal60; n : CARDINAL ) : UnsignedReal60;
 (* Divives UnsignedReal60 value r by scalar n and returns the result. *)
+
+PROCEDURE trunc ( r : UnsignedReal60; n : CARDINAL ) : UnsignedReal60;
+(* Returns the value of r truncated to n decimal places. *)
+
+PROCEDURE round ( r : UnsignedReal60; n : CARDINAL ) : UnsignedReal60;
+(* Returns the value of r rounded to n decimal places. *)
 
 
 (* Relational operations *) 

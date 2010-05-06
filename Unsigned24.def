@@ -62,10 +62,6 @@ PROCEDURE [::] fromINT  ( n : INTEGER ) : Unsigned24;
 
 (* Monadic arithmetic operations *) 
 
-PROCEDURE [ABS] abs ( n : Unsigned24 ) : Unsigned24;
-(* Returns the absolute value of Unsigned24 value n.
-   This function is bound to pervasive function ABS for type Unsigned24. *)
-
 PROCEDURE [ODD] odd ( n : Unsigned24 ) : BOOLEAN;
 (* Returns TRUE if Unsigned24 value n is odd, otherwise FALSE.
    This function is bound to pervasive function ODD for type Unsigned24. *)
