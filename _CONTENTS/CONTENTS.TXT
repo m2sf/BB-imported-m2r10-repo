@@ -76,8 +76,8 @@ LONGCOMPLEX.def     double precision complex number type
 CHARSET.def         character set type
 STRING.def          dynamic ASCII strings
 UNISTRING.def       dynamic unicode strings
-Dictionary.def      associative array of strings
 Unsigned24.def      unsigned integer subrange type with values from 0 to 23
+Unsigned31.def      unsigned integer subrange type with values from 1 to 31
 Unsigned60.def      unsigned integer subrange type with values from 0 to 59
 UnsignedReal60.def  unsigned real subrange type with values from 0.0 to 59.999
 
@@ -131,5 +131,10 @@ SplayTree.def       generic Splay tree template
 PatriciaTrie.def    generic Patricia trie template
 DynamicArray.def    generic dynamic array template
 KeyValueStore.def   generic key value storage template
+
+Examples:
+
+Dictionary.def      example of a library defined associative array of strings
+
 
 [status: May 2, 2010 -- further modules are being added]
