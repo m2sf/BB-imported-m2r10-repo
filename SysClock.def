@@ -33,7 +33,8 @@ PROCEDURE GetClock ( VAR elapsed  : MilliSecs;
 (* Reads the value of the system clock. Passes the elapsed time since the
    system clock's start value back in elapsed and the time zone offset in
    tzOffset. The value of elapsed is measured in milli-seconds, the value
-   of the time zone offset in minutes in the range of -720 to 720. *)
+   of tzOffset is measured in minutes relative to UTC. Values of tzOffset
+   range from -720 minutes (UTC-1200hrs) to +720 minutes (UTC+1200hrs). *)
 
 
 (* Write to the Clock *)
@@ -42,8 +43,8 @@ PROCEDURE SetClock ( newValue   : MilliSecs;
                      tzOffset   : INTEGER;
                      VAR status : Status );
 (* Sets the value of the system clock. NewValue is a value of elapsed time
-   since the system clock's defined start value in milli-seconds and tzOffset
-   is the time zone offset in minutes in the range of -720 to 720. *)
+   since the system clock's defined start value in milli-seconds and
+   tzOffset is the time zone offset in minutes relative to UTC. *)
 
 
 (* Check Writing Privilege *)
