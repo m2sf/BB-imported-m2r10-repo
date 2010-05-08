@@ -121,8 +121,13 @@ PROCEDURE Read ( file : File; VAR data : OCTET );
    in <data> and advances the read/write position of <file> by one. *)
 
 PROCEDURE Write ( file : File; data : OCTET );
-(* Writes one octet passed in <data> to the current position of <file> and
-   advances the read/write position of <file> by one. *)
+(* Performs a write or append operation depending on the mode of <file>.
+   In write mode, the procedure writes one octet in <data> to the current
+   position of <file>. In append mode, the procedure atomically sets the
+   current read/write position of <file> to the end of the file and appends
+   one octet in <data> to the end of the file. In either mode, the current
+   read/write position of <file> is advanced by one after the data has been
+   written. *)
 
 PROCEDURE Lookahead ( file : File; VAR data : OCTET );
 (* Passes one octet of data at the current position of <file> back in <data>
@@ -136,9 +141,14 @@ PROCEDURE ReadBlock ( file : File;
 
 PROCEDURE WriteBlock ( file : File;
                        data : ARRAY OF OCTET; VAR octetsWritten : FileSize );
-(* Writes the block of data passed in <data> starting at the current position
-   of <file> and passes the number of octets written back in <octetsWritten>. 
-   The read/write position of <file> is advanced accordingly. *)
+(* Performs a write or append operation depending on the mode of <file>.
+   In write mode, the procedure writes the block of data passed in <data>
+   starting at the current read/write position of <file>. In append mode, the
+   procedure atomically sets the current read/write position of <file> to the
+   end of the file and appends the block of data passed in <data> to the end
+   of the file. In either mode, the current read/write position of <file> is
+   advanced by the number of octets written and the number of octets written
+   is passed back in <octetsWritten> after the data has been written. *)
 
 PROCEDURE Flush ( file : File );
 (* Writes unwritten data in the buffer of <file> to its associated file. *)
