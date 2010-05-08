@@ -2,7 +2,8 @@
 
 DEFINITION MODULE Regex;
 
-(* Regular Expression Library *)
+(* Thompson NFA based Regular Expression Library *)
+
 
 (* ---------------------------------------------------------------------------
  * Regular expression syntax
@@ -84,16 +85,22 @@ DEFINITION MODULE Regex;
  * ------------------------------------------------------------------------ *)
 
 
+
 TYPE
+
+(* Automaton Type *)
+
     NFA = OPAQUE;
 
+(* Status Type *)
+
     Status = (
-        success,
-        invalidExpr,
-        invalidString,
-        invalidNFA,
-        stackFull,
-        allocationFailed );
+        success,            (* the operation completed successfully *)
+        invalidExpr,        (* invalid regular expression passed in *)
+        invalidString,      (* empty string passed in               *)
+        invalidNFA,         (* invalid automaton passed in          *)
+        stackFull,          (* stack limit of automaton exceeded    *)
+        allocationFailed ); (* memory allocation failed             *)
 
 
 (* ---------------------------------------------------------------------------
@@ -133,9 +140,10 @@ TYPE
  * function:  Regex.new( expr, status )
  * ---------------------------------------------------------------------------
  *
- * Creates  and returns  a new regular expression automaton object for regular
- * expression string <expr>.  The function fails and returns NIL if the length
- * of string <expr> is zero or if memory could not be allocated.
+ * Creates and returns a new  non-deterministic finite automaton (NFA) object
+ * for matching the regular expression described by string <expr>.  The func-
+ * tion failes and returns NIL  if the length of <expr> is zero  or if memory
+ * could not be allocated.
  *
  * The status of the operation is passed back in <status>. *)
 
