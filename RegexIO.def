@@ -19,8 +19,8 @@ TYPE
  *
  * Matches the input stream at the current reading position of <file>  against
  * regular expression automaton <automaton>  and passes the matched portion of
- * the input back in <str>.  The reading position of <file> is updated and the
- * status is passed back in <status>. *)
+ * the input back in <str>.  The reading position of <file> is advanced by the
+ * number of octets read and the status is passed back in <status>. *)
 
 PROCEDURE ReadMatchingStr ( file       : FileIO.File;
                             automaton  : Regex.NFA;
@@ -34,8 +34,8 @@ PROCEDURE ReadMatchingStr ( file       : FileIO.File;
  *
  * Matches the input stream at the current reading position of <file>  against
  * regular expression automaton <automaton>  and skips  the matched portion of
- * the input.  The reading position  of <file>  is updated  and  the status is
- * passed back in <status>. *)
+ * the input.  The  reading position  of <file>  is advanced  by the number of
+ * octets skipped and  the status is passed back in <status>. *)
 
 PROCEDURE SkipMatchingStr ( file       : FileIO.File;
                             automaton  : Regex.NFA;
@@ -48,7 +48,8 @@ PROCEDURE SkipMatchingStr ( file       : FileIO.File;
  *
  * Matches string <str>  against regular expression automaton <automaton>  and
  * writes <str> to file <file>  if it matches.  The writing position of <file>
- * is updated and the status is passed back in <status>. *)
+ * is advanced by the number of octets written  and  the status is passed back
+ * in <status>. *)
 
 PROCEDURE WriteMatchingStr ( file       : FileIO.File;
                              automaton  : Regex.NFA;
