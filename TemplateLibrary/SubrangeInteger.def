@@ -48,11 +48,6 @@ TYPE
 <* FATAL "maxValue is not within range of baseType." *>
 <* ENDIF *>
 
-<* IF @@minValue@@ >= @@maxValue *>
-<* FATAL "minValue is not less than maxValue." *>
-<* ENDIF *>
-
-
 CONST [TMIN] minValue = @@minValue@@;
 (* Smallest value of type @@module@@.
    This value is bound to TMIN for type @@module@@. *) 
