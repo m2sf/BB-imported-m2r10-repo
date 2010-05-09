@@ -595,7 +595,7 @@ varDeclaration : varDefinition ;
 Examples:
 
 VAR x, y : REAL;
-VAR [mappedIOAddr] portA : OCTET;
+VAR portA [mappedIOAddr] : OCTET;
 
 
 5.2.1 Global Variables
