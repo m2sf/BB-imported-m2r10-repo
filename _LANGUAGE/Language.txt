@@ -431,6 +431,31 @@ implementationOfModule :
     IMPLEMENTATION programModule ;
 
 
+2.4 Module Initialisation
+
+The body of the implementation part of a library module is the library's
+initialisation procedure. It is automatically executed by the Modula-2
+runtime environment when a Modula-2 program is run.
+
+The order in which modules are initialised is language defined and depends
+on the module dependency graph. During compilation a module dependency graph
+is built and the initialisation procedures are called in depth-first traversal
+order of the dependency graph.
+
+
+2.5 Module Termination
+
+Module termination is not a language feature but it is a facility provided
+by a library module in the standard library. The termination library provides
+an API for client modules that require termination to install their own
+termination handlers onto the library's termination handler stack.
+
+The termination library installs its own wind down procedure in the runtime
+environment during module initialisation. The wind down procedure then calls
+the installed termination handlers in reverse order when the program is about
+to be terminated.
+
+
 3 Import of Identifiers
 
 Identifiers defined in the interface of a library module may be imported by
