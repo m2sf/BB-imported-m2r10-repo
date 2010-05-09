@@ -547,9 +547,149 @@ FROM FileIO IMPORT *; (* import all identifiers *)
 *** to do ***
 
 
-5 Declarations and Definitions
+5 Definitions and Declarations
 
-*** to do ***
+A definition is a directive that defines an identifier in the public interface
+of a library module. A declaration is a directive that declares an identifier
+in a program module or in the implementation part of a library module.
+There are four types of definitions and declarations:
+
+* constant definitions and declarations
+* variable definitions and declarations
+* type definitions and declarations
+* procedure definitions and declarations
+
+
+5.1 Constant Definitions and Declarations
+
+A constant is an immutable value determined at compile time. A constant may be
+defined or declared as an alias of another constant, but it may not be defined
+or declared as an alias of a variable, a type or a procedure.
+
+EBNF:
+
+constDefinition :
+    CONST ( ( "[" ident "]" )? ident "=" constExpression ";" )* ;
+
+constDeclaration :
+    CONST ( ident "=" constExpression ";" )* ;
+
+Examples:
+
+CONST zero = 0;
+CONST intSize = TSIZE(INTEGER);
+
+
+5.2 Variable Definitions and Declarations
+
+A variable is a variant whose value is determined at runtime and may change at
+runtime. A variable always has a type which is determined at compile time.
+
+EBNF:
+
+varDefinition :
+    VAR ( ident ( "[" address "]" | "," identList )?
+          : ( namedType | anonymousType ) ";" )* ;
+varDeclaration : varDefinition ;
+
+Examples:
+
+VAR x, y : REAL;
+VAR [mappedIOAddr] portA : OCTET;
+
+
+5.2.1 Global Variables
+
+A variable defined or declared in the top level of a module has a global life
+span in that it exists during the entire runtime of the program. However, a
+global variable only does not have global scope. It is only visible within
+the module it is defined or declared in and within modules that import it.
+
+A variable declared in the top level of a library module is always exported
+immutable. It can be modified within the library module's implementation part
+but it cannot be modified within modules that import it.
+
+
+5.2.2 Local Variables
+
+A variable declared within a procedure has local life span and local scope. It
+only exists at the time the procedure is executing and it is only visible
+within the procedure it is declared in and within procedures local to the
+procedure it is declared in.
+
+
+5.3 Type Definitions and Declarations
+
+A type is an abstract property that determines the storage size and layout of
+variables and the operations that are permitted for variables of the type.
+
+EBNF:
+
+typeDefinition :
+    TYPE ( ident = ( type | opaqueType ) ";" )* ;
+typeDeclaration :
+    TYPE ( ident = type ";" )* ;
+    
+Examples:
+
+TYPE Volume = INTEGER;
+TYPE HashTable = OPAQUE;
+
+
+5.3.1 Strict Name Equivalence
+
+R10 Modula-2 uses strict name equivalence. By default types of different names
+are always incompatible even if they are derived from the same base type.
+
+Example:
+
+TYPE Celsius = REAL; Fahrenheit = REAL;
+VAR celsius : Celsius; fahrenheit : Fahrenheit;
+
+celsius := fahrenheit; (* compile time error: incompatible types *)
+
+In order to assign values across type boundaries, type conversion is required.
+
+Example:
+
+celsius := (fahrenheit - 32.0) * 100.0/180.0 :: Celsius; (* type conversion *)
+
+
+5.3.2 Alias Types
+
+If a type is desired to be compatible with another type it must be defined or
+declared as an alias type.
+
+Example:
+
+TYPE INT = ALIAS OF INTEGER;
+VAR i : INT; j : INTEGER;
+
+i := j; (* i and j are compatible *)
+
+
+5.3.3 Opaque Types
+
+5.3.4 Anonymous Types
+
+5.3.5 Enumeration Types
+
+5.3.6 Array Types
+
+5.3.6.1 Indexed Array Types
+
+5.3.6.2 Associative Array Types
+
+5.3.7 Record Types
+
+5.3.8 Set Types
+
+5.3.9 Pointer Types
+
+5.3.10 Procedure Types
+
+
+5.4 Procedure Definitions and Declarations
 
 
 6 Statements
