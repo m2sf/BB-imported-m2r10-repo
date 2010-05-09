@@ -439,8 +439,9 @@ runtime environment when a Modula-2 program is run.
 
 The order in which modules are initialised is language defined and depends
 on the module dependency graph. During compilation a module dependency graph
-is built and the initialisation procedures are called in depth-first traversal
-order of the dependency graph.
+is built and the initialisation order is determined by depth-first traversal
+order of the dependency graph whereby initialisation takes place for each
+node from bottom to top on the way back up.
 
 
 2.5 Module Termination
