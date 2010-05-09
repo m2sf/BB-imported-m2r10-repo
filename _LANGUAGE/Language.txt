@@ -638,7 +638,7 @@ TYPE HashTable = OPAQUE;
 
 5.3.1 Strict Name Equivalence
 
-R10 Modula-2 uses strict name equivalence. By default types of different names
+Modula-2 R10 uses strict name equivalence. By default types of different names
 are always incompatible even if they are derived from the same base type.
 
 Example:
