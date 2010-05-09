@@ -483,17 +483,25 @@ Example:
 IMPORT FileIO; (* qualified import of module FileIO *)
 VAR status : FileIO.Status; (* qualified identifier of Status *)
 
+
+3.1.1 Import Aggregators
+
 A module imported by qualified import may be automatically re-exported to any
 importing client module. Modules to be re-exported in this way are marked with
 a plus sign after their identifiers.
 
-Example:
-
-IMPORT Foo+, Bar+, Baz+;
-
 A module that imports other modules for the sole purpose of re-export is
 called an import aggregator. This facility is useful to allow clients to
 import an entire library with a single import statement.
+
+Example:
+
+DEFINITION MODULE FooBarBaz;
+IMPORT Foo+, Bar+, Baz+; (* import Foo, Bar and Baz into client module *)
+END FooBarBaz.
+
+
+3.1.2 Import of Abstract Data Type Library Modules
 
 If the interface of a module defines a type that has the same name as the
 module, the type is referenced unqualified. This facility is useful in the
@@ -503,6 +511,7 @@ Example:
 
 DEFINITION MODULE Colour;
 TYPE Colour = ( red, green, blue );
+(* public interface *)
 END Colour.
 
 IMPORT Colour;
@@ -520,6 +529,9 @@ Example:
 
 FROM FileIO IMPORT Status; (* unqualified import of Status *)
 VAR status : Status; (* unqualified identifier of Status *)
+
+
+3.2.1 Wildcard Import
 
 An unqualified import directive may import all available identifiers of a
 library module by using an asterisk as a wildcard.
