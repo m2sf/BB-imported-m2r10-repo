@@ -66,8 +66,8 @@ PROCEDURE Raise ( dispatchTable : Exceptions; e : Exception );
 (* Resume from exception *)
 
 PROCEDURE Resume;
-(* Returns control to the procedure that raised the current exception. This
-   procedure is used to prevent procedure Raise to initiate termination. *)
+(* Returns control to the procedure that raised the current exception. A call
+   to Resume prevents the calling Raise from initiating program termination.*)
 
 
 (* Exception counter *)
