@@ -1,0 +1,552 @@
+Modula-2 R10 Concise Language Description
+
+This document is a concise description of a dialect of the Modula-2 programming
+language, tentatively called R10, jointly developed in 2009 and 2010 by
+B.Kowarsch and R.Sutcliffe as a modern revision of classic Modula-2.
+
+At the time of writing, the authoritative language report is still work in
+progress and has not yet been published. The present document is intended
+strictly as a non-authoritative informational source for contributors who
+wish to participate in work on the reference compiler, the standard library
+and associated compliance test tools. Details may change without prior notice.
+
+
+The notation used to describe syntax in this document is based on the EBNF
+notation used by the lexer and parser generator ANTLR:
+
+* names that start with a capital letter represent terminal symbols
+* names that start with a lowercase letter represent non-terminal symbols
+* single and double quotes are used to delimit literals
+* parentheses are used to group syntactic entities
+* the vertical bar is used to separate alternatives
+* a preceding tilde is used to denote logical not
+* a trailing question mark is used to denote zero or one occurence
+* a trailing plus sign is used to denote one or more occurences
+* a trailing asterisk is used to denote zero or more occurences
+* a colon is used between a rule's name and its body
+* a semicolon is used to terminate a production rule
+
+
+1 Lexical Entities
+
+1.1 Special Symbols
+
+Special symbols are non-alphanumeric characters or sequences of two
+non-alphanumeric characters that have special meaning in the language.
+
+List of Special Symbols
+
+!     [ ] operator binding
+#     not-equal operator
+&     synonym for logical AND operator
+*     multiplication and set intersection operator
++     addition and set union operator
+++    postfix increment operator
+,     punctuation, used as a separator in item lists
+-     subtraction and set difference operator
+--    postfix decrement operator
+.     punctuation, used as a separator, decimal point and module terminator
+..    range operator
+/     division and symmetric set difference operator
+:     punctuation, used as a separator between identifiers and formal types
+::    type conversion operator
+:=    assignment operator
+;     punctuation, used as a separator in statement sequences
+<     less-than and true-subset relational operator
+<=    less-than-or-equal and subset relational operator
+=     equal operator
+>     greater-than and true-superset relational operator
+>=    greather-than-or-equal and superset relational operator
+^     pointer dereferencing operator
+|     punctuation, used as a separator in case label lists
+~     synonym for logical NOT operator
+'     single quote, used as a string delimiter
+"     double quote, used as a string delimiter
+\     escape symbol within a quoted string
+
+[ ]   brackets, used as index operator and to delimit special syntax
+( )   parentheses, used to group expressions and to delimit argument lists
+{ }   braces, used to delimit structured literals
+
+<*    opening delimiter for pragmas
+*>    closing delimiter for pragmas
+//    single line comment prefix
+(*    opening delimiter for nestable comments
+*)    closing delimiter for nestable comments
+/*    opening delimiter for non-nestable comments
+*/    closing delimiter for non-nestable comments
+
+
+1.2 Non-Semantic Symbols
+
+Non-semantic symbols are symbols that do not impact the meaning of a program.
+They may occur anywhere in a program before or after semantic symbols but not
+within them. There are three types of non-semantic symbols:
+
+* pragmas
+* comments
+* lexical separators
+
+
+1.2.1 Pragmas
+
+Pragmas are directives used to control the translation process but do not
+change the meaning of the program text. Pragmas are delimited by special
+symbols "<*" and "*>". There are two types of pragmas:
+
+* implementation defined pragmas
+* language defined pragmas
+
+
+1.2.1.1 Implementation Defined Pragmas
+
+Any implementation may define its own set of pragmas, specific to the compiler.
+The name of an implementation defined pragma must not be an all-uppercase word.
+
+EBNF:
+
+implementationDefinedPragma :
+    pragmaName ( "+" | "-" | "=" ( ident | number ) )?
+pragmaName : ident ;
+
+
+1.2.1.2 Language Defined Pragmas
+
+Language defined pragmas use all-uppercase words as pragma names. There
+are three groups of language defined pragmas:
+
+* pragmas to control conditional compilation
+* pragmas to emit console messages during compilation
+* pragmas to control, influence or optimise code-generation
+
+List of Language Defined Pragma Names
+
+IF               INFO             FATAL            MAKE             VOLATILE
+ELSIF            WARN             ALIGN            INLINE
+ENDIF            ERROR            FOREIGN          NOINLINE
+
+EBNF:
+
+pragma : "<*" ( conditionalPragma | compileTimeMessagePragma |
+                codeGenerationPragma | implementationDefinedPragma ) "*>" ;
+conditionalPragma : ( IF | ELSIF ) constExpression | ELSE | ENDIF ;
+compileTimeMessagePragma : ( INFO | WARN | ERROR | FATAL ) compileTimeMessage ;
+codeGenerationPragma : ALIGN '=' constExpression | FOREIGN ( '=' string )? |
+    MAKE '=' string | INLINE | NOINLINE | VOLATILE ;
+compileTimeMessage : string ;
+
+Examples:
+
+<* IF TSIZE(INTEGER) = 2 *>
+<* ALIGN = 8*TSIZE(CARDINAL) *>
+<* INLINE *> PROCEDURE P;
+
+
+1.2.2 Comments
+
+Comments are symbols ignored by the compiler but intended for a human reader.
+There are three types of comments:
+
+* single line comments
+* nestable multi-line comments
+* non-nestable multi-line comments
+
+EBNF:
+
+Comment : SingleLineComment | NestableComment | NonNestableComment ;
+SingleLineComment : "//" ~( EndOfLine )* EndOfLine ;
+NestableComment : "(*" ~( "*)" )* NestableComment* "*)" ;
+NonNestableComment : "/*" ~( "*/" )* "*/" ;
+
+Examples:
+
+// comment until end-of-line
+/* This is a non-nesting comment */
+(* This is a comment (* and a comment within *) *)
+
+Non-nestable C-style comments are intended strictly to allow support of
+source code processing tools that require such comments. For ordinary
+multi-line comments, classic Modula-2 style comments are recommended.
+
+
+1.2.3 Lexical Separators
+
+Tab and newline are ignored anywhere in a program. The space character is
+ignored anywhere other than within string literals. These symbols always
+terminate a numeric literal, an identifier, a reserved word or a pragma name.
+
+EBNF:
+
+LexicalSeparator : " " | TAB | NewLine ;
+NewLine : LF CR? | CR LF? ;
+
+
+1.3 Literals
+
+There are three types of literals:
+
+* numeric literals
+* string literals
+* structured literals
+
+
+1.3.1 Numeric literals
+
+There are three types of numeric literals
+
+* character code literals
+* whole number literals
+* real number literals
+
+
+1.3.1.1 Character Code Literals
+
+Character code literals are base-16 numbers, indicated by suffix "C".
+
+EBNF:
+
+charCode : Digit Base16Digit+ "C" ;
+
+Examples: 0C, 0AC, 7FC
+
+
+1.3.1.2 Whole Number Literals
+
+There are three types of whole number literals
+
+* base-10, without suffix
+* base-2, with suffix "B"
+* base-16, with suffix "H"
+
+DecimalValue : Digit+ ;
+BinaryValue : BinaryDigit+ "B" ;
+Base16Value : Digit Base16Digit+ "H" ;
+
+Examples: 42, 01101010B, 0BEEFH
+
+
+1.3.1.3 Real Number Literals
+
+Real number literals are base-10 numbers, always with an integral part,
+a decimal point and a fractional part, optionally followed by an exponent.
+
+RealValue : Digit+ "." Digit+ ( "E" ( "+" | "-" )? Digit+ )? ;
+
+Examples: 0.0, 123.45, 3.1415926, 7.523012E+12
+
+
+1.3.2 String Literals
+
+String literals are sequences of characters left- and right-delimited by
+single quotes or double quotes.
+
+String : "'" ( Character | '"' )* "'" |
+         '"' ( Character | "'" )* '"' ;
+
+Character : Digit | Letter |
+	        " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" |
+            "," | "-" | "." | "/" | ":" | ";" | "<" | "=" | ">" | "?" |
+            "@" | "[" | "]" | "^" | "_" | "`" | "{" | "|" | "}" | "~" |
+            EscapeSequence ;
+Digit : "0" .. "9" ;
+Letter : "A" .. "Z" | "a" .. "z" ;
+EscapeSequence : "\" ( "0" | "n" | "r" | "t" | "\" | "'" | '"' ) ;
+
+Examples:
+
+"it's nine o'clock"
+'he said "Modula-2" and smiled'
+"this is the end of the line\n"
+
+
+1.3.3 Structured Literals
+
+Structured literals are compound values whith comma separated numeric literals,
+string literals or structured literals, always enclosed in braces.
+
+constStructuredValue :
+	"{" ( constValueComponent ( "," constValueComponent )* )? "}" ;
+constValueComponent :
+	constExpression ( ( BY | ".." ) constExpression )? ;
+
+Examples:
+
+{ 0 BY 100 }, { 1 .. 10 }
+{ "abc", 123, 456.78, { 1, 2, 3 } }
+{ 1970, Month.Jan, 1, 0, 0, 0.0, TZ.UTC }
+
+
+1.4 Identifiers
+
+Identifiers are names for syntactic entities in a program. There are two
+types of identifiers:
+
+* user-definable identifiers
+* language defined identifiers, aka reserved words
+
+
+1.4.1 User-definable Identifiers
+
+Identifiers are names that start with a letter, lowline or dollar sign,
+followed by any number and combination of letters, lowlines, dollar signs
+and digits. User definable identifiers must not coincide with reserved words.
+The use of the dollar sign in identifiers should be limited to referencing
+entities defined by an operating system API for public use (eg. OpenVMS).
+
+Ident : ( "_" | "$" | Letter ) ( "_" | "$" | Letter | Digit )* ;
+
+
+1.4.2 Reserved Words
+
+Reserved words are identifiers that have special meaning in the language.
+
+List of Reserved Words
+
+ALIAS            DIV              IMPLEMENTATION   OR               TYPE         
+AND              DO               IMPORT           POINTER          UNTIL
+ARRAY            ELSE             IN               PROCEDURE        VAR
+ASSOCIATIVE      ELSIF            LOOP             RECORD           VARIADIC
+BEGIN            END              MOD              REPEAT           WHILE
+BY               EXIT             MODULE           RETURN
+CASE             FOR              NOT              SET
+CONST            FROM             OF               THEN
+DEFINITION       IF               OPAQUE           TO
+
+
+1.5 Symbols Reserved for Language Extensions and External Utilities
+
+1.5.1 Symbols Reserved for Use by Language Extensions
+
+Although not part of the language specification, certain symbols are reserved
+specifically for use by language extensions. Three such language extensions
+are supported:
+
+* Parallel Modula-2
+* Objective Modula-2
+* single-pass compilers
+
+
+1.5.1.1 Symbols Reserved for Parallel Modula-2
+
+The following identifiers are reserved for exclusive use by the Parallel
+Modula-2 language extension:
+
+ALL PARALLEL SYNC
+
+The following pragma names are reserved for exclusive use by the Parallel
+Modula-2 language extension:
+
+LOCAL SPREAD CYCLE SBLOCK CBLOCK
+
+
+1.5.1.2 Symbols Reserved for Objective Modula-2
+
+The following identifiers are reserved for exclusive use by the Objective
+Modula-2 language extension:
+
+BYCOPY BYREF CLASS CONTINUE CRITICAL INOUT METHOD ON OPTIONAL OUT PRIVATE
+PROCECTED PROTOCOL PUBLIC SUPER TRY
+
+The following pragma names are reserved for exclusive use by the Objective
+Modula-2 language extension:
+
+FRAMEWORK IBACTION IBOUTLET QUALIFIED
+
+
+1.5.1.3 Symbols Reserved for Single-Pass Compilers
+
+The following pragma name is reserved for use by single-pass compilers:
+
+FORWARD
+
+
+1.5.2 Symbols Reserved for Use by External Utilities
+
+To assist external source code processing prior to compilation, the following
+symbols are reserved for exclusive use by external source code processors:
+
+?   reserved for use by editors or di-/tri-graph converters
+@@  reserved for use by template engine or make utilities
+%%  reserved for use by template engine or make utilities
+
+These symbols may only legally occur within quoted strings and comments. Their
+use within source code as special control symbols is safe prior to compilation.
+
+
+2 Compilation Units
+
+A compilation unit is a sequence of source code that can be independently
+compiled. There are three types of compilation units:
+
+* a program module
+* the interface part of a library module
+* the implementation part of a library module
+
+EBNF:
+
+compilationUnit :
+    programModule | definitionOfModule | implementationOfModule ;
+
+
+2.1 Program Modules
+
+A Modula-2 program consists of exactly one program module and zero or more
+library modules. A program module does not export any identifiers. The body
+of a program module roughly corresponds to the main() function in a C program.
+
+EBNF:
+
+programModule :
+    MODULE moduleId ( '[' priority ']' )? ';'
+    importList* block moduleId '.'
+
+moduleId : ident ;
+
+
+2.2 Definition Part of Library Modules
+
+The definition part of a library module represents the public interface of the
+library module. Any identifier defined in the definition part is automatically
+available for import by other modules.
+
+EBNF:
+
+definitionOfModule :
+    DEFINITION MODULE moduleId ';'
+    importList* definition*
+    END moduleId '.'
+
+
+2.3 Implementation Part of Library Modules
+
+The implementation part of a library module represents the implementation of
+the library module. Any identifier defined in the corresponding definition
+part is automatically available in the implementation part. Any identifier
+defined in the implementation part is not available outside of the
+implementation part.
+
+EBNF:
+
+implementationOfModule :
+    IMPLEMENTATION programModule ;
+
+
+3 Import of Identifiers
+
+Identifiers defined in the interface of a library module may be imported by
+other modules using an import directive. There are two types of import:
+
+* qualified import
+* unqualified import
+
+EBNF:
+
+importList :
+    ( FROM moduleId IMPORT ( identList | '*' ) |
+    IMPORT ident '+'? ( ',' ident '+'? )* ) ';'
+
+
+3.1 Qualified Import
+
+When an identifier is imported by qualified import, it must be qualified with
+the exporting module's module name when it is referenced in the importing
+module. This avoids name conflicts when importing identically named
+identifiers from different modules.
+
+Example:
+
+IMPORT FileIO; (* qualified import of module FileIO *)
+VAR status : FileIO.Status; (* qualified identifier of Status *)
+
+A module imported by qualified import may be automatically re-exported to any
+importing client module. Modules to be re-exported in this way are marked with
+a plus sign after their identifiers.
+
+Example:
+
+IMPORT Foo+, Bar+, Baz+;
+
+A module that imports other modules for the sole purpose of re-export is
+called an import aggregator. This facility is useful to allow clients to
+import an entire library with a single import statement.
+
+If the interface of a module defines a type that has the same name as the
+module, the type is referenced unqualified. This facility is useful in the
+construction of abstract data types as library modules.
+
+Example:
+
+DEFINITION MODULE Colour;
+TYPE Colour = ( red, green, blue );
+END Colour.
+
+IMPORT Colour;
+VAR colour : Colour;
+
+
+3.2 Unqualified Import
+
+When an identifier is imported by unqualified import, it is made available in
+the importing module as is. This will lead to a name conflict and cause a
+compile time error when importing identically named identifiers from different
+modules.
+
+Example:
+
+FROM FileIO IMPORT Status; (* unqualified import of Status *)
+VAR status : Status; (* unqualified identifier of Status *)
+
+An unqualified import directive may import all available identifiers of a
+library module by using an asterisk as a wildcard.
+
+Example:
+
+FROM FileIO IMPORT *; (* import all identifiers *)
+
+
+4 Blocks
+
+*** to do ***
+
+
+5 Declarations and Definitions
+
+*** to do ***
+
+
+6 Statements
+
+*** to do ***
+
+
+7 Expressions
+
+*** to do ***
+
+
+8 Structured Values
+
+*** to do ***
+
+
+9 Pragmas
+
+*** to do ***
+
+
+10 Pervasive Identifiers
+
+*** to do ***
+
+
+11 The Modula-2 Template Engine Utility
+
+*** to do ***
+
+
+12 Standard Library
+
+*** to do ***
+
+
+[status: May, 8, 2010] (C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved.
