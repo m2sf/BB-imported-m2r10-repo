@@ -601,9 +601,9 @@ VAR portA [mappedIOAddr] : OCTET;
 5.2.1 Global Variables
 
 A variable defined or declared in the top level of a module has a global life
-span in that it exists during the entire runtime of the program. However, a
-global variable only does not have global scope. It is only visible within
-the module it is defined or declared in and within modules that import it.
+span. It exists throughout the entire runtime of the program. However, a
+global variable does not have global scope. It is only visible within the
+module it is defined or declared in and within modules that import it.
 
 A variable declared in the top level of a library module is always exported
 immutable. It can be modified within the library module's implementation part
@@ -669,6 +669,77 @@ i := j; (* i and j are compatible *)
 
 
 5.3.3 Opaque Types
+
+A type may be defined as an opaque type. The identifier of an opaque type is
+available in the library where it is defined and in modules that import it.
+However, the implementation details of an opaque type are only available
+within the implementation part of the library where it is defined. This
+facility is useful for the construction of abstract data types.
+
+There are two types of opaque types:
+
+* opaque pointer types
+* opaque record types
+
+
+5.3.3.1 Opaque Pointers
+
+An opaque pointer type is a pointer to a type whose declaration is hidden in
+the corresponding implementation part. Objects of the abstract data type can
+only be allocated dynamically at runtime.
+
+EBNF:
+
+opaquePointer : TYPE Ident "=" OPAQUE ";" ;
+
+Example:
+
+DEFINITION MODULE Tree;
+TYPE Tree = OPAQUE; (* opaque pointer *)
+(* public interface *)
+END Tree.
+
+IMPLEMENTATION MODULE Tree;
+TYPE Tree = POINTER TO TreeDescriptor;
+TYPE TreeDescriptor = RECORD left, right : Tree; value : ValueType END;
+(* implementation *)
+END Tree.
+
+IMPORT Tree;
+VAR tree : Tree;
+NEW(tree); (* dynamic allocation of a variable of abstract data type Tree *)
+
+
+5.3.3.2 Opaque Records
+
+An opaque record type is an opaque type that represents a record type instead
+of a pointer to a record type. Objects of the abstract data type can be
+allocated either statically as global or local variables or dynamically.
+
+In order for the compiler to be able to allocate a variable of an opaque
+record type statically, it must be able to determine its allocation size.
+However, the allocation size of a record can only be determined from the
+record type's declaration. For this reason, the declaration of an opaque
+record type is lexically located in the definition part where it is defined
+but it is semantically treated as if it was hidden in the correspoinding
+implementation part. Only the identifier of an opaque record is visible to
+modules that import it. Its internal structure is not available to them.
+
+EBNF:
+
+opaqueRecord : TYPE Ident "=" OPAQUE recordType ";" ;
+
+Example:
+
+DEFINITION MODULE BigInteger;
+TYPE BigInteger = OPAQUE RECORD highDigits, lowDigits : INTEGER END;
+(* public interface *)
+END BigInteger.
+
+IMPORT BigInteger;
+VAR bigInt : BigInteger; i : INTEGER;
+i := bigInt.highDigits; (* compile time error: hidden component *)
+
 
 5.3.4 Anonymous Types
 
