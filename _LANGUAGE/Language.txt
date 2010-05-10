@@ -884,7 +884,7 @@ Pervasive Identifiers are predefined identifiers that are available in every
 scope of a program without having to import them. Unlike reserved words,
 pervasive identifiers may be redefined by libraries or program modules.
 
-There are four groups of pervasive identifiers:
+There are five groups of pervasive identifiers:
 
 * predefined constants
 * predefined types
@@ -1044,7 +1044,7 @@ WRITE(stdOut, balance); (* replaced by BCD.Write(stdOut, balance); *)
 10.3.5 Procedure WRITEF
 
 Procedure WRITEF is used to write a value to a file or stream using a
-given format depending on a formatting string. A call to procedure WRITEF is
+given format depending on a format string. A call to procedure WRITEF is
 replaced by the compiler with a call to a library procedure WriteF which must
 be defined in a library module that has the same name as the type of the value
 being written.
@@ -1057,15 +1057,23 @@ In order to be able to call WRITEF on library defined types, the library module
 that defines the type must have the same name as the type and it must provide
 its own WriteF procedure.
 
+Procedure WRITEF is variadic. It accepts one or more values to be written.
+However, all values must be of the same type. The format string strictly
+determines the appearance of values only. This is in contrast to the printf
+function of C where the format string also determines the types of values.
+In Modula-2 R10 all values must be of the same value to ensure type safety.
+
 Examples:
 
 IMPORT PervasiveIO;
-VAR n : CARDINAL;
-WRITEF(stdOut, "", n); (* replaced by CARDINAL.WriteF(stdOut, "", n); *)
+VAR n1, n2, n3 : CARDINAL;
+WRITEF(stdOut, "", n1, n2, n3); (* replaced by
+                                   CARDINAL.WriteF(stdOut, "", n1, n2, n3); *)
 
 IMPORT BCD;
 VAR balance : BCD;
 WRITEF(stdOut, "", balance); (* replaced by BCD.WriteF(stdOut, "", balance); *)
+
 
 
 10.4 Predefined Functions
