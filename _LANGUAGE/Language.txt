@@ -1109,7 +1109,162 @@ MAX(c1, c2, c3, ...) replaced by largest constant in argument list
 
 12 Standard Library
 
-*** to do ***
+The public repository with the complete definition parts of the Modula-2 R10
+standard library is available at:
+
+http://bitbucket.org/trijezdci/m2r10stdlib/src
+
+A list of modules with a synopsis for each module is given below.
+
+
+12.1 Pseudo Modules
+
+There are five mandatory pseudo modules and one optional pseudo module:
+
+ATOMIC.def          provides atomic intrinsics
+SYSTEM.def          access to system dependent resources
+RUNTIME.def         interface to the Modula-2 runtime system
+COMPILER.def        interface to the Modula-2 compile-time system
+ASSEMBLER.def       access to target dependent inline assember (optional)
+
+
+12.2 Memory Management Modules
+
+Storage.def         dynamic memory allocator
+
+
+12.3 Modules for Exception Handling and Termination
+
+Exceptions.def      exception handling
+Termination.def     termination handling
+
+
+12.4 File System Modules
+
+Filesystem.def      file system operations using absolute paths
+DefaultDir.def      file system operations relative to a working directory
+Pathnames.def       operating system independent pathname operations
+
+
+12.5 File IO Modules
+
+FileIO.def          file oriented input and output
+TextIO.def          text file based input and output
+RegexIO.def         regular expression based input and output
+Scanner.def         primitives for scanning text files
+Terminal.def        terminal based input and output
+
+
+12.6 IO Modules for SYSTEM Types
+
+BYTE.def            IO module for type BYTE
+WORD.def            IO module for type WORD
+ADDRESS.def         IO module for type ADDRESS
+
+
+12.7 IO Modules for Pervasive Types:
+
+PervasiveIO.def     aggregator module to import all pervasive IO modules
+BOOLEAN.def         IO module for type BOOLEAN
+BITSET.def          IO module for type BITSET
+LONGBITSET.def      IO module for type LONGBITSET
+CHAR.def            IO module for type CHAR
+ARRAYOFCHAR.def     IO module for ARRAY OF CHAR types
+UNICHAR.def         IO module for type UNICHAR
+ARRAYOFUNICHAR.def  IO module for ARRAY OF CHAR types
+OCTET.def           IO module for type OCTET
+CARDINAL.def        IO module for type CARDINAL
+LONGCARD.def        IO module for type LONGCARD
+INTEGER.def         IO module for type INTEGER
+LONGINT.def         IO module for type LONGINT
+REAL.def            IO module for type REAL
+LONGREAL.def        IO module for type LONGREAL
+
+
+12.8 Library Modules Implementing Basic Types
+
+BS16.def            16-bit bitset type
+BS32.def            32-bit bitset type
+BS64.def            64-bit bitset type
+BS128.def           128-bit bitset type
+CARD16.def          16-bit unsigned integer type
+CARD32.def          32-bit unsigned integer type
+CARD64.def          64-bit unsigned integer type
+CARD128.def         128-bit unsigned integer type
+INT16.def           16-bit signed integer type
+INT32.def           32-bit signed integer type
+INT64.def           64-bit signed integer type
+INT128.def          128-bit signed integer type
+BCD.def             single precision binary coded decimals
+LONGBCD.def         double precision binary coded decimals
+COMPLEX.def         single precision complex number type
+LONGCOMPLEX.def     double precision complex number type
+CHARSET.def         character set type
+STRING.def          dynamic ASCII strings
+UNISTRING.def       dynamic unicode strings
+Unsigned24.def      unsigned integer subrange type with values from 0 to 23
+Unsigned31.def      unsigned integer subrange type with values from 1 to 31
+Unsigned60.def      unsigned integer subrange type with values from 0 to 59
+UnsignedReal60.def  unsigned real subrange type with values from 0.0 to 59.999
+
+
+12.9 Modules Defining Alias Types
+
+Bitsets.def         alias types for bitsets with guaranteed widths
+Cardinals.def       alias types for unsigned integers with guaranteed widths
+Integers.def        alias types for signed integers with guaranteed widths
+SHORTBITSET.def     alias type for bitset with smallest width
+LONGLONGBITSET.def  alias type for bitset with largest width
+SHORTCARD.def       alias type for unsigned integers with smallest width
+LONGLONGCARD.def    alias type for unsigned integers with largest width
+SHORTINT.def        alias type for signed integers with smallest width
+LONGLONGINT.def     alias type for signed integers with largest width
+
+
+12.10 Modules Providing Math for Basic Types
+
+RealMath.def        mathematic constants and functions for type REAL
+LongRealMath.def    mathematic constants and functions for type LONGREAL
+BCDMath.def         mathematic constants and functions for type BCD
+LongBCDMath.def     mathematic constants and functions for type LONGBCD
+ComplexMath.def     mathematic constants and functions for type COMPLEX
+LongComplexMath.def mathematic constants and functions for type LONGCOMPLEX
+
+
+12.11 Modules Providing Primitives for Text Handling
+
+ASCII.def           mnemonics and macro-functions for ASCII characters
+Regex.def           Modula-2 regular expression library
+RegexConv.def       conversion library for regular expression syntax
+
+
+12.12 Modules for Date and Time Handling
+
+TZ.def              time zone offsets and abbreviations
+Time.def            compound time with day, hour, minute, sec/msec components
+DateTime.def        compound calendar date and time
+TimeUnits.def       date and time base units
+SysClock.def        interface to the system clock
+
+
+12.12 Modules with Legacy Interfaces
+
+LegacyPIM.def       legacy interface to deprecated PIM functions and procedures
+LegacyISO.def       legacy interface to deprecated ISO functions and procedures
+
+
+12.13 Template Library
+
+Stack.def           generic stack template
+Queue.def           generic queue template
+DEQ.def             generic double ended queue template
+PriorityQueue.def   generic priority queue template
+AATree.def          generic AA tree template
+SplayTree.def       generic Splay tree template
+PatriciaTrie.def    generic Patricia trie template
+DynamicArray.def    generic dynamic array template
+KeyValueStore.def   generic key value storage template
+SubrangeInteger.def generic integer subrange type template
 
 
 [status: May, 10, 2010] (C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved.
