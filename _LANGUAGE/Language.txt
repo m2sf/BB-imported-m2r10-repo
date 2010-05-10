@@ -1119,7 +1119,11 @@ A list of modules with a synopsis for each module is given below.
 
 12.1 Pseudo Modules
 
-There are five mandatory pseudo modules and one optional pseudo module:
+Pseudo modules provide interfaces to the system or the compiler itself and
+are therefore built-in. However, the identifiers they provide need to be
+expclicity imported to be availble.
+
+There are four mandatory pseudo modules and one optional pseudo module:
 
 ATOMIC.def          provides atomic intrinsics
 SYSTEM.def          access to system dependent resources
