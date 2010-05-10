@@ -91,55 +91,37 @@ within them. There are three types of non-semantic symbols:
 1.2.1 Pragmas
 
 Pragmas are directives used to control the translation process but do not
-change the meaning of the program text. Pragmas are delimited by special
-symbols "<*" and "*>". There are two types of pragmas:
+change the meaning of the program text. Pragmas consist of a pragma name
+optionally followed by other symbols, delimited by "<*" and "*>".
+
+There are two types of pragmas:
 
 * implementation defined pragmas
 * language defined pragmas
+
+EBNF:
+
+pragma : "<*" pragmaName otherSymbols? "*>" ;
+
+pragmaName : Ident ;
 
 
 1.2.1.1 Implementation Defined Pragmas
 
 Any implementation may define its own set of pragmas, specific to the compiler.
-The name of an implementation defined pragma must not be an all-uppercase word.
-
-EBNF:
-
-implementationDefinedPragma :
-    pragmaName ( "+" | "-" | "=" ( ident | number ) )?
-pragmaName : ident ;
+Implementation defined pragma names must not be all-uppercase words.
 
 
 1.2.1.2 Language Defined Pragmas
 
-Language defined pragmas use all-uppercase words as pragma names. There
-are three groups of language defined pragmas:
-
-* pragmas to control conditional compilation
-* pragmas to emit console messages during compilation
-* pragmas to control, influence or optimise code-generation
+Language defined pragmas use all-uppercase words as pragma names. The pragma
+names of language defined pragmas are reserved.
 
 List of Language Defined Pragma Names
 
 IF               INFO             FATAL            MAKE             VOLATILE
 ELSIF            WARN             ALIGN            INLINE
 ENDIF            ERROR            FOREIGN          NOINLINE
-
-EBNF:
-
-pragma : "<*" ( conditionalPragma | compileTimeMessagePragma |
-                codeGenerationPragma | implementationDefinedPragma ) "*>" ;
-conditionalPragma : ( IF | ELSIF ) constExpression | ELSE | ENDIF ;
-compileTimeMessagePragma : ( INFO | WARN | ERROR | FATAL ) compileTimeMessage ;
-codeGenerationPragma : ALIGN '=' constExpression | FOREIGN ( '=' string )? |
-    MAKE '=' string | INLINE | NOINLINE | VOLATILE ;
-compileTimeMessage : string ;
-
-Examples:
-
-<* IF TSIZE(INTEGER) = 2 *>
-<* ALIGN = 8*TSIZE(CARDINAL) *>
-<* INLINE *> PROCEDURE P;
 
 
 1.2.2 Comments
@@ -782,7 +764,118 @@ i := bigInt.highDigits; (* compile time error: hidden component *)
 
 9 Pragmas
 
-*** to do ***
+Pragmas are directives used to control or influence the translation process
+but they do not change the meaning of the program text.
+
+There are two types of pragmas:
+
+* implementation defined pragmas
+* language defined pragmas
+
+
+9.1 Implementation Defined Pragmas
+
+Implementation defined pragmas are compiler specific and non-portable. They
+are easily recognisable because their pragma names are either all-lowercase
+or mixed-case but never all-uppercase words.
+
+EBNF:
+
+implementationDefinedPragma :
+    "<*" pragmaName ( "+" | "-" | "=" ( Ident | Number ) )? "*>" ;
+
+pragmaName : Ident ;
+
+
+9.2 Language Defined Pragmas
+
+Language defined pragmas are portable across implementations. They are easily
+recognisable because their pragma names are all-uppercase words. There are
+three groups of language defined pragmas:
+
+* pragmas to control conditional compilation
+* pragmas to emit console messages during compilation
+* pragmas to control, influence or optimise code-generation
+
+
+9.2.1 Conditional Compilation Pragmas
+
+Conditional compilation pragmas are used to compile portions of the source
+text only if a certain condition is met. The condition must be a compile
+time expression.
+
+EBNF:
+
+conditionalCompilationPragma :
+    "<*" ( IF | ELSIF ) constExpression | ELSE | ENDIF "*>" ;
+
+Example:
+
+TYPE Model = ( small, large, custom );
+
+<* IF TSIZE(INTEGER) = 2 *>
+CONST model = Model.small;
+<* ELSIF TSIZE(INTEGER) = 4 *>
+CONST model = Model.large;
+<* ELSIF TSIZE(INTEGER) MOD 2 = 0 *>
+CONST model = Model.custom;
+<* ELSE *>
+<* FATAL "unsupported type model." *>
+<* ENDIF *>
+
+
+9.2.2 Compile Time Console Message Pragmas
+
+Compile time console message pragmas are used to emit console messages during
+compilation. There are four types of message pragmas:
+
+* pragmas emitting informational messages
+* pragmas emitting compilation warnings
+* pragmas emitting compilation errors
+* pragmas emitting fatal compilation errors
+
+Informational messages and warnings do not cause the compilation to fail.
+Error messages cause the compilation to fail but continue. Fatal messages
+cause the compilation to fail and abort immediately.
+
+EBNF:
+
+compileTimeMessagePragma :
+    "<*" ( INFO | WARN | ERROR | FATAL ) quotedStringLiteral "*>" ;
+
+Example:
+
+<* FATAL "unsupported target architecture." *>
+
+
+9.2.3 Code Generation Pragmas
+
+Code generation pragmas are used to control or influence code generation and
+optimisation. There are six code generation pragmas:
+
+* pragma to force specified memory alignment
+* pragma to force specified calling convention
+* pragma to cause the build system to invoke an external utility
+* pragma to suggest inlining a procedure
+* pragma to suggest not inlining a procedure
+* pragma to mark a variable as volatile
+
+EBNF:
+
+codeGenerationPragma :
+    "<*" ( ALIGN "=" constExpression |
+           FOREIGN ( "=" quotedStringLiteral )? |
+           MAKE "=" quotedStringLiteral |
+           INLINE | NOINLINE | VOLATILE ) "*>" ;
+
+Examples:
+
+TYPE Point = RECORD <* ALIGN = 8*TSIZE(CARDINAL) *> x, y : OCTET END;
+<* FOREIGN = "C" *> PROCEDURE atoi ( CONST s : ARRAY OF CHAR ) : INTEGER;
+<* MAKE = "genhashes foo bar baz > Hashes.def" *>
+<* INLINE *> PROCEDURE P;
+<* NOINLINE *> PROCEDURE Q;
+VAR <* VOLATILE *> signal : Signal;
 
 
 10 Pervasive Identifiers
