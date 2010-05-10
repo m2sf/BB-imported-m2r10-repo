@@ -880,7 +880,218 @@ VAR <* VOLATILE *> signal : Signal;
 
 10 Pervasive Identifiers
 
-*** to do ***
+Pervasive Identifiers are predefined identifiers that are available in every
+scope of a program without having to import them. Unlike reserved words,
+pervasive identifiers may be redefined by libraries or program modules.
+
+There are four groups of pervasive identifiers:
+
+* predefined constants
+* predefined types
+* predefined procedures
+* predefined functions
+* builtin compile-time macros
+
+
+10.1 Predefined Constants
+
+There are three predefined constants:
+
+NIL    invalid pointer value, shorthand for 0 :: POINTER TO CONST OCTET
+TRUE   shorthand for BOOLEAN.TRUE
+FALSE  shorthand for BOOLEAN.FALSE
+
+
+10.2 Predefined Types
+
+There are twelve predefined types:
+
+BOOLEAN     boolean type, TYPE BOOLEAN = ( TRUE, FALSE );
+BITSET      bitset type of same size as CARDINAL
+LONGBITSET  bitset type of same size as LONGCARD
+CHAR        7-bit character type, first 128 code points of UTF-8
+UNICHAR     4-octet character type, all code points of UTF-32
+OCTET       unsigned 8-bit integer type
+CARDINAL    unsigned integer type, 2*n octets for n >= 1
+LONGCARD    unsigned integer type, 2*n octets for n >= 1
+INTEGER     signed integer type, 2*n octets for n >= 1
+LONGINT     signed integer type, 2*n octets for n >= 1
+REAL        real number type
+LONGREAL    double precision real number type
+
+Although these types are predefined, their IO operations are not. The IO
+operations corresponding to READ, WRITE and WRITEF for pervasive types are
+provided in the standard library and need to be imported to become available.
+
+
+10.3 Predefined Procedures
+
+All predefined procedures are Wirthian macros. They act and look like library
+defined procedures but they may not be assigned to procedure variables, may
+not be passed to a procedure as parameters and calls to them are replaced by
+the compiler with a call to a corresponding library procedure.
+
+There are five predefined procedures:
+
+* NEW
+* DISPOSE
+* READ
+* WRITE
+* WRITEF
+
+
+10.3.1 Procedure NEW
+
+Procedure NEW is used to dynamically allocate storage for a variable of a
+pointer type. A call to procedure NEW is replaced by the compiler with a call
+to library procedure ALLOCATE which must be imported before NEW can be used.
+The standard library provides an ALLOCATE procedure in module Storage.
+
+Library procedure ALLOCATE always requires a second parameter to specify the
+allocation size of the type that the pointer variable points to. The compiler
+automatically determines the allocation size for the pointer variable passed
+to NEW and passes the appropriate size value as a second parameter to library
+procedure ALLOCATE when it replaces the procedure call.
+
+Example:
+
+TYPE FooPtr = POINTER TO Foo;
+VAR fooptr : FooPtr;
+
+NEW(fooptr); (* replaced by ALLOCATE(fooptr, TSIZE(Foo)); *)
+
+When NEW is used to allocate storage for a variable of indeterminate type
+a second parameter is required to pass the determinant value for the type.
+
+Example:
+
+TYPE VLA = RECORD items : CARDINAL; array : ARRAY items OF INTEGER END;
+TYPE VLAPtr = POINTER TO VLA;
+VAR v : VLAPtr;
+
+NEW(v, 100); (* replaced by ALLOCATE(v, TSIZE(VLA) + 100*TSIZE(INTEGER)); *)
+
+
+10.3.2 Procedure DISPOSE
+
+Procedure DISPOSE is used to deallocate storage that was earlier allocated by
+a call to procedure NEW. A call to procedure DISPOSE is replaced by the
+compiler with a call to a library procedure DEALLOCATE which must be imported
+before DISPOSE can be used. The standard library provides a DEALLOCATE
+procedure in module Storage. Procedure DISPOSE always requires a single
+parameter only.
+
+Examples:
+
+DISPOSE(fooptr); (* replaced by DEALLOCATE(fooptr, TSIZE(Foo)); *)
+
+DISPOSE(v); (* replaced by
+               DEALLOCATE(v, TSIZE(VLA) + v^.items*TSIZE(INTEGER)); *)
+
+
+10.3.3 Procedure READ
+
+Procedure READ is used to read a value from a file or stream and assign it to
+a variable. A call to procedure READ is replaced by the compiler with a call
+to a library procedure Read which must be defined in a library module that
+has the same name as the type of the variable for which a value is being read.
+
+The standard library provides a Read procedure for each pervasive type in a
+corresponding module. The IO modules for all pervasive types may be imported
+at once by importing aggregator module PervasiveIO.
+
+In order to be able to call READ on library defined types, the library module
+that defines the type must have the same name as the type and it must provide
+its own Read procedure.
+
+Examples:
+
+IMPORT PervasiveIO;
+VAR n : CARDINAL;
+READ(stdIn, n); (* replaced by CARDINAL.Read(stdIn, n); *)
+
+IMPORT BCD;
+VAR balance : BCD;
+READ(stdIn, balance); (* replaced by BCD.Read(stdIn, balance); *)
+
+
+10.3.4 Procedure WRITE
+
+Procedure WRITE is used to write a value to a file or stream. A call to
+procedure WRITE is replaced by the compiler with a call to a library procedure
+Write which must be defined in a library module that has the same name as the
+type of the value being written.
+
+The standard library provides a Write procedure for each pervasive type in a
+corresponding module. The IO modules for all pervasive types may be imported
+at once by importing aggregator module PervasiveIO.
+
+In order to be able to call WRITE on library defined types, the library module
+that defines the type must have the same name as the type and it must provide
+its own Write procedure.
+
+Examples:
+
+IMPORT PervasiveIO;
+VAR n : CARDINAL;
+WRITE(stdOut, n); (* replaced by CARDINAL.Write(stdOut, n); *)
+
+IMPORT BCD;
+VAR balance : BCD;
+WRITE(stdOut, balance); (* replaced by BCD.Write(stdOut, balance); *)
+
+
+10.3.5 Procedure WRITEF
+
+Procedure WRITEF is used to write a value to a file or stream using a
+given format depending on a formatting string. A call to procedure WRITEF is
+replaced by the compiler with a call to a library procedure WriteF which must
+be defined in a library module that has the same name as the type of the value
+being written.
+
+The standard library provides a WriteF procedure for each pervasive type in a
+corresponding module. The IO modules for all pervasive types may be imported
+at once by importing aggregator module PervasiveIO.
+
+In order to be able to call WRITEF on library defined types, the library module
+that defines the type must have the same name as the type and it must provide
+its own WriteF procedure.
+
+Examples:
+
+IMPORT PervasiveIO;
+VAR n : CARDINAL;
+WRITEF(stdOut, "", n); (* replaced by CARDINAL.WriteF(stdOut, "", n); *)
+
+IMPORT BCD;
+VAR balance : BCD;
+WRITEF(stdOut, "", balance); (* replaced by BCD.WriteF(stdOut, "", balance); *)
+
+
+10.4 Predefined Functions
+
+ABS(x)      returns the absolute value of x
+NEG(x)      returns the sign reversed value of x
+ODD(x)      returns TRUE if x is an odd number
+PRED(x, n)  returns the n-th predecessor of x
+SUCC(x, n)  returns the n-th successor of x
+ORD(x)      returns the ordinal value of x
+CHR(x)      returns the character for code point x
+COUNT(c)    returns the item count of set/collection
+SIZE(v)     returns the allocated size of variable v
+HIGH(a)     returns the highest subscript of array or indexed variadic list
+LENGTH(s)   returns the length of character string s
+NEXTV(v)    returns pointer to next item in value-terminated variadic list
+TMIN(T)     returns smallest legal value of type T
+TMAX(T)     returns largest legal value of type T
+TSIZE(T)    returns number of octets required to allocate variable of type T
+VAL(T, x)   equivalent of type conversion expression x :: T
+
+
+10.5 Built-in Compile Time Expression Replacement Macros
+
+MIN(c1, c2, c3, ...) replaced by smallest constant in argument list
+MAX(c1, c2, c3, ...) replaced by largest constant in argument list
 
 
 11 The Modula-2 Template Engine Utility
@@ -893,4 +1104,4 @@ VAR <* VOLATILE *> signal : Signal;
 *** to do ***
 
 
-[status: May, 8, 2010] (C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved.
+[status: May, 10, 2010] (C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved.
