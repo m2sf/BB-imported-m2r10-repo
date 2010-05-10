@@ -23,7 +23,7 @@ notation used by the lexer and parser generator ANTLR:
 * a trailing question mark is used to denote zero or one occurence
 * a trailing plus sign is used to denote one or more occurences
 * a trailing asterisk is used to denote zero or more occurences
-* a colon is used between a rule's name and its body
+* a colon is used between a production rule's name and its body
 * a semicolon is used to terminate a production rule
 
 
@@ -36,8 +36,8 @@ non-alphanumeric characters that have special meaning in the language.
 
 List of Special Symbols
 
-!     [ ] operator binding
-#     not-equal operator
+!     denotes ADT binding to [ ]
+#     not-equal operator, obsoletes <>
 &     synonym for logical AND operator
 *     multiplication and set intersection operator
 +     addition and set union operator
@@ -400,7 +400,7 @@ programModule :
     MODULE moduleId ( '[' priority ']' )? ';'
     importList* block moduleId '.'
 
-moduleId : ident ;
+moduleId : Ident ;
 
 
 2.2 Definition Part of Library Modules
@@ -469,7 +469,7 @@ EBNF:
 
 importList :
     ( FROM moduleId IMPORT ( identList | '*' ) |
-    IMPORT ident '+'? ( ',' ident '+'? )* ) ';'
+    IMPORT Ident '+'? ( ',' Ident '+'? )* ) ';'
 
 
 3.1 Qualified Import
@@ -500,6 +500,8 @@ Example:
 DEFINITION MODULE FooBarBaz;
 IMPORT Foo+, Bar+, Baz+; (* import Foo, Bar and Baz into client module *)
 END FooBarBaz.
+
+IMPORT FooBarBaz; (* imports all modules imported by FooBarBaz and marked + *)
 
 
 3.1.2 Import of Abstract Data Type Library Modules
@@ -569,15 +571,15 @@ or declared as an alias of a variable, a type or a procedure.
 EBNF:
 
 constDefinition :
-    CONST ( ( "[" ident "]" )? ident "=" constExpression ";" )* ;
+    CONST ( ( "[" Ident "]" )? Ident "=" constExpression ";" )* ;
 
 constDeclaration :
-    CONST ( ident "=" constExpression ";" )* ;
+    CONST ( Ident "=" constExpression ";" )* ;
 
 Examples:
 
 CONST zero = 0;
-CONST intSize = TSIZE(INTEGER);
+CONST maxInt = TMAX(INTEGER);
 
 
 5.2 Variable Definitions and Declarations
@@ -588,7 +590,7 @@ runtime. A variable always has a type which is determined at compile time.
 EBNF:
 
 varDefinition :
-    VAR ( ident ( "[" address "]" | "," identList )?
+    VAR ( Ident ( "[" address "]" | "," identList )?
           : ( namedType | anonymousType ) ";" )* ;
 varDeclaration : varDefinition ;
 
@@ -626,9 +628,9 @@ variables and the operations that are permitted for variables of the type.
 EBNF:
 
 typeDefinition :
-    TYPE ( ident = ( type | opaqueType ) ";" )* ;
+    TYPE ( Ident = ( type | opaqueType ) ";" )* ;
 typeDeclaration :
-    TYPE ( ident = type ";" )* ;
+    TYPE ( Ident = type ";" )* ;
     
 Examples:
 
@@ -721,7 +723,7 @@ record type statically, it must be able to determine its allocation size.
 However, the allocation size of a record can only be determined from the
 record type's declaration. For this reason, the declaration of an opaque
 record type is lexically located in the definition part where it is defined
-but it is semantically treated as if it was hidden in the correspoinding
+but it is semantically treated as if it was hidden in the corresponding
 implementation part. Only the identifier of an opaque record is visible to
 modules that import it. Its internal structure is not available to them.
 
