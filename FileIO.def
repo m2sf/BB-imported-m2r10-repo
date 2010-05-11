@@ -4,6 +4,9 @@ DEFINITION MODULE FileIO;
 
 (* Driver for File Based IO *)
 
+(* This module interprets the contents of files as a stream of octets without
+   any particular structure. The module represents the lowest level interface
+   for file based IO in the standard library. *)
 
 FROM Integers IMPORT CARDINAL64; (* assuming 64-bit file systems *)
 
