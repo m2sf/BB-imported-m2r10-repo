@@ -4,7 +4,7 @@ DEFINITION MODULE TextIO;
 
 (* Driver for Line Oriented Text IO *)
 
-(* This module interpretes the contents of files as a sequence of lines of text
+(* This module interprets the contents of files as a sequence of lines of text
    delimited by newline. The module is implemented on top of module FileIO. *)
 
 FROM FileIO IMPORT File;
