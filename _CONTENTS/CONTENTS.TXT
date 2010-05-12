@@ -2,141 +2,142 @@ M2R10StdLib
 
 Pseudo-modules:
 
-ATOMIC.def          provides atomic intrinsics
-SYSTEM.def          access to system dependent resources
-RUNTIME.def         interface to the Modula-2 runtime system
-COMPILER.def        interface to the Modula-2 compile-time system
-ASSEMBLER.def       access to target dependent inline assember (optional)
+ATOMIC.def            provides atomic intrinsics
+SYSTEM.def            access to system dependent resources
+RUNTIME.def           interface to the Modula-2 runtime system
+COMPILER.def          interface to the Modula-2 compile-time system
+ASSEMBLER.def         access to target dependent inline assember (optional)
 
 Memory Management:
 
-Storage.def         dynamic memory allocator
+Storage.def           dynamic memory allocator
 
 Exceptions and termination:
 
-Exceptions.def      exception handling
-Termination.def     termination handling
+Exceptions.def        exception handling
+Termination.def       termination handling
 
 Filesystem:
 
-Filesystem.def      file system operations using absolute paths
-DefaultDir.def      file system operations relative to a working directory
-Pathnames.def       operating system independent pathname operations
+Filesystem.def        file system operations using absolute paths
+DefaultDir.def        file system operations relative to a working directory
+Pathnames.def         operating system independent pathname operations
 
 File IO:
 
-FileIO.def          file oriented input and output
-TextIO.def          text file based input and output
-RegexIO.def         regular expression based input and output
-Scanner.def         primitives for scanning text files
-Terminal.def        terminal based input and output
+FileIO.def            file oriented input and output
+TextIO.def            text file based input and output
+RegexIO.def           regular expression based input and output
+Scanner.def           primitives for scanning text files
+Terminal.def          terminal based input and output
 
 System Type IO:
 
-BYTE.def            IO module for type BYTE
-WORD.def            IO module for type WORD
-ADDRESS.def         IO module for type ADDRESS
+BYTE.def              IO module for type BYTE
+WORD.def              IO module for type WORD
+ADDRESS.def           IO module for type ADDRESS
 
 Pervasive Type IO:
 
-PervasiveIO.def     aggregator module to import all pervasive IO modules
-BOOLEAN.def         IO module for type BOOLEAN
-BITSET.def          IO module for type BITSET
-LONGBITSET.def      IO module for type LONGBITSET
-CHAR.def            IO module for type CHAR
-ARRAYOFCHAR.def     IO module for ARRAY OF CHAR types
-UNICHAR.def         IO module for type UNICHAR
-ARRAYOFUNICHAR.def  IO module for ARRAY OF CHAR types
-OCTET.def           IO module for type OCTET
-CARDINAL.def        IO module for type CARDINAL
-LONGCARD.def        IO module for type LONGCARD
-INTEGER.def         IO module for type INTEGER
-LONGINT.def         IO module for type LONGINT
-REAL.def            IO module for type REAL
-LONGREAL.def        IO module for type LONGREAL
+PervasiveIO.def       aggregator module to import all pervasive IO modules
+BOOLEAN.def           IO module for type BOOLEAN
+BITSET.def            IO module for type BITSET
+LONGBITSET.def        IO module for type LONGBITSET
+CHAR.def              IO module for type CHAR
+ARRAYOFCHAR.def       IO module for ARRAY OF CHAR types
+UNICHAR.def           IO module for type UNICHAR
+ARRAYOFUNICHAR.def    IO module for ARRAY OF CHAR types
+OCTET.def             IO module for type OCTET
+CARDINAL.def          IO module for type CARDINAL
+LONGCARD.def          IO module for type LONGCARD
+INTEGER.def           IO module for type INTEGER
+LONGINT.def           IO module for type LONGINT
+REAL.def              IO module for type REAL
+LONGREAL.def          IO module for type LONGREAL
 
 Library defined types:
 
-BS16.def            16-bit bitset type
-BS32.def            32-bit bitset type
-BS64.def            64-bit bitset type
-BS128.def           128-bit bitset type
-CARD16.def          16-bit unsigned integer type
-CARD32.def          32-bit unsigned integer type
-CARD64.def          64-bit unsigned integer type
-CARD128.def         128-bit unsigned integer type
-INT16.def           16-bit signed integer type
-INT32.def           32-bit signed integer type
-INT64.def           64-bit signed integer type
-INT128.def          128-bit signed integer type
-BCD.def             single precision binary coded decimals
-LONGBCD.def         double precision binary coded decimals
-COMPLEX.def         single precision complex number type
-LONGCOMPLEX.def     double precision complex number type
-CHARSET.def         character set type
-STRING.def          dynamic ASCII strings
-UNISTRING.def       dynamic unicode strings
-Unsigned24.def      unsigned integer subrange type with values from 0 to 23
-Unsigned31.def      unsigned integer subrange type with values from 1 to 31
-Unsigned60.def      unsigned integer subrange type with values from 0 to 59
-UnsignedReal60.def  unsigned real subrange type with values from 0.0 to 59.999
+BS16.def              16-bit bitset type
+BS32.def              32-bit bitset type
+BS64.def              64-bit bitset type
+BS128.def             128-bit bitset type
+CARD16.def            16-bit unsigned integer type
+CARD32.def            32-bit unsigned integer type
+CARD64.def            64-bit unsigned integer type
+CARD128.def           128-bit unsigned integer type
+INT16.def             16-bit signed integer type
+INT32.def             32-bit signed integer type
+INT64.def             64-bit signed integer type
+INT128.def            128-bit signed integer type
+BCD.def               single precision binary coded decimals
+LONGBCD.def           double precision binary coded decimals
+COMPLEX.def           single precision complex number type
+LONGCOMPLEX.def       double precision complex number type
+CHARSET.def           character set type
+STRING.def            dynamic ASCII strings
+UNISTRING.def         dynamic unicode strings
+Unsigned24.def        unsigned integer subrange type with values from 0 to 23
+Unsigned31.def        unsigned integer subrange type with values from 1 to 31
+Unsigned60.def        unsigned integer subrange type with values from 0 to 59
+UnsignedReal60.def    real subrange type with values from 0.0 to 59.999
 
 Alias types:
 
-Bitsets.def         alias types for bitsets with guaranteed widths
-Cardinals.def       alias types for unsigned integers with guaranteed widths
-Integers.def        alias types for signed integers with guaranteed widths
-SHORTBITSET.def     alias type for bitset with smallest width
-LONGLONGBITSET.def  alias type for bitset with largest width
-SHORTCARD.def       alias type for unsigned integers with smallest width
-LONGLONGCARD.def    alias type for unsigned integers with largest width
-SHORTINT.def        alias type for signed integers with smallest width
-LONGLONGINT.def     alias type for signed integers with largest width
+Bitsets.def           alias types for bitsets with guaranteed widths
+Cardinals.def         alias types for unsigned integers with guaranteed widths
+Integers.def          alias types for signed integers with guaranteed widths
+SHORTBITSET.def       alias type for bitset with smallest width
+LONGLONGBITSET.def    alias type for bitset with largest width
+SHORTCARD.def         alias type for unsigned integers with smallest width
+LONGLONGCARD.def      alias type for unsigned integers with largest width
+SHORTINT.def          alias type for signed integers with smallest width
+LONGLONGINT.def       alias type for signed integers with largest width
 
 Math:
 
-RealMath.def        mathematic constants and functions for type REAL
-LongRealMath.def    mathematic constants and functions for type LONGREAL
-BCDMath.def         mathematic constants and functions for type BCD
-LongBCDMath.def     mathematic constants and functions for type LONGBCD
-ComplexMath.def     mathematic constants and functions for type COMPLEX
-LongComplexMath.def mathematic constants and functions for type LONGCOMPLEX
+RealMath.def          mathematic constants and functions for type REAL
+LongRealMath.def      mathematic constants and functions for type LONGREAL
+BCDMath.def           mathematic constants and functions for type BCD
+LongBCDMath.def       mathematic constants and functions for type LONGBCD
+ComplexMath.def       mathematic constants and functions for type COMPLEX
+LongComplexMath.def   mathematic constants and functions for type LONGCOMPLEX
 
 Text:
 
-ASCII.def           mnemonics and macro-functions for ASCII characters
-Regex.def           Modula-2 regular expression library
-RegexConv.def       conversion library for regular expression syntax
+ASCII.def             mnemonics and macro-functions for ASCII characters
+Regex.def             Modula-2 regular expression library
+RegexConv.def         conversion library for regular expression syntax
 
 Date & Time:
 
-TZ.def              time zone offsets and abbreviations
-Time.def            compound time with day, hour, minute, sec/msec components
-DateTime.def        compound calendar date and time
-TimeUnits.def       date and time base units
-SysClock.def        interface to the system clock
+TZ.def                time zone offsets and abbreviations
+Time.def              compound time with day, hour, minute, sec/msec components
+DateTime.def          compound calendar date and time
+TimeUnits.def         date and time base units
+SysClock.def          interface to the system clock
 
 Legacy:
 
-LegacyPIM.def       legacy interface to deprecated PIM functions and procedures
-LegacyISO.def       legacy interface to deprecated ISO functions and procedures
+LegacyPIM.def         selected legacy PIM functions and procedures
+LegacyISO.def         selected legacy ISO functions and procedures
 
 Template Library:
 
-Stack.def           generic stack template
-Queue.def           generic queue template
-DEQ.def             generic double ended queue template
-PriorityQueue.def   generic priority queue template
-AATree.def          generic AA tree template
-SplayTree.def       generic Splay tree template
-PatriciaTrie.def    generic Patricia trie template
-DynamicArray.def    generic dynamic array template
-KeyValueStore.def   generic key value storage template
-SubrangeInteger.def generic integer subrange type template
+Stack.def             generic stack template
+Queue.def             generic queue template
+DEQ.def               generic double ended queue template
+PriorityQueue.def     generic priority queue template
+AATree.def            generic AA tree template
+SplayTree.def         generic Splay tree template
+PatriciaTrie.def      generic Patricia trie template
+DynamicArray.def      generic dynamic array template
+KeyValueStore.def     generic key value storage template
+SubrangeInteger.def   generic integer subrange type template
+NonZeroIndexArray.def generic non-zero index array type template
 
 Examples:
 
-Dictionary.def      example of a library defined associative array of strings
+Dictionary.def        example of a library defined associative array of strings
 
 
-[status: May 8, 2010 -- further modules are being added]
+[status: May 12, 2010 -- further modules are being added]
