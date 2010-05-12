@@ -736,9 +736,9 @@ or expression compatible. If the types do not have names, then compatibility
 cannot be determined. For this reason, anonymous types are of very limited use
 in languages with name equivalence.
 
-Modula-2 name equivalence for all types other than procedure types and formal
-array and pointer parameters. A procedure is compatible with a procedure type
-if their respective signatures match. An array is compatible with a formal
+Modula-2 follows name equivalence for all types other than procedure types and
+formal array and pointer parameters. A procedure is compatible with a procedure
+type if their respective signatures match. An array is compatible with a formal
 array parameter if their respective component types match. A pointer is
 compatible with a formal pointer parameter if the respective types they
 point to match. These types are thus permitted as anonymous types:
