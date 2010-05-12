@@ -741,7 +741,7 @@ formal array and pointer parameters. A procedure is compatible with a procedure
 type if their respective signatures match. An array is compatible with a formal
 array parameter if their respective component types match. A pointer is
 compatible with a formal pointer parameter if the respective types they
-point to match. These types are thus permitted as anonymous types:
+point to match. These types are thus permitted as anonymous types.
 
 EBNF:
 
@@ -750,8 +750,8 @@ anonymousType : arrayType | pointerType | procedureType ;
 
 5.3.5 Enumeration Types
 
-An enumeration type is an ordinal type whose legal values are defined by
-a list of identifiers.
+An enumeration type is an ordinal type whose legal values are defined by a list
+of identifiers. The identifiers are assigned ordinal values from left to right.
 
 EBNF:
 
