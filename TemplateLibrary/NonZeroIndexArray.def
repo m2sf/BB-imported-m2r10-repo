@@ -8,12 +8,13 @@ DEFINITION MODULE @@module@@;
 %%
 %% either manually by invoking the m2te utility from a shell:
 %%
-%%   m2te NonZeroIndexArray module:A10 baseType:OCTET minIndex:1 maxIndex:10
+%%   m2te NonZeroIndexArray module:OCTET
+%%        baseType:OCTET indexType:OCTET minIndex:1 maxIndex:10
 %%
 %% or automatically during compilation using the MAKE pragma in the source:
 %%
-%%   <* MAKE = "m2te NonZeroIndexArray
-%%              module:A10 baseType:OCTET minIndex:1 maxIndex:10" *>
+%%   <* MAKE = "m2te NonZeroIndexArray module:A10
+%%              baseType:OCTET indexType:OCTET minIndex:1 maxIndex:10" *>
 %%
 %% the expanded template can then be imported like any other library module:
 %%
