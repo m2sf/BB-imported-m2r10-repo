@@ -613,8 +613,15 @@ EBNF:
 
 typeDefinition :
     TYPE ( Ident = ( type | opaqueType ) ";" )* ;
+
 typeDeclaration :
     TYPE ( Ident = type ";" )* ;
+
+type :
+	( ALIAS OF )? namedType |
+    anonymousType | enumerationType | recordType | setType ;
+
+namedType : qualident ;
     
 Examples:
 
@@ -676,7 +683,7 @@ only be allocated dynamically at runtime.
 
 EBNF:
 
-opaquePointer : TYPE Ident "=" OPAQUE ";" ;
+opaquePointerDefinition : TYPE Ident "=" OPAQUE ";" ;
 
 Example:
 
@@ -713,7 +720,7 @@ modules that import it. Its internal structure is not available to them.
 
 EBNF:
 
-opaqueRecord : TYPE Ident "=" OPAQUE recordType ";" ;
+opaqueRecordDefinition : TYPE Ident "=" OPAQUE recordType ";" ;
 
 Example:
 
@@ -756,14 +763,14 @@ of identifiers. The identifiers are assigned ordinal values from left to right.
 EBNF:
 
 enumerationType :
-    TYPE Ident "=" "(" ( ( "+" namedType ) | ident )
-                         ( "," ( ( "+" namedType ) | ident ) )* ")" ";" ;
+    "(" ( ( "+" namedType ) | ident )
+        ( "," ( ( "+" namedType ) | ident ) )* ")" ;
 
 Example:
 
 TYPE Colours = ( red, green, blue );
 
-The list of identifiers that define the legal value of an enumeration type
+The list of identifiers that define the legal values of an enumeration type
 may contain references to other enumeration types. When another enumeration
 type is referenced within an enumerated list all the identifiers listed in
 the referenced type become legal values of the new type.
@@ -787,15 +794,73 @@ colour := Colours.green; (* qualified identifier of value green *)
 
 5.3.6.1 Indexed Array Types
 
+EBNF:
+
+indexedArray :
+    ARRAY arrayIndex ( "," arrayIndex )*
+    OF ( namedType | pointerType | procedureType ) ;
+
+arrayIndex : ordinalConstExpression ;
+
+
 5.3.6.2 Associative Array Types
+
+EBNF:
+
+associativeArray :
+    ASSOCIATIVE ARRAY OF ( namedType | pointerType | procedureType ) ;
+
 
 5.3.7 Record Types
 
+EBNF:
+
+recordType :
+    RECORD ( '(' ( semanticType | baseType ) ')' )? fieldListSequence? END ;
+
+fieldListSequence :
+    fieldList ( ";" fieldList )* ;
+
+fieldList :
+    identList ":" ( namedType | arrayType | pointerType | procedureType ) ;
+
+baseType : Ident ;
+
+
 5.3.8 Set Types
+
+EBNF:
+
+setType :
+    SET OF ( namedEnumType | "(" identList ")" ) ;
+
+namedEnumType : namedType ;
+
 
 5.3.9 Pointer Types
 
+EBNF:
+
+pointerType : POINTER TO CONST? namedType ;
+
+
 5.3.10 Procedure Types
+
+EBNF:
+
+procedureType :
+    PROCEDURE ( "(" formalTypeList ")" )? ( ":" returnedType )? ;
+
+formalTypeList :
+    attributedFormalType ( "," attributedFormalType )* ;
+
+attributedFormalType :
+    ( CONST | VAR )? formalType ;
+
+formalType :
+    ( ARRAY OF )? namedType ;
+
+returnedType : namedType ;
 
 
 5.4 Procedure Definitions and Declarations
@@ -930,6 +995,8 @@ TYPE Point = RECORD <* ALIGN = 8*TSIZE(CARDINAL) *> x, y : OCTET END;
 <* INLINE *> PROCEDURE P;
 <* NOINLINE *> PROCEDURE Q;
 VAR <* VOLATILE *> signal : Signal;
+
+NB: At present, the only parameter defined for pragma FOREIGN is "C".
 
 
 10 Pervasive Identifiers
