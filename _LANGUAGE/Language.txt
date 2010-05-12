@@ -1272,9 +1272,54 @@ x := MIN( 1, 2, 3, 4, 5 ) => x := 1
 x := MAX( 1, 2, 3, 4, 5 ) => x := 5
 
 
-11 The Modula-2 Template Engine Utility
+11 Generics
 
-*** to do ***
+Syntax for generics programming is not provided in Modula-2 R10 (on purpose).
+Instead, generics programming is supported via the Modula-2 Template Engine,
+or M2TE, a free-text templating utility that is external to the compiler.
+
+The M2TE utility is invoked by passing the name of a template file and one or
+more translations for placeholders in the template file as parameters. It then
+recursively replaces all the placeholders with their respective translations,
+thereby generating the source text for a library module that is then written
+to a set of Modula-2 source files available for import by any Modula-2 library
+or program.
+
+The M2TE utility recognises any string prefixed and suffixed by @@ as a place-
+holder and any line that starts with %% as a comment not to be copied into the
+output. To produce these symbols verbatim they may be escaped with backquote.
+
+The M2TE utility may be invoked manually or automatically by the compiler on a
+generate-on-demand basis using the MAKE pragma within a Modula-2 source file.
+
+EBNF:
+
+m2teInvocation :
+    "m2te" templateFilename ( placeholderName ":" translation )*
+
+By convention, the first placeholder name is always "module", standing in for
+the name of the module to be generated.
+
+Example:
+
+$ m2te Stack module:IntegerStack componentType:INTEGER
+
+The example above invokes the M2TE utility to read template files Stack.def
+and Stack.mod, replace any occurences of the placeholders "module" with
+"IntegerStack" and "componentType" with "INTEGER", and write the resulting
+output into files named IntegerStack.def and IntegerStack.mod respectively.
+
+The MAKE pragma may be used to generate a module on demand from within the
+source text of a client module or program.
+
+Example:
+
+<* MAKE = "Stack module:IntegerStack componentType:INTEGER" *>
+IMPORT IntegerStack; (* import the generated module *)
+
+The standard library provides a portfolia of generic templates for commonly
+used abstract data types. A list of templates and their descriptions can be
+found in the Standard Library section of this document.
 
 
 12 Standard Library
