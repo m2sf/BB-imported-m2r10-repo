@@ -892,7 +892,7 @@ There are five groups of pervasive identifiers:
 * predefined types
 * predefined procedures
 * predefined functions
-* builtin compile-time macros
+* built-in lexical macros
 
 
 10.1 Predefined Constants
@@ -935,19 +935,19 @@ the compiler with a call to a corresponding library procedure.
 
 There are five predefined procedures:
 
-* NEW
-* DISPOSE
-* READ
-* WRITE
-* WRITEF
+NEW DISPOSE READ WRITE WRITEF
 
 
 10.3.1 Procedure NEW
 
 Procedure NEW is used to dynamically allocate storage for a variable of a
-pointer type. A call to procedure NEW is replaced by the compiler with a call
-to library procedure ALLOCATE which must be imported before NEW can be used.
-The standard library provides an ALLOCATE procedure in module Storage.
+pointer type. Its pseudo-definition is:
+
+PROCEDURE NEW ( VAR p : <anyPointerType>; (*OPTIONAL*) n : <unsignedType> );
+
+A call to procedure NEW is replaced by the compiler with a call to library
+procedure ALLOCATE which must be imported before NEW can be used. The standard
+library provides an ALLOCATE procedure in module Storage.
 
 Library procedure ALLOCATE always requires a second parameter to specify the
 allocation size of the type that the pointer variable points to. The compiler
@@ -977,11 +977,14 @@ NEW(v, 100); (* replaced by ALLOCATE(v, TSIZE(VLA) + 100*TSIZE(INTEGER)); *)
 10.3.2 Procedure DISPOSE
 
 Procedure DISPOSE is used to deallocate storage that was earlier allocated by
-a call to procedure NEW. A call to procedure DISPOSE is replaced by the
-compiler with a call to a library procedure DEALLOCATE which must be imported
-before DISPOSE can be used. The standard library provides a DEALLOCATE
-procedure in module Storage. Procedure DISPOSE always requires a single
-parameter only.
+a call to procedure NEW. Its pseudo-defintion is:
+
+PROCEDURE DISPOSE ( VAR p : <anyPointerType> );
+
+A call to procedure DISPOSE is replaced by the compiler with a call to a
+library procedure DEALLOCATE which must be imported before DISPOSE can be
+used. The standard library provides a DEALLOCATE procedure in module Storage.
+Procedure DISPOSE always requires a single parameter only.
 
 Examples:
 
@@ -994,9 +997,13 @@ DISPOSE(v); (* replaced by
 10.3.3 Procedure READ
 
 Procedure READ is used to read a value from a file or stream and assign it to
-a variable. A call to procedure READ is replaced by the compiler with a call
-to a library procedure Read which must be defined in a library module that
-has the same name as the type of the variable for which a value is being read.
+a variable. Its pseudo-definition is:
+
+PROCEDURE READ ( f : File; VAR v : <anyType> );
+
+A call to procedure READ is replaced by the compiler with a call to a library
+procedure Read which must be defined in a library module that has the same
+name as the type of the variable for which a value is being read.
 
 The standard library provides a Read procedure for each pervasive type in a
 corresponding module. The IO modules for all pervasive types may be imported
@@ -1019,10 +1026,14 @@ READ(stdIn, balance); (* replaced by BCD.Read(stdIn, balance); *)
 
 10.3.4 Procedure WRITE
 
-Procedure WRITE is used to write a value to a file or stream. A call to
-procedure WRITE is replaced by the compiler with a call to a library procedure
-Write which must be defined in a library module that has the same name as the
-type of the value being written.
+Procedure WRITE is used to write a value to a file or stream. Its pseudo-
+definition is:
+
+PROCEDURE WRITE ( f : File; v : <anyType> );
+
+A call to procedure WRITE is replaced by the compiler with a call to a library
+procedure Write which must be defined in a library module that has the same
+name as the type of the value being written.
 
 The standard library provides a Write procedure for each pervasive type in a
 corresponding module. The IO modules for all pervasive types may be imported
@@ -1045,19 +1056,22 @@ WRITE(stdOut, balance); (* replaced by BCD.Write(stdOut, balance); *)
 
 10.3.5 Procedure WRITEF
 
-Procedure WRITEF is used to write a value to a file or stream using a
-given format depending on a format string. A call to procedure WRITEF is
-replaced by the compiler with a call to a library procedure WriteF which must
-be defined in a library module that has the same name as the type of the value
-being written.
+Procedure WRITEF is used to write one or more values to a file or stream using
+a given format depending on a format string. Its pseudo-definition is:
+
+PROCEDURE WRITEF ( f : File; fmt : ARRAY OF CHAR; v : VARIADIC OF <anyType> );
+
+A call to procedure WRITEF is replaced by the compiler with a call to a
+library procedure WriteF which must be defined in a library module that has
+the same name as the type of the value being written.
 
 The standard library provides a WriteF procedure for each pervasive type in a
 corresponding module. The IO modules for all pervasive types may be imported
 at once by importing aggregator module PervasiveIO.
 
-In order to be able to call WRITEF on library defined types, the library module
-that defines the type must have the same name as the type and it must provide
-its own WriteF procedure.
+In order to be able to call WRITEF on library defined types, the library
+module that defines the type must have the same name as the type and it must
+provide its own WriteF procedure.
 
 Procedure WRITEF is variadic. It accepts one or more values to be written.
 However, all values must be of the same type. The format string strictly
@@ -1077,31 +1091,185 @@ VAR balance : BCD;
 WRITEF(stdOut, "", balance); (* replaced by BCD.WriteF(stdOut, "", balance); *)
 
 
-
 10.4 Predefined Functions
 
-ABS(x)      returns the absolute value of x
-NEG(x)      returns the sign reversed value of x
-ODD(x)      returns TRUE if x is an odd number
-PRED(x, n)  returns the n-th predecessor of x
-SUCC(x, n)  returns the n-th successor of x
-ORD(x)      returns the ordinal value of x
-CHR(x)      returns the character for code point x
-COUNT(c)    returns the item count of set/collection
-SIZE(v)     returns the allocated size of variable v
-HIGH(a)     returns the highest subscript of array or indexed variadic list
-LENGTH(s)   returns the length of character string s
-NEXTV(v)    returns pointer to next item in value-terminated variadic list
-TMIN(T)     returns smallest legal value of type T
-TMAX(T)     returns largest legal value of type T
-TSIZE(T)    returns number of octets required to allocate variable of type T
-VAL(T, x)   equivalent of type conversion expression x :: T
+Predefined functions act and look like library defined functions but they may
+not be assigned to procedure variables, may not be passed to a procedure as
+parameters and calls to them are typically replaced by the compiler with
+an expression rather than a call to a corresponding function.
+
+There are 16 predefined functions:
+
+ABS NEG ODD PRED SUCC ORD CHR COUNT SIZE HIGH LENGTH NEXTV TMIN TMAX TSIZE VAL
 
 
-10.5 Built-in Compile Time Expression Replacement Macros
+10.4.1 Function ABS
 
-MIN(c1, c2, c3, ...) replaced by smallest constant in argument list
-MAX(c1, c2, c3, ...) replaced by largest constant in argument list
+Function ABS returns the absolute value of its operand. Its operand may be of
+any Z-Type, R-Type, C-Type or V-Type. Its return type is always the same as
+the operand type. Its pseudo-definiton is:
+
+PROCEDURE ABS ( x : <numericType> ) : <operandType> ;
+
+
+10.4.2 Function NEG
+
+Function NEG returns the sign reversed value of its operand. Its operand may
+be of any Z-Type, R-Type, C-Type or V-Type. Its return type is always the same
+as the operand type. Its pseudo-definiton is:
+
+PROCEDURE NEG ( x : <numericType> ) : <operandType> ;
+
+
+10.4.3 Function ODD
+
+Function ODD returns TRUE if its operand operand is an odd number or FALSE if
+it is not. Its operand may be of any Z-Type. Its return type is the boolean
+type. Its pseudo-definiton is:
+
+PROCEDURE ODD ( x : <Z-Type> ) : BOOLEAN ;
+
+
+10.4.4 Function PRED
+
+Function PRED returns the n-th predecessor of its first operand where n is the
+second operand. Its first operand may be of any ordinal type and its second
+operand may be of any unsigned type. Its return type is always the same as
+the the first operand type. Its pseudo-definition is:
+
+PROCEDURE PRED ( x : <ordinalType>; n : <unsignedType> ) : <typeOf(x)> ;
+
+
+10.4.5 Function SUCC
+
+Function SUCC returns the n-th successor of its first operand where n is the
+second operand. Its first operand may be of any ordinal type and its second
+operand may be of any unsigned Z-Type. Its return type is always the same as
+the the first operand type. Its pseudo-definition is:
+
+PROCEDURE SUCC ( x : <ordinalType>; n : <unsignedType> ) : <typeOf(x)> ;
+
+
+10.4.6 Function ORD
+
+Function ORD returns the ordinal value of its operand. Its operand may be of
+any ordinal type. Its return type is the Z-Type. Its pseudo-definition is:
+
+PROCEDURE ORD ( x : <ordinalType> ) : <Z-Type> ;
+
+
+10.4.7 Function CHR
+
+Function CHR returns the character whose code point is its operand. Its
+operand may be of any unsigned Z-Type. If the value of its operand is less
+than 128 then its return type is CHAR, otherwise its return type is UNICHAR.
+Its pseudo-definition is:
+
+PROCEDURE CHR ( x : <unsignedType> ) : <charOrUnicharType> ; 
+
+
+10.4.8 Function COUNT
+
+Function count returns the number of items stored in its operand. Its operand
+may be of any set type or collection type. Its return type is LONGCARD.
+Its pseudo-definition is:
+
+PROCEDURE COUNT ( c : <setOrCollectionType> ) : LONGCARD ;
+
+
+10.4.9 Function SIZE
+
+Function SIZE returns the allocation size of its operand. The value returned
+represents the number of octets allocated for its operand. Its operand may be
+a variable of any type. Its return type is LONGCARD. Its pseudo-defintion is:
+
+PROCEDURE SIZE ( variable : <anyType> ) : LONGCARD ;
+
+
+10.4.10 Function HIGH
+
+Function HIGH returns the highest subscript of its operand. Its operand may be
+a variable of an indexed array type or the identifier of an open array para-
+meter or variadic parameter list. Its return type is LONGCARD. Its pseudo-
+definition is:
+
+PROCEDURE HIGH ( ident : <arrayOrVariadicList> ) : LONGCARD ;
+
+
+10.4.11 Function LENGTH
+
+Function LENGTH returns the number of characters in its operand. Its operand
+may be of any character array type. Its return type is LONGCARD. Its pseudo-
+definition is:
+
+PROCEDURE LENGTH ( s : <characterArray> ) : LONGCARD ;
+
+
+10.4.12 Function NEXTV
+
+Function NEXTV returns a pointer to the next item in a value-terminated
+variadic parameter list or NIL if the end of parameter list has been reached.
+Its operand is an identifier of a value-terminated variadic parameter list.
+Its return type is a pointer to the base type of the variadic parameter list.
+Its pseudo-definition is:
+
+PROCEDURE NEXTV ( ident : <variadicList> ) : <pointerToVariadicBaseType> ;
+
+
+10.4.13 Function TMIN
+
+Function TMIN returns the smallest legal value of its operand. Its operand is
+an identifier of any Z-Type or R-Type. Its return type is the operand.
+Its pseudo-definition is:
+
+PROCEDURE TMIN ( T : <typeIdentifier> ) : <T> ;
+
+
+10.4.14 Function TMAX
+
+Function TMIN returns the largest legal value of its operand. Its operand is
+an identifier of any Z-Type or R-Type. Its return type is the operand.
+Its pseudo-definition is:
+
+PROCEDURE TMAX ( T : <typeIdentifier> ) : <T> ;
+
+
+10.4.15 Function TSIZE
+
+Function TSIZE returns the required allocation size its operand.
+
+Function TSIZE returns the required allocation size of a type. The value
+returned represents the number of octets required to allocate a variable of
+the type denoted by its operand. Its operand is an identifier denoting a type.
+Its return type is LONGCARD. Its pseudo-defintion is:
+
+PROCEDURE TSIZE ( T : <typeIdentifier> ) : LONGCARD ;
+
+
+10.4.16 Function VAL
+
+Function VAL is a macro that is provided only as a measure of legacy support.
+Any invocation is replaced by an equivalent type conversion expression. The
+invocation 'VAL(T, x)' is replaced by type conversion expression 'x :: T'.
+
+PROCEDURE VAL ( T : <typeIdentifier>; x : <anyType> ) : <T> ; => x :: T
+
+CAUTION: This macro may be deprecated in a future revision and its use should
+be avoided. The type conversion operator :: should always be used instead.
+
+
+10.5 Built-in Lexical Macros
+
+User-definable lexical macros are not provided in Modula-2 (on purpose), but
+there are two built-in lexical macros: MIN and MAX.
+
+Macro MIN is replaced with the smallest constant from its variadic argument
+list and Macro MAX is replaced with the largest constant from its variadic
+argument list. All arguments must be numeric constants or numeric constant
+expressions. Examples:
+
+x := MIN( 1, 2, 3, 4, 5 ) => x := 1
+x := MAX( 1, 2, 3, 4, 5 ) => x := 5
 
 
 11 The Modula-2 Template Engine Utility
