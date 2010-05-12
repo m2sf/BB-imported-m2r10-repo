@@ -759,6 +759,7 @@ anonymousType : arrayType | pointerType | procedureType ;
 
 An enumeration type is an ordinal type whose legal values are defined by a list
 of identifiers. The identifiers are assigned ordinal values from left to right.
+The ordinal value assigned to the first value is always zero.
 
 EBNF:
 
@@ -1395,7 +1396,7 @@ x := MAX( 1, 2, 3 ) => x := 3
 
 Syntax for generics programming is not provided in Modula-2 R10 (on purpose).
 Instead, generics programming is supported via the Modula-2 Template Engine,
-or M2TE, a free-text templating utility that is external to the compiler.
+or M2TE, a text templating utility that is external to the compiler.
 
 The M2TE utility is invoked by passing the name of a template file and one or
 more translations for placeholders in the template file as parameters. It then
@@ -1433,7 +1434,7 @@ source text of a client module or program.
 
 Example:
 
-<* MAKE = "Stack module:IntegerStack componentType:INTEGER" *>
+<* MAKE = "m2te Stack module:IntegerStack componentType:INTEGER" *>
 IMPORT IntegerStack; (* import the generated module *)
 
 The standard library provides a portfolio of generic templates for commonly
