@@ -729,7 +729,59 @@ i := bigInt.highDigits; (* compile time error: hidden component *)
 
 5.3.4 Anonymous Types
 
+An anonymous type is a type that does not have a type identifier associated
+with it. However, in languages with name equivalence, the names of the types
+of variables must be examined to determine whether or not they are assignment
+or expression compatible. If the types do not have names, then compatibility
+cannot be determined. For this reason, anonymous types are of very limited use
+in languages with name equivalence.
+
+Modula-2 name equivalence for all types other than procedure types and formal
+array and pointer parameters. A procedure is compatible with a procedure type
+if their respective signatures match. An array is compatible with a formal
+array parameter if their respective component types match. A pointer is
+compatible with a formal pointer parameter if the respective types they
+point to match. These types are thus permitted as anonymous types:
+
+EBNF:
+
+anonymousType : arrayType | pointerType | procedureType ;
+
+
 5.3.5 Enumeration Types
+
+An enumeration type is an ordinal type whose legal values are defined by
+a list of identifiers.
+
+EBNF:
+
+enumerationType :
+    TYPE Ident "=" "(" ( ( "+" namedType ) | ident )
+                         ( "," ( ( "+" namedType ) | ident ) )* ")" ";" ;
+
+Example:
+
+TYPE Colours = ( red, green, blue );
+
+The list of identifiers that define the legal value of an enumeration type
+may contain references to other enumeration types. When another enumeration
+type is referenced within an enumerated list all the identifiers listed in
+the referenced type become legal values of the new type.
+
+Example:
+
+TYPE MoreColours = ( +Colour, orange, magenta, cyan );
+(* equivalent to: ( red, green, blue, orange, magenta, cyan ) *)
+
+When referencing an enumerated value, its identifier must always be qualified
+with the name of its type. This requirement fixes a flaw in classic Modula-2
+where importing enumeration types could cause name conflicts.
+
+Example:
+
+VAR colour : Colours;
+colour := Colours.green; (* qualified identifier of value green *)
+
 
 5.3.6 Array Types
 
@@ -1268,8 +1320,8 @@ list and Macro MAX is replaced with the largest constant from its variadic
 argument list. All arguments must be numeric constants or numeric constant
 expressions. Examples:
 
-x := MIN( 1, 2, 3, 4, 5 ) => x := 1
-x := MAX( 1, 2, 3, 4, 5 ) => x := 5
+x := MIN( 1, 2, 3 ) => x := 1
+x := MAX( 1, 2, 3 ) => x := 3
 
 
 11 Generics
@@ -1317,9 +1369,9 @@ Example:
 <* MAKE = "Stack module:IntegerStack componentType:INTEGER" *>
 IMPORT IntegerStack; (* import the generated module *)
 
-The standard library provides a portfolia of generic templates for commonly
-used abstract data types. A list of templates and their descriptions can be
-found in the Standard Library section of this document.
+The standard library provides a portfolio of generic templates for commonly
+used abstract data types. A list of templates and their brief descriptions
+can be found in the Standard Library section of this document.
 
 
 12 Standard Library
@@ -1329,7 +1381,7 @@ standard library is available at:
 
 http://bitbucket.org/trijezdci/m2r10stdlib/src
 
-A list of modules with a synopsis for each module is given below.
+A list of modules with a brief description for each module is given below.
 
 
 12.1 Pseudo Modules
