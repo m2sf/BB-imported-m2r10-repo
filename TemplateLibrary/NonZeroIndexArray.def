@@ -1,0 +1,86 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE @@module@@;
+%% (*
+%% NonZeroIndexArray - Generic Arbitrary Index Array Type Template
+%%
+%% This template can be expanded using the Modula-2 Template Engine Utility
+%%
+%% either manually by invoking the m2te utility from a shell:
+%%
+%%   m2te NonZeroIndexArray module:A10 baseType:OCTET minValue:1 maxValue:10
+%%
+%% or automatically during compilation using the MAKE pragma in the source:
+%%
+%%   <* MAKE = "m2te NonZeroIndexArray
+%%              module:A10 baseType:OCTET minValue:1 maxValue:10" *>
+%%
+%% the expanded template can then be imported like any other library module:
+%%
+%%   IMPORT A10;
+%% *)
+
+(* Arbitrary Index Array Type @@module@@ *)
+
+
+IMPORT @@baseType@@, @@indexType@@;
+
+
+(* Index range *) 
+
+<* IF @@minIndex@@ < TMIN(@@indexType@@) OR
+      @@minIndex@@ > TMAX(@@indexType@@) *>
+<* FATAL "minIndex is not within range of indexType." *>
+<* ENDIF *>
+
+<* IF @@maxIndex@@ < TMIN(@@indexType@@) OR
+      @@maxIndex@@ > TMAX(@@indexType@@) *>
+<* FATAL "maxIndex is not within range of indexType." *>
+<* ENDIF *>
+
+<* IF @@minIndex@@ => @@maxIndex@@ *>
+<* FATAL "minIndex must be less than maxIndex." *>
+<* ENDIF *>
+
+CONST minIndex = @@minIndex@@; (* smallest array index *)
+
+CONST maxIndex = @@maxIndex@@; (* largest array index *)
+
+CONST capacity = @@maxIndex@@ - @@maxIndex@@;
+
+
+TYPE
+
+(* Base Type *)
+
+    BaseType = ALIAS OF @@baseType@@;
+
+(* Index Type *)
+
+    IndexType = ALIAS OF @@indexType@@;
+    
+(* Array Type *)
+
+    @@module@@ = OPAQUE RECORD ("A-Type")
+        array : ARRAY capacity OF BaseType;
+    END; (* @@module@@ *)
+
+
+(* accessor *)
+
+PROCEDURE [.] valueAtIndex ( array : @@module@@;
+                             index : IndexType ) : BaseType;
+(* Returns the value stored in <array> at <index>. This function is bound to
+   the array [ ] operator for rvalues of type @@module@@. *)
+
+
+(* mutator *)
+
+PROCEDURE [!] storeValue ( VAR   array : @@module@@;
+                                 index : IndexType;
+                           CONST value : BaseType );
+(* Stores <value> in <array> at <index>. Overwrites any previous value stored
+   at the same index. This procedure is bound to the array operator [ ] for
+   lvalues of type @@module@@. *)
+
+END @@module@@.
