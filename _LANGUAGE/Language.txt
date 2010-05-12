@@ -1219,7 +1219,7 @@ PROCEDURE NEXTV ( ident : <variadicList> ) : <pointerToVariadicBaseType> ;
 10.4.13 Function TMIN
 
 Function TMIN returns the smallest legal value of its operand. Its operand is
-an identifier of any Z-Type or R-Type. Its return type is the operand.
+an identifier denoting any Z-Type or R-Type. Its return type is the operand.
 Its pseudo-definition is:
 
 PROCEDURE TMIN ( T : <typeIdentifier> ) : <T> ;
@@ -1228,7 +1228,7 @@ PROCEDURE TMIN ( T : <typeIdentifier> ) : <T> ;
 10.4.14 Function TMAX
 
 Function TMIN returns the largest legal value of its operand. Its operand is
-an identifier of any Z-Type or R-Type. Its return type is the operand.
+an identifier denoting any Z-Type or R-Type. Its return type is the operand.
 Its pseudo-definition is:
 
 PROCEDURE TMAX ( T : <typeIdentifier> ) : <T> ;
