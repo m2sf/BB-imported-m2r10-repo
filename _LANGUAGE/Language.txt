@@ -1036,8 +1036,8 @@ UNICHAR     4-octet character type, all code points of UTF-32
 OCTET       unsigned 8-bit integer type
 CARDINAL    unsigned integer type, 2*n octets for n >= 1
 LONGCARD    unsigned integer type, 2*n octets for n >= 1
-INTEGER     signed integer type, 2*n octets for n >= 1
-LONGINT     signed integer type, 2*n octets for n >= 1
+INTEGER     signed integer type of same size as CARDINAL
+LONGINT     signed integer type of same size as LONGCARD
 REAL        real number type
 LONGREAL    double precision real number type
 
@@ -1255,7 +1255,7 @@ PROCEDURE ODD ( x : <Z-Type> ) : BOOLEAN ;
 Function PRED returns the n-th predecessor of its first operand where n is the
 second operand. Its first operand may be of any ordinal type and its second
 operand may be of any unsigned type. Its return type is always the same as
-the the first operand type. Its pseudo-definition is:
+type of its first operand. Its pseudo-definition is:
 
 PROCEDURE PRED ( x : <ordinalType>; n : <unsignedType> ) : <typeOf(x)> ;
 
@@ -1265,7 +1265,7 @@ PROCEDURE PRED ( x : <ordinalType>; n : <unsignedType> ) : <typeOf(x)> ;
 Function SUCC returns the n-th successor of its first operand where n is the
 second operand. Its first operand may be of any ordinal type and its second
 operand may be of any unsigned Z-Type. Its return type is always the same as
-the the first operand type. Its pseudo-definition is:
+the type of its first operand. Its pseudo-definition is:
 
 PROCEDURE SUCC ( x : <ordinalType>; n : <unsignedType> ) : <typeOf(x)> ;
 
@@ -1356,8 +1356,6 @@ PROCEDURE TMAX ( T : <typeIdentifier> ) : <T> ;
 
 10.4.15 Function TSIZE
 
-Function TSIZE returns the required allocation size its operand.
-
 Function TSIZE returns the required allocation size of a type. The value
 returned represents the number of octets required to allocate a variable of
 the type denoted by its operand. Its operand is an identifier denoting a type.
@@ -1394,8 +1392,8 @@ x := MAX( 1, 2, 3 ) => x := 3
 
 11 Generics
 
-Syntax for generics programming is not provided in Modula-2 R10 (on purpose).
-Instead, generics programming is supported via the Modula-2 Template Engine,
+Syntax for generic programming is not provided in Modula-2 R10 (on purpose).
+Instead, generic programming is supported via the Modula-2 Template Engine,
 or M2TE, a text templating utility that is external to the compiler.
 
 The M2TE utility is invoked by passing the name of a template file and one or
@@ -1425,9 +1423,10 @@ Example:
 $ m2te Stack module:IntegerStack componentType:INTEGER
 
 The example above invokes the M2TE utility to read template files Stack.def
-and Stack.mod, replace any occurences of the placeholders "module" with
-"IntegerStack" and "componentType" with "INTEGER", and write the resulting
-output into files named IntegerStack.def and IntegerStack.mod respectively.
+and Stack.mod, replace any occurences of the passed placeholders "module" and
+"componentType" with "IntegerStack" and "INTEGER" respectively, and write the
+resulting output into Modula-2 source files named IntegerStack.def and
+IntegerStack.mod respectively.
 
 The MAKE pragma may be used to generate a module on demand from within the
 source text of a client module or program.
