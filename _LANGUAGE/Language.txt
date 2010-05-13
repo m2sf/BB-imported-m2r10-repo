@@ -202,6 +202,8 @@ There are three types of whole number literals
 * base-2, with suffix "B"
 * base-16, with suffix "H"
 
+EBNF:
+
 DecimalValue : Digit+ ;
 BinaryValue : BinaryDigit+ "B" ;
 Base16Value : Digit Base16Digit+ "H" ;
@@ -214,6 +216,8 @@ Examples: 42, 01101010B, 0BEEFH
 Real number literals are base-10 numbers, always with an integral part,
 a decimal point and a fractional part, optionally followed by an exponent.
 
+EBNF:
+
 RealValue : Digit+ "." Digit+ ( "E" ( "+" | "-" )? Digit+ )? ;
 
 Examples: 0.0, 123.45, 3.1415926, 7.523012E+12
@@ -224,6 +228,8 @@ Examples: 0.0, 123.45, 3.1415926, 7.523012E+12
 String literals are sequences of characters left- and right-delimited by
 single quotes or double quotes.
 
+EBNF:
+
 String : "'" ( Character | '"' )* "'" |
          '"' ( Character | "'" )* '"' ;
 
@@ -232,6 +238,7 @@ Character : Digit | Letter |
             "," | "-" | "." | "/" | ":" | ";" | "<" | "=" | ">" | "?" |
             "@" | "[" | "]" | "^" | "_" | "`" | "{" | "|" | "}" | "~" |
             EscapeSequence ;
+
 Digit : "0" .. "9" ;
 Letter : "A" .. "Z" | "a" .. "z" ;
 EscapeSequence : "\" ( "0" | "n" | "r" | "t" | "\" | "'" | '"' ) ;
@@ -247,6 +254,8 @@ Examples:
 
 Structured literals are compound values consisting of multiple terminal
 symbols, enclosed in braces.
+
+EBNF:
 
 structuredLiteral : "{" otherSymbols? "}" ;
 
@@ -273,6 +282,8 @@ followed by any number and combination of letters, lowlines, dollar signs
 and digits. User definable identifiers must not coincide with reserved words.
 The use of the dollar sign in identifiers should be limited to referencing
 entities defined by an operating system API for public use (eg. OpenVMS).
+
+EBNF:
 
 Ident : ( "_" | "$" | Letter ) ( "_" | "$" | Letter | Digit )* ;
 
