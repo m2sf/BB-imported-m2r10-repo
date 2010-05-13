@@ -148,9 +148,9 @@ Examples:
 /* This is a non-nesting comment */
 (* This is a comment (* and a comment within *) *)
 
-Non-nestable C-style comments are intended strictly to allow support of
-source code processing tools that require such comments. For ordinary
-multi-line comments, classic Modula-2 style comments are recommended.
+NB: Non-nestable C-style /* */ comments are strictly intended to allow the use
+of source code processing tools that require such comments. For ordinary multi-
+line comments, classic Modula-2 style (* *) comments should be used instead.
 
 
 1.2.3 Lexical Separators
@@ -245,19 +245,16 @@ Examples:
 
 1.3.3 Structured Literals
 
-Structured literals are compound values whith comma separated numeric literals,
-string literals or structured literals, always enclosed in braces.
+Structured literals are compound values consisting of multiple terminal
+symbols, enclosed in braces.
 
-constStructuredValue :
-	"{" ( constValueComponent ( "," constValueComponent )* )? "}" ;
-constValueComponent :
-	constExpression ( ( BY | ".." ) constExpression )? ;
+structuredLiteral : "{" otherSymbols? "}" ;
 
 Examples:
 
-{ 0 BY 100 }, { 1 .. 10 }
-{ "abc", 123, 456.78, { 1, 2, 3 } }
-{ 1970, Month.Jan, 1, 0, 0, 0.0, TZ.UTC }
+{ 1, 2, 3 }
+{ "a", "b", "c" }
+{ 42, 3.1415926, "abc" }
 
 
 1.4 Identifiers
@@ -879,7 +876,25 @@ returnedType : namedType ;
 
 8 Structured Values
 
-*** to do ***
+Structured values are compound values that consist of comma separated component
+values, enclosed in braces. Component values may be any literal or identifier
+denoting a value or structured value.
+
+EBNF:
+
+structuredValue :
+	"{" ( valueComponent ( "," valueComponent )* )? "}" ;
+valueComponent :
+	expression ( ( BY | ".." ) constExpression )? ;
+
+Static semantics: An expression in a structured value that is followed by the
+range operator .. must be a constant expression.
+
+Examples:
+
+{ x BY 100 }, { 1 .. 10 }
+{ "abc", 123, 456.78, { 1, 2, 3 } }
+{ 1970, Month.Jan, 1, 0, 0, 0.0, TZ.UTC }
 
 
 9 Pragmas
@@ -1487,7 +1502,7 @@ Pathnames.def         operating system independent pathname operations
 12.5 File IO Modules
 
 FileIO.def            file oriented input and output
-TextIO.def            text file based input and output
+TextIO.def            line oriented input and output
 RegexIO.def           regular expression based input and output
 Scanner.def           primitives for scanning text files
 Terminal.def          terminal based input and output
@@ -1509,7 +1524,7 @@ LONGBITSET.def        IO module for type LONGBITSET
 CHAR.def              IO module for type CHAR
 ARRAYOFCHAR.def       IO module for ARRAY OF CHAR types
 UNICHAR.def           IO module for type UNICHAR
-ARRAYOFUNICHAR.def    IO module for ARRAY OF CHAR types
+ARRAYOFUNICHAR.def    IO module for ARRAY OF UNICHAR types
 OCTET.def             IO module for type OCTET
 CARDINAL.def          IO module for type CARDINAL
 LONGCARD.def          IO module for type LONGCARD
