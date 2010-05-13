@@ -121,9 +121,9 @@ names of language defined pragmas are reserved.
 
 List of Language Defined Pragma Names
 
-IF               INFO             FATAL            MAKE             VOLATILE
+IF               ENDIF            ERROR            FOREIGN          NOINLINE
+ELSE             INFO             FATAL            MAKE             VOLATILE
 ELSIF            WARN             ALIGN            INLINE
-ENDIF            ERROR            FOREIGN          NOINLINE
 
 
 1.2.2 Comments
