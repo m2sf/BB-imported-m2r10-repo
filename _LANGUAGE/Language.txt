@@ -601,10 +601,235 @@ within the procedure it is declared in and within procedures local to the
 procedure it is declared in.
 
 
-5.3 Type Definitions and Declarations
+5.3 Data Types
 
-A type is an abstract property that determines the storage size and layout of
-variables and the operations that are permitted for variables of the type.
+Modula-2 is a strongly typed language. Constants and variables are always
+associated with a data type. A data type is an abstract property of a constant
+or variable that determines the storage size and structure, the compatibility
+with other constants or variables and the operations that are permitted.
+
+The elementary data type is type OCTET, representing the smallest logical unit
+of storage, defined as eight bits. Values of type OCTET are represented by
+numeric values from 0 to 255. All other data types are based on type OCTET.
+
+Data types fall into one of three general categories:
+
+* language predefined types
+* type constructor defined types
+* library defined abstract data types
+
+
+5.3.1 Language Predefined Types
+
+Language predefined types are BOOLEAN, BITSET, LONGBITSET, CHAR, UNICHAR,
+OCTET, CARDINAL, LONGCARD, INTEGER, LONGINT, REAL and LONGREAL.
+
+Section 10.2 "Predefined Types" describes these types in detail.
+
+
+5.3.2 Type Constructor Defined Types
+
+Types that can be defined using built-in type constructor syntax are: array
+types, pointer types, procedure types, enumeration types, record types and
+set types. Character strings are represented by character arrays.
+
+Section 5.5 "Type Definitions and Declarations" describes this in detail.
+
+
+5.3.3 Library Defined Abstract Data Types
+
+Abstract data types (ADTs) are typically defined by library modules. If the
+name of the library module is the same as the abstract data type it defines,
+then the library module itself becomes a data type.
+
+In order to allow library defined ADTs to become practically indistinguishable
+from language defined types, ADT library modules may specify the semantic type
+whose semantics the ADT adheres to. It may then define library procedures to
+be bound to the operators and pervasive procedures that are defined for the
+specified semantic type. Values of the type may then be used in infix expres-
+sions and may be passed as arguments to pervasive procedures. The compiler
+then replaces the respective infix expressions and calls to pervasive
+procedures with calls to the type's corresponding library procedures.
+
+
+5.4 Semantic Types
+
+A semantic type is an abstract concept, useful to categorise types into groups
+that share a common set of operations and semantics. All data types can be
+categorised into the following semantic types:
+
+* the boolean type and its operations
+* ordinal types and their operations
+* pointer types and their operations
+* procedure types and their operations
+* the Z-Type: whole number types and their operations
+* the R-Type: real number types and their operations
+* the C-Type: complex number types and their operations
+* the V-Type: vector types and their operations
+* the A-Type: collection types and their operations
+* the S-Type: character string types and their operations
+
+Not all data types define all possible operations. For example, types CARDINAL
+and INTEGER both belong to the Z-Type, but the unary minus or sign reversal
+operation is only defined for INTEGER, because CARDINAL is unsigned.
+
+
+5.4.1 The Boolean Type
+
+The boolean type is an ordinal type of two values, true and false, with
+additional operations defined:
+
+* logical NOT
+* logical AND
+* logical OR
+
+
+5.4.2 Ordinal Types
+
+Ordinal types are sets of ordered enumerated values. The following operations
+are defined for ordinal types:
+
+* assignment (:=) and type conversion (::)
+* smallest value (TMIN) and largest value (TMAX)
+* predecessor (PRED) and successor (SUCC)
+* number of values (COUNT)
+* iteration (FOR .. IN ..)
+* equal (=)
+* not-equal (#)
+* less (<) and less-or-equal (<=)
+* greater (>) and greater-or-equal (>=)
+
+
+5.4.3 Pointer Types
+
+A pointer type represents a container for a reference to a storage location.
+The following operations are defined for pointer types:
+
+* assignment (:=)
+* dereference (^)
+* equal (=)
+* not-equal (#)
+
+
+5.4.4 Procedure Types
+
+Procedure types are special pointer types that reference the storage location
+of a procedure and store the formal parameters of the respective procedure.
+The following operations are defined for procedure types:
+
+* assignment (:=)
+* procedure call
+* dereference (^)
+* equal (=)
+* not-equal (#)
+
+
+5.4.5 Whole Number Types
+
+Whole number types are subsets of the mathematical set of whole numbers. The
+following operations are defined for whole number types:
+
+* assignment (:=) and type conversion (::)
+* smallest value (TMIN) and largest value (TMAX)
+* absolute value (ABS) and sign reversal (NEG)
+* odd/even test (ODD)
+* addition (+) and increment (++)
+* difference (-) and decrement (--)
+* multiplication (*)
+* integer division (DIV) and modulo (MOD)
+* iteration (FOR .. IN ..)
+* equal (=)
+* not-equal (#)
+* less (<) and less-or-equal (<=)
+* greater (>) and greater or equal (>=)
+
+
+5.4.6 Real Number Types
+
+Real number types are subsets of the mathematical set of real numbers. The
+following operations are defined for real number types:
+
+* assignment (:=) and type conversion (::)
+* smallest value (TMIN) and largest value (TMAX)
+* absolute value (ABS) and sign reversal (NEG)
+* addition (+) and increment (++)
+* difference (-) and decrement (--)
+* multiplication (*)
+* division (/)
+* equal (=)
+* not-equal (#)
+* less (<) and less-or-equal (<=)
+* greater (>) and greater or equal (>=)
+
+
+5.4.7 Complex Number Types
+
+Complex number types are subsets of the set of complex numbers, or C-Type.
+The standard library types COMPLEX and LONGCOMPLEX are complex number types.
+The following operations are defined for complex number types:
+
+* assignment (:=) and type conversion (::)
+* absolute value (ABS) and sign reversal (NEG)
+* addition (+) and increment (++)
+* difference (-) and decrement (--)
+* multiplication (*)
+* division (/)
+* equal (=)
+* not-equal (#)
+
+
+5.4.8 Vector Types
+
+Vector types are compound types with a fixed number of scalar components. The
+components may or may not be of the same type. The following operations are
+defined for vector types:
+
+* assignment (:=) and type conversion (::)
+* smallest value (TMIN) and largest value (TMAX)
+* absolute value (ABS) and sign reversal (NEG)
+* addition (+) and difference (-)
+* increment (++) and decrement (--)
+* equal (=)
+* not-equal (#)
+* less (<) and less-or-equal (<=)
+* greater (>) and greater or equal (>=)
+
+
+5.4.9 Collection Types
+
+Collection types represent containers in which all stored values are of the
+same type. The following operations are defined for collection types:
+
+* assignment (:=) and type conversion (::)
+* number of entries (COUNT)
+* iteration (FOR .. IN ..)
+* entry membership test (IN)
+* entry access ([ ])
+* set union (+)
+* set difference (-)
+* set intersection (*)
+* symmetric set difference (/)
+* equal (=)
+* not-equal (#)
+* subset (<=) and true subset (<) tests
+* superset (>=) and true superset (>) tests
+
+
+5.4.10 Character String Types
+
+Character string types represent containers for character strings. The
+following operations are defined for character string types:
+
+* assignment (:=) and type conversion (::)
+* length of character string (LENGTH)
+* character access ([ ])
+* concatentation (+)
+* equal (=)
+* not-equal (#)
+* collating sequence comparisons (<), (<=), (>) and (>=)
+
+
+5.5 Type Definitions and Declarations
 
 EBNF:
 
@@ -626,7 +851,7 @@ TYPE Volume = INTEGER;
 TYPE HashTable = OPAQUE;
 
 
-5.3.1 Strict Name Equivalence
+5.5.1 Strict Name Equivalence
 
 Modula-2 R10 uses strict name equivalence. By default types of different names
 are always incompatible even if they are derived from the same base type.
@@ -645,7 +870,7 @@ Example:
 celsius := (fahrenheit - 32.0) * 100.0/180.0 :: Celsius; (* type conversion *)
 
 
-5.3.2 Alias Types
+5.5.2 Alias Types
 
 If a type is desired to be compatible with another type it must be defined or
 declared as an alias type.
@@ -658,7 +883,7 @@ VAR i : INT; j : INTEGER;
 i := j; (* i and j are compatible *)
 
 
-5.3.3 Opaque Types
+5.5.3 Opaque Types
 
 A type may be defined as an opaque type. The identifier of an opaque type is
 available in the library where it is defined and in modules that import it.
@@ -672,7 +897,7 @@ There are two types of opaque types:
 * opaque record types
 
 
-5.3.3.1 Opaque Pointers
+5.5.3.1 Opaque Pointers
 
 An opaque pointer type is a pointer to a type whose declaration is hidden in
 the corresponding implementation part. Objects of the abstract data type can
@@ -700,7 +925,7 @@ VAR tree : Tree;
 NEW(tree); (* dynamic allocation of a variable of abstract data type Tree *)
 
 
-5.3.3.2 Opaque Records
+5.5.3.2 Opaque Records
 
 An opaque record type is an opaque type that represents a record type instead
 of a pointer to a record type. Objects of the abstract data type can be
@@ -731,7 +956,7 @@ VAR bigInt : BigInteger; i : INTEGER;
 i := bigInt.highDigits; (* compile time error: hidden component *)
 
 
-5.3.4 Anonymous Types
+5.5.4 Anonymous Types
 
 An anonymous type is a type that does not have a type identifier associated
 with it. However, in languages with name equivalence, the names of the types
@@ -752,7 +977,7 @@ EBNF:
 anonymousType : arrayType | pointerType | procedureType ;
 
 
-5.3.5 Enumeration Types
+5.5.5 Enumeration Types
 
 An enumeration type is an ordinal type whose legal values are defined by a list
 of identifiers. The identifiers are assigned ordinal values from left to right.
@@ -809,7 +1034,7 @@ associativeArray :
     ASSOCIATIVE ARRAY OF ( namedType | pointerType | procedureType ) ;
 
 
-5.3.7 Record Types
+5.5.7 Record Types
 
 EBNF:
 
@@ -825,7 +1050,7 @@ fieldList :
 baseType : Ident ;
 
 
-5.3.8 Set Types
+5.5.8 Set Types
 
 EBNF:
 
@@ -842,7 +1067,7 @@ EBNF:
 pointerType : POINTER TO CONST? namedType ;
 
 
-5.3.10 Procedure Types
+5.5.10 Procedure Types
 
 EBNF:
 
@@ -861,7 +1086,7 @@ formalType :
 returnedType : namedType ;
 
 
-5.4 Procedure Definitions and Declarations
+5.6 Procedure Definitions and Declarations
 
 
 6 Statements
