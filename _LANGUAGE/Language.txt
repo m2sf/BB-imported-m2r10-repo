@@ -309,36 +309,28 @@ are supported:
 
 1.5.1.1 Symbols Reserved for Parallel Modula-2
 
-The following identifiers are reserved for exclusive use by the Parallel
-Modula-2 language extension:
+The following identifiers and pragma names are reserved for exclusive use by
+the Parallel Modula-2 language extension:
 
-ALL PARALLEL SYNC
-
-The following pragma names are reserved for exclusive use by the Parallel
-Modula-2 language extension:
-
-LOCAL SPREAD CYCLE SBLOCK CBLOCK
+Reserved words: ALL PARALLEL SYNC
+Pragma names  : LOCAL SPREAD CYCLE SBLOCK CBLOCK
 
 
 1.5.1.2 Symbols Reserved for Objective Modula-2
 
-The following identifiers are reserved for exclusive use by the Objective
-Modula-2 language extension:
+The following identifiers and pragma names are reserved for exclusive use by
+the Objective Modula-2 language extension:
 
-BYCOPY BYREF CLASS CONTINUE CRITICAL INOUT METHOD ON OPTIONAL OUT PRIVATE
-PROCECTED PROTOCOL PUBLIC SUPER TRY
-
-The following pragma names are reserved for exclusive use by the Objective
-Modula-2 language extension:
-
-FRAMEWORK IBACTION IBOUTLET QUALIFIED
+Reserved words: BYCOPY BYREF CLASS CONTINUE CRITICAL INOUT METHOD ON
+                OPTIONAL OUT PRIVATE PROCECTED PROTOCOL PUBLIC SUPER TRY
+Pragma names  : FRAMEWORK IBACTION IBOUTLET QUALIFIED
 
 
 1.5.1.3 Symbols Reserved for Single-Pass Compilers
 
 The following pragma name is reserved for use by single-pass compilers:
 
-FORWARD
+Pragma name  : FORWARD
 
 
 1.5.2 Symbols Reserved for Use by External Utilities
@@ -347,11 +339,8 @@ To assist external source code processing prior to compilation, the following
 symbols are reserved for exclusive use by external source code processors:
 
 ?   reserved for use by editors or di-/tri-graph converters
-@@  reserved for use by template engine or make utilities
-%%  reserved for use by template engine or make utilities
-
-These symbols may only legally occur within quoted strings and comments. Their
-use within source code as special control symbols is safe prior to compilation.
+@@  reserved for use by the Modula-2 Template Engine or make utilities
+%%  reserved for use by the Modula-2 Template Engine or make utilities
 
 
 2 Compilation Units
