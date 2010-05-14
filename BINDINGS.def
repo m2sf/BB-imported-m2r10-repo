@@ -1,0 +1,96 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE BINDINGS;
+
+(* Pseudo module to document procedure headers required for bindings *)
+
+
+(* Bindings to TMIN and TMAX *)
+
+CONST [TMIN] minValue = <value>;
+
+CONST [TMAX] maxValue = <value>;
+
+
+(* Bindings to assignment operations *)
+
+PROCEDURE [:=] assign ( VAR v : <Type>; CONST literal : ARRAY OF CHAR );
+
+PROCEDURE [:=] assign ( VAR v : <Type>; CONST elements : VARIADIC OF <T> );
+
+
+(* Bindings to conversion operations *)
+
+PROCEDURE [::] to ( x : <Type> ) : <TargetType>;
+
+PROCEDURE [::] from ( x : <TargetType> ) : <Type>;
+
+
+(* Bindings to monadic operations *)
+
+PROCEDURE [ABS] abs ( x : <Type> ) : <OperandType>;
+
+PROCEDURE [NEG] neg ( x : <Type> ) : <OperandtType;
+
+PROCEDURE [ODD] odd ( x : <Type> ) : BOOLEAN;
+
+
+(* Bindings to dyadic operations *)
+
+PROCEDURE [+] plus ( x1, x2 : <Type> ) : <Type>;
+
+PROCEDURE [-] minus ( x1, x2 : <Type> ) : <Type>;
+
+PROCEDURE [*] asterisk ( x1, x2 : <Type> ) : <Type>;
+
+PROCEDURE [/] slash ( x1, x2 : <Type> ) : <Type>;
+
+PROCEDURE [DIV] div ( x1, x2 : <Type> ) : <Type>;
+
+
+(* Bindings to relational operations *)
+
+PROCEDURE [=] isEqual ( x1, x2 : <Type> ) : BOOLEAN;
+
+PROCEDURE [<] isLess ( x1, x2 : <Type> ) : BOOLEAN;
+
+PROCEDURE [>] isGreater ( x1, x2 : <Type> ) : BOOLEAN;
+
+
+(* Bindings to scalar conversion primitives *)
+
+PROCEDURE [TO] toSXF ( x : <Type>; VAR s : ARRAY OF CHAR );
+
+PROCEDURE [FROM] fromSXF ( VAR x : <Type>; CONST s : ARRAY OF CHAR );
+
+
+(* Binding for accessor to [ ] operator *)
+
+PROCEDURE [.] retrieve ( x : <Type>; key : <KeyType> ) : <ValueType>;
+
+(* Binding for mutator to [ ] operator *)
+
+PROCEDURE [!] store ( x : <Type>; key : <KeyType>; value : <ValueType> );
+
+
+(* Bindings to COUNT and LENGTH functions *)
+
+PROCEDURE [COUNT] count ( x : <Type> ) : LONGCARD;
+
+PROCEDURE [LENGTH] length ( x : <Type> ) : LONGCARD;
+
+
+(* Binding to FOR .. IN iterator *)
+
+PROCEDURE [FOR] next ( x : <Type>;
+                       VAR key : <KeyType>; VAR val : <ValueType> );
+
+
+(* Bindings to NEW and DISPOSE procedures *)
+
+PROCEDURE [NEW] new ( VAR x : <Type> );
+
+PROCEDURE [DISPOSE] dispose ( VAR x : <Type> );
+
+
+END BINDINGS.
