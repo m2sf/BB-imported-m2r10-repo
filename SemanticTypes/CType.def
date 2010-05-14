@@ -1,31 +1,37 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOCOL MODULE CType;
+BINDINGS FOR CType;
 
-(* Bindings permitted for C-Type *)
+(* Semantic properties for complex number types, defined as C-Type. *)
 
-TYPE [RECORD];
 
-CONST [TMIN];
+(* Constraints for C-Type ADTs *)
 
-CONST [TMAX];
+TYPE = RECORD; (* ADTs must be transparent records *)
 
-PROCEDURE [:=];
 
-PROCEDURE [::];
+(* Bindings permitted for C-Type ADTs *)
 
-PROCEDURE [ABS];
+CONST [TMIN]; (* allow binding to TMIN function *)
 
-PROCEDURE [NEG];
+CONST [TMAX]; (* allow binding to TMAX function *)
 
-PROCEDURE [+];
+PROCEDURE [:=]; (* allow binding to assignment operator *)
 
-PROCEDURE [-];
+PROCEDURE [::]; (* allow binding to conversion operator *)
 
-PROCEDURE [*];
+PROCEDURE [ABS]; (* allow binding to ABS function *)
 
-PROCEDURE [/];
+PROCEDURE [NEG]; (* allow binding to NEG function *)
 
-PROCEDURE [=];
+PROCEDURE [+]; (* allow binding to plus operator *)
+
+PROCEDURE [-]; (* allow binding to minus operator *)
+
+PROCEDURE [*]; (* allow binding to multiply operator *)
+
+PROCEDURE [/]; (* allow binding to division operator *)
+
+PROCEDURE [=]; (* allow binding to equal operator *)
 
 END CType.

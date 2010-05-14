@@ -1,29 +1,39 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOCOL MODULE SType;
+BINDINGS FOR SType;
 
-(* Bindings permitted for S-Type *)
+(* Semantic properties for character string types. *)
 
-TYPE [OPAQUE];
 
-TYPE [OPAQUE RECORD];
+(* Constraints for character string ADTs *)
 
-PROCEDURE [:=];
+TYPE = OPAQUE; (* ADTs must be opaque *)
 
-PROCEDURE [::];
+CONST = CHAR; (* ADTs may use quoted string literals *)
 
-PROCEDURE [.];
 
-PROCEDURE [!];
+(* Bindings permitted for character string ADTs *)
 
-PROCEDURE [LENGTH];
+PROCEDURE [NEW]; (* allow binding to NEW procedure *)
 
-PROCEDURE [+];
+PROCEDURE [DISPOSE]; (* allow binding to DISPOSE procedure *)
 
-PROCEDURE [=];
+PROCEDURE [:=]; (* allow binding to assignment operator *)
 
-PROCEDURE [<];
+PROCEDURE [::]; (* allow binding to conversion operator *)
 
-PROCEDURE [>];
+PROCEDURE [.]; (* allow accessor binding to [ ] operator *)
+
+PROCEDURE [!]; (* allow mutator binding to [ ] operator *)
+
+PROCEDURE [LENGTH]; (* allow binding to LENGTH function *)
+
+PROCEDURE [+]; (* allow binding to concatenation operator *)
+
+PROCEDURE [=]; (* allow binding to equal operator *)
+
+PROCEDURE [<]; (* allow binding to less operator *)
+
+PROCEDURE [>]; (* allow binding to greater operator *)
 
 END SType.

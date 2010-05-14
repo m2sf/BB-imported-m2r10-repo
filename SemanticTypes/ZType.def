@@ -1,41 +1,49 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOCOL MODULE ZType;
+BINDINGS FOR ZType;
 
-(* Bindings permitted for Z-Type *)
+(* Semantic properties for whole number types, defined as Z-Type. *)
 
-TYPE [OPAQUE RECORD];
 
-CONST [TMIN];
+(* Constraints for Z-Type ADTs *)
 
-CONST [TMAX];
+TYPE = OPAQUE RECORD; (* ADTs must be opaque records *)
 
-PROCEDURE [:=];
+CONST = INTEGER; (* ADTs may use integer literals *)
 
-PROCEDURE [::];
 
-PROCEDURE [ABS];
+(* Bindings permitted for Z-Type ADTs *)
 
-PROCEDURE [NEG];
+CONST [TMIN]; (* allow binding to TMIN function *)
 
-PROCEDURE [ODD];
+CONST [TMAX]; (* allow binding to TMAX function *)
 
-PROCEDURE [+];
+PROCEDURE [:=]; (* allow binding to assignment operator *)
 
-PROCEDURE [-];
+PROCEDURE [::]; (* allow binding to conversion operator *)
 
-PROCEDURE [*];
+PROCEDURE [ABS]; (* allow binding to ABS function *)
 
-PROCEDURE [DIV];
+PROCEDURE [NEG]; (* allow binding to NEG function *)
 
-PROCEDURE [=];
+PROCEDURE [ODD]; (* allow binding to ODD function *)
 
-PROCEDURE [<];
+PROCEDURE [+]; (* allow binding to plus operator *)
 
-PROCEDURE [>];
+PROCEDURE [-]; (* allow binding to minus operator *)
 
-PROCEDURE [TO];
+PROCEDURE [*]; (* allow binding to multiply operator *)
 
-PROCEDURE [FROM];
+PROCEDURE [DIV]; (* allow binding to DIV operator *)
+
+PROCEDURE [=]; (* allow binding to equal operator *)
+
+PROCEDURE [<]; (* allow binding to less operator *)
+
+PROCEDURE [>]; (* allow binding to greater operator *)
+
+PROCEDURE [TO]; (* allow scalar conversion primitive toSXF *)
+
+PROCEDURE [FROM]; (* allow scalar conversion primitive fromSXF *)
 
 END ZType.

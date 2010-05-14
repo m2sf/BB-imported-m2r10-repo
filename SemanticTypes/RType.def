@@ -1,39 +1,47 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOCOL MODULE RType;
+BINDINGS FOR RType;
 
-(* Bindings permitted for R-Type *)
+(* Semantic properties for real number types, defined as R-Type. *)
 
-TYPE [OPAQUE RECORD];
 
-CONST [TMIN];
+(* Constraints for R-Type ADTs *)
 
-CONST [TMAX];
+TYPE = OPAQUE RECORD; (* ADTs must be opaque records *)
 
-PROCEDURE [:=];
+CONST = REAL; (* ADTs may use real literals *)
 
-PROCEDURE [::];
 
-PROCEDURE [ABS];
+(* Bindings permitted for R-Type ADTs *)
 
-PROCEDURE [NEG];
+CONST [TMIN]; (* allow binding to TMIN function *)
 
-PROCEDURE [+];
+CONST [TMAX]; (* allow binding to TMAX function *)
 
-PROCEDURE [-];
+PROCEDURE [:=]; (* allow binding to assignment operator *)
 
-PROCEDURE [*];
+PROCEDURE [::]; (* allow binding to conversion operator *)
 
-PROCEDURE [/];
+PROCEDURE [ABS]; (* allow binding to ABS function *)
 
-PROCEDURE [=];
+PROCEDURE [NEG]; (* allow binding to NEG function *)
 
-PROCEDURE [<];
+PROCEDURE [+]; (* allow binding to plus operator *)
 
-PROCEDURE [>];
+PROCEDURE [-]; (* allow binding to minus operator *)
 
-PROCEDURE [TO];
+PROCEDURE [*]; (* allow binding to multiply operator *)
 
-PROCEDURE [FROM];
+PROCEDURE [/]; (* allow binding to division operator *)
+
+PROCEDURE [=]; (* allow binding to equal operator *)
+
+PROCEDURE [<]; (* allow binding to less operator *)
+
+PROCEDURE [>]; (* allow binding to greater operator *)
+
+PROCEDURE [TO]; (* allow scalar conversion primitive toSXF *)
+
+PROCEDURE [FROM]; (* allow scalar conversion primitive fromSXF *)
 
 END RType.
