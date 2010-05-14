@@ -1,0 +1,29 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BINDINGS FOR CollectionType;
+
+(* Semantic properties for collection types. *)
+
+
+(* Constraints for collection ADTs *)
+
+TYPE = OPAQUE; (* ADTs must be opaque *)
+
+
+(* Bindings permitted for collection ADTs *)
+
+PROCEDURE [NEW]; (* allow binding to NEW procedure *)
+
+PROCEDURE [DISPOSE]; (* allow binding to DISPOSE procedure *)
+
+PROCEDURE [.]; (* allow accessor binding to [ ] operator *)
+
+PROCEDURE [!]; (* allow mutator binding to [ ] operator *)
+
+PROCEDURE [COUNT]; (* allow binding to COUNT function *)
+
+PROCEDURE [FOR]; (* allow binding to FOR .. IN iterator *)
+
+PROCEDURE [=]; (* allow binding to equal operator *)
+
+END CollectionType.

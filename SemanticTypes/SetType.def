@@ -1,0 +1,39 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BINDINGS FOR SetType;
+
+(* Semantic properties for set types. *)
+
+
+(* Constraints for set ADTs *)
+
+TYPE = OPAQUE RECORD; (* ADTs must be opaque records *)
+
+
+(* Bindings permitted for set ADTs *)
+
+PROCEDURE [::]; (* allow binding to conversion operator *)
+
+PROCEDURE [.]; (* allow accessor binding to [ ] operator *)
+
+PROCEDURE [!]; (* allow mutator binding to [ ] operator *)
+
+PROCEDURE [COUNT]; (* allow binding to COUNT function *)
+
+PROCEDURE [FOR]; (* allow binding to FOR .. IN iterator *)
+
+PROCEDURE [+]; (* allow binding to set union operator *)
+
+PROCEDURE [-]; (* allow binding to set difference operator *)
+
+PROCEDURE [*]; (* allow binding to set intersection operator *)
+
+PROCEDURE [/]; (* allow binding to symmetric set difference op *)
+
+PROCEDURE [=]; (* allow binding to equal operator *)
+
+PROCEDURE [<]; (* allow binding to subset operator *)
+
+PROCEDURE [>]; (* allow binding to superset operator *)
+
+END SetType.
