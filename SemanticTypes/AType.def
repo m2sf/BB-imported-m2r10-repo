@@ -1,0 +1,37 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+PROTOCOL MODULE AType;
+
+(* Bindings permitted for A-Type *)
+
+TYPE [OPAQUE];
+
+TYPE [OPAQUE RECORD];
+
+PROCEDURE [:=];
+
+PROCEDURE [::];
+
+PROCEDURE [.];
+
+PROCEDURE [!];
+
+PROCEDURE [COUNT];
+
+PROCEDURE [FOR];
+
+PROCEDURE [+];
+
+PROCEDURE [-];
+
+PROCEDURE [*];
+
+PROCEDURE [/];
+
+PROCEDURE [=];
+
+PROCEDURE [<];
+
+PROCEDURE [>];
+
+END AType.

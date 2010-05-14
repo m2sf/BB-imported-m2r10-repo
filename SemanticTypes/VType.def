@@ -1,0 +1,33 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+PROTOCOL MODULE VType;
+
+(* Bindings permitted for V-Type *)
+
+TYPE [RECORD];
+
+CONST [TMIN];
+
+CONST [TMAX];
+
+PROCEDURE [::];
+
+PROCEDURE [ABS];
+
+PROCEDURE [NEG];
+
+PROCEDURE [+];
+
+PROCEDURE [-];
+
+PROCEDURE [=];
+
+PROCEDURE [<];
+
+PROCEDURE [>];
+
+PROCEDURE [TO];
+
+PROCEDURE [FROM];
+
+END VType.

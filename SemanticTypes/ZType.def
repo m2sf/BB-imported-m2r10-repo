@@ -1,0 +1,41 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+PROTOCOL MODULE ZType;
+
+(* Bindings permitted for Z-Type *)
+
+TYPE [OPAQUE RECORD];
+
+CONST [TMIN];
+
+CONST [TMAX];
+
+PROCEDURE [:=];
+
+PROCEDURE [::];
+
+PROCEDURE [ABS];
+
+PROCEDURE [NEG];
+
+PROCEDURE [ODD];
+
+PROCEDURE [+];
+
+PROCEDURE [-];
+
+PROCEDURE [*];
+
+PROCEDURE [DIV];
+
+PROCEDURE [=];
+
+PROCEDURE [<];
+
+PROCEDURE [>];
+
+PROCEDURE [TO];
+
+PROCEDURE [FROM];
+
+END ZType.

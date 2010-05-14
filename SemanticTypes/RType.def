@@ -1,0 +1,39 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+PROTOCOL MODULE RType;
+
+(* Bindings permitted for R-Type *)
+
+TYPE [OPAQUE RECORD];
+
+CONST [TMIN];
+
+CONST [TMAX];
+
+PROCEDURE [:=];
+
+PROCEDURE [::];
+
+PROCEDURE [ABS];
+
+PROCEDURE [NEG];
+
+PROCEDURE [+];
+
+PROCEDURE [-];
+
+PROCEDURE [*];
+
+PROCEDURE [/];
+
+PROCEDURE [=];
+
+PROCEDURE [<];
+
+PROCEDURE [>];
+
+PROCEDURE [TO];
+
+PROCEDURE [FROM];
+
+END RType.

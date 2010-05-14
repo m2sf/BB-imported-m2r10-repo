@@ -1,0 +1,29 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+PROTOCOL MODULE SType;
+
+(* Bindings permitted for S-Type *)
+
+TYPE [OPAQUE];
+
+TYPE [OPAQUE RECORD];
+
+PROCEDURE [:=];
+
+PROCEDURE [::];
+
+PROCEDURE [.];
+
+PROCEDURE [!];
+
+PROCEDURE [LENGTH];
+
+PROCEDURE [+];
+
+PROCEDURE [=];
+
+PROCEDURE [<];
+
+PROCEDURE [>];
+
+END SType.
