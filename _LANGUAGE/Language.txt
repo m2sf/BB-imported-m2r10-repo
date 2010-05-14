@@ -570,23 +570,31 @@ Section 5.3 "Type Definitions and Declarations" describes this in detail.
 
 Abstract data types (ADTs) are typically defined by library modules. If the
 name of the library module is the same as the abstract data type it defines,
-then the library module itself represents a data type.
+then the library module itself represents the data type.
 
-In order to allow library defined ADTs to become practically indistinguishable
-from language defined types, ADT library modules may specify the semantic type
-whose semantics the ADT adheres to. It may then define library procedures to
-be bound to the operators and pervasive procedures that are defined for the
-specified semantic type. Values of the type may then be used in infix expres-
-sions and may be passed as arguments to pervasive procedures. The compiler
-then replaces the respective infix expressions and calls to pervasive
-procedures with calls to the type's corresponding library procedures.
+An ADT may be defined with an explicit promise to adhere to a specific set of
+semantics. Sets of semantics shared by discrete data types are called semantic
+types. An ADT that speficies a semantic type promises to adhere to the common
+set of semantics defined by the semantic type. A so defined ADT may then bind
+its library defined procedures to those operators and pervasive procedures
+that represent the specified semantic type's common set of semantics. The
+compiler enforces the promise in that no other bindings are permitted.
+
+Values of the type defined by the ADT may then be used in infix expressions
+using the respective operators and respective pervasive procedures may be
+called with values of the type passed in as arguments. The compiler then
+replaces the infix expressions and calls to pervasive procedures with the
+corresponding library procedures.
+
+This facility makes library defined ADTs practically indistinguishable from
+language defined types. The Modula-2 R10 standard library provides a rich set
+of library ADTs with bindings to common operators and pervasive procedures.
 
 
 4.3 Semantic Types
 
-A semantic type is an abstract concept, useful to categorise types into groups
-that share a common set of operations and semantics. All data types can be
-categorised into the following semantic types:
+A semantic type is a set of semantics shared by discrete data types. All data
+types can be categorised into the following semantic types:
 
 * the boolean type and its operations
 * ordinal types and their operations
@@ -599,9 +607,9 @@ categorised into the following semantic types:
 * the A-Type: collection types and their operations
 * the S-Type: character string types and their operations
 
-Not all data types define all possible operations. For example, types CARDINAL
-and INTEGER both belong to the Z-Type, but the unary minus or sign reversal
-operation is only defined for INTEGER, because CARDINAL is unsigned.
+NB: Not every data type provides all possible operations. For example, types
+CARDINAL and INTEGER both belong to the Z-Type, but the unary minus or sign
+reversal operation is only provided for INTEGER, because CARDINAL is unsigned.
 
 
 4.3.1 The Boolean Type
