@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARD32;
+DEFINITION MODULE CARD32 [ZTYPE];
 
 (* 32-bit Unsigned Integer Numbers *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* CARD32 type *)
 
 TYPE
-    CARD32 = OPAQUE RECORD ("Z-Type")
+    CARD32 = OPAQUE RECORD
         value : ARRAY 4 OF OCTET; (* 32 bits *)
     END; (* CARD32 *)
 

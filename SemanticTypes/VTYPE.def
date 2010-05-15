@@ -1,8 +1,8 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR VType;
+BINDINGS FOR VTYPE; (* V-Type *)
 
-(* Semantic properties for vector types, defined as V-Type. *)
+(* Semantic Properties for Vector Types *)
 
 
 (* ADTs must be transparent records,
@@ -11,7 +11,7 @@ BINDINGS FOR VType;
 TYPE = RECORD;
 
 
-(* Bindings permitted for C-Type ADTs *)
+(* Bindings permitted for V-Type ADTs *)
 
 PROCEDURE [:=]; (* allow binding to assignment operator *)
 
@@ -29,4 +29,4 @@ PROCEDURE [*]; (* allow binding to dot product operator *)
 
 PROCEDURE [=]; (* allow binding to equal operator *)
 
-END VType.
+END VTYPE.

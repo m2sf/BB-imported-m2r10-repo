@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE Unsigned31;
+DEFINITION MODULE Unsigned31 [ZTYPE];
 
 (* Unsigned Integer Subrange Type With Values from 1 to 31 *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* Unsigned31 type *)
 
 TYPE
-    Unsigned31 = OPAQUE RECORD ("Z-Type")
+    Unsigned31 = OPAQUE RECORD
         value : OCTET; (* 8 bits *)
     END; (* Unsigned31 *)
 

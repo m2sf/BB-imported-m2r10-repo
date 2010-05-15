@@ -1,8 +1,8 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR SType;
+BINDINGS FOR StringType;
 
-(* Semantic properties for character string types. *)
+(* Semantic Properties for Dynamic String Types *)
 
 
 (* ADTs must be opaque pointers,
@@ -11,7 +11,7 @@ BINDINGS FOR SType;
 TYPE = OPAQUE := CHAR;
 
 
-(* Bindings permitted for character string ADTs *)
+(* Bindings permitted for StringType ADTs *)
 
 PROCEDURE [NEW]; (* allow binding to NEW procedure *)
 
@@ -35,4 +35,4 @@ PROCEDURE [<]; (* allow binding to less operator *)
 
 PROCEDURE [>]; (* allow binding to greater operator *)
 
-END SType.
+END StringType.

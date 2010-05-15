@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INT16;
+DEFINITION MODULE INT16 [ZTYPE];
 
 (* 16-bit Integer Numbers *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* INT16 type *)
 
 TYPE
-    INT16 = OPAQUE RECORD ("Z-Type")
+    INT16 = OPAQUE RECORD
         value : ARRAY 2 OF OCTET; (* 16 bits *)
     END; (* INT16 *)
 

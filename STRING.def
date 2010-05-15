@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE STRING;
+DEFINITION MODULE STRING [StringType];
 
 (* Dynamic ASCII Strings *)
 
@@ -10,7 +10,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 
 (* STRING type *)
 
-TYPE STRING = OPAQUE ("S-Type");
+TYPE STRING = OPAQUE;
 
 
 (* S-Type bindings to operators and pervasives: *)

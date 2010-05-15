@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BS16;
+DEFINITION MODULE BS16 [SetType];
 
 (* 16-bit Bitset *)
 
@@ -10,7 +10,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* BS16 type *)
 
 TYPE
-    BS16 = OPAQUE RECORD ("B-Type")
+    BS16 = OPAQUE RECORD
         ARRAY 2 OF OCTET; (* 16 bits *)
     END; (* BS16 *)
 

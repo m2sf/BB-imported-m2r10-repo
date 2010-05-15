@@ -7,6 +7,7 @@ SYSTEM.def            access to system dependent resources
 RUNTIME.def           interface to the Modula-2 runtime system
 COMPILER.def          interface to the Modula-2 compile-time system
 ASSEMBLER.def         access to target dependent inline assember (optional)
+BINDINGS.def          documents procedure headers required for bindings 
 
 Memory Management:
 
@@ -54,6 +55,18 @@ INTEGER.def           IO module for type INTEGER
 LONGINT.def           IO module for type LONGINT
 REAL.def              IO module for type REAL
 LONGREAL.def          IO module for type LONGREAL
+
+Semantic Types:
+
+ZTYPE.def             defines semantic properties for all whole number types
+RTYPE.def             defines semantic properties for all real number types
+CTYPE.def             defines semantic properties for all complex number types
+VTYPE.def             defines semantic properties for all numeric vector types
+ArrayType.def         defines semantic properties for static array types
+SetType.def           defines semantic properties for static set types
+DateType.def          defines semantic properties for date-time types
+StringType.def        defines semantic properties for dynamic string types
+CollectionType.def    defines semantic properties for dynamic collection types
 
 Library defined types:
 

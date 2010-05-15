@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BS64;
+DEFINITION MODULE BS64 [SetType];
 
 (* 64-bit Bitset *)
 
@@ -10,7 +10,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* BS64 type *)
 
 TYPE
-    BS64 = OPAQUE RECORD ("B-Type")
+    BS64 = OPAQUE RECORD
         ARRAY 8 OF OCTET; (* 64 bits *)
     END; (* BS64 *)
 

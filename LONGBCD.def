@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGBCD;
+DEFINITION MODULE LONGBCD [RTYPE];
 
 (* Double Precision Binary Coded Decimals *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* LONGBCD type *)
 
 TYPE
-    LONGBCD = OPAQUE RECORD ("R-Type")
+    LONGBCD = OPAQUE RECORD
         value : ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* LONGBCD *)
 

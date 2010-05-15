@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INT64;
+DEFINITION MODULE INT64 [ZType];
 
 (* 64-bit Integer Numbers *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* INT64 type *)
 
 TYPE
-    INT64 = OPAQUE RECORD ("Z-Type")
+    INT64 = OPAQUE RECORD
         value : ARRAY 8 OF OCTET; (* 64 bits *)
     END; (* INT64 *)
 

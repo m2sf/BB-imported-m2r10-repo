@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INT32;
+DEFINITION MODULE INT32 [ZTYPE];
 
 (* 32-bit Integer Numbers *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* INT32 type *)
 
 TYPE
-    INT32 = OPAQUE RECORD ("Z-Type")
+    INT32 = OPAQUE RECORD
         value : ARRAY 4 OF OCTET; (* 32 bits *)
     END; (* INT32 *)
 

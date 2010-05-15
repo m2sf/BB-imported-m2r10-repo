@@ -1,4 +1,4 @@
-DEFINITION MODULE TZ;
+DEFINITION MODULE TZ [ZTYPE];
 
 (* Time Zone Offsets *)
 
@@ -9,7 +9,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* TZ type *)
 
 TYPE
-    TZ = OPAQUE RECORD ("Z-Type")
+    TZ = OPAQUE RECORD
         value : OCTET; (* 8 bits *)
     END; (* TZ *)
 

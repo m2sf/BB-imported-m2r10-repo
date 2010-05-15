@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BS128;
+DEFINITION MODULE BS128 [SetType];
 
 (* 128-bit Bitset *)
 
@@ -10,7 +10,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* BS128 type *)
 
 TYPE
-    BS128 = OPAQUE RECORD ("B-Type")
+    BS128 = OPAQUE RECORD
         ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* BS128 *)
 

@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARD16;
+DEFINITION MODULE CARD16 [ZTYPE];
 
 (* 16-bit Unsigned Integer Numbers *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* CARD16 type *)
 
 TYPE
-    CARD16 = OPAQUE RECORD ("Z-Type")
+    CARD16 = OPAQUE RECORD
         value : ARRAY 2 OF OCTET; (* 16 bits *)
     END; (* CARD16 *)
 

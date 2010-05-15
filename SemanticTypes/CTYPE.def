@@ -1,17 +1,17 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR ZType;
+BINDINGS FOR CTYPE; (* C-Type *)
 
-(* Semantic properties for whole number types, defined as Z-Type. *)
-
-
-(* ADTs must be opaque records,
-   integer number literals may be used *)
-
-TYPE = OPAQUE RECORD := INTEGER;
+(* Semantic Properties for Complex Number Types *)
 
 
-(* Bindings permitted for Z-Type ADTs *)
+(* ADTs must be transparent records,
+   structured literals will be used by default *)
+
+TYPE = RECORD; 
+
+
+(* Bindings permitted for C-Type ADTs *)
 
 CONST [TMIN]; (* allow binding to TMIN function *)
 
@@ -25,24 +25,14 @@ PROCEDURE [ABS]; (* allow binding to ABS function *)
 
 PROCEDURE [NEG]; (* allow binding to NEG function *)
 
-PROCEDURE [ODD]; (* allow binding to ODD function *)
-
 PROCEDURE [+]; (* allow binding to plus operator *)
 
 PROCEDURE [-]; (* allow binding to minus operator *)
 
 PROCEDURE [*]; (* allow binding to multiply operator *)
 
-PROCEDURE [DIV]; (* allow binding to DIV operator *)
+PROCEDURE [/]; (* allow binding to division operator *)
 
 PROCEDURE [=]; (* allow binding to equal operator *)
 
-PROCEDURE [<]; (* allow binding to less operator *)
-
-PROCEDURE [>]; (* allow binding to greater operator *)
-
-PROCEDURE [TO]; (* allow scalar conversion primitive toSXF *)
-
-PROCEDURE [FROM]; (* allow scalar conversion primitive fromSXF *)
-
-END ZType.
+END CTYPE.

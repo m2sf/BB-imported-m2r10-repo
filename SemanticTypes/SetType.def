@@ -2,7 +2,7 @@
 
 BINDINGS FOR SetType;
 
-(* Semantic properties for set types. *)
+(* Semantic Properties for Static Set Types *)
 
 
 (* ADTs must be opaque records,
@@ -11,7 +11,7 @@ BINDINGS FOR SetType;
 TYPE = OPAQUE RECORD := {};
 
 
-(* Bindings permitted for set ADTs *)
+(* Bindings permitted for SetType ADTs *)
 
 PROCEDURE [:=]; (* allow binding to assignment operator *)
 

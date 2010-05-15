@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CHARSET;
+DEFINITION MODULE CHARSET [SetType];
 
 (* CHAR based 128-bit Bitset *)
 
@@ -10,7 +10,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* CHARSET type *)
 
 TYPE
-    CHARSET = OPAQUE RECORD ("B-Type")
+    CHARSET = OPAQUE RECORD
         ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* CHARSET *)
 

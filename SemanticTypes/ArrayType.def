@@ -1,21 +1,17 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR CollectionType;
+BINDINGS FOR ArrayType;
 
-(* Semantic Properties for Collection Types *)
+(* Semantic Properties for Static Array Types *)
 
 
 (* ADTs must be opaque records,
    no literals may be used *)
 
-TYPE = OPAQUE;
+TYPE = OPAQUE RECORD;
 
 
-(* Bindings permitted for CollectionType ADTs *)
-
-PROCEDURE [NEW]; (* allow binding to NEW procedure *)
-
-PROCEDURE [DISPOSE]; (* allow binding to DISPOSE procedure *)
+(* Bindings permitted for ArrayType ADTs *)
 
 PROCEDURE [.]; (* allow accessor binding to [ ] operator *)
 
@@ -27,4 +23,4 @@ PROCEDURE [FOR]; (* allow binding to FOR .. IN iterator *)
 
 PROCEDURE [=]; (* allow binding to equal operator *)
 
-END CollectionType.
+END ArrayType.

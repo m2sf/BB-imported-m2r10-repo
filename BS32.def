@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BS32;
+DEFINITION MODULE BS32 [SetType];
 
 (* 32-bit Bitset *)
 
@@ -10,7 +10,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* BS32 type *)
 
 TYPE
-    BS32 = OPAQUE RECORD ("B-Type")
+    BS32 = OPAQUE RECORD
         ARRAY 4 OF OCTET; (* 32 bits *)
     END; (* BS32 *)
 

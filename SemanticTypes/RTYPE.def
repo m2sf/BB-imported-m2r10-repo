@@ -1,8 +1,8 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR RType;
+BINDINGS FOR RTYPE; (* R-Type *)
 
-(* Semantic properties for real number types, defined as R-Type. *)
+(* Semantic Properties for Real Number Types *)
 
 
 (* ADTs must be opaque records,
@@ -43,4 +43,4 @@ PROCEDURE [TO]; (* allow scalar conversion primitive toSXF *)
 
 PROCEDURE [FROM]; (* allow scalar conversion primitive fromSXF *)
 
-END RType.
+END RTYPE.

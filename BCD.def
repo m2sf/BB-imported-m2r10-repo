@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BCD;
+DEFINITION MODULE BCD [RTYPE];
 
 (* Single Precision Binary Coded Decimals *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* BCD type *)
 
 TYPE
-    BCD = OPAQUE RECORD ("R-Type")
+    BCD = OPAQUE RECORD
         value : ARRAY 8 OF OCTET; (* 64 bits *)
     END; (* BCD *)
 

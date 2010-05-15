@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status May 2, 2010 */
+/* M2R10 grammar in ANTLR EBNF notation -- status May 15, 2010 */
 
 
 options {
@@ -16,17 +16,18 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 41 reserved words, 14 pragma words
+// 42 reserved words, 14 pragma words
 
 tokens {
 	
-// *** Reserved Words, 41 tokens ***
+// *** Reserved Words, 42 tokens ***
 
 	ALIAS          = 'ALIAS';
 	AND            = 'AND';
 	ARRAY          = 'ARRAY';
 	ASSOCIATIVE    = 'ASSOCIATIVE';
 	BEGIN          = 'BEGIN';
+	BINDINGS       = 'BINDINGS';
 	BY             = 'BY';
 	CASE           = 'CASE';
 	CONST          = 'CONST';
@@ -98,29 +99,37 @@ tokens {
 // ---------------------------------------------------------------------------
 // N O N - T E R M I N A L   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 65 productions
+// 67 productions
 
 // *** Compilation Units ***
 
 // production #1
 compilationUnit :	
-	programModule | definitionOfModule | implementationOfModule
+	programModule | definitionOfBindings |
+	definitionOfModule | implementationOfModule
 	;
 
 // production #2
+definitionOfBindings :
+	BINDINGS FOR semanticType ';'
+	bindingsHeader bindings*
+	END semanticType '.'
+	;
+
+// production #3
 programModule :
 	MODULE moduleId ( '[' priority ']' )? ';'
 	importList* block moduleId '.'
 	;
 
-// production #3
+// production #4
 definitionOfModule :
-	DEFINITION MODULE moduleId ';'
+	DEFINITION MODULE moduleId ( '[' semanticType ']' )? ';'
 	importList* definition*
 	END moduleId '.'
 	;
 
-// production #4
+// production #5
 implementationOfModule :
 	IMPLEMENTATION programModule
 	;
@@ -131,21 +140,50 @@ moduleId : ident ;
 // alias
 priority : constExpression ;
 
-// *** Import Lists, Blocks, Declarations, Definitions ***
+// alias
+semanticType : ident ;
 
-// production #5
+
+// *** Bindings, Import Lists, Blocks, Declarations, Definitions ***
+
+// production #6
+bindingsHeader :
+	TYPE '='(  RECORD | OPAQUE RECORD? ( ':=' ( literalType | '{' '}' ) )? ) ';'
+	;
+
+// production #7
+bindings :
+    ( CONST '[' bindableIdent ']' |
+	  PROCEDURE '['( bindableOperator | bindableIdent ) ']' ) ';' 
+	;
+
+// production #8
+bindableOperator :
+	DIV | MOD | IN | FOR | TO | FROM |
+	':=' | '::' | '.' | '!' | '+' | '-' | '*' | '/' | '=' | '<' | '>'
+	{} // make ANTLRworks display separate branches
+	;
+
+// alias
+bindableIdent : ident ;
+// TMIN, TMAX, ABS, NEG, ODD, COUNT, LENGTH, NEW, DISPOSE
+
+// alias
+literalType : ident ;
+
+// production #9
 importList :
 	( FROM moduleId IMPORT ( identList | '*' ) |
 	IMPORT ident '+'? ( ',' ident '+'? )* ) ';'
 	;
 
-// production #6
+// production #10
 block :
 	declaration*
 	( BEGIN statementSequence )? END
 	;
 
-// production #7
+// production #11
 declaration :
 	CONST ( constantDeclaration ';' )* |
 	TYPE ( ident '=' type ';' )* |
@@ -153,81 +191,74 @@ declaration :
 	procedureDeclaration ';'
 	;
 
-// production #8
+// production #12
 definition :
 	CONST ( ( '[' ident ']' )? constantDeclaration ';' )* |
-	TYPE ( ident '=' ( type | opaqueType ) ';' )* |
+	TYPE ( ident '=' ( type | OPAQUE recordType? ) ';' )* |
 	VAR ( variableDeclaration ';' )* |
 	procedureHeader ';'
 	;
 
 // *** Constant Declarations ***
 
-// production #9
+// production #13
 constantDeclaration :	
-	ident '=' constExpression
+	ident '=' constExpression // no type identifiers
 	;
 
 // *** Type Declarations ***
 
-// production #10
+// production #14
 type :
-	( ALIAS OF )? namedType | anonymousType | enumerationType | recordType | setType
+	( ALIAS OF | '[' constExpression '..' constExpression ']' OF )? namedType |
+	anonymousType | enumerationType | recordType | setType
 	;
 
 // alias
 namedType : qualident ;
 
-// production #11
-opaqueType :
-	OPAQUE ( '(' semanticType ')' | recordType )?
-	;
-
-// "A-Type", "B-Type", "S-Type", "Z-Type", "R-Type", "C-Type", "V-Type"
-semanticType : string ;
-
-// production #12
+// production #15
 anonymousType :
 	arrayType | pointerType | procedureType
 	;
 
-// production #13
+// production #16
 enumerationType :
 	'(' ( ( '+' namedType ) | ident ) ( ',' ( ( '+' namedType ) | ident ) )* ')'
 	;
 
-// production #14
+// production #17
 arrayType :
 	( ARRAY arrayIndex ( ',' arrayIndex )* | ASSOCIATIVE ARRAY )
 	OF ( namedType | pointerType | procedureType )
 	;
 
 // alias
-arrayIndex : ordinalConstExpression ;
+arrayIndex : ordinalConstExpression ; // no type identifiers
 
 // alias
 ordinalConstExpression : constExpression ;
 
-// production #15
+// production #18
 recordType :
-	RECORD ( '(' ( semanticType | baseType ) ')' )? fieldListSequence? END
+	RECORD ( '('  baseType  ')' )? fieldListSequence? END
 	;
 
 // alias
 baseType : ident ;
 
-// production #16
+// production #19
 fieldListSequence :
 	fieldList ( ';' fieldList )*
 	;
 
-// production #17
+// production #20
 fieldList :
 	identList ':'
 	( namedType | arrayType | pointerType | procedureType )
 	;
 
-// production #18
+// production #21
 setType :	
 	SET OF ( namedEnumType | '(' identList ')' )
 	;
@@ -235,29 +266,29 @@ setType :
 // alias
 namedEnumType : namedType ;
 
-// production #19
+// production #22
 pointerType :
 	POINTER TO CONST? namedType
 	;
 
-// production #20
+// production #23
 procedureType :
 	PROCEDURE
 	( '(' formalTypeList ')' )?
 	( ':' returnedType )?
 	;
 
-// production #21
+// production #24
 formalTypeList :
 	attributedFormalType ( ',' attributedFormalType )*
 	;
 
-// production #22
+// production #25
 attributedFormalType :
 	( CONST | VAR {})? formalType	
 	;
 
-// production #23
+// production #26
 formalType :
 	( ARRAY OF )? namedType
 	;
@@ -267,7 +298,7 @@ returnedType : namedType ;
 
 // *** Variable Declarations ***
 
-// production #24
+// production #27
 variableDeclaration :
 	ident ( '[' machineAddress ']' | ',' identList )?
 	':' ( namedType | anonymousType )
@@ -278,45 +309,38 @@ machineAddress : constExpression ;
 
 // *** Procedure Declarations ***
 
-// production #25
+// production #28
 procedureDeclaration :
 	procedureHeader ';' block ident
 	;
 
-// production #26
+// production #29
 procedureHeader :
 	PROCEDURE
-	( '[' ( boundToOperator | ident ) ']' )?
+	( '[' ( bindableOperator | ident ) ']' )?
 	( '(' ident ':' receiverType ')' )?
 	ident ( '(' formalParamList ')' )? ( ':' returnedType )?
-	;
-
-// production #27
-boundToOperator :
-	DIV | MOD | IN | FOR | TO | FROM |
-	':=' | '::' | '.' | '!' | '+' | '-' | '*' | '/' | '=' | '<' | '>'
-	{} // make ANTLRworks display separate branches
 	;
 
 // alias
 receiverType : ident ;
 
-// production #28
+// production #30
 formalParamList :
 	formalParams ( ';' formalParams )*
 	;
 
-// production #29
+// production #31
 formalParams :
 	simpleFormalParams | variadicFormalParams
     ;
 
-// production #30
+// production #32
 simpleFormalParams :
 	( CONST | VAR {})? identList ':' formalType
 	;
 
-// production #31
+// production #33
 variadicFormalParams :
 	VARIADIC ( variadicCounter | '[' variadicTerminator ']' )? OF
 	( ( CONST | VAR {})? formalType |
@@ -331,24 +355,24 @@ variadicTerminator : constExpression ;
 
 // *** Statements ***
 
-// production #32
+// production #34
 statement :
 	( assignmentOrProcedureCall | ifStatement | caseStatement |
 	  whileStatement | repeatStatement | loopStatement |
 	  forStatement | RETURN expression? | EXIT )?
 	;
 
-// production #33
+// production #35
 statementSequence :
 	statement ( ';' statement )*
 	;
 
-// production #34
+// production #36
 assignmentOrProcedureCall :
 	designator ( ':=' expression | '++' | '--' | actualParameters )?
 	;
 
-// production #35
+// production #37
 ifStatement :
 	IF expression THEN statementSequence
 	( ELSIF expression THEN statementSequence )*
@@ -356,44 +380,44 @@ ifStatement :
 	END
 	;
 
-// production #36
+// production #38
 caseStatement :
 	CASE expression OF case ( '|' case )*
 	( ELSE statementSequence )?
 	END
 	;
 
-// production #37
+// production #39
 case :
 	caseLabelList ':' statementSequence
 	;
 
-// production #38
+// production #40
 caseLabelList :
 	caseLabels ( ',' caseLabels )*
 	;
 
-// production #39
+// production #41
 caseLabels :
 	constExpression ( '..' constExpression )?
 	;
 
-// production #40
+// production #42
 whileStatement :
 	WHILE expression DO statementSequence END
 	;
 
-// production #41
+// production #43
 repeatStatement :
 	REPEAT statementSequence UNTIL expression
 	;
 
-// production #42
+// production #44
 loopStatement :
 	LOOP statementSequence END
 	;
 
-// production #43
+// production #45
 forStatement :
 	FOR ident
 	( ':=' expression TO expression ( BY constExpression )? | IN expression )
@@ -402,76 +426,76 @@ forStatement :
 
 // *** Expressions ***
 
-// production #44
+// production #46
 constExpression :
 	simpleConstExpr ( relation simpleConstExpr | '::' namedType )?
 	;
 
-// production #45
+// production #47
 relation :
 	'=' | '#' | '<' | '<=' | '>' | '>=' | IN
 	{} // make ANTLRworks display separate branches
 	;
 
-// production #46
+// production #48
 simpleConstExpr :
 	( '+' | '-' {})? constTerm ( addOperator constTerm )*
 	;
 
-// production #47
+// production #49
 addOperator :
 	'+' | '-' | OR
 	{} // make ANTLRworks display separate branches
 	;
 
-// production #48
+// production #50
 constTerm :
 	constFactor ( mulOperator constFactor )*
 	;
 
-// production #49
+// production #51
 mulOperator :
 	'*' | '/' | DIV | MOD | AND | '&'
 	{} // make ANTLRworks display separate branches
 	;
 
-// production #50
+// production #52
 constFactor :
-	number | string | qualident | constStructuredValue |
+	number | string | constQualident | constStructuredValue |
 	'(' constExpression ')' | ( NOT | '~' {}) constFactor
 	;
 
-// production #51
+// production #53
 designator :
 	qualident designatorTail?
 	;
 
-// production #52
+// production #54
 designatorTail :
 	( ( '[' expressionList ']' | '^' ) ( '.' ident )* )+
 	;
 
-// production #53
+// production #55
 expressionList :
 	expression ( ',' expression )*
 	;
 
-// production #54
+// production #56
 expression :
 	simpleExpression ( relation simpleExpression | '::' namedType )?
 	;
 
-// production #55
+// production #57
 simpleExpression :
 	( '+' | '-' {})? term ( addOperator term )*
 	;
 
-// production #56
+// production #58
 term :
 	factor ( mulOperator factor )*
 	;
 
-// production #57
+// production #59
 factor :
 	number |
 	string |
@@ -480,52 +504,55 @@ factor :
 	'(' expression ')' | ( NOT | '~' {}) factor
 	;
 
-// production #58
+// production #60
 designatorOrProcedureCall :
 	qualident designatorTail? actualParameters?
 	;
 
-// production #59
+// production #61
 actualParameters :
 	'(' expressionList? ')'
 	;
 
 // *** Value Constructors ***
 
-// production #60
+// production #62
 constStructuredValue :
 	'{' ( constValueComponent ( ',' constValueComponent )* )? '}'	
 	;
 
-// production #61
+// production #63
 constValueComponent :
 	constExpression ( ( BY | '..' {}) constExpression  )?
 	;
 
-// production #62
+// production #64
 structuredValue :
 	'{' ( valueComponent ( ',' valueComponent )* )? '}'	
 	;
 
-// production #63
+// production #65
 valueComponent :
 	expression ( ( BY | '..' {}) constExpression )?
 	;
 
 // *** Identifiers ***
 
-// production #64
+// production #66
 qualident :
 	ident ( '.' ident )*
 	;
 
-// production #65
+// production #67
 identList :
 	ident ( ',' ident )*
 	;
 
 // alias
 ident :	IDENT ;
+
+// alias
+constQualident : qualident ; // no type and no variable identifiers
 
 // *** Literals ***
 

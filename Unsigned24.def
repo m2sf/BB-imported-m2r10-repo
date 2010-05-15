@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE Unsigned24;
+DEFINITION MODULE Unsigned24 [ZTYPE];
 
 (* Unsigned Integer Subrange Type With Values from 0 to 23 *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* Unsigned24 type *)
 
 TYPE
-    Unsigned24 = OPAQUE RECORD ("Z-Type")
+    Unsigned24 = OPAQUE RECORD
         value : OCTET; (* 8 bits *)
     END; (* Unsigned24 *)
 

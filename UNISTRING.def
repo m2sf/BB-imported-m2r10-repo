@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE UNISTRING;
+DEFINITION MODULE UNISTRING [StringType];
 
 (* Dynamic Unicode Strings *)
 
@@ -10,7 +10,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 
 (* UNISTRING type *)
 
-TYPE UNISTRING = OPAQUE ("S-Type");
+TYPE UNISTRING = OPAQUE;
 
 
 (* S-Type bindings to operators and pervasives: *)

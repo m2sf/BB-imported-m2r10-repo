@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE DateTime;
+DEFINITION MODULE DateTime [DateType];
 
 (* Calendar Date Time ADT *)
 
@@ -21,7 +21,7 @@ FROM TimeUnits IMPORT
 (* DateTime Type *)
 
 TYPE
-    DateTime = RECORD ("V-Type")
+    DateTime = RECORD
         year   : Year;
         month  : Month;
         days   : Day;
