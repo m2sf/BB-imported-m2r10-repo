@@ -13,10 +13,6 @@ TYPE = RECORD;
 
 (* Bindings permitted for C-Type ADTs *)
 
-CONST [TMIN]; (* allow binding to TMIN function *)
-
-CONST [TMAX]; (* allow binding to TMAX function *)
-
 PROCEDURE [:=]; (* allow binding to assignment operator *)
 
 PROCEDURE [::]; (* allow binding to conversion operator *)
