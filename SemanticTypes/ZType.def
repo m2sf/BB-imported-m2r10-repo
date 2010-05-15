@@ -5,11 +5,10 @@ BINDINGS FOR ZType;
 (* Semantic properties for whole number types, defined as Z-Type. *)
 
 
-(* Constraints for Z-Type ADTs *)
+(* ADTs must be opaque records,
+   integer number literals may be used *)
 
-TYPE = OPAQUE RECORD; (* ADTs must be opaque records *)
-
-CONST = INTEGER; (* ADTs may use integer literals *)
+TYPE = OPAQUE RECORD := INTEGER;
 
 
 (* Bindings permitted for Z-Type ADTs *)

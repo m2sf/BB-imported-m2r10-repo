@@ -5,9 +5,10 @@ BINDINGS FOR CollectionType;
 (* Semantic properties for collection types. *)
 
 
-(* Constraints for collection ADTs *)
+(* ADTs must be opaque records,
+   no literals may be used *)
 
-TYPE = OPAQUE; (* ADTs must be opaque *)
+TYPE = OPAQUE;
 
 
 (* Bindings permitted for collection ADTs *)

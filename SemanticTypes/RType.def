@@ -5,11 +5,10 @@ BINDINGS FOR RType;
 (* Semantic properties for real number types, defined as R-Type. *)
 
 
-(* Constraints for R-Type ADTs *)
+(* ADTs must be opaque records,
+   real number literals may be used *)
 
-TYPE = OPAQUE RECORD; (* ADTs must be opaque records *)
-
-CONST = REAL; (* ADTs may use real literals *)
+TYPE = OPAQUE RECORD := REAL;
 
 
 (* Bindings permitted for R-Type ADTs *)

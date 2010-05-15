@@ -5,11 +5,10 @@ BINDINGS FOR SType;
 (* Semantic properties for character string types. *)
 
 
-(* Constraints for character string ADTs *)
+(* ADTs must be opaque pointers,
+   character and string literals may be used *)
 
-TYPE = OPAQUE; (* ADTs must be opaque *)
-
-CONST = CHAR; (* ADTs may use quoted string literals *)
+TYPE = OPAQUE := CHAR;
 
 
 (* Bindings permitted for character string ADTs *)

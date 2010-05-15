@@ -5,12 +5,15 @@ BINDINGS FOR SetType;
 (* Semantic properties for set types. *)
 
 
-(* Constraints for set ADTs *)
+(* ADTs must be opaque records,
+   structured literals may be used *)
 
-TYPE = OPAQUE RECORD; (* ADTs must be opaque records *)
+TYPE = OPAQUE RECORD := {};
 
 
 (* Bindings permitted for set ADTs *)
+
+PROCEDURE [:=]; (* allow binding to assignment operator *)
 
 PROCEDURE [::]; (* allow binding to conversion operator *)
 

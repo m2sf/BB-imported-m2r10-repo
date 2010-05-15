@@ -5,9 +5,10 @@ BINDINGS FOR CType;
 (* Semantic properties for complex number types, defined as C-Type. *)
 
 
-(* Constraints for C-Type ADTs *)
+(* ADTs must be transparent records,
+   structured literals will be used by default *)
 
-TYPE = RECORD; (* ADTs must be transparent records *)
+TYPE = RECORD; 
 
 
 (* Bindings permitted for C-Type ADTs *)
