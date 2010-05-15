@@ -153,4 +153,4 @@ Examples:
 Dictionary.def        example of a library defined associative array of strings
 
 
-[status: May 12, 2010 -- further modules are being added]
+[status: May 15, 2010 -- further modules are being added]
