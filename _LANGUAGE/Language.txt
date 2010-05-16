@@ -1969,7 +1969,7 @@ Regex.def             Modula-2 regular expression library
 RegexConv.def         conversion library for regular expression syntax
 
 
-12.12 Modules for Date and Time Handling
+12.13 Modules for Date and Time Handling
 
 TZ.def                time zone offsets and abbreviations
 Time.def              compound time with day, hour, minute, sec/msec components
@@ -1978,13 +1978,13 @@ TimeUnits.def         date and time base units
 SysClock.def          interface to the system clock
 
 
-12.13 Modules with Legacy Interfaces
+12.14 Modules with Legacy Interfaces
 
 LegacyPIM.def         selected legacy PIM functions and procedures
 LegacyISO.def         selected legacy ISO functions and procedures
 
 
-12.14 Template Library
+12.15 Template Library
 
 Stack.def             generic stack template
 Queue.def             generic queue template
