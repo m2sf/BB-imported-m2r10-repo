@@ -551,40 +551,42 @@ associated with a data type. A data type is an abstract property of a constant
 or variable that determines the storage size and structure, the compatibility
 with other constants or variables and the operations that are permitted.
 
-There are twelve language predefined (pervasive) data types: BOOLEAN, BITSET,
-LONGBITSET, CHAR, UNICHAR, OCTET, CARDINAL, LONGCARD, INTEGER, LONGINT, REAL
-and LONGREAL.
+There are twelve language predefined (pervasive) data types:
 
-Data types that can be defined using built-in type constructor syntax are:
-array types, pointer types, procedure types, enumeration types, record types
-and set types. Character strings are represented by character arrays.
+BOOLEAN, BITSET, LONGBITSET, CHAR, UNICHAR, OCTET, CARDINAL, LONGCARD,
+INTEGER, LONGINT, REAL and LONGREAL.
 
+Other types may be defined using built-in type constructor syntax:
 
-4.1 The Boolean Type
+Enumeration types, set types, array types, record types, pointer types,
+procedure types and abstract data types using the opaque type constructor.
 
-Type BOOLEAN is the boolean type. It is a predefined (pervasive) enumeration
-type with special semantics. In addition to the operations defined for all
-enumeration types, three additional operations are defined:
-
-* logical NOT
-* logical AND
-* logical OR
+Character strings are represented by character arrays.
 
 
-4.2 Enumeration Types
+4.1 Semantics of Types
 
-Enumeration types are ordinal types whose values are defined by a list of
-constant identifiers. The identifiers are assigned ordinal values from left
-to right. The ordinal value assigned to the first constant is always zero.
+Every data type has an associated set of language defined semantics. These
+semantics define the interpretation of values, the compatibility of literals
+and a set of operations. Many data types share a common set of semantics with
+other data types. A common set of shared semantics is called a semantic type.
+Every data type is thus defined in terms of its semantic type.
 
-The following operations are always defined for all enumeration types:
 
-* assignment (:=)
+4.1.1 The Semantics of Ordinal Types
+
+Ordinal types are data types with non-numeric ordered values, including a
+start value that is interpreted as the type's zero-th value. The ordinal
+value of any n-th value is n for all n. The following operations are
+defined for ordinal types:
+
+* assignment of literals and expressions (:=)
 * type conversion (::)
 * smallest value (TMIN)
 * largest value (TMAX)
-* predecessor (PRED)
-* successor (SUCC)
+* ordinal value (ORD)
+* predecessor value (PRED)
+* successor value (SUCC)
 * number of values (COUNT)
 * iteration (FOR .. IN ..)
 * equal (=)
@@ -594,23 +596,38 @@ The following operations are always defined for all enumeration types:
 * greater (>)
 * greater-or-equal (>=)
 
+Pervasive data types BOOLEAN, CHAR and UNICHAR, and all enumeration types are
+ordinal types. Literals for type BOOLEAN are TRUE and FALSE, literals for
+types CHAR and UNICHAR are character code literals and string literals of
+length one.
 
-4.3 Set Types
 
-Set Types represent mathematical sets of values called elements. There are
-three kinds of set types:
+4.1.2 The Semantics of the Boolean Type
 
-* bitset types
-* enumerated set types
-* set types of arbitrary element types
+The boolean type is an ordinal type with two values, interpreted as boolean
+truth values, represented by the literal constants TRUE and FALSE. Further
+to the operations defined for ordinal types, three additional operations
+are defined for the boolean type:
 
-The following operations are defined for all set types:
+* logical-not (NOT, ~)
+* logical-and (AND, &)
+* logical-or (OR)
 
-* assignment (:=)
+Pervasive data type BOOLEAN is the one and only boolean type. No facility
+exists to define other data types as boolean types.
+
+
+4.1.3 The Semantics of Set Types
+
+Set types are data types that represent mathematical sets with a finite number
+of elements. The following operations are defined for set types:
+
+* assignment of structured literals and expressions (:=)
 * type conversion (::)
 * number of elements (COUNT)
 * membership test (IN)
-* element access ([n])
+* include element (set[element] := TRUE)
+* exclude element (set[element] := FALSE)
 * iteration (FOR .. IN)
 * set union (+)
 * set difference (-)
@@ -623,274 +640,410 @@ The following operations are defined for all set types:
 * subset (<=)
 * superset (>=)
 
-
-4.3.1 Bitset Types
-
-A bitset type is a set type where the element type is a numeric value and each
-element is represented by a bit in the underlying data storage.
-
-There are two predefined (pervasive) bitset types: BITSET and LONGBITSET. The
-size of type BITSET is equivalent to the size of type CARDINAL and the size of
-type LONGBITSET is equivalent to the size of type LONGCARD. Bitset types with
-a guaranteed number of bits (elements) are provided by the standard library:
-
-* BITSET16, bitset type with 16 bits, representing elements 0 to 15
-* BITSET32, bitset type with 32 bits, representing elements 0 to 31
-* BITSET64, bitset type with 64 bits, representing elements 0 to 63
-* BITSET128, bitset type with 128 bits, representing elements 0 to 127
+Pervasive data types BITSET and LONGBITSET, and all types defined using the
+"SET OF" type constructor are set types.
 
 
-4.3.2 Enumerated Set Types
+4.1.4 The Semantics of Whole Number Types
 
-An enumerated set type is a set type where the elements are defined by an
-enumerated list of constant identifiers or by an enumeration type.
+Whole number types are data types that represent subranges of the mathematical
+set of integers (Z), always with a finite number of values. The following
+operations are defined for whole number types:
+
+* assignment of whole number literals and expressions (:=)
+* type conversions (::)
+* smallest value (TMIN)
+* largest value (TMAX)
+* absolute value (ABS)
+* sign reversal (NEG)
+* odd/even test (ODD)
+* addition (+)
+* postfix increment (++)
+* difference (-)
+* postfix decrement (--)
+* multiplication (*)
+* integer division (DIV)
+* modulo (MOD)
+* iteration (FOR .. IN ..)
+* equal (=)
+* not-equal (#)
+* less-than (<)
+* less-or-equal (<=)
+* greater-than (>)
+* greater-or-equal (>=)
+
+Pervasive data types OCTET, CARDINAL, LONGCARD, INTEGER and LONGINT are whole
+number types.
 
 
-4.3.3 Set Types of Arbitrary Element Types
+4.1.5 The Semantics of Real Number Types
 
-The standard library provides set type CHARSET. Its element type is CHAR.
+Real number types are data types that represent subranges of the mathematical
+set of real numbers (R), always with a finite number of values. The following
+operations are defined for real number types:
+
+* assignment of real number literals and expressions (:=)
+* type conversions (::)
+* smallest value (TMIN)
+* largest value (TMAX)
+* absolute value (ABS)
+* sign reversal (NEG)
+* addition (+)
+* postfix increment (++)
+* difference (-)
+* postfix decrement (--)
+* multiplication (*)
+* division (/)
+* equal (=)
+* not-equal (#)
+* less-than (<)
+* less-or-equal (<=)
+* greater-than (>)
+* greater-or-equal (>=)
+
+Pervasive data types REAL and LONGREAL are real number types.
 
 
-4.4 Character Types
+4.1.6 The Semantics of Array Types
 
-4.5 Whole Number Types
+Array types are compound data types whose components are all of the same type.
+The following operations are defined for array types:
 
-4.6 Real Number Types
+* assignment of structured literals and expressions (:=)
+* store component (array[index] := value)
+* retrieve component (value := array[index])
+* obtain highest index (HIGH)
+* component iteration (FOR .. IN ..)
+* equal (=)
+* not-equal (#)
 
-4.7 Complex Number Types
-
-4.8 Vector Types
-
-4.9 Array Types
-
-4.10 Record Types
+All data types defined using the ARRAY OF type constructor are array types.
 
 
-4.11 Pointer Types
+4.1.7 The Semantics of Character String Types
 
-A pointer type represents a container for a reference to a storage location.
+Character string types are arrays whose components are character types. The
+semantic character string type represents the superset of all character string
+types. The following operations are defined for character string types:
+
+* assignment of string literals, structured literals and expressions (:=)
+* store component (array[index] := value)
+* retrieve component (value := array[index])
+* obtain highest index (HIGH)
+* obtain string length (LENGTH)
+* component iteration (FOR .. IN ..)
+* concatentation (+)
+* equal (=)
+* not-equal (#)
+
+All character string data types defined using the ARRAY OF CHAR and ARRAY OF
+UNICHAR type constructor are of the semantic character string type.
+
+
+4.1.8 The Semantics of Collection Types
+
+Collection types are data types that represent containers for an arbitrary
+number of key-value pairs. The following operations are defined for
+collection types:
+
+* allocation (NEW)
+* deallocation (DISPOSE)
+* assignment of objects of the same type (:=)
+* store value by key (collection[key] := value)
+* retrieve value for key (value := collection[key])
+* remove value for key (collection[key] := NIL)
+* number of key/value pairs (COUNT)
+* key is present test (IN)
+* iteration by key (FOR .. IN ..)
+* equal (=)
+* not-equal (#)
+
+All data types defined using the ASSOCIATIVE ARRAY OF type constructor are
+collection types.
+
+
+4.1.9 The Semantics of Record Types
+
+Record types are compound data types whose components are of arbitrary types.
+The semantic record type represents the superset of all record data types.
+The following operations are defined for record types:
+
+* assignment of structured literals and expressions (:=)
+* store component (record.component := value)
+* retrieve component (value := record.component)
+* equal (=)
+* not-equal (#)
+
+All data types defined using the RECORD type constructor are record types.
+
+
+4.1.10 The Semantics of Pointer Types
+
+Pointer types are data types that represent references to a storage location. 
+The semantic pointer type represents the superset of all pointer data types.
 The following operations are defined for pointer types:
 
-* assignment (:=)
+* assignment of NIL and expressions (:=)
+* allocation (NEW)
+* deallocation (DISPOSE)
 * dereference (^)
 * equal (=)
 * not-equal (#)
 
+All data types defined using the POINTER TO type constructor are pointer types.
 
-4.12 Procedure Types
+
+4.1.11 The Semantics of Procedure Types
 
 Procedure types are special pointer types that reference the storage location
-of a procedure and store the formal parameters of a procedure prototype.
-The following operations are defined for procedure types:
+of a procedure and store the formal parameters of a procedure prototype. The
+following operations are defined for procedure types:
 
-* assignment (:=)
+* assignment of NIL and expressions (:=)
 * procedure call
 * dereference (^)
 * equal (=)
 * not-equal (#)
 
+All procedure types defined using the PROCEDURE type constructor are procedure
+types and all procedures and functions are values of a procedure type.
 
-4.2.3 Abstract Data Types
 
-Abstract data types (ADTs) are typically defined in library modules. A library
-module that defines an abstract data type with the same name as the module's
-identifier is called an ADT library module and it represents the type itself.
+4.1.12 The Semantics of Opaque Types
 
-An ADT library module may specify a semantic type in the module header. This
+Opaque types are data types whose structure and semantics are only available
+in the implementation part of the library module that defines the opaque type.
+Outside of the implementation part the following operations are defined:
+
+for opaque pointers:
+
+* allocation (NEW)
+* deallocation (DISPOSE)
+* assignment (:=) of NIL and objects of the same type only
+* equal (=)
+* not-equal (#)
+
+for opaque records:
+
+* assignment (:=) of objects of the same type only
+* equal (=)
+* not-equal (#)
+
+All data types defined using a sole OPAQUE type constructor are opaque pointer
+types. All data types defined using a the OPAQUE RECORD type constructor are
+opaque record types.
+
+
+4.2 Library Defined Semantic Types
+
+The standard library provides a set of semantic type definitions in order to
+allow the construction of library defined abstract data types that are practi-
+cally inistinguishable from pervasive types and transparent data types defined
+using type constructor syntax.
+
+To require an ADT to conform to a library defined semantic type, the library
+that defines the ADT must specify the semantic type in the module header of
+its defintion part.
+
+
+4.2.1 Library Defined Whole Number Type Semantics
+
+The standard library provides the ZTYPE as a library defined semantic type for
+library defined whole number types. For semantic compatibility, its definition
+matches the semantics of the built-in semantic type for whole number types.
+
+
+4.2.2 Library Defined Real Number Type Semantics
+
+The standard library provides the RTYPE as a library defined semantic type for
+library defined real number types. For semantic compatibility, its definition
+matches the semantics of the built-in semantic type for real number types.
+
+
+4.2.3 Library Defined Complex Number Type Semantics
+
+The standard library provides the CTYPE as a library defined semantic type for
+library defined complex number types. Its definition matches the mathematic
+definition of complex numbers. CTYPE has no built-in equivalent.
+
+
+4.2.4 Library Defined Numeric Vector Type Semantics
+
+The standard library provides the VTYPE as a library defined semantic type for
+library defined numeric vector types. Its definition matches the mathematic
+definition of numeric vectors. VTYPE has no built-in equivalent.
+
+
+4.2.5 Library Defined Date-Time Type Semantics
+
+The standard library provides the DateType as a library defined semantic type
+for library defined date-time types. DateType has no built-in equivalent.
+
+
+4.2.6 Library Defined Set Type Semantics
+
+The standard library provides the SetType as a library defined semantic type
+for library defined static set types. For semantic compatibility, its defini-
+tion matches the semantics of the built-in semantic type for set types.
+
+
+4.2.7 Library Defined Array Type Semantics
+
+The standard library provides the ArrayType as a library defined semantic type
+for library defined dynamic array types. For semantic compatibility, its de-
+finition matches the semantics of the built-in semantic type for array types.
+
+
+4.2.8 Library Defined Collection Type Semantics
+
+The standard library provides the CollectionType as a library defined semantic
+type for library defined dynamic collection types. For semantic compatibility,
+its definition matches the semantics of the built-in semantic type for col-
+lection types.
+
+
+4.2.9 Library Defined Character String Type Semantics
+
+The standard library provides the StringType as a library defined semantic
+type for library defined dynamic character string types. For semantic compati-
+bility, its definition matches the semantics of the built-in semantic type for
+character string types.
+
+
+4.2.10 CAUTION - Do Not Modify Semantic Type Definitions
+
+For semantic compatibility, the library provided semantic type definitions
+exactly match the semantics of their corresponding built-in counterparts.
+Modification of the semantic type definitions will cause library defined
+types to behave differently from their built-in counterparts. For this
+reason, library defined definitions of semantic types should not be changed.
+
+
+4.2.11 User Defined Semantic Types
+
+User libraries may provide their own semantic type definitions for their own
+custom designed abstract data types.
+
+
+4.2 Abstract Data Types
+
+Opaque pointer types and opaque record types are predominantly used to define
+abstract data types (ADTs). An ADT is a data type whose internal structure
+and semantics are hidden from the user of the type and are superimposed by
+a new set of semantics defined by the library module that defines the ADT.
+
+A library module that defines an abstract data type with the same name as its
+own module identifier is called an ADT library module.
+
+An ADT library module may specify a semantic type in its module header. This
 represents a promise to conform to the common set of semantics defined by the
 semantic type. An ADT defined to conform to a semantic type may bind its own
 library defined procedures to those operators and pervasive procedures that
 are permitted by the semantic type. Static conformance is compiler enforced.
 No other bindings than those defined by the semantic type are permitted.
 
-Values of the type defined by the ADT may then be used in infix expressions
-using the respective operators. Bound to pervasive procedures may be called
-with values of the type passed in as arguments. The compiler then replaces
-the infix expressions and calls to pervasive procedures with calls to the
-corresponding procedures defined in the ADT library module.
+Defining an ADT with a semantic type specified and providing appropriate
+bindings in the public interface of the ADT will cause the compiler to check
+static conformance of the public interface with the specified semantic type's
+definition. If conformant, this will have the following effects:
 
-This facility makes library defined ADTs practically indistinguishable from
-language defined types. The Modula-2 R10 standard library provides a rich set
-of library ADTs with bindings to common operators and pervasive procedures.
-
-
-4.3 Semantic Types
-
-A semantic type is a library defined entity that specifies a common set of
-semantics that data types may be required to conform to. A semantic type is
-defined in a bindings definition file which defines the name of the semantic
-type, how a conformant data type may be declared, what type of literal it may
-use, and which bindings to operators and pervasive procedures it may define.
-
-The standard library provides semantic type definitions for common data types.
-It provides four semantic type definitions for numeric types:
-
-* ZTYPE, defining the bindings for whole number types
-* RTYPE, defining the bindings for real number types
-* CTYPE, defining the bindings for complex number types
-* VTYPE, defining the bindings for numeric vector types
-
-Further it provides five more semantic type definitions for other data types:
-
-* ArrayType, defining bindings for static array types
-* SetType, defining bindings for static set types
-* DateType, defining bindings for date-time types
-* StringType, defining bindings for dynamic string types
-* CollectionType, defining bindings for dynamic collection types
+* Literals defined to be compatible with the ADT may be assigned to variables
+  of the ADT or passed in as arguments for formal parameters of the ADT.
+* ADT values may be used in infix expressions using the ADT's bound operators.
+* Bound pervasive procedures may be called with ADT values passed as arguments.
+* The compiler will replace any infix expressions with calls to the corres-
+  ponding procedures defined in the ADT library module.
+* The compiler will replace any calls to bound pervasive procedures with calls
+  to the corresponding procedures defined in the ADT library module.
 
 
-4.3.1 The Z-Type
+4.3 Library Defined ADTs Using Semantic Types and Bindings
 
-Semantic type ZTYPE represents the Z-Type and it defines the bindings for
-whole number types:
-
-* assignment (:=)
-* type conversions (::)
-* smallest value (TMIN)
-* largest value (TMAX)
-* absolute value (ABS)
-* sign reversal (NEG)
-* odd/even test (ODD)
-* addition (+)
-* difference (-)
-* multiplication (*)
-* integer division (DIV)
-* modulo (MOD)
-* iteration (FOR .. IN ..)
-* equal (=)
-* less-than (<)
-* greater-than (>)
-* conversion to and from scalar exchange format (TO, FROM)
-
-The following operations are automatically synthesised:
-
-* increment (++) is synthesised from addition (+)
-* increment (--) is synthesised from difference (-)
-* not-equal (#) is synthesised from boolean NOT and equal (=)
-* less-or-equal (<=) is synthesised from boolean NOT and greater-than (>)
-* greater-or-equal (>=) is synthesised from boolean NOT and less-than (<)
-
-Predefined types OCTET, CARDINAL, LONGCARD, INTEGER and LONGINT, and standard
-library defined types CARD16, CARD32, CARD64, CARD128, INT16, INT32, INT64,
-INT128, and TZ conform to the Z-Type.
+The standard library provides a rich set of library defined ADTs that use
+semantic types and bindins and are practically inistinguishable from pervasive
+types and transparent data types defined using type constructor syntax.
 
 
-4.3.2 The R-Type
+4.3.1 Library Defined Bitset ADTs
 
-Semantic type RTYPE represents the R-Type and it defines the bindings for
-real number types:
+The standard library provides bitset ADTs whose semantics match those of the
+pervasive bitset types BITSET and LONGBITSET. The library defined bitset ADTs
+are BS16, BS32, BS64, BS128 and their respective number of bits is indicated
+in the identifier. However, client modules should not use these types using
+these identifiers directly.
 
-* assignment (:=)
-* type conversions (::)
-* smallest value (TMIN)
-* largest value (TMAX)
-* absolute value (ABS)
-* sign reversal (NEG)
-* odd/even test (ODD)
-* addition (+)
-* difference (-)
-* multiplication (*)
-* division (/)
-* equal (=)
-* less-than (<)
-* greater-than (>)
-* conversion to and from scalar exchange format (TO, FROM)
+The alias type identifiers BITSET16, BITSET32, BITSET64 and BITSET128 should
+be used instead. The aliases of whichever bitset types match the number of
+bits of the pervasive types BITSET and LONGBITSET are automatically defined
+as aliases of the pervasive types.
 
-The following operations are automatically synthesised:
-
-* increment (++) is synthesised from addition (+)
-* increment (--) is synthesised from difference (-)
-* not-equal (#) is synthesised from boolean NOT and equal (=)
-* less-or-equal (<=) is synthesised from boolean NOT and greater-than (>)
-* greater-or-equal (>=) is synthesised from boolean NOT and less-than (<)
-
-Predefined types REAL and LONGREAL, and standard library defined types BCD,
-LONGBCD and UnsignedReal60 conform to the R-Type.
+Two additional alias types are defined as SHORTBITSET and LONGLONGBITSET.
 
 
-4.3.3 The C-Type
+4.3.2 Library Defined Unsigned Integer ADTs
 
-Semantic type CTYPE represents the C-Type and it defines the bindings for
-complex number types:
+The standard library provides unsigned integer ADTs whose semantics match
+those of the pervasive types CARDINAL and LONGCARD. The library defined
+unsigned integer ADTs are CARD16, CARD32, CARD64, CARD128 and their respective
+bitwidth is indicated in the identifier. However, client modules should not
+use these types using these identifiers directly.
 
-* assignment (:=)
-* type conversions (::)
-* absolute value (ABS)
-* sign reversal (NEG)
-* addition (+)
-* difference (-)
-* multiplication (*)
-* division (/)
-* equal (=)
+The alias type identifiers CARDINAL16, CARDINAL32, CARDINAL64 and CARDINAL128
+should be used instead. The aliases of whichever types match the size of the
+pervasive types CARDINAL and LONGCARD are automatically defined as aliases of
+the pervasive types.
 
-The following operation is automatically synthesised:
-
-* not-equal (#) is synthesised from boolean NOT and equal (=)
-
-There are no predefined complex number types. Standard library defined types
-COMPLEX and LONGCOMPLEX conform to the C-Type.
+Two additional alias types are defined as SHORTCARD and LONGLONGCARD.
 
 
-4.3.4 The V-Type
+4.3.3 Library Defined Signed Integer ADTs
 
-Semantic type VTYPE represents the V-Type and it defines the bindings for
-numeric vector types:
+The standard library provides signed integer ADTs whose semantics match
+those of the pervasive types INTEGER and LONGINT. The library defined signed
+integer ADTs are INT16, INT32, INT64, INT128 and their respective bitwidth is
+indicated in the identifier. However, client modules should not use these
+types using these identifiers directly.
 
-* assignment (:=)
-* type conversions (::)
-* absolute value (ABS)
-* sign reversal (NEG)
-* addition (+)
-* difference (-)
-* dot-product (*)
-* equal (=)
+The alias type identifiers INTEGER16, INTEGER32, INTEGER64 and INTEGER128
+should be used instead. The aliases of whichever types match the size of the
+pervasive types INTEGER and LONGINT are automatically defined as aliases of
+the pervasive types.
 
-The following operation is automatically synthesised:
-
-* not-equal (#) is synthesised from boolean NOT and equal (=)
-
-There are no predefined and not standard library defined vector types.
+Two additional alias types are defined as SHORTINT and LONGLONGINT.
 
 
-4.3.5 ArrayType
+4.3.4 Library Defined BCD Real Number ADTs
 
-4.3.6 SetType
-
-4.3.7 DateType
-
-
-4.3.8 CollectionType
-
-Collection types represent containers in which all stored values are of the
-same type. The following operations are defined for collection types:
-
-* assignment (:=) and type conversion (::)
-* number of entries (COUNT)
-* iteration (FOR .. IN ..)
-* entry membership test (IN)
-* entry access ([ ])
-* set union (+)
-* set difference (-)
-* set intersection (*)
-* symmetric set difference (/)
-* equal (=)
-* not-equal (#)
-* subset (<=) and true subset (<) tests
-* superset (>=) and true superset (>) tests
+The standard library provides binary coded Decimals (BCD) real number ADTs
+whose semantics match those of the pervasive types REAL and LONGREAL. The
+library defined BCD ADTs are BCD and LONGBCD.
 
 
-4.3.9 Dynamic String Types
+4.3.5 Library Defined Complex Number ADTs
 
-Dynamic string types represent containers for character strings. The
-following operations are defined for character string types:
+The standard library provides complex number ADTs whose semantics conform to
+semantic type CTYPE. The library defined complex number ADTs are COMPLEX and
+LONGCOMPLEX.
 
-* assignment (:=) and type conversion (::)
-* length of character string (LENGTH)
-* character access ([ ])
-* concatentation (+)
-* equal (=)
-* not-equal (#)
-* collating sequence comparisons (<), (<=), (>) and (>=)
+
+4.3.6 Library Defined Character Set ADTs
+
+The standard library provides a character set ADT whos semantics conform to
+semantic type SetType. The library defined character set ADT is CHARSET.
+
+
+4.3.7 Library Defined Character String ADTs
+
+The standard library provides dynamic string ADTs whose semantics conform to
+semantic type StringType. The library defined dynamic string ADTs are STRING
+and UNISTRING.
+
+
+4.3.8 Library Defined DateTime ADTs
+
+The standard library provides two date-time ADTs that conform to semantic
+type DateType. The library defined ADTs are DateTime and Time.
+
 
 
 5 Definitions and Declarations
