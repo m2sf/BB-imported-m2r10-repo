@@ -1832,34 +1832,52 @@ Pseudo modules provide interfaces to the system or the compiler itself and
 are therefore built-in. However, the identifiers they provide need to be
 expclicity imported to be availble.
 
-There are four mandatory pseudo modules and one optional pseudo module:
+There are four mandatory pseudo modules, one optional pseudo module and one
+documentation module:
 
 ATOMIC.def            provides atomic intrinsics
 SYSTEM.def            access to system dependent resources
 RUNTIME.def           interface to the Modula-2 runtime system
 COMPILER.def          interface to the Modula-2 compile-time system
 ASSEMBLER.def         access to target dependent inline assember (optional)
+BINDINGS.def          documents procedure headers required for bindings 
 
 
-12.2 Memory Management Modules
+12.2 Definitions of Bindings
+
+Bindings definitions define semantic types which specify common semantics that
+data types may be required to conform to:
+
+ZTYPE.def             defines semantic properties for all whole number types
+RTYPE.def             defines semantic properties for all real number types
+CTYPE.def             defines semantic properties for all complex number types
+VTYPE.def             defines semantic properties for all numeric vector types
+ArrayType.def         defines semantic properties for static array types
+SetType.def           defines semantic properties for static set types
+DateType.def          defines semantic properties for date-time types
+StringType.def        defines semantic properties for dynamic string types
+CollectionType.def    defines semantic properties for dynamic collection types
+
+
+12.3 Memory Management Modules
 
 Storage.def           dynamic memory allocator
 
 
-12.3 Modules for Exception Handling and Termination
+12.4 Modules for Exception Handling and Termination
 
 Exceptions.def        exception handling
 Termination.def       termination handling
 
 
-12.4 File System Modules
+12.5 File System Modules
 
 Filesystem.def        file system operations using absolute paths
 DefaultDir.def        file system operations relative to a working directory
 Pathnames.def         operating system independent pathname operations
 
 
-12.5 File IO Modules
+12.6 File IO Modules
 
 FileIO.def            file oriented input and output
 TextIO.def            line oriented input and output
@@ -1868,14 +1886,14 @@ Scanner.def           primitives for scanning text files
 Terminal.def          terminal based input and output
 
 
-12.6 IO Modules for SYSTEM Types
+12.7 IO Modules for SYSTEM Types
 
 BYTE.def              IO module for type BYTE
 WORD.def              IO module for type WORD
 ADDRESS.def           IO module for type ADDRESS
 
 
-12.7 IO Modules for Pervasive Types:
+12.8 IO Modules for Pervasive Types:
 
 PervasiveIO.def       aggregator module to import all pervasive IO modules
 BOOLEAN.def           IO module for type BOOLEAN
@@ -1894,7 +1912,7 @@ REAL.def              IO module for type REAL
 LONGREAL.def          IO module for type LONGREAL
 
 
-12.8 Library Modules Implementing Basic Types
+12.9 Library Modules Implementing Basic Types
 
 BS16.def              16-bit bitset type
 BS32.def              32-bit bitset type
@@ -1921,7 +1939,7 @@ Unsigned60.def        unsigned integer subrange type with values from 0 to 59
 UnsignedReal60.def    real subrange type with values from 0.0 to 59.999
 
 
-12.9 Modules Defining Alias Types
+12.10 Modules Defining Alias Types
 
 Bitsets.def           alias types for bitsets with guaranteed widths
 Cardinals.def         alias types for unsigned integers with guaranteed widths
@@ -1934,7 +1952,7 @@ SHORTINT.def          alias type for signed integers with smallest width
 LONGLONGINT.def       alias type for signed integers with largest width
 
 
-12.10 Modules Providing Math for Basic Types
+12.11 Modules Providing Math for Basic Types
 
 RealMath.def          mathematic constants and functions for type REAL
 LongRealMath.def      mathematic constants and functions for type LONGREAL
@@ -1944,7 +1962,7 @@ ComplexMath.def       mathematic constants and functions for type COMPLEX
 LongComplexMath.def   mathematic constants and functions for type LONGCOMPLEX
 
 
-12.11 Modules Providing Primitives for Text Handling
+12.12 Modules Providing Primitives for Text Handling
 
 ASCII.def             mnemonics and macro-functions for ASCII characters
 Regex.def             Modula-2 regular expression library
@@ -1960,13 +1978,13 @@ TimeUnits.def         date and time base units
 SysClock.def          interface to the system clock
 
 
-12.12 Modules with Legacy Interfaces
+12.13 Modules with Legacy Interfaces
 
 LegacyPIM.def         selected legacy PIM functions and procedures
 LegacyISO.def         selected legacy ISO functions and procedures
 
 
-12.13 Template Library
+12.14 Template Library
 
 Stack.def             generic stack template
 Queue.def             generic queue template
