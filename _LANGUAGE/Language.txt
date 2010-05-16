@@ -588,7 +588,7 @@ defined for ordinal types:
 * predecessor value (PRED)
 * successor value (SUCC)
 * number of values (COUNT)
-* iteration (FOR .. IN ..)
+* iteration (FOR value IN ordinal)
 * equal (=)
 * not-equal (#)
 * less (<)
@@ -628,7 +628,7 @@ of elements. The following operations are defined for set types:
 * membership test (IN)
 * include element (set[element] := TRUE)
 * exclude element (set[element] := FALSE)
-* iteration (FOR .. IN)
+* iteration (FOR element IN set)
 * set union (+)
 * set difference (-)
 * set intersection (*)
@@ -664,7 +664,7 @@ operations are defined for whole number types:
 * multiplication (*)
 * integer division (DIV)
 * modulo (MOD)
-* iteration (FOR .. IN ..)
+* iteration (FOR value IN type)
 * equal (=)
 * not-equal (#)
 * less-than (<)
@@ -713,7 +713,7 @@ The following operations are defined for array types:
 * store component (array[index] := value)
 * retrieve component (value := array[index])
 * obtain highest index (HIGH)
-* component iteration (FOR .. IN ..)
+* component iteration (FOR index IN array)
 * equal (=)
 * not-equal (#)
 
@@ -731,7 +731,7 @@ types. The following operations are defined for character string types:
 * retrieve component (value := array[index])
 * obtain highest index (HIGH)
 * obtain string length (LENGTH)
-* component iteration (FOR .. IN ..)
+* component iteration (FOR index IN array)
 * concatentation (+)
 * equal (=)
 * not-equal (#)
@@ -754,7 +754,7 @@ collection types:
 * remove value for key (collection[key] := NIL)
 * number of key/value pairs (COUNT)
 * key is present test (IN)
-* iteration by key (FOR .. IN ..)
+* iteration by key (FOR key IN collection)
 * equal (=)
 * not-equal (#)
 
@@ -979,6 +979,12 @@ as aliases of the pervasive types.
 
 Two additional alias types are defined as SHORTBITSET and LONGLONGBITSET.
 
+Example:
+
+IMPORT Bitsets;
+VAR set, union : BITSET16;
+BEGIN set := { 0, 7, 15 }; union := set + { 1, 2, 4 }; set[1] := FALSE END;
+
 
 4.3.2 Library Defined Unsigned Integer ADTs
 
@@ -994,6 +1000,12 @@ pervasive types CARDINAL and LONGCARD are automatically defined as aliases of
 the pervasive types.
 
 Two additional alias types are defined as SHORTCARD and LONGLONGCARD.
+
+Example:
+
+IMPORT CARDINAL16;
+VAR a, sum : CARDINAL16;
+BEGIN a := 123; sum := a + 456; WRITE(StdOut, sum) END;
 
 
 4.3.3 Library Defined Signed Integer ADTs
@@ -1011,12 +1023,24 @@ the pervasive types.
 
 Two additional alias types are defined as SHORTINT and LONGLONGINT.
 
+Example:
+
+IMPORT INTEGER16;
+VAR a, diff : INTEGER16;
+BEGIN a := 123; diff := a - 456; WRITE(StdOut, diff) END;
+
 
 4.3.4 Library Defined BCD Real Number ADTs
 
 The standard library provides binary coded Decimals (BCD) real number ADTs
 whose semantics match those of the pervasive types REAL and LONGREAL. The
 library defined BCD ADTs are BCD and LONGBCD.
+
+Example:
+
+IMPORT BCD;
+VAR a, amount : BCD;
+BEGIN a := 123.45; amount := a * 1.05; WRITE(StdOut, amount) END;
 
 
 4.3.5 Library Defined Complex Number ADTs
@@ -1025,11 +1049,24 @@ The standard library provides complex number ADTs whose semantics conform to
 semantic type CTYPE. The library defined complex number ADTs are COMPLEX and
 LONGCOMPLEX.
 
+Example:
+
+IMPORT COMPLEX;
+VAR z, zsum : COMPLEX;
+BEGIN z := { 1.23, 4.56 }; zsum := z + { 1.0, 0.5 }; WRITE(StdOut, zsum) END;
+
 
 4.3.6 Library Defined Character Set ADTs
 
 The standard library provides a character set ADT whos semantics conform to
 semantic type SetType. The library defined character set ADT is CHARSET.
+
+Example:
+
+IMPORT CHARSET;
+VAR delimiters : CHARSET; found : BOOLEAN;
+BEGIN found := FALSE; delimiters := { ":", ",", "." };
+FOR char IN "foo:bar.baz" DO IF delimiters IN char THEN EXIT END END END;
 
 
 4.3.7 Library Defined Character String ADTs
@@ -1038,12 +1075,24 @@ The standard library provides dynamic string ADTs whose semantics conform to
 semantic type StringType. The library defined dynamic string ADTs are STRING
 and UNISTRING.
 
+Example:
+
+IMPORT STRING;
+VAR s : STRING;
+BEGIN NEW(s, 10); s := "foobar"; WRITE(stdOut, s); DISPOSE(s) END;
+
 
 4.3.8 Library Defined DateTime ADTs
 
 The standard library provides two date-time ADTs that conform to semantic
 type DateType. The library defined ADTs are DateTime and Time.
 
+Example:
+
+IMPORT DateTime;
+VAR date, diff : DateTime;
+BEGIN date := { 1979, Month.Oct, 31, 0, 0, 0.0 };
+diff := date - { 1970, Month.Jan, 1, 0, 0, 0.0 }; WRITE(stdOut, diff) END;
 
 
 5 Definitions and Declarations
