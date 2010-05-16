@@ -357,16 +357,18 @@ symbols are reserved for exclusive use by external source code processors:
 2 Compilation Units
 
 A compilation unit is a sequence of source code that can be independently
-compiled. There are three types of compilation units:
+compiled. There are four types of compilation units:
 
 * a program module
+* a bindings definition
 * the interface part of a library module
 * the implementation part of a library module
 
 EBNF:
 
 compilationUnit :
-    programModule | definitionOfModule | implementationOfModule ;
+    programModule | definitionOfBindings |
+    definitionOfModule | implementationOfModule ;
 
 
 2.1 Program Modules
@@ -379,12 +381,29 @@ EBNF:
 
 programModule :
     MODULE moduleId ( '[' priority ']' )? ';'
-    importList* block moduleId '.'
+    importList* block moduleId '.' ;
 
 moduleId : Ident ;
 
 
-2.2 Definition Part of Library Modules
+2.2 Bindings Definition
+
+A bindings definition represents a common set of semantics that data types may
+be required to conform to. This is called a semantic type and it determines
+how a conformant data type may be declared, what type of literal it may use,
+and which bindings to operators and built-in procedures it may define.
+
+EBNF:
+
+definitionOfBindings :
+    BINDINGS FOR semanticType ";"
+    bindingsHeader bindings*
+    END semanticType "." ;
+
+semanticType : Ident ;
+
+
+2.3 Definition Part of Library Modules
 
 The definition part of a library module represents the public interface of the
 library module. Any identifier defined in the definition part is automatically
@@ -393,12 +412,12 @@ available for import by other modules.
 EBNF:
 
 definitionOfModule :
-    DEFINITION MODULE moduleId ';'
+    DEFINITION MODULE moduleId ( '[' semanticType ']' )? ';'
     importList* definition*
-    END moduleId '.'
+    END moduleId '.' ;
 
 
-2.3 Implementation Part of Library Modules
+2.4 Implementation Part of Library Modules
 
 The implementation part of a library module represents the implementation of
 the library module. Any identifier defined in the corresponding definition
@@ -412,7 +431,7 @@ implementationOfModule :
     IMPLEMENTATION programModule ;
 
 
-2.4 Module Initialisation
+2.5 Module Initialisation
 
 The body of the implementation part of a library module is the library's
 initialisation procedure. It is automatically executed by the Modula-2
@@ -425,7 +444,7 @@ order of the dependency graph whereby initialisation takes place for each
 node from bottom to top on the way back up.
 
 
-2.5 Module Termination
+2.6 Module Termination
 
 Module termination is not a language feature but it is a facility provided
 by a library module in the standard library. The termination library provides
@@ -532,113 +551,122 @@ associated with a data type. A data type is an abstract property of a constant
 or variable that determines the storage size and structure, the compatibility
 with other constants or variables and the operations that are permitted.
 
+There are twelve language predefined (pervasive) data types: BOOLEAN, BITSET,
+LONGBITSET, CHAR, UNICHAR, OCTET, CARDINAL, LONGCARD, INTEGER, LONGINT, REAL
+and LONGREAL.
 
-4.1 Elementary Data Type
-
-The elementary data type is type OCTET, representing the smallest logical unit
-of storage, defined as eight bits. Values of type OCTET are represented by
-numeric values from 0 to 255. All other data types are based on type OCTET.
-
-
-4.2 Data Types In General
-
-Data types fall into one of three general categories:
-
-* language predefined types
-* type constructor defined types
-* library defined abstract data types
+Data types that can be defined using built-in type constructor syntax are:
+array types, pointer types, procedure types, enumeration types, record types
+and set types. Character strings are represented by character arrays.
 
 
-4.2.1 Language Predefined Types
+4.1 The Boolean Type
 
-Language predefined types are BOOLEAN, BITSET, LONGBITSET, CHAR, UNICHAR,
-OCTET, CARDINAL, LONGCARD, INTEGER, LONGINT, REAL and LONGREAL.
-
-Section 10.2 "Predefined Types" describes these types in detail.
-
-
-4.2.2 Type Constructor Defined Types
-
-Types that can be defined using built-in type constructor syntax are: array
-types, pointer types, procedure types, enumeration types, record types and
-set types. Character strings are represented by character arrays.
-
-Section 5.3 "Type Definitions and Declarations" describes this in detail.
-
-
-4.2.3 Library Defined Abstract Data Types
-
-Abstract data types (ADTs) are typically defined by library modules. If the
-name of the library module is the same as the abstract data type it defines,
-then the library module itself represents the data type.
-
-An ADT may be defined with an explicit promise to adhere to a specific set of
-semantics. Sets of semantics shared by discrete data types are called semantic
-types. An ADT that speficies a semantic type promises to adhere to the common
-set of semantics defined by the semantic type. A so defined ADT may then bind
-its library defined procedures to those operators and pervasive procedures
-that represent the specified semantic type's common set of semantics. The
-compiler enforces the promise in that no other bindings are permitted.
-
-Values of the type defined by the ADT may then be used in infix expressions
-using the respective operators and respective pervasive procedures may be
-called with values of the type passed in as arguments. The compiler then
-replaces the infix expressions and calls to pervasive procedures with the
-corresponding library procedures.
-
-This facility makes library defined ADTs practically indistinguishable from
-language defined types. The Modula-2 R10 standard library provides a rich set
-of library ADTs with bindings to common operators and pervasive procedures.
-
-
-4.3 Semantic Types
-
-A semantic type is a set of semantics shared by discrete data types. All data
-types can be categorised into the following semantic types:
-
-* the boolean type and its operations
-* ordinal types and their operations
-* pointer types and their operations
-* procedure types and their operations
-* the Z-Type: whole number types and their operations
-* the R-Type: real number types and their operations
-* the C-Type: complex number types and their operations
-* the V-Type: vector types and their operations
-* the A-Type: collection types and their operations
-* the S-Type: character string types and their operations
-
-NB: Not every data type provides all possible operations. For example, types
-CARDINAL and INTEGER both belong to the Z-Type, but the unary minus or sign
-reversal operation is only provided for INTEGER, because CARDINAL is unsigned.
-
-
-4.3.1 The Boolean Type
-
-The boolean type is an ordinal type of two values, true and false, with
-additional operations defined:
+Type BOOLEAN is the boolean type. It is a predefined (pervasive) enumeration
+type with special semantics. In addition to the operations defined for all
+enumeration types, three additional operations are defined:
 
 * logical NOT
 * logical AND
 * logical OR
 
 
-4.3.2 Ordinal Types
+4.2 Enumeration Types
 
-Ordinal types are sets of ordered enumerated values. The following operations
-are defined for ordinal types:
+Enumeration types are ordinal types whose values are defined by a list of
+constant identifiers. The identifiers are assigned ordinal values from left
+to right. The ordinal value assigned to the first constant is always zero.
 
-* assignment (:=) and type conversion (::)
-* smallest value (TMIN) and largest value (TMAX)
-* predecessor (PRED) and successor (SUCC)
+The following operations are always defined for all enumeration types:
+
+* assignment (:=)
+* type conversion (::)
+* smallest value (TMIN)
+* largest value (TMAX)
+* predecessor (PRED)
+* successor (SUCC)
 * number of values (COUNT)
 * iteration (FOR .. IN ..)
 * equal (=)
 * not-equal (#)
-* less (<) and less-or-equal (<=)
-* greater (>) and greater-or-equal (>=)
+* less (<)
+* less-or-equal (<=)
+* greater (>)
+* greater-or-equal (>=)
 
 
-4.3.3 Pointer Types
+4.3 Set Types
+
+Set Types represent mathematical sets of values called elements. There are
+three kinds of set types:
+
+* bitset types
+* enumerated set types
+* set types of arbitrary element types
+
+The following operations are defined for all set types:
+
+* assignment (:=)
+* type conversion (::)
+* number of elements (COUNT)
+* membership test (IN)
+* element access ([n])
+* iteration (FOR .. IN)
+* set union (+)
+* set difference (-)
+* set intersection (*)
+* symmetric set difference (/)
+* equal (=)
+* not-equal (#)
+* true subset (<)
+* true superset (>)
+* subset (<=)
+* superset (>=)
+
+
+4.3.1 Bitset Types
+
+A bitset type is a set type where the element type is a numeric value and each
+element is represented by a bit in the underlying data storage.
+
+There are two predefined (pervasive) bitset types: BITSET and LONGBITSET. The
+size of type BITSET is equivalent to the size of type CARDINAL and the size of
+type LONGBITSET is equivalent to the size of type LONGCARD. Bitset types with
+a guaranteed number of bits (elements) are provided by the standard library:
+
+* BITSET16, bitset type with 16 bits, representing elements 0 to 15
+* BITSET32, bitset type with 32 bits, representing elements 0 to 31
+* BITSET64, bitset type with 64 bits, representing elements 0 to 63
+* BITSET128, bitset type with 128 bits, representing elements 0 to 127
+
+
+4.3.2 Enumerated Set Types
+
+An enumerated set type is a set type where the elements are defined by an
+enumerated list of constant identifiers or by an enumeration type.
+
+
+4.3.3 Set Types of Arbitrary Element Types
+
+The standard library provides set type CHARSET. Its element type is CHAR.
+
+
+4.4 Character Types
+
+4.5 Whole Number Types
+
+4.6 Real Number Types
+
+4.7 Complex Number Types
+
+4.8 Vector Types
+
+4.9 Array Types
+
+4.10 Record Types
+
+
+4.11 Pointer Types
 
 A pointer type represents a container for a reference to a storage location.
 The following operations are defined for pointer types:
@@ -649,7 +677,7 @@ The following operations are defined for pointer types:
 * not-equal (#)
 
 
-4.3.4 Procedure Types
+4.12 Procedure Types
 
 Procedure types are special pointer types that reference the storage location
 of a procedure and store the formal parameters of a procedure prototype.
@@ -662,78 +690,176 @@ The following operations are defined for procedure types:
 * not-equal (#)
 
 
-4.3.5 Whole Number Types
+4.2.3 Abstract Data Types
 
-Whole number types are subsets of the mathematical set of whole numbers. The
-following operations are defined for whole number types:
+Abstract data types (ADTs) are typically defined in library modules. A library
+module that defines an abstract data type with the same name as the module's
+identifier is called an ADT library module and it represents the type itself.
 
-* assignment (:=) and type conversion (::)
-* smallest value (TMIN) and largest value (TMAX)
-* absolute value (ABS) and sign reversal (NEG)
+An ADT library module may specify a semantic type in the module header. This
+represents a promise to conform to the common set of semantics defined by the
+semantic type. An ADT defined to conform to a semantic type may bind its own
+library defined procedures to those operators and pervasive procedures that
+are permitted by the semantic type. Static conformance is compiler enforced.
+No other bindings than those defined by the semantic type are permitted.
+
+Values of the type defined by the ADT may then be used in infix expressions
+using the respective operators. Bound to pervasive procedures may be called
+with values of the type passed in as arguments. The compiler then replaces
+the infix expressions and calls to pervasive procedures with calls to the
+corresponding procedures defined in the ADT library module.
+
+This facility makes library defined ADTs practically indistinguishable from
+language defined types. The Modula-2 R10 standard library provides a rich set
+of library ADTs with bindings to common operators and pervasive procedures.
+
+
+4.3 Semantic Types
+
+A semantic type is a library defined entity that specifies a common set of
+semantics that data types may be required to conform to. A semantic type is
+defined in a bindings definition file which defines the name of the semantic
+type, how a conformant data type may be declared, what type of literal it may
+use, and which bindings to operators and pervasive procedures it may define.
+
+The standard library provides semantic type definitions for common data types.
+It provides four semantic type definitions for numeric types:
+
+* ZTYPE, defining the bindings for whole number types
+* RTYPE, defining the bindings for real number types
+* CTYPE, defining the bindings for complex number types
+* VTYPE, defining the bindings for numeric vector types
+
+Further it provides five more semantic type definitions for other data types:
+
+* ArrayType, defining bindings for static array types
+* SetType, defining bindings for static set types
+* DateType, defining bindings for date-time types
+* StringType, defining bindings for dynamic string types
+* CollectionType, defining bindings for dynamic collection types
+
+
+4.3.1 The Z-Type
+
+Semantic type ZTYPE represents the Z-Type and it defines the bindings for
+whole number types:
+
+* assignment (:=)
+* type conversions (::)
+* smallest value (TMIN)
+* largest value (TMAX)
+* absolute value (ABS)
+* sign reversal (NEG)
 * odd/even test (ODD)
-* addition (+) and increment (++)
-* difference (-) and decrement (--)
+* addition (+)
+* difference (-)
 * multiplication (*)
-* integer division (DIV) and modulo (MOD)
+* integer division (DIV)
+* modulo (MOD)
 * iteration (FOR .. IN ..)
 * equal (=)
-* not-equal (#)
-* less (<) and less-or-equal (<=)
-* greater (>) and greater or equal (>=)
+* less-than (<)
+* greater-than (>)
+* conversion to and from scalar exchange format (TO, FROM)
+
+The following operations are automatically synthesised:
+
+* increment (++) is synthesised from addition (+)
+* increment (--) is synthesised from difference (-)
+* not-equal (#) is synthesised from boolean NOT and equal (=)
+* less-or-equal (<=) is synthesised from boolean NOT and greater-than (>)
+* greater-or-equal (>=) is synthesised from boolean NOT and less-than (<)
+
+Predefined types OCTET, CARDINAL, LONGCARD, INTEGER and LONGINT, and standard
+library defined types CARD16, CARD32, CARD64, CARD128, INT16, INT32, INT64,
+INT128, and TZ conform to the Z-Type.
 
 
-4.3.6 Real Number Types
+4.3.2 The R-Type
 
-Real number types are subsets of the mathematical set of real numbers. The
-following operations are defined for real number types:
+Semantic type RTYPE represents the R-Type and it defines the bindings for
+real number types:
 
-* assignment (:=) and type conversion (::)
-* smallest value (TMIN) and largest value (TMAX)
-* absolute value (ABS) and sign reversal (NEG)
-* addition (+) and increment (++)
-* difference (-) and decrement (--)
+* assignment (:=)
+* type conversions (::)
+* smallest value (TMIN)
+* largest value (TMAX)
+* absolute value (ABS)
+* sign reversal (NEG)
+* odd/even test (ODD)
+* addition (+)
+* difference (-)
 * multiplication (*)
 * division (/)
 * equal (=)
-* not-equal (#)
-* less (<) and less-or-equal (<=)
-* greater (>) and greater or equal (>=)
+* less-than (<)
+* greater-than (>)
+* conversion to and from scalar exchange format (TO, FROM)
+
+The following operations are automatically synthesised:
+
+* increment (++) is synthesised from addition (+)
+* increment (--) is synthesised from difference (-)
+* not-equal (#) is synthesised from boolean NOT and equal (=)
+* less-or-equal (<=) is synthesised from boolean NOT and greater-than (>)
+* greater-or-equal (>=) is synthesised from boolean NOT and less-than (<)
+
+Predefined types REAL and LONGREAL, and standard library defined types BCD,
+LONGBCD and UnsignedReal60 conform to the R-Type.
 
 
-4.3.7 Complex Number Types
+4.3.3 The C-Type
 
-Complex number types are subsets of the set of complex numbers, or C-Type.
-The standard library types COMPLEX and LONGCOMPLEX are complex number types.
-The following operations are defined for complex number types:
+Semantic type CTYPE represents the C-Type and it defines the bindings for
+complex number types:
 
-* assignment (:=) and type conversion (::)
-* absolute value (ABS) and sign reversal (NEG)
-* addition (+) and increment (++)
-* difference (-) and decrement (--)
+* assignment (:=)
+* type conversions (::)
+* absolute value (ABS)
+* sign reversal (NEG)
+* addition (+)
+* difference (-)
 * multiplication (*)
 * division (/)
 * equal (=)
-* not-equal (#)
+
+The following operation is automatically synthesised:
+
+* not-equal (#) is synthesised from boolean NOT and equal (=)
+
+There are no predefined complex number types. Standard library defined types
+COMPLEX and LONGCOMPLEX conform to the C-Type.
 
 
-4.3.8 Vector Types
+4.3.4 The V-Type
 
-Vector types are compound types with a fixed number of scalar components. The
-components may or may not be of the same type. The following operations are
-defined for vector types:
+Semantic type VTYPE represents the V-Type and it defines the bindings for
+numeric vector types:
 
-* assignment (:=) and type conversion (::)
-* smallest value (TMIN) and largest value (TMAX)
-* absolute value (ABS) and sign reversal (NEG)
-* addition (+) and difference (-)
-* increment (++) and decrement (--)
+* assignment (:=)
+* type conversions (::)
+* absolute value (ABS)
+* sign reversal (NEG)
+* addition (+)
+* difference (-)
+* dot-product (*)
 * equal (=)
-* not-equal (#)
-* less (<) and less-or-equal (<=)
-* greater (>) and greater or equal (>=)
+
+The following operation is automatically synthesised:
+
+* not-equal (#) is synthesised from boolean NOT and equal (=)
+
+There are no predefined and not standard library defined vector types.
 
 
-4.3.9 Collection Types
+4.3.5 ArrayType
+
+4.3.6 SetType
+
+4.3.7 DateType
+
+
+4.3.8 CollectionType
 
 Collection types represent containers in which all stored values are of the
 same type. The following operations are defined for collection types:
@@ -753,9 +879,9 @@ same type. The following operations are defined for collection types:
 * superset (>=) and true superset (>) tests
 
 
-4.3.10 Character String Types
+4.3.9 Dynamic String Types
 
-Character string types represent containers for character strings. The
+Dynamic string types represent containers for character strings. The
 following operations are defined for character string types:
 
 * assignment (:=) and type conversion (::)
