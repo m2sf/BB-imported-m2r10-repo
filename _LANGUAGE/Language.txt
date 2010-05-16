@@ -1981,4 +1981,4 @@ SubrangeInteger.def   generic integer subrange type template
 NonZeroIndexArray.def generic non-zero index array type template
 
 
-[status: May, 12, 2010] (C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved.
+[status: May, 15, 2010] (C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved.
