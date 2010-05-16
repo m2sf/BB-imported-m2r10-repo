@@ -1003,7 +1003,7 @@ Two additional alias types are defined as SHORTCARD and LONGLONGCARD.
 
 Example:
 
-IMPORT CARDINAL16;
+IMPORT Cardinals;
 VAR a, sum : CARDINAL16;
 BEGIN a := 123; sum := a + 456; WRITE(StdOut, sum) END;
 
@@ -1025,7 +1025,7 @@ Two additional alias types are defined as SHORTINT and LONGLONGINT.
 
 Example:
 
-IMPORT INTEGER16;
+IMPORT Integers;
 VAR a, diff : INTEGER16;
 BEGIN a := 123; diff := a - 456; WRITE(StdOut, diff) END;
 
@@ -1066,7 +1066,7 @@ Example:
 IMPORT CHARSET;
 VAR delimiters : CHARSET; found : BOOLEAN;
 BEGIN found := FALSE; delimiters := { ":", ",", "." };
-FOR char IN "foo:bar.baz" DO IF delimiters IN char THEN EXIT END END END;
+FOR char IN "foo:bar.baz,bam" DO IF delimiters IN char THEN EXIT END END END;
 
 
 4.3.7 Library Defined Character String ADTs
@@ -1079,7 +1079,7 @@ Example:
 
 IMPORT STRING;
 VAR s : STRING;
-BEGIN NEW(s, 10); s := "foobar"; WRITE(stdOut, s); DISPOSE(s) END;
+BEGIN NEW(s, 20); s := "the quick brown fox"; WRITE(stdOut, s); DISPOSE(s) END;
 
 
 4.3.8 Library Defined DateTime ADTs
