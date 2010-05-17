@@ -44,10 +44,10 @@ TYPE LONGCARD = 0 .. 2^(16*octets) - 1;
 (* 2*n bit unsigned integer type, n > 0,
    TSIZE(LONGCARD) >= TSIZE(CARDINAL) is always true *)
 
-TYPE INTEGER = -2^(8*TSIZE(CARDINAL)) .. 2^(8*TSIZE(CARDINAL)) - 1;
+TYPE INTEGER = -2^(8*TSIZE(CARDINAL) - 1 ) .. 2^(8*TSIZE(CARDINAL) -1) - 1;
 (* Signed integer type of same size as CARDINAL *)
 
-TYPE LONGINT = -2^(8*TSIZE(LONGCARD)) .. 2^(8*TSIZE(LONGCARD)) - 1;
+TYPE LONGINT = -2^(8*TSIZE(LONGCARD) - 1 ) .. 2^(8*TSIZE(LONGCARD) - 1) - 1;
 (* Signed integer type of same size as LONGCARD *)
 
 TYPE REAL = <implementation or target dependent real number range>;
