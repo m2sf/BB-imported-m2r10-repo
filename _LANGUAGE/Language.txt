@@ -387,8 +387,8 @@ of a program module roughly corresponds to the main() function in a C program.
 EBNF:
 
 programModule :
-    MODULE moduleId ( '[' priority ']' )? ';'
-    importList* block moduleId '.' ;
+    MODULE moduleId ( "[" priority "]" )? ";"
+    importList* block moduleId "." ;
 
 moduleId : Ident ;
 
@@ -419,9 +419,9 @@ available for import by other modules.
 EBNF:
 
 definitionOfModule :
-    DEFINITION MODULE moduleId ( '[' semanticType ']' )? ';'
+    DEFINITION MODULE moduleId ( "[" semanticType "]" )? ";"
     importList* definition*
-    END moduleId '.' ;
+    END moduleId "." ;
 
 
 2.4 Implementation Part of Library Modules
@@ -475,8 +475,8 @@ other modules using an import directive. There are two types of import:
 EBNF:
 
 importList :
-    ( FROM moduleId IMPORT ( identList | '*' ) |
-    IMPORT Ident '+'? ( ',' Ident '+'? )* ) ';'
+    ( FROM moduleId IMPORT ( identList | "*" ) |
+    IMPORT Ident "+"? ( "," Ident "+"? )* ) ";"
 
 
 3.1 Qualified Import
@@ -1410,7 +1410,7 @@ Record types are defined using the RECORD type constructor.
 EBNF:
 
 recordType :
-    RECORD ( '(' ( semanticType | baseType ) ')' )? fieldListSequence? END ;
+    RECORD ( "(" ( semanticType | baseType ) ")" )? fieldListSequence? END ;
 
 fieldListSequence :
     fieldList ( ";" fieldList )* ;
@@ -1609,15 +1609,15 @@ expression.
 EBNF:
 
 caseStatement :
-    CASE expression OF case ( '|' case )*
+    CASE expression OF case ( "|" case )*
     ( ELSE statementSequence )?
     END ;
 
-case : caseLabelList ':' statementSequence ;
+case : caseLabelList ":" statementSequence ;
 
-caseLabelList : caseLabels ( ',' caseLabels )* ;
+caseLabelList : caseLabels ( "," caseLabels )* ;
 
-caseLabels : constExpression ( '..' constExpression )? ;
+caseLabels : constExpression ( ".." constExpression )? ;
 
 Example:
 
@@ -1686,7 +1686,7 @@ EBNF:
 
 forStatement :
     FOR ident
-    ( ':=' expression TO expression ( BY constExpression )? | IN expression )
+    ( ":=" expression TO expression ( BY constExpression )? | IN expression )
     DO statementSequence END ;
 
 Examples:
@@ -2263,7 +2263,7 @@ MAX( 1, 2, 3 ) => 3
 Macro VAL is provided only as a measure of legacy support. It is replaced by
 an equivalent type conversion expression. Its pseudo-definition is:
 
-PROCEDURE VAL ( T : <TypeIdentifier>; x : <anyType> ) : <T> ; => x :: T
+PROCEDURE VAL ( T : <TypeIdentifier>; x : <AnyType> ) : <T> ; => x :: T
 
 Example: VAL(INTEGER, x) => x :: INTEGER
 
