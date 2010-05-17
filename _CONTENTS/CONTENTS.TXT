@@ -59,15 +59,15 @@ LONGREAL.def          IO module for type LONGREAL
 
 Semantic Types:
 
-ZTYPE.def             defines semantic properties for all whole number types
-RTYPE.def             defines semantic properties for all real number types
-CTYPE.def             defines semantic properties for all complex number types
-VTYPE.def             defines semantic properties for all numeric vector types
-ArrayType.def         defines semantic properties for static array types
-SetType.def           defines semantic properties for static set types
-DateType.def          defines semantic properties for date-time types
-StringType.def        defines semantic properties for dynamic string types
-CollectionType.def    defines semantic properties for dynamic collection types
+ZTYPE.def             defines semantic properties for whole number ADTs
+RTYPE.def             defines semantic properties for real number ADTs
+CTYPE.def             defines semantic properties for complex number ADTs
+VTYPE.def             defines semantic properties for numeric vector ADTs
+ArrayType.def         defines semantic properties for static array ADTs
+SetType.def           defines semantic properties for static set ADTs
+DateType.def          defines semantic properties for date-time ADTs
+StringType.def        defines semantic properties for dynamic string ADTs
+CollectionType.def    defines semantic properties for dynamic collection ADTs
 
 Library defined types:
 
