@@ -1,10 +1,10 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE Dictionary;
+DEFINITION MODULE Dictionary [CollectionType];
 
 (* Example of a collection library using operator bindings *)
 
-TYPE Dictionary = OPAQUE ("A-Type");
+TYPE Dictionary = OPAQUE;
 
 
 (* key and value type *)
