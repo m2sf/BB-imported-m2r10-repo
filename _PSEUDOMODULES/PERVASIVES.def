@@ -125,9 +125,6 @@ PROCEDURE TMAX ( T : <TypeIdentifier> ) : <T>;
 PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
 (* Returns allocation size required for a variable of type T *)
 
-(* MACRO *) PROCEDURE VAL ( T : <TypeIdentifier>; x : <anyType> ) : <T>;
-(* VAL(T, x) => x :: T *)
-
 
 (* Lexical Macros *)
 
@@ -136,5 +133,8 @@ PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
 
 (* MACRO *) PROCEDURE MAX ( x : VARIADIC OF <Constant> ) : <OperandType>;
 (* Replaced with the largest constant in the variadic list *)
+
+(* MACRO *) PROCEDURE VAL ( T : <TypeIdentifier>; x : <anyType> ) : <T>;
+(* VAL(T, x) => x :: T *)
 
 END PERVASIVES.

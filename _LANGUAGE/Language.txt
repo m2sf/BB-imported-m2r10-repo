@@ -2084,16 +2084,16 @@ not be assigned to procedure variables, may not be passed to a procedure as
 parameters and calls to them are typically replaced by the compiler with
 an expression rather than a call to a corresponding function.
 
-There are 16 predefined functions:
+There are 15 predefined functions:
 
-ABS NEG ODD PRED SUCC ORD CHR COUNT SIZE HIGH LENGTH NEXTV TMIN TMAX TSIZE VAL
+ABS NEG ODD PRED SUCC ORD CHR COUNT SIZE HIGH LENGTH NEXTV TMIN TMAX TSIZE
 
 
 10.4.1 Function ABS
 
 Function ABS returns the absolute value of its operand. Its operand may be of
-any Z-Type, R-Type, C-Type or V-Type. Its return type is always the same as
-the operand type. Its pseudo-definiton is:
+any numeric type. Its return type is always the same as the operand type. Its
+pseudo-definiton is:
 
 PROCEDURE ABS ( x : <NumericType> ) : <OperandType> ;
 
@@ -2101,8 +2101,8 @@ PROCEDURE ABS ( x : <NumericType> ) : <OperandType> ;
 10.4.2 Function NEG
 
 Function NEG returns the sign reversed value of its operand. Its operand may
-be of any Z-Type, R-Type, C-Type or V-Type. Its return type is always the same
-as the operand type. Its pseudo-definiton is:
+be of any numeric type. Its return type is always the same as the operand
+type. Its pseudo-definiton is:
 
 PROCEDURE NEG ( x : <NumericType> ) : <OperandType> ;
 
@@ -2230,30 +2230,38 @@ Its return type is LONGCARD. Its pseudo-defintion is:
 PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD ;
 
 
-10.4.16 Function VAL
-
-Function VAL is a macro that is provided only as a measure of legacy support.
-Any invocation is replaced by an equivalent type conversion expression. The
-invocation 'VAL(T, x)' is replaced by type conversion expression 'x :: T'.
-
-PROCEDURE VAL ( T : <TypeIdentifier>; x : <anyType> ) : <T> ; => x :: T
-
-CAUTION: This macro may be deprecated in a future revision and its use should
-be avoided. The type conversion operator :: should always be used instead.
-
-
 10.5 Built-in Lexical Macros
 
 User-definable lexical macros are not provided in Modula-2 (on purpose), but
-there are two built-in lexical macros: MIN and MAX.
+there are three built-in lexical macros: MIN, MAX and VAL.
+
+
+10.5.1 Macros MIN and MAX
 
 Macro MIN is replaced with the smallest constant from its variadic argument
 list and Macro MAX is replaced with the largest constant from its variadic
 argument list. All arguments must be numeric constants or numeric constant
-expressions. Examples:
+expressions. Their pseudo-definitions are:
 
-x := MIN( 1, 2, 3 ) => x := 1
-x := MAX( 1, 2, 3 ) => x := 3
+PROCEDURE MIN ( constant : VARIADIC OF <AnyType> ) : <OperandType>;
+
+Examples:
+
+MIN( 1, 2, 3 ) => 1
+MAX( 1, 2, 3 ) => 3
+
+
+10.5.2 Legacy Macro VAL
+
+Macro VAL is provided only as a measure of legacy support. It is replaced by
+an equivalent type conversion expression. Its pseudo-definition is:
+
+PROCEDURE VAL ( T : <TypeIdentifier>; x : <anyType> ) : <T> ; => x :: T
+
+Example: VAL(INTEGER, x) => x :: INTEGER
+
+CAUTION: This macro may be deprecated in a future revision and its use should
+be avoided. The type conversion operator :: should always be used instead.
 
 
 11 Generics
@@ -2491,4 +2499,4 @@ SubrangeInteger.def   generic integer subrange type template
 NonZeroIndexArray.def generic non-zero index array type template
 
 
-[status: May, 15, 2010] (C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved.
+[status: May, 16, 2010] (C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved.
