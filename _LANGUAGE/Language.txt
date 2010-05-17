@@ -837,9 +837,9 @@ opaque record types.
 4.2 Library Defined Semantic Types
 
 The standard library provides a set of semantic type definitions in order to
-allow the construction of library defined abstract data types that are practi-
-cally inistinguishable from pervasive types and transparent data types defined
-using type constructor syntax.
+allow the construction of library defined abstract data types with the same
+semantics as pervasive types and transparent data types defined using type
+constructor syntax.
 
 To require an ADT to conform to a library defined semantic type, the library
 that defines the ADT must specify the semantic type in the module header of
@@ -1362,6 +1362,15 @@ indexedArray :
 
 arrayIndex : ordinalConstExpression ;
 
+Example:
+
+TYPE A = ARRAY 10 OF INTEGER;
+VAR array : A; index : OCTET;
+
+array := { 0 BY 10 }; (* initialise all values with zero };
+FOR index IN array DO array[index] := index :: INTEGER END;
+WRITE(StdOut, array);
+
 
 5.3.6.2 Associative Array Types
 
@@ -1369,6 +1378,13 @@ EBNF:
 
 associativeArray :
     ASSOCIATIVE ARRAY OF ( namedType | pointerType | procedureType ) ;
+
+Example:
+
+TYPE AA = ASSOCIATIVE ARRAY OF INTEGER;
+VAR array : AA;
+
+array["foo"] := 0; array["bar"] := -123; array["baz"] := 456;
 
 
 5.5.7 Record Types
@@ -1386,6 +1402,14 @@ fieldList :
 
 baseType : Ident ;
 
+Example:
+
+TYPE Point = RECORD x, y : REAL END;
+TYPE ColourPoint = RECORD ( Point ) colour : Colour END;
+VAR point : Point; cPoint : ColourPoint;
+
+cPoint := { 0.0, 0.0, Colour.black }; point := cPoint :: Point; 
+
 
 5.5.8 Set Types
 
@@ -1396,12 +1420,31 @@ setType :
 
 namedEnumType : namedType ;
 
+Example:
+
+TYPE ColourSet = SET OF Colour;
+TYPE PeopleSet = SET OF ( bob, fred, mary );
+VAR colours : ColourSet; people : PeopleSet;
+
+colours := { Colour.red, Colour.green }; colours[Colour.blue] := FALSE;
+people := { People.bob, People.fred }; people := people * { People.fred };
+
 
 5.3.9 Pointer Types
 
 EBNF:
 
 pointerType : POINTER TO CONST? namedType ;
+
+Example:
+
+TYPE IntPtr = POINTER TO INTEGER;
+TYPE ImmutablePtr = POINTER TO CONST INTEGER;
+VAR intPtr: IntPtr; immPtr : ImmutablePtr; int : INTEGER;
+
+intPtr := int; immPtr := int; int := 0;
+intPtr^ := 0; (* OK *)
+immPtr^ := 0; (* compile time error: immutable object *)
 
 
 5.5.10 Procedure Types
@@ -1421,6 +1464,13 @@ formalType :
     ( ARRAY OF )? namedType ;
 
 returnedType : namedType ;
+
+Example:
+
+TYPE WriteStrProc = PROCEDURE ( CONST ARRAY OF CHAR );
+VAR WriteStr : WriteStrProc;
+
+WriteStr := Terminal.WriteString; WriteStr("hi!");
 
 
 5.6 Procedure Definitions and Declarations
@@ -1605,12 +1655,12 @@ FALSE  shorthand for BOOLEAN.FALSE
 
 There are twelve predefined types:
 
-BOOLEAN     boolean type, TYPE BOOLEAN = ( TRUE, FALSE );
+BOOLEAN     boolean type
 BITSET      bitset type of same size as CARDINAL
 LONGBITSET  bitset type of same size as LONGCARD
-CHAR        7-bit character type, first 128 code points of UTF-8
-UNICHAR     4-octet character type, all code points of UTF-32
-OCTET       unsigned 8-bit integer type
+CHAR        7-bit character type, subset of UTF-8
+UNICHAR     4-octet character type, full UTF-32 set
+OCTET       unsigned 8-bit integer type, smallest unit
 CARDINAL    unsigned integer type, 2*n octets for n >= 1
 LONGCARD    unsigned integer type, 2*n octets for n >= 1
 INTEGER     signed integer type of same size as CARDINAL
