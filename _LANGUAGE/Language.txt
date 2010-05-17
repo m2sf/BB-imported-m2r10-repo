@@ -1502,7 +1502,222 @@ WriteStr := Terminal.WriteString; WriteStr("hi!");
 
 6 Statements
 
-*** to do ***
+A statement is an action that can be executed to cause a transformation of the
+computational state of a program. Statements are used for their effects only,
+they do not return any values and may not be used within expressions.
+
+There are ten types of statements:
+
+* assignments
+* procedure calls
+* increment/decrement statements
+* if statements
+* case statements
+* while statements
+* repeat statements
+* loop statements
+* for statements
+* exit statements
+* return statements
+
+
+6.1 Assignments
+
+An assignment statement is used to assign a value to a variable.
+
+EBNF:
+
+assignment : designator ":=" expression ;
+
+designator : qualident ( ( "[" expressionList "]" | "^" ) ( "." ident )* )+ ;
+
+Examples:
+
+VAR ch : CHAR; i : INTEGER; r : REAL;
+ch := "a"; i := 12345; r := 3.1415926;
+
+
+6.2 Procedure Callss
+
+A procedure call statement is used to invoke a procedure.
+
+EBNF:
+
+procedureCall : designator ( "(" expressionList? ")" )? ;
+
+Examples:
+
+Write(stdOut, ch); WriteLn;
+
+
+6.3 Increment and Decrement Statements
+
+Increment and decrement statements are used to increment or decrement
+variables.
+
+EBNF:
+
+incrementOrDecrement : designator ( "++" | "--" ) ;
+
+Examples;
+
+VAR colour : Colours; counter : CARDINAL;
+colour++; counter--; 
+
+
+6.4 IF Statements
+
+An IF statement is a conditional flow-control statement. It evaluates a
+condition in form of a boolean expression. If the condition is true then
+flow control passes to its THEN block. If the condition is false and an ELSIF
+branch follows, then flow control passes to the ELSIF branch to evaluate yet
+another condition in the ELSIF branch. Again, if the condition is true then
+flow control passes to the THEN block of the ELSIF branch. If there are no
+ELSIF branches or if the conditions of all ELSIF branches are false, and
+if an ELSE branch follows, then flow control passes to the ELSE's block.
+IF-statements must always be terminated with an END.
+
+EBNF:
+
+ifStatement :
+    IF booleanExpression THEN statementSequence
+    ( ELSIF booleanExpression THEN statementSequence )*
+    ( ELSE statementSequence )?
+    END ;
+
+Example:
+
+IF i > 0 THEN WRITE(stdOut, "Positive");
+ELSIF i = 0 THEN WRITE(stdOut, "Zero");
+ELSE WRITE(stdOut, "Negative");
+END;
+
+
+6.5 CASE Statements
+
+A CASE statement is a flow-control statement that passes control to one of
+a number of labeled statements or statement sequences depending on an ordinal
+expression.
+
+EBNF:
+
+caseStatement :
+    CASE expression OF case ( '|' case )*
+    ( ELSE statementSequence )?
+    END ;
+
+case : caseLabelList ':' statementSequence ;
+
+caseLabelList : caseLabels ( ',' caseLabels )* ;
+
+caseLabels : constExpression ( '..' constExpression )? ;
+
+Example:
+
+CASE colour OF
+    Colour.red   : WRITE(stdOut, "Red");
+|   Colour.green : WRITE(stdOut, "Green");
+|   Colour.blue  : WRITE(stdOut, "Blue");
+ELSE
+    SYSTEM.HALT(1) (* fatal error *)
+END;
+
+
+6.6 WHILE Statements
+
+A WHILE statement is used to repeat a statement or sequence of statements
+depending on a condition. The condition is evaluated before the DO block is
+executed. The DO block is repeated as long as the condition evaluates to TRUE.
+
+EBNF:
+
+whileStatement : WHILE booleanExpression DO statementSequence END ;
+
+Example:
+
+WHILE NOT EOF(file) DO READ(file, ch) END;
+
+
+6.6 REPEAT Statements
+
+A REPEAT statement is used to repeat a statement or sequence of statements
+depending on a condition. The condition is evaluated each time the REPEAT
+block has executed. If the condition is TRUE the REPEAT block is repeated,
+otherwise not.
+
+EBNF:
+
+whileStatement : REPEAT statementSequence UNTIL booleanExpression;
+
+Example:
+
+REPEAT Read(file, ch) UNTIL ch = terminator END;
+
+
+6.7 LOOP and EXIT Statements
+
+The LOOP statement is used to repeat a statement or sequence of statements
+indefinitely unless explicitly terminated by an EXIT statement.
+
+EBNF:
+
+loopStatement : LOOP statementSequence END ;
+
+exitStatement : EXIT ;
+
+Example:
+
+LOOP READ(file, ch); IF ch IN TerminatorSet THEN EXIT END;
+
+
+6.8 FOR statements
+
+The FOR statement is used to repeat a statement or statement sequence a
+given number of times, depending on a control variable.
+
+EBNF:
+
+forStatement :
+    FOR ident
+    ( ':=' expression TO expression ( BY constExpression )? | IN expression )
+    DO statementSequence END ;
+
+Examples:
+
+FOR i := 0 TO LENGTH(str) DO WRITE(file, str[i]) END;
+
+FOR colour IN ColourSet DO counter++ END;
+
+
+6.9 RETURN Statements
+
+The RETURN statement is used within a procedure body to return control to the
+calling procedure and in the main body of the program to return control to the
+operating environment that activated the program. A value may be returned.
+
+EBNF:
+
+returnStatement : RETURN expression? ;
+
+Example:
+
+PROCEDURE Increment ( x : CARDINAL ) : CARDINAL ;
+BEGIN
+    RETURN x++;
+END Increment;
+
+
+6.10 Statement Sequences
+
+Statements in a sequence of statements are separated by semicolons.
+
+EBNF:
+
+statementSequence : statement ( ";" statement )* ;
+
+Example:
+
+x := x * 5; counter++; WRITE(file, x)
 
 
 7 Expressions
