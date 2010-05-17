@@ -1690,7 +1690,7 @@ NEW DISPOSE READ WRITE WRITEF
 Procedure NEW is used to dynamically allocate storage for a variable of a
 pointer type. Its pseudo-definition is:
 
-PROCEDURE NEW ( VAR p : <anyPointerType>; (*OPTIONAL*) n : <unsignedType> );
+PROCEDURE NEW ( VAR p : <AnyPointerType>; (*OPTIONAL*) n : <UnsignedType> );
 
 A call to procedure NEW is replaced by the compiler with a call to library
 procedure ALLOCATE which must be imported before NEW can be used. The standard
@@ -1726,7 +1726,7 @@ NEW(v, 100); (* replaced by ALLOCATE(v, TSIZE(VLA) + 100*TSIZE(INTEGER)); *)
 Procedure DISPOSE is used to deallocate storage that was earlier allocated by
 a call to procedure NEW. Its pseudo-defintion is:
 
-PROCEDURE DISPOSE ( VAR p : <anyPointerType> );
+PROCEDURE DISPOSE ( VAR p : <AnyPointerType> );
 
 A call to procedure DISPOSE is replaced by the compiler with a call to a
 library procedure DEALLOCATE which must be imported before DISPOSE can be
@@ -1746,7 +1746,7 @@ DISPOSE(v); (* replaced by
 Procedure READ is used to read a value from a file or stream and assign it to
 a variable. Its pseudo-definition is:
 
-PROCEDURE READ ( f : File; VAR v : <anyType> );
+PROCEDURE READ ( f : File; VAR v : <AnyType> );
 
 A call to procedure READ is replaced by the compiler with a call to a library
 procedure Read which must be defined in a library module that has the same
@@ -1776,7 +1776,7 @@ READ(stdIn, balance); (* replaced by BCD.Read(stdIn, balance); *)
 Procedure WRITE is used to write a value to a file or stream. Its pseudo-
 definition is:
 
-PROCEDURE WRITE ( f : File; v : <anyType> );
+PROCEDURE WRITE ( f : File; v : <AnyType> );
 
 A call to procedure WRITE is replaced by the compiler with a call to a library
 procedure Write which must be defined in a library module that has the same
@@ -1806,7 +1806,7 @@ WRITE(stdOut, balance); (* replaced by BCD.Write(stdOut, balance); *)
 Procedure WRITEF is used to write one or more values to a file or stream using
 a given format depending on a format string. Its pseudo-definition is:
 
-PROCEDURE WRITEF ( f : File; fmt : ARRAY OF CHAR; v : VARIADIC OF <anyType> );
+PROCEDURE WRITEF ( f : File; fmt : ARRAY OF CHAR; v : VARIADIC OF <AnyType> );
 
 A call to procedure WRITEF is replaced by the compiler with a call to a
 library procedure WriteF which must be defined in a library module that has
@@ -1856,7 +1856,7 @@ Function ABS returns the absolute value of its operand. Its operand may be of
 any Z-Type, R-Type, C-Type or V-Type. Its return type is always the same as
 the operand type. Its pseudo-definiton is:
 
-PROCEDURE ABS ( x : <numericType> ) : <operandType> ;
+PROCEDURE ABS ( x : <NumericType> ) : <OperandType> ;
 
 
 10.4.2 Function NEG
@@ -1865,7 +1865,7 @@ Function NEG returns the sign reversed value of its operand. Its operand may
 be of any Z-Type, R-Type, C-Type or V-Type. Its return type is always the same
 as the operand type. Its pseudo-definiton is:
 
-PROCEDURE NEG ( x : <numericType> ) : <operandType> ;
+PROCEDURE NEG ( x : <NumericType> ) : <OperandType> ;
 
 
 10.4.3 Function ODD
@@ -1884,7 +1884,7 @@ second operand. Its first operand may be of any ordinal type and its second
 operand may be of any unsigned type. Its return type is always the same as
 type of its first operand. Its pseudo-definition is:
 
-PROCEDURE PRED ( x : <ordinalType>; n : <unsignedType> ) : <typeOf(x)> ;
+PROCEDURE PRED ( x : <OrdinalType>; n : <UnsignedType> ) : <typeOf(x)> ;
 
 
 10.4.5 Function SUCC
@@ -1894,7 +1894,7 @@ second operand. Its first operand may be of any ordinal type and its second
 operand may be of any unsigned Z-Type. Its return type is always the same as
 the type of its first operand. Its pseudo-definition is:
 
-PROCEDURE SUCC ( x : <ordinalType>; n : <unsignedType> ) : <typeOf(x)> ;
+PROCEDURE SUCC ( x : <OrdinalType>; n : <UnsignedType> ) : <typeOf(x)> ;
 
 
 10.4.6 Function ORD
@@ -1902,7 +1902,7 @@ PROCEDURE SUCC ( x : <ordinalType>; n : <unsignedType> ) : <typeOf(x)> ;
 Function ORD returns the ordinal value of its operand. Its operand may be of
 any ordinal type. Its return type is the Z-Type. Its pseudo-definition is:
 
-PROCEDURE ORD ( x : <ordinalType> ) : <Z-Type> ;
+PROCEDURE ORD ( x : <OrdinalType> ) : <Z-Type> ;
 
 
 10.4.7 Function CHR
@@ -1912,7 +1912,7 @@ operand may be of any unsigned Z-Type. If the value of its operand is less
 than 128 then its return type is CHAR, otherwise its return type is UNICHAR.
 Its pseudo-definition is:
 
-PROCEDURE CHR ( x : <unsignedType> ) : <charOrUnicharType> ; 
+PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType> ; 
 
 
 10.4.8 Function COUNT
@@ -1921,7 +1921,7 @@ Function count returns the number of items stored in its operand. Its operand
 may be of any set type or collection type. Its return type is LONGCARD.
 Its pseudo-definition is:
 
-PROCEDURE COUNT ( c : <setOrCollectionType> ) : LONGCARD ;
+PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD ;
 
 
 10.4.9 Function SIZE
@@ -1930,7 +1930,7 @@ Function SIZE returns the allocation size of its operand. The value returned
 represents the number of octets allocated for its operand. Its operand may be
 a variable of any type. Its return type is LONGCARD. Its pseudo-defintion is:
 
-PROCEDURE SIZE ( variable : <anyType> ) : LONGCARD ;
+PROCEDURE SIZE ( variable : <AnyType> ) : LONGCARD ;
 
 
 10.4.10 Function HIGH
@@ -1940,7 +1940,7 @@ a variable of an indexed array type or the identifier of an open array para-
 meter or variadic parameter list. Its return type is LONGCARD. Its pseudo-
 definition is:
 
-PROCEDURE HIGH ( ident : <arrayOrVariadicList> ) : LONGCARD ;
+PROCEDURE HIGH ( ident : <ArrayOrVariadicList> ) : LONGCARD ;
 
 
 10.4.11 Function LENGTH
@@ -1949,7 +1949,7 @@ Function LENGTH returns the number of characters in its operand. Its operand
 may be of any character array type. Its return type is LONGCARD. Its pseudo-
 definition is:
 
-PROCEDURE LENGTH ( s : <characterArray> ) : LONGCARD ;
+PROCEDURE LENGTH ( CONST s : <CharacterArray> ) : LONGCARD ;
 
 
 10.4.12 Function NEXTV
@@ -1960,7 +1960,7 @@ Its operand is an identifier of a value-terminated variadic parameter list.
 Its return type is a pointer to the base type of the variadic parameter list.
 Its pseudo-definition is:
 
-PROCEDURE NEXTV ( ident : <variadicList> ) : <pointerToVariadicBaseType> ;
+PROCEDURE NEXTV ( ident : <VariadicList> ) : <PointerToVariadicBaseType> ;
 
 
 10.4.13 Function TMIN
@@ -1969,7 +1969,7 @@ Function TMIN returns the smallest legal value of its operand. Its operand is
 an identifier denoting any Z-Type or R-Type. Its return type is the operand.
 Its pseudo-definition is:
 
-PROCEDURE TMIN ( T : <typeIdentifier> ) : <T> ;
+PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T> ;
 
 
 10.4.14 Function TMAX
@@ -1978,7 +1978,7 @@ Function TMIN returns the largest legal value of its operand. Its operand is
 an identifier denoting any Z-Type or R-Type. Its return type is the operand.
 Its pseudo-definition is:
 
-PROCEDURE TMAX ( T : <typeIdentifier> ) : <T> ;
+PROCEDURE TMAX ( T : <TypeIdentifier> ) : <T> ;
 
 
 10.4.15 Function TSIZE
@@ -1988,7 +1988,7 @@ returned represents the number of octets required to allocate a variable of
 the type denoted by its operand. Its operand is an identifier denoting a type.
 Its return type is LONGCARD. Its pseudo-defintion is:
 
-PROCEDURE TSIZE ( T : <typeIdentifier> ) : LONGCARD ;
+PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD ;
 
 
 10.4.16 Function VAL
@@ -1997,7 +1997,7 @@ Function VAL is a macro that is provided only as a measure of legacy support.
 Any invocation is replaced by an equivalent type conversion expression. The
 invocation 'VAL(T, x)' is replaced by type conversion expression 'x :: T'.
 
-PROCEDURE VAL ( T : <typeIdentifier>; x : <anyType> ) : <T> ; => x :: T
+PROCEDURE VAL ( T : <TypeIdentifier>; x : <anyType> ) : <T> ; => x :: T
 
 CAUTION: This macro may be deprecated in a future revision and its use should
 be avoided. The type conversion operator :: should always be used instead.
