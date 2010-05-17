@@ -1566,10 +1566,10 @@ EBNF:
 
 incrementOrDecrement : designator ( "++" | "--" ) ;
 
-Examples;
+Example;
 
-VAR colour : Colours; counter : CARDINAL;
-colour++; counter--; 
+VAR counter : CARDINAL;
+counter--; 
 
 
 6.4 IF Statements
