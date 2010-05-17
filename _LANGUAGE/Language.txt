@@ -301,15 +301,15 @@ Reserved words are identifiers that have special meaning in the language.
 
 List of Reserved Words
 
-ALIAS            DIV              IMPLEMENTATION   OR               TYPE         
-AND              DO               IMPORT           POINTER          UNTIL
-ARRAY            ELSE             IN               PROCEDURE        VAR
-ASSOCIATIVE      ELSIF            LOOP             RECORD           VARIADIC
-BEGIN            END              MOD              REPEAT           WHILE
+ALIAS            DEFINITION       IF               OPAQUE           TO         
+AND              DIV              IMPLEMENTATION   OR               TYPE
+ARRAY            DO               IMPORT           POINTER          UNTIL
+ASSOCIATIVE      ELSE             IN               PROCEDURE        VAR
+BEGIN            ELSIF            LOOP             RECORD           VARIADIC
+BINDINGS         END              MOD              REPEAT           WHILE
 BY               EXIT             MODULE           RETURN
 CASE             FOR              NOT              SET
 CONST            FROM             OF               THEN
-DEFINITION       IF               OPAQUE           TO
 
 
 1.5 Symbols Reserved for Language Extensions and External Utilities
