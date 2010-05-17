@@ -1,3 +1,5 @@
+(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: May, 16, 2010] 
+
 Modula-2 R10 Concise Language Description
 
 This document is a concise description of the R10 dialect of Modula-2, jointly
@@ -2503,5 +2505,4 @@ KeyValueStore.def     generic key value storage template
 SubrangeInteger.def   generic integer subrange type template
 NonZeroIndexArray.def generic non-zero index array type template
 
-
-[status: May, 16, 2010] (C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved.
++++ END OF FILE +++
