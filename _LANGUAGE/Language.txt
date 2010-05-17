@@ -1,14 +1,19 @@
 Modula-2 R10 Concise Language Description
 
-This document is a concise description of a dialect of the Modula-2 programming
-language, tentatively called R10, jointly developed in 2009 and 2010 by
-B.Kowarsch and R.Sutcliffe as a modern revision of classic Modula-2.
+This document is a concise description of the R10 dialect of Modula-2, jointly
+developed in 2009 and 2010 by B.Kowarsch and R.Sutcliffe, as a modern revision
+of classic Modula-2. The moniker R10 is a shorthand for "Revision 2010".
 
 At the time of writing, the authoritative language report is still work in
 progress and has not yet been published. The present document is intended
-strictly as a non-authoritative informational source for contributors who
-wish to participate in work on the reference compiler, the standard library
-and associated compliance test tools. Details may change without prior notice.
+strictly as a non-authoritative informational source for general peer-review,
+and for contributors who wish to participate in work on the reference compiler,
+the standard library implementation and associated compliance test tools.
+
+Details are subject to change without prior notice. Please check the latest
+version of this document for updates. It is located in a public repository at:
+
+http://bitbucket.org/trijezdci/m2r10stdlib/src/tip/_LANGUAGE/Language.txt
 
 
 The notation used to describe syntax in this document is based on the EBNF
