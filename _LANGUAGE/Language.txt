@@ -765,7 +765,6 @@ collection types.
 4.1.9 The Semantics of Record Types
 
 Record types are compound data types whose components are of arbitrary types.
-The semantic record type represents the superset of all record data types.
 The following operations are defined for record types:
 
 * assignment of structured literals and expressions (:=)
@@ -1354,6 +1353,10 @@ colour := Colours.green; (* qualified identifier of value green *)
 
 5.3.6.1 Indexed Array Types
 
+An indexed array type is a compound type whose compononents are all of the
+same type and are addressable by ordinal index. Array types are defined
+using the ARRAY type constructor.
+
 EBNF:
 
 indexedArray :
@@ -1374,6 +1377,11 @@ WRITE(StdOut, array);
 
 5.3.6.2 Associative Array Types
 
+A associative array type is a dynamic collection type for an arbitrary number
+of key/value pairs. Its keys are of type ARRAY OF CHAR, its values are of
+arbitrary type. All values have the same type. Associative array types are
+defined using the ASSOCIATIVE ARRAY type constructor.
+
 EBNF:
 
 associativeArray :
@@ -1388,6 +1396,9 @@ array["foo"] := 0; array["bar"] := -123; array["baz"] := 456;
 
 
 5.5.7 Record Types
+
+A record type is a compound type whose components are of arbitrary types.
+Record types are defined using the RECORD type constructor.
 
 EBNF:
 
@@ -1413,6 +1424,11 @@ cPoint := { 0.0, 0.0, Colour.black }; point := cPoint :: Point;
 
 5.5.8 Set Types
 
+A set type is a static collection type for a fixed number of key/value pairs.
+Its keys are of ordinal type and its values are of type BOOLEAN. A key whose
+value is TRUE is said to be an element of the set. Set Types are defined using
+the SET OF type constructor.
+
 EBNF:
 
 setType :
@@ -1432,6 +1448,10 @@ people := { People.bob, People.fred }; people := people * { People.fred };
 
 5.3.9 Pointer Types
 
+A pointer type is a container for a reference to a storage location of given
+type. The type of the storage location pointed to is called the base type.
+Pointer types are defined using the POINTER TO type constructor.
+
 EBNF:
 
 pointerType : POINTER TO CONST? namedType ;
@@ -1448,6 +1468,10 @@ immPtr^ := 0; (* compile time error: immutable object *)
 
 
 5.5.10 Procedure Types
+
+A procedure type is a special pointer type for references to procedures of
+given procedure headers. Procedure types are defined using the PROCEDURE
+type constructor.
 
 EBNF:
 
