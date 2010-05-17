@@ -1,8 +1,8 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BINDINGS;
+(* DOCUMENTATION *) MODULE BINDINGS;
 
-(* Pseudo module to document procedure headers required for bindings *)
+(* Pseudo Module to Document Procedure Headers Required for Bindings *)
 
 
 (* Bindings to TMIN and TMAX *)

@@ -2084,14 +2084,15 @@ Pseudo modules provide interfaces to the system or the compiler itself and
 are therefore built-in. However, the identifiers they provide need to be
 expclicity imported to be availble.
 
-There are four mandatory pseudo modules, one optional pseudo module and one
-documentation module:
+There are four mandatory pseudo modules, one optional pseudo module and
+two documentation modules:
 
 ATOMIC.def            provides atomic intrinsics
 SYSTEM.def            access to system dependent resources
 RUNTIME.def           interface to the Modula-2 runtime system
 COMPILER.def          interface to the Modula-2 compile-time system
 ASSEMBLER.def         access to target dependent inline assember (optional)
+PERVASIVES.def        documents pervasive constants, types and macros 
 BINDINGS.def          documents procedure headers required for bindings 
 
 

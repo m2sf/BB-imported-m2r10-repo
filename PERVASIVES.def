@@ -1,0 +1,140 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* DOCUMENTATION *) MODULE PERVASIVES;
+
+(* Pseudo Module to Document Pervasive Constants, Types and Macros *)
+
+
+(* Pervasive constants *)
+
+CONST NIL = 0 :: POINTER TO CONST OCTET;
+(* Invalid pointer value, compatible with all pointer types *)
+
+CONST TRUE = BOOLEAN.TRUE;
+(* Boolean truth value 'true' *)
+
+CONST FALSE = BOOLEAN.FALSE;
+(* Boolean truth value 'false' *)
+
+
+(* Pervasive types *)
+
+TYPE BOOLEAN = ( FALSE, TRUE );
+(* Boolean type *)
+
+TYPE BITSET = SET OF { 0 .. TMAX(CARDINAL) - 1 };
+(* Bitset type of same size as type CARDINAL *)
+
+TYPE LONGBITSET = SET OF { 0 .. TMAX(LONGCARD) - 1 };
+(* Bitset type of same size as type LONGCARD *)
+
+TYPE CHAR = ( 0C .. 7FC );
+(* Ordinal type with 7-bit character value set *)
+
+TYPE UNICHAR = ( <all UTF-32 code points> );
+(* Ordinal type with 4-octet character value set *)
+
+TYPE OCTET = 0 .. 255;
+(* 8-bit unsigned integer type *)
+
+TYPE CARDINAL = 0 .. 2^(16*octets) - 1;
+(* 2*n bit unsigned integer type, n > 0 *)
+
+TYPE LONGCARD = 0 .. 2^(16*octets) - 1;
+(* 2*n bit unsigned integer type, n > 0,
+   TSIZE(LONGCARD) >= TSIZE(CARDINAL) is always true *)
+
+TYPE INTEGER = -2^(8*TSIZE(CARDINAL)) .. 2^(8*TSIZE(CARDINAL)) - 1;
+(* Signed integer type of same size as CARDINAL *)
+
+TYPE LONGINT = -2^(8*TSIZE(LONGCARD)) .. 2^(8*TSIZE(LONGCARD)) - 1;
+(* Signed integer type of same size as LONGCARD *)
+
+TYPE REAL = <implementation or target dependent real number range>;
+(* Real number type, typically implemented as a floating point type *)
+
+TYPE LONGREAL = <implementation or target dependent real number range>;
+(* Higher precision Real number type *)
+
+
+(* Pervasive proper procedures *)
+
+PROCEDURE NEW ( VAR p : <AnyPointerType>; (*OPTIONAL*) n : <UnsignedType> );
+(* NEW(p) => ALLOCATE(p, TSIZE(p^))
+   NEW(p, n) => ALLOCATE(p, TSIZE(p) + n * TSIZE(p.variableComponent)) *)
+
+PROCEDURE DISPOSE ( VAR p : <AnyPointerType> );
+(* DISPOSE(p) => DEALLOCATE(p, TSIZE(p^)) *)
+
+PROCEDURE READ ( f : File; VAR v : <AnyType> );
+(* READ(f, v) => typeOf(v).Read(f, v) *)
+
+PROCEDURE WRITE ( f : File; v : <AnyType> );
+(* WRITE(f, v) => typeOf(v).Write(f, v) *)
+
+PROCEDURE WRITEF ( f : File; fmt : ARRAY OF CHAR; v : VARIADIC OF <AnyType> );
+(* WRITEF(f, fmt, v1, v2, ...) => typeOf(v).WriteF(f, fmt, v1, v2, ...) *)
+
+
+(* Pervasive function procedures *)
+
+PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
+(* Returns absolute value of x *)
+
+PROCEDURE NEG ( x : <NumericType> ) : <OperandType>;
+(* Returns sign reversed value of x *)
+
+PROCEDURE ODD ( x : <Z-Type> ) : BOOLEAN;
+(* Returns TRUE if z is odd, otherwise FALSE *)
+
+PROCEDURE PRED ( x : <OrdinalType>; n : <UnsignedType> ) : <typeOf(x)>;
+(* Returns n-th predecessor of x *)
+
+PROCEDURE SUCC ( x : <OrdinalType>; n : <UnsignedType> ) : <typeOf(x)>;
+(* Returns n-th successor of x *)
+
+PROCEDURE ORD ( x : <OrdinalType> ) : <Z-Type>;
+(* Returns ordinal value of x *)
+
+PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType>; 
+(* Returns the character whose code point is x.
+   Return type is CHAR if x < 128, otherwise UNICHAR *)
+
+PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD;
+(* Returns number of items stored in c *)
+
+PROCEDURE SIZE ( variable : <AnyType> ) : LONGCARD;
+(* Returns allocated size of variable *)
+
+PROCEDURE HIGH ( ident : <ArrayOrVariadicList> ) : LONGCARD;
+(* Returns highest subscript of ident *)
+
+PROCEDURE LENGTH ( CONST s : <CharacterArray> ) : LONGCARD;
+(* Returns length of character string in s *)
+
+PROCEDURE NEXTV ( ident : <VariadicList> ) : <PointerToVariadicBaseType>;
+(* Returns pointer to next item in value-terminated variadic list,
+   returns NIL if the end of the variadic list has been reached. *)
+
+PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T>;
+(* Returns smallest legal value of type T *)
+
+PROCEDURE TMAX ( T : <TypeIdentifier> ) : <T>;
+(* Returns largest legal value of type T *)
+
+PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
+(* Returns allocation size required for a variable of type T *)
+
+(* MACRO *) PROCEDURE VAL ( T : <TypeIdentifier>; x : <anyType> ) : <T>;
+(* VAL(T, x) => x :: T *)
+
+
+(* Lexical Macros *)
+
+(* MACRO *) PROCEDURE MIN ( x : VARIADIC OF <Constant> ) : <OperandType>;
+(* Replaced with the smallest constant in the variadic list *)
+
+(* MACRO *) PROCEDURE MAX ( x : VARIADIC OF <Constant> ) : <OperandType>;
+(* Replaced with the largest constant in the variadic list *)
+
+END PERVASIVES.
