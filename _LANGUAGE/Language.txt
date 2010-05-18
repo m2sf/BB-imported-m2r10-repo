@@ -1,4 +1,4 @@
-(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: May, 16, 2010] 
+(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: May, 18, 2010] 
 
 Modula-2 R10 Concise Language Description
 
@@ -1404,13 +1404,18 @@ array["foo"] := 0; array["bar"] := -123; array["baz"] := 456;
 
 5.5.7 Record Types
 
-A record type is a compound type whose components are of arbitrary types.
+A record type is a compound type whose components are of arbitrary types. The
+components are called fields. Record types may be defined as extensions of
+other record types. Such a type is called a type extension, the type it is
+based on is called its base type. No field of a type extension must use the
+same identifier as any of the fields of the base type.
+
 Record types are defined using the RECORD type constructor.
 
 EBNF:
 
 recordType :
-    RECORD ( "(" ( semanticType | baseType ) ")" )? fieldListSequence? END ;
+    RECORD ( "(" baseType ")" )? fieldListSequence? END ;
 
 fieldListSequence :
     fieldList ( ";" fieldList )* ;
@@ -2351,16 +2356,17 @@ Pseudo modules provide interfaces to the system or the compiler itself and
 are therefore built-in. However, the identifiers they provide need to be
 expclicity imported to be availble.
 
-There are four mandatory pseudo modules, one optional pseudo module and
+There are five mandatory pseudo modules, one optional pseudo module and
 two documentation modules:
 
 ATOMIC.def            provides atomic intrinsics
 SYSTEM.def            access to system dependent resources
+COROUTINES.def        access to built-in coroutines (TO DO)
 RUNTIME.def           interface to the Modula-2 runtime system
 COMPILER.def          interface to the Modula-2 compile-time system
 ASSEMBLER.def         access to target dependent inline assember (optional)
 PERVASIVES.def        documents pervasive constants, types and macros 
-BINDINGS.def          documents procedure headers required for bindings 
+BINDINGS.def          documents procedure headers required for bindings
 
 
 12.2 Definitions of Bindings
