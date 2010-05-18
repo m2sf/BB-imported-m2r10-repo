@@ -2105,7 +2105,7 @@ PROCEDURE WRITEF ( f : File; fmt : ARRAY OF CHAR; v : VARIADIC OF <AnyType> );
 
 A call to procedure WRITEF is replaced by the compiler with a call to a
 library procedure WriteF which must be defined in a library module that has
-the same name as the type of the value being written.
+the same name as the type of the value or values being written.
 
 The standard library provides a WriteF procedure for each pervasive type in a
 corresponding module. The IO modules for all pervasive types may be imported
@@ -2117,7 +2117,7 @@ provide its own WriteF procedure.
 
 Procedure WRITEF is variadic. It accepts one or more values to be written.
 However, all values must be of the same type. The format string strictly
-determines the appearance of values only. This is in contrast to the printf
+determines the formatting of values only. This is in contrast to the printf
 function of C where the format string also determines the types of values.
 In Modula-2 R10 all values must be of the same value to ensure type safety.
 
@@ -2241,10 +2241,10 @@ PROCEDURE HIGH ( ident : <ArrayOrVariadicList> ) : LONGCARD ;
 10.4.11 Function LENGTH
 
 Function LENGTH returns the number of characters in its operand. Its operand
-may be of any character array type. Its return type is LONGCARD. Its pseudo-
+may be of any character string type. Its return type is LONGCARD. Its pseudo-
 definition is:
 
-PROCEDURE LENGTH ( CONST s : <CharacterArray> ) : LONGCARD ;
+PROCEDURE LENGTH ( CONST s : <CharacterString> ) : LONGCARD ;
 
 
 10.4.12 Function NEXTV
@@ -2261,7 +2261,7 @@ PROCEDURE NEXTV ( ident : <VariadicList> ) : <PointerToVariadicBaseType> ;
 10.4.13 Function TMIN
 
 Function TMIN returns the smallest legal value of its operand. Its operand is
-an identifier denoting any Z-Type or R-Type. Its return type is the operand.
+an identifier denoting any ordered type. Its return type is the operand.
 Its pseudo-definition is:
 
 PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T> ;
@@ -2270,7 +2270,7 @@ PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T> ;
 10.4.14 Function TMAX
 
 Function TMIN returns the largest legal value of its operand. Its operand is
-an identifier denoting any Z-Type or R-Type. Its return type is the operand.
+an identifier denoting any ordered type. Its return type is the operand.
 Its pseudo-definition is:
 
 PROCEDURE TMAX ( T : <TypeIdentifier> ) : <T> ;
@@ -2300,6 +2300,7 @@ argument list. All arguments must be numeric constants or numeric constant
 expressions. Their pseudo-definitions are:
 
 PROCEDURE MIN ( constant : VARIADIC OF <AnyType> ) : <OperandType>;
+PROCEDURE MAX ( constant : VARIADIC OF <AnyType> ) : <OperandType>;
 
 Examples:
 
@@ -2312,7 +2313,7 @@ MAX( 1, 2, 3 ) => 3
 Macro VAL is provided only as a measure of legacy support. It is replaced by
 an equivalent type conversion expression. Its pseudo-definition is:
 
-PROCEDURE VAL ( T : <TypeIdentifier>; x : <AnyType> ) : <T> ; => x :: T
+PROCEDURE VAL ( T : <TypeIdentifier>; x : <AnyType> ) : <T>; (* => x :: T *)
 
 Example: VAL(INTEGER, x) => x :: INTEGER
 
@@ -2381,11 +2382,12 @@ http://bitbucket.org/trijezdci/m2r10stdlib/src
 A list of modules with a brief description for each module is given below.
 
 
-12.1 Pseudo Modules
+12.1 Pseudo Modules and Documentation Modules
 
 Pseudo modules provide interfaces to the system or the compiler itself and
 are therefore built-in. However, the identifiers they provide need to be
-expclicity imported to be availble.
+expclicity imported to be availble. Documentation modules are for for the
+sole purpose of documenting built-in features such as pervasives.
 
 There are five mandatory pseudo modules, one optional pseudo module and
 two documentation modules:
