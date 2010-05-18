@@ -978,7 +978,6 @@ PROCEDURE Write ( f : File; b : BCD );
 END BCD.
 
 MODULE UseBCD;
-
 IMPORT BCD;
 VAR a, b, sum : BCD;
 BEGIN
@@ -1090,7 +1089,7 @@ BEGIN z := { 1.23, 4.56 }; zsum := z + { 1.0, 0.5 }; WRITE(StdOut, zsum) END;
 
 4.3.6 Library Defined Character Set ADTs
 
-The standard library provides a character set ADT whos semantics conform to
+The standard library provides a character set ADT whose semantics conform to
 semantic type SetType. The library defined character set ADT is CHARSET.
 
 Example:
@@ -1193,7 +1192,7 @@ implementation part but it cannot be modified within modules that import it.
 5.2.2 Local Variables
 
 A variable declared within a procedure has local life span and local scope. It
-only exists at the time the procedure is executing and it is only visible
+only exists during the lifetime of the procedure and it is only visible
 within the procedure it is declared in and within procedures local to the
 procedure it is declared in.
 
@@ -1350,7 +1349,7 @@ anonymousType : arrayType | pointerType | procedureType ;
 
 An enumeration type is an ordinal type whose legal values are defined by a list
 of identifiers. The identifiers are assigned ordinal values from left to right.
-The ordinal value assigned to the first value is always zero.
+The ordinal value assigned to the leftmost value is always zero.
 
 EBNF:
 
@@ -1410,7 +1409,7 @@ WRITE(StdOut, array);
 
 5.3.6.2 Associative Array Types
 
-A associative array type is a dynamic collection type for an arbitrary number
+An associative array type is a dynamic collection type for an arbitrary number
 of key/value pairs. Its keys are of type ARRAY OF CHAR, its values are of
 arbitrary type. All values have the same type. Associative array types are
 defined using the ASSOCIATIVE ARRAY type constructor.
@@ -1698,7 +1697,10 @@ REPEAT Read(file, ch) UNTIL ch = terminator END;
 6.7 LOOP and EXIT Statements
 
 The LOOP statement is used to repeat a statement or sequence of statements
-indefinitely unless explicitly terminated by an EXIT statement.
+indefinitely unless explicitly terminated by an EXIT statement. An EXIT
+statement terminates the loop body in which it is invoked and it transfers
+control to the first statement after the loop body. The loop body may be
+the body of a LOOP, WHILE, REPEAT or FOR loop.
 
 EBNF:
 
@@ -1782,7 +1784,7 @@ x := x * 5; counter++; WRITE(file, x)
 8 Structured Values
 
 Structured values are compound values that consist of comma separated component
-values, enclosed in braces. Component values may be any literal or identifier
+values, enclosed in braces. A component value may be any literal or identifier
 denoting a value or structured value.
 
 EBNF:
@@ -1816,7 +1818,7 @@ There are two types of pragmas:
 9.1 Implementation Defined Pragmas
 
 Implementation defined pragmas are compiler specific and non-portable. They
-are easily recognisable because their pragma names are either all-lowercase
+are easily distinguished because their pragma names are either all-lowercase
 or mixed-case but never all-uppercase words.
 
 EBNF:
@@ -1830,7 +1832,7 @@ pragmaName : Ident ;
 9.2 Language Defined Pragmas
 
 Language defined pragmas are portable across implementations. They are easily
-recognisable because their pragma names are all-uppercase words. There are
+distinguished because their pragma names are all-uppercase words. There are
 three groups of language defined pragmas:
 
 * pragmas to control conditional compilation
