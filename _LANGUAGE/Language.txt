@@ -1540,8 +1540,8 @@ designator : qualident ( ( "[" expressionList "]" | "^" ) ( "." ident )* )+ ;
 
 Examples:
 
-VAR ch : CHAR; i : INTEGER; r : REAL;
-ch := "a"; i := 12345; r := 3.1415926;
+VAR ch : CHAR; i : INTEGER; r : REAL; z : COMPLEX; a : Array10;
+ch := "a"; i := 12345; r := 3.1415926; z := { 1.2, 3.4 }; a[5] := 0; 
 
 
 6.2 Procedure Callss
@@ -1654,7 +1654,7 @@ otherwise not.
 
 EBNF:
 
-whileStatement : REPEAT statementSequence UNTIL booleanExpression;
+repeatStatement : REPEAT statementSequence UNTIL booleanExpression;
 
 Example:
 
@@ -1674,26 +1674,39 @@ exitStatement : EXIT ;
 
 Example:
 
-LOOP READ(file, ch); IF ch IN TerminatorSet THEN EXIT END;
+LOOP READ(file, ch); IF ch IN TerminatorSet THEN EXIT END END;
 
 
 6.8 FOR statements
 
 The FOR statement is used to repeat a statement or statement sequence a
-given number of times, depending on a control variable.
+given number of times, depending on a control variable. The control variable
+is always treated as a constant outside of the loop header. It can only be
+modified by the FOR loop's header, not anywhere else:
+
+* it may not be the left hand side of an assignment
+* it may not be the designator in an increment or decrement statement
+* it may not be passed to any procedure as a VAR parameter
+* it may not be assigned to any pointer other than POINTER TO CONST pointers
+
+NB: The scope of a FOR loop control variable is still undetermined.
 
 EBNF:
 
 forStatement :
-    FOR ident
+    FOR controlVariable
     ( ":=" expression TO expression ( BY constExpression )? | IN expression )
     DO statementSequence END ;
 
+controlVariable : Ident ;
+
 Examples:
 
-FOR i := 0 TO LENGTH(str) DO WRITE(file, str[i]) END;
-
+FOR count := 99 TO 0 BY -1 DO BottlesOfBeer(count) END;
 FOR colour IN ColourSet DO counter++ END;
+FOR char IN string DO WRITE(file, char) END;
+FOR key IN dictionary DO WRITE(file, dictionary[key]) END;
+FOR status IN Status DO WRITE(file, NameOfStatus(status)) END;
 
 
 6.9 RETURN Statements
