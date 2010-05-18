@@ -259,7 +259,7 @@ Examples:
 
 1.3.3 Structured Literals
 
-Structured literals are compound values consisting of multiple terminal
+Structured literals are compound values consisting of zero or more terminal
 symbols, enclosed in braces.
 
 EBNF:
@@ -328,7 +328,7 @@ are supported:
 1.5.1.1 Symbols Reserved for Parallel Modula-2
 
 The following identifiers and pragma names are reserved for exclusive use by
-the Parallel Modula-2 language extension:
+the Parallel Modula-2 language superset:
 
 Reserved words: ALL PARALLEL SYNC
 Pragma names  : LOCAL SPREAD CYCLE SBLOCK CBLOCK
@@ -337,7 +337,7 @@ Pragma names  : LOCAL SPREAD CYCLE SBLOCK CBLOCK
 1.5.1.2 Symbols Reserved for Objective Modula-2
 
 The following identifiers and pragma names are reserved for exclusive use by
-the Objective Modula-2 language extension:
+the Objective Modula-2 language superset:
 
 Reserved words: BYCOPY BYREF CLASS CONTINUE CRITICAL INOUT METHOD ON
                 OPTIONAL OUT PRIVATE PROCECTED PROTOCOL PUBLIC SUPER TRY
@@ -458,8 +458,8 @@ by a library module in the standard library. The termination library provides
 an API for client modules that require termination to install their own
 termination handlers onto the library's termination handler stack.
 
-The termination library installs its own wind down procedure in the runtime
-environment during module initialisation. The wind down procedure then calls
+The termination library installs its own wind-down procedure in the runtime
+environment during module initialisation. The wind-down procedure then calls
 the installed termination handlers in reverse order when the program is about
 to be terminated.
 
@@ -531,9 +531,9 @@ VAR colour : Colour;
 3.2 Unqualified Import
 
 When an identifier is imported by unqualified import, it is made available in
-the importing module as is. This will lead to a name conflict and cause a
-compile time error when importing identically named identifiers from different
-modules.
+the importing module as is. When importing identically named identifiers from
+different modules in this way, a name conflict will occur and cause a compile
+time error. In most cases qualified import should therefore be used instead.
 
 Example:
 
@@ -544,7 +544,8 @@ VAR status : Status; (* unqualified identifier of Status *)
 3.2.1 Wildcard Import
 
 An unqualified import directive may import all available identifiers of a
-library module by using an asterisk as a wildcard.
+library module by using an asterisk as a wildcard. This facility should be
+used with caution because it increases the likelihood of name conflicts.
 
 Example:
 
@@ -568,7 +569,7 @@ Other types may be defined using built-in type constructor syntax:
 Enumeration types, set types, array types, record types, pointer types,
 procedure types and abstract data types using the opaque type constructor.
 
-Character strings are represented by character arrays.
+Character strings are represented by character arrays or abstract data types.
 
 
 4.1 Semantics of Types
@@ -730,21 +731,20 @@ All data types defined using the ARRAY OF type constructor are array types.
 4.1.7 The Semantics of Character String Types
 
 Character string types are arrays whose components are character types. The
-semantic character string type represents the superset of all character string
-types. The following operations are defined for character string types:
+following operations are defined for character string types:
 
 * assignment of string literals, structured literals and expressions (:=)
-* store component (array[index] := value)
-* retrieve component (value := array[index])
+* store component (string[index] := value)
+* retrieve component (value := string[index])
 * obtain highest index (HIGH)
 * obtain string length (LENGTH)
-* component iteration (FOR index IN array)
+* component iteration (FOR char IN string)
 * concatentation (+)
 * equal (=)
 * not-equal (#)
 
 All character string data types defined using the ARRAY OF CHAR and ARRAY OF
-UNICHAR type constructor are of the semantic character string type.
+UNICHAR type constructor are character string types.
 
 
 4.1.8 The Semantics of Collection Types
@@ -786,7 +786,6 @@ All data types defined using the RECORD type constructor are record types.
 4.1.10 The Semantics of Pointer Types
 
 Pointer types are data types that represent references to a storage location. 
-The semantic pointer type represents the superset of all pointer data types.
 The following operations are defined for pointer types:
 
 * assignment of NIL and expressions (:=)
@@ -962,12 +961,39 @@ definition. If conformant, this will have the following effects:
 * The compiler will replace any calls to bound pervasive procedures with calls
   to the corresponding procedures defined in the ADT library module.
 
+Example:
+
+DEFINITION MODULE BCD [RTYPE];
+
+FROM FileIO IMPORT File;
+
+TYPE BCD = OPAQUE RECORD value : ARRAY 8 OF OCTET END;
+
+PROCEDURE [:=] assign ( VAR assignTo : BCD; literal : ARRAY OF CHAR );
+
+PROCEDURE [+] add ( a, b : BCD ) : BCD;
+...
+PROCEDURE Write ( f : File; b : BCD );
+...
+END BCD.
+
+MODULE UseBCD;
+
+IMPORT BCD;
+VAR a, b, sum : BCD;
+BEGIN
+    a := 1.5; (* replaced by BCD.assign(a, "1.5"); *)
+    b := 2.75; (* replaced by BCD.assign(b, "2.75"); *)
+    sum := a + b; (* replaced by sum := BCD.add(a, b); *)
+    WRITE(stdOut, sum); (* replaced by BCD.Write(stdOut, sum); *)
+END UseBCD.
+
 
 4.3 Library Defined ADTs Using Semantic Types and Bindings
 
 The standard library provides a rich set of library defined ADTs that use
-semantic types and bindins and are practically inistinguishable from pervasive
-types and transparent data types defined using type constructor syntax.
+bindings and are practically inistinguishable from pervasive types and
+transparent data types defined using type constructor syntax.
 
 
 4.3.1 Library Defined Bitset ADTs
