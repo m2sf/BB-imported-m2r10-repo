@@ -1407,8 +1407,9 @@ array["foo"] := 0; array["bar"] := -123; array["baz"] := 456;
 A record type is a compound type whose components are of arbitrary types. The
 components are called fields. Record types may be defined as extensions of
 other record types. Such a type is called a type extension, the type it is
-based on is called its base type. No field of a type extension must use the
-same identifier as any of the fields of the base type.
+based on is called its base type. The base type may not be an opaque record.
+The names of the fields of the base type may not be used as field names in
+the type extension.
 
 Record types are defined using the RECORD type constructor.
 
@@ -1425,7 +1426,7 @@ fieldList :
 
 baseType : Ident ;
 
-Example:
+Examples:
 
 TYPE Point = RECORD x, y : REAL END;
 TYPE ColourPoint = RECORD ( Point ) colour : Colour END;
@@ -1455,7 +1456,9 @@ TYPE PeopleSet = SET OF ( bob, fred, mary );
 VAR colours : ColourSet; people : PeopleSet;
 
 colours := { Colour.red, Colour.green }; colours[Colour.blue] := FALSE;
-people := { People.bob, People.fred }; people := people * { People.fred };
+IF Colour.blue IN colours THEN WRITE(stdOut, "blue is on\n") END;
+people := { PeopleSet.bob, PeopleSet.fred };
+people := people * { PeopleSet.fred, PeopleSet.mary };
 
 
 5.3.9 Pointer Types
@@ -1476,7 +1479,7 @@ VAR intPtr: IntPtr; immPtr : ImmutablePtr; int : INTEGER;
 
 intPtr := int; immPtr := int; int := 0;
 intPtr^ := 0; (* OK *)
-immPtr^ := 0; (* compile time error: immutable object *)
+immPtr^ := 0; (* compile time error: attempt to modify an immutable object *)
 
 
 5.5.10 Procedure Types
