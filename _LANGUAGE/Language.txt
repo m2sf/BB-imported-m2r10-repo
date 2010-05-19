@@ -1812,7 +1812,7 @@ Example:
 
 VAR str : String10; x : LONGBITSET;
 
-PROCEDURE Copy ( source : ARRAY OF OCTET; VAR target : ARRAY OF OCTET );
+PROCEDURE Copy ( CONST source : ARRAY OF OCTET; VAR target : ARRAY OF OCTET );
 
 str := "hello"; Copy(str, x); (* casting copy *)
 
