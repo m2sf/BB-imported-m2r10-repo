@@ -1540,6 +1540,8 @@ WriteStr := Terminal.WriteString; WriteStr("hi!");
 5.6 Procedure Definitions and Declarations
 
 
+
+
 6 Statements
 
 A statement is an action that can be executed to cause a transformation of the
@@ -1577,9 +1579,13 @@ VAR ch : CHAR; i : INTEGER; r : REAL; z : COMPLEX; a : Array10;
 ch := "a"; i := 12345; r := 3.1415926; z := { 1.2, 3.4 }; a[5] := 0; 
 
 
-6.2 Procedure Callss
+6.2 Procedure Calls
 
-A procedure call statement is used to invoke a procedure.
+A procedure call statement is used to invoke a procedure. A procedure call may
+include a list of parameters to be passed to the called procedure. Parameters
+passed are called actual parameters. Parameters defined in the procedure's
+definition and declaration are called formal parameters. In a procedure call
+with parameters, the types of actual and formal parameters must match.
 
 EBNF:
 
