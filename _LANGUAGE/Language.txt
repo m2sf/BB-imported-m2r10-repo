@@ -1699,6 +1699,11 @@ There are three variadic parameter passing conventions:
 
 5.6.3.6 Automatic Variadic Counter
 
+When the automcatic-variadic-counter convention is used, the compiler
+determines the number of actual parameters passed in the procedure call and
+automatically inserts the count as an additional parameter immediately before
+the variadic list.
+
 Example:
 
 PROCEDURE Variadic ( v : VARIADIC OF INTEGER );
@@ -1709,6 +1714,13 @@ compiled as: Variadic(5, 0, 1, 2, 3, 4); (* compiler inserts counter *)
 
 5.6.3.7 Explicit Variadic Counter
 
+When the explicit-variadic-counter convention is used, the compiler
+determines the number of actual parameters passed in the procedure call and
+automatically inserts the count at the position indicated by the formal count
+parameter in the procedure's formal parameter list. This facility is useful to
+map to C APIs with variadic functions that use a counter that is not placed
+immediately before the variadic list.
+
 Example:
 
 PROCEDURE Variadic ( count, x : CARDINAL; v : VARIADIC count OF INTEGER );
@@ -1718,6 +1730,12 @@ compiled as: Variadic(5, 42, 0, 1, 2, 3, 4); (* compiler inserts counter *)
 
 
 5.6.3.7 Variadic List Terminator
+
+When the variadic-list-terminator convention is used, the compiler determines
+the number of actual parameters passed in the procedure call and automatically
+inserts the terminator value indicated by the procedure's formal parameter
+after the variadic list. This facility is useful to map to C APIs with variadic
+functions that use a terminator value to indicate the end of a variadic list.
 
 Example:
 
