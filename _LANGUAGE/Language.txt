@@ -1745,6 +1745,37 @@ invoked as:  Variadic(0, 1, 2, 3, 4);
 compiled as: Variadic(0, 1, 2, 3, 4, -1); (* compiler inserts terminator *)
 
 
+5.6.3.8 Variadic List With Multiple Components
+
+A variadic formal parameter may contain multiple components. This is useful to
+define procedures that can accept a variable number of value pairs, or other
+tuples.
+
+Example:
+
+PROCEDURE Insert ( tree : Tree;
+                   keysAndValues : VARIADIC OF ( key : Key; value : Value ) );
+
+invoked as:  Insert(tree, "foo", 123, "bar", 456, "baz", 789);
+compiled as: Insert(tree, 3, "foo", 123, "bar", 456, "baz", 789);
+
+
+5.6.3.9 Variadic List Followed By Further Parameters
+
+When a variadic formal parameter is followed by further formal parameters the
+actual variadic parameters must be passed as structure values for the compiler
+to be able to determine where the actual variadic parameter list ends.
+
+Example:
+
+PROCEDURE Insert ( tree : Tree;
+                   keysAndValues : VARIADIC OF ( key : Key; value : Value );
+                   VAR status : Status );
+
+invoked as:  Insert(tree, { "foo", 123, "bar", 456, "baz", 789 }, status);
+compiled as: Insert(tree, 3, "foo", 123, "bar", 456, "baz", 789, status);
+
+
 5.6.4 Procedure Type Compatibility
 
 The types of the formal parameters and the return type of a procedure are
