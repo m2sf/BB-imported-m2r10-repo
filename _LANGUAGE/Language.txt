@@ -1702,11 +1702,17 @@ There are three variadic parameter passing conventions:
 When the automcatic-variadic-counter convention is used, the compiler
 determines the number of actual parameters passed in the procedure call and
 automatically inserts the count as an additional parameter immediately before
-the variadic list.
+the variadic list. Within the procedure the variadic parameter is presented
+as an array and pervasive function HIGH is used to obtain its highest index.
 
 Example:
 
 PROCEDURE Variadic ( v : VARIADIC OF INTEGER );
+VAR item : INTEGER;
+BEGIN
+    FOR item IN v DO WRITE(f, item) END;
+    RETURN
+END Variadic;
 
 invoked as:  Variadic(0, 1, 2, 3, 4);
 compiled as: Variadic(5, 0, 1, 2, 3, 4); (* compiler inserts counter *)
@@ -1719,11 +1725,17 @@ determines the number of actual parameters passed in the procedure call and
 automatically inserts the count at the position indicated by the formal count
 parameter in the procedure's formal parameter list. This facility is useful to
 map to C APIs with variadic functions that use a counter that is not placed
-immediately before the variadic list.
+immediately before the variadic list. Within the procedure the variadic para-
+meter is presented as an array and the counter contains the number of items.
 
 Example:
 
 PROCEDURE Variadic ( count, x : CARDINAL; v : VARIADIC count OF INTEGER );
+VAR item : INTEGER;
+BEGIN
+    FOR item := 0 TO count - 1 DO WRITE(f, v[item]) END;
+    RETURN
+END Variadic;
 
 invoked as:  Variadic(42, 0, 1, 2, 3, 4);
 compiled as: Variadic(5, 42, 0, 1, 2, 3, 4); (* compiler inserts counter *)
@@ -1737,9 +1749,17 @@ inserts the terminator value indicated by the procedure's formal parameter
 after the variadic list. This facility is useful to map to C APIs with variadic
 functions that use a terminator value to indicate the end of a variadic list.
 
+Within the procedure, pervasive function NEXTV is used to traverse the list
+of arguments in the variadic list. Each time NEXTV is called it returns a
+pointer to the next variadic argument or tuple.
 Example:
 
 PROCEDURE Variadic ( v : VARIADIC [-1] OF INTEGER );
+VAR item : INTEGER;
+BEGIN
+    item := NEXTV(v); WHILE item # -1 DO WRITE(f, item); item := NEXTV(v) END;
+    RETURN
+END Variadic;
 
 invoked as:  Variadic(0, 1, 2, 3, 4);
 compiled as: Variadic(0, 1, 2, 3, 4, -1); (* compiler inserts terminator *)
