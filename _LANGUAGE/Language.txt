@@ -1810,11 +1810,11 @@ should be used with caution because type safety is no longer guaranteed.
 
 Example:
 
-VAR str : String10; x : LONGCARD;
+VAR str : String10; x : LONGBITSET;
 
-PROCEDURE Copy ( source : ARRAY OF OCTET; target : ARRAY OF OCTET );
+PROCEDURE Copy ( source : ARRAY OF OCTET; VAR target : ARRAY OF OCTET );
 
-str := "hello"; Copy(str, x);
+str := "hello"; Copy(str, x); (* casting copy *)
 
 
 5.6.4 Procedure Type Compatibility
