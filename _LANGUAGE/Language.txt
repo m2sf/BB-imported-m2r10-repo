@@ -1600,17 +1600,35 @@ END IsNegative;
 5.6.3 Formal Parameters
 
 The parameters in the parameter list of a procedure header are called the
-procedure's formal parameters. A formal parameter always specifies a type,
-and it may or may not specify an attribute. A formal parameter's attribute
-determines the parameter passing convention of the formal parameter. There
-are three different passing conventions.
+procedure's formal parameters. There are simple formal parameters and
+variadic formal parameters.
+
+EBNF:
+
+formalParamList : formalParams ( ';' formalParams )* ;
+
+formalParams : simpleFormalParams | variadicFormalParams ;
+
+
+5.6.3.1 Simple Formal Parameters
+
+A formal parameter always specifies a type, and it may or may not specify an
+attribute. A formal parameter's attribute determines the parameter passing
+convention of the formal parameter.
+
+EBNF:
+
+simpleFormalParams :
+	( CONST | VAR )? identList ':' formalType
+
+There are three passing conventions:
 
 * pass by value
 * pass by reference, mutable
 * pass by reference, immutable
 
 
-5.6.3.1 Pass By Value
+5.6.3.2 Pass By Value
 
 When the pass-by-value convention is used, a copy of the respective parameter
 is passed to the called procedure and the scope of the copy is the procedure's
@@ -1623,7 +1641,7 @@ PROCEDURE IsNegative ( x : INTEGER ) : BOOLEAN;
 (* no attribute => pass-by-value *)
 
 
-5.6.3.2 Pass By Reference - Mutable
+5.6.3.3 Pass By Reference - Mutable
 
 When the pass-by-reference-mutable convention is used, a reference to the
 parameter is passed to the called procedure and the procedure may modify
@@ -1643,7 +1661,7 @@ number := 1; Increment(number); (* number is now 2 *)
 CONST zero = 0; Increment(zero); (* compile time error: immutable object *)
 
 
-5.6.3.3 Pass By Reference - Immutable
+5.6.3.4 Pass By Reference - Immutable
 
 When the pass-by-reference-immutable convention is used, a reference to the
 parameter is passed to the called procedure but the procedure may not modify
@@ -1655,6 +1673,58 @@ Example:
 
 PROCEDURE WriteString ( CONST s : ARRAY OF CHAR );
 (* CONST => pass-by-reference, immutable *)
+
+
+5.6.3.5 Variadic Formal Parameters
+
+Modula-2 R10 supports type-safe variadic procedures. For this purpose, a
+a formal parameter list may contain one or more variadic formal parameter
+lists. A variadic formal parameter is denoted by reserved word VARIADIC.
+
+variadicFormalParams :
+    VARIADIC ( variadicCounter | "[" variadicTerminator "]" )? OF
+    ( ( CONST | VAR )? formalType |
+      "(" simpleFormalParams ( ';' simpleFormalParams )* ")" ) ;
+
+variadicCounter : Ident ;
+
+variadicTerminator : constExpression ;
+
+There are three variadic parameter passing conventions:
+
+* automatic variadic counter
+* explicit variadic counter
+* variadic list terminator
+
+
+5.6.3.6 Automatic Variadic Counter
+
+Example:
+
+PROCEDURE Variadic ( v : VARIADIC OF INTEGER );
+
+invoked as:  Variadic(0, 1, 2, 3, 4);
+compiled as: Variadic(5, 0, 1, 2, 3, 4); (* compiler inserts counter *)
+
+
+5.6.3.7 Explicit Variadic Counter
+
+Example:
+
+PROCEDURE Variadic ( count, x : CARDINAL; v : VARIADIC [count] OF INTEGER );
+
+invoked as:  Variadic(42, 0, 1, 2, 3, 4);
+compiled as: Variadic(5, 42, 0, 1, 2, 3, 4); (* compiler inserts counter *)
+
+
+5.6.3.7 Variadic List Terminator
+
+Example:
+
+PROCEDURE Variadic ( v : VARIADIC [-1] OF INTEGER );
+
+invoked as:  Variadic(0, 1, 2, 3, 4);
+compiled as: Variadic(0, 1, 2, 3, 4, -1); (* compiler inserts terminator *)
 
 
 5.6.4 Procedure Type Compatibility
