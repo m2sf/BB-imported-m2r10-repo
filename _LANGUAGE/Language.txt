@@ -1762,9 +1762,11 @@ compiled as: Insert(tree, 3, "foo", 123, "bar", 456, "baz", 789);
 
 5.6.3.9 Variadic List Followed By Further Parameters
 
-When a variadic formal parameter is followed by further formal parameters the
-actual variadic parameters must be passed as structure values for the compiler
-to be able to determine where the actual variadic parameter list ends.
+A variadic parameter list may always be passed as a structured value, regard-
+less of the formal parameter list of the variadic procedure. However, when
+a variadic formal parameter is followed by further formal parameters, then
+the actual variadic parameter list can only be passed as a structured value
+in order to allow the compiler to determine where the variadic list ends.
 
 Example:
 
