@@ -1539,7 +1539,167 @@ WriteStr := Terminal.WriteString; WriteStr("hi!");
 
 5.6 Procedure Definitions and Declarations
 
+A procedure is a sequence of actions to perform a computation identified by a
+name. In Modula-2, may have zero or more parameters associated and they may or
+may not return a result. Procedures that return a result are called function
+procedures, those that do not return a result are called proper procedures.
 
+A procedure consists of two parts:
+
+* procedure header
+* procedure body
+
+Typically, procedure definitions are placed in a library module's definition
+part and corresponding procedure declarations are placed in the library's
+implementation part.
+
+
+5.6.1 The Procedure Header
+
+The procedure header represents the interface of a procedure. It consists of
+the procedure's identifier, its formal parameter list and its return type.
+
+EBNF:
+
+procedureHeader :
+    PROCEDURE ( '[' ( bindableOperator | Ident ) ']' )?
+    ( '(' Ident ':' receiverType ')' )?
+    procedureIdent ( '(' formalParamList ')' )? ( ':' returnedType )? ;
+
+procedureIdent : Ident ;
+
+Example:
+
+PROCEDURE IsNegative ( x : INTEGER ) : BOOLEAN;
+
+
+5.6.2 The Procedure Body
+
+A procedure body consists of any local variable declarations, any local proce-
+dure declarations and the procedure's execution block that represents the
+sequence of actions that perform the procedure's intended task.
+
+A procedure declaration repeats the procedure definition, followed by the
+procedure body.
+
+EBNF:
+
+procedureBody : block ident ;
+
+procedureDeclaration : procedureHeader ";" procedureBody ;
+
+Example:
+
+PROCEDURE IsNegative ( x : INTEGER ) : BOOLEAN; (* header *)
+
+BEGIN (* body *)
+    IF x < 0 THEN RETURN TRUE ELSE RETURN FALSE END
+END IsNegative;
+
+
+5.6.3 Formal Parameters
+
+The parameters in the parameter list of a procedure header are called the
+procedure's formal parameters. A formal parameter always specifies a type,
+and it may or may not specify an attribute. A formal parameter's attribute
+determines the parameter passing convention of the formal parameter. There
+are three different passing conventions.
+
+* pass by value
+* pass by reference, mutable
+* pass by reference, immutable
+
+
+5.6.3.1 Pass By Value
+
+When the pass-by-value convention is used, a copy of the respective parameter
+is passed to the called procedure and the scope of the copy is the procedure's
+body. The pass-by-value convention is the default. It is used when a formal
+parameter does not specify any attribute.
+
+Example:
+
+PROCEDURE IsNegative ( x : INTEGER ) : BOOLEAN;
+(* no attribute => pass-by-value *)
+
+
+5.6.3.2 Pass By Reference - Mutable
+
+When the pass-by-reference-mutable convention is used, a reference to the
+parameter is passed to the called procedure and the procedure may modify
+the passed in variable's value. The VAR attribute denotes this convention.
+Immutable objects may not be passed as VAR parameters.
+
+Example:
+
+PROCEDURE Increment ( VAR x : INTEGER );
+(* VAR => pass-by-reference, mutable *)
+BEGIN
+    x++; (* modifies original *)
+    RETURN
+END Increment;
+
+number := 1; Increment(number); (* number is now 2 *)
+CONST zero = 0; Increment(zero); (* compile time error: immutable object *)
+
+
+5.6.3.3 Pass By Reference - Immutable
+
+When the pass-by-reference-immutable convention is used, a reference to the
+parameter is passed to the called procedure but the procedure may not modify
+the passed in variable's value. That is, within the scope of the procedure,
+the parameter is treated as if it was a constant. The CONST attribute denotes
+this convention. Immutable objects may be passed as CONST parameters.
+
+Example:
+
+PROCEDURE WriteString ( CONST s : ARRAY OF CHAR );
+(* CONST => pass-by-reference, immutable *)
+
+
+5.6.4 Procedure Type Compatibility
+
+The types of the formal parameters and the return type of a procedure are
+collectively called the procedure's signature. The signature determines the
+procedure type. Procedures and procedure variables are compatible if they are
+of the same procedure type, that is, if their respective signatures match.
+
+Example:
+
+VAR p : PROCEDURE ( VAR ARRAY OF CHAR );
+
+PROCEDURE StripTabs ( VAR s : ARRAY OF CHAR );
+PROCEDURE WriteString ( CONST s : ARRAY OF CHAR );
+
+p := StripTabs; (* OK *)
+p := WriteString; (* compile time error: incompatible types *)
+
+
+5.6.5 Operator Bound Procedures
+
+A procedure may be defined to bind to an operator or a pervasive procedure in
+respect of an abstract data type defined to conform to a semantic type.
+
+Example:
+
+DEFINITION MODULE BCD [RTYPE];
+
+TYPE BCD = OPAQUE RECORD value : ARRAY 8 OF OCTET END;
+
+PROCEDURE [+] add ( a, b : BCD ) : BCD;
+...
+END BCD.
+
+
+5.6.6 Type Bound Procedures
+
+A procedure may be defined to bind to a type.
+
+Example:
+
+TYPE Point = RECORD x, y : REAL END;
+
+PROCEDURE ( self : Point ) SetXandY ( x, y : REAL );
 
 
 6 Statements
