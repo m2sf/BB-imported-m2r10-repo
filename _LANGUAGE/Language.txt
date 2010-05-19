@@ -1678,7 +1678,8 @@ p := WriteString; (* compile time error: incompatible types *)
 5.6.5 Operator Bound Procedures
 
 A procedure may be defined to bind to an operator or a pervasive procedure in
-respect of an abstract data type defined to conform to a semantic type.
+respect of an abstract data type defined to conform to a semantic type. Only
+bindings permitted by the semantic type the ADT conforms to may be defined.
 
 Example:
 
@@ -1944,7 +1945,110 @@ x := x * 5; counter++; WRITE(file, x)
 
 7 Expressions
 
-*** to do ***
+An expression is a computational formula that evaluates to a computational
+value. An expression consists of operands, operators and optional parentheses.
+
+Operands may be constant or variable operands. An operand that is also an
+expression is called a sub-expression. An expression in which only constant
+operands are permitted is called a constant expression. Constant expressions
+can always be evaluated at compile time.
+
+Operators are special symbols or reserved words that represent an operation
+to be carried out using one or more operands to compute a value. An operator
+that acts on a single operand is called a monadic operator and its operation
+is called a monadic operation. An operator that acts on a pair of operands is
+called a dyadic operator and its operation is called a dyadic operation.
+
+Pairs of matching parentheses may be used in an expression to control the
+order in which its sub-expressions are evaluated.
+
+EBNF:
+
+constExpression :
+    simpleConstExpr ( relation simpleConstExpr | "::" namedType )? ;
+
+simpleConstExpr :
+    ( "+" | "-" )? constTerm ( addOperator constTerm )* ;
+
+constTerm :
+	constFactor ( mulOperator constFactor )* ;
+
+constFactor :
+    NumberLiteral | StringLiteral | constQualident | constStructuredValue |
+	"(" constExpression ")" | ( NOT | "~" ) constFactor ;
+
+expression :
+    simpleExpression ( relation simpleExpression | "::" namedType )? ;
+
+simpleExpression :
+    ( "+" | "-" )? term ( addOperator term )* ;
+
+term :
+    factor ( mulOperator factor )* ;
+
+factor : NumberLiteral | StringLiteral | structuredValue |
+    designatorOrProcedureCall | "(" expression ")" | ( NOT | "~" ) factor ;
+
+relation : relationalOperator ;
+
+
+7.1 Operands
+
+Operands are denoted by literals, designators or sub-expressions. Designators
+consist of an identifier that refers to a constant, a variable or a function
+procedure, followed by an optional designator tail that consists of one or
+more selectors. The designator's identifier may be qualified. A selector may
+denote the index of an array, the dereference symbol following a pointer,
+a field of a record or a procedure's actual parameter list.
+
+EBNF:
+
+designatorOrProcedureCall :
+    qualident designatorTail? actualParameters? ;
+
+actualParameters :
+    "(" expressionList? ")" ;
+
+designator :
+    qualident designatorTail? ;
+
+designatorTail :
+    ( ( "[" expressionList "]" | "^" ) ( "." ident )* )+ ;
+
+expressionList :
+    expression ( "," expression )* ;
+
+Examples:
+
+array[index], multiDimArray[i, j, k], pointer^, record.field, write("a")
+
+
+7.2 Operators
+
+Operators are special symbols or reserved words that represent an operation.
+Each operator has an associated precedence level that determines the order of
+evaluation for expressions consisting of multiple sub-expressions with diverse
+operations. There are five different precedence levels:
+
+* level 1: ::
+* level 2: NOT, ~
+* level 3: *, /, DIV, MOD, AND, &
+* level 4: +, -, OR
+* level 5: =, #, <, <=, >, >=, IN
+
+Level 1 represents highest precedence, level 5 represents lowest precedence.
+
+EBNF:
+
+typeConversionOperator : "::" ;
+
+notOperator : NOT | "~" ;
+
+mulOperator : "*" | "/" | DIV | MOD | AND | "&" ;
+
+addOperator : "+" | "-" | OR ;
+
+relationalOperator : "=" | "#" | "<" | "<=" | ">" | ">=" | IN ;
 
 
 8 Structured Values
