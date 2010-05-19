@@ -1399,8 +1399,8 @@ arrayIndex : ordinalConstExpression ;
 
 Example:
 
-TYPE A = ARRAY 10 OF INTEGER;
-VAR array : A; index : OCTET;
+TYPE IntArray = ARRAY 10 OF INTEGER;
+VAR array : IntArray;
 
 array := { 0 BY 10 }; (* initialise all values with zero };
 FOR item IN array DO item := 0 END; (* another way to initialise *)
