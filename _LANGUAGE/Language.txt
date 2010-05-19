@@ -1684,7 +1684,7 @@ lists. A variadic formal parameter is denoted by reserved word VARIADIC.
 variadicFormalParams :
     VARIADIC ( variadicCounter | "[" variadicTerminator "]" )? OF
     ( ( CONST | VAR )? formalType |
-      "(" simpleFormalParams ( ';' simpleFormalParams )* ")" ) ;
+      "(" simpleFormalParams ( ";" simpleFormalParams )* ")" ) ;
 
 variadicCounter : Ident ;
 
@@ -1776,6 +1776,45 @@ PROCEDURE Insert ( tree : Tree;
 
 invoked as:  Insert(tree, { "foo", 123, "bar", 456, "baz", 789 }, status);
 compiled as: Insert(tree, 3, "foo", 123, "bar", 456, "baz", 789, status);
+
+
+5.6.3.10 Open Array Parameters
+
+A formal parameter may be declared as an open array parameter. An open array
+parameter has an anonymous array type without any index specified. Any array
+whose component type matches that of the open array's component may then be
+passed as an actual parameter.
+
+For a procedure with an open array parameter to determine the highest index
+of the array passed to it, the value of the highest index is automatically
+passed as a hidden parameter. Within the procedure, pervasive function HIGH
+is used to obtain the value of the highest index of the passed in array.
+
+Example:
+
+TYPE String10 = ARRAY 10 OF CHAR;
+VAR str : String10;
+
+PROCEDURE Write ( s : ARRAY OF CHAR );
+
+str := "hello"; Write(str); (* any CHAR array is compatible *)
+
+
+5.6.3.11 Auto-Casting Open Array Parameters
+
+Open array parameters with component type OCTET, SYSTEM.BYTE or SYSTEM.WORD
+have auto-casting semantics. Any value of any type may then be passed as an
+actual parameter and it is automatically cast to the array type of the formal
+parameter. This facility is useful for system-level programming tasks but it
+should be used with caution because type safety is no longer guaranteed.
+
+Example:
+
+VAR str : String10; x : LONGCARD;
+
+PROCEDURE Copy ( source : ARRAY OF OCTET; target : ARRAY OF OCTET );
+
+str := "hello"; Copy(str, x);
 
 
 5.6.4 Procedure Type Compatibility
