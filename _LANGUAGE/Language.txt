@@ -1711,7 +1711,7 @@ compiled as: Variadic(5, 0, 1, 2, 3, 4); (* compiler inserts counter *)
 
 Example:
 
-PROCEDURE Variadic ( count, x : CARDINAL; v : VARIADIC [count] OF INTEGER );
+PROCEDURE Variadic ( count, x : CARDINAL; v : VARIADIC count OF INTEGER );
 
 invoked as:  Variadic(42, 0, 1, 2, 3, 4);
 compiled as: Variadic(5, 42, 0, 1, 2, 3, 4); (* compiler inserts counter *)
