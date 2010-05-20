@@ -2064,28 +2064,29 @@ LOOP READ(file, ch); IF ch IN TerminatorSet THEN EXIT END END;
 
 The FOR statement is used to repeat a statement or statement sequence a
 given number of times, depending on a control variable. The control variable
-is always treated as a constant outside of the loop header. It can only be
-modified by the FOR loop's header, not anywhere else:
+is declared in the loop header and its scope is the loop. It no longer exists
+after the the loop has exited. The control variable is treated as a mutable
+variable inside the loop header and as an immutable variable or runtime
+constant within the loop body:
 
 * it may not be the left hand side of an assignment
 * it may not be the designator in an increment or decrement statement
 * it may not be passed to any procedure as a VAR parameter
 * it may not be assigned to any pointer other than POINTER TO CONST pointers
 
-NB: The scope of a FOR loop control variable is still undetermined.
-
 EBNF:
 
 forStatement :
     FOR controlVariable
-    ( ":=" expression TO expression ( BY constExpression )? | IN expression )
+    ( IN expression |
+      ":" namedType ":=" expression TO expression ( BY constExpression )? )
     DO statementSequence END ;
 
 controlVariable : Ident ;
 
 Examples:
 
-FOR count := 99 TO 0 BY -1 DO BottlesOfBeer(count) END;
+FOR count : CARDINAL := 99 TO 0 BY -1 DO BottlesOfBeer(count) END;
 FOR colour IN ColourSet DO counter++ END;
 FOR char IN string DO WRITE(file, char) END;
 FOR key IN dictionary DO WRITE(file, dictionary[key]) END;

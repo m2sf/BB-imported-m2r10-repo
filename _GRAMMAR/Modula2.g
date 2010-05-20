@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status May 15, 2010 */
+/* M2R10 grammar in ANTLR EBNF notation -- status May 20, 2010 */
 
 
 options {
@@ -148,13 +148,13 @@ semanticType : ident ;
 
 // production #6
 bindingsHeader :
-	TYPE '='(  RECORD | OPAQUE RECORD? ( ':=' ( literalType | '{' '}' ) )? ) ';'
+	TYPE '=' ( RECORD | OPAQUE RECORD? ( ':=' ( literalType | '{' '}' ) )? ) ';'
 	;
 
 // production #7
 bindings :
     ( CONST '[' bindableIdent ']' |
-	  PROCEDURE '['( bindableOperator | bindableIdent ) ']' ) ';' 
+	  PROCEDURE '[' ( bindableOperator | bindableIdent ) ']' ) ';' 
 	;
 
 // production #8
@@ -420,7 +420,8 @@ loopStatement :
 // production #45
 forStatement :
 	FOR ident
-	( ':=' expression TO expression ( BY constExpression )? | IN expression )
+	( IN expression |
+	  ':' namedType ':=' expression TO expression ( BY constExpression )? )
 	DO statementSequence END
 	;
 
