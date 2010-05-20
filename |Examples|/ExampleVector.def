@@ -42,9 +42,8 @@ PROCEDURE [-] sub ( v1, v2 : ExampleVector ) : ExampleVector;
 (* Subtracts vectors v2 from v1 and returns the result.
    This function is bound to the - operator for type ExampleVector. *)
 
-PROCEDURE [*] dot ( v1, v2 : ExampleVector ) : ComponentType;
-(* Calculates the dot product of vectors v1 and v2 and returns the result.
-   This function is bound to the * operator for type ExampleVector. *)
+PROCEDURE dot ( v1, v2 : ExampleVector ) : ComponentType;
+(* Calculates the dot product of vectors v1 and v2 and returns the result. *)
 
 PROCEDURE scalar ( a : ComponentType; v : ExampleVector ) : ExampleVector; 
 (* Performs a scalar division of vector v and component a,
