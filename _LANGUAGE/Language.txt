@@ -1556,8 +1556,21 @@ implementation part.
 
 5.6.1 The Procedure Header
 
-The procedure header represents the interface of a procedure. It consists of
-the procedure's identifier, its formal parameter list and its return type.
+The procedure header represents the interface of a procedure. A procedure
+header always defines a procedure's identifier. It may further define a
+binding to an operator or pervasive procedure or a receiver type, the
+procedure's formal parameter list and its return type.
+
+A procedure header may only define a binding to an operator or pervasive
+procedure if it belongs to a global definition in an ADT library module that
+specifies a semantic type in its module header and the binding is permitted by
+the definition of the semantic type. The signature of a procedure header that
+binds to an operator or pervasive procedure must conform to the language
+defined signature for the respective operator. A list of procedure signatures
+for bindable operators and pervasive procedures is provided in BINDINGS.def.
+
+A procedure header may only define a binding to a receiver type if it belongs
+to a global definition in a library module that defines the receiver type.
 
 EBNF:
 
@@ -1926,7 +1939,8 @@ A procedure call statement is used to invoke a procedure. A procedure call may
 include a list of parameters to be passed to the called procedure. Parameters
 passed are called actual parameters. Parameters defined in the procedure's
 definition and declaration are called formal parameters. In a procedure call
-with parameters, the types of actual and formal parameters must match.
+with parameters, the types of actual and formal parameters must match. Pro-
+cedure calls may be recursive, that is, a procedure may call itself.
 
 EBNF:
 
