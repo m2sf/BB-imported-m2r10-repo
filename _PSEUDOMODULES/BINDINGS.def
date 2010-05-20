@@ -2,95 +2,172 @@
 
 (* DOCUMENTATION *) MODULE BINDINGS;
 
-(* Pseudo Module to Document Procedure Headers Required for Bindings *)
+(* Pseudo Module to Document Procedure Signatures for Binding Procedures *)
+
+
+(* ADT means the abstract data type for which bindings are to be defined. *)
 
 
 (* Bindings to TMIN and TMAX *)
 
 CONST [TMIN] minValue = <value>;
+(* Signature for a constant definition that binds a value to pervasive
+   function TMIN when called with type ADT as an argument. *)
 
 CONST [TMAX] maxValue = <value>;
+(* Signature for a constant definition that binds a value to pervasive
+   function TMAX when called with type ADT as an argument. *)
 
 
 (* Bindings to assignment operations *)
 
-PROCEDURE [:=] assign ( VAR v : <Type>; CONST literal : ARRAY OF CHAR );
+(* Binding to the assign operator depends on the type of literal specified
+   by the semantic type that the ADT has been defined to conform to. *)
 
-PROCEDURE [:=] assign ( VAR v : <Type>; CONST elements : VARIADIC OF <T> );
+PROCEDURE [:=] assign ( VAR v : <ADT>; CONST literal : ARRAY OF CHAR );
+(* Signature for a procedure that binds to the assign operator for type <ADT>
+   when ADT uses whole number, real number or string literals. *)
+
+PROCEDURE [:=] assign ( VAR v : <ADT>; CONST elements : VARIADIC OF <T> );
+(* Signature for a procedure that binds to the assign operator for type <ADT>
+   when ADT uses structured literals. <elements> represent value components.*)
+
 
 
 (* Bindings to conversion operations *)
 
-PROCEDURE [::] to ( x : <Type> ) : <TargetType>;
+(* One pair of bindings to the conversion operator per target type. *)
 
-PROCEDURE [::] from ( x : <TargetType> ) : <Type>;
+PROCEDURE [::] to ( x : <ADT> ) : <TargetType>;
+(* Signature for a procedure that binds to the conversion operator
+   for conversions from type <ADT> to type <TargetType>. *)
+
+PROCEDURE [::] from ( x : <TargetType> ) : <ADT>;
+(* Signature for a procedure that binds to the conversion operator
+   for conversions from type <TargetType> to type <ADT>. *)
 
 
 (* Bindings to monadic operations *)
 
-PROCEDURE [ABS] abs ( x : <Type> ) : <OperandType>;
+PROCEDURE [ABS] abs ( x : <ADT> ) : <ADT>;
+(* Signature for a procedure that binds to pervasive function ABS
+   for arguments of type <ADT>. *)
 
-PROCEDURE [NEG] neg ( x : <Type> ) : <OperandtType;
+PROCEDURE [NEG] neg ( x : <ADT> ) : <ADT>;
+(* Signature for a procedure that binds to pervasive function NEG
+   for arguments of type <ADT>. *)
 
-PROCEDURE [ODD] odd ( x : <Type> ) : BOOLEAN;
+PROCEDURE [ODD] odd ( x : <ADT> ) : BOOLEAN;
+(* Signature for a procedure that binds to pervasive function NEG
+   for arguments of type <ADT>. *)
 
 
 (* Bindings to dyadic operations *)
 
-PROCEDURE [+] plus ( x1, x2 : <Type> ) : <Type>;
+PROCEDURE [+] plus ( x1, x2 : <ADT> ) : <ADT>;
+(* Signature for a procedure that binds to the + operator
+   for operands of type <ADT>. *)
 
-PROCEDURE [-] minus ( x1, x2 : <Type> ) : <Type>;
+PROCEDURE [-] minus ( x1, x2 : <ADT> ) : <ADT>;
+(* Signature for a procedure that binds to the - operator
+   for operands of type <ADT>. *)
 
-PROCEDURE [*] asterisk ( x1, x2 : <Type> ) : <Type>;
+PROCEDURE [*] asterisk ( x1, x2 : <ADT> ) : <ADT>;
+(* Signature for a procedure that binds to the * operator
+   for operands of type <ADT>. *)
 
-PROCEDURE [/] slash ( x1, x2 : <Type> ) : <Type>;
+PROCEDURE [/] slash ( x1, x2 : <ADT> ) : <ADT>;
+(* Signature for a procedure that binds to the / operator
+   for operands of type <ADT>. *)
 
-PROCEDURE [DIV] div ( x1, x2 : <Type> ) : <Type>;
+PROCEDURE [DIV] div ( x1, x2 : <ADT> ) : <ADT>;
+(* Signature for a procedure that binds to the DIV operator
+   for operands of type <ADT>. *)
+
+(* The operation for the ++ statement operator is synthesized as follows:
+   for ADTs that use whole number literals:  x++  is replaced by  x := x + 1
+   for ADTs that use real number literals :  x++  is replaced by  x := x + 1.0
+   for ADTs that do not use numeric literals the ++ operation is undefined. *)
+
+(* The operation for the -- statement operator is synthesized as follows:
+   for ADTs that use whole number literals:  x--  is replaced by  x := x - 1
+   for ADTs that use real number literals :  x--  is replaced by  x := x - 1.0
+   for ADTs that do not use numeric literals the -- operation is undefined. *)
 
 
 (* Bindings to relational operations *)
 
-PROCEDURE [=] isEqual ( x1, x2 : <Type> ) : BOOLEAN;
+PROCEDURE [=] isEqual ( x1, x2 : <ADT> ) : BOOLEAN;
+(* Signature for a procedure that binds to the = operator
+   for operands of type <ADT>. *)
 
-PROCEDURE [<] isLess ( x1, x2 : <Type> ) : BOOLEAN;
+(* The operation for the # operator is synthesized as NOT (x1 = x2) *)
 
-PROCEDURE [>] isGreater ( x1, x2 : <Type> ) : BOOLEAN;
+PROCEDURE [<] isLess ( x1, x2 : <ADT> ) : BOOLEAN;
+(* Signature for a procedure that binds to the < operator
+   for operands of type <ADT>. *)
+
+(* The operation for the <= operator is synthesized as NOT (x1 > x2) *)
+
+PROCEDURE [>] isGreater ( x1, x2 : <ADT> ) : BOOLEAN;
+(* Signature for a procedure that binds to the > operator
+   for operands of type <ADT>. *)
+
+(* The operation for the >= operator is synthesized as NOT (x1 < x2) *)
 
 
 (* Bindings to scalar conversion primitives *)
 
-PROCEDURE [TO] toSXF ( x : <Type>; VAR s : ARRAY OF CHAR );
+PROCEDURE [TO] toSXF ( x : <ADT>; VAR s : ARRAY OF CHAR );
+(* Signature for a procedure that binds to the internal scalar conversion
+   primitive toSXF to convert values of type ADT to scalar exchange format. *)
 
-PROCEDURE [FROM] fromSXF ( VAR x : <Type>; CONST s : ARRAY OF CHAR );
+PROCEDURE [FROM] fromSXF ( VAR x : <ADT>; CONST s : ARRAY OF CHAR );
+(* Signature for a procedure that binds to the internal scalar conversion
+   primitive fromSXF to convert scalar exchange format to type <ADT>. *)
 
 
 (* Binding for accessor to [ ] operator *)
 
-PROCEDURE [.] retrieve ( x : <Type>; key : <KeyType> ) : <ValueType>;
+PROCEDURE [.] retrieve ( x : <ADT>; key : <KeyType> ) : <ValueType>;
+(* Signature for a procedure that binds to the [ ] operator
+   for expressions of the form  x[key]  where x is of type <ADT>. *)
 
 (* Binding for mutator to [ ] operator *)
 
-PROCEDURE [!] store ( x : <Type>; key : <KeyType>; value : <ValueType> );
+PROCEDURE [!] store ( x : <ADT>; key : <KeyType>; value : <ValueType> );
+(* Signature for a procedure that binds to the [ ] operator
+   for assignments the form  x[key] := value  where x is of type <ADT>. *)
 
 
 (* Bindings to COUNT and LENGTH functions *)
 
-PROCEDURE [COUNT] count ( x : <Type> ) : LONGCARD;
+PROCEDURE [COUNT] count ( x : <ADT> ) : LONGCARD;
+(* Signature for a procedure that binds to pervasive function COUNT
+   for arguments of type <ADT>. *)
 
-PROCEDURE [LENGTH] length ( x : <Type> ) : LONGCARD;
+PROCEDURE [LENGTH] length ( x : <ADT> ) : LONGCARD;
+(* Signature for a procedure that binds to pervasive function LENGTH
+   for arguments of type <ADT>. *)
 
 
 (* Binding to FOR .. IN iterator *)
 
-PROCEDURE [FOR] next ( x : <Type>;
+PROCEDURE [FOR] next ( x : <ADT>;
                        VAR key : <KeyType>; VAR val : <ValueType> );
+(* Signature for a procedure that binds to the FOR .. IN .. iterator
+   for iterations of the form  FOR key IN x DO  where x is of tyoe <ADT>. *)
 
 
 (* Bindings to NEW and DISPOSE procedures *)
 
-PROCEDURE [NEW] new ( VAR x : <Type> );
+PROCEDURE [NEW] new ( VAR x : <ADT> );
+(* Signature for a procedure that binds to pervasive procedure NEW
+   for arguments of type <ADT>. *)
 
-PROCEDURE [DISPOSE] dispose ( VAR x : <Type> );
+PROCEDURE [DISPOSE] dispose ( VAR x : <ADT> );
+(* Signature for a procedure that binds to pervasive procedure DISPOSE
+   for arguments of type <ADT>. *)
 
 
 END BINDINGS.
