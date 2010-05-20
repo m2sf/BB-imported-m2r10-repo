@@ -2146,7 +2146,7 @@ order in which its sub-expressions are evaluated.
 EBNF:
 
 constExpression :
-    simpleConstExpr ( relation simpleConstExpr | "::" namedType )? ;
+    simpleConstExpr ( relation simpleConstExpr )? ;
 
 simpleConstExpr :
     ( "+" | "-" )? constTerm ( addOperator constTerm )* ;
@@ -2155,11 +2155,12 @@ constTerm :
 	constFactor ( mulOperator constFactor )* ;
 
 constFactor :
-    NumberLiteral | StringLiteral | constQualident | constStructuredValue |
-	"(" constExpression ")" | ( NOT | "~" ) constFactor ;
+    ( NumberLiteral | StringLiteral | constQualident | constStructuredValue |
+	  "(" constExpression ")" ) ( "::" namedType )?
+    | ( NOT | "~" ) constFactor ;
 
 expression :
-    simpleExpression ( relation simpleExpression | "::" namedType )? ;
+    simpleExpression ( relation simpleExpression )? ;
 
 simpleExpression :
     ( "+" | "-" )? term ( addOperator term )* ;
@@ -2167,8 +2168,10 @@ simpleExpression :
 term :
     factor ( mulOperator factor )* ;
 
-factor : NumberLiteral | StringLiteral | structuredValue |
-    designatorOrProcedureCall | "(" expression ")" | ( NOT | "~" ) factor ;
+factor :
+    ( NumberLiteral | StringLiteral | structuredValue |
+      designatorOrProcedureCall | "(" expression ")" ) ( "::" namedType )?
+    | ( NOT | "~" ) factor ;
 
 relation : relationalOperator ;
 
@@ -2209,7 +2212,8 @@ array[index], multiDimArray[i, j, k], pointer^, record.field, write("a")
 Operators are special symbols or reserved words that represent an operation.
 Each operator has an associated precedence level that determines the order of
 evaluation for expressions consisting of multiple sub-expressions with diverse
-operations. There are five different precedence levels:
+operations. Operators with higher precedence are evaluated before operators
+with lower precedence. There are five different precedence levels:
 
 * level 1: ::
 * level 2: NOT, ~

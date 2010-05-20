@@ -429,7 +429,7 @@ forStatement :
 
 // production #46
 constExpression :
-	simpleConstExpr ( relation simpleConstExpr | '::' namedType )?
+	simpleConstExpr ( relation simpleConstExpr )?
 	;
 
 // production #47
@@ -462,8 +462,9 @@ mulOperator :
 
 // production #52
 constFactor :
-	number | string | constQualident | constStructuredValue |
-	'(' constExpression ')' | ( NOT | '~' {}) constFactor
+	( number | string | constQualident | constStructuredValue |
+	'(' constExpression ')' ) ( '::' namedType )?
+	| ( NOT | '~' {}) constFactor
 	;
 
 // production #53
@@ -483,7 +484,7 @@ expressionList :
 
 // production #56
 expression :
-	simpleExpression ( relation simpleExpression | '::' namedType )?
+	simpleExpression ( relation simpleExpression )?
 	;
 
 // production #57
@@ -498,11 +499,10 @@ term :
 
 // production #59
 factor :
-	number |
-	string |
-	structuredValue |
-	designatorOrProcedureCall |
-	'(' expression ')' | ( NOT | '~' {}) factor
+	( number | string | structuredValue |
+	  designatorOrProcedureCall | '(' expression ')' )
+	( '::' namedType )?
+	| ( NOT | '~' {}) factor
 	;
 
 // production #60
