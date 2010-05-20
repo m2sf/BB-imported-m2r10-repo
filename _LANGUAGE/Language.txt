@@ -930,7 +930,7 @@ User libraries may provide their own semantic type definitions for their own
 custom designed abstract data types.
 
 
-4.2 Abstract Data Types
+4.3 Abstract Data Types
 
 Opaque pointer types and opaque record types are predominantly used to define
 abstract data types (ADTs). An ADT is a data type whose internal structure
@@ -988,14 +988,14 @@ BEGIN
 END UseBCD.
 
 
-4.3 Library Defined ADTs Using Semantic Types and Bindings
+4.4 Library Defined ADTs Using Semantic Types and Bindings
 
 The standard library provides a rich set of library defined ADTs that use
 bindings and are practically inistinguishable from pervasive types and
 transparent data types defined using type constructor syntax.
 
 
-4.3.1 Library Defined Bitset ADTs
+4.4.1 Library Defined Bitset ADTs
 
 The standard library provides bitset ADTs whose semantics match those of the
 pervasive bitset types BITSET and LONGBITSET. The library defined bitset ADTs
@@ -1017,7 +1017,7 @@ VAR set, union : BITSET16;
 BEGIN set := { 0, 7, 15 }; union := set + { 1, 2, 4 }; set[1] := FALSE END;
 
 
-4.3.2 Library Defined Unsigned Integer ADTs
+4.4.2 Library Defined Unsigned Integer ADTs
 
 The standard library provides unsigned integer ADTs whose semantics match
 those of the pervasive types CARDINAL and LONGCARD. The library defined
@@ -1039,7 +1039,7 @@ VAR a, sum : CARDINAL16;
 BEGIN a := 123; sum := a + 456; WRITE(StdOut, sum) END;
 
 
-4.3.3 Library Defined Signed Integer ADTs
+4.4.3 Library Defined Signed Integer ADTs
 
 The standard library provides signed integer ADTs whose semantics match
 those of the pervasive types INTEGER and LONGINT. The library defined signed
@@ -1061,7 +1061,7 @@ VAR a, diff : INTEGER16;
 BEGIN a := 123; diff := a - 456; WRITE(StdOut, diff) END;
 
 
-4.3.4 Library Defined BCD Real Number ADTs
+4.4.4 Library Defined BCD Real Number ADTs
 
 The standard library provides binary coded Decimals (BCD) real number ADTs
 whose semantics match those of the pervasive types REAL and LONGREAL. The
@@ -1074,7 +1074,7 @@ VAR a, amount : BCD;
 BEGIN a := 123.45; amount := a * 1.05; WRITE(StdOut, amount) END;
 
 
-4.3.5 Library Defined Complex Number ADTs
+4.4.5 Library Defined Complex Number ADTs
 
 The standard library provides complex number ADTs whose semantics conform to
 semantic type CTYPE. The library defined complex number ADTs are COMPLEX and
@@ -1087,7 +1087,7 @@ VAR z, zsum : COMPLEX;
 BEGIN z := { 1.23, 4.56 }; zsum := z + { 1.0, 0.5 }; WRITE(StdOut, zsum) END;
 
 
-4.3.6 Library Defined Character Set ADTs
+4.4.6 Library Defined Character Set ADTs
 
 The standard library provides a character set ADT whose semantics conform to
 semantic type SetType. The library defined character set ADT is CHARSET.
@@ -1100,7 +1100,7 @@ BEGIN found := FALSE; delimiters := { ":", ",", "." };
 FOR char IN "foo:bar.baz,bam" DO IF delimiters IN char THEN EXIT END END END;
 
 
-4.3.7 Library Defined Character String ADTs
+4.4.7 Library Defined Character String ADTs
 
 The standard library provides dynamic string ADTs whose semantics conform to
 semantic type StringType. The library defined dynamic string ADTs are STRING
@@ -1113,7 +1113,7 @@ VAR s : STRING;
 BEGIN NEW(s, 20); s := "the quick brown fox"; WRITE(stdOut, s); DISPOSE(s) END;
 
 
-4.3.8 Library Defined DateTime ADTs
+4.4.8 Library Defined DateTime ADTs
 
 The standard library provides two date-time ADTs that conform to semantic
 type DateType. The library defined ADTs are DateTime and Time.
@@ -2569,7 +2569,7 @@ Procedure WRITEF is variadic. It accepts one or more values to be written.
 However, all values must be of the same type. The format string strictly
 determines the formatting of values only. This is in contrast to the printf
 function of C where the format string also determines the types of values.
-In Modula-2 R10 all values must be of the same value to ensure type safety.
+In Modula-2 R10 all values must be of the same type to ensure type safety.
 
 Examples:
 
