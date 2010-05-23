@@ -1664,10 +1664,125 @@ TYPE Point = RECORD x, y : REAL END;
 TYPE ColourPoint = RECORD ( Point ) colour : Colour END;
 VAR point : Point; cPoint : ColourPoint;
 
-cPoint := { 0.0, 0.0, Colour.black }; point := cPoint :: Point; 
+cPoint := { 0.0, 0.0, Colour.black }; point := cPoint :: Point;
 
 
-5.3.8 Set Types
+5.3.8 Indeterminate Record Types
+
+An indeterminate record type is a record type with an indeterminate field and
+a determinant field. An indeterminate field is a field whose type is indeter-
+minate. A type is indeterminate if its allocation size cannot be determined
+from its type declaration. A determinant field is a field that determines the
+size of an indeterminate field.
+
+
+5.3.8.1 Declaration of an Indeterminate Record Types
+
+Indeterminate record types may be declared provided that the type declaration
+meets all of the following constraints:
+
+* it contains only one indeterminate field
+* the indeterminate field is the last field
+* the type of its indeterminate field is an array
+* it also constains a determinant field of a whole number type
+* the determinant field is referenced as the indeterminate field's array size
+
+Indeterminate record types are the type-safe equivalent of structs with
+variable length array (VLA) members in C99, sometimes called flex-arrays.
+
+Example:
+
+TYPE VLA = POINTER TO VLADescriptor;
+
+TYPE VLADescriptor = RECORD
+    a, b, c : Foo; (* other fields *)
+    size    : CARDINAL; (* determinant field *)
+    buffer  : ARRAY size OF OCTET (* indeterminate field *)
+END; (* VLADescriptor *)
+
+
+5.3.8.2 Allocating Indeterminate Records
+
+Records of an indeterminate type may only be allocated dynamically at runtime
+using pervasive procedure NEW. When the record is allocated, the determinant
+value must be passed to NEW as an additional parameter. Any attempt to
+allocate a record of indeterminate type without passing the determinant
+value results in a compile time error.
+
+The compiler replaces any invocation of NEW for an indeterminate record type
+with a call to library procedure ALLOCATE passing the correct allocation size
+using the formula:
+
+allocSize(T) = TSIZE(T) + determinant * TSIZE(baseType(T.indeterminateField))
+
+where T is the indeterminate record type, determinant is the determinant value
+passed to NEW and baseType(T.indeterminateField) is the base type of the array
+of the indeterminate field. The value returned by TSIZE for an indeterminate
+record type is the value of its allocation size without the size of the
+indeterminate field.
+
+Example:
+
+VAR vla : VLA;
+
+NEW(vla, 100); (* allocate VLA record with 100 buffer elements *)
+
+compiled as: ALLOCATE(vla, TSIZE(VLADescriptor) + 100 * TSIZE(OCTET));
+
+
+5.3.8.3 Immutability of the Determinant Field
+
+The determinant field of a record of indeterminate type is automatically
+initialised when it is allocated. After initialisation the determinant field
+becomes immutable and the compiler enforces its immutability as follows:
+
+* a determinant field may not be passed to any procedure as a VAR parameter
+* a determinant field may not appear on the left hand side of an assignment
+* a determinant field may not be the designator in a ++ or -- statement
+
+Example:
+
+INC(vla^.size); (* determinant field may not be passed as VAR parameter *)
+vla^.size := 42; (* determinant field may not be assigned to *)
+vla^.size++; (* determinant field may not be used with ++ or -- *)
+
+
+5.3.8.4 Run-time Bounds Checking
+
+Access to the indeterminate array field of a record of indeterminate type is
+bounds checked at runtime in the same manner as access to a determinate array
+is checked. The compiler automatically inserts the code to check array indices
+against the determinant field. Any attempt to access the array with a subscript
+that is out of bounds results in a run-time error.
+
+
+5.3.8.5 Assignment Compatibility
+
+The assignment compatibility of two records of indeterminate type cannot be
+verified at compile time. For this reason records of indeterminate type can
+only be copied field-wise, not record-wise.
+
+
+5.3.8.6 Parameter Passing
+
+Since the compatibility of records of indeterminate types cannot be determined
+at compile time, they may not be formal types.
+
+A record of indeterminate may only be passed to a universal open array para-
+meter ARRAY OF OCTET, ARRAY OF SYSTEM.BYTE or SYSTEM.WORD.
+
+The indeterminate field of an indeterminate record may be passed to an open
+array parameter whose base type is assignment compatible with the base type
+of the indeterminate field.
+
+
+5.3.8.7 Deallocating Indeterminate Records
+
+Records of indeterminate type may only be deallocated using pervasive
+procedure DISPOSE.
+
+
+5.3.9 Set Types
 
 A set type is a static collection type for a fixed number of key/value pairs.
 Its keys are of ordinal type and its values are of type BOOLEAN. A key whose
@@ -1693,7 +1808,7 @@ people := { PeopleSet.bob, PeopleSet.fred };
 people := people * { PeopleSet.fred, PeopleSet.mary };
 
 
-5.3.9 Pointer Types
+5.3.10 Pointer Types
 
 A pointer type is a container for a reference to a storage location of given
 type. The type of the storage location pointed to is called the base type.
@@ -1714,7 +1829,7 @@ intPtr^ := 0; (* OK *)
 immPtr^ := 0; (* compile time error: attempt to modify an immutable object *)
 
 
-5.3.10 Procedure Types
+5.3.11 Procedure Types
 
 A procedure type is a special pointer type for references to procedures of
 given procedure headers. Procedure types are defined using the PROCEDURE
