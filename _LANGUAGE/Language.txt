@@ -684,9 +684,8 @@ A value v1 of an ordinal type T1 is convertible to an equivalent value of
 another ordinal type T2 if T2 has a legal value v2 for which the relation
 ORD(v1) = ORD(v2) is true. 
 
-A value v1 of an ordinal type T1 is convertible to an equivalent value of
-a pervasive whole number type T2 if T2 has a legal value v2 for which the
-relation v1 = ORD(v2) is true.
+A value v of an ordinal type T1 is convertible to an equivalent value of
+a pervasive whole number type T2 if ORD(v) is a legal value of T2.
 
 
 4.2.2 Convertibility of Pervasive Numeric Types
@@ -694,8 +693,9 @@ relation v1 = ORD(v2) is true.
 A value v of a pervasive numeric type T1 is convertible to an equivalent
 value of another pervasive numeric type T2 if v is also a legal value of T2.
 
-A value v of a pervasive whole number type is convertible to an equivalent
-value of an ordinal type if T2 has a legal value whose ordinal value is v.
+A value v1 of a pervasive whole number type is convertible to an equivalent
+value of an ordinal type T2 if T2 has a legal value v2 for which the relation
+v1 = ORD(v2) is true.
 
 
 4.2.3 Convertibility of Set Types
