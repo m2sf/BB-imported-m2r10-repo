@@ -692,6 +692,9 @@ a pervasive numeric type T2 if the ordinal value of v is a legal value of T2.
 A value v of a pervasive numeric type T1 is convertible to an equivalent
 value of another pervasive numeric type T2 if v is also a legal value of T2.
 
+A value of a pervasive whole number type is convertible to an equivalent
+value of an ordinal type if v is a legal ordinal value of T2.
+
 
 4.2.3 Convertibility of Set Types
 
@@ -702,7 +705,8 @@ another set type T2 if every element in T1 may also be a legal element of T2.
 4.2.4 Convertibility of Array Types
 
 A value of an array type T1 is convertible to a value of another array type T2
-if the base type of T1 is assignment compatible with the base type of T2.
+if T1 and T2 have the same number of components and the base type of T1 is
+assignment compatible with the base type of T2.
 
 
 4.2.5 Convertibility of Record Types
