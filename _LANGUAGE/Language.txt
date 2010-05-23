@@ -2401,7 +2401,7 @@ LOOP READ(file, ch); IF ch IN TerminatorSet THEN EXIT END END;
 The FOR statement is used to repeat a statement or statement sequence a
 given number of times, depending on a control variable. The control variable
 is declared in the loop header and its scope is the loop. It no longer exists
-after the the loop has exited. The control variable is treated as a mutable
+after the loop has exited. The control variable is treated as a mutable
 variable inside the loop header and as an immutable variable or runtime
 constant within the loop body:
 
