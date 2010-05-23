@@ -648,7 +648,7 @@ An expression e may be passed to an open array VAR parameter p if:
 
 * e is a mutable variable designator,
   the type of e is an array type,
-  the base type of e is assignment compatible with the base type of p
+  and the base type of e is assignment compatible with the base type of p
 * e is a mutable variable designator
   and the base type of p is OCTET, SYSTEM.BYTE or SYSTEM.WORD
 
@@ -656,7 +656,7 @@ An expression e may be passed to an open array non-VAR parameter p if:
 
 * e is not a mutable variable designator,
   the type of e is an array type,
-  the base type of e is assignment compatible with the base type of p
+  and the base type of e is assignment compatible with the base type of p
 * the base type of p is OCTET, SYSTEM.BYTE or SYSTEM.WORD
 
 
@@ -1526,15 +1526,18 @@ An anonymous type is a type that does not have a type identifier associated
 with it. However, in languages with name equivalence, the names of the types
 of variables must be examined to determine whether or not they are assignment
 or expression compatible. If the types do not have names, then compatibility
-cannot be determined. For this reason, anonymous types are of very limited use
-in languages with name equivalence.
+cannot be determined.
 
-Modula-2 follows name equivalence for all types other than procedure types and
-formal array and pointer parameters. A procedure is compatible with a procedure
-type if their respective signatures match. An array is compatible with a formal
-array parameter if their respective component types match. A pointer is
-compatible with a formal pointer parameter if the respective types they
-point to match. These types are thus permitted as anonymous types.
+For this reason, anonymous types are of very limited use in languages with
+name equivalence. Nevertheless, Modula-2 R10 allows the use of anonymous types
+in the following cases:
+
+* anonymous arrays, pointers and procedure types in variable declarations
+* anonymous records and procedure types in array declarations
+* anonymous arrays, records and procedure types as record fields
+* anonymous open arrays as formal parameters of procedures
+
+NB: The number of usage cases may still be reduced.
 
 EBNF:
 
