@@ -1395,6 +1395,8 @@ procedure it is declared in.
 
 5.3 Type Definitions and Declarations
 
+Types are defined and declared using a type definition or declaration.
+
 EBNF:
 
 typeDefinition :
@@ -1431,7 +1433,7 @@ In order to assign values across type boundaries, type conversion is required.
 
 Example:
 
-celsius := (fahrenheit - 32.0) * 100.0/180.0 :: Celsius; (* type conversion *)
+celsius := (fahrenheit :: Celsius - 32.0) * 100.0/180.0; (* type conversion *)
 
 
 5.3.2 Alias Types
