@@ -27,9 +27,9 @@ notation used by the lexer and parser generator ANTLR:
 * parentheses are used to group syntactic entities
 * the vertical bar is used to separate alternatives
 * a preceding tilde is used to denote logical not
-* a trailing question mark is used to denote zero or one occurence
-* a trailing plus sign is used to denote one or more occurences
-* a trailing asterisk is used to denote zero or more occurences
+* a trailing question mark is used to denote zero or one occurrence
+* a trailing plus sign is used to denote one or more occurrences
+* a trailing asterisk is used to denote zero or more occurrences
 * a colon is used between a production rule's name and its body
 * a semicolon is used to terminate a production rule
 
@@ -63,7 +63,7 @@ List of Special Symbols
 <=    less-than-or-equal and subset relational operator
 =     equal operator
 >     greater-than and true-superset relational operator
->=    greather-than-or-equal and superset relational operator
+>=    greater-than-or-equal and superset relational operator
 ^     pointer dereferencing operator
 |     punctuation, used as a separator in case label lists
 ~     synonym for logical NOT operator
