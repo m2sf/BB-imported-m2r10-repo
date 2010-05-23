@@ -572,7 +572,203 @@ procedure types and abstract data types using the opaque type constructor.
 Character strings are represented by character arrays or abstract data types.
 
 
-4.1 Semantics of Types
+4.1 Type Compatibility
+
+Modula-2 R10 uses strict name equivalence. Two types with different names are 
+incompatible unless one type is defined as an alias type of the other, or
+unless they are both defined as alias types of the same type.
+
+Type compatibility is transitive. If types T1 and T2 are compatible and types
+T2 and T3 are compatible, then types T1 and T3 are also compatible.
+
+
+4.1.1 Alias Type Compatibility
+
+If type A is an alias type of type T, then A is compatible with T.
+
+
+4.1.2 Literal Compatibility
+
+Whole number literals are assignment compatible with:
+
+* pervasive types OCTET, CARDINAL, LONGCARD, INTEGER and LONGINT
+* any ADT whose semantic type permits the use of whole number literals
+  provided the ADT defines a procedure to bind to the assignment operator
+
+Real number literals are assignment compatible with:
+
+* pervasive types REAL and LONGREAL
+* any ADT whose semantic type permits the use of real number literals
+  provided the ADT defines a procedure to bind to the assignment operator
+
+Character code and string literals are assignment compatible with:
+
+* pervasive types CHAR and UNICHAR
+* any ADT whose semantic type permits the use of character literals
+  provided the ADT defines a procedure to bind to the assignment operator
+
+Structured literals are assignment compatible with:
+
+* types that are structurally equivalent to the structured literal
+* any ADT whose semantic type permits the use of structured literals
+  provided the literal is structurally equivalent to the variadic parameter
+  of the procedure that the ADT defines to bind to the assignment operator
+
+
+4.1.3 Assignment Compatibility
+
+An expression e may be assigned to a mutable variable v if:
+
+* e and v are both of the same type
+* the type of e is an alias type of v or vice versa
+* the type of e and the type of v are both alias types of the same type
+* e is a literal that is compatible under literal compatibility rules
+
+Immutable variables may not be assigned to regardless of type compatibility.
+
+
+4.1.4 Parameter Passing Compatibility
+
+4.1.4.1 Named Type Parameters
+
+An expression e may be passed to a named-type VAR parameter p if:
+
+* e is a mutable variable designator
+  and e is assignment compatible with p
+
+An expression e may be passed to a named-type non-VAR parameter p if:
+
+* e is not a mutable variable designator
+  and e is assignment compatible with the type of p
+
+
+4.1.4.2 Open Array Parameters
+
+An expression e may be passed to an open array VAR parameter p if:
+
+* e is a mutable variable designator,
+  the type of e is an array type,
+  the base type of e is assignment compatible with the base type of p
+* e is a mutable variable designator
+  and the base type of p is OCTET, SYSTEM.BYTE or SYSTEM.WORD
+
+An expression e may be passed to an open array non-VAR parameter p if:
+
+* e is not a mutable variable designator,
+  the type of e is an array type,
+  the base type of e is assignment compatible with the base type of p
+* the base type of p is OCTET, SYSTEM.BYTE or SYSTEM.WORD
+
+
+4.1.4.3 Variadic Parameters
+
+A comma separated list of values may be passed to a variadic parameter if:
+
+* the formal variadic parameter is the last parameter of the procedure
+  and the list is structurally equivalent to the formal variadic parameter
+
+A structured literal may be passed to a variadic parameter if:
+
+* the literal is structurally equivalent to the formal variadic parameter
+
+
+4.2 Type Conversions
+
+A value of type T1 may be converted to an equivalent value of an incompatible
+type T2 using the type conversion operator if T1 is convertible to T2.
+
+
+4.2.1 Convertibility of Ordinal Types
+
+A value v of an ordinal type T1 is convertible to an equivalent value of
+another ordinal type T2 if the ordinal value of v is also a legal value of T2.
+
+A value v of an ordinal type T1 is convertible to an equivalent value of
+a pervasive numeric type T2 if the ordinal value of v is a legal value of T2.
+
+
+4.2.2 Convertibility of Pervasive Numeric Types
+
+A value v of a pervasive numeric type T1 is convertible to an equivalent
+value of another pervasive numeric type T2 if v is also a legal value of T2.
+
+
+4.2.3 Convertibility of Set Types
+
+A value s of a set type T1 is convertible to an equivalent value of
+another set type T2 if every element in T1 may also be a legal element of T2.
+
+
+4.2.4 Convertibility of Array Types
+
+A value of an array type T1 is convertible to a value of another array type T2
+if the base type of T1 is assignment compatible with the base type of T2.
+
+
+4.2.5 Convertibility of Record Types
+
+A value of a record type T1 is convertible to a value of record type T2
+if T1 is an extension of T2.
+
+
+4.2.6 Convertibility of Pointer Types
+
+A value of a pointer type T1 is convertible to a value of another pointer type
+T2 if the base type of T1 is assignment compatible with the base type of T2.
+
+
+4.2.7 Convertibility of Procedure Types
+
+A value of a procedure type T1 is convertible to a value of procedure type T2
+if they are structurally equivalent.
+
+
+4.2.8 Convertibility of Opaque Types
+
+A value v of an opaque type T1 is convertible to an equivalent value
+of another type T2 if:
+
+* T1 is an ADT that provides a conversion procedure for conversions from
+  type T1 to type T2 that is bound to the conversion operator,
+  and v is a legal value of T2
+* T1 and T2 are scalar types,
+  T1 is convertible to scalar exchange format,
+  T2 is convertible from scalar exchange format,
+  and v is a legal value of T2 
+
+
+4.2.9 Convertibility of Scalar Types
+
+A type T is convertible to scalar exchange format if:
+
+* T is a pervasive numeric type
+* T is an ADT that provides a conversion primitive to scalar exchange format
+
+A type T is convertible from scalar exchange format if:
+
+* T is a pervasive numeric type
+* T is an ADT that provides a conversion primitive from scalar exchange format
+
+
+4.2.10 Convertibility of SYSTEM Types
+
+A value of type CHAR is convertible to SYSTEM.BYTE
+if the relation TSIZE(OCTET) = TSIZE(SYSTEM.BYTE) is true.
+
+A value v of type SYSTEM.BYTE is convertible to CHAR if the relation
+TSIZE(OCTET) = TSIZE(SYSTEM.BYTE) is true and the highest bit of v is not set.
+
+Values of types OCTET and SYSTEM.BYTE are convertible between each other
+if the relation TSIZE(OCTET) = TSIZE(SYSTEM.BYTE) is true.
+
+Values of types CARDINAL and SYSTEM.WORD are convertible between each other
+if the relation TSIZE(CARDINAL) = TSIZE(SYSTEM.WORD) is true.
+
+Values of types LONGCARD and SYSTEM.WORD are convertible between each other
+if the relation TSIZE(LONGCARD) = TSIZE(SYSTEM.WORD) is true.
+
+
+4.3 Semantics of Types
 
 Every data type has an associated set of language defined semantics. These
 semantics define the interpretation of values, the compatibility of literals
@@ -581,7 +777,7 @@ other data types. A common set of shared semantics is called a semantic type.
 Every data type is thus defined in terms of its semantic type.
 
 
-4.1.1 The Semantics of Ordinal Types
+4.3.1 The Semantics of Ordinal Types
 
 Ordinal types are data types with non-numeric ordered values, including a
 start value that is interpreted as the type's zero-th value. The ordinal
@@ -610,7 +806,7 @@ types CHAR and UNICHAR are character code literals and string literals of
 length one.
 
 
-4.1.2 The Semantics of the Boolean Type
+4.3.2 The Semantics of the Boolean Type
 
 The boolean type is an ordinal type with two values, interpreted as boolean
 truth values, represented by the literal constants TRUE and FALSE. Further
@@ -625,7 +821,7 @@ Pervasive data type BOOLEAN is the one and only boolean type. No facility
 exists to define other data types as boolean types.
 
 
-4.1.3 The Semantics of Set Types
+4.3.3 The Semantics of Set Types
 
 Set types are data types that represent mathematical sets with a finite number
 of elements. The following operations are defined for set types:
@@ -652,7 +848,7 @@ Pervasive data types BITSET and LONGBITSET, and all types defined using the
 "SET OF" type constructor are set types.
 
 
-4.1.4 The Semantics of Whole Number Types
+4.3.4 The Semantics of Whole Number Types
 
 Whole number types are data types that represent subranges of the mathematical
 set of integers (Z), always with a finite number of values. The following
@@ -684,7 +880,7 @@ Pervasive data types OCTET, CARDINAL, LONGCARD, INTEGER and LONGINT are whole
 number types.
 
 
-4.1.5 The Semantics of Real Number Types
+4.3.5 The Semantics of Real Number Types
 
 Real number types are data types that represent subranges of the mathematical
 set of real numbers (R), always with a finite number of values. The following
@@ -712,7 +908,7 @@ operations are defined for real number types:
 Pervasive data types REAL and LONGREAL are real number types.
 
 
-4.1.6 The Semantics of Array Types
+4.3.6 The Semantics of Array Types
 
 Array types are compound data types whose components are all of the same type.
 The following operations are defined for array types:
@@ -728,7 +924,7 @@ The following operations are defined for array types:
 All data types defined using the ARRAY OF type constructor are array types.
 
 
-4.1.7 The Semantics of Character String Types
+4.3.7 The Semantics of Character String Types
 
 Character string types are arrays whose components are character types. The
 following operations are defined for character string types:
@@ -747,7 +943,7 @@ All character string data types defined using the ARRAY OF CHAR and ARRAY OF
 UNICHAR type constructor are character string types.
 
 
-4.1.8 The Semantics of Collection Types
+4.3.8 The Semantics of Collection Types
 
 Collection types are data types that represent containers for an arbitrary
 number of key-value pairs. The following operations are defined for
@@ -769,7 +965,7 @@ All data types defined using the ASSOCIATIVE ARRAY OF type constructor are
 collection types.
 
 
-4.1.9 The Semantics of Record Types
+4.3.9 The Semantics of Record Types
 
 Record types are compound data types whose components are of arbitrary types.
 The following operations are defined for record types:
@@ -783,7 +979,7 @@ The following operations are defined for record types:
 All data types defined using the RECORD type constructor are record types.
 
 
-4.1.10 The Semantics of Pointer Types
+4.3.10 The Semantics of Pointer Types
 
 Pointer types are data types that represent references to a storage location. 
 The following operations are defined for pointer types:
@@ -798,7 +994,7 @@ The following operations are defined for pointer types:
 All data types defined using the POINTER TO type constructor are pointer types.
 
 
-4.1.11 The Semantics of Procedure Types
+4.3.11 The Semantics of Procedure Types
 
 Procedure types are special pointer types that reference the storage location
 of a procedure and store the formal parameters of a procedure prototype. The
@@ -814,7 +1010,7 @@ All procedure types defined using the PROCEDURE type constructor are procedure
 types and all procedures and functions are values of a procedure type.
 
 
-4.1.12 The Semantics of Opaque Types
+4.3.12 The Semantics of Opaque Types
 
 Opaque types are data types whose structure and semantics are only available
 in the implementation part of the library module that defines the opaque type.
@@ -839,7 +1035,7 @@ types. All data types defined using a the OPAQUE RECORD type constructor are
 opaque record types.
 
 
-4.2 Library Defined Semantic Types
+4.4 Library Defined Semantic Types
 
 The standard library provides a set of semantic type definitions in order to
 allow the construction of library defined abstract data types with the same
@@ -851,55 +1047,55 @@ that defines the ADT must specify the semantic type in the module header of
 its defintion part.
 
 
-4.2.1 Library Defined Whole Number Type Semantics
+4.4.1 Library Defined Whole Number Type Semantics
 
 The standard library provides the ZTYPE as a library defined semantic type for
 library defined whole number types. For semantic compatibility, its definition
 matches the semantics of the built-in semantic type for whole number types.
 
 
-4.2.2 Library Defined Real Number Type Semantics
+4.4.2 Library Defined Real Number Type Semantics
 
 The standard library provides the RTYPE as a library defined semantic type for
 library defined real number types. For semantic compatibility, its definition
 matches the semantics of the built-in semantic type for real number types.
 
 
-4.2.3 Library Defined Complex Number Type Semantics
+4.4.3 Library Defined Complex Number Type Semantics
 
 The standard library provides the CTYPE as a library defined semantic type for
 library defined complex number types. Its definition matches the mathematic
 definition of complex numbers. CTYPE has no built-in equivalent.
 
 
-4.2.4 Library Defined Numeric Vector Type Semantics
+4.4.4 Library Defined Numeric Vector Type Semantics
 
 The standard library provides the VTYPE as a library defined semantic type for
 library defined numeric vector types. Its definition matches the mathematic
 definition of numeric vectors. VTYPE has no built-in equivalent.
 
 
-4.2.5 Library Defined Date-Time Type Semantics
+4.4.5 Library Defined Date-Time Type Semantics
 
 The standard library provides the DateType as a library defined semantic type
 for library defined date-time types. DateType has no built-in equivalent.
 
 
-4.2.6 Library Defined Set Type Semantics
+4.4.6 Library Defined Set Type Semantics
 
 The standard library provides the SetType as a library defined semantic type
 for library defined static set types. For semantic compatibility, its defini-
 tion matches the semantics of the built-in semantic type for set types.
 
 
-4.2.7 Library Defined Array Type Semantics
+4.4.7 Library Defined Array Type Semantics
 
 The standard library provides the ArrayType as a library defined semantic type
 for library defined dynamic array types. For semantic compatibility, its de-
 finition matches the semantics of the built-in semantic type for array types.
 
 
-4.2.8 Library Defined Collection Type Semantics
+4.4.8 Library Defined Collection Type Semantics
 
 The standard library provides the CollectionType as a library defined semantic
 type for library defined dynamic collection types. For semantic compatibility,
@@ -907,7 +1103,7 @@ its definition matches the semantics of the built-in semantic type for col-
 lection types.
 
 
-4.2.9 Library Defined Character String Type Semantics
+4.4.9 Library Defined Character String Type Semantics
 
 The standard library provides the StringType as a library defined semantic
 type for library defined dynamic character string types. For semantic compati-
@@ -915,7 +1111,7 @@ bility, its definition matches the semantics of the built-in semantic type for
 character string types.
 
 
-4.2.10 CAUTION - Do Not Modify Semantic Type Definitions
+4.4.10 CAUTION - Do Not Modify Semantic Type Definitions
 
 For semantic compatibility, the library provided semantic type definitions
 exactly match the semantics of their corresponding built-in counterparts.
@@ -924,13 +1120,13 @@ types to behave differently from their built-in counterparts. For this
 reason, library defined definitions of semantic types should not be changed.
 
 
-4.2.11 User Defined Semantic Types
+4.4.11 User Defined Semantic Types
 
 User libraries may provide their own semantic type definitions for their own
 custom designed abstract data types.
 
 
-4.3 Abstract Data Types
+4.5 Abstract Data Types
 
 Opaque pointer types and opaque record types are predominantly used to define
 abstract data types (ADTs). An ADT is a data type whose internal structure
@@ -988,14 +1184,14 @@ BEGIN
 END UseBCD.
 
 
-4.4 Library Defined ADTs Using Semantic Types and Bindings
+4.6 Library Defined ADTs Using Semantic Types and Bindings
 
 The standard library provides a rich set of library defined ADTs that use
 bindings and are practically inistinguishable from pervasive types and
 transparent data types defined using type constructor syntax.
 
 
-4.4.1 Library Defined Bitset ADTs
+4.6.1 Library Defined Bitset ADTs
 
 The standard library provides bitset ADTs whose semantics match those of the
 pervasive bitset types BITSET and LONGBITSET. The library defined bitset ADTs
@@ -1017,7 +1213,7 @@ VAR set, union : BITSET16;
 BEGIN set := { 0, 7, 15 }; union := set + { 1, 2, 4 }; set[1] := FALSE END;
 
 
-4.4.2 Library Defined Unsigned Integer ADTs
+4.6.2 Library Defined Unsigned Integer ADTs
 
 The standard library provides unsigned integer ADTs whose semantics match
 those of the pervasive types CARDINAL and LONGCARD. The library defined
@@ -1039,7 +1235,7 @@ VAR a, sum : CARDINAL16;
 BEGIN a := 123; sum := a + 456; WRITE(StdOut, sum) END;
 
 
-4.4.3 Library Defined Signed Integer ADTs
+4.6.3 Library Defined Signed Integer ADTs
 
 The standard library provides signed integer ADTs whose semantics match
 those of the pervasive types INTEGER and LONGINT. The library defined signed
@@ -1061,7 +1257,7 @@ VAR a, diff : INTEGER16;
 BEGIN a := 123; diff := a - 456; WRITE(StdOut, diff) END;
 
 
-4.4.4 Library Defined BCD Real Number ADTs
+4.6.4 Library Defined BCD Real Number ADTs
 
 The standard library provides binary coded Decimals (BCD) real number ADTs
 whose semantics match those of the pervasive types REAL and LONGREAL. The
@@ -1074,7 +1270,7 @@ VAR a, amount : BCD;
 BEGIN a := 123.45; amount := a * 1.05; WRITE(StdOut, amount) END;
 
 
-4.4.5 Library Defined Complex Number ADTs
+4.6.5 Library Defined Complex Number ADTs
 
 The standard library provides complex number ADTs whose semantics conform to
 semantic type CTYPE. The library defined complex number ADTs are COMPLEX and
@@ -1087,7 +1283,7 @@ VAR z, zsum : COMPLEX;
 BEGIN z := { 1.23, 4.56 }; zsum := z + { 1.0, 0.5 }; WRITE(StdOut, zsum) END;
 
 
-4.4.6 Library Defined Character Set ADTs
+4.6.6 Library Defined Character Set ADTs
 
 The standard library provides a character set ADT whose semantics conform to
 semantic type SetType. The library defined character set ADT is CHARSET.
@@ -1100,7 +1296,7 @@ BEGIN found := FALSE; delimiters := { ":", ",", "." };
 FOR char IN "foo:bar.baz,bam" DO IF delimiters IN char THEN EXIT END END END;
 
 
-4.4.7 Library Defined Character String ADTs
+4.6.7 Library Defined Character String ADTs
 
 The standard library provides dynamic string ADTs whose semantics conform to
 semantic type StringType. The library defined dynamic string ADTs are STRING
@@ -1113,7 +1309,7 @@ VAR s : STRING;
 BEGIN NEW(s, 20); s := "the quick brown fox"; WRITE(stdOut, s); DISPOSE(s) END;
 
 
-4.4.8 Library Defined DateTime ADTs
+4.6.8 Library Defined DateTime ADTs
 
 The standard library provides two date-time ADTs that conform to semantic
 type DateType. The library defined ADTs are DateTime and Time.
@@ -1219,10 +1415,10 @@ TYPE Volume = INTEGER;
 TYPE HashTable = OPAQUE;
 
 
-5.5.1 Strict Name Equivalence
+5.3.1 Strict Name Equivalence
 
-Modula-2 R10 uses strict name equivalence. By default types of different names
-are always incompatible even if they are derived from the same base type.
+By default types of different names are always incompatible even if they are
+derived from the same base type.
 
 Example:
 
@@ -1238,7 +1434,7 @@ Example:
 celsius := (fahrenheit - 32.0) * 100.0/180.0 :: Celsius; (* type conversion *)
 
 
-5.5.2 Alias Types
+5.3.2 Alias Types
 
 If a type is desired to be compatible with another type it must be defined or
 declared as an alias type.
@@ -1251,7 +1447,7 @@ VAR i : INT; j : INTEGER;
 i := j; (* i and j are compatible *)
 
 
-5.5.3 Opaque Types
+5.3.3 Opaque Types
 
 A type may be defined as an opaque type. The identifier of an opaque type is
 available in the library where it is defined and in modules that import it.
@@ -1265,7 +1461,7 @@ There are two types of opaque types:
 * opaque record types
 
 
-5.5.3.1 Opaque Pointers
+5.3.3.1 Opaque Pointers
 
 An opaque pointer type is a pointer to a type whose declaration is hidden in
 the corresponding implementation part. Objects of the abstract data type can
@@ -1293,7 +1489,7 @@ VAR tree : Tree;
 NEW(tree); (* dynamic allocation of a variable of abstract data type Tree *)
 
 
-5.5.3.2 Opaque Records
+5.3.3.2 Opaque Records
 
 An opaque record type is an opaque type that represents a record type instead
 of a pointer to a record type. Objects of the abstract data type can be
@@ -1324,7 +1520,7 @@ VAR bigInt : BigInteger; i : INTEGER;
 i := bigInt.highDigits; (* compile time error: hidden component *)
 
 
-5.5.4 Anonymous Types
+5.3.4 Anonymous Types
 
 An anonymous type is a type that does not have a type identifier associated
 with it. However, in languages with name equivalence, the names of the types
@@ -1345,7 +1541,7 @@ EBNF:
 anonymousType : arrayType | pointerType | procedureType ;
 
 
-5.5.5 Enumeration Types
+5.3.5 Enumeration Types
 
 An enumeration type is an ordinal type whose legal values are defined by a list
 of identifiers. The identifiers are assigned ordinal values from left to right.
@@ -1427,7 +1623,7 @@ VAR array : AA;
 array["foo"] := 0; array["bar"] := -123; array["baz"] := 456;
 
 
-5.5.7 Record Types
+5.3.7 Record Types
 
 A record type is a compound type whose components are of arbitrary types. The
 components are called fields. Record types may be defined as extensions of
@@ -1460,7 +1656,7 @@ VAR point : Point; cPoint : ColourPoint;
 cPoint := { 0.0, 0.0, Colour.black }; point := cPoint :: Point; 
 
 
-5.5.8 Set Types
+5.3.8 Set Types
 
 A set type is a static collection type for a fixed number of key/value pairs.
 Its keys are of ordinal type and its values are of type BOOLEAN. A key whose
@@ -1507,7 +1703,7 @@ intPtr^ := 0; (* OK *)
 immPtr^ := 0; (* compile time error: attempt to modify an immutable object *)
 
 
-5.5.10 Procedure Types
+5.3.10 Procedure Types
 
 A procedure type is a special pointer type for references to procedures of
 given procedure headers. Procedure types are defined using the PROCEDURE
@@ -1537,7 +1733,7 @@ VAR WriteStr : WriteStrProc;
 WriteStr := Terminal.WriteString; WriteStr("hi!");
 
 
-5.6 Procedure Definitions and Declarations
+5.4 Procedure Definitions and Declarations
 
 A procedure is a sequence of actions to perform a computation identified by a
 name. In Modula-2, may have zero or more parameters associated and they may or
@@ -1554,7 +1750,7 @@ part and corresponding procedure declarations are placed in the library's
 implementation part.
 
 
-5.6.1 The Procedure Header
+5.4.1 The Procedure Header
 
 The procedure header represents the interface of a procedure. A procedure
 header always defines a procedure's identifier. It may further define a
@@ -1586,7 +1782,7 @@ Example:
 PROCEDURE IsNegative ( x : INTEGER ) : BOOLEAN;
 
 
-5.6.2 The Procedure Body
+5.4.2 The Procedure Body
 
 A procedure body consists of any local variable declarations, any local proce-
 dure declarations and the procedure's execution block that represents the
@@ -1610,7 +1806,7 @@ BEGIN (* body *)
 END IsNegative;
 
 
-5.6.3 Formal Parameters
+5.4.3 Formal Parameters
 
 The parameters in the parameter list of a procedure header are called the
 procedure's formal parameters. There are simple formal parameters and
@@ -1623,7 +1819,7 @@ formalParamList : formalParams ( ';' formalParams )* ;
 formalParams : simpleFormalParams | variadicFormalParams ;
 
 
-5.6.3.1 Simple Formal Parameters
+5.4.3.1 Simple Formal Parameters
 
 A formal parameter always specifies a type, and it may or may not specify an
 attribute. A formal parameter's attribute determines the parameter passing
@@ -1641,7 +1837,7 @@ There are three passing conventions:
 * pass by reference, immutable
 
 
-5.6.3.2 Pass By Value
+5.4.3.2 Pass By Value
 
 When the pass-by-value convention is used, a copy of the respective parameter
 is passed to the called procedure and the scope of the copy is the procedure's
@@ -1654,7 +1850,7 @@ PROCEDURE IsNegative ( x : INTEGER ) : BOOLEAN;
 (* no attribute => pass-by-value *)
 
 
-5.6.3.3 Pass By Reference - Mutable
+5.4.3.3 Pass By Reference - Mutable
 
 When the pass-by-reference-mutable convention is used, a reference to the
 parameter is passed to the called procedure and the procedure may modify
@@ -1674,7 +1870,7 @@ number := 1; Increment(number); (* number is now 2 *)
 CONST zero = 0; Increment(zero); (* compile time error: immutable object *)
 
 
-5.6.3.4 Pass By Reference - Immutable
+5.4.3.4 Pass By Reference - Immutable
 
 When the pass-by-reference-immutable convention is used, a reference to the
 parameter is passed to the called procedure but the procedure may not modify
@@ -1688,7 +1884,7 @@ PROCEDURE WriteString ( CONST s : ARRAY OF CHAR );
 (* CONST => pass-by-reference, immutable *)
 
 
-5.6.3.5 Variadic Formal Parameters
+5.4.3.5 Variadic Formal Parameters
 
 Modula-2 R10 supports type-safe variadic procedures. For this purpose, a
 a formal parameter list may contain one or more variadic formal parameter
@@ -1710,7 +1906,7 @@ There are three variadic parameter passing conventions:
 * variadic list terminator
 
 
-5.6.3.6 Automatic Variadic Counter
+5.4.3.6 Automatic Variadic Counter
 
 When the automcatic-variadic-counter convention is used, the compiler
 determines the number of actual parameters passed in the procedure call and
@@ -1731,7 +1927,7 @@ invoked as:  Variadic(0, 1, 2, 3, 4);
 compiled as: Variadic(5, 0, 1, 2, 3, 4); (* compiler inserts counter *)
 
 
-5.6.3.7 Explicit Variadic Counter
+5.4.3.7 Explicit Variadic Counter
 
 When the explicit-variadic-counter convention is used, the compiler
 determines the number of actual parameters passed in the procedure call and
@@ -1754,7 +1950,7 @@ invoked as:  Variadic(42, 0, 1, 2, 3, 4);
 compiled as: Variadic(5, 42, 0, 1, 2, 3, 4); (* compiler inserts counter *)
 
 
-5.6.3.7 Variadic List Terminator
+5.4.3.7 Variadic List Terminator
 
 When the variadic-list-terminator convention is used, the compiler determines
 the number of actual parameters passed in the procedure call and automatically
@@ -1778,7 +1974,7 @@ invoked as:  Variadic(0, 1, 2, 3, 4);
 compiled as: Variadic(0, 1, 2, 3, 4, -1); (* compiler inserts terminator *)
 
 
-5.6.3.8 Variadic List With Multiple Components
+5.4.3.8 Variadic List With Multiple Components
 
 A variadic formal parameter may contain multiple components. This is useful to
 define procedures that can accept a variable number of value pairs, or other
@@ -1793,7 +1989,7 @@ invoked as:  Insert(tree, "foo", 123, "bar", 456, "baz", 789);
 compiled as: Insert(tree, 3, "foo", 123, "bar", 456, "baz", 789);
 
 
-5.6.3.9 Variadic List Followed By Further Parameters
+5.4.3.9 Variadic List Followed By Further Parameters
 
 A variadic parameter list may always be passed as a structured value, regard-
 less of the formal parameter list of the variadic procedure. However, when
@@ -1811,7 +2007,7 @@ invoked as:  Insert(tree, { "foo", 123, "bar", 456, "baz", 789 }, status);
 compiled as: Insert(tree, 3, "foo", 123, "bar", 456, "baz", 789, status);
 
 
-5.6.3.10 Open Array Parameters
+5.4.3.10 Open Array Parameters
 
 A formal parameter may be declared as an open array parameter. An open array
 parameter has an anonymous array type without any index specified. Any array
@@ -1833,7 +2029,7 @@ PROCEDURE Write ( s : ARRAY OF CHAR );
 str := "hello"; Write(str); (* any CHAR array is compatible *)
 
 
-5.6.3.11 Auto-Casting Open Array Parameters
+5.4.3.11 Auto-Casting Open Array Parameters
 
 Open array parameters with component type OCTET, SYSTEM.BYTE or SYSTEM.WORD
 have auto-casting semantics. Any value of any type may then be passed as an
@@ -1850,7 +2046,7 @@ PROCEDURE Copy ( CONST source : ARRAY OF OCTET; VAR target : ARRAY OF OCTET );
 str := "hello"; Copy(str, x); (* casting copy *)
 
 
-5.6.4 Procedure Type Compatibility
+5.4.4 Procedure Type Compatibility
 
 The types of the formal parameters and the return type of a procedure are
 collectively called the procedure's signature. The signature determines the
@@ -1868,7 +2064,7 @@ p := StripTabs; (* OK *)
 p := WriteString; (* compile time error: incompatible types *)
 
 
-5.6.5 Operator Bound Procedures
+5.4.5 Operator Bound Procedures
 
 A procedure may be defined to bind to an operator or a pervasive procedure in
 respect of an abstract data type defined to conform to a semantic type. Only
@@ -1885,7 +2081,7 @@ PROCEDURE [+] add ( a, b : BCD ) : BCD;
 END BCD.
 
 
-5.6.6 Type Bound Procedures
+5.4.6 Type Bound Procedures
 
 A procedure may be defined to bind to a type.
 
