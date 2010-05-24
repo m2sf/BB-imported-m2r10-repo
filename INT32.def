@@ -145,4 +145,4 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    INT32 arguments. *)
 
-END INT32.
+END INT32. (* thirty-two *)

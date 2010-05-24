@@ -141,4 +141,4 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    CARD32 arguments. *)
 
-END CARD32.
+END CARD32. (* thirty-two *)

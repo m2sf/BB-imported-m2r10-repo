@@ -141,4 +141,4 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    CARD16 arguments. *)
 
-END CARD16.
+END CARD16. (* sixteen *)

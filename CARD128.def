@@ -143,4 +143,4 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    CARD128 arguments. *)
 
-END CARD128.
+END CARD128. (* one-twenty-eight *)

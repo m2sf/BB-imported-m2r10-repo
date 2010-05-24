@@ -116,4 +116,4 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    BS64 arguments. *)
 
-END BS64.
+END BS64. (* sixty-four *)

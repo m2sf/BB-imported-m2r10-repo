@@ -116,4 +116,4 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    BS16 arguments. *)
 
-END BS16.
+END BS16. (* sixteen *)

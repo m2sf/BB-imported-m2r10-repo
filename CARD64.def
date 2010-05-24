@@ -142,4 +142,4 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    CARD64 arguments. *)
 
-END CARD64.
+END CARD64. (* sixty-four *)
