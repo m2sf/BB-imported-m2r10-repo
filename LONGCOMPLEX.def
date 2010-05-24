@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGCOMPLEX;
+DEFINITION MODULE LONGCOMPLEX [CTYPE];
 
 (* Double Precision Complex Numbers *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* LONGCOMPLEX type *)
 
 TYPE
-    LONGCOMPLEX = RECORD ("C-Type")
+    LONGCOMPLEX = RECORD
         re, im : LONGREAL;
     END; (* LONGCOMPLEX *)
 

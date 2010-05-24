@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE COMPLEX;
+DEFINITION MODULE COMPLEX [CTYPE];
 
 (* Single Precision Complex Numbers *) 
 
@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 (* COMPLEX type *)
 
 TYPE
-    COMPLEX = RECORD ("C-Type")
+    COMPLEX = RECORD
         re, im : REAL;
     END; (* COMPLEX *)
 
