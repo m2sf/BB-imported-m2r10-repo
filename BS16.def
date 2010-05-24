@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BS16 [SetType];
+DEFINITION MODULE BS16 [SetType]; (* Sixteen one-six *)
 
 (* 16-bit Bitset *)
 
@@ -116,4 +116,4 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    BS16 arguments. *)
 
-END BS16. (* sixteen *)
+END BS16.

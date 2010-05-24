@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BS64 [SetType];
+DEFINITION MODULE BS64 [SetType]; (* Sixty-four six-four *)
 
 (* 64-bit Bitset *)
 
@@ -116,4 +116,4 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    BS64 arguments. *)
 
-END BS64. (* sixty-four *)
+END BS64.
