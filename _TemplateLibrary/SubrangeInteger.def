@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE @@module@@;
+DEFINITION MODULE @@module@@ [ZType];
 %% (*
 %% SubrangeInteger - Generic Integer Subrange Type Template
 %%
@@ -30,7 +30,7 @@ IMPORT @@baseType@@;
 (* @@module@@ type *)
 
 TYPE
-    @@module@@ = OPAQUE RECORD ("Z-Type")
+    @@module@@ = OPAQUE RECORD
         value : @@baseType@@; 
     END; (* @@module@@ *)
 
