@@ -4,7 +4,7 @@ M2R10 PERVASIVE IDENTIFIERS
 
 1) Predefined Constants
 
-NIL         invalid pointer value, 0 :: POINTER TO CONST OCTET
+NIL         invalid pointer value
 TRUE        boolean value, BOOLEAN.TRUE
 FALSE       boolean value, BOOLEAN.FALSE
 

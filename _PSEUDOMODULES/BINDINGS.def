@@ -129,7 +129,7 @@ PROCEDURE [FROM] fromSXF ( VAR x : <ADT>; CONST s : ARRAY OF CHAR );
 
 (* Binding for accessor to [ ] operator *)
 
-PROCEDURE [.] retrieve ( x : <ADT>; key : <KeyType> ) : <ValueType>;
+PROCEDURE [?] retrieve ( x : <ADT>; key : <KeyType> ) : <ValueType>;
 (* Signature for a procedure that binds to the [ ] operator
    for expressions of the form  x[key]  where x is of type <ADT>. *)
 
