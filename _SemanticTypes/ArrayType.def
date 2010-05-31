@@ -13,7 +13,7 @@ TYPE = OPAQUE RECORD;
 
 (* Bindings permitted for ArrayType ADTs *)
 
-PROCEDURE [.]; (* allow accessor binding to [ ] operator *)
+PROCEDURE [?]; (* allow accessor binding to [ ] operator *)
 
 PROCEDURE [!]; (* allow mutator binding to [ ] operator *)
 

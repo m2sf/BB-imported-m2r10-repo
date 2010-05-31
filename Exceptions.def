@@ -28,7 +28,7 @@ PROCEDURE [NEW] new ( VAR dispatchTable : Exceptions );
 
 (* Accessor *)
 
-PROCEDURE [.] handlerForException ( dispatchTable : Exceptions;
+PROCEDURE [?] handlerForException ( dispatchTable : Exceptions;
                 e : Exception; VAR found : BOOLEAN ) : Handler;
 (* Searches for exception <e> in <dispatchTable>. If it is found then TRUE is
    passed back in <found> and the topmost handler of <e> is returned, otherwise

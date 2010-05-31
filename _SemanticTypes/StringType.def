@@ -21,7 +21,7 @@ PROCEDURE [:=]; (* allow binding to assignment operator *)
 
 PROCEDURE [::]; (* allow binding to conversion operator *)
 
-PROCEDURE [.]; (* allow accessor binding to [ ] operator *)
+PROCEDURE [?]; (* allow accessor binding to [ ] operator *)
 
 PROCEDURE [!]; (* allow mutator binding to [ ] operator *)
 

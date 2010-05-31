@@ -17,7 +17,7 @@ PROCEDURE [NEW]; (* allow binding to NEW procedure *)
 
 PROCEDURE [DISPOSE]; (* allow binding to DISPOSE procedure *)
 
-PROCEDURE [.]; (* allow accessor binding to [ ] operator *)
+PROCEDURE [?]; (* allow accessor binding to [ ] operator *)
 
 PROCEDURE [!]; (* allow mutator binding to [ ] operator *)
 

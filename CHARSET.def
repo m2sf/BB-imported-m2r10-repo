@@ -25,7 +25,7 @@ PROCEDURE [:=] assign ( VAR assignTo : CHARSET;
 
 (* accessor *)
 
-PROCEDURE [.] isElement ( CONST set : CHARSET; ch : CHAR ) : BOOLEAN;
+PROCEDURE [?] isElement ( CONST set : CHARSET; ch : CHAR ) : BOOLEAN;
 (* Returns TRUE if character ch is an element of CHARSET set, otherwise FALSE.
    This function is bound to the array operator [ ] and the IN operator
    for rvalues of type CHARSET. *)

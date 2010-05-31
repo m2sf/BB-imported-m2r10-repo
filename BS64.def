@@ -25,7 +25,7 @@ PROCEDURE [:=] assign ( VAR assignTo : BS64;
 
 (* accessor *)
 
-PROCEDURE [.] isElement ( CONST set : BS64; element : CARDINAL ) : BOOLEAN;
+PROCEDURE [?] isElement ( CONST set : BS64; element : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if element is an element of BS64 set, otherwise FALSE.
    This function is bound to the array operator [ ] and the IN operator
    for rvalues of type BS64. *)

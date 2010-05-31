@@ -25,7 +25,7 @@ PROCEDURE [NEW] new ( VAR s : STRING );
 
 (* accessor *)
 
-PROCEDURE [.] characterAtIndex ( s : STRING; index : LONGCARD ) : CHAR;
+PROCEDURE [?] characterAtIndex ( s : STRING; index : LONGCARD ) : CHAR;
 (* Returns the character at the specified index in STRING s. This function
    is bound to the array operator [ ] for rvalues of type STRING. *)
 
