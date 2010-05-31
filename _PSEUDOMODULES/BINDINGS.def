@@ -129,15 +129,26 @@ PROCEDURE [FROM] fromSXF ( VAR x : <ADT>; CONST s : ARRAY OF CHAR );
 
 (* Binding for accessor to [ ] operator *)
 
-PROCEDURE [?] retrieve ( x : <ADT>; key : <KeyType> ) : <ValueType>;
+PROCEDURE [?] retrieve ( x                  : <ADT>;
+                         key (* or index *) : <KeyType>;
+                         VAR value          : <ValueType>;
+                         VAR found          : BOOLEAN );
 (* Signature for a procedure that binds to the [ ] operator
    for expressions of the form  x[key]  where x is of type <ADT>. *)
 
 (* Binding for mutator to [ ] operator *)
 
-PROCEDURE [!] store ( x : <ADT>; key : <KeyType>; value : <ValueType> );
+PROCEDURE [!] store ( x                  : <ADT>;
+                      key (* or index *) : <KeyType>;
+                      CONST value        : <ValueType>;
+                      remove             : BOOLEAN );
 (* Signature for a procedure that binds to the [ ] operator
    for assignments the form  x[key] := value  where x is of type <ADT>. *)
+
+(* expressions and assignments are translated as follows:
+   retrieval :  value := dict[key]  =>  retrieveValue(dict, key, value, found)
+   storage   :  dict[key] := value  =>  storeValue(dict, key, value, FALSE)
+   removal   :  dict[key] := NIL    =>  storeValue(dict, key, value, TRUE) *)
 
 
 (* Bindings to COUNT and LENGTH functions *)

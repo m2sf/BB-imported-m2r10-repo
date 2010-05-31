@@ -22,32 +22,32 @@ PROCEDURE [NEW] new ( VAR dict : Dictionary );
 
 (* accessor *)
 
-PROCEDURE [.] valueForKey ( dict : Dictionary;
-                            key : KeyType; VAR found : BOOLEAN ) : ValueType;
-(* Searches for key in dict, passes TRUE in found if the key is present
-   and returns its value, otherwise passes FALSE. This function is bound
-   to the array operator [ ] for rvalues of type Dictionary. *)
+PROCEDURE [?] retrieveValue ( dict      : Dictionary;
+                              key       : KeyType;
+                              VAR value : ValueType;
+                              VAR found : BOOLEAN );
+(* Searches for key in dict. If key is present in dict, its value is passed
+   back in value and TRUE is passed back in found. If key is not present in
+   dict, no value is passed back in value and FALSE is passed back in found.
+   This procedure is bound to the [ ] operator for expressions of the form
+   dict[key] where dict is of type Dictionary and key is of type KeyType. *)
 
 
 (* mutators *)
 
-PROCEDURE [!] storeValue ( dict : Dictionary;
-                           key : KeyType; value : ValueType );
-(* Stores value for key in dict, overwrites the previous value if key is
-   already present in dict. This procedure is bound to the array operator [ ]
-   for lvalues of type Dictionary. *)
-
-PROCEDURE [-] removeValue ( dict : Dictionary; key : KeyType );
-(* Removes the entry whose key is key from dict. This procedure is bound
-   to the array operator [ ] for lvalues of type Dictionary in assignments
-   where the rvalue is the null key for type Dictionary. *)
-
-
-(* membership test *)
-
-PROCEDURE [IN] keyExists ( dict : Dictionary; key : KeyType ) : BOOLEAN;
-(* Returns TRUE if key is present in dict, otherwise returns FALSE. This
-   function is bound to the IN operator for type Dictionary. *)
+PROCEDURE [!] storeValue ( dict         : Dictionary;
+                           key          : KeyType;
+                           CONST value  : ValueType;
+                           remove       : BOOLEAN );
+(* Stores or modifies a key/value pair in dict. If key is not present in dict
+   and FALSE is passed in remove, the key/value pair is stored in dict. If key
+   is present in dict and FALSE is passed in remove, the value of key is re-
+   placed by value. If key is present in dict and TRUE is passed in remove,
+   the key/value pair is removed. If key is not present in dict and TRUE is
+   passed in remove, the procedure returns without effect. This procedure is
+   bound to the [ ] operator for assignments of the form dict[key] := value
+   where dict is of type Dictionary, key is of type KeyType and value is of
+   type ValueType or NIL: *)
 
 
 (* counter *)
