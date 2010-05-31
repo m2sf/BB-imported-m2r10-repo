@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 
 TYPE
     BS16 = OPAQUE RECORD
-        ARRAY 2 OF OCTET; (* 16 bits *)
+        bits : ARRAY 2 OF OCTET; (* 16 bits *)
     END; (* BS16 *)
 
 
