@@ -6,9 +6,9 @@ BINDINGS FOR CollectionType;
 
 
 (* ADTs must be opaque records,
-   no literals may be used *)
+   no literals may be used, NIL may be assigned to remove an entry *)
 
-TYPE = OPAQUE;
+TYPE = OPAQUE := NIL;
 
 
 (* Bindings permitted for CollectionType ADTs *)
