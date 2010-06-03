@@ -638,7 +638,7 @@ An expression e may be passed to a named-type VAR parameter p if:
 * e is a mutable variable designator
   and e is assignment compatible with p
 
-An expression e may be passed to a named-type non-VAR parameter p if:
+An expression e may be passed to a named-type CONST or value parameter p if:
 
 * e is not a mutable variable designator
   and e is assignment compatible with the type of p
@@ -654,7 +654,7 @@ An expression e may be passed to an open array VAR parameter p if:
 * e is a mutable variable designator
   and the base type of p is OCTET, SYSTEM.BYTE or SYSTEM.WORD
 
-An expression e may be passed to an open array non-VAR parameter p if:
+An expression e may be passed to an open array CONST or value parameter p if:
 
 * e is not a mutable variable designator,
   the type of e is an array type,
@@ -1546,8 +1546,8 @@ For this reason, anonymous types are of very limited use in languages with
 name equivalence. Nevertheless, Modula-2 R10 allows the use of anonymous
 types in the following cases:
 
-* anonymous one-dimensional arrays in variable declarations
 * anonymous one-dimensional arrays as record fields
+* anonymous one-dimensional arrays in variable declarations
 * anonymous open arrays as formal parameters of procedures
 
 
@@ -1966,10 +1966,11 @@ There are three passing conventions:
 
 5.4.3.2 Pass By Value
 
-When the pass-by-value convention is used, a copy of the respective parameter
-is passed to the called procedure and the scope of the copy is the procedure's
-body. The pass-by-value convention is the default. It is used when a formal
-parameter does not specify any attribute.
+The default parameter passing convention is pass-by-value. It is used when no
+attribute is specified for a parameter or parameter list. A parameter passed
+by value is called a value parameter. When the pass-by-value convention is
+used, a copy of the value parameter is passed to the called procedure and
+the scope of the copy is the procedure's body.
 
 Example:
 
@@ -1979,10 +1980,12 @@ PROCEDURE IsNegative ( x : INTEGER ) : BOOLEAN;
 
 5.4.3.3 Pass By Reference - Mutable
 
-When the pass-by-reference-mutable convention is used, a reference to the
-parameter is passed to the called procedure and the procedure may modify
-the passed in variable's value. The VAR attribute denotes this convention.
-Immutable objects may not be passed as VAR parameters.
+The pass-by-mutable-reference convention is used when the VAR attribute is
+specified for a parameter or parameter list. A parameter passed by mutable-
+reference is called a VAR parameter. When the pass-by-mutable-reference
+convention is used, a mutable reference to the parameter is passed to the
+called procedure and the procedure may modify the passed in variable's value.
+Immutable objects may not be passed by mutable-reference.
 
 Example:
 
@@ -1999,11 +2002,13 @@ CONST zero = 0; Increment(zero); (* compile time error: immutable object *)
 
 5.4.3.4 Pass By Reference - Immutable
 
-When the pass-by-reference-immutable convention is used, a reference to the
-parameter is passed to the called procedure but the procedure may not modify
-the passed in variable's value. That is, within the scope of the procedure,
-the parameter is treated as if it was a constant. The CONST attribute denotes
-this convention. Immutable objects may be passed as CONST parameters.
+The pass-by-immutable-reference convention is used when the CONST attribute is
+specified for a parameter or parameter list. A parameter passed by immutable-
+reference is called a CONST parameter. When the pass-by-immutable-reference
+convention is used, an immutable reference to the parameter is passed to the
+called procedure and the procedure may not modify a passed in value. That is,
+within the scope of the procedure the parameter is treated as if it was a
+constant. Mutable and immutable objects may be passed as CONST parameters.
 
 Example:
 
