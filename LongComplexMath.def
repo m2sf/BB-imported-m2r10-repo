@@ -20,8 +20,11 @@ PROCEDURE conj ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 PROCEDURE power ( base : LONGCOMPLEX; exponent : LONGREAL ) : LONGCOMPLEX;
 (* Returns the value of base raised to the power exponent. *)
 
+PROCEDURE exp ( z : LONGCOMPLEX ) : LONGCOMPLEX;
+(* Returns the complex exponential of z. *)
+
 PROCEDURE sqrt ( z : LONGCOMPLEX ) : LONGCOMPLEX;
-(* Returns the square root of z. *)
+(* Returns the principal square root of z. *)
 
 PROCEDURE ln ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the natural logarithm of z. *)

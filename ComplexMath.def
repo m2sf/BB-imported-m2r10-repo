@@ -20,8 +20,11 @@ PROCEDURE conj ( z : COMPLEX ) : COMPLEX;
 PROCEDURE power ( base : COMPLEX; exponent : REAL ) : COMPLEX;
 (* Returns the value of base raised to the power exponent. *)
 
+PROCEDURE exp ( z : COMPLEX ) : COMPLEX;
+(* Returns the complex exponential of z. *)
+
 PROCEDURE sqrt ( z : COMPLEX ) : COMPLEX;
-(* Returns the square root of z. *)
+(* Returns the principal square root of z. *)
 
 PROCEDURE ln ( z : COMPLEX ) : COMPLEX;
 (* Returns the natural logarithm of z. *)
