@@ -1684,7 +1684,7 @@ meets all of the following constraints:
 * it contains only one indeterminate field
 * the indeterminate field is the last field
 * the type of its indeterminate field is an array
-* it also constains a determinant field of a whole number type
+* it also contains a determinant field of a whole number type
 * the determinant field is referenced as the indeterminate field's array size
 
 Indeterminate record types are the type-safe equivalent of structs with
