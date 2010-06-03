@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status May 30, 2010 */
+/* M2R10 grammar in ANTLR EBNF notation -- status June 4, 2010 */
 
 
 options {
@@ -457,7 +457,7 @@ constTerm :
 
 // production #50
 mulOperator :
-	'*' | '/' | DIV | MOD | AND | '&'
+	'*' | '/' | DIV | MOD | AND
 	{} // make ANTLRworks display separate branches
 	;
 
@@ -465,7 +465,7 @@ mulOperator :
 constFactor :
 	( number | string | constQualident | constStructuredValue |
 	'(' constExpression ')' ) ( '::' namedType )?
-	| ( NOT | '~' {}) constFactor
+	| NOT constFactor
 	;
 
 // production #52
@@ -503,7 +503,7 @@ factor :
 	( number | string | structuredValue |
 	  designatorOrProcedureCall | '(' expression ')' )
 	( '::' namedType )?
-	| ( NOT | '~' {}) factor
+	| NOT factor
 	;
 
 // production #59
@@ -694,7 +694,7 @@ ESCAPE_SEQUENCE :
 // ---------------------------------------------------------------------------
 // I G N O R E   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 6 productions
+// 5 productions
 
 // *** Whitespace ***
 
@@ -709,26 +709,18 @@ WHITESPACE :
 
 // production #2
 COMMENT :
-	NESTABLE_COMMENT | NON_NESTABLE_COMMENT | SINGLE_LINE_COMMENT
+	MULTI_LINE_COMMENT | SINGLE_LINE_COMMENT
 	{ $channel = HIDDEN; } // ignore
 	;
 
 // production #3
 fragment
-NESTABLE_COMMENT :
+MULTI_LINE_COMMENT :
 	'(*'
 	( options { greedy=false; }: . )* // anything other than '(*' or '*)'
-	NESTABLE_COMMENT*
+	MULTI_LINE_COMMENT*
 	'*)'
 	;	
-
-// production #4
-fragment
-NON_NESTABLE_COMMENT :
-	'/*'
-	( options { greedy=false; }: . )* // anything other than '*/'
-	'*/'
-	;
 
 // production #5
 fragment
@@ -738,7 +730,7 @@ SINGLE_LINE_COMMENT :
 	END_OF_LINE
 	;
 
-// production #6
+// production #5
 fragment
 END_OF_LINE :
 	ASCII_LF ASCII_CR? | ASCII_CR ASCII_LF?

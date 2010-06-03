@@ -1,4 +1,4 @@
-(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: June, 3, 2010] 
+(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: June, 4, 2010] 
 
 Modula-2 R10 Concise Language Description
 
@@ -46,7 +46,6 @@ List of Special Symbols
 !     mutator binding pseudo-operator
 ?     accessor binding pseudo-operator
 #     not-equal operator, obsoletes <>
-&     synonym for logical AND operator
 *     multiplication and set intersection operator
 +     addition and set union operator
 ++    postfix increment operator
@@ -67,7 +66,6 @@ List of Special Symbols
 >=    greater-than-or-equal and superset relational operator
 ^     pointer dereferencing operator
 |     punctuation, used as a separator in case label lists
-~     synonym for logical NOT operator
 '     single quote, used as a string delimiter
 "     double quote, used as a string delimiter
 \     escape symbol within a quoted string
@@ -81,8 +79,6 @@ List of Special Symbols
 //    single line comment prefix
 (*    opening delimiter for nestable comments
 *)    closing delimiter for nestable comments
-/*    opening delimiter for non-nestable comments
-*/    closing delimiter for non-nestable comments
 
 
 1.2 Non-Semantic Symbols
@@ -137,28 +133,21 @@ ELSIF            WARN             ALIGN            INLINE
 1.2.2 Comments
 
 Comments are symbols ignored by the compiler but intended for a human reader.
-There are three types of comments:
+There are two types of comments:
 
 * single line comments
 * nestable multi-line comments
-* non-nestable multi-line comments
 
 EBNF:
 
-Comment : SingleLineComment | NestableComment | NonNestableComment ;
+Comment : SingleLineComment | MultiLineComment ;
 SingleLineComment : "//" ~( EndOfLine )* EndOfLine ;
-NestableComment : "(*" ~( "*)" )* NestableComment* "*)" ;
-NonNestableComment : "/*" ~( "*/" )* "*/" ;
+MultiLineComment : "(*" ~( "*)" )* MultiLineComment* "*)" ;
 
 Examples:
 
 // comment until end-of-line
-/* This is a non-nesting comment */
 (* This is a comment (* and a comment within *) *)
-
-NB: Non-nestable C-style /* */ comments are strictly intended to allow the use
-of source code processing tools that require such comments. For ordinary multi-
-line comments, classic Modula-2 style (* *) comments should be used instead.
 
 
 1.2.3 Lexical Separators
@@ -821,8 +810,8 @@ truth values, represented by the literal constants TRUE and FALSE. Further
 to the operations defined for ordinal types, three additional operations
 are defined for the boolean type:
 
-* logical-not (NOT, ~)
-* logical-and (AND, &)
+* logical-not (NOT)
+* logical-and (AND)
 * logical-or (OR)
 
 Pervasive data type BOOLEAN is the one and only boolean type. No facility
@@ -2488,7 +2477,7 @@ constTerm :
 constFactor :
     ( NumberLiteral | StringLiteral | constQualident | constStructuredValue |
 	  "(" constExpression ")" ) ( "::" namedType )?
-    | ( NOT | "~" ) constFactor ;
+    | NOT constFactor ;
 
 expression :
     simpleExpression ( relation simpleExpression )? ;
@@ -2502,7 +2491,7 @@ term :
 factor :
     ( NumberLiteral | StringLiteral | structuredValue |
       designatorOrProcedureCall | "(" expression ")" ) ( "::" namedType )?
-    | ( NOT | "~" ) factor ;
+    | NOT factor ;
 
 relation : relationalOperator ;
 
@@ -2547,8 +2536,8 @@ operations. Operators with higher precedence are evaluated before operators
 with lower precedence. There are five different precedence levels:
 
 * level 1: ::
-* level 2: NOT, ~
-* level 3: *, /, DIV, MOD, AND, &
+* level 2: NOT
+* level 3: *, /, DIV, MOD, AND
 * level 4: +, -, OR
 * level 5: =, #, <, <=, >, >=, IN
 
@@ -2558,9 +2547,9 @@ EBNF:
 
 typeConversionOperator : "::" ;
 
-notOperator : NOT | "~" ;
+notOperator : NOT ;
 
-mulOperator : "*" | "/" | DIV | MOD | AND | "&" ;
+mulOperator : "*" | "/" | DIV | MOD | AND ;
 
 addOperator : "+" | "-" | OR ;
 
