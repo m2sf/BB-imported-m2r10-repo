@@ -127,15 +127,6 @@ PROCEDURE [FROM] fromSXF ( VAR x : <ADT>; CONST s : ARRAY OF CHAR );
    primitive fromSXF to convert scalar exchange format to type <ADT>. *)
 
 
-PROCEDURE [?] valueForKey ( x              : <ADT>;
-                            key            : <KeyType>;
-                            VAR keyIsValid : BOOLEAN ) : <ValueType>;
-(* Signature for an accessor function that binds to the [ ] operator
-   when the semantic type that <ADT> conforms to is associative.
-   Any expression or sub-expression of the form  x[key]  where x is of type
-   <ADT> will be replaced by a function call  valueForKey(x, key, isValid). *)
-
-
 (* Storage mutator binding to [ ] operator *)
 
 PROCEDURE [!] storeValue ( x           : <ADT>;
@@ -164,6 +155,14 @@ PROCEDURE [?] valueAtIndex ( x     : <ADT>;
    when the semantic type that <ADT> conforms to is not associative.
    Any expression or sub-expression of the form  x[index]  where x is of type
    <ADT> will be replaced by a function call  valueAtIndex(x, index) .*)
+
+PROCEDURE [?] valueForKey ( x              : <ADT>;
+                            key            : <KeyType>;
+                            VAR keyIsValid : BOOLEAN ) : <ValueType>;
+(* Signature for an accessor function that binds to the [ ] operator
+   when the semantic type that <ADT> conforms to is associative.
+   Any expression or sub-expression of the form  x[key]  where x is of type
+   <ADT> will be replaced by a function call  valueForKey(x, key, isValid). *)
 
 
 (* Bindings to COUNT and LENGTH functions *)
