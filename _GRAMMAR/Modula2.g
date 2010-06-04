@@ -148,7 +148,8 @@ semanticType : ident ;
 
 // production #6
 bindingsHeader :
-	TYPE '=' ( RECORD | OPAQUE RECORD? ( ':=' ( literalType | '{' '}' ) )? ) ';'
+	TYPE '=' ( RECORD | OPAQUE ( AND ASSOCIATIVE | RECORD )?
+               ( ':=' ( literalType | '{' '}' ) )? ) ';'
 	;
 
 // production #7
@@ -160,7 +161,7 @@ binding :
 // production #8
 bindableOperator :
 	DIV | MOD | IN | FOR | TO | FROM |
-	':=' | '::' | '?' | '!' | '+' | '-' | '*' | '/' | '=' | '<' | '>'
+	':=' | '::' | '?' | '!' | '~' | '+' | '-' | '*' | '/' | '=' | '<' | '>'
 	{} // make ANTLRworks display separate branches
 	;
 

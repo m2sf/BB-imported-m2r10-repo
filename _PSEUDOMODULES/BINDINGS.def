@@ -127,53 +127,43 @@ PROCEDURE [FROM] fromSXF ( VAR x : <ADT>; CONST s : ARRAY OF CHAR );
    primitive fromSXF to convert scalar exchange format to type <ADT>. *)
 
 
-(* Binding to the [ ] operator depends on the type of literal specified
-   by the semantic type that the ADT has been defined to conform to. *)
+PROCEDURE [?] valueForKey ( x              : <ADT>;
+                            key            : <KeyType>;
+                            VAR keyIsValid : BOOLEAN ) : <ValueType>;
+(* Signature for an accessor function that binds to the [ ] operator
+   when the semantic type that <ADT> conforms to is associative.
+   Any expression or sub-expression of the form  x[key]  where x is of type
+   <ADT> will be replaced by a function call  valueForKey(x, key, isValid). *)
 
-(* Binding for accessor to [ ] operator *)
+
+(* Storage mutator binding to [ ] operator *)
+
+PROCEDURE [!] storeValue ( x           : <ADT>;
+                           indexOrKey  : <IndexOrKeyType>;
+                           CONST value : <ValueType> );
+(* Signature for a storage mutator procedure that binds to the [ ] operator.
+   Any assignment of the form  x[indexOrKey] := value  where <x> is of type
+   <ADT> is replaced by a procedure call storeValue(x, indexOrKey, value) un-
+   less the semantic type <ADT> conforms to is associative and value is NIL.*)
+
+
+(* Removal mutator binding to [ ] operator *)
+
+PROCEDURE [~] removeKeyValuePair ( x : <ADT>; key : <KeyType> );
+(* Signature for a removal mutator procedure that binds to the [ ] operator
+   when the semantic type that <ADT> conforms to is associative.
+   Any assignment of the form  x[key] := NIL  where <x> is of type <ADT>
+   will be replaced by a procedure call  removeKeyValuePair(x, key) .*)
+
+
+(* Retrieval accessor binding to [ ] operator *)
 
 PROCEDURE [?] valueAtIndex ( x     : <ADT>;
                              index : <IndexType> ) : <ValueType>;
-(* Signature for an accessor function that binds to the [ ] operator when the
-   the semantic type that <ADT> conforms to does not specify NIL assignment.
+(* Signature for an accessor function that binds to the [ ] operator
+   when the semantic type that <ADT> conforms to is not associative.
    Any expression or sub-expression of the form  x[index]  where x is of type
    <ADT> will be replaced by a function call  valueAtIndex(x, index) .*)
-
-PROCEDURE [?] retrieveValueForKey ( x         : <ADT>;
-                                    key       : <KeyType>;
-                                    VAR value : <ValueType>;
-                                    VAR found : BOOLEAN );
-(* Signature for an accessor procedure that binds to the [ ] operator
-   when the semantic type that <ADT> conforms to specifies NIL assignment.
-   Any expression or sub-expression of the form  x[key]  where <x> is of type
-   <ADT> will be replaced by the value passed back in <value> in a preceding
-   procedure call  retrieveValueForKey(x, key, value, found)  if TRUE is
-   passed back in <found>, otherwise a runtime error will be raised. *)
-
-
-(* Binding for mutator to [ ] operator *)
-
-PROCEDURE [!] storeAtIndex ( x           : <ADT>;
-                             index       : <IndexType>;
-                             CONST value : <ValueType> );
-(* Signature for a mutator procedure that binds to the [ ] operator when
-   the semantic type that <ADT> conforms to does not specify NIL assignment.
-   Any assignment of the form  x[index] := value  where x is of type <ADT>
-   will be replaced by a procedure call storeAtIndex(x, index, value) .*)
-
-PROCEDURE [!] storeValueForKey ( x           : <ADT>;
-                                 key         : <KeyType>;
-                                 CONST value : <ValueType>;
-                                 remove      : BOOLEAN );
-(* Signature for a mutator procedure that binds to the [ ] operator
-   when the semantic type that <ADT> conforms to specifies NIL assignment.
-   Any assignment of the form  x[key] := value  where <x> is of type <ADT>
-   will be replaced by a mutator procedure call as follows:
-   - if value is NIL      =>  storeValueForKey(x, key, dummyValue, TRUE)
-   - if value is not NIL  =>  storeValueForKey(x, key, value, FALSE) .*)
-   
-(* The dummy value is synthesised automatically as follows:
-   CONST dummyValue = SYSTEM.CAST(<ValueType>, {0 BY TSIZE(<ValueType>)}); *)
 
 
 (* Bindings to COUNT and LENGTH functions *)
@@ -189,10 +179,11 @@ PROCEDURE [LENGTH] length ( x : <ADT> ) : LONGCARD;
 
 (* Binding to FOR .. IN iterator *)
 
-PROCEDURE [FOR] next ( x : <ADT>;
-                       VAR key : <KeyType>; VAR val : <ValueType> );
+PROCEDURE [FOR] nextKeyValuePair ( x       : <ADT>;
+                                   VAR key : <KeyType>;
+                                   VAR val : <ValueType> );
 (* Signature for a procedure that binds to the FOR .. IN .. iterator
-   for iterations of the form  FOR key IN x DO  where x is of tyoe <ADT>. *)
+   for iterations of the form  FOR key IN x DO  where x is of type <ADT>. *)
 
 
 (* Bindings to NEW and DISPOSE procedures *)

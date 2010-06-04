@@ -11,38 +11,38 @@ BINDINGS FOR ZTYPE; (* Z-Type *)
 TYPE = OPAQUE RECORD := INTEGER;
 
 
-(* Bindings permitted for Z-Type ADTs *)
+(* Bindings required for Z-Type ADTs *)
 
-CONST [TMIN]; (* allow binding to TMIN function *)
+CONST [TMIN]; (* require binding to TMIN function *)
 
-CONST [TMAX]; (* allow binding to TMAX function *)
+CONST [TMAX]; (* require binding to TMAX function *)
 
-PROCEDURE [:=]; (* allow binding to assignment operator *)
+PROCEDURE [:=]; (* require binding to assignment operator *)
 
-PROCEDURE [::]; (* allow binding to conversion operator *)
+PROCEDURE [::]; (* optional bindings to conversion operator *)
 
-PROCEDURE [ABS]; (* allow binding to ABS function *)
+PROCEDURE [ABS]; (* require binding to ABS function *)
 
-PROCEDURE [NEG]; (* allow binding to NEG function *)
+PROCEDURE [NEG]; (* optional binding to NEG function *)
 
-PROCEDURE [ODD]; (* allow binding to ODD function *)
+PROCEDURE [ODD]; (* require binding to ODD function *)
 
-PROCEDURE [+]; (* allow binding to plus operator *)
+PROCEDURE [+]; (* require binding to plus operator *)
 
-PROCEDURE [-]; (* allow binding to minus operator *)
+PROCEDURE [-]; (* require binding to minus operator *)
 
-PROCEDURE [*]; (* allow binding to multiply operator *)
+PROCEDURE [*]; (* require binding to multiply operator *)
 
-PROCEDURE [DIV]; (* allow binding to DIV operator *)
+PROCEDURE [DIV]; (* require binding to DIV operator *)
 
-PROCEDURE [=]; (* allow binding to equal operator *)
+PROCEDURE [=]; (* require binding to equal operator *)
 
-PROCEDURE [<]; (* allow binding to less operator *)
+PROCEDURE [<]; (* require binding to less operator *)
 
-PROCEDURE [>]; (* allow binding to greater operator *)
+PROCEDURE [>]; (* require binding to greater operator *)
 
-PROCEDURE [TO]; (* allow scalar conversion primitive toSXF *)
+PROCEDURE [TO]; (* require scalar conversion primitive toSXF *)
 
-PROCEDURE [FROM]; (* allow scalar conversion primitive fromSXF *)
+PROCEDURE [FROM]; (* require scalar conversion primitive fromSXF *)
 
 END ZTYPE.

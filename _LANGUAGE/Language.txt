@@ -43,8 +43,6 @@ non-alphanumeric characters that have special meaning in the language.
 
 List of Special Symbols
 
-!     mutator binding pseudo-operator
-?     accessor binding pseudo-operator
 #     not-equal operator, obsoletes <>
 *     multiplication and set intersection operator
 +     addition and set union operator
@@ -73,6 +71,10 @@ List of Special Symbols
 [ ]   brackets, used as index operator and to delimit special syntax
 ( )   parentheses, used to group expressions and to delimit argument lists
 { }   braces, used to delimit structured literals
+
+!     pseudo-operator used to define storage mutator binding
+~     pseudo-operator used to define removal mutator binding
+?     pseudo-operator used to define retrieval accessor binding
 
 <*    opening delimiter for pragmas
 *>    closing delimiter for pragmas
@@ -389,13 +391,13 @@ moduleId : Ident ;
 A bindings definition represents a common set of semantics that data types may
 be required to conform to. This is called a semantic type and it determines
 how a conformant data type may be declared, what type of literal it may use,
-and which bindings to operators and built-in procedures it may define.
+and which bindings to operators and built-in procedures it must define.
 
 EBNF:
 
 definitionOfBindings :
     BINDINGS FOR semanticType ";"
-    bindingsHeader bindings*
+    bindingsHeader binding*
     END semanticType "." ;
 
 semanticType : Ident ;
@@ -1137,9 +1139,9 @@ own module identifier is called an ADT library module.
 
 An ADT library module may specify a semantic type in its module header. This
 represents a promise to conform to the common set of semantics defined by the
-semantic type. An ADT defined to conform to a semantic type may bind its own
+semantic type. An ADT defined to conform to a semantic type must bind its own
 library defined procedures to those operators and pervasive procedures that
-are permitted by the semantic type. Static conformance is compiler enforced.
+are required by the semantic type. Static conformance is compiler enforced.
 No other bindings than those defined by the semantic type are permitted.
 
 Defining an ADT with a semantic type specified and providing appropriate
@@ -1757,8 +1759,8 @@ only be copied field-wise, not record-wise.
 Since the compatibility of records of indeterminate types cannot be determined
 at compile time, they may not be formal types.
 
-A record of indeterminate may only be passed to a universal open array para-
-meter ARRAY OF OCTET, ARRAY OF SYSTEM.BYTE or SYSTEM.WORD.
+A record of indeterminate type may only be passed to a universal open array
+parameter ARRAY OF OCTET, ARRAY OF SYSTEM.BYTE or SYSTEM.WORD.
 
 The indeterminate field of an indeterminate record may be passed to an open
 array parameter whose base type is assignment compatible with the base type
@@ -1878,7 +1880,7 @@ parameter list and its return type.
 
 A procedure header may only define a binding to an operator or pervasive
 procedure if it belongs to a global definition in an ADT library module that
-specifies a semantic type in its module header and the binding is permitted by
+specifies a semantic type in its module header and the binding is required by
 the definition of the semantic type. The signature of a procedure header that
 binds to an operator or pervasive procedure must conform to the language
 defined signature for the respective operator. A list of procedure signatures
@@ -2189,7 +2191,7 @@ p := WriteString; (* compile time error: incompatible types *)
 
 A procedure may be defined to bind to an operator or a pervasive procedure in
 respect of an abstract data type defined to conform to a semantic type. Only
-bindings permitted by the semantic type the ADT conforms to may be defined.
+bindings required by the semantic type the ADT conforms to may be defined.
 
 Example:
 

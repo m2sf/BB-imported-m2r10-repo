@@ -11,28 +11,28 @@ BINDINGS FOR CTYPE; (* C-Type *)
 TYPE = RECORD; 
 
 
-(* Bindings permitted for C-Type ADTs *)
+(* Bindings required for C-Type ADTs *)
 
-CONST [TMIN]; (* allow binding to TMIN function *)
+CONST [TMIN]; (* require binding to TMIN function *)
 
-CONST [TMAX]; (* allow binding to TMAX function *)
+CONST [TMAX]; (* require binding to TMAX function *)
 
-PROCEDURE [:=]; (* allow binding to assignment operator *)
+PROCEDURE [:=]; (* require binding to assignment operator *)
 
-PROCEDURE [::]; (* allow binding to conversion operator *)
+PROCEDURE [::]; (* optional bindings to conversion operator *)
 
-PROCEDURE [ABS]; (* allow binding to ABS function *)
+PROCEDURE [ABS]; (* require binding to ABS function *)
 
-PROCEDURE [NEG]; (* allow binding to NEG function *)
+PROCEDURE [NEG]; (* require binding to NEG function *)
 
-PROCEDURE [+]; (* allow binding to plus operator *)
+PROCEDURE [+]; (* require binding to plus operator *)
 
-PROCEDURE [-]; (* allow binding to minus operator *)
+PROCEDURE [-]; (* require binding to minus operator *)
 
-PROCEDURE [*]; (* allow binding to multiply operator *)
+PROCEDURE [*]; (* require binding to multiply operator *)
 
-PROCEDURE [/]; (* allow binding to division operator *)
+PROCEDURE [/]; (* require binding to division operator *)
 
-PROCEDURE [=]; (* allow binding to equal operator *)
+PROCEDURE [=]; (* require binding to equal operator *)
 
 END CTYPE.

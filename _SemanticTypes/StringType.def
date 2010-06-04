@@ -11,28 +11,28 @@ BINDINGS FOR StringType;
 TYPE = OPAQUE := CHAR;
 
 
-(* Bindings permitted for StringType ADTs *)
+(* Bindings required for StringType ADTs *)
 
-PROCEDURE [NEW]; (* allow binding to NEW procedure *)
+PROCEDURE [NEW]; (* require binding to NEW procedure *)
 
-PROCEDURE [DISPOSE]; (* allow binding to DISPOSE procedure *)
+PROCEDURE [DISPOSE]; (* require binding to DISPOSE procedure *)
 
-PROCEDURE [:=]; (* allow binding to assignment operator *)
+PROCEDURE [:=]; (* require binding to assignment operator *)
 
-PROCEDURE [::]; (* allow binding to conversion operator *)
+PROCEDURE [::]; (* optional bindings to conversion operator *)
 
-PROCEDURE [?]; (* allow accessor binding to [ ] operator *)
+PROCEDURE [?]; (* require accessor binding to [ ] operator *)
 
-PROCEDURE [!]; (* allow mutator binding to [ ] operator *)
+PROCEDURE [!]; (* require mutator binding to [ ] operator *)
 
-PROCEDURE [LENGTH]; (* allow binding to LENGTH function *)
+PROCEDURE [LENGTH]; (* require binding to LENGTH function *)
 
-PROCEDURE [+]; (* allow binding to concatenation operator *)
+PROCEDURE [+]; (* require binding to concatenation operator *)
 
-PROCEDURE [=]; (* allow binding to equal operator *)
+PROCEDURE [=]; (* require binding to equal operator *)
 
-PROCEDURE [<]; (* allow binding to less operator *)
+PROCEDURE [<]; (* require binding to less operator *)
 
-PROCEDURE [>]; (* allow binding to greater operator *)
+PROCEDURE [>]; (* require binding to greater operator *)
 
 END StringType.

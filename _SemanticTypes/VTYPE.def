@@ -11,20 +11,20 @@ BINDINGS FOR VTYPE; (* V-Type *)
 TYPE = RECORD;
 
 
-(* Bindings permitted for V-Type ADTs *)
+(* Bindings required for V-Type ADTs *)
 
-PROCEDURE [:=]; (* allow binding to assignment operator *)
+PROCEDURE [:=]; (* require binding to assignment operator *)
 
-PROCEDURE [::]; (* allow binding to conversion operator *)
+PROCEDURE [::]; (* optional bindings to conversion operator *)
 
-PROCEDURE [ABS]; (* allow binding to ABS function *)
+PROCEDURE [ABS]; (* require binding to ABS function *)
 
-PROCEDURE [NEG]; (* allow binding to NEG function *)
+PROCEDURE [NEG]; (* require binding to NEG function *)
 
-PROCEDURE [+]; (* allow binding to plus operator *)
+PROCEDURE [+]; (* require binding to plus operator *)
 
-PROCEDURE [-]; (* allow binding to minus operator *)
+PROCEDURE [-]; (* require binding to minus operator *)
 
-PROCEDURE [=]; (* allow binding to equal operator *)
+PROCEDURE [=]; (* require binding to equal operator *)
 
 END VTYPE.

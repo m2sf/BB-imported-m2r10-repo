@@ -11,22 +11,22 @@ BINDINGS FOR DateType;
 TYPE = RECORD;
 
 
-(* Bindings permitted for DateType ADTs *)
+(* Bindings required for DateType ADTs *)
 
-CONST [TMIN]; (* allow binding to TMIN function *)
+CONST [TMIN]; (* require binding to TMIN function *)
 
-CONST [TMAX]; (* allow binding to TMAX function *)
+CONST [TMAX]; (* require binding to TMAX function *)
 
-PROCEDURE [::]; (* allow binding to conversion operator *)
+PROCEDURE [::]; (* optional bindings to conversion operator *)
 
-PROCEDURE [+]; (* allow binding to plus operator *)
+PROCEDURE [+]; (* require binding to plus operator *)
 
-PROCEDURE [-]; (* allow binding to minus operator *)
+PROCEDURE [-]; (* require binding to minus operator *)
 
-PROCEDURE [=]; (* allow binding to equal operator *)
+PROCEDURE [=]; (* require binding to equal operator *)
 
-PROCEDURE [<]; (* allow binding to less operator *)
+PROCEDURE [<]; (* require binding to less operator *)
 
-PROCEDURE [>]; (* allow binding to greater operator *)
+PROCEDURE [>]; (* require binding to greater operator *)
 
 END DateType.

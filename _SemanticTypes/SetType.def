@@ -11,32 +11,32 @@ BINDINGS FOR SetType;
 TYPE = OPAQUE RECORD := {};
 
 
-(* Bindings permitted for SetType ADTs *)
+(* Bindings required for SetType ADTs *)
 
-PROCEDURE [:=]; (* allow binding to assignment operator *)
+PROCEDURE [:=]; (* require binding to assignment operator *)
 
-PROCEDURE [::]; (* allow binding to conversion operator *)
+PROCEDURE [::]; (* optional bindings to conversion operator *)
 
-PROCEDURE [?]; (* allow accessor binding to [ ] operator *)
+PROCEDURE [?]; (* required accessor binding to [ ] operator *)
 
-PROCEDURE [!]; (* allow mutator binding to [ ] operator *)
+PROCEDURE [!]; (* require storage mutator binding to [ ] operator *)
 
-PROCEDURE [COUNT]; (* allow binding to COUNT function *)
+PROCEDURE [COUNT]; (* require binding to COUNT function *)
 
-PROCEDURE [FOR]; (* allow binding to FOR .. IN iterator *)
+PROCEDURE [FOR]; (* require binding to FOR .. IN iterator *)
 
-PROCEDURE [+]; (* allow binding to set union operator *)
+PROCEDURE [+]; (* require binding to set union operator *)
 
-PROCEDURE [-]; (* allow binding to set difference operator *)
+PROCEDURE [-]; (* require binding to set difference operator *)
 
-PROCEDURE [*]; (* allow binding to set intersection operator *)
+PROCEDURE [*]; (* require binding to set intersection operator *)
 
-PROCEDURE [/]; (* allow binding to symmetric set difference op *)
+PROCEDURE [/]; (* require binding to symmetric set difference op *)
 
-PROCEDURE [=]; (* allow binding to equal operator *)
+PROCEDURE [=]; (* require binding to equal operator *)
 
-PROCEDURE [<]; (* allow binding to subset operator *)
+PROCEDURE [<]; (* require binding to subset operator *)
 
-PROCEDURE [>]; (* allow binding to superset operator *)
+PROCEDURE [>]; (* alrequirelow binding to superset operator *)
 
 END SetType.

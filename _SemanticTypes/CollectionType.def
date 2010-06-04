@@ -5,26 +5,28 @@ BINDINGS FOR CollectionType;
 (* Semantic Properties for Collection Types *)
 
 
-(* ADTs must be opaque records,
-   no literals may be used, NIL may be assigned to remove an entry *)
+(* ADTs must be opaque records with associative semantics,
+   no literals may be assigned *)
 
-TYPE = OPAQUE := NIL;
+TYPE = OPAQUE AND ASSOCIATIVE;
 
 
-(* Bindings permitted for CollectionType ADTs *)
+(* Bindings required for CollectionType ADTs *)
 
-PROCEDURE [NEW]; (* allow binding to NEW procedure *)
+PROCEDURE [NEW]; (* require binding to NEW procedure *)
 
-PROCEDURE [DISPOSE]; (* allow binding to DISPOSE procedure *)
+PROCEDURE [DISPOSE]; (* require binding to DISPOSE procedure *)
 
-PROCEDURE [?]; (* allow accessor binding to [ ] operator *)
+PROCEDURE [?]; (* require accessor binding to [ ] operator *)
 
-PROCEDURE [!]; (* allow mutator binding to [ ] operator *)
+PROCEDURE [!]; (* require storage mutator binding to [ ] operator *)
 
-PROCEDURE [COUNT]; (* allow binding to COUNT function *)
+PROCEDURE [~]; (* require removal mutator binding to [ ] operator *)
 
-PROCEDURE [FOR]; (* allow binding to FOR .. IN iterator *)
+PROCEDURE [COUNT]; (* require binding to COUNT function *)
 
-PROCEDURE [=]; (* allow binding to equal operator *)
+PROCEDURE [FOR]; (* require binding to FOR .. IN iterator *)
+
+PROCEDURE [=]; (* require binding to equal operator *)
 
 END CollectionType.

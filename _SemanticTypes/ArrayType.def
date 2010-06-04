@@ -11,16 +11,16 @@ BINDINGS FOR ArrayType;
 TYPE = OPAQUE RECORD;
 
 
-(* Bindings permitted for ArrayType ADTs *)
+(* Bindings required for ArrayType ADTs *)
 
-PROCEDURE [?]; (* allow accessor binding to [ ] operator *)
+PROCEDURE [?]; (* require accessor binding to [ ] operator *)
 
-PROCEDURE [!]; (* allow mutator binding to [ ] operator *)
+PROCEDURE [!]; (* require mutator binding to [ ] operator *)
 
-PROCEDURE [COUNT]; (* allow binding to COUNT function *)
+PROCEDURE [COUNT]; (* require binding to COUNT function *)
 
-PROCEDURE [FOR]; (* allow binding to FOR .. IN iterator *)
+PROCEDURE [FOR]; (* require binding to FOR .. IN iterator *)
 
-PROCEDURE [=]; (* allow binding to equal operator *)
+PROCEDURE [=]; (* require binding to equal operator *)
 
 END ArrayType.
