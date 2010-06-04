@@ -148,7 +148,7 @@ semanticType : ident ;
 
 // production #6
 bindingsHeader :
-	TYPE '=' ( RECORD | OPAQUE ( AND ASSOCIATIVE | RECORD )?
+	TYPE '=' ( RECORD | OPAQUE ( ASSOCIATIVE ARRAY | RECORD )?
                ( ':=' ( literalType | '{' '}' ) )? ) ';'
 	;
 

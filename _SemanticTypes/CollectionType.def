@@ -8,7 +8,7 @@ BINDINGS FOR CollectionType;
 (* ADTs must be opaque records with associative semantics,
    no literals may be assigned *)
 
-TYPE = OPAQUE AND ASSOCIATIVE;
+TYPE = OPAQUE ASSOCIATIVE ARRAY;
 
 
 (* Bindings required for CollectionType ADTs *)
