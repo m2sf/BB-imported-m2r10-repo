@@ -8,7 +8,7 @@ BINDINGS FOR SetType;
 (* ADTs must be opaque records,
    structured literals may be used *)
 
-TYPE = OPAQUE RECORD := {};
+TYPE = OPAQUE RECORD := { };
 
 
 (* Bindings required for SetType ADTs *)
@@ -37,6 +37,6 @@ PROCEDURE [=]; (* require binding to equal operator *)
 
 PROCEDURE [<]; (* require binding to subset operator *)
 
-PROCEDURE [>]; (* alrequirelow binding to superset operator *)
+PROCEDURE [>]; (* require binding to superset operator *)
 
 END SetType.
