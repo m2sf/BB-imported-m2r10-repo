@@ -1,4 +1,4 @@
-(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: June, 4, 2010] 
+(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: June, 5, 2010] 
 
 Modula-2 R10 Concise Language Description
 
@@ -3250,6 +3250,7 @@ LONGREAL.def          IO module for type LONGREAL
 
 12.9 Library Modules Implementing Basic Types
 
+ScalarDigitCount.def  digit count constants and types for scalar ADTs
 BS16.def              16-bit bitset type
 BS32.def              32-bit bitset type
 BS64.def              64-bit bitset type

@@ -71,6 +71,7 @@ CollectionType.def    defines semantic properties for dynamic collection ADTs
 
 Library defined types:
 
+ScalarDigitCount.def  digit count constants and types for scalar ADTs
 BS16.def              16-bit bitset type
 BS32.def              32-bit bitset type
 BS64.def              64-bit bitset type
@@ -155,4 +156,4 @@ Dictionary.def        example of a library defined associative array of strings
 ExampleVector.def     example of a vector ADT
 
 
-[status: May 18, 2010 -- further modules are being added]
+[status: June 5, 2010 -- further modules are being added]
