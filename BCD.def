@@ -15,16 +15,25 @@ TYPE
         value : ARRAY 8 OF OCTET; (* 64 bits *)
     END; (* BCD *)
 
+    (* 1-bit sign, 56-bit significand, 7-bit exponent *)
+
+
+(* Maximum digits in native radix *)
+
+CONST
+    maxDigitCount = { 14, 2 } :: ScalarDigitCount;
+    (* maximum of 14 decimal digits significand, 2 digits exponent *)
+
 
 (* R-Type bindings to operators, pervasives and primitives: *)
 
 
 (* Range *) 
 
-CONST [TMIN] minValue = -9.9999999999999E+99;
+CONST [TMIN] minValue = -9.9999999999999E+63;
 (* Smallest value of type BCD. This value is bound to TMIN for type BCD. *) 
 
-CONST [TMAX] maxValue = +9.9999999999999E+99;
+CONST [TMAX] maxValue = +9.9999999999999E+63;
 (* Largest value of type BCD. This value is bound to TMAX for type BCD. *)
 
 
@@ -96,8 +105,6 @@ PROCEDURE [>] isGreater ( a, b : BCD ) : BOOLEAN;
 
 
 (* Scalar conversion primitives *)
-
-CONST digitCapacity = 15; (* maximum digits *)
 
 PROCEDURE [TO] toSXF ( b : BCD; VAR s : ARRAY OF CHAR );
 (* Converts a BCD value to a string in scalar exchange format.

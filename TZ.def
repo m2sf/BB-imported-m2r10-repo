@@ -3,6 +3,8 @@ DEFINITION MODULE TZ [ZTYPE];
 (* Time Zone Offsets *)
 
 
+IMPORT ScalarDigitCount;
+
 FROM FileIO IMPORT File; (* required for IO *)
 
 
@@ -12,6 +14,13 @@ TYPE
     TZ = OPAQUE RECORD
         value : OCTET; (* 8 bits *)
     END; (* TZ *)
+
+
+(* Maximum digits in native radix *)
+
+CONST
+    maxDigitCount = { 3, 0 } :: ScalarDigitCount;
+    (* maximum of 3 base-16 digits significand, no exponent *)
 
 
 CONST interval = 15;

@@ -15,17 +15,26 @@ TYPE
         value : ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* LONGBCD *)
 
+    (* 1-bit sign, 116-bit significand, 11-bit exponent *)
+
+
+(* Maximum digits in native radix *)
+
+CONST
+    maxDigitCount = { 29, 3 } :: ScalarDigitCount;
+    (* maximum of 29 decimal digits significand, 3 digits exponent *)
+
 
 (* R-Type bindings to operators, pervasives and primitives: *)
 
 
 (* Range *) 
 
-CONST [TMIN] minValue = -9.99999999999999999999999999E+999;
+CONST [TMIN] minValue = -9.9999999999999999999999999999E+999;
 (* Smallest value of type LONGBCD.
    This value is bound to TMIN for type LONGBCD. *) 
 
-CONST [TMAX] maxValue = +9.99999999999999999999999999E+999;
+CONST [TMAX] maxValue = +9.9999999999999999999999999999E+999;
 (* Largest value of type LONGBCD.
    This value is bound to TMAX for type LONGBCD. *)
 
@@ -98,8 +107,6 @@ PROCEDURE [>] isGreater ( a, b : LONGBCD ) : BOOLEAN;
 
 
 (* Scalar conversion primitives *)
-
-CONST digitCapacity = 30; (* maximum digits *)
 
 PROCEDURE [TO] toSXF ( b : LONGBCD; VAR s : ARRAY OF CHAR );
 (* Converts a LONGBCD value to a string in scalar exchange format.

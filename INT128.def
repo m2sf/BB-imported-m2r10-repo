@@ -5,6 +5,8 @@ DEFINITION MODULE INT128 [ZTYPE];
 (* 128-bit Integer Numbers *) 
 
 
+IMPORT ScalarDigitCount;
+
 FROM FileIO IMPORT File; (* required for IO *)
 
 
@@ -14,6 +16,13 @@ TYPE
     INT128 = OPAQUE RECORD
         value : ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* INT128 *)
+
+
+(* Maximum digits in native radix *)
+
+CONST
+    maxDigitCount = { 32, 0 } :: ScalarDigitCount;
+    (* maximum of 32 base-16 digits significand, no exponent *)
 
 
 (* Z-Type bindings to operators, pervasives and primitives: *)
@@ -110,8 +119,6 @@ PROCEDURE [>] isGreater ( n1, n2 : INT128 ) : BOOLEAN;
 
 
 (* Scalar conversion primitives *)
-
-CONST digitCapacity = 16; (* maximum digits in native format *)
 
 PROCEDURE [TO] toSXF ( n : INT128; VAR s : ARRAY OF CHAR );
 (* Converts INT128 value n to a string in scalar exchange format.

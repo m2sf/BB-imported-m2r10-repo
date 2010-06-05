@@ -5,6 +5,8 @@ DEFINITION MODULE UnsignedReal60 [RTYPE];
 (* Unsigned Real Subrange Type With Values from 0.0 to 59.999 *) 
 
 
+IMPORT ScalarDigitCount;
+
 FROM FileIO IMPORT File; (* required for IO *)
 
 
@@ -14,6 +16,15 @@ TYPE
     UnsignedReal60 = OPAQUE RECORD
         value : ARRAY 2 OF OCTET; (* 16 bits *)
     END; (* UnsignedReal60 *)
+
+    (* 1-bit sign, 15-bit significand, fixed decimal point *)
+
+
+(* Maximum digits in native radix *)
+
+CONST
+    maxDigitCount = { 4, 1 } :: ScalarDigitCount;
+    (* maximum of 4 base-16 digits significand, 1 digit exponent *)
 
 
 (* R-Type bindings to operators, pervasives and primitives: *)
@@ -106,8 +117,6 @@ PROCEDURE [>] isGreater ( r1, r2 : UnsignedReal60 ) : BOOLEAN;
 
 
 (* Scalar conversion primitives *)
-
-CONST digitCapacity = 5; (* maximum total digits *)
 
 PROCEDURE [TO] toSXF ( r : UnsignedReal60; VAR s : ARRAY OF CHAR );
 (* Converts a UnsignedReal60 value to a string in scalar exchange format.

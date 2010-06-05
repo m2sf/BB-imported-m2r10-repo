@@ -4,6 +4,7 @@ DEFINITION MODULE CARD16 [ZTYPE];
 
 (* 16-bit Unsigned Integer Numbers *) 
 
+IMPORT ScalarDigitCount;
 
 FROM FileIO IMPORT File; (* required for IO *)
 
@@ -14,6 +15,13 @@ TYPE
     CARD16 = OPAQUE RECORD
         value : ARRAY 2 OF OCTET; (* 16 bits *)
     END; (* CARD16 *)
+
+
+(* Maximum digits in native radix *)
+
+CONST
+    maxDigitCount = { 4, 0 } :: ScalarDigitCount;
+    (* maximum of 4 base-16 digits significand, no exponent *)
 
 
 (* Z-Type bindings to operators, pervasives and primitives: *)
@@ -102,8 +110,6 @@ PROCEDURE [>] isGreater ( n1, n2 : CARD16 ) : BOOLEAN;
 
 
 (* Scalar conversion primitives *)
-
-CONST digitCapacity = 4; (* maximum digits in native format *)
 
 PROCEDURE [TO] toSXF ( n : CARD16; VAR s : ARRAY OF CHAR );
 (* Converts CARD16 value n to a string in scalar exchange format.

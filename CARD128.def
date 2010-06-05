@@ -5,6 +5,8 @@ DEFINITION MODULE CARD128 [ZTYPE];
 (* 128-bit Unsigned Integer Numbers *) 
 
 
+IMPORT ScalarDigitCount;
+
 FROM FileIO IMPORT File; (* required for IO *)
 
 
@@ -14,6 +16,13 @@ TYPE
     CARD128 = OPAQUE RECORD
         value : ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* CARD128 *)
+
+
+(* Maximum digits in native radix *)
+
+CONST
+    maxDigitCount = { 32, 0 } :: ScalarDigitCount;
+    (* maximum of 32 base-16 digits significand, no exponent *)
 
 
 (* Z-Type bindings to operators, pervasives and primitives: *)
@@ -104,8 +113,6 @@ PROCEDURE [>] isGreater ( n1, n2 : CARD128 ) : BOOLEAN;
 
 
 (* Scalar conversion primitives *)
-
-CONST digitCapacity = 32; (* maximum digits in native format *)
 
 PROCEDURE [TO] toSXF ( n : CARD128; VAR s : ARRAY OF CHAR );
 (* Converts CARD128 value n to a string in scalar exchange format.
