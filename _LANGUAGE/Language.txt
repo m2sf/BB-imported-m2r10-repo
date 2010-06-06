@@ -2400,23 +2400,82 @@ constant within the loop body:
 * it may not be passed to any procedure as a VAR parameter
 * it may not be assigned to any pointer other than POINTER TO CONST pointers
 
+There are two types of FOR statements:
+
+* FOR IN statements
+* FOR TO BY statements
+
+Where possible, the use of FOR IN statements should be given preference.
+
+
+6.8.1 FOR IN statements
+
+FOR IN statements iterate over all values of an ordered value set in ascending
+order. The value set may be a designator of an ordinal or whole number type,
+or an array, a set or an ordered collection. The control variable is assigned
+a value of the value set at each iteration and its type therefore depends on
+the value set.
+
+If the value set is an ordinal or whole number type then the control variable
+is of the ordinal or whole number type and the loop will iterate over all
+legal values of the ordinal or whole number type.
+
+If the value set is an array then the control variable is of the component
+type of the array and the loop will iterate over all the components of the
+array.
+
+If the value set is a set then the control variable is of the element type of
+the set and the loop will iterate over all the elements present in the set.
+
+If the value set is an ordered collection then the control variable is of the
+key type of the collection and the loop will iterate over all the keys present
+in the collection.
+
 EBNF:
 
-forStatement :
-    FOR controlVariable
-    ( IN expression |
-      ":" namedType ":=" expression TO expression ( BY constExpression )? )
-    DO statementSequence END ;
+forInStatement :
+    FOR controlVariable IN valueSet DO statementSequence END ;
 
-controlVariable : Ident ;
+controlVariable : Ident;
+
+valueSet : expression;
 
 Examples:
 
-FOR count : CARDINAL := 99 TO 0 BY -1 DO BottlesOfBeer(count) END;
-FOR colour IN ColourSet DO counter++ END;
-FOR char IN string DO WRITE(file, char) END;
-FOR key IN dictionary DO WRITE(file, dictionary[key]) END;
+(* iterating over all values of an ordinal type *)
 FOR status IN Status DO WRITE(file, NameOfStatus(status)) END;
+
+(* iterating over all values of a whole number type *)
+FOR number IN CARDINAL DO BottlesOfBeer(number) END;
+
+(* iterating over all components in an array *)
+FOR char IN string DO WRITE(file, char) END;
+
+(* iterating over all elements in a set *)
+FOR colour IN ColourSet DO counter++ END;
+
+(* iterating over all keys in a collection *)
+FOR key IN dictionary DO WRITE(file, dictionary[key]) END;
+
+
+6.8.2 FOR TO BY statements
+
+FOR TO BY statements iterate over an explicit whole number range denoted by
+a start and stop value and an optional increment value. The control variable
+is assigned a value of the whole number range at each iteration and its type
+must be explicitly declared in the loop header. The type must be a whole
+number type. 
+
+
+EBNF:
+
+forToByStatement :
+    FOR controlVariable ":" namedWholeNumberType ":=" expression TO expression
+    ( BY constExpression )? DO statementSequence END ;
+
+Example:
+
+FOR count : CARDINAL := 99 TO 0 BY -1 DO BottlesOfBeer(count) END;
 
 
 6.9 RETURN Statements
