@@ -78,9 +78,9 @@ List of Special Symbols
 
 <*    opening delimiter for pragmas
 *>    closing delimiter for pragmas
-//    single line comment prefix
-(*    opening delimiter for nestable comments
-*)    closing delimiter for nestable comments
+//    prefix for single-line comment
+(*    opening delimiter for multi-line comment
+*)    closing delimiter for multi-line comment
 
 
 1.2 Non-Semantic Symbols
@@ -137,8 +137,11 @@ ELSIF            WARN             ALIGN            INLINE
 Comments are symbols ignored by the compiler but intended for a human reader.
 There are two types of comments:
 
-* single line comments
-* nestable multi-line comments
+* single-line comments
+* multi-line comments
+
+Multi-line comments may be nested up to a nesting level of ten, including the
+outermost comment. A compile time error occurs if this limit is exceded.
 
 EBNF:
 
@@ -150,6 +153,7 @@ Examples:
 
 // comment until end-of-line
 (* This is a comment (* and a comment within *) *)
+(* Level L1 (* L2 (* L3 (* L4 (* L5 (* L6 (* L7 (* L8 (* L9 (* L10 (* Error
 
 
 1.2.3 Lexical Separators
