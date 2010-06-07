@@ -18,6 +18,8 @@ version of this document for updates. It is located in a public repository at:
 http://bitbucket.org/trijezdci/m2r10stdlib/src/tip/_LANGUAGE/Language.txt
 
 
+Syntax Notation
+
 The notation used to describe syntax in this document is based on the EBNF
 notation used by the lexer and parser generator ANTLR:
 
@@ -32,6 +34,28 @@ notation used by the lexer and parser generator ANTLR:
 * a trailing asterisk is used to denote zero or more occurrences
 * a colon is used between a production rule's name and its body
 * a semicolon is used to terminate a production rule
+
+
+Items To Do
+
+The following items sill need to be done before the language report can be
+finalised:
+
+* revise the convertibility rules for SYSTEM types
+* describe module initialisation order in more detail
+* definition and description of the COROUTINES pseudo-module
+
+
+Outstanding Issues To Resolve
+
+The following issues still need to be resolved before the language report can
+be finalised:
+
+* whether to include a subrange integer type constructor or not
+* whether to lexically distinguish auto-casting open arrays from ordinary
+  open arrays
+* whether the digit capacity of a scalar ADT should be a binding, a magic
+  constant or a pragma
 
 
 1 Lexical Entities
@@ -104,8 +128,8 @@ can only occur within pragma delimiters.
 
 There are two types of pragmas:
 
-* implementation defined pragmas
 * language defined pragmas
+* implementation defined pragmas
 
 EBNF:
 
@@ -114,13 +138,7 @@ pragma : "<*" pragmaName otherSymbols? "*>" ;
 pragmaName : Ident ;
 
 
-1.2.1.1 Implementation Defined Pragmas
-
-Any implementation may define its own set of pragmas, specific to the compiler.
-Implementation defined pragma names must not be all-uppercase words.
-
-
-1.2.1.2 Language Defined Pragmas
+1.2.1.1 Language Defined Pragmas
 
 Language defined pragmas use all-uppercase words as pragma names. The pragma
 names of language defined pragmas are reserved.
@@ -130,6 +148,12 @@ List of Language Defined Pragma Names
 IF               ENDIF            ERROR            FOREIGN          NOINLINE
 ELSE             INFO             FATAL            MAKE             VOLATILE
 ELSIF            WARN             ALIGN            INLINE
+
+
+1.2.1.2 Implementation Defined Pragmas
+
+Any implementation may define its own set of pragmas, specific to the compiler.
+Implementation defined pragma names must not be all-uppercase words.
 
 
 1.2.2 Comments
@@ -284,7 +308,7 @@ Identifiers are names that start with a letter, lowline or dollar sign,
 followed by any number and combination of letters, lowlines, dollar signs
 and digits. User definable identifiers must not coincide with reserved words.
 The use of the dollar sign in identifiers should be limited to referencing
-entities defined by an operating system API for public use (eg. OpenVMS).
+entities defined by an operating system API for public use (e.g. OpenVMS).
 
 EBNF:
 
@@ -616,7 +640,7 @@ Structured literals are assignment compatible with:
 
 An expression e may be assigned to a mutable variable v if:
 
-* e and v are both of the same type
+* both e and v are of the same type
 * the type of e is an alias type of v or vice versa
 * the type of e and the type of v are both alias types of the same type
 * e is a literal that is compatible under literal compatibility rules
@@ -769,6 +793,9 @@ if the relation TSIZE(CARDINAL) = TSIZE(SYSTEM.WORD) is true.
 
 Values of types LONGCARD and SYSTEM.WORD are convertible between each other
 if the relation TSIZE(LONGCARD) = TSIZE(SYSTEM.WORD) is true.
+
+NB: The convertibility rules for SYSTEM types are still being discussed and
+will likely change.
 
 
 4.3 Semantics of Types
@@ -1264,7 +1291,7 @@ BEGIN a := 123; diff := a - 456; WRITE(StdOut, diff) END;
 
 4.6.4 Library Defined BCD Real Number ADTs
 
-The standard library provides binary coded Decimals (BCD) real number ADTs
+The standard library provides Binary Coded Decimal (BCD) real number ADTs
 whose semantics match those of the pervasive types REAL and LONGREAL. The
 library defined BCD ADTs are BCD and LONGBCD.
 
@@ -1624,7 +1651,7 @@ Example:
 TYPE AA = ASSOCIATIVE ARRAY OF INTEGER;
 VAR array : AA;
 
-array["foo"] := 0; array["bar"] := -123; array["baz"] := 456;
+NEW(array); array["foo"] := 0; array["bar"] := -123; array["baz"] := 456;
 
 
 5.3.7 Record Types
@@ -1671,7 +1698,7 @@ from its type declaration. A determinant field is a field that determines the
 size of an indeterminate field.
 
 
-5.3.8.1 Declaration of an Indeterminate Record Types
+5.3.8.1 Declaration of Indeterminate Record Types
 
 Indeterminate record types may be declared provided that the type declaration
 meets all of the following constraints:
@@ -1861,9 +1888,10 @@ WriteStr := Terminal.WriteString; WriteStr("hi!");
 5.4 Procedure Definitions and Declarations
 
 A procedure is a sequence of actions to perform a computation identified by a
-name. In Modula-2, may have zero or more parameters associated and they may or
-may not return a result. Procedures that return a result are called function
-procedures, those that do not return a result are called proper procedures.
+name. In Modula-2, procedures may have zero or more parameters associated and
+they may or may not return a result. Procedures that return a result are
+called function procedures, those that do not return a result are called
+proper procedures.
 
 A procedure consists of two parts:
 
@@ -2416,20 +2444,21 @@ or an array, a set or an ordered collection. The control variable is assigned
 a value of the value set at each iteration and its type therefore depends on
 the value set.
 
-If the value set is an ordinal or whole number type then the control variable
-is of the ordinal or whole number type and the loop will iterate over all
-legal values of the ordinal or whole number type.
+* If the value set is an ordinal or whole number type then the control
+  variable is of the ordinal or whole number type and the loop will iterate
+  over all legal values of the ordinal or whole number type.
 
-If the value set is an array then the control variable is of the component
-type of the array and the loop will iterate over all the components of the
-array.
+* If the value set is an array then the control variable is of the component
+  type of the array and the loop will iterate over all the components of the
+  array.
 
-If the value set is a set then the control variable is of the element type of
-the set and the loop will iterate over all the elements present in the set.
+* If the value set is a set then the control variable is of the element type
+  of the set and the loop will iterate over all the elements present in the
+  set.
 
-If the value set is an ordered collection then the control variable is of the
-key type of the collection and the loop will iterate over all the keys present
-in the collection.
+* If the value set is an ordered collection then the control variable is of
+  the key type of the collection and the loop will iterate over all the keys
+  present in the collection.
 
 EBNF:
 
@@ -2651,25 +2680,11 @@ but they do not change the meaning of the program text.
 
 There are two types of pragmas:
 
-* implementation defined pragmas
 * language defined pragmas
+* implementation defined pragmas
 
 
-9.1 Implementation Defined Pragmas
-
-Implementation defined pragmas are compiler specific and non-portable. They
-are easily distinguished because their pragma names are either all-lowercase
-or mixed-case but never all-uppercase words.
-
-EBNF:
-
-implementationDefinedPragma :
-    "<*" pragmaName ( "+" | "-" | "=" ( Ident | Number ) )? "*>" ;
-
-pragmaName : Ident ;
-
-
-9.2 Language Defined Pragmas
+9.1 Language Defined Pragmas
 
 Language defined pragmas are portable across implementations. They are easily
 distinguished because their pragma names are all-uppercase words. There are
@@ -2680,7 +2695,7 @@ three groups of language defined pragmas:
 * pragmas to control, influence or optimise code-generation
 
 
-9.2.1 Conditional Compilation Pragmas
+9.1.1 Conditional Compilation Pragmas
 
 Conditional compilation pragmas are used to compile portions of the source
 text only if a certain condition is met. The condition must be a compile
@@ -2706,7 +2721,7 @@ CONST model = Model.custom;
 <* ENDIF *>
 
 
-9.2.2 Compile Time Console Message Pragmas
+9.1.2 Compile Time Console Message Pragmas
 
 Compile time console message pragmas are used to emit console messages during
 compilation. There are four types of message pragmas:
@@ -2730,7 +2745,7 @@ Example:
 <* FATAL "unsupported target architecture." *>
 
 
-9.2.3 Code Generation Pragmas
+9.1.3 Code Generation Pragmas
 
 Code generation pragmas are used to control or influence code generation and
 optimisation. There are six code generation pragmas:
@@ -2760,6 +2775,20 @@ TYPE Point = RECORD <* ALIGN = 8*TSIZE(CARDINAL) *> x, y : OCTET END;
 VAR <* VOLATILE *> signal : Signal;
 
 NB: At present, the only parameter defined for pragma FOREIGN is "C".
+
+
+9.2 Implementation Defined Pragmas
+
+Implementation defined pragmas are compiler specific and non-portable. They
+are easily distinguished because their pragma names are either all-lowercase
+or mixed-case but never all-uppercase words.
+
+EBNF:
+
+implementationDefinedPragma :
+    "<*" pragmaName ( "+" | "-" | "=" ( Ident | Number ) )? "*>" ;
+
+pragmaName : Ident ;
 
 
 10 Pervasive Identifiers
@@ -2796,8 +2825,8 @@ LONGBITSET  bitset type of same size as LONGCARD
 CHAR        7-bit character type, subset of UTF-8
 UNICHAR     4-octet character type, full UTF-32 set
 OCTET       unsigned 8-bit integer type, smallest unit
-CARDINAL    unsigned integer type, 2*n octets for n >= 1
-LONGCARD    unsigned integer type, 2*n octets for n >= 1
+CARDINAL    unsigned integer type, 2n octets for n >= 1
+LONGCARD    unsigned integer type, 2n octets for n >= 1
 INTEGER     signed integer type of same size as CARDINAL
 LONGINT     signed integer type of same size as LONGCARD
 REAL        real number type
@@ -2859,7 +2888,7 @@ NEW(v, 100); (* replaced by ALLOCATE(v, TSIZE(VLA) + 100*TSIZE(INTEGER)); *)
 10.3.2 Procedure DISPOSE
 
 Procedure DISPOSE is used to deallocate storage that was earlier allocated by
-a call to procedure NEW. Its pseudo-defintion is:
+a call to procedure NEW. Its pseudo-definition is:
 
 PROCEDURE DISPOSE ( VAR p : <AnyPointerType> );
 
@@ -2989,7 +3018,7 @@ ABS NEG ODD PRED SUCC ORD CHR COUNT SIZE HIGH LENGTH NEXTV TMIN TMAX TSIZE
 
 Function ABS returns the absolute value of its operand. Its operand may be of
 any numeric type. Its return type is always the same as the operand type. Its
-pseudo-definiton is:
+pseudo-definition is:
 
 PROCEDURE ABS ( x : <NumericType> ) : <OperandType> ;
 
@@ -2998,7 +3027,7 @@ PROCEDURE ABS ( x : <NumericType> ) : <OperandType> ;
 
 Function NEG returns the sign reversed value of its operand. Its operand may
 be of any numeric type. Its return type is always the same as the operand
-type. Its pseudo-definiton is:
+type. Its pseudo-definition is:
 
 PROCEDURE NEG ( x : <NumericType> ) : <OperandType> ;
 
@@ -3007,7 +3036,7 @@ PROCEDURE NEG ( x : <NumericType> ) : <OperandType> ;
 
 Function ODD returns TRUE if its operand operand is an odd number or FALSE if
 it is not. Its operand may be of any Z-Type. Its return type is the boolean
-type. Its pseudo-definiton is:
+type. Its pseudo-definition is:
 
 PROCEDURE ODD ( x : <Z-Type> ) : BOOLEAN ;
 
@@ -3052,7 +3081,7 @@ PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType> ;
 
 10.4.8 Function COUNT
 
-Function count returns the number of items stored in its operand. Its operand
+Function COUNT returns the number of items stored in its operand. Its operand
 may be of any set type or collection type. Its return type is LONGCARD.
 Its pseudo-definition is:
 
@@ -3063,7 +3092,7 @@ PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD ;
 
 Function SIZE returns the allocation size of its operand. The value returned
 represents the number of octets allocated for its operand. Its operand may be
-a variable of any type. Its return type is LONGCARD. Its pseudo-defintion is:
+a variable of any type. Its return type is LONGCARD. Its pseudo-definition is:
 
 PROCEDURE SIZE ( variable : <AnyType> ) : LONGCARD ;
 
@@ -3109,7 +3138,7 @@ PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T> ;
 
 10.4.14 Function TMAX
 
-Function TMIN returns the largest legal value of its operand. Its operand is
+Function TMAX returns the largest legal value of its operand. Its operand is
 an identifier denoting any ordered type. Its return type is the operand.
 Its pseudo-definition is:
 
