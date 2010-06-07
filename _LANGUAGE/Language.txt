@@ -1,4 +1,4 @@
-(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: June, 5, 2010] 
+(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: June, 6, 2010] 
 
 Modula-2 R10 Concise Language Description
 
