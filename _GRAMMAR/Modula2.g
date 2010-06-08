@@ -2,7 +2,21 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status June 4, 2010 */
+/* M2R10 grammar in ANTLR EBNF notation -- status June 8, 2010 */
+
+
+// ---------------------------------------------------------------------------
+// N A M I N G   C O N V E N T I O N
+// ---------------------------------------------------------------------------
+//
+// Non-Terminals:
+//  camelCase with first character lowercase
+// 
+// Terminals:
+//  CamelCase with first character uppercase
+//
+// Reserved Words and Fragments:
+//  ALL_UPPERCASE with underscores separating words
 
 
 options {
@@ -135,13 +149,13 @@ implementationOfModule :
 	;
 
 // alias
-moduleId : ident ;
+moduleId : Ident ;
 
 // alias
 priority : constExpression ;
 
 // alias
-semanticType : ident ;
+semanticType : Ident ;
 
 
 // *** Bindings, Import Lists, Blocks, Declarations, Definitions ***
@@ -166,16 +180,16 @@ bindableOperator :
 	;
 
 // alias
-bindableIdent : ident ;
+bindableIdent : Ident ;
 // TMIN, TMAX, ABS, NEG, ODD, COUNT, LENGTH, NEW, DISPOSE
 
 // alias
-literalType : ident ;
+literalType : Ident ;
 
 // production #9
 importList :
 	( FROM moduleId IMPORT ( identList | '*' ) |
-	IMPORT ident '+'? ( ',' ident '+'? )* ) ';'
+	IMPORT Ident '+'? ( ',' Ident '+'? )* ) ';'
 	;
 
 // production #10
@@ -187,15 +201,15 @@ block :
 // production #11
 declaration :
 	CONST ( constantDeclaration ';' )* |
-	TYPE ( ident '=' type ';' )* |
+	TYPE ( Ident '=' type ';' )* |
 	VAR ( variableDeclaration ';' )* |
 	procedureDeclaration ';'
 	;
 
 // production #12
 definition :
-	CONST ( ( '[' ident ']' )? constantDeclaration ';' )* |
-	TYPE ( ident '=' ( type | OPAQUE recordType? ) ';' )* |
+	CONST ( ( '[' Ident ']' )? constantDeclaration ';' )* |
+	TYPE ( Ident '=' ( type | OPAQUE recordType? ) ';' )* |
 	VAR ( variableDeclaration ';' )* |
 	procedureHeader ';'
 	;
@@ -204,7 +218,7 @@ definition :
 
 // production #13
 constantDeclaration :	
-	ident '=' constExpression // no type identifiers
+	Ident '=' constExpression // no type identifiers
 	;
 
 // *** Type Declarations ***
@@ -221,7 +235,7 @@ namedType : qualident ;
 
 // production #15
 enumerationType :
-	'(' ( ( '+' namedType ) | ident ) ( ',' ( ( '+' namedType ) | ident ) )* ')'
+	'(' ( ( '+' namedType ) | Ident ) ( ',' ( ( '+' namedType ) | Ident ) )* ')'
 	;
 
 // production #16
@@ -241,7 +255,7 @@ recordType :
 	;
 
 // alias
-baseType : ident ;
+baseType : Ident ;
 
 // production #18
 fieldListSequence :
@@ -250,8 +264,8 @@ fieldListSequence :
 
 // production #19
 fieldList :
-	ident
-	( ( ',' ident )+ ':' namedType |
+	Ident
+	( ( ',' Ident )+ ':' namedType |
 	  ':' ( ARRAY ( arrayIndexOrDeterminantField ) OF )? namedType )
 	;
 
@@ -290,7 +304,7 @@ formalType :
 
 // production #25
 simpleFormalType :
-	( CONST | VAR {})? ( ARRAY OF )? namedType
+	( CONST | VAR {})? ( '*'? ARRAY OF )? namedType
 	;
 
 // production #26
@@ -306,7 +320,7 @@ returnedType : namedType ;
 
 // production #27
 variableDeclaration :
-	ident ( '[' machineAddress ']' | ',' identList )?
+	Ident ( '[' machineAddress ']' | ',' identList )?
 	':' ( ARRAY arrayIndex OF )? namedType 
 	;
 
@@ -317,14 +331,14 @@ machineAddress : constExpression ;
 
 // production #28
 procedureDeclaration :
-	procedureHeader ';' block ident
+	procedureHeader ';' block Ident
 	;
 
 // production #29
 procedureHeader :
 	PROCEDURE
 	( '[' ( bindableOperator | bindableIdent ) ']' )?
-	ident ( '(' formalParamList ')' )? ( ':' returnedType )?
+	Ident ( '(' formalParamList ')' )? ( ':' returnedType )?
 	;
 
 // production #30
@@ -349,7 +363,7 @@ variadicFormalParams :
 	;
 
 // alias
-variadicCounter : ident ;
+variadicCounter : Ident ;
 
 // alias
 variadicTerminator : constExpression ;
@@ -421,7 +435,7 @@ forStatement :
 	;
 
 // alias ordinalConstExpression
-controlVariable : ident ;
+controlVariable : Ident ;
 
 // alias
 ordinalExpression : expression ;
@@ -464,7 +478,7 @@ mulOperator :
 
 // production #51
 constFactor :
-	( number | string | constQualident | constStructuredValue |
+	( Number | String | constQualident | constStructuredValue |
 	'(' constExpression ')' ) ( '::' namedType )?
 	| NOT constFactor
 	;
@@ -476,7 +490,7 @@ designator :
 
 // production #53
 designatorTail :
-	( ( '[' expressionList ']' | '^' ) ( '.' ident )* )+
+	( ( '[' expressionList ']' | '^' ) ( '.' Ident )* )+
 	;
 
 // production #54
@@ -501,7 +515,7 @@ term :
 
 // production #58
 factor :
-	( number | string | structuredValue |
+	( Number | String | structuredValue |
 	  designatorOrProcedureCall | '(' expression ')' )
 	( '::' namedType )?
 	| NOT factor
@@ -543,27 +557,16 @@ valueComponent :
 
 // production #65
 qualident :
-	ident ( '.' ident )*
+	Ident ( '.' Ident )*
 	;
 
 // production #66
 identList :
-	ident ( ',' ident )*
+	Ident ( ',' Ident )*
 	;
 
 // alias
-ident :	IDENT ;
-
-// alias
 constQualident : qualident ; // no type and no variable identifiers
-
-// *** Literals ***
-
-// alias
-number : NUMBER ;
-
-// alias
-string : STRING ;
 
 
 // ---------------------------------------------------------------------------
@@ -593,20 +596,20 @@ compileTimeMessagePragma :
 
 // production #4
 codeGenerationPragma :
-	ALIGN '=' constExpression | FOREIGN ( '=' string )? | MAKE '=' string |
+	ALIGN '=' constExpression | FOREIGN ( '=' String )? | MAKE '=' String |
 	INLINE | NOINLINE | VOLATILE
 	;
 
 // production #5
 implementationDefinedPragma :
-	pragmaName ( '+' | '-' | '=' ( ident | number ) )?
+	pragmaName ( '+' | '-' | '=' ( Ident | Number ) )?
 	;
 
 // alias
-compileTimeMessage : string ;
+compileTimeMessage : String ;
 
 // alias
-pragmaName : ident ; // lowercase or camelcase only
+pragmaName : Ident ; // lowercase or camelcase only
 
 
 // ---------------------------------------------------------------------------
@@ -615,27 +618,27 @@ pragmaName : ident ; // lowercase or camelcase only
 // 9 productions
 
 // production #1
-IDENT :
+Ident :
 	( '_' | '$' | LETTER ) ( '_' | '$' | LETTER | DIGIT )*
 	;
 
 // production #2
-NUMBER :
+Number :
 	// Decimal integer
 	DIGIT+ |
 	
 	// Binary integer
-	BINARY_DIGIT+ 'B' |
+	BASE2_DIGIT+ 'B' |
 	
 	// Sedecimal integer
-	DIGIT SEDECIMAL_DIGIT* ( 'C' | 'H' {}) |
+	DIGIT BASE16_DIGIT* ( 'C' | 'H' {}) |
 	
 	// Real number
 	DIGIT+ '.' DIGIT+ ( 'E' ( '+' | '-' {})? DIGIT+ )?
 	;
 
 // production #3
-STRING :
+String :
 //  Proper EBNF for STRING
     SINGLE_QUOTE ( CHARACTER | DOUBLE_QUOTE )* SINGLE_QUOTE |
     DOUBLE_QUOTE ( CHARACTER | SINGLE_QUOTE )* DOUBLE_QUOTE
@@ -655,20 +658,20 @@ LETTER :
 // production #5
 fragment
 DIGIT :
-	BINARY_DIGIT | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+	BASE2_DIGIT | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 	{} // make ANTLRworks display separate branches
 	;
 
 // production #6
 fragment
-BINARY_DIGIT :
+BASE2_DIGIT :
 	'0' | '1'
 	{} // make ANTLRworks display separate branches
 	;
 
 // production #7
 fragment
-SEDECIMAL_DIGIT :
+BASE16_DIGIT :
 	DIGIT | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
 	{} // make ANTLRworks display separate branches
 	;
