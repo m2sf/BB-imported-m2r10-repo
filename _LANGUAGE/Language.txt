@@ -54,8 +54,6 @@ be finalised:
 * whether to include a subrange integer type constructor or not
 * whether to lexically distinguish auto-casting open arrays from ordinary
   open arrays
-* whether the digit capacity of a scalar ADT should be a binding, a magic
-  constant or a pragma
 
 
 1 Lexical Entities
