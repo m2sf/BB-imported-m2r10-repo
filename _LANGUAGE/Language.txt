@@ -1,4 +1,4 @@
-(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: June, 6, 2010] 
+(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: June, 8, 2010] 
 
 Modula-2 R10 Concise Language Description
 
@@ -2803,6 +2803,7 @@ There are five groups of pervasive identifiers:
 * predefined types
 * predefined procedures
 * predefined functions
+* predefined primitives
 * built-in lexical macros
 
 
@@ -3155,13 +3156,33 @@ Its return type is LONGCARD. Its pseudo-defintion is:
 PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD ;
 
 
-10.5 Built-in Lexical Macros
+10.5 Scalar Conversion Primitives
+
+Scalar conversion primitives are bindable built-in pseudo-procedures used by
+the compiler to convert between different scalar types when no direct
+conversion path exists between the types.
+
+
+10.5.2 Primitive SXF
+
+The SXF primitive converts a value of a scalar type to scalar exchange format
+and passes the result back in a string variable. Its pseudo-definition is:
+
+PROCEDURE SXF ( value : <ScalarType>; VAR s : ARRAY OF CHAR );
+
+
+10.5.2 Primitive VAL
+
+The VAL primitive converts a string in scalar exchange format to an equivalent
+value of a given scalar type. Its pseudo-definition is:
+
+PROCEDURE VAL ( CONST s : ARRAY OF CHAR; VAR value : <ScalarType> );
+
+
+10.6 Built-in Lexical Macros MIN and MAX
 
 User-definable lexical macros are not provided in Modula-2 (on purpose), but
-there are three built-in lexical macros: MIN, MAX and VAL.
-
-
-10.5.1 Macros MIN and MAX
+there are two built-in lexical macros: MIN and MAX.
 
 Macro MIN is replaced with the smallest constant from its variadic argument
 list and Macro MAX is replaced with the largest constant from its variadic
@@ -3175,19 +3196,6 @@ Examples:
 
 MIN( 1, 2, 3 ) => 1
 MAX( 1, 2, 3 ) => 3
-
-
-10.5.2 Legacy Macro VAL
-
-Macro VAL is provided only as a measure of legacy support. It is replaced by
-an equivalent type conversion expression. Its pseudo-definition is:
-
-PROCEDURE VAL ( T : <TypeIdentifier>; x : <AnyType> ) : <T>; (* => x :: T *)
-
-Example: VAL(INTEGER, x) => x :: INTEGER
-
-CAUTION: This macro may be deprecated in a future revision and its use should
-be avoided. The type conversion operator :: should always be used instead.
 
 
 11 Generics

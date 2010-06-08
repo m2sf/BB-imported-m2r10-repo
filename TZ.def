@@ -3,8 +3,6 @@ DEFINITION MODULE TZ [ZTYPE];
 (* Time Zone Offsets *)
 
 
-IMPORT ScalarDigitCount;
-
 FROM FileIO IMPORT File; (* required for IO *)
 
 
@@ -14,13 +12,6 @@ TYPE
     TZ = OPAQUE RECORD
         value : OCTET; (* 8 bits *)
     END; (* TZ *)
-
-
-(* Maximum digits in native radix *)
-
-CONST
-    maxDigitCount = { 3, 0 } :: ScalarDigitCount;
-    (* maximum of 3 base-16 digits significand, no exponent *)
 
 
 CONST interval = 15;
@@ -59,6 +50,20 @@ PROCEDURE [::] fromCARD  ( n : CARDINAL ) : TZ;
 PROCEDURE [::] fromINT  ( n : INTEGER ) : TZ;
 (* Converts INTEGER value n to a TZ value and returns it. This function
    is bound to the :: operator for INTEGER to TZ conversion. *)
+
+
+(* Scalar conversion primitives *)
+
+CONST maxSXFDigits = 3;
+    (* maximum digits when converted to scalar exchange format *)
+
+PROCEDURE [SXF] toSXF ( n : TZ; VAR s : ARRAY OF CHAR );
+(* Converts TZ value n to a string in scalar exchange format.
+   This procedure is bound to pervasive primitive SXF for type TZ. *)
+
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR n : TZ );
+(* Converts a string in scalar exchange format to a TZ value.
+   This procedure is bound to pervasive primitive VAL for type TZ. *)
 
 
 (* Monadic arithmetic operations *) 
@@ -100,21 +105,6 @@ PROCEDURE [<] isLess ( n1, n2 : TZ ) : BOOLEAN;
 PROCEDURE [>] isGreater ( n1, n2 : TZ ) : BOOLEAN;
 (* Returns TRUE if TZ value n1 is greater than n2, otherwise FALSE.
    This function is bound to operators > and <= for type TZ. *)
-
-
-(* Scalar conversion primitives *)
-
-CONST digitCapacity = 3; (* maximum digits in native format *)
-
-PROCEDURE [TO] toSXF ( n : TZ; VAR s : ARRAY OF CHAR );
-(* Converts TZ value n to a string in scalar exchange format.
-   This procedure is used to synthesise conversions to other scalar types
-   when no direct conversion path exists. *)
-
-PROCEDURE [FROM] fromSXF ( VAR n : TZ; CONST s : ARRAY OF CHAR );
-(* Converts a string in scalar exchange format to a TZ value.
-   This procedure is used to synthesise conversions from other scalar types
-   when no direct conversion path exists. *)
 
 
 (* Common Time Zone Identifiers *)

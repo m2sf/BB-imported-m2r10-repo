@@ -47,6 +47,17 @@ PROCEDURE [::] from ( x : <TargetType> ) : <ADT>;
    for conversions from type <TargetType> to type <ADT>. *)
 
 
+(* Bindings to scalar conversion primitives *)
+
+PROCEDURE [SXF] toSXF ( x : <ADT>; VAR s : ARRAY OF CHAR );
+(* Signature for a procedure that binds to pervasive procedure SXF
+   to convert values of type <ADT> to scalar exchange format. *)
+
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR x : <ADT> );
+(* Signature for a procedure that binds to pervasive procedure VAL
+   to convert scalar exchange format to values of type <ADT>. *)
+
+
 (* Bindings to monadic operations *)
 
 PROCEDURE [ABS] abs ( x : <ADT> ) : <ADT>;
@@ -114,17 +125,6 @@ PROCEDURE [>] isGreater ( x1, x2 : <ADT> ) : BOOLEAN;
    for operands of type <ADT>. *)
 
 (* The operation for the >= operator is synthesized as NOT (x1 < x2) *)
-
-
-(* Bindings to scalar conversion primitives *)
-
-PROCEDURE [TO] toSXF ( x : <ADT>; VAR s : ARRAY OF CHAR );
-(* Signature for a procedure that binds to the internal scalar conversion
-   primitive toSXF to convert values of type ADT to scalar exchange format. *)
-
-PROCEDURE [FROM] fromSXF ( VAR x : <ADT>; CONST s : ARRAY OF CHAR );
-(* Signature for a procedure that binds to the internal scalar conversion
-   primitive fromSXF to convert scalar exchange format to type <ADT>. *)
 
 
 (* Storage mutator binding to [ ] operator *)

@@ -39,8 +39,8 @@ PROCEDURE [<]; (* require binding to less operator *)
 
 PROCEDURE [>]; (* require binding to greater operator *)
 
-PROCEDURE [TO]; (* require scalar conversion primitive toSXF *)
+PROCEDURE [SXF]; (* require binding to scalar conversion primitive SXF *)
 
-PROCEDURE [FROM]; (* require scalar conversion primitive fromSXF *)
+PROCEDURE [VAL]; (* require binding to scalar conversion primitive VAL *)
 
 END RTYPE.

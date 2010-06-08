@@ -5,8 +5,6 @@ DEFINITION MODULE UnsignedReal60 [RTYPE];
 (* Unsigned Real Subrange Type With Values from 0.0 to 59.999 *) 
 
 
-IMPORT ScalarDigitCount;
-
 FROM FileIO IMPORT File; (* required for IO *)
 
 
@@ -18,13 +16,6 @@ TYPE
     END; (* UnsignedReal60 *)
 
     (* 1-bit sign, 15-bit significand, fixed decimal point *)
-
-
-(* Maximum digits in native radix *)
-
-CONST
-    maxDigitCount = { 4, 1 } :: ScalarDigitCount;
-    (* maximum of 4 base-16 digits significand, 1 digit exponent *)
 
 
 (* R-Type bindings to operators, pervasives and primitives: *)
@@ -64,6 +55,22 @@ PROCEDURE [::] toREAL ( r : UnsignedReal60 ) : REAL;
 (* Converts UnsignedReal60 value r to a REAL value and returns it.
    This function is bound to the :: operator for UnsignedReal60 to REAL
    conversion. *)
+
+
+(* Scalar conversion primitives *)
+
+CONST maxSXFDigits = 5;
+    (* maximum digits when converted to scalar exchange format *)
+
+PROCEDURE [SXF] toSXF ( r : UnsignedReal60; VAR s : ARRAY OF CHAR );
+(* Converts UnsignedReal60 value r to a string in scalar exchange format.
+   This procedure is bound to pervasive primitive SXF for type
+   UnsignedReal60. *)
+
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR r : UnsignedReal60 );
+(* Converts a string in scalar exchange format to an UnsignedReal60 value.
+   This procedure is bound to pervasive primitive VAL for type
+   UnsignedReal60. *)
 
 
 (* Monadic arithmetic operations *) 
@@ -114,19 +121,6 @@ PROCEDURE [<] isLess ( r1, r2 : UnsignedReal60 ) : BOOLEAN;
 PROCEDURE [>] isGreater ( r1, r2 : UnsignedReal60 ) : BOOLEAN;
 (* Returns TRUE if UnsignedReal60 value r1 is greater than r2, otherwise FALSE.
    This function is bound to operators > and <= for type UnsignedReal60. *)
-
-
-(* Scalar conversion primitives *)
-
-PROCEDURE [TO] toSXF ( r : UnsignedReal60; VAR s : ARRAY OF CHAR );
-(* Converts a UnsignedReal60 value to a string in scalar exchange format.
-   This procedure is used to synthesise conversions to other scalar types
-   when no direct conversion path exists. *)
-
-PROCEDURE [FROM] fromSXF ( VAR r : UnsignedReal60; CONST s : ARRAY OF CHAR );
-(* Converts a string in scalar exchange format to a UnsignedReal60 value.
-   This procedure is used to synthesise conversions from other scalar types
-   when no direct conversion path exists. *)
 
 
 (* IO operations *)

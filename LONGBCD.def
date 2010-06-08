@@ -18,13 +18,6 @@ TYPE
     (* 1-bit sign, 116-bit significand, 11-bit exponent *)
 
 
-(* Maximum digits in native radix *)
-
-CONST
-    maxDigitCount = { 29, 3 } :: ScalarDigitCount;
-    (* maximum of 29 decimal digits significand, 3 digits exponent *)
-
-
 (* R-Type bindings to operators, pervasives and primitives: *)
 
 
@@ -59,6 +52,20 @@ PROCEDURE [::] toINT ( a : LONGBCD ) : INTEGER;
 PROCEDURE [::] toREAL ( a : LONGBCD ) : REAL;
 (* Converts LONGBCD value a to a REAL value and returns it. This
    function is bound to the :: operator for LONGBCD to REAL conversion. *)
+
+
+(* Scalar conversion primitives *)
+
+CONST maxSXFDigits = 32;
+    (* maximum digits when converted to scalar exchange format *)
+
+PROCEDURE [SXF] toSXF ( a : LONGBCD; VAR s : ARRAY OF CHAR );
+(* Converts LONGBCD value a to a string in scalar exchange format.
+   This procedure is bound to pervasive primitive SXF for type LONGBCD. *)
+
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR a : LONGBCD );
+(* Converts a string in scalar exchange format to a LONGBCD value.
+   This procedure is bound to pervasive primitive VAL for type LONGBCD. *)
 
 
 (* Monadic arithmetic operations *) 
@@ -104,19 +111,6 @@ PROCEDURE [<] isLess ( a, b : LONGBCD ) : BOOLEAN;
 PROCEDURE [>] isGreater ( a, b : LONGBCD ) : BOOLEAN;
 (* Returns TRUE if LONGBCD value a is greater than b, otherwise FALSE.
    This function is bound to operators > and <= for type LONGBCD. *)
-
-
-(* Scalar conversion primitives *)
-
-PROCEDURE [TO] toSXF ( b : LONGBCD; VAR s : ARRAY OF CHAR );
-(* Converts a LONGBCD value to a string in scalar exchange format.
-   This procedure is used to synthesise conversions to other scalar types
-   when no direct conversion path exists. *)
-
-PROCEDURE [FROM] fromSXF ( VAR b : LONGBCD; CONST s : ARRAY OF CHAR );
-(* Converts a string in scalar exchange format to a LONGBCD value.
-   This procedure is used to synthesise conversions from other scalar types
-   when no direct conversion path exists. *)
 
 
 (* IO operations *)

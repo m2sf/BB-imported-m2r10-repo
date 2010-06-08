@@ -5,8 +5,6 @@ DEFINITION MODULE CARD64 [ZTYPE];
 (* 64-bit Unsigned Integer Numbers *) 
 
 
-IMPORT ScalarDigitCount;
-
 FROM FileIO IMPORT File; (* required for IO *)
 
 
@@ -16,13 +14,6 @@ TYPE
     CARD64 = OPAQUE RECORD
         value : ARRAY 8 OF OCTET; (* 64 bits *)
     END; (* CARD64 *)
-
-
-(* Maximum digits in native radix *)
-
-CONST
-    maxDigitCount = { 16, 0 } :: ScalarDigitCount;
-    (* maximum of 16 base-16 digits significand, no exponent *)
 
 
 (* Z-Type bindings to operators, pervasives and primitives: *)
@@ -64,6 +55,20 @@ PROCEDURE [::] fromCARD  ( n : CARDINAL ) : CARD64;
 PROCEDURE [::] fromINT  ( n : INTEGER ) : CARD64;
 (* Converts INTEGER value n to a CARD64 value and returns it. This function
    is bound to the :: operator for INTEGER to CARD64 conversion. *)
+
+
+(* Scalar conversion primitives *)
+
+CONST maxSXFDigits = 16;
+    (* maximum digits when converted to scalar exchange format *)
+
+PROCEDURE [SXF] toSXF ( n : CARD64; VAR s : ARRAY OF CHAR );
+(* Converts CARD64 value n to a string in scalar exchange format.
+   This procedure is bound to pervasive primitive SXF for type CARD64. *)
+
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR n : CARD64 );
+(* Converts a string in scalar exchange format to a CARD64 value.
+   This procedure is bound to pervasive primitive VAL for type CARD64. *)
 
 
 (* Monadic arithmetic operations *) 
@@ -109,19 +114,6 @@ PROCEDURE [<] isLess ( n1, n2 : CARD64 ) : BOOLEAN;
 PROCEDURE [>] isGreater ( n1, n2 : CARD64 ) : BOOLEAN;
 (* Returns TRUE if CARD64 value n1 is greater than n2, otherwise FALSE.
    This function is bound to operators > and <= for type CARD64. *)
-
-
-(* Scalar conversion primitives *)
-
-PROCEDURE [TO] toSXF ( n : CARD64; VAR s : ARRAY OF CHAR );
-(* Converts CARD64 value n to a string in scalar exchange format.
-   This procedure is used to synthesise conversions to other scalar types
-   when no direct conversion path exists. *)
-
-PROCEDURE [FROM] fromSXF ( VAR n : CARD64; CONST s : ARRAY OF CHAR );
-(* Converts a string in scalar exchange format to a CARD64 value.
-   This procedure is used to synthesise conversions from other scalar types
-   when no direct conversion path exists. *)
 
 
 (* IO operations *)

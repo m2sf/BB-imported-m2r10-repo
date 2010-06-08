@@ -174,14 +174,14 @@ binding :
 
 // production #8
 bindableOperator :
-	DIV | MOD | IN | FOR | TO | FROM |
+	DIV | MOD | IN | FOR |
 	':=' | '::' | '?' | '!' | '~' | '+' | '-' | '*' | '/' | '=' | '<' | '>'
 	{} // make ANTLRworks display separate branches
 	;
 
 // alias
 bindableIdent : Ident ;
-// TMIN, TMAX, ABS, NEG, ODD, COUNT, LENGTH, NEW, DISPOSE
+// TMIN, TMAX, ABS, NEG, ODD, COUNT, LENGTH, NEW, DISPOSE, SXF, VAL
 
 // alias
 literalType : Ident ;

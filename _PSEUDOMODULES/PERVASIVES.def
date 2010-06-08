@@ -126,6 +126,15 @@ PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
 (* Returns allocation size required for a variable of type T *)
 
 
+(* Pervasive conversion primitives *)
+
+PROCEDURE SXF ( value : <ScalarType>; VAR s : ARRAY OF CHAR );
+(* Converts value to scalar exchange format and passes the result in s. *)
+
+PROCEDURE VAL ( CONST s : ARRAY OF CHAR; VAR value : <ScalarType> );
+(* Converts the value represented by s in scalar exchange format to value. *)
+
+
 (* Lexical Macros *)
 
 (* MACRO *) PROCEDURE MIN ( x : VARIADIC OF <Constant> ) : <OperandType>;
@@ -134,7 +143,5 @@ PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
 (* MACRO *) PROCEDURE MAX ( x : VARIADIC OF <Constant> ) : <OperandType>;
 (* Replaced with the largest constant in the variadic list *)
 
-(* MACRO *) PROCEDURE VAL ( T : <TypeIdentifier>; x : <anyType> ) : <T>;
-(* VAL(T, x) => x :: T *)
 
 END PERVASIVES.

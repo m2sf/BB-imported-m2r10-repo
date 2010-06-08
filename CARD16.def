@@ -4,7 +4,6 @@ DEFINITION MODULE CARD16 [ZTYPE];
 
 (* 16-bit Unsigned Integer Numbers *) 
 
-IMPORT ScalarDigitCount;
 
 FROM FileIO IMPORT File; (* required for IO *)
 
@@ -15,13 +14,6 @@ TYPE
     CARD16 = OPAQUE RECORD
         value : ARRAY 2 OF OCTET; (* 16 bits *)
     END; (* CARD16 *)
-
-
-(* Maximum digits in native radix *)
-
-CONST
-    maxDigitCount = { 4, 0 } :: ScalarDigitCount;
-    (* maximum of 4 base-16 digits significand, no exponent *)
 
 
 (* Z-Type bindings to operators, pervasives and primitives: *)
@@ -62,6 +54,20 @@ PROCEDURE [::] fromCARD  ( n : CARDINAL ) : CARD16;
 PROCEDURE [::] fromINT  ( n : INTEGER ) : CARD16;
 (* Converts INTEGER value n to a CARD16 value and returns it. This function
    is bound to the :: operator for INTEGER to CARD16 conversion. *)
+
+
+(* Scalar conversion primitives *)
+
+CONST maxSXFDigits = 4;
+    (* maximum digits when converted to scalar exchange format *)
+
+PROCEDURE [SXF] toSXF ( n : CARD16; VAR s : ARRAY OF CHAR );
+(* Converts CARD16 value n to a string in scalar exchange format.
+   This procedure is bound to pervasive primitive SXF for type CARD16. *)
+
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR n : CARD16 );
+(* Converts a string in scalar exchange format to a CARD16 value.
+   This procedure is bound to pervasive primitive VAL for type CARD16. *)
 
 
 (* Monadic arithmetic operations *) 
@@ -107,19 +113,6 @@ PROCEDURE [<] isLess ( n1, n2 : CARD16 ) : BOOLEAN;
 PROCEDURE [>] isGreater ( n1, n2 : CARD16 ) : BOOLEAN;
 (* Returns TRUE if CARD16 value n1 is greater than n2, otherwise FALSE.
    This function is bound to operators > and <= for type CARD16. *)
-
-
-(* Scalar conversion primitives *)
-
-PROCEDURE [TO] toSXF ( n : CARD16; VAR s : ARRAY OF CHAR );
-(* Converts CARD16 value n to a string in scalar exchange format.
-   This procedure is used to synthesise conversions to other scalar types
-   when no direct conversion path exists. *)
-
-PROCEDURE [FROM] fromSXF ( VAR n : CARD16; CONST s : ARRAY OF CHAR );
-(* Converts a string in scalar exchange format to a CARD16 value.
-   This procedure is used to synthesise conversions from other scalar types
-   when no direct conversion path exists. *)
 
 
 (* IO operations *)
