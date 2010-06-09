@@ -163,7 +163,7 @@ semanticType : Ident ;
 // production #6
 bindingsHeader :
 	TYPE '=' ( RECORD | OPAQUE ( ASSOCIATIVE ARRAY | RECORD )?
-               ( ':=' ( literalType | '{' '}' ) )? ) ';'
+               ( ':=' ( literalType | '{' '..' '}' ) )? ) ';'
 	;
 
 // production #7
