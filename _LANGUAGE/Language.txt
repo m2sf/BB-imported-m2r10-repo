@@ -36,6 +36,13 @@ notation used by the lexer and parser generator ANTLR:
 * a semicolon is used to terminate a production rule
 
 
+Abbreviations
+
+ADT   Abstract Data Type                  SXF   Scalar Exchange Format
+API   Application Programming Interface   VLA   Variable Length Array
+EBNF  Extended Backus-Naur Formalism
+
+
 Items To Do
 
 The following items sill need to be done before the language report can be
@@ -374,10 +381,8 @@ Pragma name  : FORWARD
 To assist external source code processing prior to compilation, the following
 symbols are reserved for exclusive use by external source code processors:
 
-!!  reserved for use by editors or di-/tri-graph converters
-??  reserved for use by editors or di-/tri-graph converters
-@@  reserved for use by the Modula-2 Template Engine or make utilities
-%%  reserved for use by the Modula-2 Template Engine or make utilities
+!! and ??  reserved for use by editors or di-/tri-graph converters
+@@ and %%  reserved for use by the Modula-2 Template Engine or make utilities
 
 
 2 Compilation Units
