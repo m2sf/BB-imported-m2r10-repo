@@ -187,9 +187,8 @@ Examples:
 
 1.2.3 Lexical Separators
 
-Tab and newline are ignored anywhere in a program. The space character is
-ignored anywhere other than within string literals. These symbols always
-terminate a numeric literal, an identifier, a reserved word or a pragma name.
+Lexical separators terminate a numeric literal, an identifier, a reserved word
+or a pragma name.
 
 EBNF:
 
@@ -258,7 +257,8 @@ Examples: 0.0, 123.45, 3.1415926, 7.523012E+12
 1.3.2 String Literals
 
 String literals are sequences of characters left- and right-delimited by
-single quotes or double quotes.
+single quotes or double quotes. They may not contain control-characters
+but they may contain escape sequences.
 
 EBNF:
 
