@@ -93,6 +93,7 @@ List of Special Symbols
 >=    greater-than-or-equal and superset relational operator
 ^     pointer dereferencing operator
 |     punctuation, used as a separator in case label lists
+
 '     single quote, used as a string delimiter
 "     double quote, used as a string delimiter
 \     escape symbol within a quoted string
@@ -107,6 +108,7 @@ List of Special Symbols
 
 <*    opening delimiter for pragmas
 *>    closing delimiter for pragmas
+
 //    prefix for single-line comment
 (*    opening delimiter for multi-line comment
 *)    closing delimiter for multi-line comment
