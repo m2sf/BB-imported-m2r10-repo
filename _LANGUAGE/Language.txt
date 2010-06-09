@@ -1568,12 +1568,9 @@ or expression compatible. If the types do not have names, then compatibility
 cannot be determined.
 
 For this reason, anonymous types are of very limited use in languages with
-name equivalence. Nevertheless, Modula-2 R10 allows the use of anonymous
-types in the following cases:
-
-* anonymous one-dimensional arrays as record fields
-* anonymous one-dimensional arrays in variable declarations
-* anonymous open arrays as formal parameters of procedures
+name equivalence. However, in order to allow the construction of VLAs,
+Modula-2 R10 supports the use of anonymous one-dimensional arrays
+in record fields and in variable declarations.
 
 
 5.3.5 Enumeration Types
@@ -1617,8 +1614,9 @@ colour := Colours.green; (* qualified identifier of value green *)
 5.3.6.1 Indexed Array Types
 
 An indexed array type is a compound type whose compononents are all of the
-same type and are addressable by ordinal index. Array types are defined
-using the ARRAY type constructor.
+same type and are addressable by ordinal index. The formal array index para-
+meter must be a positive whole number value or a named ordinal type. Array
+types are defined using the ARRAY type constructor.
 
 EBNF:
 
