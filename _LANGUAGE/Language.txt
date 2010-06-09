@@ -1479,8 +1479,8 @@ celsius := (fahrenheit :: Celsius - 32.0) * 100.0/180.0; (* type conversion *)
 
 5.3.2 Alias Types
 
-If a type is desired to be compatible with another type it must be defined or
-declared as an alias type.
+For a type to be compatible with another type it must be defined or declared
+as an alias type.
 
 Example:
 
