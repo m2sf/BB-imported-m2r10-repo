@@ -1332,7 +1332,7 @@ Example:
 IMPORT CHARSET;
 VAR delimiters : CHARSET; found : BOOLEAN;
 BEGIN found := FALSE; delimiters := { ":", ",", "." };
-FOR char IN "foo:bar.baz,bam" DO IF delimiters IN char THEN EXIT END END END;
+FOR char IN "foo:bar.baz,bam" DO IF char IN delimiters THEN EXIT END END END;
 
 
 4.6.7 Library Defined Character String ADTs
@@ -1874,7 +1874,7 @@ formalType :
     simpleFormalType | variadicFormalType ;
 
 simpleFormalType :
-    ( CONST | VAR {})? ( ARRAY OF )? namedType ;
+    ( CONST | VAR )? ( ARRAY OF )? namedType ;
 
 variadicFormalType :
     VARIADIC OF
@@ -1893,7 +1893,7 @@ WriteStr := Terminal.WriteString; WriteStr("hi!");
 5.4 Procedure Definitions and Declarations
 
 A procedure is a sequence of actions to perform a computation identified by a
-name. In Modula-2, procedures may have zero or more parameters associated and
+name. In Modula-2, procedures may have zero or more associated parameters and
 they may or may not return a result. Procedures that return a result are
 called function procedures, those that do not return a result are called
 proper procedures.
@@ -2047,7 +2047,7 @@ PROCEDURE WriteString ( CONST s : ARRAY OF CHAR );
 5.4.3.5 Variadic Formal Parameters
 
 Modula-2 R10 supports type-safe variadic procedures. For this purpose, a
-a formal parameter list may contain one or more variadic formal parameter
+formal parameter list may contain one or more variadic formal parameter
 lists. A variadic formal parameter is denoted by reserved word VARIADIC.
 
 variadicFormalParams :
@@ -2192,9 +2192,9 @@ str := "hello"; Write(str); (* any CHAR array is compatible *)
 5.4.3.11 Auto-Casting Open Array Parameters
 
 Open array parameters with component type OCTET, SYSTEM.BYTE or SYSTEM.WORD
-have auto-casting semantics. Any value of any type may then be passed as an
-actual parameter and it is automatically cast to the array type of the formal
-parameter. This facility is useful for system-level programming tasks but it
+have auto-casting semantics. Any value of any type may be passed as an actual
+parameter and it is automatically cast to the array type of the formal para-
+meter. This facility is useful for system-level programming tasks but it
 should be used with caution because type safety is no longer guaranteed.
 
 Example:
@@ -2384,7 +2384,7 @@ Example:
 WHILE NOT EOF(file) DO READ(file, ch) END;
 
 
-6.6 REPEAT Statements
+6.7 REPEAT Statements
 
 A REPEAT statement is used to repeat a statement or sequence of statements
 depending on a condition. The condition is evaluated each time the REPEAT
@@ -2400,13 +2400,13 @@ Example:
 REPEAT Read(file, ch) UNTIL ch = terminator END;
 
 
-6.7 LOOP and EXIT Statements
+6.8 LOOP and EXIT Statements
 
 The LOOP statement is used to repeat a statement or sequence of statements
 indefinitely unless explicitly terminated by an EXIT statement. An EXIT
 statement terminates the loop body in which it is invoked and it transfers
 control to the first statement after the loop body. The loop body may be
-the body of a LOOP, WHILE, REPEAT or FOR loop.
+the body of a LOOP, WHILE, REPEAT or FOR statement.
 
 EBNF:
 
@@ -2419,7 +2419,7 @@ Example:
 LOOP READ(file, ch); IF ch IN TerminatorSet THEN EXIT END END;
 
 
-6.8 FOR statements
+6.9 FOR statements
 
 The FOR statement is used to repeat a statement or statement sequence a
 given number of times, depending on a control variable. The control variable
@@ -2441,7 +2441,7 @@ There are two types of FOR statements:
 Where possible, the use of FOR IN statements should be given preference.
 
 
-6.8.1 FOR IN statements
+6.9.1 FOR IN statements
 
 FOR IN statements iterate over all values of an ordered value set in ascending
 order. The value set may be a designator of an ordinal or whole number type,
@@ -2492,7 +2492,7 @@ FOR colour IN ColourSet DO counter++ END;
 FOR key IN dictionary DO WRITE(file, dictionary[key]) END;
 
 
-6.8.2 FOR TO BY statements
+6.9.2 FOR TO BY statements
 
 FOR TO BY statements iterate over an explicit whole number range denoted by
 a start and stop value and an optional increment value. The control variable
@@ -2512,7 +2512,7 @@ Example:
 FOR count : CARDINAL := 99 TO 0 BY -1 DO BottlesOfBeer(count) END;
 
 
-6.9 RETURN Statements
+6.10 RETURN Statements
 
 The RETURN statement is used within a procedure body to return control to the
 calling procedure and in the main body of the program to return control to the
@@ -2530,7 +2530,7 @@ BEGIN
 END Increment;
 
 
-6.10 Statement Sequences
+6.11 Statement Sequences
 
 Statements in a sequence of statements are separated by semicolons.
 
@@ -2785,8 +2785,8 @@ NB: At present, the only parameter defined for pragma FOREIGN is "C".
 9.2 Implementation Defined Pragmas
 
 Implementation defined pragmas are compiler specific and non-portable. They
-are easily distinguished because their pragma names are either all-lowercase
-or mixed-case but never all-uppercase words.
+are easily distinguished because their pragma names are never all-uppercase
+words.
 
 EBNF:
 
@@ -2816,9 +2816,9 @@ There are five groups of pervasive identifiers:
 
 There are three predefined constants:
 
-NIL    invalid pointer value
-TRUE   shorthand for BOOLEAN.TRUE
-FALSE  shorthand for BOOLEAN.FALSE
+NIL         invalid pointer value
+TRUE        shorthand for BOOLEAN.TRUE
+FALSE       shorthand for BOOLEAN.FALSE
 
 
 10.2 Predefined Types
@@ -3052,7 +3052,7 @@ PROCEDURE ODD ( x : <Z-Type> ) : BOOLEAN ;
 Function PRED returns the n-th predecessor of its first operand where n is the
 second operand. Its first operand may be of any ordinal type and its second
 operand may be of any unsigned type. Its return type is always the same as
-type of its first operand. Its pseudo-definition is:
+the type of its first operand. Its pseudo-definition is:
 
 PROCEDURE PRED ( x : <OrdinalType>; n : <UnsignedType> ) : <typeOf(x)> ;
 
@@ -3251,7 +3251,7 @@ IMPORT IntegerStack; (* import the generated module *)
 
 The standard library provides a portfolio of generic templates for commonly
 used abstract data types. A list of templates and their brief descriptions
-can be found in the Standard Library section of this document.
+can be found in the standard library section of this document.
 
 
 12 Standard Library
