@@ -18,6 +18,13 @@ version of this document for updates. It is located in a public repository at:
 http://bitbucket.org/trijezdci/m2r10stdlib/src/tip/_LANGUAGE/Language.txt
 
 
+Abbreviations
+
+ADT   Abstract Data Type                  SXF   Scalar Exchange Format
+API   Application Programming Interface   VLA   Variable Length Array
+EBNF  Extended Backus-Naur Formalism
+
+
 Syntax Notation
 
 The notation used to describe syntax in this document is based on the EBNF
@@ -34,13 +41,6 @@ notation used by the lexer and parser generator ANTLR:
 * a trailing asterisk is used to denote zero or more occurrences
 * a colon is used between a production rule's name and its body
 * a semicolon is used to terminate a production rule
-
-
-Abbreviations
-
-ADT   Abstract Data Type                  SXF   Scalar Exchange Format
-API   Application Programming Interface   VLA   Variable Length Array
-EBNF  Extended Backus-Naur Formalism
 
 
 Items To Do
