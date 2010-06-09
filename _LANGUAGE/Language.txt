@@ -889,6 +889,7 @@ operations are defined for whole number types:
 
 * assignment of whole number literals and expressions (:=)
 * type conversions (::)
+* scalar conversion (SXF, VAL)
 * smallest value (TMIN)
 * largest value (TMAX)
 * absolute value (ABS)
@@ -921,6 +922,7 @@ operations are defined for real number types:
 
 * assignment of real number literals and expressions (:=)
 * type conversions (::)
+* scalar conversion (SXF, VAL)
 * smallest value (TMIN)
 * largest value (TMAX)
 * absolute value (ABS)
