@@ -98,7 +98,7 @@ PROCEDURE [*] multiply ( n1, n2 : CARD64 ) : CARD64;
 
 PROCEDURE [DIV] divide ( n1, n2 : CARD64 ) : CARD64;
 (* Divives CARD64 value n1 by n2 and returns the result.
-   This function is bound to the / operator for type CARD64. *)
+   This function is bound to the DIV operator for type CARD64. *)
 
 
 (* Relational operations *) 

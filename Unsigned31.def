@@ -97,7 +97,7 @@ PROCEDURE [*] multiply ( n1, n2 : Unsigned31 ) : Unsigned31;
 
 PROCEDURE [DIV] divide ( n1, n2 : Unsigned31 ) : Unsigned31;
 (* Divives Unsigned31 value n1 by n2 and returns the result.
-   This function is bound to the / operator for type Unsigned31. *)
+   This function is bound to the DIV operator for type Unsigned31. *)
 
 
 (* Relational operations *) 
