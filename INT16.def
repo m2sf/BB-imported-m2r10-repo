@@ -99,7 +99,7 @@ PROCEDURE [*] multiply ( n1, n2 : INT16 ) : INT16;
 (* Multiplies INT16 values n1 and n2 and returns the result.
    This function it bound to the * operator for type INT16. *)
 
-PROCEDURE [/] divide ( n1, n2 : INT16 ) : INT16;
+PROCEDURE [DIV] divide ( n1, n2 : INT16 ) : INT16;
 (* Divives INT16 value n1 by n2 and returns the result.
    This function is bound to the / operator for type INT16. *)
 

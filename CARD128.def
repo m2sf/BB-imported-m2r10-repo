@@ -97,7 +97,7 @@ PROCEDURE [*] multiply ( n1, n2 : CARD128 ) : CARD128;
 (* Multiplies CARD128 values n1 and n2 and returns the result.
    This function it bound to the * operator for type CARD128. *)
 
-PROCEDURE [/] divide ( n1, n2 : CARD128 ) : CARD128;
+PROCEDURE [DIV] divide ( n1, n2 : CARD128 ) : CARD128;
 (* Divives CARD128 value n1 by n2 and returns the result.
    This function is bound to the / operator for type CARD128. *)
 

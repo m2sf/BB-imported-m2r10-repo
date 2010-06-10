@@ -95,7 +95,7 @@ PROCEDURE [*] multiply ( n1, n2 : CARD32 ) : CARD32;
 (* Multiplies CARD32 values n1 and n2 and returns the result.
    This function it bound to the * operator for type CARD32. *)
 
-PROCEDURE [/] divide ( n1, n2 : CARD32 ) : CARD32;
+PROCEDURE [DIV] divide ( n1, n2 : CARD32 ) : CARD32;
 (* Divives CARD32 value n1 by n2 and returns the result.
    This function is bound to the / operator for type CARD32. *)
 

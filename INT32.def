@@ -99,7 +99,7 @@ PROCEDURE [*] multiply ( n1, n2 : INT32 ) : INT32;
 (* Multiplies INT32 values n1 and n2 and returns the result.
    This function it bound to the * operator for type INT32. *)
 
-PROCEDURE [/] divide ( n1, n2 : INT32 ) : INT32;
+PROCEDURE [DIV] divide ( n1, n2 : INT32 ) : INT32;
 (* Divives INT32 value n1 by n2 and returns the result.
    This function is bound to the / operator for type INT32. *)
 
