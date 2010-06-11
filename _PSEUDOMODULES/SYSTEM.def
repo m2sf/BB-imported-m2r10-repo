@@ -16,9 +16,13 @@ CONST
 
 
 TYPE
-    BYTE = ARRAY OctetsPerByte OF OCTET;  (* virtual byte *)
+    BYTE = OPAQUE RECORD (* virtual byte *)
+        ARRAY OctetsPerByte OF OCTET;
+    END; (* BYTE *)
 
-    WORD = ARRAY BytesPerWord OF BYTE;  (* virtual word *)
+    WORD = OPAQUE RECORD (* virtual word *)
+        ARRAY BytesPerWord OF BYTE;
+    END; (* WORD *)
 
 
 (* target dependent machine types *)
@@ -37,7 +41,9 @@ CONST
 TYPE
     MACHINEBYTE;  (* target dependent byte *)
 
-    MACHINEWORD = ARRAY MachineBytesPerMachineWord OF MACHINEBYTE;
+    MACHINEWORD = OPAQUE RECORD (* target dependent word *)
+        ARRAY MachineBytesPerMachineWord OF MACHINEBYTE;
+    END; (* MACHINEWORD *)
 
     ADDRESS; (* target dependent machine address *)
 
@@ -171,7 +177,7 @@ PROCEDURE CSBITS( x : <AnyType> ) : CARDINAL;
 
 (* Miscellaneous *)
 
-PROCEDURE RETCC( x : <AnyType> );
+PROCEDURE BAIL( x : <AnyType> );
 (* Returns program control to the caller of the calling procedure and
    passes x as the return value, x must match the caller's return type. *)
 
