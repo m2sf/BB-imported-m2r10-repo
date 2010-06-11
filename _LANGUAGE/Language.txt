@@ -2110,7 +2110,7 @@ invoked as:  Variadic(42, 0, 1, 2, 3, 4);
 compiled as: Variadic(5, 42, 0, 1, 2, 3, 4); (* compiler inserts counter *)
 
 
-5.4.3.7 Variadic List Terminator
+5.4.3.8 Variadic List Terminator
 
 When the variadic-list-terminator convention is used, the compiler determines
 the number of actual parameters passed in the procedure call and automatically
@@ -2134,7 +2134,7 @@ invoked as:  Variadic(0, 1, 2, 3, 4);
 compiled as: Variadic(0, 1, 2, 3, 4, -1); (* compiler inserts terminator *)
 
 
-5.4.3.8 Variadic List With Multiple Components
+5.4.3.9 Variadic List With Multiple Components
 
 A variadic formal parameter may contain multiple components. This is useful to
 define procedures that can accept a variable number of value pairs, or other
@@ -2149,7 +2149,7 @@ invoked as:  Insert(tree, "foo", 123, "bar", 456, "baz", 789);
 compiled as: Insert(tree, 3, "foo", 123, "bar", 456, "baz", 789);
 
 
-5.4.3.9 Variadic List Followed By Further Parameters
+5.4.3.10 Variadic List Followed By Further Parameters
 
 A variadic parameter list may always be passed as a structured value, regard-
 less of the formal parameter list of the variadic procedure. However, when
@@ -2167,7 +2167,7 @@ invoked as:  Insert(tree, { "foo", 123, "bar", 456, "baz", 789 }, status);
 compiled as: Insert(tree, 3, "foo", 123, "bar", 456, "baz", 789, status);
 
 
-5.4.3.10 Open Array Parameters
+5.4.3.11 Open Array Parameters
 
 A formal parameter may be declared as an open array parameter. An open array
 parameter has an anonymous array type without any index specified. Any array
@@ -2189,7 +2189,7 @@ PROCEDURE Write ( s : ARRAY OF CHAR );
 str := "hello"; Write(str); (* any CHAR array is compatible *)
 
 
-5.4.3.11 Auto-Casting Open Array Parameters
+5.4.3.12 Auto-Casting Open Array Parameters
 
 Open array parameters with component type OCTET, SYSTEM.BYTE or SYSTEM.WORD
 have auto-casting semantics. Any value of any type may be passed as an actual
@@ -3168,7 +3168,7 @@ the compiler to convert between different scalar types when no direct
 conversion path exists between the types.
 
 
-10.5.2 Primitive SXF
+10.5.1 Primitive SXF
 
 The SXF primitive converts a value of a scalar type to scalar exchange format
 and passes the result back in a string variable. Its pseudo-definition is:
