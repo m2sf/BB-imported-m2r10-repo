@@ -2,7 +2,7 @@
 
 DEFINITION MODULE UnsignedReal60 [RTYPE];
 
-(* Unsigned Real Subrange Type With Values from 0.0 to 59.999 *) 
+(* Unsigned Real Number Type With Values from 0.0 to 59.999 *) 
 
 
 FROM FileIO IMPORT File; (* required for IO *)
@@ -15,7 +15,7 @@ TYPE
         value : ARRAY 2 OF OCTET; (* 16 bits *)
     END; (* UnsignedReal60 *)
 
-    (* 1-bit sign, 15-bit significand, fixed decimal point *)
+    (* no sign, 16-bit significand, fixed decimal point *)
 
 
 (* R-Type bindings to operators, pervasives and primitives: *)
@@ -59,7 +59,7 @@ PROCEDURE [::] toREAL ( r : UnsignedReal60 ) : REAL;
 
 (* Scalar conversion primitives *)
 
-CONST maxSXFDigits = 5;
+CONST maxSXFDigits = 4;
     (* maximum digits when converted to scalar exchange format *)
 
 PROCEDURE [SXF] toSXF ( r : UnsignedReal60; VAR s : ARRAY OF CHAR );

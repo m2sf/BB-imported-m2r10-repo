@@ -1,0 +1,44 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BINDINGS FOR IntervalType;
+
+(* Semantic Properties for Interval Number Types *)
+
+
+(* ADTs must be opaque records,
+   integer number literals may be used *)
+
+TYPE = OPAQUE RECORD := INTEGER;
+
+
+(* Bindings required for Interval ADTs *)
+
+CONST [TMIN]; (* require binding to TMIN function *)
+
+CONST [TMAX]; (* require binding to TMAX function *)
+
+PROCEDURE [:=]; (* require binding to assignment operator *)
+
+PROCEDURE [::]; (* optional bindings to conversion operator *)
+
+PROCEDURE [ABS]; (* require binding to ABS function *)
+
+PROCEDURE [NEG]; (* optional binding to NEG function *)
+
+PROCEDURE [ODD]; (* require binding to ODD function *)
+
+PROCEDURE [+]; (* require binding to plus operator *)
+
+PROCEDURE [-]; (* require binding to minus operator *)
+
+PROCEDURE [=]; (* require binding to equal operator *)
+
+PROCEDURE [<]; (* require binding to less operator *)
+
+PROCEDURE [>]; (* require binding to greater operator *)
+
+PROCEDURE [SXF]; (* require binding to scalar conversion primitive SXF *)
+
+PROCEDURE [VAL]; (* require binding to scalar conversion primitive VAL *)
+
+END IntervalType.

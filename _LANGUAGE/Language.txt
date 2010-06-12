@@ -3296,6 +3296,7 @@ VTYPE.def             defines semantic properties for numeric vector ADTs
 ArrayType.def         defines semantic properties for static array ADTs
 SetType.def           defines semantic properties for static set ADTs
 DateType.def          defines semantic properties for date-time ADTs
+IntervalType.def      defines semantic properties for interval ADTs
 StringType.def        defines semantic properties for dynamic string ADTs
 CollectionType.def    defines semantic properties for dynamic collection ADTs
 
@@ -3355,7 +3356,6 @@ LONGREAL.def          IO module for type LONGREAL
 
 12.9 Library Modules Implementing Basic Types
 
-ScalarDigitCount.def  digit count constants and types for scalar ADTs
 BS16.def              16-bit bitset type
 BS32.def              32-bit bitset type
 BS64.def              64-bit bitset type
@@ -3375,10 +3375,9 @@ LONGCOMPLEX.def       double precision complex number type
 CHARSET.def           character set type
 STRING.def            dynamic ASCII strings
 UNISTRING.def         dynamic unicode strings
-Unsigned24.def        unsigned integer subrange type with values from 0 to 23
-Unsigned31.def        unsigned integer subrange type with values from 1 to 31
-Unsigned60.def        unsigned integer subrange type with values from 0 to 59
-UnsignedReal60.def    real subrange type with values from 0.0 to 59.999
+UnsignedReal1.def     real number type with values from 0.0 to 1.0
+UnsignedReal60.def    real number type with values from 0.0 to 59.999
+UnsignedReal360.def   real number type with values from 0.0 to 359.9999999
 
 
 12.10 Modules Defining Alias Types

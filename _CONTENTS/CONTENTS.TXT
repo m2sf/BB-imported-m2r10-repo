@@ -71,7 +71,6 @@ CollectionType.def    defines semantic properties for dynamic collection ADTs
 
 Library defined types:
 
-ScalarDigitCount.def  digit count constants and types for scalar ADTs
 BS16.def              16-bit bitset type
 BS32.def              32-bit bitset type
 BS64.def              64-bit bitset type
@@ -91,10 +90,9 @@ LONGCOMPLEX.def       double precision complex number type
 CHARSET.def           character set type
 STRING.def            dynamic ASCII strings
 UNISTRING.def         dynamic unicode strings
-Unsigned24.def        unsigned integer subrange type with values from 0 to 23
-Unsigned31.def        unsigned integer subrange type with values from 1 to 31
-Unsigned60.def        unsigned integer subrange type with values from 0 to 59
-UnsignedReal60.def    real subrange type with values from 0.0 to 59.999
+UnsignedReal1.def     real number type with values from 0.0 to 1.0
+UnsignedReal60.def    real number type with values from 0.0 to 59.999
+UnsignedReal360.def   real number type with values from 0.0 to 359.9999999
 
 Alias types:
 
@@ -147,7 +145,6 @@ SplayTree.def         generic Splay tree template
 PatriciaTrie.def      generic Patricia trie template
 DynamicArray.def      generic dynamic array template
 KeyValueStore.def     generic key value storage template
-SubrangeInteger.def   generic integer subrange type template
 NonZeroIndexArray.def generic non-zero index array type template
 
 Examples:
@@ -156,4 +153,4 @@ Dictionary.def        example of a library defined associative array of strings
 ExampleVector.def     example of a vector ADT
 
 
-[status: June 5, 2010 -- further modules are being added]
+[status: June 10, 2010 -- further modules are being added]
