@@ -1,4 +1,4 @@
-(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: June, 8, 2010] 
+(C) 2010 B.Kowarsch & R.Sutcliffe. All rights reserved. [status: June, 10, 2010] 
 
 Modula-2 R10 Concise Language Description
 
@@ -3436,7 +3436,6 @@ SplayTree.def         generic Splay tree template
 PatriciaTrie.def      generic Patricia trie template
 DynamicArray.def      generic dynamic array template
 KeyValueStore.def     generic key value storage template
-SubrangeInteger.def   generic integer subrange type template
 NonZeroIndexArray.def generic non-zero index array type template
 
 +++ END OF FILE +++
