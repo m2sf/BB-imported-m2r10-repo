@@ -370,7 +370,7 @@ simpleFormalParams :
 // production #34
 variadicFormalParams :
 	VARIADIC ( variadicCounter | '[' variadicTerminator ']' )? OF
-	( simpleFormalParams | '(' simpleFormalParams ( ';' simpleFormalParams )* ')' )
+	( simpleFormalType | '(' simpleFormalParams ( ';' simpleFormalParams )* ')' )
 	;
 
 // alias
