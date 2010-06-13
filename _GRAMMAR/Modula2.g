@@ -130,7 +130,7 @@ prototype :
 	TYPE '='
 	( RECORD | OPAQUE RECORD? ( ':=' ( literalType | '{' '..' '}' ) )? ) ';'
 	( ASSOCIATIVE ';' )?
-	binding*
+	requiredBinding*
 	END prototypeId '.'
 	;
 
@@ -166,8 +166,8 @@ priority : constExpression ;
 
 // *** Semantic Types, Import Lists, Blocks, Declarations, Definitions ***
 
-// production #6
-binding :
+// production #6 requiredBinding
+requiredBinding :
     ( CONST '[' bindableIdent ']' |
 	  PROCEDURE '[' ( bindableOperator | bindableIdent ) ']' ) ';' 
 	;
@@ -175,7 +175,7 @@ binding :
 // production #7
 bindableOperator :
 	DIV | MOD | IN | FOR |
-	':=' | '::' | '?' | '!' | '~' | '+' | '-' | '*' | '/' | '=' | '<' | '>'
+	':=' | '?' | '!' | '~' | '+' | '-' | '*' | '/' | '=' | '<' | '>'
 	{} // make ANTLRworks display separate branches
 	;
 
@@ -348,7 +348,7 @@ procedureDeclaration :
 // production #30
 procedureHeader :
 	PROCEDURE
-	( '[' ( bindableOperator | bindableIdent ) ']' )?
+	( '[' ( '::' | bindableOperator | bindableIdent ) ']' )?
 	Ident ( '(' formalParamList ')' )? ( ':' returnedType )?
 	;
 
