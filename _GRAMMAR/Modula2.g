@@ -314,7 +314,7 @@ attributedFormalType :
 
 // production #26
 simpleFormalType :
-	( ( CAST TO )? ARRAY OF )? namedType
+	( CAST? ARRAY OF )? namedType
 	;
 
 // production #27
