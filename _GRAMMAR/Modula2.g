@@ -134,11 +134,23 @@ prototype :
 	END prototypeId '.'
 	;
 
+// alias
+prototypeId : Ident ;
+
+// alias
+literalType : Ident ;
+
 // production #3
 programModule :
 	MODULE moduleId ( '[' priority ']' )? ';'
 	importList* block moduleId '.'
 	;
+
+// alias
+moduleId : Ident ;
+
+// alias
+priority : constExpression ;
 
 // production #4
 definitionOfModule :
@@ -152,21 +164,9 @@ implementationOfModule :
 	IMPLEMENTATION programModule
 	;
 
-// alias
-prototypeId : Ident ;
+// *** Bindings, Import Lists, Blocks, Declarations, Definitions ***
 
-// alias
-literalType : Ident ;
-
-// alias
-moduleId : Ident ;
-
-// alias
-priority : constExpression ;
-
-// *** Semantic Types, Import Lists, Blocks, Declarations, Definitions ***
-
-// production #6 requiredBinding
+// production #6
 requiredBinding :
     ( CONST '[' bindableIdent ']' |
 	  PROCEDURE '[' ( bindableOperator | bindableIdent ) ']' ) ';' 
@@ -222,17 +222,17 @@ constantDeclaration :
 
 // production #13
 type :
-	(( ALIAS | range ) OF )? namedType |
-	enumerationType | arrayType | recordType | setType | pointerType | procedureType
+	(( ALIAS | range ) OF )? namedType | enumerationType |
+	arrayType | recordType | setType | pointerType | procedureType
 	;
+
+// alias
+namedType : qualident ;
 
 // production #14
 range :
 	'[' constExpression '..' constExpression ']'
 	;
-
-// alias
-namedType : qualident ;
 
 // production #15
 enumerationType :
@@ -268,14 +268,11 @@ fieldListSequence :
 fieldList :
 	Ident
 	( ( ',' Ident )+ ':' namedType |
-	  ':' ( ARRAY ( componentCount ) OF )? namedType )
+	  ':' ( ARRAY determinantField OF )? namedType )
 	;
 
 // alias
-componentCount : expression ;
-
-// alias
-arrayIndexOrDeterminantField : expression ;
+determinantField : Ident ;
 
 // production #20
 setType :	
@@ -296,6 +293,9 @@ procedureType :
 	( '(' formalTypeList ')' )?
 	( ':' returnedType )?
 	;
+
+// alias
+returnedType : namedType ;
 
 // production #23
 formalTypeList :
@@ -323,9 +323,6 @@ variadicFormalType :
 	( attributedFormalType |
 	  '(' attributedFormalType ( ',' attributedFormalType )* ')'  )
 	;
-
-// alias
-returnedType : namedType ;
 
 // *** Variable Declarations ***
 
@@ -408,9 +405,7 @@ ifStatement :
 
 // production #39
 caseStatement :
-	CASE expression OF case ( '|' case )*
-	( ELSE statementSequence )?
-	END
+	CASE expression OF case ( '|' case )* ( ELSE statementSequence )? END
 	;
 
 // production #40
@@ -440,15 +435,13 @@ loopStatement :
 
 // production #45
 forStatement :
-    FOR DESCENDING? controlVariable ( OF namedType )? IN ( expression | range OF namedType )
+    FOR DESCENDING? controlVariable ( OF namedType )?
+    IN ( expression | range OF namedType )
     DO statementSequence END
     ;
 
 // alias
 controlVariable : Ident ;
-
-// alias
-cardinalExpression : expression ;
 
 
 // *** Expressions ***
@@ -606,6 +599,9 @@ compileTimeMessagePragma :
 	( INFO | WARN | ERROR | FATAL {}) compileTimeMessage
 	;
 
+// alias
+compileTimeMessage : String ;
+
 // production #4
 codeGenerationPragma :
 	ALIGN '=' constExpression | FOREIGN ( '=' String )? | MAKE '=' String |
@@ -616,9 +612,6 @@ codeGenerationPragma :
 implementationDefinedPragma :
 	pragmaName ( '+' | '-' | '=' ( Ident | Number ) )?
 	;
-
-// alias
-compileTimeMessage : String ;
 
 // alias
 pragmaName : Ident ; // lowercase or camelcase only
@@ -636,11 +629,11 @@ Ident :
 
 // production #2
 Number :
-	// Binary integer
-	( '0' | '1' {})+ 'B' |
-	
 	// Decimal integer
 	DIGIT+ |
+	
+	// Binary integer
+	( '0' | '1' {})+ 'B' |
 	
 	// Sedecimal integer
 	DIGIT BASE16_DIGIT* ( 'C' | 'H' {}) |
