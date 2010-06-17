@@ -308,13 +308,14 @@ set all_graphs {
     }
   }
   variableDeclaration {
-    line Ident {
-      or
-        {}
-        {line [ machineAddress ]}
-        {line , identList}
-    }
-    : {optx ARRAY constComponentCount OF} namedType
+    stack
+      {line Ident {
+        or
+          {}
+          {line [ machineAddress ]}
+          {line , identList}
+      }}
+      {line : {optx ARRAY constComponentCount OF} namedType}
   }
   machineAddress {
     line constExpression
@@ -323,9 +324,10 @@ set all_graphs {
     line procedureHeader ; block Ident
   }
   procedureHeader {
-    line PROCEDURE
-      {optx {or :: bindableOperator bindableIdent} } Ident
-      {optx ( formalParamList )} {optx : returnedType}
+    stack
+      {line PROCEDURE
+        {optx {line [ {or :: bindableOperator bindableIdent} ]} } }
+      {line Ident {optx ( formalParamList )} {optx : returnedType}}
   }
   formalParamList {
     line formalParams {loop {} {nil , formalParams}}
@@ -384,10 +386,9 @@ set all_graphs {
       {line {optx ELSE statementSequence} END}
   }
   caseStatement {
-    line CASE expression OF case
-    {loop {} {nil | case}}
-    {optx ELSE statementSequence}
-    END
+    stack
+      {line CASE expression OF case {loop {} {nil | case}}}
+      {line {optx ELSE statementSequence} END}
   }
   case {
     line caseLabels {loop {} {nil , caseLables}} : statementSequence
