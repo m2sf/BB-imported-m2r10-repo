@@ -1,6 +1,20 @@
-M2R10StdLib
+Contents of the Modula-2 R10 Repository [status: July 6, 2010]
 
-Pseudo-modules:
+* GRAMMAR *
+
+Modula2.g             complete grammar in ANTLRv3 EBNF
+ScalarExchangeFormat  grammar of the internal scalar exchange format
+modula2_syntax_diagrams.tcl
+                      script to generate syntax diagrams for Modula-2 R10
+SyntaxDiagrams        generated syntax diagram files in postscript format
+
+
+* LANGUAGE *
+
+Language.txt          language specification in plain text format
+
+
+* PSEUDO_MODULES *
 
 ATOMIC.def            provides atomic intrinsics
 SYSTEM.def            access to system dependent resources
@@ -9,6 +23,37 @@ COMPILER.def          interface to the Modula-2 compile-time system
 ASSEMBLER.def         access to target dependent inline assember (optional)
 PERVASIVES.def        documents pervasive constants, types and macros 
 BINDINGS.def          documents procedure headers required for bindings 
+
+
+* REFERENCE_COMPILER *
+
+
+* STANDARD_LIBRARY *
+
+Templates:
+
+Stack.def             generic stack template
+Queue.def             generic queue template
+DEQ.def               generic double ended queue template
+PriorityQueue.def     generic priority queue template
+AATree.def            generic AA tree template
+SplayTree.def         generic Splay tree template
+PatriciaTrie.def      generic Patricia trie template
+DynamicArray.def      generic dynamic array template
+KeyValueStore.def     generic key value storage template
+NonZeroIndexArray.def generic non-zero index array type template
+
+Prototypes:
+
+ZTYPE.def             defines semantic properties for whole number ADTs
+RTYPE.def             defines semantic properties for real number ADTs
+CTYPE.def             defines semantic properties for complex number ADTs
+VTYPE.def             defines semantic properties for numeric vector ADTs
+ArrayType.def         defines semantic properties for static array ADTs
+SetType.def           defines semantic properties for static set ADTs
+DateType.def          defines semantic properties for date-time ADTs
+StringType.def        defines semantic properties for dynamic string ADTs
+CollectionType.def    defines semantic properties for dynamic collection ADTs
 
 Memory Management:
 
@@ -56,18 +101,6 @@ INTEGER.def           IO module for type INTEGER
 LONGINT.def           IO module for type LONGINT
 REAL.def              IO module for type REAL
 LONGREAL.def          IO module for type LONGREAL
-
-Semantic Types:
-
-ZTYPE.def             defines semantic properties for whole number ADTs
-RTYPE.def             defines semantic properties for real number ADTs
-CTYPE.def             defines semantic properties for complex number ADTs
-VTYPE.def             defines semantic properties for numeric vector ADTs
-ArrayType.def         defines semantic properties for static array ADTs
-SetType.def           defines semantic properties for static set ADTs
-DateType.def          defines semantic properties for date-time ADTs
-StringType.def        defines semantic properties for dynamic string ADTs
-CollectionType.def    defines semantic properties for dynamic collection ADTs
 
 Library defined types:
 
@@ -134,23 +167,8 @@ Legacy:
 LegacyPIM.def         selected legacy PIM functions and procedures
 LegacyISO.def         selected legacy ISO functions and procedures
 
-Template Library:
 
-Stack.def             generic stack template
-Queue.def             generic queue template
-DEQ.def               generic double ended queue template
-PriorityQueue.def     generic priority queue template
-AATree.def            generic AA tree template
-SplayTree.def         generic Splay tree template
-PatriciaTrie.def      generic Patricia trie template
-DynamicArray.def      generic dynamic array template
-KeyValueStore.def     generic key value storage template
-NonZeroIndexArray.def generic non-zero index array type template
-
-Examples:
+* Examples *
 
 Dictionary.def        example of a library defined associative array of strings
 ExampleVector.def     example of a vector ADT
-
-
-[status: June 10, 2010 -- further modules are being added]
