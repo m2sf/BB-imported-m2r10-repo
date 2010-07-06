@@ -53,7 +53,7 @@ static const cardinal _m2_reserved_word[] = {
 
 #define _N _M2_NUMBER_OF_RESERVED_WORDS + 1
 
-static const char _m2_minimal_hash_to_index_map[] = {
+static const char _m2_perfect_hash_to_index_map[] = {
 //            0    1    2    3    4    5    6    7    8    9
 /*  00 */    _N,  _N,  _N,  _N,  _N,  _N,  _N,  _N,  _N,  18,
 /*  10 */    _N,  13,  _N,  _N,  _N,  17,  _N,  37,  _N,  41,
@@ -81,7 +81,7 @@ static const char _m2_minimal_hash_to_index_map[] = {
 /* 230 */    _N,  _N,  _N,  _N,  _N,  _N,  44,  _N,  _N,  _N,
 /* 240 */    _N,  _N,  _N,  _N,  _N,  _N,  _N,  _N,  _N,  _N,
 /* 250 */    _N,  _N,  11,  _N,  _N,  39 // last index is 255
-}; // end _m2_minimal_hash_to_index_map
+}; // end _m2_perfect_hash_to_index_map
 
 #undef _N
 
@@ -124,7 +124,7 @@ cardinal m2_token_for_reserved_word_hash(cardinal hash) {
         table_index = (table_index - 256) & 0xFF;
 
     // retrieve token index from mapping table
-    token_index = _m2_minimal_hash_to_index_map[table_index];
+    token_index = _m2_perfect_hash_to_index_map[table_index];
     
     // compare storage hash with stored hash
     if (hash == _m2_reserved_word[token_index])
