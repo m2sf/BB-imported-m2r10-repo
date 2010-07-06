@@ -73,8 +73,11 @@ typedef /* m2_lexer_status_t */ enum {
     // string literal is missing delimiting quotation
     M2_LEXER_STATUS_STRING_NOT_DELIMITED,
     
-    // nested M2 comment exceeds maximum nesting level
-    M2_LEXER_STATUS_COMMENT_NESTING_LIMIT_REACHED
+    // nested comment exceeds maximum nesting limit
+    M2_LEXER_STATUS_COMMENT_NESTING_LIMIT_REACHED,
+    
+    // EOF found while processing comment
+    M2_LEXER_STATUS_EOF_REACHED_WITHIN_COMMENT,
 } m2_lexer_status_t;
 
 
