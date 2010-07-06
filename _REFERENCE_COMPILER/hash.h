@@ -2,9 +2,8 @@
  *
  *  hash.h
  *
- *  Created by Sunrise Telephone Systems KK
- *
- *  This file ("hash.h") is hereby released into the public domain.
+ *  This file ("hash.h") was released into the public domain
+ *  by Sunrise Telephone Systems KK, Tokyo, Japan.
  *
  */
 

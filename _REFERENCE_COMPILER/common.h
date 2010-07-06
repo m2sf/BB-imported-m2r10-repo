@@ -1,10 +1,9 @@
 /*  Definitions for common data types and macros
  *
- *  @file common.h
+ *  common.h
  *
- *  Created by Sunrise Telephone Systems KK
- *
- *  This file ("common.h") is hereby released into the public domain.
+ *  This file ("common.h") was released into the public domain
+ *  by Sunrise Telephone Systems KK, Tokyo, Japan.
  *
  */
 

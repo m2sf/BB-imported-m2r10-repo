@@ -1,10 +1,9 @@
-/*  Identifiers/Aliases for 7-bit-ASCII characters
+/*  Identifiers and macros for testing 7-bit-ASCII characters
  *
- *  @file ASCII.h
+ *  ASCII.h
  *
- *  Created by Sunrise Telephone Systems KK
- *
- *  This file ("ASCII.h") is hereby placed into the public domain.
+ *  This file ("ASCII.h") was released into the public domain
+ *  by Sunrise Telephone Systems KK, Tokyo, Japan.
  *
  */
 
@@ -70,12 +69,14 @@ typedef /* ASCII_CONTROL_CHAR */ enum {
 #define ASCII_XOFF          ASCII_DC3
 #define ESCAPE              ASCII_ESC
 
+
 // ---------------------------------------------------------------------------
 // Identifiers for whitespace character
 // ---------------------------------------------------------------------------
 
 #define ASCII_SP        '\040'
 #define WHITESPACE      ASCII_SP
+
 
 // ---------------------------------------------------------------------------
 // Identifiers for ASCII printable characters
@@ -178,21 +179,22 @@ typedef /* ASCII_PRINTABLE_CHAR */ enum {
     TILDE               = '~'
 } ASCII_PRINTABLE_CHAR;
 
+
 // Aliases
-#define HASH                NUMBER_SIGN
-#define OCTOTHORPE          NUMBER_SIGN
-#define APOSTROPHE          SINGLE_QUOTE
-#define SINGLEQUOTE         SINGLE_QUOTE
-#define DASH                MINUS
-#define HYPHEN              MINUS
-#define DOUBLEQUOTE         DOUBLE_QUOTE
-#define OPENING_PAREN       OPENING_PARENTHESIS
-#define CLOSING_PAREN       CLOSING_PARENTHESIS
-#define SLASH               FORWARD_SLASH
-#define BACKSLASH           BACK_SLASH
-#define BACKQUOTE           BACK_QUOTE
-#define OPENING_ANGULAR_BRACKET LESS_THAN
-#define CLOSING_ANGULAR_BRACKET GREATER_THAN
+#define HASH                     NUMBER_SIGN
+#define OCTOTHORPE               NUMBER_SIGN
+#define APOSTROPHE               SINGLE_QUOTE
+#define SINGLEQUOTE              SINGLE_QUOTE
+#define DASH                     MINUS
+#define HYPHEN                   MINUS
+#define DOUBLEQUOTE              DOUBLE_QUOTE
+#define OPENING_PAREN            OPENING_PARENTHESIS
+#define CLOSING_PAREN            CLOSING_PARENTHESIS
+#define SLASH                    FORWARD_SLASH
+#define BACKSLASH                BACK_SLASH
+#define BACKQUOTE                BACK_QUOTE
+#define OPENING_ANGULAR_BRACKET  LESS_THAN
+#define CLOSING_ANGULAR_BRACKET  GREATER_THAN
 
 
 // ---------------------------------------------------------------------------
@@ -223,9 +225,14 @@ typedef /* ASCII_PRINTABLE_CHAR */ enum {
 
 // test booleans
 #define IS_BOOLEAN(x) \
-    ((x == 0) || (x == 1) || (x == 'y') || (x == 'n') || (x == 't') || (x == 'f'))
+    ((x == 0) || (x == 1) || \
+     (x == 'y') || (x == 'n') || (x == 't') || (x == 'f'))
 
 // test digits
+#define IS_BINARY(x) \
+    ((x == '0') || (x == '1'))
+#define IS_NOT_BINARY(x) \
+    ((x > '1') || (x < '0'))
 #define IS_0_TO_3(x) \
     ((x >= '0') && (x <= '3'))
 #define IS_NOT_0_TO_3(x) \
@@ -239,9 +246,11 @@ typedef /* ASCII_PRINTABLE_CHAR */ enum {
 #define IS_NOT_OCTAL(x) \
     ((x < '0') || (x > '7'))
 #define IS_HEX(x) \
-    (((x >= '0') && (x <= '9')) || ((x >= 'a') && (x <= 'f')) || ((x >= 'A') && (x <= 'F')))
+    (((x >= '0') && (x <= '9')) || \
+     ((x >= 'a') && (x <= 'f')) || ((x >= 'A') && (x <= 'F')))
 #define IS_NOT_HEX(x) \
-    ((x < '0') || (x > 'f') || ((x > '9') && (x < 'A')) || ((x > 'F') && (x < 'a')))
+    ((x < '0') || (x > 'f') || \
+     ((x > '9') && (x < 'A')) || ((x > 'F') && (x < 'a')))
 #define IS_LOWERHEX(x) \
     (((x >= '0') && (x <= '9')) || ((x >= 'a') && (x <= 'f')))
 #define IS_NOT_LOWERHEX(x) \
@@ -285,25 +294,18 @@ typedef /* ASCII_PRINTABLE_CHAR */ enum {
 
 // test alphanumeric
 #define IS_ALPHANUM(x) \
-    (((x >= '0') && (x <= '9')) || ((x >= 'a') && (x <= 'z')) || ((x >= 'A') && (x <= 'Z')))
+    (((x >= '0') && (x <= '9')) || \
+     ((x >= 'a') && (x <= 'z')) || ((x >= 'A') && (x <= 'Z')))
 #define IS_NOT_ALPHANUM(x) \
-    ((x < '0') || (x > 'z') || ((x > '9') && (x < 'A')) || ((x > 'Z') && (x < 'a')))
+    ((x < '0') || (x > 'z') || \
+     ((x > '9') && (x < 'A')) || ((x > 'Z') && (x < 'a')))
 
 // tests for identifiers
 #define IS_UNDERSCORE_OR_ALPHANUM(x) \
     ((x == UNDERSCORE) || (IS_ALPHANUM(x))
 #define IS_NOT_UNDERSCORE_NOR_ALPHANUM(x) \
-    ((x < '0') || (x > 'z') || ((x > '9') && (x < 'A')) || ((x > 'Z') && (x < UNDERSCORE)) || (x == BACK_QUOTE))
-
-#define IS_R10_IDENT_FIRST(x) \
-    ((x == UNDERSCORE) || (IS_LETTER(x) || (x == DOLLAR)))
-#define IS_NOT_R10_IDENT_FIRST(x) \
-    (NOT(IS_R10_IDENT_FIRST(x)))
-#define IS_R10_IDENT_FOLLOW(x) \
-    ((x == UNDERSCORE) || (IS_ALPHANUM(x) || (x == DOLLAR)))
-#define IS_NOT_R10_IDENT_FOLLOW(x) \
-    (NOT(IS_R10_IDENT_FOLLOW(x)))
-
+    ((x < '0') || (x > 'z') || ((x > '9') && (x < 'A')) || ((x > 'Z') && \
+     (x < UNDERSCORE)) || (x == BACK_QUOTE))
 
 #endif /* ASCII_H */
 

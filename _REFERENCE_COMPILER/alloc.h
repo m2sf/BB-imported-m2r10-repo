@@ -2,9 +2,8 @@
  *
  *  alloc.h
  *
- *  Created by Sunrise Telephone Systems KK
- *
- *  This file ("alloc.h") is hereby released into the public domain.
+ *  This file ("alloc.h") was released into the public domain
+ *  by Sunrise Telephone Systems KK, Tokyo, Japan.
  *
  */
 
