@@ -965,6 +965,10 @@ void generate_production_table() {
     m2_tokenset_literal_t tuples;
     m2_tokenset_literal_status_t status;
     
+    printf("\nNumber of productions: %i", M2_NUMBER_OF_PRODUCTIONS);
+    printf("\nNumber of tokens     : %i", M2_NUMBER_OF_TOKENS);
+    printf("\n");
+    
     printf("\n// Productions\n");
 
     prod_index = 0;
