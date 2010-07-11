@@ -128,18 +128,18 @@ static fmacro m2_token_t _lookahead(m2_parser_s *p) {
 
 
 // ---------------------------------------------------------------------------
-// private function:  match_token( p, expected_token, followset )
+// private function:  match_token( p, expected_token, skip_to_tokens )
 // ---------------------------------------------------------------------------
 //
 // Compares the current lookahead token of parser <p> to <expected_token>.  If
 // the two match,  the lookahead symbol is read from the input stream.  If the
 // the two do not match,  the parser's error counter is incremented,  an error
 // message is printed to stderr  and  symbols in the input stream  are skipped
-// until the lookahead token matches one of the tokens in <followset>.
+// until the lookahead token matches one of the tokens in <skip_to_tokens>.
 
 static void match_token(m2_parser_s *p,
                          m2_token_t expected_token,
-                      m2_tokenset_t followset) {
+                      m2_tokenset_t set_of_tokens_to_skip_to) {
     
     // consume lookahead if it matches expected token
     if (p->lookahead_sym.token == expected_token)
@@ -149,8 +149,9 @@ static void match_token(m2_parser_s *p,
     else {
         report_mismatch(p, expected_token, 0);
         
-        // skip symbols until the lookahead symbol matches followset
-        while NOT (m2_tokenset_is_element(followset, p->lookahead_sym.token)) {
+        // skip symbols until the lookahead symbol matches skipset
+        while NOT (m2_tokenset_is_element(set_of_tokens_to_skip_to,
+                                          p->lookahead_sym.token)) {
             _getsym(p);
         } // end while
         
@@ -295,29 +296,26 @@ m2_parse(m2_parser_t *p) {
 //  program_module | definition_of_module | implementation_of_module
 
 m2_token_t m2_compilation_unit(m2_parser_t *p) {
-    m2_token_t token;
-    
-    token = _lookahead(p);
-    
-    switch(token) {
+        
+    switch(_lookahead(p)) {
         case TOKEN_PROTOTYPE :
-            token = m2_prototype(p);
+            m2_prototype(p);
             break;
         case TOKEN_MODULE :
-            token = m2_program_module(p);
+            m2_program_module(p);
             break;
         case TOKEN_DEFINITION :
-            token = m2_definition_of_module(p);
+            m2_definition_of_module(p);
             break;
         case TOKEN_IMPLEMENTATION :
-            token = m2_implementation_of_module(p);
+            m2_implementation_of_module(p);
             break;
         default :
             // unreachable code
             fatal_error(); // abort
     } // end switch
     
-    return token;
+    return _lookahead(p);
 } // end m2_compilation_unit
 
 
@@ -335,27 +333,27 @@ m2_token_t m2_prototype(m2_parser_t *p) {
     _getsym(p);
     
     // prototypeId
-    if (match_token(p, TOKEN_IDENTIFIER, FIRST_TYPE_OR_FIRST_REQ_BINDING)) {
+    if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_TYPE_OR_REQ_BINDING)) {
         _getsym(p);
         
         // ";"
-        if (match_token, TOKEN_SEMICOLON, FIRST_TYPE_OR_FIRST_REQ_BINDING) {
+        if (match_token, TOKEN_SEMICOLON, SKIP_TO_TYPE_OR_REQ_BINDING) {
             _getsym(p);
             
         } // end ";"
     } // end prototypeId
     
     // TYPE
-    if (match_token(p, TOKEN_TYPE, FIRST_REQ_BINDING)) {
+    if (match_token(p, TOKEN_TYPE, SKIP_TO_REQ_BINDING)) {
         _getsym(p);
         
         // "="
-        if (match_token(p, TOKEN_EQUAL_OP, FIRST_REQ_BINDING)) {
+        if (match_token(p, TOKEN_EQUAL_OP, SKIP_TO_REQ_BINDING)) {
             _getsym(p);
             
             // RECORD | OPAQUE
             if (match_token_in_set(p, FIRST_RECORD_OR_OPAQUE,
-                                      FIRST_REQ_BINDING)) {
+                                      SKIP_TO_REQ_BINDING)) {
                 _getsym(p);
                 
                 // ":="
@@ -363,12 +361,12 @@ m2_token_t m2_prototype(m2_parser_t *p) {
                     _getsym(p);
                     
                     // literalType
-                    m2_parse_literal_type(p);
+                    m2_literal_type(p);
                     
                 } // end ":="
                 
                 // ";"
-                if (match_token(p, TOKEN_SEMICOLON, FIRST_REQ_BINDING)) {
+                if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_REQ_BINDING)) {
                     _getsym(p);
 
                 } // end ";" 
@@ -384,7 +382,7 @@ m2_token_t m2_prototype(m2_parser_t *p) {
         _getsym(p);
         
         // ";"
-        if (match_token(p, TOKEN_SEMICOLON, FIRST_REQ_BINDING)) {
+        if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_REQ_BINDING)) {
             _getsym(p);
             
         } // end ";" 
@@ -393,18 +391,18 @@ m2_token_t m2_prototype(m2_parser_t *p) {
     
     // requiredBinding*
     while (m2_tokenset_is_element(FIRST_REQ_BINDING, _lookahead(p))) {
-        m2_parse_required_binding(p);
+        m2_required_binding(p);
            
-    } // end while
+    } // end requiredBinding
 
     // END
-    if (match_token(p, TOKEN_END, SET_DOT_OR_EOF)) {
+    if (match_token(p, TOKEN_END, SKIP_TO_DOT_OR_EOF)) {
         _getsym(p);
         
     } // end END 
 
     // prototypeId
-    if (match_token(p, TOKEN_IDENTIFIER, SET_DOT_OR_EOF)) {
+    if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_DOT_OR_EOF)) {
         _getsym(p);
         
         // check against name in prototype header
@@ -413,7 +411,7 @@ m2_token_t m2_prototype(m2_parser_t *p) {
     } // end prototypeId
     
     // "."
-    if (match_token(p, TOKEN_DOT, SET_EOF)) {
+    if (match_token(p, TOKEN_DOT, SKIP_TO_EOF)) {
         _getsym(p);
         
     } // end "."
@@ -434,7 +432,7 @@ m2_token_t m2_program_module(m2_parser_t *p) {
     _getsym(p);
         
     // moduleId
-    if (match_token(p, TOKEN_IDENTIFIER, FIRST_IMPORT_LIST_OR_BLOCK)) {
+    if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_IMPORT_OR_BLOCK)) {
         _getsym(p); // consume moduleId
         
         // store module name
@@ -445,11 +443,13 @@ m2_token_t m2_program_module(m2_parser_t *p) {
             _getsym(p);
             
             // constExpression
-            if (match_token_in_set(p, FIRST_CONST_EXPRESSION, follow_set)) {
-                m2_parse_const_expression(p);
+            if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                                      SKIP_TO_SEMI_OR_IMPORT_OR_BLOCK)) {
+                m2_const_expression(p);
                 
                 // "]"
-                if (match_token(p, TOKEN_RBRACKET, follow_set)) {
+                if (match_token(p, TOKEN_RBRACKET,
+                                   SKIP_TO_SEMI_OR_IMPORT_OR_BLOCK)) {
                     _getsym(p);
                     
                 } // end "]"
@@ -458,25 +458,25 @@ m2_token_t m2_program_module(m2_parser_t *p) {
         } // end "["
         
         // ";"
-        if (match_token(p, TOKEN_SEMICOLON, follow_set)) {
+        if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_IMPORT_OR_BLOCK)) {
             _getsym(p);
         } // end ";"
                 
     } // end moduleId
-        
+    
     // importList*
-    while (m2_tokenset_is_element(FIRST_IMPORT_LIST, _lookahead(p)) {
-        m2_parse_import_list(p);
+    while (m2_tokenset_is_element(FIRST_IMPORT_LIST, _lookahead(p))) {
+        m2_import_list(p);
         
     } // end while
     
     // block
-    if (match_token_in_set(p, FIRST_BLOCK, FOLLOW_BLOCK)) {
-        m2_parse_block(p);
+    if (match_token_in_set(p, FIRST_BLOCK, SKIP_TO_IDENT_OR_DOT_OR_EOF)) {
+        m2_block(p);
     } // end block
     
     // moduleId
-    if (match_token(p, TOKEN_IDENTIFIER, SET_DOT_OR_EOF)) {
+    if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_DOT_OR_EOF)) {
         _getsym(p);
         
         // check against name in module header
@@ -485,7 +485,7 @@ m2_token_t m2_program_module(m2_parser_t *p) {
     } // end moduleId
     
     // "."
-    if (match_token(p, TOKEN_DOT, SET_EOF)) {
+    if (match_token(p, TOKEN_DOT, SKIP_TO_EOF)) {
         _getsym(p);
 
     } // end "."
@@ -497,13 +497,88 @@ m2_token_t m2_program_module(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #4 definition_of_module
 // --------------------------------------------------------------------------
-//
+//  DEFINITION MODULE moduleId ( "[" prototypeId "]" )? ";"
+//  importList* definition* END moduleId "."
 
 m2_token_t m2_definition_of_module(m2_parser_t *p) {
-    m2_token_t token;
     
+    // DEFINITION
+    _getsym(p);
     
-    return token;
+    // MODULE
+    if (match_token(p, TOKEN_MODULE, SKIP_TO_IDENT)) {
+        _getsym(p);
+        
+    } // end MODULE
+    
+    // moduleId
+    if (match_token(p, TOKEN_IDENTIFIER,
+                       SKIP_TO_SEMI_OR_IMPORT_OR_DEFN_OR_END)) {
+        _getsym(p);
+        
+        // store module name
+        *** TO DO ***
+        
+        // "["
+        if (_lookahead(p) == TOKEN_LBRACKET) {
+            _getsym(p);
+            
+            // prototypeId
+            if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_RBRACKET)) {
+                _getsym(p);
+                
+            } // end prototypeId
+            
+            if (match_token(p, TOKEN_RBRACKET,
+                               SKIP_TO_SEMI_OR_IMPORT_OR_DEFN_OR_END)) {
+                _getsym(p);
+                
+            } // end "]"
+        } // end "["
+        
+    } // end moduleId
+    
+    // ";"
+    if (match_token(p, TOKEN_SEMICOLON,
+                       SKIP_TO_IMPORT_OR_DEFN_OR_END)) {
+        _getsym(p);
+        
+    } // end ";"
+    
+    // importList*
+    while (m2_tokenset_is_element(FIRST_IMPORT_LIST, _lookahead(p))) {
+        m2_import_list(p);
+        
+    } // end importList
+
+    // definition*
+    while (m2_tokenset_is_element(FIRST_DEFINITION, _lookahead(p))) {
+        m2_definition(p);
+        
+    } // end definition
+    
+    // END
+    if (match_token(p, TOKEN_END, SKIP_TO_DOT_OR_EOF)) {
+        _getsym(p);
+        
+    } // end END
+    
+    // moduleId
+    if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_DOT_OR_EOF)) {
+        _getsym(p);
+        
+        // check against name in module header
+        *** TO DO ***
+        
+    } // end moduleId
+    
+    // "."
+    if (match_token(p, TOKEN_DOT, SKIP_TO_EOF)) {
+        _getsym(p);
+        
+    } // end "."
+    
+    return _lookahead(p);
 } // end m2_definition_of_module
 
 
