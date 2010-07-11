@@ -24,6 +24,224 @@
 
 #include "m2_parser.h"
 #include "m2_tokens.h"
+#include "m2_tokenset.h"
+
+
+// ---------------------------------------------------------------------------
+// Symbol type
+// ---------------------------------------------------------------------------
+
+typedef struct /* m2_sym_s */ {
+    m2_token_t token;
+    cardinal lexeme;
+    m2_lexer_status_t status;
+    fpos_t pos;
+} m2_sym_s;
+
+#define ZERO_SYMBOL { 0, 0, 0, { 0, 0 } }
+
+
+// ---------------------------------------------------------------------------
+// Parser state
+// ---------------------------------------------------------------------------
+
+typedef struct /* m2_parser_s */ {
+    char *filename;
+    m2_source_type_t source_type;
+    m2_lexer_t *lexer;
+    m2_sym_s current_sym;
+    m2_sym_s lookahead_sym;
+    m2_ast_t *ast;
+    uint16_t warnings;
+    uint16_t errors;
+} m2_parser_s;
+
+
+// ===========================================================================
+// P U B L I C   F U N C T I O N S
+// ===========================================================================
+
+// --------------------------------------------------------------------------
+// function:  m2_new_parser(infile, lextab, status)
+// --------------------------------------------------------------------------
+//
+// Creates  and returns  a  new  parser object  associated  with  source file 
+// <infile> and lexeme table <lextab>.  The status of the operation is passed
+// back in <status> unless NULL is passed in for <status>.
+//
+// Returns NULL if the parser object could not be created.
+
+m2_parser_t m2_new_parser(FILE *infile,
+                          kvs_table_t lextab,
+                          m2_parser_status_t *status) {
+    
+} // end m2_new_parser
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_dispose_parser(lexer, status)
+// ---------------------------------------------------------------------------
+//
+// Deallocates  lexer object <lexer>.  The function does  not  close the input
+// stream  and  it  does  not  deallocate the lexeme table associated with the
+// lexer object.  The  status  of  the  operation  is  passed back in <status>
+// unless NULL is passed in for <status>.
+
+void m2_dispose_parser(m2_parser_t parser, m2_parser_status_t *status) {
+    
+} // end m2_dispose_parser
+
+
+// ===========================================================================
+// P R I V A T E   F U N C T I O N S
+// ===========================================================================
+
+// ---------------------------------------------------------------------------
+// private function:  _getsym( p )
+// ---------------------------------------------------------------------------
+//
+// Reads a new symbol from the input stream,  stores the previous lookahead
+// symbol as the current symbol,  stores the new symbol as lookahead symbol,
+// then returns the current symbol's token.
+
+static m2_token_t _getsym(m2_parser_s *p) {
+    p->current_sym = p->lookahead_sym;
+    p->lookahead_sym.token = m2_lexer_getsym(p->lexer,
+                                             &p->lookahead_sym.lexeme,
+                                             &p->lookahead_sym.status);
+    return p->lookahead_sym.token;
+} // _getsym
+
+
+// ---------------------------------------------------------------------------
+// private function:  _lookahead( p )
+// ---------------------------------------------------------------------------
+//
+// Returns the token of the current lookahead symbol.  This function does not
+// read from the input stream.  Subsequent calls to this function will return
+// the  same token  again.  To read  further symbols  from the  input stream,
+// function _getsym must be used.
+
+static fmacro m2_token_t _lookahead(m2_parser_s *p) {
+    return p->lookahead_sym.token;
+} // _lookahead
+
+
+// ---------------------------------------------------------------------------
+// private function:  match_token( p, expected_token, followset )
+// ---------------------------------------------------------------------------
+//
+// Compares the current lookahead token of parser <p> to <expected_token>.  If
+// the two match,  the lookahead symbol is read from the input stream.  If the
+// the two do not match,  the parser's error counter is incremented,  an error
+// message is printed to stderr  and  symbols in the input stream  are skipped
+// until the lookahead token matches one of the tokens in <followset>.
+
+static void match_token(m2_parser_s *p,
+                         m2_token_t expected_token,
+                      m2_tokenset_t followset) {
+    
+    // consume lookahead if it matches expected token
+    if (p->lookahead_sym.token == expected_token)
+        _getsym(p);
+    
+    // handle syntax error if it doesn't match
+    else {
+        report_mismatch(p, expected_token, 0);
+        
+        // skip symbols until the lookahead symbol matches followset
+        while NOT (m2_tokenset_is_element(followset, p->lookahead_sym.token)) {
+            _getsym(p);
+        } // end while
+        
+        // update error count
+        p->errors++;
+    } // end if
+    
+    return;
+} // end match_token
+
+
+// ---------------------------------------------------------------------------
+// private function:  match_token_in_set( p, expected_tokens, skip_to_tokens )
+// ---------------------------------------------------------------------------
+//
+// Tests the current lookahead token  against  tokenset <expected_tokens>.  If
+// the lookahead token  matches  any  of the tokens in <expected_tokens>,  the
+// lookahead symbol is read from the input stream.  If it does  not match  any
+// of the tokens,  the parser's error counter is incremented, an error message
+// is printed to stderr  and symbols in the input stream are skipped until the
+// lookahead token matches one of the tokens in <skip_to_tokens>.
+
+static void match_token_in_set(m2_parser_s *p,
+                             m2_tokenset_t set_of_expected_tokens,
+                             m2_tokenset_t set_of_tokens_to_skip_to) {
+    
+    // consume lookahead if it matches any of the expected tokens
+    if (m2_tokenset_is_element(set_of_expected_tokens,
+                               p->lookahead_sym.token))
+        // get next symbol
+        _getsym(p);
+    else {
+        // handle syntax error if it doesn't match
+        report_mismatch(p, p->lookahead_sym.token, 0);
+        
+        // skip symbols until the lookahead symbol matches followset
+        while NOT (m2_tokenset_is_element(set_of_tokens_to_skip_to,
+                                          p->lookahead_sym.token)) {
+            _getsym(p);
+        } // end while
+        
+        // update error count
+        p->errors++;
+    } // end if
+    
+    return;
+} // end match_token_in_set
+
+
+// ---------------------------------------------------------------------------
+// private function: report_mismatch( p, expected_tokens )
+// ---------------------------------------------------------------------------
+//
+// Reports a mismatch  between encountered symbol  found_sym  and the expected
+// tokens passed in as tokenset iterator <expected_tokens>.
+
+static void report_mismatch(m2_parser_s *p,
+                 m2_tokenset_iterator_t set_of_expected_tokens) {
+    
+    cardinal row = 0, col = 0, index, token_count;
+    m2_lexer_status_t status;
+    m2_token_t token;
+    
+    if (expected_tokens == NULL) return;
+    
+    token_count = m2_tokenset_iterator_token_count(set_of_expected_tokens);
+    
+    if (token_count == 0) return;
+    
+    token = m2_tokenset_iterator_token_at_index(set_of_expected_tokens, 0);
+    m2_lexer_getpos(p->lexer, &row, &col, &status);
+    
+    printf("syntax error in line %i, col %i : found '%s', expected ",
+           row, col, m2_token_name(p->lookahead_sym.token));
+    
+    index = 0;
+    while (index < token_count) {
+        token =
+          m2_tokenset_iterator_token_at_index(set_of_expected_tokens, index);
+        printf("'%s'", m2_token_name(token));
+        if (index + 2 < token_count)
+            printf(", ");
+        else if (index + 2 == token_count)
+            printf(" or ");
+        else
+            printf("\n");
+        index++;
+    } // end while
+    
+    return;
+} // end report_mismatch
 
 
 // ===========================================================================
@@ -113,28 +331,166 @@ m2_token_t m2_compilation_unit(m2_parser_t *p) {
 m2_token_t m2_prototype(m2_parser_t *p) {
     m2_token_t token;
     
-    _getsym(p); // consume "PROTOTYPE"
+    // PROTOTYPE
+    _getsym(p);
     
-    token = _lookahead(p);
+    // prototypeId
+    if (match_token(p, TOKEN_IDENTIFIER, FIRST_TYPE_OR_FIRST_REQ_BINDING)) {
+        _getsym(p);
+        
+        // ";"
+        if (match_token, TOKEN_SEMICOLON, FIRST_TYPE_OR_FIRST_REQ_BINDING) {
+            _getsym(p);
+            
+        } // end ";"
+    } // end prototypeId
     
-    match(p, TOKEN_IDENTIFIER); // prototypeId is identifier
+    // TYPE
+    if (match_token(p, TOKEN_TYPE, FIRST_REQ_BINDING)) {
+        _getsym(p);
+        
+        // "="
+        if (match_token(p, TOKEN_EQUAL_OP, FIRST_REQ_BINDING)) {
+            _getsym(p);
+            
+            // RECORD | OPAQUE
+            if (match_token_in_set(p, FIRST_RECORD_OR_OPAQUE,
+                                      FIRST_REQ_BINDING)) {
+                _getsym(p);
+                
+                // ":="
+                if (_lookahead(p) == TOKEN_ASSIGN_OP) {
+                    _getsym(p);
+                    
+                    // literalType
+                    m2_parse_literal_type(p);
+                    
+                } // end ":="
+                
+                // ";"
+                if (match_token(p, TOKEN_SEMICOLON, FIRST_REQ_BINDING)) {
+                    _getsym(p);
+
+                } // end ";" 
+                
+            } // end RECORD | OPAQUE
+            
+        } // end "="
+        
+    } // end TYPE
     
+    // ASSOCIATIVE
+    if (_lookahead(p) == TOKEN_ASSOCIATIVE) {
+        _getsym(p);
+        
+        // ";"
+        if (match_token(p, TOKEN_SEMICOLON, FIRST_REQ_BINDING)) {
+            _getsym(p);
+            
+        } // end ";" 
+        
+    } // end ASSOCIATIVE
     
+    // requiredBinding*
+    while (m2_tokenset_is_element(FIRST_REQ_BINDING, _lookahead(p))) {
+        m2_parse_required_binding(p);
+           
+    } // end while
+
+    // END
+    if (match_token(p, TOKEN_END, SET_DOT_OR_EOF)) {
+        _getsym(p);
+        
+    } // end END 
+
+    // prototypeId
+    if (match_token(p, TOKEN_IDENTIFIER, SET_DOT_OR_EOF)) {
+        _getsym(p);
+        
+        // check against name in prototype header
+        *** TO DO ***
+        
+    } // end prototypeId
     
+    // "."
+    if (match_token(p, TOKEN_DOT, SET_EOF)) {
+        _getsym(p);
+        
+    } // end "."
     
+    return _lookahead(p);
 } // end m2_prototype
 
 
 // --------------------------------------------------------------------------
 // #3 program_module
 // --------------------------------------------------------------------------
-//
+//  MODULE moduleId ( "[" constExpression "]" )? ";"
+//  importList* block moduleId "."
 
 m2_token_t m2_program_module(m2_parser_t *p) {
-    m2_token_t token;
+        
+    // MODULE
+    _getsym(p);
+        
+    // moduleId
+    if (match_token(p, TOKEN_IDENTIFIER, FIRST_IMPORT_LIST_OR_BLOCK)) {
+        _getsym(p); // consume moduleId
+        
+        // store module name
+        *** TO DO ***
+        
+        // "["
+        if (_lookahead(p) == TOKEN_LBRACKET) {
+            _getsym(p);
+            
+            // constExpression
+            if (match_token_in_set(p, FIRST_CONST_EXPRESSION, follow_set)) {
+                m2_parse_const_expression(p);
+                
+                // "]"
+                if (match_token(p, TOKEN_RBRACKET, follow_set)) {
+                    _getsym(p);
+                    
+                } // end "]"
+                
+            } // end constExpression
+        } // end "["
+        
+        // ";"
+        if (match_token(p, TOKEN_SEMICOLON, follow_set)) {
+            _getsym(p);
+        } // end ";"
+                
+    } // end moduleId
+        
+    // importList*
+    while (m2_tokenset_is_element(FIRST_IMPORT_LIST, _lookahead(p)) {
+        m2_parse_import_list(p);
+        
+    } // end while
     
+    // block
+    if (match_token_in_set(p, FIRST_BLOCK, FOLLOW_BLOCK)) {
+        m2_parse_block(p);
+    } // end block
     
-    return token;
+    // moduleId
+    if (match_token(p, TOKEN_IDENTIFIER, SET_DOT_OR_EOF)) {
+        _getsym(p);
+        
+        // check against name in module header
+        *** TO DO ***
+        
+    } // end moduleId
+    
+    // "."
+    if (match_token(p, TOKEN_DOT, SET_EOF)) {
+        _getsym(p);
+
+    } // end "."
+    
+    return _lookahead(p);
 } // end m2_program_module
 
 
