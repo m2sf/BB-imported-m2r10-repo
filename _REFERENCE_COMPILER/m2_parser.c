@@ -854,13 +854,35 @@ m2_token_t m2_import_list(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #9 block
 // --------------------------------------------------------------------------
-//
+//  definition* ( BEGIN statementSequence )? END
 
 m2_token_t m2_block(m2_parser_t *p) {
-    m2_token_t token;
     
+    // definition*
+    while (m2_tokenset_is_element(FIRST_DEFINITION, _lookahead(p))) {
+        m2_definition(p);
+        
+    } // end definition*
     
-    return token;
+    // BEGIN
+    if (_lookahead(p) == TOKEN_BEGIN) {
+        _getsym(p);
+        
+        // statementSequence
+        if (match_token_in_set(p, FIRST_STATEMENT_SEQ, SKIP_TO_END)) {
+            m2_statement_sequence(p);
+            
+        } // end statementSequence
+        
+    } // end BEGIN
+    
+    // END
+    if (match_token(p, TOKEN_END, SKIP_TO_END)) {
+        _getsym(p);
+        
+    } // end END
+    
+    return _lookahead(p);
 } // end m2_block
 
 
