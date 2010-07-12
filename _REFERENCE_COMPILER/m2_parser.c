@@ -889,26 +889,145 @@ m2_token_t m2_block(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #10 declaration
 // --------------------------------------------------------------------------
-//
+//  CONST ( constantDeclaration ";" )* |
+//  TYPE ( ident "=" type ";" )* |
+//  VAR ( variableDeclaration ";" )* |
+//  procedureDeclaration ";"
 
 m2_token_t m2_declaration(m2_parser_t *p) {
-    m2_token_t token;
     
+    switch (_lookahead(p)) {
+        
+        // CONST
+        case TOKEN_CONST :
+            _getsym(p);
+            
+            // ( constantDeclaration ";" )*
+            while (m2_tokenset_is_element(FIRST_CONST_DECLARATION,
+                                          _lookahead(p))) {
+                m2_const_declaration(p);
+                
+                // ";"
+                if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_SEMICOLON)) {
+                    _getsym(p);
+                    
+                } // ";"
+                
+            } // end ( constantDeclaration ";" )*
+            
+            break;
+            
+        // TYPE
+        case TOKEN_TYPE :
+            _getsym(p);
+            
+            // ( ident "=" type ";" )*
+            while (_lookahead(p) == TOKEN_IDENTIFIER) {
+                _getsym(p);
+                
+                // "="
+                if (match_token(p, TOKEN_EQUAL_OP, SKIP_TO_TYPE)) {
+                    _getsym(p);
+                    
+                } // end "="
+                
+                // type
+                if (match_token_in_set(p, FIRST_TYPE, SKIP_TO_SEMICOLON)) {
+                    m2_type(p);
+                    
+                } // end type
+                
+                // ";"
+                if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_SEMICOLON)) {
+                    _getsym(p);
+                    
+                } // ";"
+                
+            } // end ( ident "=" type ";" )*
+            
+            break;
+            
+        // VAR
+        case TOKEN_VAR :
+            _getsym(p);
+            
+            // ( variableDeclaration ";" )*
+            while (m2_tokenset_is_element(FIRST_VAR_DECLARATION,
+                                          _lookahead(p))) {
+                m2_variable_declaration(p);
+                
+                // ";"
+                if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_SEMICOLON)) {
+                    _getsym(p);
+                    
+                } // ";"
+                
+            } // end ( variableDeclaration ";" )*
+            
+            break;
+            // PROCEDURE
+        case TOKEN_PROCEDURE :            
+            m2_procedure_declaration(p);
+            
+            // ";"
+            if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_SEMICOLON)) {
+                _getsym(p);
+                
+            } // ";"
+
+            break;
+            
+        default :
+            // unreachable code
+            fatal_error(); // abort
+    } // end
     
-    return token;
+    return _lookahead(p);
 } // end m2_declaration
 
 
 // --------------------------------------------------------------------------
 // #11 definition
 // --------------------------------------------------------------------------
-//
+//  CONST ( ( "[" ident "]" )? constantDeclaration ";"  )* |
+//  TYPE ( ident "=" ( type | OPAQUE recordType? ) ";" )* |
+//  VAR ( variableDeclaration ";" )* |
+//  procedureHeader ";"
 
 m2_token_t m2_definition(m2_parser_t *p) {
-    m2_token_t token;
     
+    switch (_lookahead(p)) {
+            
+            // CONST
+        case TOKEN_CONST :
+            _getsym(p);
+            
+            break;
+            
+            // TYPE
+        case TOKEN_TYPE :
+            _getsym(p);
+            
+            break;
+            
+            // VAR
+        case TOKEN_VAR :
+            _getsym(p);
+            
+            break;
+            
+            // PROCEDURE
+        case TOKEN_PROCEDURE :
+            _getsym(p);
+            
+            break;
+            
+        default :
+            // unreachable code
+            fatal_error(); // abort
+    } // end
     
-    return token;
+    return _lookahead(p);
 } // end m2_definition
 
 
