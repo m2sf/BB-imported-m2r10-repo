@@ -137,16 +137,18 @@ static fmacro m2_token_t _lookahead(m2_parser_s *p) {
 // message is printed to stderr  and  symbols in the input stream  are skipped
 // until the lookahead token matches one of the tokens in <skip_to_tokens>.
 
-static void match_token(m2_parser_s *p,
+static bool match_token(m2_parser_s *p,
                          m2_token_t expected_token,
                       m2_tokenset_t set_of_tokens_to_skip_to) {
     
     // consume lookahead if it matches expected token
-    if (p->lookahead_sym.token == expected_token)
+    if (p->lookahead_sym.token == expected_token) {
         _getsym(p);
-    
-    // handle syntax error if it doesn't match
-    else {
+        
+        return true;
+    }
+    else /* syntax error */ {
+        // report error
         report_mismatch(p, expected_token, 0);
         
         // skip symbols until the lookahead symbol matches skipset
@@ -157,9 +159,10 @@ static void match_token(m2_parser_s *p,
         
         // update error count
         p->errors++;
+        
+        return false;
     } // end if
     
-    return;
 } // end match_token
 
 
@@ -174,17 +177,20 @@ static void match_token(m2_parser_s *p,
 // is printed to stderr  and symbols in the input stream are skipped until the
 // lookahead token matches one of the tokens in <skip_to_tokens>.
 
-static void match_token_in_set(m2_parser_s *p,
+static bool match_token_in_set(m2_parser_s *p,
                              m2_tokenset_t set_of_expected_tokens,
                              m2_tokenset_t set_of_tokens_to_skip_to) {
     
     // consume lookahead if it matches any of the expected tokens
     if (m2_tokenset_is_element(set_of_expected_tokens,
-                               p->lookahead_sym.token))
+                               p->lookahead_sym.token)) {
         // get next symbol
         _getsym(p);
-    else {
-        // handle syntax error if it doesn't match
+        
+        return true;
+    }
+    else /* syntax error */ {
+        // report error
         report_mismatch(p, p->lookahead_sym.token, 0);
         
         // skip symbols until the lookahead symbol matches followset
@@ -195,9 +201,10 @@ static void match_token_in_set(m2_parser_s *p,
         
         // update error count
         p->errors++;
+        
+        return false;
     } // end if
     
-    return;
 } // end match_token_in_set
 
 
@@ -585,52 +592,262 @@ m2_token_t m2_definition_of_module(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #5 implementation_of_module
 // --------------------------------------------------------------------------
-//
+//  IMPLEMENTATION programModule
 
 m2_token_t m2_implementation_of_module(m2_parser_t *p) {
-    m2_token_t token;
     
+    // IMPLEMENTATION
+    _getsym(p);
     
-    return token;
+    // programModule
+    if (match_token_in_set(p, FIRST_PROGRAM_MODULE, SKIP_TO_EOF)) {
+        m2_program_module(p);
+        
+    } // end programModule
+    
+    return _lookahead(p);
 } // end m2_implementation_of_module
 
 
 // --------------------------------------------------------------------------
 // #6 required_binding
 // --------------------------------------------------------------------------
-//
+//  ( CONST "[" bindableIdent "] |
+//    PROCEDURE "[" ( bindableOperator | bindableIdent ) "]" ) ";"
 
 m2_token_t m2_required_binding(m2_parser_t *p) {
-    m2_token_t token;
     
+    switch (_lookahead(p)) {
+        // CONST
+        case TOKEN_CONST :
+            _getsym(p);
+            
+            // "["
+            if (match_token(p, TOKEN_LBRACKET, SKIP_TO_IDENT)) {
+                _getsym(p);
+                
+            } // end "["
+            
+            // bindableIdent
+            if (match_token_in_set(p, FIRST_BINDABLE_IDENT,
+                                      SKIP_TO_RBRACKET_OR_CONST_OR_PROC)) {
+                _getsym(p);
+                
+            } // end bindableIdent
+            
+            // "]"
+            if (match_token(p, TOKEN_RBRACKET, SKIP_TO_CONST_OR_PROC)) {
+                _getsym(p);
+                
+            } // end "]"
+            break;
+        
+        // PROCEDURE
+        case TOKEN_PROCEDURE :
+            _getsym(p);
+            
+            // "["
+            if (match_token(p, TOKEN_LBRACKET, SKIP_TO_IDENT)) {
+                _getsym(p);
+                
+            } // end "["
+            
+            // bindableOperator
+            if (m2_tokenset_is_element(FIRST_BINDABLE_OP, _lookahead(p))) {
+                m2_bindable_operator(p);
+                
+            }
+            else if (_lookahead(p) == TOKEN_IDENTIFIER) {
+                _getsym(p);
+                
+                // check identifier
+                *** TO DO ***
+            }
+            else {
+                // syntax error: expected bindable operator or ident
+                
+            } // end bindableOperator | bindableIdent
+            
+            // "]"
+            if (match_token(p, TOKEN_RBRACKET, SKIP_TO_CONST_OR_PROC)) {
+                _getsym(p);
+                
+            } // end "]"
+            break;
+            
+        default :
+            // unreachable code
+            fatal_error(); // abort
+    } // switch
     
-    return token;
+    // ";"
+    if (match_token(p, TOKEN_SEMICOLON, FOLLOW_REQ_BINDING)) {
+        _getsym(p);
+        
+    } // end ";"
+    
+    return _lookahead(p);
 } // end m2_required_binding
 
 
 // --------------------------------------------------------------------------
 // #7 bindable_operator
 // --------------------------------------------------------------------------
-//
+//  DIV | MOD | IN | FOR |
+//  ":=" | "?" | "!" | "~" | "+" | "-" | "*" | "/" | "=" | "<" | ">"
 
 m2_token_t m2_bindable_operator(m2_parser_t *p) {
-    m2_token_t token;
     
+    switch (_lookahead(p)) {
+        case TOKEN_DIV :
+            _getsym(p);
+            break;
+        case TOKEN_MOD :
+            _getsym(p);
+            break;
+        case TOKEN_IN :
+            _getsym(p);
+            break;
+        case TOKEN_FOR :
+            _getsym(p);
+            break;
+        case TOKEN_ASSIGN_OP :
+            _getsym(p);
+            break;
+        case TOKEN_RETRIEVAL_PSEUDO_OP :
+            _getsym(p);
+            break;
+        case TOKEN_STORAGE_PSEUDO_OP :
+            _getsym(p);
+            break;
+        case TOKEN_REMOVAL_PSEUDO_OP :
+            _getsym(p);
+            break;
+        case TOKEN_PLUS_OP :
+            _getsym(p);
+            break;
+        case TOKEN_MINUS_OP :
+            _getsym(p);
+            break;
+        case TOKEN_ASTERISK_OP :
+            _getsym(p);
+            break;
+        case TOKEN_SLASH_OP :
+            _getsym(p);
+            break;
+        case TOKEN_EQUAL_OP :
+            _getsym(p);
+            break;
+        case TOKEN_LESS_OP :
+            _getsym(p);
+            break;
+        case TOKEN_GREATER_OP :
+            _getsym(p);
+            break;
+        default :
+            // unreachable code
+            fatal_error(); // abort
+    } // end switch
     
-    return token;
+    return _lookahead(p);
 } // end m2_bindable_operator
 
 
 // --------------------------------------------------------------------------
 // #8 import_list
 // --------------------------------------------------------------------------
-//
+//  ( FROM moduleId IMPORT ( identList | "*" ) |
+//    IMPORT ident "+"? ( "," ident "+"? )* ) ";"
 
 m2_token_t m2_import_list(m2_parser_t *p) {
-    m2_token_t token;
     
+    switch (_lookahead(p)) {
+        
+        // FROM
+        case TOKEN_FROM :
+            _getsym(p);
+            
+            // moduleId
+            if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_IMPORT)) {
+                _getsym(p);
+                
+            } // end moduleId
+            
+            // IMPORT
+            if (match_token(p, TOKEN_IMPORT,
+                               SKIP_TO_SEMI_OR_IMPORT_OR_BLOCK)) {
+                _getsym(p);
+                
+                // identList | "*"
+                if (match_token_in_set(p, FIRST_IDENT_OR_ASTERISK,
+                                          SKIP_TO_SEMI_OR_IMPORT_OR_BLOCK)) {
+                    if (_lookahead(p) == TOKEN_IDENTIFIER) {
+                        _getsym(p);
+                    }
+                    else if (_lookahead(p) == TOKEN_ASTERISK_OP) {
+                        _getsym(p);
+                    }
+                    else {
+                        // unreachable code
+                        fatal_error(); // abort
+                    } // end if
+                    
+                } // end identList | "*"
+                
+            } // end IMPORT
+            
+            break;
+            
+        // IMPORT
+        case TOKEN_IMPORT :
+            _getsym(p);
+            
+            // ident
+            if (match_token(p, TOKEN_IDENTIFIER,
+                               SKIP_TO_COMMA_OR_SEMI_OR_IMPORT_OR_BLOCK)) {
+                _getsym(p);
+                
+            } // ident
+            
+            // "+"?
+            if (_lookahead(p) == TOKEN_PLUS_OP) {
+                _getsym(p);
+                
+            } // "+"?
+            
+            // ( "," ident "+"? )*
+            while (_lookahead(p) == TOKEN_COMMA) {
+                _getsym(p);
+                
+                // ident
+                if (match_token(p, TOKEN_IDENTIFIER,
+                                   SKIP_TO_SEMI_OR_IMPORT_OR_BLOCK)) {
+                    _getsym(p);
+                    
+                } // end ident
+                
+                // "+"?
+                if (_lookahead(p) == TOKEN_PLUS_OP) {
+                    _getsym(p);
+                    
+                } // "+"?
+                
+            } // ( "," ident "+"? )*
+            
+            break;
+            
+        default :
+            // unreachable code
+            fatal_error(); // abort
+    } // end switch
+
+    // ";"
+    if (match_token(p, TOKEN_SEMICOLON, FOLLOW_IMPORT_LIST)) {
+        _getsym(p);
+        
+    } // end ";"
     
-    return token;
+    return _lookahead(p);
 } // end m2_import_list
 
 
