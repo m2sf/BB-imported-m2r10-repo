@@ -1221,7 +1221,7 @@ static fmacro uchar_t get_digits(objm2_lexer_s *lexer,
            (lexer->lexeme.length < M2_MAX_NUM_LENGTH) && (NOT_EOF(lexer))) {
         if (ch >= UPPERCASE_A)
             *non_decimal_digits++;
-        if (ch >= DIGIT_ONE)
+        if (ch >= DIGIT_TWO)
             *non_binary_digits++;
         ch = readchar();
         lexer->lexeme.string[lexer->lexeme.length] = ch;
