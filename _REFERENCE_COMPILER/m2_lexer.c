@@ -102,7 +102,7 @@ typedef /* m2_lexer_s */ struct {
     // offending character
     char offending_char;
     file_pos_t offending_char_pos;
-} objm2_lexer_s;
+} m2_lexer_s;
 
 #define NOT_EOF(_lexer) (_lexer->end_of_file == false)
 #define EOF_REACHED(_lexer) (_lexer->end_of_file == true)
@@ -534,9 +534,9 @@ void m2_lexer_getpos(m2_lexer_t lexer,
 // position  back  in  <row>  and <col>.  If no error occurred during the last
 // read operation then ASCII NUL is returned  and zero is passed pack in <row>
 // and <col>.  This function should only be called  after a preceeding call to
-// function objm2_lexer_getsym()  returned an error indicating that an illegal
-// or unexcpected character was found.  The status of the operation  is passed
-// back in <status> unless NULL is passed in for <status>.
+// function m2_lexer_getsym()  returned an error indicating that an illegal or
+// unexcpected character was found. The status of the operation is passed back
+// in <status> unless NULL is passed in for <status>.
 
 char m2_offending_char(m2_lexer_t lexer,
                          cardinal *row,
@@ -998,7 +998,7 @@ static fmacro uchar_t get_prefixed_number(m2_lexer_s *lexer) {
 //  digit := "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 //  uppercaseBase16Digit := digit | "A" | "B" | "C" | "D" | "E" | "F" ;
 
-static fmacro uchar_t get_suffixed_number(objm2_lexer_s *lexer) {
+static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
     
     cardinal non_binary_digit_count = 0;
     cardinal non_decimal_digit_count = 0;
@@ -1207,7 +1207,7 @@ static fmacro uchar_t get_suffixed_number(objm2_lexer_s *lexer) {
 //  digit-sequence := ( digit | "A" | "B" | "C" | "D" | "E" | "F" )*
 //  digit : = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
-static fmacro uchar_t get_digits(objm2_lexer_s *lexer,
+static fmacro uchar_t get_digits(m2_lexer_s *lexer,
                                  cardinal *non_binary_digits,
                                  cardinal *non_decimal_digits) {
     uchar_t ch;
@@ -1246,7 +1246,7 @@ static fmacro uchar_t get_digits(objm2_lexer_s *lexer,
 //  decimal-digit-sequence := digit*
 //  digit : = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
-static fmacro uchar_t get_decimal_digits(objm2_lexer_s *lexer) {
+static fmacro uchar_t get_decimal_digits(m2_lexer_s *lexer) {
     uchar_t ch;
 
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
@@ -1279,7 +1279,7 @@ static fmacro uchar_t get_decimal_digits(objm2_lexer_s *lexer) {
 //  scale-factor := "E" ( "+" | "-" )? digit*
 //  digit : = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
-static fmacro uchar_t get_scale_factor(objm2_lexer_s *lexer) {
+static fmacro uchar_t get_scale_factor(m2_lexer_s *lexer) {
     uchar_t ch;
 
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
@@ -1358,7 +1358,7 @@ static fmacro uchar_t get_scale_factor(objm2_lexer_s *lexer) {
 //     quotation mark delimiter or EOF is found.
 //  o  the new lookahead character is the character following the literal.
 
-static fmacro uchar_t get_quoted_literal(objm2_lexer_s *lexer) {
+static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
     uchar_t ch, delimiter_ch;
     bool all_7bit_ascii = true;
     
@@ -1488,7 +1488,7 @@ static fmacro uchar_t get_quoted_literal(objm2_lexer_s *lexer) {
 //  if the assumed backslash does not start an escape sequence
 //  o  a backslash is returned
 
-static fmacro uchar_t get_escaped_char(objm2_lexer_s *lexer) {
+static fmacro uchar_t get_escaped_char(m2_lexer_s *lexer) {
     uchar_t ch, nextch;
     bool escape_sequence_found = false;
     
@@ -1561,7 +1561,7 @@ static fmacro uchar_t get_escaped_char(objm2_lexer_s *lexer) {
 //  o  no entry has been added to lexer->lextab.
 //  o  lexer->status contains M2_LEXER_STATUS_ALLOCATION_FAILED.
 
-static fmacro void add_lexeme_to_lextab(objm2_lexer_s *lexer) {
+static fmacro void add_lexeme_to_lextab(m2_lexer_s *lexer) {
     kvs_status_t status;
     
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
@@ -1608,7 +1608,7 @@ static fmacro void add_lexeme_to_lextab(objm2_lexer_s *lexer) {
 //  o  the lexer's line and coloumn counters have been updated.
 //  o  lexer->status contains M2_LEXER_STATUS_COMMENT_NESTING_LIMIT_REACHED.
 
-static fmacro uchar_t skip_multiline_comment(objm2_lexer_s *lexer) {
+static fmacro uchar_t skip_multiline_comment(m2_lexer_s *lexer) {
     uchar_t ch, nextch;
     cardinal open_comment_count = 1;
     
@@ -1676,7 +1676,7 @@ static fmacro uchar_t skip_multiline_comment(objm2_lexer_s *lexer) {
 //     marker.
 //  o  the lexer's line and coloumn counters have been updated.
 
-static fmacro uchar_t skip_past_end_of_line(objm2_lexer_s *lexer) {
+static fmacro uchar_t skip_past_end_of_line(m2_lexer_s *lexer) {
     
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
     if (lexer == NULL) return (uchar_t)0;
