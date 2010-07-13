@@ -1294,13 +1294,44 @@ m2_token_t m2_array_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #17 record_type
 // --------------------------------------------------------------------------
-//
+//  RECORD ( "(" baseType ")" )? fieldListSequence? END
 
 m2_token_t m2_record_type(m2_parser_t *p) {
-    m2_token_t token;
     
+    // RECORD
+    _getsym(p);
     
-    return token;
+    // ( "(" baseType ")" )?
+    if (_lookahead(p) == TOKEN_LPAREN) {
+        _getsym(p);
+        
+        // baseType
+        if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_RPAREN)) {
+            _getsym(p);
+            
+        } // end baseType
+        
+        // ")"
+        if (match_token(p, TOKEN_RPAREN, FIRST_FIELD_LIST_SEQ)) {
+            _getsym(p);
+            
+        } // end ")"
+        
+    } // end ( "(" baseType ")" )?
+    
+    // fieldListSequence?
+    if (m2_tokenset_is_element(FIRST_FIELD_LIST_SEQ, _lookahead(p))) {
+        m2_field_list_sequence(p);
+    
+    } // end fieldListSequence?
+    
+    // END
+    if (match_token(p, TOKEN_END, FOLLOW_RECORS_TYPE)) {
+        _getsym(p);
+        
+    } // end END
+    
+    return _lookahead(p);
 } // end m2_record_type
 
 
