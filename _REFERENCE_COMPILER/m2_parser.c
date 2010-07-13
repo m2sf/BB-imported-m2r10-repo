@@ -1338,11 +1338,24 @@ m2_token_t m2_record_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #18 field_list_sequence
 // --------------------------------------------------------------------------
-//
+//  fieldList ( ";" fieldList )*
 
 m2_token_t m2_field_list_sequence(m2_parser_t *p) {
-    m2_token_t token;
     
+    // fieldList
+    m2_field_list(p);
+    
+    // ( ";" fieldList )*
+    while (_lookahead(p) == TOKEN_SEMICOLON) {
+        _getsym(p);
+        
+        // fieldList
+        if (match_token_in_set(p, FIRST_FIELD_LIST, FOLLOW_FIELD_LIST_SEQ)) {
+            m2_field_list(p);
+            
+        } // end fieldList
+        
+    } // end ( ";" fieldList )*
     
     return token;
 } // end m2_field_list_sequence
