@@ -1034,26 +1034,92 @@ m2_token_t m2_definition(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #12 const_declaration
 // --------------------------------------------------------------------------
-//
+//  ident "=" constExpression
 
 m2_token_t m2_const_declaration(m2_parser_t *p) {
-    m2_token_t token;
     
+    // ident
+    _getsym(p);
     
-    return token;
+    // "="
+    if (match_token(p, TOKEN_EQUAL_OP, FIRST_CONST_EXPRESSION)) {
+        _getsym(p);
+        
+    } // end "="
+    
+    // constExpression
+    if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                              FOLLOW_CONST_EXPRESSION)) {
+        m2_const_expression(p);
+        
+    } // end constExpression
+    
+    return _lookahead(p);
 } // end m2_const_declaration
 
 
 // --------------------------------------------------------------------------
 // #13 type
 // --------------------------------------------------------------------------
-//
+//  ( ALIAS | range ) OF namedType | enumerationType |
+//  arrayType | recordType | setType | pointerType | procedureType
 
 m2_token_t m2_type(m2_parser_t *p) {
-    m2_token_t token;
     
+    if (_lookahead(p) == TOKEN_ALIAS) {
+        _getsym(p);
+        
+        // OF
+        if (match_token(p, TOKEN_OF, SKIP_TO_IDENTIFIER)) {
+            _getsym(p);
+        
+        } // end OF
+        
+        // namedType
+        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_TYPE)) {
+            _getsym(p);
+            
+        } // end namedType
+    }
+    else if (m2_tokenset_is_element(FIRST_RANGE, _lookahead(p))) {
+        m2_range(p);
+        
+        // OF
+        if (match_token(p, TOKEN_OF, SKIP_TO_IDENTIFIER)) {
+            _getsym(p);
+            
+        } // end OF
+        
+        // namedType
+        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_TYPE)) {
+            _getsym(p);
+            
+        } // end namedType
+    }
+    else if (m2_tokenset_is_element(FIRST_ENUMERATION_TYPE, _lookahead(p))) {
+        m2_enumeration_type(p);
+    }
+    else if (m2_tokenset_is_element(FIRST_ARRAY_TYPE, _lookahead(p))) {
+        m2_array_type(p);
+    }
+    else if (m2_tokenset_is_element(FIRST_RECORD_TYPE, _lookahead(p))) {
+        m2_record_type(p);
+    }
+    else if (m2_tokenset_is_element(FIRST_SET_TYPE, _lookahead(p))) {
+        m2_set_type(p);
+    }
+    else if (m2_tokenset_is_element(FIRST_POINTER_TYPE, _lookahead(p))) {
+        m2_pointer_type(p);
+    }
+    else if (m2_tokenset_is_element(FIRST_PROCEDURE_TYPE, _lookahead(p))) {
+        m2_procedure_type(p);
+    }
+    else {
+        // unreachable code
+        fatal_error(); // abort
+    } // end if
     
-    return token;
+    return _lookahead(p);
 } // end m2_type
 
 
