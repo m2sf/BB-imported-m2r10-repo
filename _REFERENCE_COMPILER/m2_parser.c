@@ -1229,13 +1229,65 @@ m2_token_t m2_enumeration_component(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #16 array_type
 // --------------------------------------------------------------------------
-//
+//  ( ARRAY constComponentCount ( "," constComponentCount )* |
+//    ASSOCIATIVE ARRAY ) OF namedType
 
 m2_token_t m2_array_type(m2_parser_t *p) {
-    m2_token_t token;
     
+    // ARRAY
+    if (_lookahead(p) == TOKEN_ARRAY) {
+        _getsym(p);
+        
+        // constComponentCount
+        if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                                  SKIP_TO_COMMA_OR_OF)) {
+            _getsym(p);
+            
+        } // end constComponentCount
+        
+        // ( "," constComponentCount )*
+        while (_lookahead(p) == TOKEN_COMMA) {
+            _getsym(p);
+            
+            // constComponentCount
+            if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                                   SKIP_TO_COMMA_OR_OF)) {
+                _getsym(p);
+                
+            } // end constComponentCount
+            
+        } // end ( "," constComponentCount )*
+        
+    }
+    // ASSOCIATIVE
+    else if (_lookahead(p) == TOKEN_ASSOCIATIVE) {
+        _getsym(p);
+        
+        // ARRAY
+        if (match_token(p, TOKEN_ARRAY, SKIP_TO_OF_OR_IDENT)) {
+            _getsym(p);
+            
+        } // end ARRAY
+        
+    }
+    else {
+        // unreachable code
+        fatal_error(); // abort
+    } //
     
-    return token;
+    // OF
+    if (match_token(p, TOKEN_OF, SKIP_TO_IDENT)) {
+        _getsym(p);
+        
+    } // end OF
+    
+    // namedType
+    if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_ARRAY_TYPE)) {
+        _getsym(p);
+        
+    } // end namedType
+    
+    return _lookahead(p);
 } // end m2_array_type
 
 
