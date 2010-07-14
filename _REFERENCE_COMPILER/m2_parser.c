@@ -2624,20 +2624,34 @@ m2_token_t m2_for_statement(m2_parser_t *p) {
         
     } // end
     
-    return token;
+    return _lookahead(p);
 } // end m2_for_statement
 
 
 // --------------------------------------------------------------------------
 // #46 const_expression
 // --------------------------------------------------------------------------
-//
+//  simpleConstExpr ( relation simpleConstExpr )?
 
 m2_token_t m2_const_expression(m2_parser_t *p) {
-    m2_token_t token;
     
+    // simpleConstExpr
+    m2_simple_const_expression(p);
     
-    return token;
+    // ( relation simpleConstExpr )?
+    if (m2_tokenset_is_element(FIRST_RELATION, _lookahead(p))) {
+        m2_relation(p);
+        
+        // simpleConstExpr
+        if (match_token_in_set(p, FIRST_SIMPLE_CONST_EXPRESSION,
+                                  FOLLOW_SIMPLE_CONST_EXPRESSION)) {
+            m2_simple_const_expression(p);
+            
+        } // end simpleConstExpr
+        
+    } // end ( relation simpleConstExpr )?
+    
+    return _lookahead(p);
 } // end m2_const_expression
 
 
