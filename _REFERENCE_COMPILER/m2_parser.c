@@ -2132,7 +2132,7 @@ m2_token_t m2_variadic_formal_params(m2_parser_t *p) {
             // unreachable code
             fatal_error(); // abort
             
-        }
+        } // end if
         
     } // end tail
     
@@ -2143,13 +2143,63 @@ m2_token_t m2_variadic_formal_params(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #35 statement
 // --------------------------------------------------------------------------
-//
+//  assignmentOrProcedureCall | ifStatement | caseStatement |
+//  whileStatement | repeatStatement | loopStatement |
+//  forStatement | RETURN expression? | EXIT 
 
 m2_token_t m2_statement(m2_parser_t *p) {
-    m2_token_t token;
     
+    // assignmentOrProcedureCall
+    if (m2_tokenset_is_element(FIRST_ASSIGNMENT_OR_PROCEDURE_CALL,
+                               _lookahead(p))) {
+        m2_assignment_or_procedure_call(p);
+    }
+    // ifStatement
+    else if (_lookahead(p) == TOKEN_IF) {
+        m2_if_statement(p);
+    }
+    // caseStatement
+    else if (_lookahead(p) == TOKEN_CASE) {
+        m2_case_statement(p);
+    }
+    // whileStatement
+    else if (_lookahead(p) == TOKEN_WHILE) {
+        m2_while_statement(p);
+    }
+    // repeatStatement
+    else if (_lookahead(p) == TOKEN_REPEAT) {
+        m2_repeat_statement(p);
+    }
+    // loopStatement
+    else if (_lookahead(p) == TOKEN_LOOP) {
+        m2_loop_statement(p);
+    }
+    // forStatement
+    else if (_lookahead(p) == TOKEN_FOR) {
+        m2_for_statement(p);
+    }
+    // RETURN
+    else if (_lookahead(p) == TOKEN_RETURN) {
+        _getsym(p);
+        
+        // expression
+        if (match_token_in_set(p, FIRST_EXPRESSION, FOLLOW_STATEMENT)) {
+            m2_expression(p);
+            
+        } // end expression
+    }
+    // EXIT
+    else if (_lookahead(p) == TOKEN_EXIT) {
+        _getsym(p);
+        
+    }
+    else {
+        // unreachable code
+        fatal_error(); // abort
+        
+    } // end if
     
-    return token;
+    return _lookahead(p);
 } // end m2_statement
 
 
