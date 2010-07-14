@@ -1844,13 +1844,32 @@ m2_token_t m2_variable_declaration(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #29 procedure_declaration
 // --------------------------------------------------------------------------
-//
+//  procedureHeader ";" block ident
 
 m2_token_t m2_procedure_declaration(m2_parser_t *p) {
-    m2_token_t token;
     
+    // procedureHeader
+    m2_procedure_header(p);
     
-    return token;
+    // ";"
+    if (match_token(p, TOKEN_SEMICOLON, FIRST_BLOCK)) {
+        _getsym(p);
+        
+    } // end ";"
+    
+    // block
+    if (match_token_in_set(p, FIRST_BLOCK, SKIP_TO_IDENT)) {
+        m2_block(p);
+        
+    } // end block
+    
+    // ident
+    if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_PROCEDURE_DECLARATION)) {
+        _getsym(p);
+        
+    } // end ident
+    
+    return _lookahead(p);
 } // end m2_procedure_declaration
 
 
