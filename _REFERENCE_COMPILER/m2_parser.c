@@ -2993,13 +2993,20 @@ m2_token_t m2_const_factor(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #53 designator
 // --------------------------------------------------------------------------
-//
+//  qualident designatorTail?
 
 m2_token_t m2_designator(m2_parser_t *p) {
-    m2_token_t token;
     
+    // qualident
+    m2_qualident(p);
     
-    return token;
+    // designatorTail?
+    if (m2_tokenset_is_element(FIRST_DESIGNATOR_TAIL, _lookahead(p))) {
+        m2_designator_tail(p);
+        
+    } // end  designatorTail?
+    
+    return _lookahead(p);
 } // end m2_designator
 
 
