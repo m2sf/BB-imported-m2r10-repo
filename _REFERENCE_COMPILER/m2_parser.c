@@ -2424,13 +2424,26 @@ m2_token_t m2_case_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #40 case
 // --------------------------------------------------------------------------
-//
+//  caseLabels ( "," caseLabels )* ":" statementSequence
 
 m2_token_t m2_case(m2_parser_t *p) {
-    m2_token_t token;
     
+    // caseLabels
+    m2_case_labels(p);
     
-    return token;
+    // ( "," caseLabels )*
+    while (_lookahead(p) == TOKEN_COMMA) {
+        -getsym(p);
+        
+        // caseLabels
+        if (match_token_in_set(p, FIRST_CASE_LABELS, FOLLOW_CASE_LABELS)) {
+            m2_case_labels(p);
+            
+        } // end caseLabels
+        
+    } // end ( "," caseLabels )*
+    
+    return _lookahead(p);
 } // end m2_case
 
 
