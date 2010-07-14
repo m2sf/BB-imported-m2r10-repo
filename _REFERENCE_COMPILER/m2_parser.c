@@ -3490,11 +3490,24 @@ m2_token_t m2_value_component(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #66 qualident
 // --------------------------------------------------------------------------
-//
+//  ident ( "." ident )*
 
 m2_token_t m2_qualident(m2_parser_t *p) {
-    m2_token_t token;
+
+    // ident
+    _getsym(p);
     
+    // ( "." ident )*
+    while (_lookahead(p) == TOKEN_DOT) {
+        _getsym(p);
+        
+        // ident
+        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_QUALIDENT)) {
+            _getsym(p);
+            
+        } // end ident
+        
+    } // end ( "." ident )*
     
     return token;
 } // end m2_qualident
