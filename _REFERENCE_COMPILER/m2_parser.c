@@ -2415,7 +2415,7 @@ m2_token_t m2_case_statement(m2_parser_t *p) {
     if (match_token(p, TOKEN_END, FOLLOW_CASE_STATEMENT)) {
         _getsym(p);
         
-    } // end OF
+    } // end END
     
     return _lookahead(p);
 } // end m2_case_statement
@@ -2564,7 +2564,7 @@ m2_token_t m2_loop_statement(m2_parser_t *p) {
     if (match_token(p, TOKEN_END, FOLLOW_LOOP_STATEMENT)) {
         _getsym(p);
         
-    } // end OF
+    } // end END
 
     return _lookahead(p);
 } // end m2_loop_statement
@@ -2573,11 +2573,56 @@ m2_token_t m2_loop_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #45 for_statement
 // --------------------------------------------------------------------------
-//
+//  FOR controlVariable DESCENDING? IN ( expression | range OF namedType )
 
 m2_token_t m2_for_statement(m2_parser_t *p) {
-    m2_token_t token;
     
+    // FOR
+    _getsym(p);
+    
+    // DESCENDING?
+    if (_lookahead(p) == TOKEN_DESCENDING) {
+        _getsym(p);
+        
+    } // end DESCENDING?
+    
+    // IN
+    if (match_token(p, TOKEN_IN, FIRST_EXPRESSION_OR_RANGE)) {
+        _getsym(p);
+        
+    } // end IN
+    
+    // ( expression | range OF namedType )
+    if (match_token_in_set(p, FIRST_EXPRESSION_OR_RANGE,
+                              FOLLOW_FOR_STATEMENT)) {
+        
+        // expression
+        if (m2_tokenset_is_element(FIRST_EXPRESSION, _lookahead(p))) {
+            m2_expression(p);
+        }
+        // range
+        else if (m2_tokenset_is_element(FIRST_RANGE, _lookahead(p))) {
+            m2_range(p);
+            
+            // OF
+            if (match_token(p, TOKEN_OF, SKIP_TO_IDENT)) {
+                _getsym(p);
+                
+            } // end OF
+            
+            // namedType
+            if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_FOR_STATEMENT)) {
+                _getsym(p);
+                
+            } // end namedType
+        }
+        else {
+            // unreachable code
+            fatal_error(p); // abort
+            
+        } // end if
+        
+    } // end
     
     return token;
 } // end m2_for_statement
