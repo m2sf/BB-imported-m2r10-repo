@@ -2013,13 +2013,40 @@ m2_token_t m2_formal_params(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #33 simple_formal_params
 // --------------------------------------------------------------------------
-//
+//  ( CONST | VAR )? identList ":" simpleFormalType
 
 m2_token_t m2_simple_formal_params(m2_parser_t *p) {
-    m2_token_t token;
     
+    // ( CONST | VAR )?
+    if (_lookahead(p) == TOKEN_CONST) {
+        _getsym(p);
+        
+    }
+    else if (_lookahead(p) == TOKEN_VAR) {
+        _getsym(p);
+        
+    } // end ( CONST | VAR )?
     
-    return token;
+    // identList
+    if (match_token_in_set(p, FIRST_IDENT_LIST, FOLLOW_IDENT_LIST)) {
+        m2_ident_list(p);
+        
+    } // end identList
+    
+    // ":"
+    if (match_token(p, TOKEN_SEMICOLON, FIRST_SIMPLE_FORMAL_TYPE)) {
+        _getsym(p);
+        
+    } // end ":"
+    
+    // simpleFormalType
+    if (match_token_in_set(p, FIRST_SIMPLE_FORMAL_TYPE,
+                           FOLLOW_SIMPLE_FORMAL_TYPE)) {
+        m2_simple_formal_type(p);
+        
+    } // end simpleFormalType
+    
+    return _lookahead(p);
 } // end m2_simple_formal_params
 
 
