@@ -3509,20 +3509,33 @@ m2_token_t m2_qualident(m2_parser_t *p) {
         
     } // end ( "." ident )*
     
-    return token;
+    return _lookahead(p);
 } // end m2_qualident
 
 
 // --------------------------------------------------------------------------
 // #67 ident_list
 // --------------------------------------------------------------------------
-//
+//  ident ( "," ident )*
 
 m2_token_t m2_ident_list(m2_parser_t *p) {
-    m2_token_t token;
     
+    // ident
+    _getsym(p);
     
-    return token;
+    // ( "," ident )*
+    while (_lookahead(p) == TOKEN_COMMA) {
+        _getsym(p);
+        
+        // ident
+        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_IDENT_LIST)) {
+            _getsym(p);
+            
+        } // end ident
+        
+    } // end ( "," ident )*
+    
+    return _lookahead(p);
 } // end m2_ident_list
 
 
