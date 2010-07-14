@@ -56,9 +56,9 @@
 //  o  one extra character for C string terminator (ASCII NUL).
 
 #define M2_MAX_LEXEME_LENGTH \
-    (MAX3(M2_MAX_IDENT_LENGTH, \
-          M2_MAX_NUM_LENGTH + 1, \
-          M2_MAX_STRING_LENGTH + 3) + 1)
+(MAX3(M2_MAX_IDENT_LENGTH, \
+M2_MAX_NUM_LENGTH + 1, \
+M2_MAX_STRING_LENGTH + 3) + 1)
 
 
 // ---------------------------------------------------------------------------
@@ -76,7 +76,7 @@ typedef struct /* lexbuf_t */ {
 // ---------------------------------------------------------------------------
 
 typedef /* m2_lexer_s */ struct {
-
+    
     // configuration parameters
     FILE *sourcefile;                   // source file
     kvs_table_t lextab;                 // lexeme table
@@ -118,11 +118,11 @@ static fmacro uchar_t _nextchar(m2_lexer_s *lexer);
 
 static fmacro uchar_t get_ident(m2_lexer_s *lexer);
 
+static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer);
+
 static fmacro uchar_t get_prefixed_number(m2_lexer_s *lexer);
 
 static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer);
-
-static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer);
 
 static fmacro uchar_t get_digits(m2_lexer_s *lexer,
                                  cardinal *non_binary_digits,
@@ -161,9 +161,9 @@ static fmacro uchar_t skip_past_end_of_line(m2_lexer_s *lexer);
 // Returns NULL if the lexer object could not be created.
 
 m2_lexer_t m2_new_lexer(FILE *infile,
-                 kvs_table_t lextab,
-           m2_lexer_status_t *status) {
-
+                        kvs_table_t lextab,
+                        m2_lexer_status_t *status) {
+    
     m2_lexer_s *new_lexer;    
     
     // assert pre-conditions
@@ -198,7 +198,7 @@ m2_lexer_t m2_new_lexer(FILE *infile,
     // configuration parameters
     new_lexer->sourcefile = infile;
     new_lexer->lextab = lextab;
-
+    
     // return values
     new_lexer->token = 0;
     new_lexer->lexkey = 0;
@@ -220,7 +220,7 @@ m2_lexer_t m2_new_lexer(FILE *infile,
     // offending character
     new_lexer->offending_char = 0;
     SET_FPOS(new_lexer->offending_char_pos, 0, 0);
-            
+    
     // return the initialised lexer object
     ASSIGN_BY_REF(status, M2_LEXER_STATUS_SUCCESS);
     return (m2_lexer_t) new_lexer;
@@ -237,9 +237,9 @@ m2_lexer_t m2_new_lexer(FILE *infile,
 // unless NULL is passed in for <status>.
 
 m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
-                             cardinal *lexeme,
-                    m2_lexer_status_t *status) {
-
+                           cardinal *lexeme,
+                           m2_lexer_status_t *status) {
+    
     register m2_lexer_s *this_lexer = (m2_lexer_s *) lexer;
     register uchar_t ch;
     bool ignore_token;
@@ -255,7 +255,7 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
     this_lexer->lexkey = 0;
     this_lexer->lexeme.length = 0;
     this_lexer->lexeme.string[0] = CSTRING_TERMINATOR;
-
+    
     ch = nextchar();
     ignore_token = false;
     repeat {
@@ -268,7 +268,7 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
             // take a peek at the next one
             ch = nextchar();
         } // end while;
-                        
+        
         // remember position at the start of the symbol
         this_lexer->token_pos = this_lexer->current_pos;
         
@@ -508,10 +508,10 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
 // operation is passed back in <status> unless NULL is passed in for <status>.
 
 void m2_lexer_getpos(m2_lexer_t lexer,
-                       cardinal *row,
-                       cardinal *col,
-              m2_lexer_status_t *status) {
-
+                     cardinal *row,
+                     cardinal *col,
+                     m2_lexer_status_t *status) {
+    
     m2_lexer_s *this_lexer = (m2_lexer_s *) lexer;
     
     if (lexer == NULL) {
@@ -540,12 +540,12 @@ void m2_lexer_getpos(m2_lexer_t lexer,
 // in <status> unless NULL is passed in for <status>.
 
 char m2_offending_char(m2_lexer_t lexer,
-                         cardinal *row,
-                         cardinal *col,
-                m2_lexer_status_t *status) {
-
+                       cardinal *row,
+                       cardinal *col,
+                       m2_lexer_status_t *status) {
+    
     m2_lexer_s *this_lexer = (m2_lexer_s *) lexer;
-
+    
     if (lexer == NULL) {
         ASSIGN_BY_REF(row, 0);
         ASSIGN_BY_REF(col, 0);
@@ -576,7 +576,7 @@ char m2_offending_char(m2_lexer_t lexer,
 // the operation is passed back in <status>.
 
 void m2_dispose_lexer(m2_lexer_t lexer,
-               m2_lexer_status_t *status) {
+                      m2_lexer_status_t *status) {
     
     m2_lexer_s *this_lexer = (m2_lexer_s *) lexer;
     
@@ -607,8 +607,8 @@ void m2_dispose_lexer(m2_lexer_t lexer,
 #define readchar(v) _readchar(lexer) /* v = void */
 #define nextchar(v) _nextchar(lexer) /* v = void */
 #define IS_METHOD_SIGNATURE_CONTEXT(lexer) \
-    ((lexer->seen_method && !(lexer->seen_open_paren_since_method)) || \
-     (lexer->bracket_nesting_level > 0) || (lexer->seen_backquote))
+((lexer->seen_method && !(lexer->seen_open_paren_since_method)) || \
+(lexer->bracket_nesting_level > 0) || (lexer->seen_backquote))
 
 
 // ---------------------------------------------------------------------------
@@ -670,7 +670,7 @@ static fmacro uchar_t _readchar(m2_lexer_s *lexer) {
     
     if (((uchar_t) c == 255) || (c == 0)) {
         //printf("");
-	;
+        ;
     } // end if
     
     // return character
@@ -757,7 +757,7 @@ static fmacro uchar_t _nextchar(m2_lexer_s *lexer) {
 static fmacro uchar_t get_ident(m2_lexer_s *lexer) {
     bool is_all_uppercase = true;
     uchar_t ch;
-
+    
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
     if (lexer == NULL) return (uchar_t)0;
 #endif
@@ -776,10 +776,10 @@ static fmacro uchar_t get_ident(m2_lexer_s *lexer) {
     } while (((IS_ALPHANUM(ch)) || (ch == UNDERSCORE) || (ch == DOLLAR)) &&
              ((lexer->lexeme.length < (M2_MAX_IDENT_LENGTH)) &&
               (NOT_EOF(lexer))));
-
+    
     // check if maximum identifier length has been reached
     if (lexer->lexeme.length == (M2_MAX_IDENT_LENGTH)) {
-
+        
         // any further characters are not significant, skip them
         while (((IS_ALPHANUM(ch)) || (ch == UNDERSCORE) || (ch == DOLLAR)) &&
                (NOT_EOF(lexer))) {
@@ -787,7 +787,7 @@ static fmacro uchar_t get_ident(m2_lexer_s *lexer) {
             ch = nextchar();
         } // end while
     } // end if
-
+    
     // terminate the lexeme
     lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
     lexer->lexkey = HASH_FINAL(lexer->lexkey);
@@ -802,6 +802,82 @@ static fmacro uchar_t get_ident(m2_lexer_s *lexer) {
 } // end get_ident
 
 
+
+
+// ---------------------------------------------------------------------------
+// private function:  get_numeric_literal(lexer)
+// ---------------------------------------------------------------------------
+//
+// Reads a  numeric literal  from the input stream of <lexer>  and returns the
+// character following the literal.
+//
+// This function accepts input conforming to the following syntax:
+//
+//  number := integer | real
+//  integer := binary-integer | decimal-integer | base-16-integer
+//  binary-integer := ( "0" | "1" )+ "B"
+//  decimal-integer := digit+
+//  sbase-16-integer := digit base-16-digit+ ( "H" | "U" )
+//  real := digit+ "." digit+ | digit "." digit+ "E" ( "+" | "-")? digit+
+//  digit := "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+//  base-16-digit := digit | "A" | "B" | "C" | "D" | "E" | "F"
+//
+// pre-conditions:
+//  o  lexer is an initialised lexer object
+//  o  the current lookahead character is the first digit  at the beginning of
+//     the literal.
+//  o  the literal is well-formed, conforming to the syntax given above.
+//
+// post-conditions:
+//  o  lexer->lexeme.string contains the literal,
+//     followed by a type designator ('B', 'H', 'U' or 'R'),
+//     followed by a C string terminator (ASCII NUL).
+//  o  lexer->lexeme.length contains the length of lexer->lexeme.string.
+//  o  lexer->token contains TOKEN_NUMERIC_LITERAL.
+//  o  lexer->lexkey contains the key for the lexeme table.
+//  o  lexer->status contains M2_LEXER_STATUS_SUCCESS.
+//  o  the new lookahead character is the character following the literal.
+//
+// error-conditions:
+//  o  lexer->lexeme.string contains the part of the literal before the
+//     offending character, followed by a C string terminator (ASCII NUL).
+//  o  lexer->lexeme.length contains the length of lexer->lexeme.string.
+//  o  lexer->token contains TOKEN_ILLEGAL_CHARACTER.
+//  o  lexer->lexkey contains 0.
+//  o  lexer->offending_char contains the offending character.
+//  o  lexer->offending_char_pos contains the position of the offending char.
+//  o  lexer->status contains
+//     - M2_LEXER_STATUS_LITERAL_TOO_LONG if maximum length is exceeded,
+//     - M2_LEXER_STATUS_MALFORMED_NUMBER if illegal characters are found.
+//  o  the new lookahead character is the offending character.
+
+static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer) {
+    uchar_t ch, first_ch;
+    
+    lexer->lexeme.length = 0;
+    lexer->lexkey = HASH_INITIAL;
+    
+    // get the first character
+    
+    first_ch = readchar();
+    lexer->lexeme.string[lexer->lexeme.length] = first_ch;
+    lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, first_ch);
+    lexer->lexeme.length++;
+    ch = nextchar();
+    
+    // get any remaining characters
+    
+    if /* literal is prefixed */ ((first_ch == DIGIT_ZERO) &&
+                                  ((ch == LOWERCASE_X) || (ch == LOWERCASE_U) || (ch == LOWERCASE_X))) {
+        ch = get_prefixed_number(lexer);
+    }
+    else /* literal is not prefixed */ {
+        ch = get_suffixed_number(lexer);
+    } // end if
+    
+    // return the lokkahead character
+    return ch;
+} // end get_numeric_literal
 
 
 // ---------------------------------------------------------------------------
@@ -933,7 +1009,7 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
     bool well_formed = false;
     uchar_t final_ch;
     uchar_t ch;
-
+    
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
     if (lexer == NULL) return (uchar_t)0;
 #endif
@@ -1115,8 +1191,8 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
         lexer->lexkey = 0;
         return ch;
     } // end if
-
-} // end get_suffixed_number
+    
+} // end get_numeric_literal
 
 
 // ---------------------------------------------------------------------------
@@ -1137,7 +1213,7 @@ static fmacro uchar_t get_digits(m2_lexer_s *lexer,
                                  cardinal *non_binary_digits,
                                  cardinal *non_decimal_digits) {
     uchar_t ch;
-
+    
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
     if (lexer == NULL) return (uchar_t)0;
 #endif
@@ -1174,7 +1250,7 @@ static fmacro uchar_t get_digits(m2_lexer_s *lexer,
 
 static fmacro uchar_t get_decimal_digits(m2_lexer_s *lexer) {
     uchar_t ch;
-
+    
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
     if (lexer == NULL) return (uchar_t)0;
 #endif
@@ -1207,7 +1283,7 @@ static fmacro uchar_t get_decimal_digits(m2_lexer_s *lexer) {
 
 static fmacro uchar_t get_scale_factor(m2_lexer_s *lexer) {
     uchar_t ch;
-
+    
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
     if (lexer == NULL) return (uchar_t)0;
 #endif
@@ -1241,166 +1317,6 @@ static fmacro uchar_t get_scale_factor(m2_lexer_s *lexer) {
     
     return ch;
 } // end get_scale_factor
-
-
-
-
-// ---------------------------------------------------------------------------
-// private function:  get_numeric_literal(lexer)
-// ---------------------------------------------------------------------------
-//
-// Reads a  numeric literal  from the input stream of <lexer>  and returns the
-// character following the literal.
-//
-// This function accepts input conforming to the following syntax:
-//
-//  number := integer | real
-//  integer := binary-integer | decimal-integer | base-16-integer
-//  binary-integer := ( "0" | "1" )+ "B"
-//  decimal-integer := digit+
-//  sbase-16-integer := digit base-16-digit+ ( "H" | "U" )
-//  real := digit+ "." digit+ | digit "." digit+ "E" ( "+" | "-")? digit+
-//  digit := "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-//  base-16-digit := digit | "A" | "B" | "C" | "D" | "E" | "F"
-//
-// pre-conditions:
-//  o  lexer is an initialised lexer object
-//  o  the current lookahead character is the first digit  at the beginning of
-//     the literal.
-//  o  the literal is well-formed, conforming to the syntax given above.
-//
-// post-conditions:
-//  o  lexer->lexeme.string contains the literal,
-//     followed by a type designator ('B', 'H', 'U' or 'R'),
-//     followed by a C string terminator (ASCII NUL).
-//  o  lexer->lexeme.length contains the length of lexer->lexeme.string.
-//  o  lexer->token contains TOKEN_NUMERIC_LITERAL.
-//  o  lexer->lexkey contains the key for the lexeme table.
-//  o  lexer->status contains M2_LEXER_STATUS_SUCCESS.
-//  o  the new lookahead character is the character following the literal.
-//
-// error-conditions:
-//  o  lexer->lexeme.string contains the part of the literal before the
-//     offending character, followed by a C string terminator (ASCII NUL).
-//  o  lexer->lexeme.length contains the length of lexer->lexeme.string.
-//  o  lexer->token contains TOKEN_ILLEGAL_CHARACTER.
-//  o  lexer->lexkey contains 0.
-//  o  lexer->offending_char contains the offending character.
-//  o  lexer->offending_char_pos contains the position of the offending char.
-//  o  lexer->status contains
-//     - M2_LEXER_STATUS_LITERAL_TOO_LONG if maximum length is exceeded,
-//     - M2_LEXER_STATUS_MALFORMED_NUMBER if illegal characters are found.
-//  o  the new lookahead character is the offending character.
-
-static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer) {
-    uchar_t ch, first_ch;
-    
-    lexer->lexeme.length = 0;
-    lexer->lexkey = HASH_INITIAL;
-    
-    // get the first character
-    
-    first_ch = readchar();
-    lexer->lexeme.string[lexer->lexeme.length] = first_ch;
-    lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, first_ch);
-    lexer->lexeme.length++;
-    ch = nextchar();
-    
-    // get any remaining characters
-    
-    if /* literal is prefixed */ ((first_ch == DIGIT_ZERO) &&
-         ((ch == LOWERCASE_X) || (ch == LOWERCASE_U) || (ch == LOWERCASE_X))) {
-        ch = get_prefixed_number(lexer);
-    }
-    else /* literal is not prefixed */ {
-        ch = get_suffixed_number(lexer);
-    } // end if
-    
-    // return the lokkahead character
-    return ch;
-} // end get_numeric_literal
-
-
-
-
-
-// ---------------------------------------------------------------------------
-// private function:  get_escaped_char(lexer)
-// ---------------------------------------------------------------------------
-//
-// Reads an  escaped character sequence  from the input stream of <lexer>  and
-// returns the character represented by the escape sequence.
-//
-// pre-conditions:
-//  o  lexer is an initialised lexer object
-//  o  current character is *assumed* to be backslash
-//
-// post-conditions:
-//  if the assumed backslash starts an escape sequence
-//  o  the current character is the last character in the escape sequence
-//  o  the lookahead character is the character following the escape sequence
-//  o  line and coloumn counters are updated
-//
-//  if the assumed backslash does not start an escape sequence
-//  o  current character, lookahead character, line and coloumn counter
-//     remain unchanged
-//
-// return-value:
-//  if the assumed backslash starts an escape sequence
-//  o  the escaped character is returned
-//
-//  if the assumed backslash does not start an escape sequence
-//  o  a backslash is returned
-
-static fmacro uchar_t get_escaped_char(m2_lexer_s *lexer) {
-    uchar_t ch, nextch;
-    bool escape_sequence_found = false;
-    
-#ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
-    if (lexer == NULL) return (uchar_t)0;
-#endif
-    
-    // must NOT consume current character
-    // simply assume that it is backslash
-    ch = BACKSLASH;
-    
-    // get the lookahead character
-    nextch = nextchar();
-    
-    switch (nextch) {
-        case DOUBLE_QUOTE :
-        case SINGLE_QUOTE :
-            escape_sequence_found = true;
-            ch = nextchar();
-            break;
-        case DIGIT_ZERO :
-            escape_sequence_found = true;
-            ch = ASCII_NUL;
-            break;
-        case LOWERCASE_N :
-            escape_sequence_found = true;
-            ch = LINEFEED;
-            break;
-        case LOWERCASE_R :
-            escape_sequence_found = true;
-            ch = CARRIAGE_RETURN;
-            break;
-        case LOWERCASE_T :
-            escape_sequence_found = true;
-            ch = TAB;
-            break;
-        case BACKSLASH :
-            escape_sequence_found = true;
-            ch = BACKSLASH;
-    } // end switch
-    
-    // consume current character only if escape sequence was found
-    if (escape_sequence_found)
-        readchar();
-    
-    return ch;
-} // end get_escaped_char
-
 
 
 // ---------------------------------------------------------------------------
@@ -1504,7 +1420,7 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
         
         // pass back token and lexeme key
         lexer->token = TOKEN_STRING_LITERAL;
-                
+        
         // set status
         if (lexer->status != KVS_STATUS_ALLOCATION_FAILED)
             lexer->status = M2_LEXER_STATUS_SUCCESS;
@@ -1544,6 +1460,85 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
         return ch;
     } // end if
 } // end get_quoted_literal
+
+
+// ---------------------------------------------------------------------------
+// private function:  get_escaped_char(lexer)
+// ---------------------------------------------------------------------------
+//
+// Reads an  escaped character sequence  from the input stream of <lexer>  and
+// returns the character represented by the escape sequence.
+//
+// pre-conditions:
+//  o  lexer is an initialised lexer object
+//  o  current character is *assumed* to be backslash
+//
+// post-conditions:
+//  if the assumed backslash starts an escape sequence
+//  o  the current character is the last character in the escape sequence
+//  o  the lookahead character is the character following the escape sequence
+//  o  line and coloumn counters are updated
+//
+//  if the assumed backslash does not start an escape sequence
+//  o  current character, lookahead character, line and coloumn counter
+//     remain unchanged
+//
+// return-value:
+//  if the assumed backslash starts an escape sequence
+//  o  the escaped character is returned
+//
+//  if the assumed backslash does not start an escape sequence
+//  o  a backslash is returned
+
+static fmacro uchar_t get_escaped_char(m2_lexer_s *lexer) {
+    uchar_t ch, nextch;
+    bool escape_sequence_found = false;
+    
+#ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
+    if (lexer == NULL) return (uchar_t)0;
+#endif
+    
+    // must NOT consume current character
+    // simply assume that it is backslash
+    ch = BACKSLASH;
+    
+    // get the lookahead character
+    nextch = nextchar();
+    
+    switch (nextch) {
+        case DOUBLE_QUOTE :
+        case SINGLE_QUOTE :
+            escape_sequence_found = true;
+            ch = nextchar();
+            break;
+        case DIGIT_ZERO :
+            escape_sequence_found = true;
+            ch = ASCII_NUL;
+            break;
+        case LOWERCASE_N :
+            escape_sequence_found = true;
+            ch = LINEFEED;
+            break;
+        case LOWERCASE_R :
+            escape_sequence_found = true;
+            ch = CARRIAGE_RETURN;
+            break;
+        case LOWERCASE_T :
+            escape_sequence_found = true;
+            ch = TAB;
+            break;
+        case BACKSLASH :
+            escape_sequence_found = true;
+            ch = BACKSLASH;
+    } // end switch
+    
+    // consume current character only if escape sequence was found
+    if (escape_sequence_found)
+        readchar();
+    
+    return ch;
+} // end get_escaped_char
+
 
 // ---------------------------------------------------------------------------
 // private function:  skip_c_comment(lexer)

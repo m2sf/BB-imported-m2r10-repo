@@ -51,7 +51,7 @@ static const cardinal _m2_reserved_word[] = {
 // minimal perfect hash codes between  1  and  M2_NUMBER_OF_RESERVED_WORDS, it
 // further maps all invalid codes to M2_NUMBER_OF_RESERVED_WORDS + 1.
 
-#define _N _M2_NUMBER_OF_RESERVED_WORDS + 1
+#define _N M2_NUMBER_OF_RESERVED_WORDS + 1
 
 static const char _m2_perfect_hash_to_index_map[] = {
 //            0    1    2    3    4    5    6    7    8    9
@@ -96,7 +96,7 @@ static const char _m2_perfect_hash_to_index_map[] = {
 
 cardinal m2_hash_for_reserved_word_token(cardinal token_index) {
 
-    if (token_index > _M2_NUMBER_OF_RESERVED_WORDS)
+    if (token_index > M2_NUMBER_OF_RESERVED_WORDS)
         return 0;
     else
         return _m2_reserved_word[token_index];
@@ -128,9 +128,9 @@ cardinal m2_token_for_reserved_word_hash(cardinal hash) {
     
     // compare storage hash with stored hash
     if (hash == _m2_reserved_word[token_index])
-        return token_index
+        return token_index;
     else
-        return _M2_NUMBER_OF_RESERVED_WORDS + 1;
+        return M2_NUMBER_OF_RESERVED_WORDS + 1;
     
 } // end m2_token_for_reserved_word_hash
 
