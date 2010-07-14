@@ -1691,7 +1691,7 @@ m2_token_t m2_simple_formal_type(m2_parser_t *p) {
         
     } // end namedType
     
-    return token;
+    return _lookahead(p);
 } // end m2_simple_formal_type
 
 
