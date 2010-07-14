@@ -1445,13 +1445,52 @@ m2_token_t m2_field_list(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #20 set_type
 // --------------------------------------------------------------------------
-//
+//  SET OF ( namedEnumType | "(" identList ")" )
 
 m2_token_t m2_set_type(m2_parser_t *p) {
-    m2_token_t token;
     
+    // SET
+    _getsym(p);
     
-    return token;
+    // OF
+    if (match_token(p, TOKEN_OF, SKIP_TO_LPAREN_OR_IDENT)) {
+        _getsym(p);
+        
+    } // end OF
+    
+    // set tail
+    if (match_token_in_set(p, FIRST_IDENT_OR_LPAREN, FOLLOW_SET_TYPE)) {
+        
+        // namedEnumType | "("
+        if (_lookahead(p) == TOKEN_IDENTIFIER) {
+            _getsym(p);
+            
+        }
+        else if (_lookahead(p) == TOKEN_LPAREN) {
+            _getsym(p);
+            
+            // identList
+            if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_RPAREN)) {
+                m2_ident_list(p);
+                
+            } // end identList
+            
+            // ")"
+            if (match_token(p, TOKEN_RPAREN, FOLLOW_SET_TYPE)) {
+                _getsym(p);
+                
+            } // end ")"
+            
+        }
+        else {
+            // unreachable code
+            fatal_error(); // abort
+            
+        } // namedEnumType | "("
+        
+    } // end set tail
+        
+    return _lookahead(p);
 } // end m2_set_type
 
 
