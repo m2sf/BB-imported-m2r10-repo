@@ -2867,13 +2867,126 @@ m2_token_t m2_mul_operator(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #52 const_factor
 // --------------------------------------------------------------------------
-//
+//  ( Number | String | constQualident | constStructuredValue |
+//    "(" constExpression ")" | CAST "(" namedType "," constExpression ")" )
+//  ( "::" namedType )? | NOT constFactor
 
 m2_token_t m2_const_factor(m2_parser_t *p) {
-    m2_token_t token;
     
-    
-    return token;
+    // NOT constFactor
+    if (_lookahead(p) == TOKEN_NOT) {
+        _getym(p);
+        
+        // constFactor
+        if (match_token_in_set(p, FIRST_CONST_FACTOR, FOLLOW_CONST_FACTOR)) {
+            m2_const_factor(p);
+            
+        } // end constFactor
+    }
+    // ( Number | String | constQualident | constStructuredValue |
+    //   "(" constExpression ")" | CAST "(" namedType "," constExpression ")" )
+    // ( "::" namedType )?
+    else {
+        switch (_lookahead(p)) {
+                
+            // Number
+            case TOKEN_NUM_LITERAL :
+                _getsym(p);
+                
+                break;
+                
+            // String
+            case TOKEN_STR_LITERAL :
+                _getsym(p);
+                
+                break;
+                
+            // constQualident
+            case TOKEN_IDENTIFIER :
+                m2_qualident(p);
+                
+                break;
+                
+            // constStructuredValue
+            case TOKEN_LBRACE :
+                m2_const_structured_value(p);
+                
+                break;
+                
+            // "(" constExpression ")"
+            case TOKEN_LPAREN :
+                _getsym(p);
+                
+                // constExpression
+                if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                                       FOLLOW_CONST_EXPRESSION)) {
+                    m2_const_expression(p);
+                } // constExpression
+                
+                // ")"
+                if (match_token(p, TOKEN_RPAREN, FOLLOW_CONST_FACTOR)) {
+                    _getsym(p);
+                    
+                } // end ")"
+                
+                break;
+                
+            // CAST "(" namedType "," constExpression ")"
+            case TOKEN_CAST :
+                _getsym(p);
+                
+                // "("
+                if (match_token(p, TOKEN_LPAREN, SKIP_TO_IDENT)) {
+                    _getsym(p);
+                    
+                } // end "("
+                
+                // namedType
+                if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_COMMA)) {
+                    _getsym(p);
+                    
+                } // end namedType
+                
+                // ","
+                if (match_token(p, TOKEN_COMMA, FIRST_CONST_EXPRESSION)) {
+                    _getsym(p);
+                    
+                } // end ","
+                
+                // constExpression
+                if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                                       FOLLOW_CONST_EXPRESSION)) {
+                    m2_const_expression(p);
+                } // constExpression
+                
+                // ")"
+                if (match_token(p, TOKEN_RPAREN, FOLLOW_CONST_FACTOR)) {
+                    _getsym(p);
+                    
+                } // end ")"
+                
+                break;
+                
+            default : // unreachable code
+                fatal_error(); // abort
+                
+        } // end switch
+        
+        // ( "::" namedType )?
+        if (_lookahead(p) == TOKEN_TYPE_CONVERSION_OP) {
+            _getsym(p);
+            
+            // namedType
+            if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_CONST_FACTOR)) {
+                _getsym(p);
+                
+            } // end namedType
+            
+        } // end ( "::" namedType )?
+        
+    } // end if
+        
+    return _lookahead(p);
 } // end m2_const_factor
 
 
