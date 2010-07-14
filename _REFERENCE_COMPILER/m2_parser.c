@@ -3094,13 +3094,27 @@ m2_token_t m2_expression_list(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #56 expression
 // --------------------------------------------------------------------------
-//
+//  simpleExpression ( relation simpleExpression )?
 
 m2_token_t m2_expression(m2_parser_t *p) {
-    m2_token_t token;
     
+    // simpleExpression
+    m2_simple_expression(p);
     
-    return token;
+    // ( relation simpleExpression )?
+    if (m2_tokenset_is_element(FIRST_RELATION, _lookahead(p))) {
+        m2_relation(p);
+        
+        // simpleExpression
+        if (match_token_in_set(p, FIRST_SIMPLE_EXPRESSION,
+                               FOLLOW_SIMPLE_EXPRESSION)) {
+            m2_simple_expression(p);
+            
+        } // end simpleExpression
+        
+    } // end ( relation simpleExpression )?
+    
+    return _lookahead(p);
 } // end m2_expression
 
 
