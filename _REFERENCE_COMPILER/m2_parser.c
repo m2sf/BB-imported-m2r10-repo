@@ -2053,13 +2053,90 @@ m2_token_t m2_simple_formal_params(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #34 variadic_formal_params
 // --------------------------------------------------------------------------
-//
+//  VARIADIC ( variadicCounter | "[" variadicTerminator "]" )? OF
+//  ( simpleFormalType |
+//    "(" simpleFormalParams ( ";" simpleFormalParams )* ")" )
 
 m2_token_t m2_variadic_formal_params(m2_parser_t *p) {
-    m2_token_t token;
     
+    // VARIADIC
+    _getsym(p);
     
-    return token;
+    // ( variadicCounter | "[" variadicTerminator "]" )?
+    if (_lookahead(p) == TOKEN_IDENTIFIER) {
+        _getsym(p);
+        
+    }
+    else if (_lookahead(p) == TOKEN_LBRACKET) {
+        _getsym(p);
+        
+        // variadicTerminator
+        if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                               SKIP_TO_RBRACKET_OR_OF)) {
+            m2_const_expression(p);
+            
+        } // end variadicTerminator
+        
+        // "]"
+        if (match_token(p, TOKEN_RBRACKET, SKIP_TO_OF)) {
+            _getsym(p);
+            
+        } // end "]"
+        
+    } // end ( variadicCounter | "[" variadicTerminator "]" )?
+    
+    // OF
+    if (match_token(p, TOKEN_OF, FIRST_SIMPLE_FORMAL_TYPE_OR_LPAREN)) {
+        _getsym(p);
+        
+    } // end OF
+    
+    // tail
+    if (match_token_in_set(p, FIRST_SIMPLE_FORMAL_TYPE_OR_LPAREN,
+                              FOLLOW_SIMPLE_FORMAL_TYPE)) {
+        
+        // simpleFormalType
+        if (m2_tokenset_is_element(FIRST_SIMPLE_FORMAL_TYPE, _lookahead(p))) {
+            m2_simple_formal_type(p);
+            
+        }
+        // "("
+        else if (_lookahead(p) == TOKEN_LPAREN) {
+            _getsym(p);
+            
+            // simpleFormalParams
+            if (match_token_in_set(p, FIRST_SIMPLE_FORMAL_PARAMS,
+                                      FOLLOW_SIMPLE_FORMAL_PARAMS)) {
+                m2_simple_formal_params(p);
+            } // end simpleFormalParams
+            
+            // ( ";" simpleFormalParams )*
+            if (_lookahead(p) == TOKEN_SEMICOLON) {
+                _getsym(p);
+                
+                // simpleFormalParams
+                if (match_token_in_set(p, FIRST_SIMPLE_FORMAL_PARAMS,
+                                       FOLLOW_SIMPLE_FORMAL_PARAMS)) {
+                    m2_simple_formal_params(p);
+                } // end simpleFormalParams
+                
+            } // end ( ";" simpleFormalParams )*
+            
+            // ")"
+            if (match_token(p, TOKEN_RPAREN, FOLLOW_VARIADIC_FORMAL_PARAMS)) {
+                _getsym(p);
+                
+            } // end ")"
+        }
+        else {
+            // unreachable code
+            fatal_error(); // abort
+            
+        }
+        
+    } // end tail
+    
+    return _lookahead(p);
 } // end m2_variadic_formal_params
 
 
