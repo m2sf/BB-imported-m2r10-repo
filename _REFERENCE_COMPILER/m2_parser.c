@@ -1623,13 +1623,28 @@ m2_token_t m2_formal_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #25 attributed_formal_type
 // --------------------------------------------------------------------------
-//
+//  ( CONST | VAR )? simpleFormalType
 
 m2_token_t m2_attributed_formal_type(m2_parser_t *p) {
-    m2_token_t token;
     
+    // ( CONST | VAR )?
+    if (_lookahead(p) == TOKEN_CONST) {
+        _getsym(p);
+        
+    }
+    else if (_lookahead(p) == TOKEN_VAR) {
+        _getsym(p);
+        
+    } // end ( CONST | VAR )?
     
-    return token;
+    // simpleFormalType
+    if (match_token_in_set(p, FIRST_SIMPLE_FORMAL_TYPE,
+                              FOLLOW_SIMPLE_FORMAL_TYPE)) {
+        m2_simple_formal_type(p);
+        
+    } // end simpleFormalType
+    
+    return _lookahead(p);
 } // end m2_attributed_formal_type
 
 
