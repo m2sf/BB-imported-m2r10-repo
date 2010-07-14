@@ -1990,13 +1990,23 @@ m2_token_t m2_formal_param_list(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #32 formal_params
 // --------------------------------------------------------------------------
-//
+//  simpleFormalParams | variadicFormalParams
 
 m2_token_t m2_formal_params(m2_parser_t *p) {
-    m2_token_t token;
     
+    // simpleFormalParams | variadicFormalParams
+    if (m2_tokenset_is_element(p, FIRST_SIMPLE_FORMAL_PARAMS)) {
+        m2_simple_formal_params(p);
+    }
+    else if (m2_tokenset_is_element(p, FIRST_VARIADIC_FORMAL_PARAMS)) {
+        m2_variadic_formal_params(p);
+    }
+    else {
+        // unreachable code
+        fatal_error(); // abort
+    } // end simpleFormalParams | variadicFormalParams
     
-    return token;
+    return _lookahead(p);
 } // end m2_formal_params
 
 
