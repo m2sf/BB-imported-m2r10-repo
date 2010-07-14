@@ -1964,13 +1964,26 @@ m2_token_t m2_procedure_header(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #31 formal_param_list
 // --------------------------------------------------------------------------
-//
+//  formalParams ( ";" formalParams )*
 
 m2_token_t m2_formal_param_list(m2_parser_t *p) {
-    m2_token_t token;
     
+    // formalParams
+    m2_formal_params(p);
     
-    return token;
+    // ( ";" formalParams )*
+    while (_lookahead(p) == TOKEN_SEMICOLON) {
+        _getsym(p);
+        
+        // formalParams
+        if (match_token_in_set(p, FIRST_FORMAL_PARAMS,
+                                  FOLLOW_FORMAL_PARAMS)) {
+            m2_formal_params(p);
+        } // emd formalParams
+        
+    } // end ( ";" formalParams )*
+    
+    return _lookahead(p);
 } // end m2_formal_param_list
 
 
