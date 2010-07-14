@@ -2285,13 +2285,77 @@ m2_token_t m2_assignment_or_procedure_call(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #38 if_statement
 // --------------------------------------------------------------------------
-//
+//  IF expression THEN statementSequence
+//  ( ELSIF expression THEN statementSequence )*
+//  ( ELSE statementSequence )?
+//  END
 
 m2_token_t m2_if_statement(m2_parser_t *p) {
-    m2_token_t token;
     
+    // IF
+    _getsym(p);
     
-    return token;
+    // expression
+    if (match_token_in_set(p, FIRST_EXPRESSION, FOLLOW_EXPRESSION)) {
+        m2_expression(p);
+        
+    } // end expression
+    
+    // THEN
+    if (match_token(p, TOKEN_THEN, FIRST_STATEMENT_SEQ)) {
+        _getsym(p);
+        
+    } // end THEN
+    
+    // statementSequence
+    if (match_token_in_set(p, FIRST_STATEMENT_SEQ, FOLLOW_STATEMENT_SEQ)) {
+        m2_statement_sequence(p);
+        
+    } // end statementSequence
+    
+    // ( ELSIF expression THEN statementSequence )*
+    while (_lookahead(p) == TOKEN_ELSIF) {
+        _getsym(p);
+        
+        // expression
+        if (match_token_in_set(p, FIRST_EXPRESSION, FOLLOW_EXPRESSION)) {
+            m2_expression(p);
+            
+        } // end expression
+        
+        // THEN
+        if (match_token(p, TOKEN_THEN, FIRST_STATEMENT_SEQ)) {
+            _getsym(p);
+            
+        } // end THEN
+        
+        // statementSequence
+        if (match_token_in_set(p, FIRST_STATEMENT_SEQ, FOLLOW_STATEMENT_SEQ)) {
+            m2_statement_sequence(p);
+            
+        } // end statementSequence
+        
+    } // end ( ELSIF expression THEN statementSequence )*
+    
+    // ( ELSE statementSequence )?
+    if (_lookahead(p) == TOKEN_ELSE) {
+        _getsym(p);
+        
+        // statementSequence
+        if (match_token_in_set(p, FIRST_STATEMENT_SEQ, FOLLOW_STATEMENT_SEQ)) {
+            m2_statement_sequence(p);
+            
+        } // end statementSequence
+        
+    } // end ( ELSE statementSequence )?
+    
+    // END
+    if (match_token(p, TOKEN_END, FOLLOW_IF_STATEMENT)) {
+        _getsym(p);
+        
+    } // end END
+    
+    return _lookahead(p);
 } // end m2_if_statement
 
 
