@@ -3338,13 +3338,26 @@ m2_token_t m2_designator_or_procedure_call(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #61 actual_params
 // --------------------------------------------------------------------------
-//
+//  "(" expressionList? ")"
 
 m2_token_t m2_actual_params(m2_parser_t *p) {
-    m2_token_t token;
     
+    // "("
+    _getsym(p);
     
-    return token;
+    // expressionList?
+    if (m2_tokenset_is_element(FIRST_EXPRESSION_LIST, _lookahead(p))) {
+        m2_expression_list(p);
+        
+    } // end expressionList?
+    
+    // ")"
+    if (_lookahead(p) == TOKEN_RPAREN) {
+        _getsym(p);
+        
+    } // end ")"
+    
+    return _lookahead(p);
 } // end m2_actual_params
 
 
