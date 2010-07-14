@@ -2709,7 +2709,7 @@ m2_token_t m2_relation(m2_parser_t *p) {
         default : // unreachable code
             fatal_error(); // abort
         
-    } // end if
+    } // end switch
     
     return _lookahead(p);
 } // end m2_relation
@@ -2757,13 +2757,36 @@ m2_token_t m2_simple_const_expression(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #49 add_operator
 // --------------------------------------------------------------------------
-//
+//  "+" | "-" | OR
 
 m2_token_t m2_add_operator(m2_parser_t *p) {
-    m2_token_t token;
     
+    switch (_lookahead(p)) {
+        
+        // "+"
+        case TOKEN_PLUS_OP :
+            _getsym(p);
+            
+            break;
+            
+        // "-"
+        case TOKEN_MINUS_OP :
+            _getsym(p);
+            
+            break;
+            
+        // OR
+        case TOKEN_OR :
+            _getsym(p);
+            
+            break;
+            
+        default : // unreachable code
+            fatal_error(); // abort
+            
+    } // end switch
     
-    return token;
+    return _lookahead(p);
 } // end m2_add_operator
 
 
