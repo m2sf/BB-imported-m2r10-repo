@@ -3400,13 +3400,27 @@ m2_token_t m2_const_structured_value(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #63 const_value_component
 // --------------------------------------------------------------------------
-//
+//  constExpression ( ( BY | ".." ) constExpression )?
 
 m2_token_t m2_const_value_component(m2_parser_t *p) {
-    m2_token_t token;
     
+    // constExpression
+    m2_const_expression(p);
     
-    return token;
+    // ( ( BY | ".." ) constExpression )?
+    if ((_lookahead(p) == TOKEN_BY) || (_lookahead(p) == TOKEN_RANGE_OP)) {
+        _getsym(p);
+        
+        // constExpression
+        if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                                  FOLLOW_CONST_EXPRESSION)) {
+            m2_const_expression(p);
+            
+        } // end constExpression
+        
+    } // end ( ( BY | ".." ) constExpression )?
+    
+    return _lookahead(p);
 } // end m2_const_value_component
 
 
