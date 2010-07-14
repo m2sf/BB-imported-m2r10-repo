@@ -2385,7 +2385,7 @@ m2_token_t m2_case_statement(m2_parser_t *p) {
     if (match_token_in_set(p, FIRST_CASE, FOLLOW_CASE)) {
         m2_case(p);
         
-    } // end expression
+    } // end case
     
     // ( "|" case )*
     while (_lookahead(p) == TOKEN_CASE_LABEL_SEPARATOR) {
@@ -2395,7 +2395,7 @@ m2_token_t m2_case_statement(m2_parser_t *p) {
         if (match_token_in_set(p, FIRST_CASE, FOLLOW_CASE)) {
             m2_case(p);
             
-        } // end expression
+        } // end case
         
     } // end ( "|" case )*
     
@@ -2477,13 +2477,38 @@ m2_token_t m2_case_labels(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #42 while_statement
 // --------------------------------------------------------------------------
-//
+//  WHILE expression DO statementSequence END
 
 m2_token_t m2_while_statement(m2_parser_t *p) {
-    m2_token_t token;
     
+    // WHILE
+    _getsym(p);
     
-    return token;
+    // expression
+    if (match_token_in_set(p, FIRST_EXPRESSION, FOLLOW_EXPRESSION)) {
+        m2_expression(p);
+        
+    } // end expression
+    
+    // DO
+    if (match_token(p, TOKEN_DO, FIRST_STATEMENT_SEQ)) {
+        _getsym(p);
+        
+    } // end DO
+    
+    // statementSequence
+    if (match_token_in_set(p, FIRST_STATEMENT_SEQ, FOLLOW_STATEMENT_SEQ)) {
+        m2_statement_sequence(p);
+        
+    } // end statementSequence
+    
+    // END
+    if (match_token(p, TOKEN_END, FOLLOW_WHILE_STATEMENT)) {
+        _getsym(p);
+        
+    } // end OF
+    
+    return _lookahead(p);
 } // end m2_while_statement
 
 
