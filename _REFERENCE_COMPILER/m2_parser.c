@@ -3427,13 +3427,36 @@ m2_token_t m2_const_value_component(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #64 structured_value
 // --------------------------------------------------------------------------
-//
+//  "{" ( valueComponent ( "," valueComponent )* )? "}"
 
 m2_token_t m2_structured_value(m2_parser_t *p) {
-    m2_token_t token;
     
+    // "{"
+    _getsym(p);
     
-    return token;
+    if (m2_tokenset_is_element(FIRST_VALUE_COMPONENT, _lookahead(p))) {
+        m2_value_component(p);
+        
+        // ( "," valueComponent )*
+        while (_lookahead(p) == TOKEN_COMMA) {
+            _getsym(p);
+            
+            // valueComponent
+            if (match_token_in_set(p, FIRST_VALUE_COMPONENT,
+                                      FOLLOW_VALUE_COMPONENT)) {
+                m2_value_component(p);
+            } // end valueComponent
+            
+        } // end ( "," valueComponent )*
+    } // end
+    
+    // "}"
+    if (match_token(p, TOKEN_RBRACE, FOLLOW_VALUE_COMPONENT)) {
+        _getsym(p);
+        
+    } // end "}"
+    
+    return _lookahead(p);
 } // end m2_structured_value
 
 
