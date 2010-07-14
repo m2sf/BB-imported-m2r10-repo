@@ -237,7 +237,7 @@ m2_lexer_t m2_new_lexer(FILE *infile,
 // unless NULL is passed in for <status>.
 
 m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
-                             cardinal *lexeme
+                             cardinal *lexeme,
                     m2_lexer_status_t *status) {
 
     register m2_lexer_s *this_lexer = (m2_lexer_s *) lexer;
