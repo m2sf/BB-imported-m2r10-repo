@@ -1574,13 +1574,26 @@ m2_token_t m2_procedure_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #23 formal_type_list
 // --------------------------------------------------------------------------
-//
+//  formalType ( "," formalType )*
 
 m2_token_t m2_formal_type_list(m2_parser_t *p) {
-    m2_token_t token;
     
+    // formalType
+    m2_formal_type(p);
     
-    return token;
+    // ( "," formalType )*
+    while (_lookahead(p) == TOKEN_COMMA) {
+        _getsym(p);
+        
+        // formalType
+        if (match_token_in_set(p, FIRST_FORMAL_TYPE, FOLLOW_FORMAL_TYPE)) {
+            m2_formal_type(p);
+            
+        } // end formalType
+        
+    } // end ( "," formalType )*
+    
+    return _lookahead(p);
 } // end m2_formal_type_list
 
 
