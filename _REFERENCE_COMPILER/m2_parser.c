@@ -1651,11 +1651,45 @@ m2_token_t m2_attributed_formal_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #26 simple_formal_type
 // --------------------------------------------------------------------------
-//
+//  ( CAST? ARRAY OF )? namedType
 
 m2_token_t m2_simple_formal_type(m2_parser_t *p) {
-    m2_token_t token;
     
+    // ( CAST ARRAY OF )?
+    if (_lookahead(p) == TOKEN_CAST) {
+        _getsym(p);
+        
+        // ARRAY
+        if (match_token(p, TOKEN_ARRAY, SKIP_TO_OF_OR_IDENT)) {
+            _getsym(p);
+            
+            // OF
+            if (match_token(p, TOKEN_OF, SKIP_TO_IDENT)) {
+                _getsym(p);
+                
+            } // end OF
+            
+        } // end ARRAY
+        
+    } // end 
+    
+    // ( ARRAY OF )?
+    else if (_lookahead(p) == TOKEN_ARRAY) {
+        _getsym(p);
+        
+        // OF
+        if (match_token(p, TOKEN_OF, SKIP_TO_IDENT)) {
+            _getsym(p);
+            
+        } // end OF
+        
+    } // end ( CAST? ARRAY OF )?
+
+    // namedType
+    if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_SIMPLE_FORMAL_TYPE)) {
+        _getsym(p);
+        
+    } // end namedType
     
     return token;
 } // end m2_simple_formal_type
