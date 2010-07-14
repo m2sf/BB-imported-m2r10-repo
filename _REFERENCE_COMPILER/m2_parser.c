@@ -2362,13 +2362,62 @@ m2_token_t m2_if_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #39 case_statement
 // --------------------------------------------------------------------------
-//
+//  CASE expression OF case ( "|" case )* ( ELSE statementSequence )? END
 
 m2_token_t m2_case_statement(m2_parser_t *p) {
-    m2_token_t token;
     
+    // CASE
+    _getsym(p);
     
-    return token;
+    // expression
+    if (match_token_in_set(p, FIRST_EXPRESSION, FOLLOW_EXPRESSION)) {
+        m2_expression(p);
+        
+    } // end expression
+    
+    // OF
+    if (match_token(p, TOKEN_OF, FIRST_CASE)) {
+        _getsym(p);
+        
+    } // end OF
+    
+    // case
+    if (match_token_in_set(p, FIRST_CASE, FOLLOW_CASE)) {
+        m2_case(p);
+        
+    } // end expression
+    
+    // ( "|" case )*
+    while (_lookahead(p) == TOKEN_CASE_LABEL_SEPARATOR) {
+        getsym(p);
+        
+        // case
+        if (match_token_in_set(p, FIRST_CASE, FOLLOW_CASE)) {
+            m2_case(p);
+            
+        } // end expression
+        
+    } // end ( "|" case )*
+    
+    // ( ELSE statementSequence )?
+    if (_lookahead(p) == TOKEN_ELSE) {
+        _getsym(p);
+        
+        // statementSequence
+        if (match_token_in_set(p, FIRST_STATEMENT_SEQ, FOLLOW_STATEMENT_SEQ)) {
+            m2_statement_sequence(p);
+            
+        } // end statementSequence
+        
+    } // end ( ELSE statementSequence )?
+    
+    // END
+    if (match_token(p, TOKEN_END, FOLLOW_CASE_STATEMENT)) {
+        _getsym(p);
+        
+    } // end OF
+    
+    return _lookahead(p);
 } // end m2_case_statement
 
 
