@@ -2662,44 +2662,52 @@ m2_token_t m2_const_expression(m2_parser_t *p) {
 
 m2_token_t m2_relation(m2_parser_t *p) {
     
-    // "="
-    if (_lookahead(p) == TOKEN_EQUAL_OP) {
-        _getsym(p);
+    switch (_lookahead(p)) {
         
-    }
-    // "#"
-    else if (_lookahead(p) == TOKEN_NOT_EQUAL_OP) {
-        _getsym(p);
+        // "="
+        case TOKEN_EQUAL_OP :
+            _getsym(p);
+            
+            break;
+            
+        // "#"
+        case TOKEN_NOT_EQUAL_OP :
+            _getsym(p);
+            
+            break;
+            
+        // "<"
+        case TOKEN_LESS_OP :
+            _getsym(p);
+            
+            break;
+            
+        // "<="
+        case TOKEN_LESS_OR_EQUAL_OP :
+            _getsym(p);
+            
+            break;
         
-    }
-    // "<"
-    else if (_lookahead(p) == TOKEN_LESS_OP) {
-        _getsym(p);
+        // ">"
+        case TOKEN_GREATER_OP :
+            _getsym(p);
+            
+            break;
+
+        // ">="
+        case TOKEN_GREATER_OR_EQUAL_OP :
+            _getsym(p);
+            
+            break;
         
-    }
-    // "<="
-    else if (_lookahead(p) == TOKEN_LESS_OR_EQUAL_OP) {
-        _getsym(p);
+        // "IN"
+        case TOKEN_IN :
+            _getsym(p);
+            
+            break;
         
-    }
-    // ">"
-    else if (_lookahead(p) == TOKEN_GREATER_OP) {
-        _getsym(p);
-        
-    }
-    // ">="
-    else if (_lookahead(p) == TOKEN_GREATER_OR_EQUAL_OP) {
-        _getsym(p);
-        
-    }
-    // "IN"
-    else if (_lookahead(p) == TOKEN_IN) {
-        _getsym(p);
-        
-    }
-    else {
-        // unreachable code
-        fatal_error(); // abort
+        default : // unreachable code
+            fatal_error(); // abort
         
     } // end if
     
