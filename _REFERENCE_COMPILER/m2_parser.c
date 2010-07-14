@@ -3068,13 +3068,26 @@ m2_token_t m2_designator_tail(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #55 expression_list
 // --------------------------------------------------------------------------
-//
+//  expression ( "," expression )*
 
 m2_token_t m2_expression_list(m2_parser_t *p) {
-    m2_token_t token;
     
+    // expression
+    m2_expression(p);
     
-    return token;
+    // ( "," expression )*
+    while (_lookahead(p) == TOKEN_COMMA) {
+        _getsym(p);
+        
+        // expression
+        if (match_token_in_set(p, FIRST_EXPRESSION, FOLLOW_EXPRESSION)) {
+            m2_expression(p);
+            
+        } // end expression
+        
+    } // end ( "," expression )*
+    
+    return _lookahead(p);
 } // end m2_expression_list
 
 
