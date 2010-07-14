@@ -3364,13 +3364,36 @@ m2_token_t m2_actual_params(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #62 const_structured_value
 // --------------------------------------------------------------------------
-//
+//  "{" ( constValueComponent ( "," constValueComponent )* )? "}"
 
 m2_token_t m2_const_structured_value(m2_parser_t *p) {
-    m2_token_t token;
     
+    // "{"
+    _getsym(p);
     
-    return token;
+    if (m2_tokenset_is_element(FIRST_CONST_VALUE_COMPONENT, _lookahead(p))) {
+        m2_const_value_component(p);
+        
+        // ( "," constValueComponent )*
+        while (_lookahead(p) == TOKEN_COMMA) {
+            _getsym(p);
+            
+            // constValueComponent
+            if (match_token_in_set(p, FIRST_CONST_VALUE_COMPONENT,
+                                      FOLLOW_CONST_VALUE_COMPONENT)) {
+                m2_const_value_component(p);
+            } // end constValueComponent
+
+        } // end ( "," constValueComponent )*
+    } // end
+    
+    // "}"
+    if (match_token(p, TOKEN_RBRACE, FOLLOW_CONST_VALUE_COMPONENT)) {
+        _getsym(p);
+        
+    } // end "}"
+    
+    return _lookahead(p);
 } // end m2_const_structured_value
 
 
