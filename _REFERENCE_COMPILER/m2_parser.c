@@ -2232,13 +2232,53 @@ m2_token_t m2_statement_sequence(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #37 assignment_or_procedure_call
 // --------------------------------------------------------------------------
-//
+//  designator ( ":=" expression | "++" | "--" | actualParameters )?
 
 m2_token_t m2_assignment_or_procedure_call(m2_parser_t *p) {
-    m2_token_t token;
     
+    // designator
+    m2_designator(p);
     
-    return token;
+    // ( ":=" expression | "++" | "--" | actualParameters )?
+    if (m2_tokenset_is_element(ASSIGN_OR_INC_OR_DEC_OR_LPAREN,
+                               _lookahead(p))) {
+        
+        // ":="
+        if (_lookahead(p) == TOKEN_ASSIGN_OP) {
+            _getsym(p);
+            
+            // expression
+            if (match_token_in_set(p, FIRST_EXPRESSION,
+                                      FOLLOW_ASSIGNMENT_OR_PROCEDURE_CALL)) {
+                m2_expression(p);
+                
+            } // end expression
+            
+        }
+        // "++"
+        else if (_lookahead(p) == TOKEN_DECREMENT_OP) {
+            _getsym(p);
+            
+        }
+        // "--"
+        else if (_lookahead(p) == TOKEN_INCREMENT_OP) {
+            _getsym(p);
+            
+        }
+        // actualParameters
+        else if (m2_tokenset_is_element(FIRST_ACTUAL_PARAMETERS,
+                                        _lookahead(p))) {
+            m2_actual_params(p);
+            
+        }
+        else {
+            // unreachable code
+            fatal_error(); // abort
+        } // end if
+        
+    } // end ( ":=" expression | "++" | "--" | actualParameters )?
+    
+    return _lookahead(p);
 } // end m2_assignment_or_procedure_call
 
 
