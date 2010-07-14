@@ -3013,13 +3013,55 @@ m2_token_t m2_designator(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #54 designator_tail
 // --------------------------------------------------------------------------
-//
+//  ( ( "[" expressionList "]" | "^" ) ( "." ident )* )+
 
 m2_token_t m2_designator_tail(m2_parser_t *p) {
-    m2_token_t token;
     
+    do {
+        
+        // ( "[" expressionList "]" | "^" )
+        if (_lookahead(p) == TOKEN_LBRACKET) {
+            _getsym(p);
+            
+            // expressionList
+            if (match_token_in_set(p, FIRST_EXPRESSION_LIST,
+                                      SKIP_TO_RBRACKET)) {
+                m2_expression_list(p);
+            } // end expressionList
+            
+            // "]"
+            if (match_token(p, TOKEN_RBRACKET, FOLLOW_DESIGNATOR_TAIL)) {
+                _getsym(p);
+                
+            } // end "]"
+        }
+        // "^"
+        else if (_lookahead(p) == TOKEN_POINTER_DEREF_OP) {
+            _getsym(p);
+            
+        }
+        // unreachable code
+        else {
+            fatal_error(); // abort
+            
+        } // end if
+        
+        // ( "." ident )*
+        while (_lookahead(p) == TOKEN_DOT) {
+            _getsym(p);
+            
+            // ident
+            if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_DESIGNATOR_TAIL)) {
+                _getsym(p);
+                
+            } // end ident
+            
+        } // end ( "." ident )*
+        
+    } while ((_lookahead(p) == TOKEN_LBRACKET) ||
+             (_lookahead(p) == TOKEN_POINTER_DEREF_OP));
     
-    return token;
+    return _lookahead(p);
 } // end m2_designator_tail
 
 
