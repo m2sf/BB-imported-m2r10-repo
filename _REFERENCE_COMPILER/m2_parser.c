@@ -3186,13 +3186,126 @@ m2_token_t m2_term(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #59 factor
 // --------------------------------------------------------------------------
-//
+//  ( Number | String | structuredValue | designatorOrProcedureCall |
+//    "(" constExpression ")" | CAST "(" namedType "," constExpression ")" )
+//  ( "::" namedType )? | NOT constFactor
 
 m2_token_t m2_factor(m2_parser_t *p) {
-    m2_token_t token;
     
+    // NOT factor
+    if (_lookahead(p) == TOKEN_NOT) {
+        _getym(p);
+        
+        // factor
+        if (match_token_in_set(p, FIRST_FACTOR, FOLLOW_FACTOR)) {
+            m2_factor(p);
+            
+        } // end factor
+    }
+    // ( Number | String | structuredValue | designatorOrProcedureCall |
+    //   "(" constExpression ")" | CAST "(" namedType "," constExpression ")" )
+    // ( "::" namedType )?
+    else {
+        switch (_lookahead(p)) {
+                
+            // Number
+            case TOKEN_NUM_LITERAL :
+                _getsym(p);
+                
+                break;
+                
+            // String
+            case TOKEN_STR_LITERAL :
+                _getsym(p);
+                
+                break;
+                
+            // structuredValue
+            case TOKEN_LBRACE :
+                m2_structured_value(p);
+                
+                break;
+                
+            // designatorOrProcedureCall
+            case TOKEN_IDENTIFIER :
+                m2_designator_or_procedure_call(p);
+                
+                break;
+                
+            // "(" expression ")"
+            case TOKEN_LPAREN :
+                _getsym(p);
+                
+                // expression
+                if (match_token_in_set(p, FIRST_EXPRESSION,
+                                          FOLLOW_EXPRESSION)) {
+                    m2_expression(p);
+                } // expression
+                
+                // ")"
+                if (match_token(p, TOKEN_RPAREN, FOLLOW_FACTOR)) {
+                    _getsym(p);
+                    
+                } // end ")"
+                
+                break;
+                
+            // CAST "(" namedType "," expression ")"
+            case TOKEN_CAST :
+                _getsym(p);
+                
+                // "("
+                if (match_token(p, TOKEN_LPAREN, SKIP_TO_IDENT)) {
+                    _getsym(p);
+                    
+                } // end "("
+                
+                // namedType
+                if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_COMMA)) {
+                    _getsym(p);
+                    
+                } // end namedType
+                
+                // ","
+                if (match_token(p, TOKEN_COMMA, FIRST_EXPRESSION)) {
+                    _getsym(p);
+                    
+                } // end ","
+                
+                // expression
+                if (match_token_in_set(p, FIRST_EXPRESSION,
+                                          FOLLOW_EXPRESSION)) {
+                    m2_expression(p);
+                } // expression
+                
+                // ")"
+                if (match_token(p, TOKEN_RPAREN, FOLLOW_FACTOR)) {
+                    _getsym(p);
+                    
+                } // end ")"
+                
+                break;
+                
+            default : // unreachable code
+                fatal_error(); // abort
+                
+        } // end switch
+        
+        // ( "::" namedType )?
+        if (_lookahead(p) == TOKEN_TYPE_CONVERSION_OP) {
+            _getsym(p);
+            
+            // namedType
+            if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_CONST_FACTOR)) {
+                _getsym(p);
+                
+            } // end namedType
+            
+        } // end ( "::" namedType )?
+        
+    } // end if
     
-    return token;
+    return _lookahead(p);
 } // end m2_factor
 
 
