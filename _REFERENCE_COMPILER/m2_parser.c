@@ -2206,13 +2206,26 @@ m2_token_t m2_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #36 statement_sequence
 // --------------------------------------------------------------------------
-//
+//  statement ( ";" statement )*
 
 m2_token_t m2_statement_sequence(m2_parser_t *p) {
-    m2_token_t token;
     
+    // statement
+    m2_statement(p);
     
-    return token;
+    // ( ";" statement )*
+    while (_lookahead(p) == TOKEN_SEMICOLON) {
+        _getsym(p);
+        
+        // statement
+        if (match_token_in_set(p, FIRST_STATEMENT, FOLLOW_STATEMENT)) {
+            m2_statement(p);
+            
+        } // end statement
+        
+    } // end ( ";" statement )*
+    
+    return _lookahead(p);
 } // end m2_statement_sequence
 
 
