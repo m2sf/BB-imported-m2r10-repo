@@ -3312,13 +3312,26 @@ m2_token_t m2_factor(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #60 designator_or_procedure_call
 // --------------------------------------------------------------------------
-//
+//  qualident designatorTail? actualParameters?
 
 m2_token_t m2_designator_or_procedure_call(m2_parser_t *p) {
-    m2_token_t token;
     
+    // qualident
+    m2_qualident(p);
     
-    return token;
+    // designatorTail?
+    if (m2_tokenset_is_element(FIRST_DESIGNATOR_TAIL, _lookahead(p))) {
+        m2_designator_tail(p);
+        
+    } // end designatorTail?
+    
+    // actualParameters?
+    if (_lookahead(p) == TOKEN_LPAREN) {
+        m2_actual_params(p);
+        
+    } // end actualParameters?
+    
+    return _lookahead(p);
 } // end m2_designator_or_procedure_call
 
 
