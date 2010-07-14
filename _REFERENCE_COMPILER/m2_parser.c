@@ -3160,13 +3160,26 @@ m2_token_t m2_simple_expression(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #58 term
 // --------------------------------------------------------------------------
-//
+//  factor ( mulOperator factor )*
 
 m2_token_t m2_term(m2_parser_t *p) {
-    m2_token_t token;
     
+    // factor
+    m2_factor(p);
     
-    return token;
+    // ( mulOperator factor )*
+    while (m2_tokenset_is_element(FIRST_MUL_OPERATOR, _lookahead(p))) {
+        m2_mul_operator(p);
+        
+        // factor
+        if (match_token_in_set(p, FIRST_FACTOR, FOLLOW_FACTOR)) {
+            m2_factor(p);
+            
+        } // end factor
+        
+    } // end ( mulOperator factor )*
+    
+    return _lookahead(p);
 } // end m2_term
 
 
