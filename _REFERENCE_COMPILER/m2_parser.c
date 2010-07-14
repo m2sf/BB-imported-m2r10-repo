@@ -2793,13 +2793,26 @@ m2_token_t m2_add_operator(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #50 const_term
 // --------------------------------------------------------------------------
-//
+//  constFactor ( mulOperator constFactor )*
 
 m2_token_t m2_const_term(m2_parser_t *p) {
-    m2_token_t token;
     
+    // constFactor
+    m2_const_factor(p);
     
-    return token;
+    // ( mulOperator constFactor )*
+    while (m2_tokenset_is_element(FIRST_MUL_OPERATOR, _lookahead(p))) {
+        m2_mul_operator(p);
+        
+        // constFactor
+        if (match_token_in_set(p, FIRST_CONST_FACTOR, FOLLOW_CONST_FACTOR) {
+            m2_const_factor(p);
+            
+        } // end constFactor
+        
+    } // end ( mulOperator constFactor )*
+    
+    return _lookahead(p);
 } // end m2_const_term
 
 
