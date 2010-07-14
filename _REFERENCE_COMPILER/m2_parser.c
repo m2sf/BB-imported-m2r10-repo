@@ -2547,13 +2547,26 @@ m2_token_t m2_repeat_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #44 loop_statement
 // --------------------------------------------------------------------------
-//
+//  LOOP statementSequence END
 
 m2_token_t m2_loop_statement(m2_parser_t *p) {
-    m2_token_t token;
     
+    // LOOP
+    _getsym(p);
     
-    return token;
+    // statementSequence
+    if (match_token_in_set(p, FIRST_STATEMENT_SEQ, FOLLOW_STATEMENT_SEQ)) {
+        m2_statement_sequence(p);
+        
+    } // end statementSequence
+    
+    // END
+    if (match_token(p, TOKEN_END, FOLLOW_LOOP_STATEMENT)) {
+        _getsym(p);
+        
+    } // end OF
+
+    return _lookahead(p);
 } // end m2_loop_statement
 
 
