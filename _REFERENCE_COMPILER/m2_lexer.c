@@ -186,7 +186,7 @@ m2_lexer_t m2_new_lexer(FILE *infile,
     } // end if
     
     // allocate a new lexer object
-    new_lexer = (m2_lexer_s) malloc(sizeof(m2_lexer_s));
+    new_lexer = (m2_lexer_s*) malloc(sizeof(m2_lexer_s));
     
     if (new_lexer == NULL) {
         ASSIGN_BY_REF(status, M2_LEXER_STATUS_ALLOCATION_FAILED);
@@ -514,8 +514,9 @@ void m2_lexer_getpos(m2_lexer_t lexer,
 
     m2_lexer_s *this_lexer = (m2_lexer_s *) lexer;
     
-    if (lexer == NULL)
+    if (lexer == NULL) {
         ASSIGN_BY_REF(status, M2_LEXER_STATUS_INVALID_REFERENCE);
+	}
     else {
         ASSIGN_BY_REF(row, this_lexer->token_pos.line);
         ASSIGN_BY_REF(col, this_lexer->token_pos.col);
@@ -668,7 +669,8 @@ static fmacro uchar_t _readchar(m2_lexer_s *lexer) {
     } // end if
     
     if (((uchar_t) c == 255) || (c == 0)) {
-        printf("");
+        //printf("");
+	;
     } // end if
     
     // return character
@@ -792,7 +794,7 @@ static fmacro uchar_t get_ident(m2_lexer_s *lexer) {
     
     // determine if lexeme is reserved word or identifier
     if (is_all_uppercase) // may be a reserved word
-        lexer->token = m2_index_for_reserved_word_hash(lexer->lexkey);
+        lexer->token = m2_token_for_reserved_word_hash(lexer->lexkey);
     else // could not possibly be a reserved word
         lexer->token = TOKEN_IDENTIFIER;
     
@@ -1086,8 +1088,8 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
         // if malformed, return offending char, null-token, null-key, status
         else /* malformed */ {
             lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
-            offending_char = ch;
-            offending_char_pos = lexer->current_pos;
+            lexer->offending_char = ch;
+            lexer->offending_char_pos = lexer->current_pos;
             lexer->token = TOKEN_ILLEGAL_CHARACTER;
             lexer->lexkey = 0;
             return ch;
@@ -1182,8 +1184,8 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
     // if malformed, return offending char, null-token, null-key, status
     else /* malformed */ {
         lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
-        offending_char = ch;
-        offending_char_pos = lexer->current_pos;
+        lexer->offending_char = ch;
+        lexer->offending_char_pos = lexer->current_pos;
         lexer->token = TOKEN_ILLEGAL_CHARACTER;
         lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;        
         lexer->lexkey = 0;
@@ -1305,7 +1307,7 @@ static fmacro uchar_t get_scale_factor(m2_lexer_s *lexer) {
     
     // get exponent digits
     while ((IS_DIGIT(ch)) &&
-           (index < M2_MAX_NUM_LENGTH) && (NOT_EOF(lexer))) {
+           (lexer->lexeme.length < M2_MAX_NUM_LENGTH) && (NOT_EOF(lexer))) {
         ch = readchar();
         lexer->lexeme.string[lexer->lexeme.length] = ch;
         lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
@@ -1378,7 +1380,7 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
     ch = nextchar();
     
     while ((ch != delimiter_ch) && (IS_NOT_CONTROL(ch)) &&
-           (index < M2_MAX_STRING_LENGTH) && (NOT_EOF(lexer))) {
+           ( lexer->lexeme.length < M2_MAX_STRING_LENGTH) && (NOT_EOF(lexer))) {
         
         // remember occurrence of non-ASCII chars
         if (IS_NOT_7BIT_ASCII(ch))
@@ -1420,7 +1422,7 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
         lexer->token = TOKEN_STRING_LITERAL;
                 
         // set status
-        if (status != KVS_STATUS_ALLOCATION_FAILED)
+        if (lexer->status != KVS_STATUS_ALLOCATION_FAILED)
             lexer->status = M2_LEXER_STATUS_SUCCESS;
         else
             lexer->status = M2_LEXER_STATUS_ALLOCATION_FAILED;
@@ -1438,7 +1440,7 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
         lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
         
         // set status
-        if (index >= M2_MAX_STRING_LENGTH)
+        if (lexer->lexeme.length >= M2_MAX_STRING_LENGTH)
             lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
         else if (EOF_REACHED(lexer))
             lexer->status = M2_LEXER_STATUS_STRING_NOT_DELIMITED;
@@ -1565,7 +1567,7 @@ static fmacro void add_lexeme_to_lextab(m2_lexer_s *lexer) {
     kvs_status_t status;
     
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
-    if ((lexer == NULL) || (lexer-lextab == NULL)) return;
+    if ((lexer == NULL) || (lexer->lextab == NULL)) return;
 #endif
     
     kvs_store_value(lexer->lextab,
