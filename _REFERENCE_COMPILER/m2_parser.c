@@ -1480,7 +1480,6 @@ m2_token_t m2_set_type(m2_parser_t *p) {
                 _getsym(p);
                 
             } // end ")"
-            
         }
         else {
             // unreachable code
@@ -1497,13 +1496,32 @@ m2_token_t m2_set_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #21 pointer_type
 // --------------------------------------------------------------------------
-//
+//  POINTER TO CONST? namedType
 
 m2_token_t m2_pointer_type(m2_parser_t *p) {
-    m2_token_t token;
     
+    // POINTER
+    _getsym(p);
     
-    return token;
+    // TO
+    if (match_token(p, TOKEN_TO, SKIP_TO_CONST_OR_IDENT)) {
+        _getsym(p);
+        
+    } // end TO
+    
+    // CONST?
+    if (_lookahead(p) == TOKEN_CONST) {
+        _getsym(p);
+        
+    } // end CONST?
+    
+    // namedType
+    if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_POINTER_TYPE)) {
+        _getsym(p);
+        
+    } // end namedType
+    
+    return _lookahead(p);
 } // end m2_pointer_type
 
 
