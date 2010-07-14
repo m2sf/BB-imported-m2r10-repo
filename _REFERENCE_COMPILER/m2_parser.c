@@ -1600,13 +1600,23 @@ m2_token_t m2_formal_type_list(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #24 formal_type
 // --------------------------------------------------------------------------
-//
+//  attributedFormalType | variadicFormalType
 
 m2_token_t m2_formal_type(m2_parser_t *p) {
-    m2_token_t token;
     
+    // attributedFormalType | variadicFormalType
+    if (m2_tokenset_is_element(p, FIRST_ATTRIBUTED_FORMAL_TYPE)) {
+        m2_attributed_formal_type(p);
+    }
+    else if (m2_tokenset_is_element(p, FIRST_VARIADIC_FORMAL_TYPE)) {
+        m2_variadic_formal_type(p);
+    }
+    else {
+        // unreachable code
+        fatal_error(); // abort
+    } // end attributedFormalType | variadicFormalType
     
-    return token;
+    return _lookahead(p);
 } // end m2_formal_type
 
 
