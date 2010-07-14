@@ -2805,7 +2805,7 @@ m2_token_t m2_const_term(m2_parser_t *p) {
         m2_mul_operator(p);
         
         // constFactor
-        if (match_token_in_set(p, FIRST_CONST_FACTOR, FOLLOW_CONST_FACTOR) {
+        if (match_token_in_set(p, FIRST_CONST_FACTOR, FOLLOW_CONST_FACTOR)) {
             m2_const_factor(p);
             
         } // end constFactor
@@ -2819,13 +2819,48 @@ m2_token_t m2_const_term(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #51 mul_operator
 // --------------------------------------------------------------------------
-//
+//  "*" | "/" | DIV | MOD | AND
 
 m2_token_t m2_mul_operator(m2_parser_t *p) {
-    m2_token_t token;
     
-    
-    return token;
+    switch (_lookahead(p)) {
+            
+            // "*"
+        case TOKEN_ASTERISK_OP :
+            _getsym(p);
+            
+            break;
+            
+            // "/"
+        case TOKEN_SLASH_OP :
+            _getsym(p);
+            
+            break;
+            
+            // DIV
+        case TOKEN_DIV :
+            _getsym(p);
+            
+            break;
+            
+        // MOD
+        case TOKEN_MOD :
+            _getsym(p);
+            
+            break;
+            
+        // AND
+        case TOKEN_AND :
+            _getsym(p);
+            
+            break;
+            
+        default : // unreachable code
+            fatal_error(); // abort
+            
+    } // end switch
+
+    return _lookahead(p);
 } // end m2_mul_operator
 
 
