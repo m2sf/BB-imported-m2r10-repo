@@ -1357,20 +1357,88 @@ m2_token_t m2_field_list_sequence(m2_parser_t *p) {
         
     } // end ( ";" fieldList )*
     
-    return token;
+    return _lookahead(p);
 } // end m2_field_list_sequence
 
 
 // --------------------------------------------------------------------------
 // #19 field_list
 // --------------------------------------------------------------------------
-//
+//  ident
+//  ( ( "," ident )+ ":" namedType |
+//    ":" ( ARRAY determinantField OF )? namedType )
 
 m2_token_t m2_field_list(m2_parser_t *p) {
-    m2_token_t token;
     
+    // ident
+    _getsym(p);
     
-    return token;
+    // ( "," ident )+ ":" namedType
+    if (_lookahead(p) == TOKEN_COMMA) {
+        _getsym(p);
+        
+        // ident
+        if (match_token(p, TOKEN_IDENTIFIER, SKIPT_TO_COMMA_OR_IDENT)) {
+            _getsym(p);
+            
+        } // end ident
+        
+        // ","
+        while (_lookahead(p) == TOKEN_COMMA) {
+            _getsym(p);
+            
+            // ident
+            if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_COMMA_OR_IDENT)) {
+                _getsym(p);
+                
+            } // end ident
+            
+        } // end ","
+        
+        // ":"
+        if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_IDENT)) {
+            _getstm(p);
+            
+        } // end ":"
+        
+        // namedType
+        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_FIELD_LIST)) {
+            _getsym(p);
+            
+        } // end namedType
+        
+    }
+    // ":" ( ARRAY determinantField OF )? namedType
+    else if (_lookahead(p) == TOKEN_COLON) {
+        _getsym(p);
+        
+        // ARRAY
+        if (_lookahead(p) == TOKEN_ARRAY) {
+            _getsym(p);
+            
+            // determinantField
+            if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_OF_OR_IDENT)) {
+                _getsym(p);
+                
+            } // end determinantField
+            
+            // OF
+            if (match_token(p, TOKEN_OF, SKIP_TO_IDENT)) {
+                _getsym(p);
+                
+            } // end OF
+        
+        } // end ARRAY
+
+        // namedType
+        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_FIELD_LIST)) {
+            _getsym(p);
+            
+        } // end namedType
+        
+    } // end 
+    
+    return _lookahead(p);
 } // end m2_field_list
 
 
