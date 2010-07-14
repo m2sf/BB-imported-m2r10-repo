@@ -2718,13 +2718,39 @@ m2_token_t m2_relation(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #48 simple_const_expression
 // --------------------------------------------------------------------------
-//
+//  ( "+" | "-" )? constTerm ( addOperator constTerm )*
 
 m2_token_t m2_simple_const_expression(m2_parser_t *p) {
-    m2_token_t token;
     
+    // ( "+" | "-" )?
+    if (_lookahead(p) == TOKEN_PLUS_OP) {
+        _getsym(p);
+        
+    }
+    else if (_lookahead(p) == TOKEN_MINUS_OP) {
+        _getsym(p);
+        
+    } // end ( "+" | "-" )?
     
-    return token;
+    // constTerm
+    if (match_token_in_set(p, FIRST_CONST_TERM, FOLLOW_CONST_TERM)) {
+        m2_const_term(p);
+        
+    } // end constTerm
+    
+    // ( addOperator constTerm )*
+    while (m2_tokenset_is_element(FIRST_ADD_OPERATOR, _lookahead(p))) {
+        m2_add_operator(p);
+        
+        // constTerm
+        if (match_token_in_set(p, FIRST_CONST_TERM, FOLLOW_CONST_TERM)) {
+            m2_const_term(p);
+            
+        } // end constTerm
+        
+    } // end ( addOperator constTerm )*
+    
+    return _lookahead(p);
 } // end m2_simple_const_expression
 
 
