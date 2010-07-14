@@ -2450,13 +2450,27 @@ m2_token_t m2_case(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #41 case_labels
 // --------------------------------------------------------------------------
-//
+//  constExpression ( ".." constExpression )?
 
 m2_token_t m2_case_labels(m2_parser_t *p) {
-    m2_token_t token;
     
+    // constExpression
+    m2_const_expression(p);
     
-    return token;
+    // ( ".." constExpression )?
+    if (_lookahead(p) == TOKEN_RANGE_OP) {
+        _getsym(p);
+        
+        // constExpression
+        if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                               FOLLOW_CONST_EXPRESSION)) {
+            m2_const_expression(p);
+            
+        } // end constExpression
+        
+    } // end ( ".." constExpression )?
+    
+    return _lookahead(p);
 } // end m2_case_labels
 
 
