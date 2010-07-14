@@ -1762,13 +1762,82 @@ m2_token_t m2_variadic_formal_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #28 variable_declaration
 // --------------------------------------------------------------------------
-//
+//  ident ( "[" machineAddress "]" | "," identList )?
+//  ":" ( ARRAY constComponentCount OF )? namedType
 
 m2_token_t m2_variable_declaration(m2_parser_t *p) {
-    m2_token_t token;
     
+    // ident
+    _getsym(p);
     
-    return token;
+    // first option
+    if (m2_tokenset_is_element(FIRST_LBRACKET_OR_COMMA, _lookahead(p))) {
+        
+        // ( "[" machineAddress "]" | "," identList )?
+        if (_lookahead(p) == TOKEN_LBRACKET) {
+            _getsym(p);
+            
+            // machineAddress
+            if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                                      FOLLOW_CONST_EXPRESSION)) {
+                _getsym(p);
+            } // machineAddress
+            
+            // "]"
+            if (match_token(p, TOKEN_RBRACKET)) {
+                _getsym(p);
+                
+            } // "]"
+            
+        }
+        else if (_lookahead(p) == TOKEN_COMMA) {
+            _getsym(p);
+            
+            // identList
+            if (match_token_in_set(p, FIRST_IDENT_LIST, FOLLOW_IDENT_LIST)) {
+                m2_ident_list(p);
+                
+            } // end identList
+        }
+        else {
+            // unreachable code
+            fatal_error(); // abort
+            
+        } // end ( "[" machineAddress "]" | "," identList )?
+
+    } // end first option
+    
+    // ":"
+    if (match_token(p, TOKEN_SEMICOLON,
+                       SKIP_TO_ARRAY_OR_FOLLOW_VARIABLE_DECL)) {
+        _getsym(p);
+    } // end ":"
+    
+    // second option
+    if (_lookahead(p) == TOKEN_ARRAY) {
+        _getsym(p);
+        
+        // constComponentCount
+        if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
+                                  SKIP_TO_OF_OR_IDENT)) {
+            _getsym(p);
+        } // end constComponentCount
+        
+        // OF
+        if (match_token(p, TOKEN_OF, SKIP_TO_IDENT)) {
+            _getsym(p);
+            
+        } // end OF
+    }
+    // end second option
+
+    // namedType
+    if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_VARIABLE_DECLARATION)) {
+        _getsym(p);
+        
+    } // end namedType
+    
+    return _lookahead(p);
 } // end m2_variable_declaration
 
 
