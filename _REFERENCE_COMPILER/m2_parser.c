@@ -1528,13 +1528,46 @@ m2_token_t m2_pointer_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #22 procedure_type
 // --------------------------------------------------------------------------
-//
+//  PROCEDURE ( "(" formalTypeList ")" )? ( ":" returnedType )?
 
 m2_token_t m2_procedure_type(m2_parser_t *p) {
-    m2_token_t token;
     
+    // PROCEDURE
+    _getsym(p);
     
-    return token;
+    // ( "(" formalTypeList ")" )?
+    if (_lookahead(p) == TOKEN_LPAREN) {
+        _getsym(p);
+        
+        // formalTypeList
+        if (match_token_in_set(p, FIRST_FORMAL_TYPE_LIST,
+                                  FOLLOW_FORMAL_TYPE_LIST)) {
+            m2_formal_type_list(p);
+            
+        } // end formalTypeList
+        
+        // ")"
+        if (match_token(p, TOKEN_RPAREN,
+                           SKIP_TO_SEMI_OR_FOLLOW_PROCEDURE_TYPE)) {
+            _getsym(p);
+            
+        } // end ")"
+        
+    } // end ( "(" formalTypeList ")" )?
+    
+    // ( ":" returnedType )?
+    if (_lookahead(p) == TOKEN_SEMICOLON) {
+        _getsym(p);
+        
+        // returnedType
+        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_PROCEDURE_TYPE)) {
+            _getsym(p);
+            
+        } // end returnedType
+        
+    } // end ( ":" returnedType )?
+    
+    return _lookahead(p);
 } // end m2_procedure_type
 
 
