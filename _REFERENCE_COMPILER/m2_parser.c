@@ -2658,13 +2658,52 @@ m2_token_t m2_const_expression(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #47 relation
 // --------------------------------------------------------------------------
-//
+//  "=" | "#" | "<" | "<=" | ">" | ">=" | "IN"
 
 m2_token_t m2_relation(m2_parser_t *p) {
-    m2_token_t token;
     
+    // "="
+    if (_lookahead(p) == TOKEN_EQUAL_OP) {
+        _getsym(p);
+        
+    }
+    // "#"
+    else if (_lookahead(p) == TOKEN_NOT_EQUAL_OP) {
+        _getsym(p);
+        
+    }
+    // "<"
+    else if (_lookahead(p) == TOKEN_LESS_OP) {
+        _getsym(p);
+        
+    }
+    // "<="
+    else if (_lookahead(p) == TOKEN_LESS_OR_EQUAL_OP) {
+        _getsym(p);
+        
+    }
+    // ">"
+    else if (_lookahead(p) == TOKEN_GREATER_OP) {
+        _getsym(p);
+        
+    }
+    // ">="
+    else if (_lookahead(p) == TOKEN_GREATER_OR_EQUAL_OP) {
+        _getsym(p);
+        
+    }
+    // "IN"
+    else if (_lookahead(p) == TOKEN_IN) {
+        _getsym(p);
+        
+    }
+    else {
+        // unreachable code
+        fatal_error(); // abort
+        
+    } // end if
     
-    return token;
+    return _lookahead(p);
 } // end m2_relation
 
 
