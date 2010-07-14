@@ -1698,13 +1698,64 @@ m2_token_t m2_simple_formal_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #27 variadic_formal_type
 // --------------------------------------------------------------------------
-//
+//  VARIADIC OF
+//  ( attributedFormalType |
+//    "(" attributedFormalType ( "," attributedFormalType )* ")" )
 
 m2_token_t m2_variadic_formal_type(m2_parser_t *p) {
-    m2_token_t token;
     
+    // VARIADIC
+    _getsym(p);
     
-    return token;
+    // OF
+    if (match_token(p, TOKEN_OF, SKIP_TO_FIRST_ATTRIBUTED_TYPE_OR_LPAREN)) {
+        _getsym(p);
+        
+    } // end OF
+    
+    // variadic formal type tail
+    if (match_token_in_set(p, FIRST_ATTRIBUTED_FORMAL_TYPE_OR_LPAREN,
+                              FOLLOW_VARIADIC_FORMAL_TYPE)) {
+        
+        if (m2_tokenset_is_element(FIRST_ATTRIBUTED_FORMAL_TYPE,
+                                   _lookahead(p))) {
+            m2_attributed_formal_type(p);
+        }
+        else if (_lookahead(p) == TOKEN_LPAREN) {
+            _getsym(p);
+            
+            // attributedFormalType
+            if (match_token_in_set(p, FIRST_ATTRIBUTED_FORMAL_TYPE,
+                            FOLLOW_COMMA_OR_FOLLOW_ATTRIBUTED_FORMAL_TYPE )) {
+                m2_attributed_formal_type(p);
+            } // end attributedFormalType
+            
+            // ( "," attributedFormalType )*
+            while (_lookahead(p) == TOKEN_COMMA) {
+                _getsym(p);
+                
+                // attributedFormalType
+                if (match_token_in_set(p, FIRST_ATTRIBUTED_FORMAL_TYPE,
+                            FOLLOW_COMMA_OR_FOLLOW_ATTRIBUTED_FORMAL_TYPE )) {
+                    m2_attributed_formal_type(p);
+                } // end attributedFormalType
+                
+            } // end ( "," attributedFormalType )*
+            
+            // ")"
+            if (match_token(p, TOKEN_RPAREN)) {
+                _getsym(p);
+                
+            } // end ")"
+        }
+        else {
+            // unreachable code
+            fatal_error(); // abort
+        } //
+        
+    } // end variadic formal type tail
+    
+    return _lookahead(p);
 } // end m2_variadic_formal_type
 
 
