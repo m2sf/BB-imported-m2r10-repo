@@ -2515,13 +2515,32 @@ m2_token_t m2_while_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #43 repeat_statement
 // --------------------------------------------------------------------------
-//
+//  REPEAT statementSequence UNTIL expression
 
 m2_token_t m2_repeat_statement(m2_parser_t *p) {
-    m2_token_t token;
     
+    // REPEAT
+    _getsym(p);
     
-    return token;
+    // statementSequence
+    if (match_token_in_set(p, FIRST_STATEMENT_SEQ, FOLLOW_STATEMENT_SEQ)) {
+        m2_statement_sequence(p);
+        
+    } // end statementSequence
+    
+    // UNTIL
+    if (match_token(p, TOKEN_UNTIL, FIRST_EXPRESSION)) {
+        _getsym(p);
+        
+    } // end OF
+    
+    // expression
+    if (match_token_in_set(p, FIRST_EXPRESSION, FOLLOW_REPEAT_STATEMENT)) {
+        m2_expression(p);
+        
+    } // end expression
+    
+    return _lookahead(p);
 } // end m2_repeat_statement
 
 
