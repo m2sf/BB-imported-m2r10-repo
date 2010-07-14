@@ -120,21 +120,21 @@ static fmacro uchar_t get_ident(m2_lexer_s *lexer);
 
 static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer);
 
-static fmacro uchar_t get_prefixed_number(m2_lexer_s *lexer);
+static uchar_t get_prefixed_number(m2_lexer_s *lexer);
 
-static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer);
+static uchar_t get_suffixed_number(m2_lexer_s *lexer);
 
-static fmacro uchar_t get_digits(m2_lexer_s *lexer,
+static uchar_t get_digits(m2_lexer_s *lexer,
                                  cardinal *non_binary_digits,
                                  cardinal *non_decimal_digits);
 
-static fmacro uchar_t get_decimal_digits(m2_lexer_s *lexer);
+static uchar_t get_decimal_digits(m2_lexer_s *lexer);
 
-static fmacro uchar_t get_scale_factor(m2_lexer_s *lexer);
+static uchar_t get_scale_factor(m2_lexer_s *lexer);
 
 static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer);
 
-static fmacro uchar_t get_escaped_char(m2_lexer_s *lexer);
+static uchar_t get_escaped_char(m2_lexer_s *lexer);
 
 static fmacro void add_lexeme_to_lextab(m2_lexer_s *lexer);
 
