@@ -1876,13 +1876,88 @@ m2_token_t m2_procedure_declaration(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 // #30 procedure_header
 // --------------------------------------------------------------------------
-//
+//  PROCEDURE ( "[" ( "::" | bindableOperator | bindableIdent ) "]" )?
+//  ident ( "(" formalParamList ")" )? ( ":" returnedType )?
 
 m2_token_t m2_procedure_header(m2_parser_t *p) {
-    m2_token_t token;
     
+    // PROCEDURE
+    _getsym(p);
     
-    return token;
+    // ( "[" ( "::" | bindableOperator | bindableIdent ) "]" )?
+    if (_lookahead(p) == TOKEN_LBRACKET) {
+        
+        // "["
+        _getsym(p);
+        
+        // "::" | bindableOperator | bindableIdent
+        if (match_token_in_set(p, FIRST_TYPECONV_OR_BINDABLE_OP_OR_IDENT,
+                                  SKIP_TO_RBRACKET)) {
+            
+            // "::"
+            if (_lookahead(p) == TOKEN_TYPE_CONVERSION_OP) {
+                _getsym(p);
+                
+            }
+            // bindableOperator
+            else if (m2_tokenset_is_element(FIRST_BINDABLE_OP,
+                                            _lookahead(p))) {
+                m2_bindable_operator(p);
+                
+            }
+            // bindableIdent
+            else if (_lookahead(p) == TOKEN_IDENTIFIER) {
+                _getsym(p);
+                
+            }
+            else {
+                // unreachable code
+                fatal_error(); // abort
+            }
+            
+        } // end "::" | bindableOperator | bindableIdent
+        
+    } // end ( "[" ( "::" | bindableOperator | bindableIdent ) "]" )?
+    
+    // ident
+    if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_LPAREN_OR_COLON)) {
+        _getsym(p);
+        
+    } // end ident
+    
+    // ( "(" formalParamList ")" )?
+    if (_lookahead(p) == TOKEN_LPAREN) {
+        _getsym(p);
+        
+        // formalParamList
+        if (match_token_in_set(p, FIRST_FORMAL_PARAM_LIST,
+                                  FOLLOW_FORMAL_PARAM_LIST)) {
+            m2_formal_param_list(p);
+            
+        } // end formalParamList
+        
+        // ")"
+        if (match_token(p, TOKEN_RPAREN,
+                        SKIP_TO_COLON_OR_IDENT_OR_FOLLOW_PROCEDURE_HEADER)) {
+            _getsym(p);
+        
+        } // end ")"
+        
+    } // end ( "(" formalParamList ")" )?
+    
+    // ( ":" returnedType )?
+    if (_lookahead(p) == TOKEN_COLON) {
+        _getsym(p);
+        
+        // returnedType
+        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_PROCEDURE_HEADER)) {
+            _getsym(p);
+            
+        } end returnedType
+        
+    } // end ( ":" returnedType )?
+    
+    return _lookahead(p);
 } // end m2_procedure_header
 
 
