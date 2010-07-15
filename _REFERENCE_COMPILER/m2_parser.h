@@ -45,7 +45,18 @@ typedef opaque_t m2_parser_t;
 // --------------------------------------------------------------------------
 
 typedef /* m2_parser_status_t */ enum {
-
+    
+    // operation completed successfully
+    M2_PARSER_STATUS_SUCCESS = 0,
+    
+    // invalid pointer to parser object passed
+    M2_PARSER_STATUS_INVALID_REFERENCE,
+    
+    // unable to allocate memory
+    M2_PARSER_STATUS_ALLOCATION_FAILED,
+    
+    // one or more syntax errors encountered
+    M2_PARSER_STATUS_SYNTAX_ERRORS_FOUND
 } m2_parser_status_t;
 
 
