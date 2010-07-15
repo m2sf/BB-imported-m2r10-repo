@@ -72,9 +72,45 @@ typedef struct /* m2_parser_s */ {
 // Returns NULL if the parser object could not be created.
 
 m2_parser_t m2_new_parser(FILE *infile,
-                          kvs_table_t lextab,
-                          m2_parser_status_t *status) {
+             const kvs_table_t *lextab,
+            m2_parser_status_t *status) {
+    m2_parser_s *p;
     
+    // bail out if infile is NULL
+    if (infile == NULL) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_INVALID_REFERENCE);
+        return NULL;
+    } // end if
+    
+    // allocate memory for parser state
+    p = (m2_parser_s *) malloc(sizeof(m2_parser_s));
+    
+    // bail out if allocation failed
+    if (p == NULL) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    } // end if
+    
+    // obtain newly allocated filename string
+    p->filename =
+    m2_filename_string_from_path(infile, DEFAULT_FILENAMING, &p->source_type);
+    
+    // bail out if allocation failed
+    if (p->filename == NULL) {
+        DEALLOCATE(p);
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    } // end if
+    
+    // initialise
+    p->current_sym = ZERO_SYMBOL;
+    p->lookahead_sym = ZERO_SYMBOL;
+    p->ast = NULL;
+    p->warnings = 0;
+    p->errors = 0;
+    
+    ASSIGN_BY_REF(status, M2_PARSER_STATUS_SUCCESS);
+    return (m2_parser_t) p;
 } // end m2_new_parser
 
 
@@ -89,6 +125,16 @@ m2_parser_t m2_new_parser(FILE *infile,
 
 void m2_dispose_parser(m2_parser_t parser, m2_parser_status_t *status) {
     
+    // bail out if parser is NULL
+    if (parser == NULL) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_INVALID_REFERENCE);
+        return;
+    } // end if
+    
+    // deallocate
+    
+    ASSIGN_BY_REF(status, M2_PARSER_STATUS_SUCCESS);
+    return;
 } // end m2_dispose_parser
 
 
