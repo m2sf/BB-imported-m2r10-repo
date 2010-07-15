@@ -20,91 +20,102 @@
 #  source license  AFTER  the M2R10 language definition has been finalised.
 
 
-include ../version.mk
-
-SHELL = /bin/sh
-
 # ---------------------------------------------------------------------------
 # A P P L I C A T I O N S
 # ---------------------------------------------------------------------------
 
-APPL = m2r10c
+APP = m2r10c
 
+SRC = \
+	KVS.c \
+	m2_reserved_words.c \
+	m2_tokens.c \
+	m2_lexer.c \
+	m2_productions.c \
+	m2_tokenset.c \
+	m2r10c.c
+
+#	m2_filenames.c
+#	m2_parser.c
+#	m2_ast.c
+#	m2_te.c
+
+LIB =
+
+
+# ---------------------------------------------------------------------------
+# T O O L S
+# ---------------------------------------------------------------------------
+
+RM = rm -f
 
 CC = gcc
-CXX = g++
-
 CFLAGS = -Wall -g
-CXXFLAGS = -Wall -g
+
+LD = gcc
 LDFLAGS =
 
 
-DEFS =
-
-OBJS = 	\
-	KVS.o \
-	m2_reserved_words.o \
-	m2_tokens.o \
-	m2_lexer.o \
-	m2_productions.o \
-	m2_tokenset.o \
-	main.c
-
-#	m2_filenames.o \
-#	m2_parser.o \
-#	m2_ast.o \
-#	m2_te.o
-
-
-LIBS =
-
-
-c_sources 	= *.c
-headers		= *.h
-sources		= $(c_sources) $(headers)
+# ---------------------------------------------------------------------------
+# A U T O M A T I C -- D O  N O T  E D I T  B E L O W  T H I S  L I N E
+# ---------------------------------------------------------------------------
 
 
 # ---------------------------------------------------------------------------
-# O B J E C T   F I L E S
+# S O U R C E  C L A S S I F I C A T I O N
 # ---------------------------------------------------------------------------
 
-%.o:%.c
-	$(CC) -c $(CFLAGS) $< -o $@
+C_SOURCE = $(filter %.c,$(SRC))
+C_HEADER = *.h
 
 
 # ---------------------------------------------------------------------------
-# M A I N   T A R G E T S
+# O B J E C T  C L A S S I F I C A T I O N
 # ---------------------------------------------------------------------------
 
-all: $(APPL)
+C_OBJECT = $(C_SOURCE:%.c=%.o)
+
+
+# ---------------------------------------------------------------------------
+# M A I N  T A R G E T S
+# ---------------------------------------------------------------------------
+
+.PHONY: all clean tidy summary
+
+all: $(APP)
 
 clean:
-	$(RM) *.o
+	$(RM) $(C_OBJECT) $(APP)
 
-dist:
+tidy: clean
+	$(RM) depends.mk *.o
 
-dist-clean:
-
-install:
-
-uninstall:
+summary:
+	@ echo C Sources = $(C_SOURCE)
+	@ echo C Headers = $(C_HEADER)
+	@ echo C Objects = $(C_OBJECT)
+	@ echo Libraries = $(LIB)
 
 
 # ---------------------------------------------------------------------------
-# B U I L D S
+# B U I L D  T A R G E T S
 # ---------------------------------------------------------------------------
 
-$(APPL): $(OBJS)
-	$(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
+%.o : %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+
+$(APP) : $(C_OBJECT)
+	$(LD) $(LDFLAGS) $(LIB:%=-l%) $< -o $@
 
 
 # ---------------------------------------------------------------------------
 # D E P E N D E N C I E S
 # ---------------------------------------------------------------------------
 
+depends.mk : Makefile $(C_SOURCE) $(C_HEADER)
+	$(CC) -MM $(C_SOURCE) > depends.mk
+
 include depends.mk
 
-depends.mk: Makefile $(sources)
-	$(CC) -MM $(c_sources) >depends.mk
 
 # END OF FILE
