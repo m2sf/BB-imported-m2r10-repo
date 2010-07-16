@@ -32,7 +32,7 @@
 // ---------------------------------------------------------------------------
 
 #define _add_production(_production, \
-    _fi0, _fi1, _fi2, _fi3, _fo0, _fo1, _fo2, _fo3) p ## _production,
+    _fi0, _fi1, _fi2, _fo0, _fo1, _fo2) p ## _production,
 typedef enum /* m2_production_t */ {
 #include "m2_table_of_productions.h"
 M2_NUMBER_OF_PRODUCTIONS

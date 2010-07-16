@@ -50,7 +50,7 @@ LIB =
 RM = rm -f
 
 CC = gcc
-CFLAGS = -Wall -g
+CFLAGS = -Wall -Wno-comments -g
 
 LD = gcc
 LDFLAGS =
@@ -85,10 +85,10 @@ C_OBJECT = $(C_SOURCE:%.c=%.o)
 all: $(APP)
 
 clean:
-	$(RM) $(C_OBJECT) $(APP)
+	$(RM) $(C_OBJECT)
 
 tidy: clean
-	$(RM) depends.mk *.o
+	$(RM) depends.mk *.o $(APP)
 
 summary:
 	@ echo C Sources = $(C_SOURCE)
@@ -105,7 +105,7 @@ summary:
 	$(CC) -c $(CFLAGS) $< -o $@
 
 $(APP) : $(C_OBJECT)
-	$(LD) $(LDFLAGS) $(LIB:%=-l%) $< -o $@
+	$(LD) $(LDFLAGS) $(LIB:%=-l%) $^ -o $@
 
 
 # ---------------------------------------------------------------------------
@@ -115,7 +115,7 @@ $(APP) : $(C_OBJECT)
 depends.mk : Makefile $(C_SOURCE) $(C_HEADER)
 	$(CC) -MM $(C_SOURCE) > depends.mk
 
-include depends.mk
+-include depends.mk
 
 
 # END OF FILE

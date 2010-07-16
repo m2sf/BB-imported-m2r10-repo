@@ -67,9 +67,9 @@ typedef _M2_TOKENSET_SEGMENT_TYPE
 // ---------------------------------------------------------------------------
 
 #define _add_production(_production, \
-    _first0,  _first1,  _first2,  _first3, \
-    _follow0, _follow1, _follow2, _follow3 ) \
-    { _first0, _first1, _first2, _first3 },
+    _first0,  _first1,  _first2, \
+    _follow0, _follow1, _follow2 ) \
+    { _first0, _first1, _first2 },
 
 static const m2_tokenset_a _first_set[] = {
 #include "m2_table_of_productions.h"
@@ -83,9 +83,9 @@ static const m2_tokenset_a _first_set[] = {
 // ---------------------------------------------------------------------------
 
 #define _add_production(_production, \
-    _first0,  _first1,  _first2,  _first3, \
-    _follow0, _follow1, _follow2, _follow3 ) \
-    { _follow0, _follow1, _follow2, _follow3 },
+    _first0,  _first1,  _first2, \
+    _follow0, _follow1, _follow2 ) \
+    { _follow0, _follow1, _follow2 },
 
 static const m2_tokenset_a _follow_set[] = {
 #include "m2_table_of_productions.h"
@@ -111,7 +111,7 @@ typedef _M2_TOKENSET_ITERATOR_BASE_TYPE *m2_tokenset_iterator_a;
 // ---------------------------------------------------------------------------
 
 #define _add_production(_production, \
-    _fi0, _fi1, _fi2, _fi3, _fo0, _fo1, _fo2, _fo3 ) \
+    _fi0, _fi1, _fi2, _fo0, _fo1, _fo2 ) \
     static const _M2_TOKENSET_ITERATOR_BASE_TYPE \
         _FiSI ## _production[] = { FIRST_LIST_for ## _production };
 
@@ -125,7 +125,7 @@ typedef _M2_TOKENSET_ITERATOR_BASE_TYPE *m2_tokenset_iterator_a;
 // ---------------------------------------------------------------------------
 
 #define _add_production(_production, \
-    _fi0,  _fi1,  _fi2,  _fi3, _fo0, _fo1, _fo2, _fo3 ) \
+    _fi0,  _fi1,  _fi2, _fo0, _fo1, _fo2 ) \
     (m2_tokenset_iterator_t) &_FiSI ## _production,
 
 static const _M2_TOKENSET_ITERATOR_BASE_TYPE * _first_set_iterator[] = {
@@ -140,7 +140,7 @@ static const _M2_TOKENSET_ITERATOR_BASE_TYPE * _first_set_iterator[] = {
 // ---------------------------------------------------------------------------
 
 #define _add_production(_production, \
-    _fi0, _fi1, _fi2, _fi3, _fo0, _fo1, _fo2, _fo3 ) \
+    _fi0, _fi1, _fi2, _fo0, _fo1, _fo2 ) \
     static const _M2_TOKENSET_ITERATOR_BASE_TYPE \
         _FoSI ## _production[] = { FOLLOW_LIST_for ## _production };
 
@@ -154,7 +154,7 @@ static const _M2_TOKENSET_ITERATOR_BASE_TYPE * _first_set_iterator[] = {
 // ---------------------------------------------------------------------------
 
 #define _add_production(_production, \
-    _fi0,  _fi1,  _fi2,  _fi3, _fo0, _fo1, _fo2, _fo3 ) \
+    _fi0,  _fi1,  _fi2, _fo0, _fo1, _fo2 ) \
     (m2_tokenset_iterator_t) &_FoSI ## _production,
 
 static const _M2_TOKENSET_ITERATOR_BASE_TYPE * _follow_set_iterator[] = {

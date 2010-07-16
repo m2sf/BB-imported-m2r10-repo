@@ -36,7 +36,7 @@
 typedef char *m2_production_name_t;
 
 #define _add_production(_production, \
-    _fi0, _fi1, _fi2, _fi3, _fo0, _fo1, _fo2, _fo3) \
+    _fi0, _fi1, _fi2, _fo0, _fo1, _fo2) \
     static const char _PRODNAM ## _production[] = # _production EMPTY_STRING;
 
 #include "m2_table_of_productions.h"
@@ -52,7 +52,7 @@ typedef char *m2_production_name_t;
 // Each string's address is incremented to skip the preceeding underscore.
 
 #define _add_production(_production, \
-    _fi0, _fi1, _fi2, _fi3, _fo0, _fo1, _fo2, _fo3) \
+    _fi0, _fi1, _fi2, _fo0, _fo1, _fo2) \
     (char *)&_PRODNAM ## _production + 1,
 
 static const m2_production_name_t m2_production_name_str[] = {
