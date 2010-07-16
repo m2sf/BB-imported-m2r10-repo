@@ -1,0 +1,40 @@
+# Modula-2 R10 Compiler (m2r10c)
+#
+# Information on building the First- and Follow-Set Generator utility.
+
+GUIDE
+
+To build the utility, several files need to be copied from the source
+directory of the reference compiler to this directory.  Subsequently
+the utility can be built by invoking 'make'.
+
+The resulting executable will output the First- and Follow-Set.
+
+CURRENT FILES
+
+The following files should already exist in this directory:
+
+gen_first_and_follow_sets.c
+m2_tokenset_literals.c
+m2_tokenset_literals.h
+Makefile
+
+EXTRA FILES 
+
+The following files should be copied from the source directory
+of the reference compiler:
+
+alloc.h
+ASCII.h
+common.h
+m2_build_params.h
+m2_first_follow.h
+m2_productions.c
+m2_productions.h
+m2_table_of_productions.h
+m2_table_of_reserved_words.h
+m2_table_of_tokens.h
+m2_tokens.c
+m2_tokens.h
+m2_tokenset.c
+m2_tokenset.h
