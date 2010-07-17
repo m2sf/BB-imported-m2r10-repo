@@ -40,7 +40,7 @@
 
 #ifdef MAX_PATH // in limits.h
 #define M2_MAX_PATH_LENGTH MAX_PATH
-#elif
+#else
 #warning MAX_PATH is undefined, using default value of 511
 #define M2_MAX_PATH_LENGTH 511
 #endif
@@ -53,7 +53,7 @@
 
 #ifdef MAX_NAME // in limits.h
 #define M2_MAX_FILENAME_LENGTH MAX_NAME
-#elif
+#else
 #warning MAX_NAME is undefined, using default value of 127
 #define M2_MAX_FILENAME_LENGTH 127
 #endif
@@ -66,7 +66,7 @@
 
 #if !defined(getcwd) && defined(_getcwd)
 #define getcwd _getcwd
-#elif
+#else
 #error function getcwd() is undefined, this should have been in unistd.h
 #endif
 
