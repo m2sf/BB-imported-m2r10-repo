@@ -36,12 +36,12 @@
 // ---------------------------------------------------------------------------
 // Maximum pathname length
 // ---------------------------------------------------------------------------
-// On some operating systems,  MAX_PATH may not be defined.
+// On some operating systems PATH_MAX may not be defined.
 
-#ifdef MAX_PATH // in limits.h
-#define M2_MAX_PATH_LENGTH MAX_PATH
+#ifdef PATH_MAX // in limits.h
+#define M2_MAX_PATH_LENGTH PATH_MAX
 #else
-#warning MAX_PATH is undefined, using default value of 511
+#warning PATH_MAX is undefined, using default value of 511
 #define M2_MAX_PATH_LENGTH 511
 #endif
 
@@ -49,12 +49,12 @@
 // ---------------------------------------------------------------------------
 // Maximum filename length
 // ---------------------------------------------------------------------------
-// On some operating systems,  MAX_NAME may not be defined.
+// On some operating systems NAME_MAX may not be defined.
 
-#ifdef MAX_NAME // in limits.h
-#define M2_MAX_FILENAME_LENGTH MAX_NAME
+#ifdef NAME_MAX // in limits.h
+#define M2_MAX_FILENAME_LENGTH NAME_MAX
 #else
-#warning MAX_NAME is undefined, using default value of 127
+#warning NAME_MAX is undefined, using default value of 127
 #define M2_MAX_FILENAME_LENGTH 127
 #endif
 
@@ -63,6 +63,8 @@
 // Check for presence of getcwd() or _getcwd()
 // ---------------------------------------------------------------------------
 // On some operating systems,  getcwd() may be called _getcwd() instead 
+
+// FIX ME
 
 #if !defined(getcwd) && defined(_getcwd)
 #define getcwd _getcwd
