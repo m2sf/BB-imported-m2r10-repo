@@ -33,7 +33,8 @@ SRC = \
 	m2_lexer.c \
 	m2_productions.c \
 	m2_tokenset.c \
-    m2_filenames.c \
+	m2_filenames.c \
+	m2_errmsg.c \
 	m2r10c.c
 
 #	m2_parser.c
