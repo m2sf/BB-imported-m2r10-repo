@@ -26,7 +26,7 @@
 #include "ASCII.h"
 #include "m2_build_params.h"
 #include "m2_errmsg.h"
-#include "m2_filename.h"
+#include "m2_filenames.h"
 
 
 // --------------------------------------------------------------------------
