@@ -22,6 +22,8 @@
  *  
  */
 
+#include <stddef.h>
+
 #include "m2_errmsg.h"
 
 
