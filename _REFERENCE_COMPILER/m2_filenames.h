@@ -250,8 +250,8 @@ m2_filenaming_t m2_filenaming(m2_filename_t filename);
 // The status of the operation  is passed back in <status>,  unless  NULL  was
 // passed in for <status>.
 
-const char m2_path_from_filename(m2_filename_t filename,
-                          m2_filename_status_t *status);
+const char *m2_path_from_filename(m2_filename_t filename,
+                           m2_filename_status_t *status);
 
 
 // ---------------------------------------------------------------------------

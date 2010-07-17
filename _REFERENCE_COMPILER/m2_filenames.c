@@ -722,8 +722,8 @@ m2_filenaming_t m2_filenaming(m2_filename_t filename) {
 // The status of the operation  is passed back in <status>,  unless  NULL  was
 // passed in for <status>.
 
-const char m2_path_from_filename(m2_filename_t filename,
-                          m2_filename_status_t *status) {
+const char *m2_path_from_filename(m2_filename_t filename,
+                           m2_filename_status_t *status) {
     
     m2_filename_s *this_filename = (m2_filename_s *) filename;
     int index, path_index = 0;
@@ -739,7 +739,7 @@ const char m2_path_from_filename(m2_filename_t filename,
     path = ALLOCATE(this_filename->path_length + 1);
     
     // bail out if allocation failed
-    if (path = NULL) {
+    if (path == NULL) {
         ASSIGN_BY_REF(status, M2_FILENAME_STATUS_ALLOCATION_FAILED);
         return NULL;
     } // end if
