@@ -1,6 +1,6 @@
 /* Modula-2 R10 Compiler (m2r10c)
  *
- *  m2_pragma_name_table.h
+ *  m2_table_of_pragma_names.h
  *  Master table of pragma names
  *
  *  Author: Benjamin Kowarsch
@@ -49,6 +49,7 @@ _add_pragma_ident( _IF,       0x0049123D )
 _add_pragma_ident( _ELSIF,    0x47E3AD09 )
 _add_pragma_ident( _ELSE,     0x3015F279 )
 _add_pragma_ident( _ENDIF,    0x1D8E65F8 )
+_add_pragma_ident( _ENCODING, 0x78784A93 )
 _add_pragma_ident( _INFO,     0x6B20514E )
 _add_pragma_ident( _WARN,     0x7024F526 )
 _add_pragma_ident( _ERROR,    0x5E948388 )
