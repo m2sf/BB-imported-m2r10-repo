@@ -208,14 +208,16 @@ bool m2_is_valid_filename_string(const char *filename) {
     int index;
 
     if ((IS_NOT_LETTER(filename[0])) &&
-        (filename[0] != UNDERSCORE) && (filename[0] != DOLLAR))
+        (filename[0] != UNDERSCORE) && (filename[0] != DOLLAR)) {
         return false;
+    } // end if
     
     index = 1;
     while (filename[index] != CSTRING_TERMINATOR) {
         if ((IS_NOT_ALPHANUM(filename[index])) &&
-            (filename[0] != UNDERSCORE) && (filename[0] != DOLLAR))
+            (filename[0] != UNDERSCORE) && (filename[0] != DOLLAR)) {
             return false;
+        } // end if
         index++;
     } // end while
         
@@ -299,8 +301,9 @@ m2_filename_t *m2_new_filename(const char *directory,
     
     // use default if filenaming value is not specific or invalid
     if ((filenaming == DEFAULT_FILENAMING) ||
-        (filenaming >= NUMBER_OF_FILENAMING_SCHEMES))
+        (filenaming >= NUMBER_OF_FILENAMING_SCHEMES)) {
         filenaming = _default_filenaming;
+    } // end if
     
     // determine delimiters
     fn_delimiter = _delimiter[filenaming].for_filename;
@@ -457,8 +460,9 @@ m2_filename_t m2_new_filename_from_path(const char *path,
 
     // use default if filenaming value is not specific or invalid
     if ((filenaming == DEFAULT_FILENAMING) ||
-        (filenaming >= NUMBER_OF_FILENAMING_SCHEMES))
+        (filenaming >= NUMBER_OF_FILENAMING_SCHEMES)) {
         filenaming = _default_filenaming;
+    } // end if
     
     // determine delimiters
     fn_delimiter = _delimiter[filenaming].for_filename;
@@ -593,8 +597,9 @@ m2_filename_t m2_new_filename_from_path(const char *path,
     
     // determine and set the file type
     if ((new_filename->filename[0] == CSTRING_TERMINATOR) ||
-        (new_filename->extension[0] == CSTRING_TERMINATOR))
+        (new_filename->extension[0] == CSTRING_TERMINATOR)) {
         new_filename->file_type = INVALID_FILENAME;
+    }
     else if ((ext_hash == M2_EXT_DEF_UPPER) ||
              (ext_hash == M2_EXT_DEF_CAMEL) ||
              (ext_hash == M2_EXT_DEF_LOWER)) {
