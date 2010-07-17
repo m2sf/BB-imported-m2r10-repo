@@ -172,7 +172,7 @@ typedef struct /* m2_filename_s */ {
 // Buffer for pathname of working directory
 // ---------------------------------------------------------------------------
 
-static char *_working_directory[M2_MAX_PATH_LENGTH + 1] = EMPTY_STRING;
+static char _working_directory[M2_MAX_PATH_LENGTH + 1] = EMPTY_STRING;
 
 
 // ---------------------------------------------------------------------------
@@ -510,7 +510,7 @@ m2_filename_t m2_new_filename_from_path(const char *path,
     index = 0;
     if (length > 0) {
         // copy the directory string
-        while (index < size) {
+        while (index < length) {
             new_filename->directory[index] = path[index];
             index++;
         } // end while
@@ -545,7 +545,7 @@ m2_filename_t m2_new_filename_from_path(const char *path,
     path_index = fn_index + 1;
     if (length > 0) {
         // copy the filename string
-        while (index < size) {
+        while (index < length) {
             new_filename->filename[index] = path[path_index];
             index++;
             path_index++;
