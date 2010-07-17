@@ -283,7 +283,7 @@ m2_filename_t *m2_new_filename(const char *directory,
                      m2_filename_status_t *status) {
     m2_filename_s *new_filename;
     int size, index = 0, total_length = 0;
-    char *fn_delimiter, *ext_delimiter, *ver_delimiter;
+    char fn_delimiter, ext_delimiter, ver_delimiter;
     
     // bail out if filename is invalid
     if ((filename == NULL) ||
@@ -450,7 +450,7 @@ m2_filename_t m2_new_filename_from_path(const char *path,
     int index, path_index, fn_index, ext_index;
     int end_of_path, length, total_length;
     cardinal ext_hash = HASH_INITIAL;
-    char *fn_delimiter, *ext_delimiter, *ver_delimiter;
+    char fn_delimiter, ext_delimiter, ver_delimiter;
     
     // bail out if there is no path string
     if ((path == NULL) || (path[0] == CSTRING_TERMINATOR)) {
