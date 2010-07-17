@@ -66,10 +66,12 @@
 
 // FIX ME
 
+#if false
 #if !defined(getcwd) && defined(_getcwd)
 #define getcwd _getcwd
 #else
 #error function getcwd() is undefined, this should have been in unistd.h
+#endif
 #endif
 
 
