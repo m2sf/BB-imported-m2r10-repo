@@ -25,6 +25,13 @@
 #ifndef M2_PARSER_H
 #define M2_PARSER_H
 
+
+#include <stdio.h>
+
+#include "common.h"
+#include "KVS.h"
+
+
 // --------------------------------------------------------------------------
 // Opaque lexer handle type
 // --------------------------------------------------------------------------

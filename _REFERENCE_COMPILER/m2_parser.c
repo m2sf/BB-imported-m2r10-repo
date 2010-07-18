@@ -23,8 +23,10 @@
  */
 
 #include "m2_parser.h"
+#include "m2_lexer.h"
 #include "m2_tokens.h"
 #include "m2_tokenset.h"
+#include "m2_filenames.h"
 
 
 // ---------------------------------------------------------------------------
