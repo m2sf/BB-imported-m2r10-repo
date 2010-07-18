@@ -39,7 +39,6 @@
 #include "ASCII.h"
 #include "m2_build_params.h"
 #include "m2_reserved_words.h"
-#include "m2_tokens.h"
 #include "m2_lexer.h"
 
 
