@@ -81,11 +81,11 @@ typedef enum /* m2_file_type_t */ {
 // Source types
 // ---------------------------------------------------------------------------
 
-typedef enum /* m2_source_t */ {
+typedef enum /* m2_source_type_t */ {
     SOURCE_TYPE_UNKNOWN = FILE_TYPE_UNKNOWN,
     SOURCE_TYPE_DEF = FILE_TYPE_DEF,
     SOURCE_TYPE_MOD = FILE_TYPE_MOD
-} m2_source_t;
+} m2_source_type_t;
 
 
 // ---------------------------------------------------------------------------
@@ -261,8 +261,8 @@ m2_filenaming_t m2_filenaming(m2_filename_t filename);
 // The status of the operation  is passed back in <status>,  unless  NULL  was
 // passed in for <status>.
 
-const char m2_path_from_filename(m2_filename_t filename,
-                          m2_filename_status_t *status);
+const char *m2_path_from_filename(m2_filename_t filename,
+                           m2_filename_status_t *status);
 
 
 // ---------------------------------------------------------------------------
