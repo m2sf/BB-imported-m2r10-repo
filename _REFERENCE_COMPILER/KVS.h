@@ -47,6 +47,9 @@
  *  
  */
 
+#ifndef KVS_H
+#define KVS_H
+
 
 #include "common.h"
 
@@ -371,5 +374,7 @@ cardinal kvs_number_of_entries(kvs_table_t table);
 
 void kvs_dispose_table(kvs_table_t table, kvs_status_t *status);
 
+
+#endif /* KVS_H */
 
 // END OF FILE
