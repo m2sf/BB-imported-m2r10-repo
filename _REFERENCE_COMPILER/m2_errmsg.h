@@ -33,9 +33,11 @@
 typedef enum /* m2_err_t */ {
     ERR_OPT_NOT_IMPLEMENTED,
     ERR_OPT_INVALID,
+    ERR_TOO_MANY_ARGS,
     ERR_ALLOC_FAILED,
     ERR_SRC_NOT_SPECIFIED,
-    
+    ERR_ALLOCATION_FAILED,
+
     NUMBER_OF_ERROR_MESSAGES
 } m2_err_t;
 
