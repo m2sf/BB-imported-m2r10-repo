@@ -26,7 +26,9 @@
 #include "m2_lexer.h"
 #include "m2_tokens.h"
 #include "m2_tokenset.h"
+#include "m2_ast.h"
 #include "m2_filenames.h"
+#include "alloc.h"
 
 
 // ---------------------------------------------------------------------------
@@ -53,7 +55,7 @@ typedef struct /* m2_parser_s */ {
     m2_lexer_t *lexer;
     m2_sym_s current_sym;
     m2_sym_s lookahead_sym;
-    m2_ast_t *ast;
+    m2_ast_node_t *ast;
     uint16_t warnings;
     uint16_t errors;
 } m2_parser_s;
