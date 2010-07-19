@@ -159,11 +159,11 @@ m2_file_type_t m2_outfile_type_for(m2_target_t target,
 // The status of the operation  is passed back in <status>,  unless  NULL  was
 // passed in for <status>.
 
-m2_filename_t *m2_new_filename(const char *directory,
-                               const char *filename,
-                           m2_file_type_t file_type,
-                          m2_filenaming_t filenaming,
-                     m2_filename_status_t *status);
+m2_filename_t m2_new_filename(const char *directory,
+                              const char *filename,
+                          m2_file_type_t file_type,
+                         m2_filenaming_t filenaming,
+                    m2_filename_status_t *status);
 
 
 // ---------------------------------------------------------------------------
