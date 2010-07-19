@@ -151,7 +151,9 @@ int main (int argc, const char * argv[]) {
     m2_file_type_t outfile_type;
     m2_target_t target = M2_TARGET_C99;
     m2_filename_t source_filename, output_filename;
-    int fn_status, fio_status, p_status, cg_status;
+    m2_filename_status_t fn_status;
+    m2_parser_status_t p_status;
+    int fio_status, cg_status;
     kvs_table_t lexeme_table;
     m2_parser_t parser; m2_ast_node_t ast; m2_codegen_t cgen;
     
