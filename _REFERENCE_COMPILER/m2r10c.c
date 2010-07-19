@@ -23,10 +23,23 @@
  */
 
 #include <stdio.h>
+#include <getopt.h>
+#include "KVS.h"
 #include "ASCII.h"
 #include "m2_build_params.h"
 #include "m2_errmsg.h"
 #include "m2_filenames.h"
+#include "m2_parser.h"
+#include "m2_ast.h"
+
+
+// --------------------------------------------------------------------------
+// Interim declarations due to yet unimplemented module(s)
+// --------------------------------------------------------------------------
+
+typedef opaque_t m2_codegen_t;
+#define M2_CODEGEN_STATUS_SUCCESS 0
+#define M2_FILEIO_STATUS_SUCCESS 0
 
 
 // --------------------------------------------------------------------------
@@ -63,6 +76,20 @@
 #define OPT_USAGE 'h'
 
 #define OPT_LIST "ahstV"
+
+
+// --------------------------------------------------------------------------
+// Long options
+// --------------------------------------------------------------------------
+
+static struct option lopts_all[] = {
+    { "dumpast",     0, 0, 'a' },
+    { "dumpsymtab",  0, 0, 's' },
+    { "syntaxcheck", 0, 0, 't' },
+    { "help",        0, 0, 'h' },
+    { "version",     0, 0, 'V' },
+    { 0, 0, 0, 0 }
+}; // end lopts_all
 
 
 // --------------------------------------------------------------------------
@@ -117,12 +144,15 @@ static void show_error(m2_err_t error) {
 // Get command line arguments, open source file and feed parser.
 
 int main (int argc, const char * argv[]) {
-    int opt;
+    int opt, index = 0;
+    char *source_path;
+    FILE *sourcefile, *outfile;
     bool syntax_check_only = false;
     m2_file_type_t outfile_type;
     m2_target_t target = M2_TARGET_C99;
     m2_filename_t source_filename, output_filename;
     int fn_status, fio_status, p_status, cg_status;
+    kvs_table_t lexeme_table;
     m2_parser_t parser; m2_ast_node_t ast; m2_codegen_t cgen;
     
     // get command line options and arguments
@@ -157,11 +187,11 @@ int main (int argc, const char * argv[]) {
     } // end switch
     
     if (argc == 0) {
-        show_error(); // missing sourcefile argument
+        show_error(ERR_SRC_NOT_SPECIFIED); // missing sourcefile argument
         return EXIT_FAILURE;
     }
     else if (argc > 1) {
-        show_error(); // extra arguments ingored
+        show_error(ERR_TOO_MANY_ARGS); // extra arguments ingored
     } // end if
     
     // get source path argument
@@ -181,7 +211,8 @@ int main (int argc, const char * argv[]) {
       m2_outfile_type_for(target, m2_file_type(source_filename));
     
     if (outfile_type == FILE_TYPE_UNKNOWN) {
-        show_error(); // no outfile associated with with source for target
+        // no outfile associated with with source for target
+        show_error(ERR_OPT_INVALID);
         return EXIT_FAILURE;
     } // end if
     
@@ -194,7 +225,7 @@ int main (int argc, const char * argv[]) {
     } // end if
     
     // init parser
-    parser = m2_new_parser(sourcefile, &p_status);
+    parser = m2_new_parser(sourcefile, lexeme_table, &p_status);
     
     if (p_status != M2_PARSER_STATUS_SUCCESS) {
         show_error(p_status);
@@ -205,7 +236,7 @@ int main (int argc, const char * argv[]) {
     ast = m2_ast_new_root();
     
     if (ast == NULL) {
-        show_error(M2_AST_STATUS_ALLOCATION_FAILED);
+        show_error(ERR_ALLOCATION_FAILED);
         return EXIT_FAILURE;
     } // end if
     
@@ -245,7 +276,7 @@ int main (int argc, const char * argv[]) {
     
     // clean up
     m2_close_file(sourcefile, NULL);
-    m2_dispose_parser(parser);
+    m2_dispose_parser(parser, NULL);
     
     m2_close_file(outfile, NULL);
     m2_dispose_codegen(cgen);
