@@ -219,7 +219,7 @@ bool m2_is_valid_filename_string(const char *filename) {
     index = 1;
     while (filename[index] != CSTRING_TERMINATOR) {
         if ((IS_NOT_ALPHANUM(filename[index])) &&
-            (filename[0] != UNDERSCORE) && (filename[0] != DOLLAR)) {
+            (filename[index] != UNDERSCORE) && (filename[index] != DOLLAR)) {
             return false;
         } // end if
         index++;
