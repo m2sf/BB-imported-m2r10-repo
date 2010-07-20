@@ -117,7 +117,7 @@ typedef struct /* filename_info_t */
 // ---------------------------------------------------------------------------
 
 static const filename_info_t _filename_info[] = {
-    { "filename", "directory", FILE_TYPE_MOD, DEFAULT_FILENAMING,
+    { "filename", "directory", FILE_TYPE_MOD, POSIX_FILENAMING,
       M2_FILENAME_STATUS_SUCCESS, "mod" }
 }; /* _filename_info */
 
