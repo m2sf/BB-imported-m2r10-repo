@@ -315,7 +315,7 @@ m2_filename_t m2_new_filename(const char *directory,
     ext_delimiter = _delimiter[filenaming].for_file_extension;
     
     // allocate memory for filename descriptor
-    new_filename = ALLOCATE(sizeof(m2_filename_t));
+    new_filename = ALLOCATE(sizeof(m2_filename_s));
     
     // bail out if allocation failed
     if (new_filename == NULL) {
@@ -329,7 +329,7 @@ m2_filename_t m2_new_filename(const char *directory,
         size++;
     
     // allocate memory for directory string
-    new_filename->directory = ALLOCATE(size);
+    new_filename->directory = ALLOCATE(size + 1);
     
     // bail out if allocation failed
     if (new_filename->directory == NULL) {
@@ -358,7 +358,7 @@ m2_filename_t m2_new_filename(const char *directory,
         size++;
     
     // allocate memory for the filename string
-    new_filename->filename = ALLOCATE(size);
+    new_filename->filename = ALLOCATE(size + 1);
     
     // bail out if allocation failed
     if (new_filename->filename == NULL) {
