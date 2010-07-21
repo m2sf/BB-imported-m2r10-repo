@@ -55,7 +55,7 @@ void add_test(test_case_t test);
 // function:  assert_true(file, line, condition)
 // --------------------------------------------------------------------------
 //
-// Checks if <condition> is true, and prints <file> and <line> if not.
+// Checks if <condition> is true, and prints a message if not.
 
 void assert_true(const char *file, int line, int condition);
 
@@ -64,26 +64,26 @@ void assert_true(const char *file, int line, int condition);
 // function:  assert_false(file, line, condition)
 // --------------------------------------------------------------------------
 //
-// Checks if <condition> is false, and prints <file> and <line> if not.
+// Checks if <condition> is false, and prints a message if not.
 
 void assert_false(const char *file, int line, int condition);
 
 
 // --------------------------------------------------------------------------
-// macro:  assert_same_string(file, line, a, b)
+// macro:  assert_same_string(file, line, got, expect)
 // --------------------------------------------------------------------------
 //
-// Checks if <a> and <b> are identical, and prints <file> and <line> if not.
+// Checks if <got> and <expect> are identical, and prints a message if not.
 
 void assert_same_string(const char *file, int line,
-                        const char *a, const char *b);
+                        const char *got, const char *expect);
 
 
 // --------------------------------------------------------------------------
 // macro:  assert_true(condition)
 // --------------------------------------------------------------------------
 //
-// Checks if <condition> is true, and prints the file and line if not.
+// Checks if <condition> is true, and prints a message if not.
 
 #define assert_true(condition)  assert_true(__FILE__, __LINE__, condition)
 
@@ -92,7 +92,7 @@ void assert_same_string(const char *file, int line,
 // macro:  assert_false(condition)
 // --------------------------------------------------------------------------
 //
-// Checks if <condition> is true, and prints the file and line if not.
+// Checks if <condition> is true, and prints a message if not.
 
 #define assert_false(condition)  assert_false(__FILE__, __LINE__, condition)
 
@@ -101,7 +101,7 @@ void assert_same_string(const char *file, int line,
 // macro:  assert_equal(a, b)
 // --------------------------------------------------------------------------
 //
-// Checks if <a> equals <b>, and prints the file and line if not.
+// Checks if <a> equals <b>, and prints a message if not.
 
 #define assert_equal(a, b)  assert_true((a) == (b))
 
@@ -110,7 +110,7 @@ void assert_same_string(const char *file, int line,
 // macro:  assert_same_string(a, b)
 // --------------------------------------------------------------------------
 //
-// Checks if <a> and <b> are identical, and prints <file> and <line> if not.
+// Checks if <a> and <b> are identical, and prints a message if not.
 
 #define assert_same_string(a, b)  assert_same_string(__FILE__, __LINE__, a, b)
 

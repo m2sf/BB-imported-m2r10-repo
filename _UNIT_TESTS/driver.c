@@ -119,6 +119,28 @@ run_tests(void)
 
 
 // --------------------------------------------------------------------------
+// function:  add_test_result(success)
+// --------------------------------------------------------------------------
+//
+// Adds the given result to the test statistics.  If <success> is true,
+// the success counter is incremented, else the failure counter.
+
+void
+add_test_result(int success)
+{
+    // Register the result.
+    statistics.total++;
+    
+    if (success == 0)
+        // Register the failure.
+        statistics.failed++;
+    else
+        // Register the success
+        statistics.success++;
+}
+
+
+// --------------------------------------------------------------------------
 // function:  generate_report()
 // --------------------------------------------------------------------------
 //
@@ -160,7 +182,7 @@ add_test(test_case_t test)
 // function:  assert_true(file, line, condition)
 // --------------------------------------------------------------------------
 //
-// Checks if <condition> is true, and prints <file> and <line> if not.
+// Checks if <condition> is true, and prints a message if not.
 
 #undef assert_true
 
@@ -168,20 +190,11 @@ void
 assert_true(const char *file, int line, int condition)
 {
     // Register the test has run.
-    statistics.total++;
+    add_test_result(condition);
     
-    if (condition == 0)
-    {
-        // Register the failure.
-        statistics.failed++;
-        
-        // Print the file and line, if any.
-        if (file != NULL)
-            printf("%s:%d\n", file, line);
-    }
-    else
-        // Register the success
-        statistics.success++;
+    // Print the file and line on failure, if any.
+    if ((condition == 0) && (file != NULL))
+        printf("%s:%d  Expected true.\n", file, line);
 }
 
 
@@ -189,32 +202,45 @@ assert_true(const char *file, int line, int condition)
 // function:  assert_false(file, line, condition)
 // --------------------------------------------------------------------------
 //
-// Checks if <condition> is false, and prints <file> and <line> if not.
+// Checks if <condition> is false, and prints a message if not.
 
 #undef assert_false
 
 void
 assert_false(const char *file, int line, int condition)
 {
-    // Forward the call.
-    assert_true(file, line, condition == 0);
+    // Register the test has run.
+    add_test_result(condition == 0);
+    
+    // Print the file and line on failure, if any.
+    if ((condition != 0) && (file != NULL))
+        printf("%s:%d  Expected false.\n", file, line);
 }
 
 
 // --------------------------------------------------------------------------
-// function:  assert_same_string(file, line, a, b)
+// function:  assert_same_string(file, line, got, expect)
 // --------------------------------------------------------------------------
 //
-// Checks if <a> and <b> are identical, and prints <file> and <line> if not.
+// Checks if <got> and <expect> are identical, prints a message if not.
 
 #undef assert_same_string
 
 void
 assert_same_string(const char *file, int line,
-                   const char *a, const char *b)
+                   const char *got, const char *expect)
 {
-    // Compare and forward the call.
-    assert_true(file, line, strcmp(a, b) == 0);
+    int condition;
+    
+    // Compare the strings.
+    condition = (strcmp(got, expect) == 0);
+    
+    // Register the test has run.
+    add_test_result(condition);
+    
+    // Print the file and line on failure, if any.
+    if ((condition == 0) && (file != NULL))
+        printf("%s:%d  Expected '%s', got '%s'.\n", file, line, expect, got);
 }
 
 
