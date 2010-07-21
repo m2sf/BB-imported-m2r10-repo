@@ -497,6 +497,15 @@ m2_filename_t m2_new_filename_from_path(const char *path,
     if (ext_index < fn_index)
         ext_index = -1;
     
+    // allocate memory for filename descriptor
+    new_filename = ALLOCATE(sizeof(m2_filename_s));
+    
+    // bail out if allocation failed
+    if (new_filename == NULL) {
+        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    } // end if
+    
     // length of directory string
     length = fn_index + 1;
     total_length = length;
