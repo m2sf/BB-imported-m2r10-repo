@@ -24,10 +24,9 @@
 
 // TO DO: Add more test data.
 // TO DO: Add tests for m2_working_directory.
-// TO DO: Add tests for m2_new_filename_from_path.
-// TO DO: Add tests for m2_path_from_filename.
 
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "../driver.h"
 #include "../../_REFERENCE_COMPILER/m2_filenames.h"
@@ -109,6 +108,7 @@ typedef struct /* filename_info_t */
     
     m2_filename_status_t status;
     char *ext;
+    char *path;
 } filename_info_t;
 
 
@@ -117,8 +117,17 @@ typedef struct /* filename_info_t */
 // ---------------------------------------------------------------------------
 
 static const filename_info_t _filename_info[] = {
+    // For POSIX
     { "filename", "directory", FILE_TYPE_MOD, POSIX_FILENAMING,
-      M2_FILENAME_STATUS_SUCCESS, "mod" }
+      M2_FILENAME_STATUS_SUCCESS, "mod", "directory/filename.mod" },
+    { "filename", "directory/", FILE_TYPE_DEF, POSIX_FILENAMING,
+      M2_FILENAME_STATUS_SUCCESS, "def", "directory/filename.def" },
+    
+    // For MSDOS
+    { "filename", "directory", FILE_TYPE_MOD, MSDOS_FILENAMING,
+      M2_FILENAME_STATUS_SUCCESS, "mod", "directory\\filename.mod" },
+    { "filename", "directory\\", FILE_TYPE_DEF, POSIX_FILENAMING,
+      M2_FILENAME_STATUS_SUCCESS, "def", "directory\\filename.def" }
 }; /* _filename_info */
 
 
@@ -176,6 +185,57 @@ static void m2_outfile_type_for_test(void)
 
 
 // --------------------------------------------------------------------------
+// function:  m2_filename_t_test()
+// --------------------------------------------------------------------------
+//
+// Tests the interaction between m2_filename_t and the following functions:
+// - m2_directory_string()
+// - m2_filename_string()
+// - m2_file_ext_string()
+// - m2_file_type()
+// - m2_filenaming()
+// - m2_path_from_filename()
+
+static void m2_filename_t_test(m2_filename_t filename,
+                               const filename_info_t *info)
+{
+    m2_filename_status_t status;
+    const char *path;
+    
+    // Check if the directory is as expected.
+    assert_same_string(m2_directory_string(filename), info->directory);
+    
+    // Check if the filename is as expected.
+    assert_same_string(m2_filename_string(filename), info->name);
+    
+    // Check if the extension is as expected.
+    assert_same_string(m2_file_ext_string(filename), info->ext);
+    
+    // Check if the file type is as expected.
+    assert_equal(m2_file_type(filename), info->type);
+    
+    // Check if the filenaming is as expected.
+    assert_equal(m2_filenaming(filename), info->naming);
+    
+    // Get the filepath.
+    path = m2_path_from_filename(filename, &status);
+    
+    // Compare with our expectation.
+    assert_equal(status, info->status);
+    
+    // Check if more tests are applicable.
+    if (path != NULL)
+    {
+        // Check if the path is as expected.
+        assert_same_string(path, info->path);
+        
+        // Clean up.
+        free(path);
+    }
+}
+
+
+// --------------------------------------------------------------------------
 // function:  m2_new_filename_test()
 // --------------------------------------------------------------------------
 //
@@ -187,7 +247,7 @@ static void m2_new_filename_test(void)
     m2_filename_t filename;
     m2_filename_status_t status;
     
-    // Check all source file types and for their expected output file type.
+    // Check all filename information for the expected associated behaviour.
     for (i = 0; i < sizeof(_filename_info) / sizeof(_filename_info[0]); i++)
     {
         // Allocate a filename descriptor.
@@ -216,29 +276,8 @@ static void m2_new_filename_test(void)
         if (filename == NULL)
             continue;
         
-        // Check if the directory is as expected.
-        assert_same_string(
-            m2_directory_string(filename),
-            _filename_info[i].directory
-        );
-        
-        // Check if the filename is as expected.
-        assert_same_string(
-            m2_filename_string(filename),
-            _filename_info[i].name
-        );
-        
-        // Check if the extension is as expected.
-        assert_same_string(
-            m2_file_ext_string(filename),
-            _filename_info[i].ext
-        );
-        
-        // Check if the file type is as expected.
-        assert_equal(m2_file_type(filename), _filename_info[i].type);
-        
-        // Check if the filenaming is as expected.
-        assert_equal(m2_filenaming(filename), _filename_info[i].naming);
+        // Check the filename descriptor.
+        m2_filename_t_test(filename, &_filename_info[i]);
         
         // Clean up.
         m2_dispose_filename(filename);
@@ -254,17 +293,44 @@ static void m2_new_filename_test(void)
 
 static void m2_new_filename_from_path_test(void)
 {
-}
-
-
-// --------------------------------------------------------------------------
-// function:  m2_path_from_filename_test()
-// --------------------------------------------------------------------------
-//
-// Tests the m2_path_from_filename() function.
-
-static void m2_path_from_filename_test(void)
-{
+    int i;
+    m2_filename_t filename;
+    m2_filename_status_t status;
+    
+    // Check all filename information for the expected associated behaviour.
+    for (i = 0; i < sizeof(_filename_info) / sizeof(_filename_info[0]); i++)
+    {
+        // Allocate a filename descriptor.
+        filename = m2_new_filename_from_path(
+            _filename_info[i].path, _filename_info[i].naming, &status
+        );
+        
+        // Compare with our expectation.
+        assert_equal(status, _filename_info[i].status);
+        
+        // Check if more tests are applicable.
+        if (status != M2_FILENAME_STATUS_SUCCESS)
+        {
+            // Failure should mean no descriptor.
+            assert_true(filename == NULL);
+            
+            // Clean up if needed.
+            if (filename != NULL)
+                m2_dispose_filename(filename);
+            continue;
+        }
+        
+        // Success should mean there is a descriptor.
+        assert_true(filename != NULL);
+        if (filename == NULL)
+            continue;
+        
+        // Check the filename descriptor.
+        m2_filename_t_test(filename, &_filename_info[i]);
+        
+        // Clean up.
+        m2_dispose_filename(filename);
+    }
 }
 
 
@@ -281,6 +347,7 @@ collect_tests(void)
     add_test(m2_is_valid_filename_string_test);
     add_test(m2_outfile_type_for_test);
     add_test(m2_new_filename_test);
+    add_test(m2_new_filename_from_path_test);
 }
 
 
