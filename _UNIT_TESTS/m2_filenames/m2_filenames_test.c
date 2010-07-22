@@ -259,28 +259,22 @@ static void m2_new_filename_test(void)
         // Compare with our expectation.
         assert_equal(status, _filename_info[i].status);
         
-        // Check if more tests are applicable.
-        if (status != M2_FILENAME_STATUS_SUCCESS)
-        {
-            // Failure should mean no descriptor.
-            assert_true(filename == NULL);
-            
-            // Clean up if needed.
-            if (filename != NULL)
-                m2_dispose_filename(filename);
-            continue;
-        }
-        
-        // Success should mean there is a descriptor.
-        assert_true(filename != NULL);
         if (filename == NULL)
-            continue;
-        
-        // Check the filename descriptor.
-        m2_filename_t_test(filename, &_filename_info[i]);
-        
-        // Clean up.
-        m2_dispose_filename(filename);
+        {
+            // No descriptor should mean failure.
+            assert_false(status == M2_FILENAME_STATUS_SUCCESS);
+        }
+        else
+        {
+            // A descriptor should mean success.
+            assert_true(status == M2_FILENAME_STATUS_SUCCESS);
+            
+            // Check the filename descriptor.
+            m2_filename_t_test(filename, &_filename_info[i]);
+            
+            // Clean up.
+            m2_dispose_filename(filename);
+        }
     }
 }
 
@@ -308,28 +302,22 @@ static void m2_new_filename_from_path_test(void)
         // Compare with our expectation.
         assert_equal(status, _filename_info[i].status);
         
-        // Check if more tests are applicable.
-        if (status != M2_FILENAME_STATUS_SUCCESS)
-        {
-            // Failure should mean no descriptor.
-            assert_true(filename == NULL);
-            
-            // Clean up if needed.
-            if (filename != NULL)
-                m2_dispose_filename(filename);
-            continue;
-        }
-        
-        // Success should mean there is a descriptor.
-        assert_true(filename != NULL);
         if (filename == NULL)
-            continue;
-        
-        // Check the filename descriptor.
-        m2_filename_t_test(filename, &_filename_info[i]);
-        
-        // Clean up.
-        m2_dispose_filename(filename);
+        {
+            // No descriptor should mean failure.
+            assert_false(status == M2_FILENAME_STATUS_SUCCESS);
+        }
+        else
+        {
+            // A descriptor should mean success.
+            assert_true(status == M2_FILENAME_STATUS_SUCCESS);
+            
+            // Check the filename descriptor.
+            m2_filename_t_test(filename, &_filename_info[i]);
+            
+            // Clean up.
+            m2_dispose_filename(filename);
+        }
     }
 }
 
