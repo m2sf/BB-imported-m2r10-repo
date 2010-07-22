@@ -33,27 +33,27 @@
 #include "m2_ast.h"
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Interim declarations due to yet unimplemented module(s)
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 typedef opaque_t m2_codegen_t;
 #define M2_CODEGEN_STATUS_SUCCESS 0
 #define M2_FILEIO_STATUS_SUCCESS 0
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Application info
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 #define APP_NAME      "Modula-2 R10 Compiler (m2r10c)"
 #define APP_VERSION   "Version 0.0" " Build " BUILD_VERSION
 #define APP_COPYRIGHT "(C) 2010 B.Kowarsch. All rights reserved."
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Exit codes
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 #ifndef EXIT_SUCCESS
 #define EXIT_SUCCESS 0
@@ -64,59 +64,64 @@ typedef opaque_t m2_codegen_t;
 #endif
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Option macros
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 #define OPT_ENDMARKER -1
+#define OPT_SYNTAXCHECK 'c'
 #define OPT_DUMPAST 'a'
 #define OPT_DUMPSYMTAB 's'
-#define OPT_SYNTAXCHECK 't'
+#define OPT_TARGET 't'
 #define OPT_VERSION 'V'
 #define OPT_USAGE 'h'
 
-#define OPT_LIST "ahstV"
+#define OPT_LIST "achst:V"
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Long options
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 static struct option lopts_all[] = {
+    { "syntaxcheck", 0, 0, 'c' },
     { "dumpast",     0, 0, 'a' },
     { "dumpsymtab",  0, 0, 's' },
-    { "syntaxcheck", 0, 0, 't' },
+    { "target",      0, 0, 't' },
     { "help",        0, 0, 'h' },
     { "version",     0, 0, 'V' },
     { 0, 0, 0, 0 }
 }; // end lopts_all
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // function:  show_usage()
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 // Prints usage info to stdout.
 
 static void show_usage() {
     printf("Usage\n\n"
-           "  m2r10c [ debug-option ] sourcefile\n\n"
+           "  m2r10c [ debug-option | target_option tgt] sourcefile\n\n"
            "Obtaining information:\n"
            "  m2r10c usage-info-option | version-info-option\n\n"
+           "Target options:\n"
+           " -t, --target  tgt : generate code for specified target"
+           "                     available targets are c99 and llvm\n"
            "Debug options:\n"
+           " -c, --syntaxcheck : perform syntax check only\n\n"
            " -a, --dumpast     : build and print AST only\n"
            " -s, --dumpsymtab  : build and print symbol table only\n"
-           " -t, --syntaxcheck : perform syntax check only\n\n"
            "Info options:\n"
            " -h, --help        : print usage info\n"
-           " -V, --version     : print software version and copyright notice\n"
+           " -V, --version     : print version and copyright notice\n"
            "\n");
 } // end show_usage
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // function:  show_version()
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 // Prints software version and copyright notice to stdout.
 
@@ -125,9 +130,9 @@ static void show_version() {
 } // end show_version
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // function:  show_error( error )
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 // Prints error message for <error> to stderr.
 
@@ -164,11 +169,15 @@ int main (int argc, const char * argv[]) {
         case OPT_DUMPAST :
             show_error(ERR_OPT_NOT_IMPLEMENTED);
             return EXIT_FAILURE;
+        case OPT_SYNTAXCHECK :
+            syntax_check_only = true;
+            break;
         case OPT_DUMPSYMTAB :
             show_error(ERR_OPT_NOT_IMPLEMENTED);
             return EXIT_FAILURE;
-        case OPT_SYNTAXCHECK :
-            syntax_check_only = true;
+        case OPT_TARGET :
+            show_error(ERR_OPT_NOT_IMPLEMENTED);
+            return EXIT_FAILURE;
             break;
         case OPT_USAGE :
             show_usage();
