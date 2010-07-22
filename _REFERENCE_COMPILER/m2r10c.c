@@ -84,12 +84,12 @@ typedef opaque_t m2_codegen_t;
 // ---------------------------------------------------------------------------
 
 static struct option lopts_all[] = {
-    { "syntaxcheck", 0, 0, 'c' },
-    { "dumpast",     0, 0, 'a' },
-    { "dumpsymtab",  0, 0, 's' },
-    { "target",      0, 0, 't' },
-    { "help",        0, 0, 'h' },
-    { "version",     0, 0, 'V' },
+    { "syntaxcheck", 0, 0, OPT_SYNTAXCHECK },
+    { "dumpast",     0, 0, OPT_DUMPAST     },
+    { "dumpsymtab",  0, 0, OPT_DUMPSYMTAB  },
+    { "target",      0, 0, OPT_TARGET      },
+    { "help",        0, 0, OPT_USAGE       },
+    { "version",     0, 0, OPT_VERSION     },
     { 0, 0, 0, 0 }
 }; // end lopts_all
 
