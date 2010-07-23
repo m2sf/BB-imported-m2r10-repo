@@ -101,14 +101,17 @@ static const target_file_type_info_t _type_info[] = {
 
 typedef struct /* filename_info_t */
 {
-    char *name;
-    char *directory;
+    char *dir;
+    char *file;
     m2_file_type_t type;
     m2_filenaming_t naming;
-    
-    m2_filename_status_t status;
-    char *ext;
     char *path;
+    
+    m2_filename_status_t expect_status;
+    char *expect_dir;
+    char *expect_file;
+    char *expect_ext;
+    char *expect_path;
 } filename_info_t;
 
 
@@ -118,16 +121,16 @@ typedef struct /* filename_info_t */
 
 static const filename_info_t _filename_info[] = {
     // For POSIX
-    { "filename", "directory", FILE_TYPE_MOD, POSIX_FILENAMING,
-      M2_FILENAME_STATUS_SUCCESS, "mod", "directory/filename.mod" },
-    { "filename", "directory/", FILE_TYPE_DEF, POSIX_FILENAMING,
-      M2_FILENAME_STATUS_SUCCESS, "def", "directory/filename.def" },
+    { "dir", "file", FILE_TYPE_MOD, POSIX_FILENAMING, "dir/file.mod",
+      M2_FILENAME_STATUS_SUCCESS, "dir/", "file", "mod", "dir/file.mod" },
+    { "dir/", "file", FILE_TYPE_DEF, POSIX_FILENAMING, "dir/file.def",
+      M2_FILENAME_STATUS_SUCCESS, "dir/", "file", "def", "dir/file.def" },
     
     // For MSDOS
-    { "filename", "directory", FILE_TYPE_MOD, MSDOS_FILENAMING,
-      M2_FILENAME_STATUS_SUCCESS, "mod", "directory\\filename.mod" },
-    { "filename", "directory\\", FILE_TYPE_DEF, POSIX_FILENAMING,
-      M2_FILENAME_STATUS_SUCCESS, "def", "directory\\filename.def" }
+    { "dir", "file", FILE_TYPE_MOD, MSDOS_FILENAMING, "dir\\file.mod",
+      M2_FILENAME_STATUS_SUCCESS, "dir\\", "file", "mod", "dir\\file.mod" },
+    { "dir\\", "file", FILE_TYPE_DEF, MSDOS_FILENAMING, "dir\\file.def",
+      M2_FILENAME_STATUS_SUCCESS, "dir\\", "file", "def", "dir\\file.def" }
 }; /* _filename_info */
 
 
@@ -203,13 +206,13 @@ static void m2_filename_t_test(m2_filename_t filename,
     const char *path;
     
     // Check if the directory is as expected.
-    assert_same_string(m2_directory_string(filename), info->directory);
+    assert_same_string(m2_directory_string(filename), info->expect_dir);
     
     // Check if the filename is as expected.
-    assert_same_string(m2_filename_string(filename), info->name);
+    assert_same_string(m2_filename_string(filename), info->expect_file);
     
     // Check if the extension is as expected.
-    assert_same_string(m2_file_ext_string(filename), info->ext);
+    assert_same_string(m2_file_ext_string(filename), info->expect_ext);
     
     // Check if the file type is as expected.
     assert_equal(m2_file_type(filename), info->type);
@@ -221,13 +224,13 @@ static void m2_filename_t_test(m2_filename_t filename,
     path = m2_path_from_filename(filename, &status);
     
     // Compare with our expectation.
-    assert_equal(status, info->status);
+    assert_equal(status, info->expect_status);
     
     // Check if more tests are applicable.
     if (path != NULL)
     {
         // Check if the path is as expected.
-        assert_same_string(path, info->path);
+        assert_same_string(path, info->expect_path);
         
         // Clean up.
         free(path);
@@ -252,12 +255,12 @@ static void m2_new_filename_test(void)
     {
         // Allocate a filename descriptor.
         filename = m2_new_filename(
-            _filename_info[i].directory, _filename_info[i].name,
+            _filename_info[i].dir, _filename_info[i].file,
             _filename_info[i].type, _filename_info[i].naming, &status
         );
         
         // Compare with our expectation.
-        assert_equal(status, _filename_info[i].status);
+        assert_equal(status, _filename_info[i].expect_status);
         
         if (filename == NULL)
         {
@@ -300,7 +303,7 @@ static void m2_new_filename_from_path_test(void)
         );
         
         // Compare with our expectation.
-        assert_equal(status, _filename_info[i].status);
+        assert_equal(status, _filename_info[i].expect_status);
         
         if (filename == NULL)
         {
