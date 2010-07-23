@@ -289,6 +289,12 @@ m2_filename_t m2_new_filename(const char *directory,
     int size, index = 0, total_length = 0;
     char fn_delimiter, ext_delimiter, ver_delimiter;
     
+    // bail out if directory is invalid
+    if (directory == NULL) {
+        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_INVALID_DIRECTORY);
+        return NULL;
+    } // end if
+    
     // bail out if filename is invalid
     if ((filename == NULL) ||
         (m2_is_valid_filename_string(filename) == false)) {
@@ -329,7 +335,7 @@ m2_filename_t m2_new_filename(const char *directory,
         size++;
     
     // allocate memory for directory string
-    new_filename->directory = ALLOCATE(size + 1);
+    new_filename->directory = ALLOCATE(size + 2);
     
     // bail out if allocation failed
     if (new_filename->directory == NULL) {
@@ -344,7 +350,13 @@ m2_filename_t m2_new_filename(const char *directory,
         new_filename->directory[index] = directory[index];
         index++;
     } // end while
-        
+    
+    // add a trailing delimiter if a directory without one is present
+    if ((index != 0) && (directory[index - 1] != fn_delimiter)) {
+        new_filename->directory[index] = fn_delimiter;
+        index++;
+    }
+    
     // accumulated length
     total_length = index;
     
