@@ -296,8 +296,7 @@ m2_filename_t m2_new_filename(const char *directory,
     } // end if
     
     // bail out if filename is invalid
-    if ((filename == NULL) ||
-        (m2_is_valid_filename_string(filename) == false)) {
+    if (filename == NULL) {
         ASSIGN_BY_REF(status, M2_FILENAME_STATUS_INVALID_FILENAME);
         return NULL;
     } // end if
@@ -366,7 +365,8 @@ m2_filename_t m2_new_filename(const char *directory,
     
     // determine the allocation size of the filename string
     size = 0;
-    while (filename[size] != CSTRING_TERMINATOR)
+    while ((filename[size] != CSTRING_TERMINATOR) &&
+           (filename[size] != ver_delimiter))
         size++;
     
     // allocate memory for the filename string
@@ -393,6 +393,15 @@ m2_filename_t m2_new_filename(const char *directory,
     // terminate the filename string
     new_filename->filename[index] = CSTRING_TERMINATOR;
 
+    // bail out if filename is invalid
+    if (m2_is_valid_filename_string(new_filename->filename) == false) {
+        DEALLOCATE(new_filename->directory);
+        DEALLOCATE(new_filename->filename);
+        DEALLOCATE(new_filename);
+        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_INVALID_FILENAME);
+        return NULL;
+    } // end if
+    
     // allocate memory for the file extension string
     new_filename->extension = ALLOCATE(_MAX_EXTSTR_SIZE);
     
