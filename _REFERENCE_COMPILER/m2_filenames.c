@@ -542,13 +542,11 @@ m2_filename_t m2_new_filename_from_path(const char *path,
     } // end if
         
     index = 0;
-    if (length > 0) {
-        // copy the directory string
-        while (index < length) {
-            new_filename->directory[index] = path[index];
-            index++;
-        } // end while
-    } // end if
+    // copy the directory string
+    while (index < length) {
+        new_filename->directory[index] = path[index];
+        index++;
+    } // end while
     
     // terminate the directory string
     new_filename->directory[index] = CSTRING_TERMINATOR;
@@ -575,19 +573,27 @@ m2_filename_t m2_new_filename_from_path(const char *path,
         return NULL;
     } // end if
     
+    // copy the filename string
     index = 0;
     path_index = fn_index + 1;
-    if (length > 0) {
-        // copy the filename string
-        while (index < length) {
-            new_filename->filename[index] = path[path_index];
-            index++;
-            path_index++;
-        } // end while
-    } // end if
+    while (index < length) {
+        new_filename->filename[index] = path[path_index];
+        index++;
+        path_index++;
+    } // end while
     
     // terminate the filename string
     new_filename->filename[index] = CSTRING_TERMINATOR;
+    
+    // bail out if filename is invalid
+    if ((length > 0) &&
+        (m2_is_valid_filename_string(new_filename->filename) == false)) {
+        DEALLOCATE(new_filename->directory);
+        DEALLOCATE(new_filename->filename);
+        DEALLOCATE(new_filename);
+        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_INVALID_FILENAME);
+        return NULL;
+    } // end if
     
     // length of file extension string
     if (ext_index < 0) {
