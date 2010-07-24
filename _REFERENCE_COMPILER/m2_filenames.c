@@ -585,7 +585,7 @@ m2_filename_t m2_new_filename_from_path(const char *path,
         length = 0;
     }
     else {
-        length = end_of_path - ext_index - 1;
+        length = end_of_path - ext_index;
     } // end if
     total_length = total_length + length;
     
