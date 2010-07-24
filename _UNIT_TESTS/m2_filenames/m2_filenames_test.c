@@ -130,7 +130,11 @@ static const filename_info_t _filename_info[] = {
     { "dir", "file", FILE_TYPE_MOD, MSDOS_FILENAMING, "dir\\file.mod",
       M2_FILENAME_STATUS_SUCCESS, "dir\\", "file", "mod", "dir\\file.mod" },
     { "dir\\", "file", FILE_TYPE_DEF, MSDOS_FILENAMING, "dir\\file.def",
-      M2_FILENAME_STATUS_SUCCESS, "dir\\", "file", "def", "dir\\file.def" }
+      M2_FILENAME_STATUS_SUCCESS, "dir\\", "file", "def", "dir\\file.def" },
+    
+    // For OpenVMS
+    { "[dir]", "file;3", FILE_TYPE_MOD, OPENVMS_FILENAMING, "[dir]file.mod;3",
+      M2_FILENAME_STATUS_SUCCESS, "[dir]", "file", "mod", "[dir]file.mod" }
 }; /* _filename_info */
 
 
