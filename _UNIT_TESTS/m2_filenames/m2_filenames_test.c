@@ -126,15 +126,24 @@ static const filename_info_t _filename_info[] = {
     { "dir/", "file", FILE_TYPE_DEF, POSIX_FILENAMING, "dir/file.def",
       M2_FILENAME_STATUS_SUCCESS, "dir/", "file", "def", "dir/file.def" },
     
+    { "dir", "1337", FILE_TYPE_MOD, POSIX_FILENAMING, "dir/3.mod",
+      M2_FILENAME_STATUS_INVALID_FILENAME, NULL, NULL, NULL, NULL },
+    
     // For MSDOS
     { "dir", "file", FILE_TYPE_MOD, MSDOS_FILENAMING, "dir\\file.mod",
       M2_FILENAME_STATUS_SUCCESS, "dir\\", "file", "mod", "dir\\file.mod" },
     { "dir\\", "file", FILE_TYPE_DEF, MSDOS_FILENAMING, "dir\\file.def",
       M2_FILENAME_STATUS_SUCCESS, "dir\\", "file", "def", "dir\\file.def" },
     
+    { "dir", "1337", FILE_TYPE_MOD, MSDOS_FILENAMING, "dir\\3.mod",
+      M2_FILENAME_STATUS_INVALID_FILENAME, NULL, NULL, NULL, NULL },
+    
     // For OpenVMS
     { "[dir]", "file;3", FILE_TYPE_MOD, OPENVMS_FILENAMING, "[dir]file.mod;3",
-      M2_FILENAME_STATUS_SUCCESS, "[dir]", "file", "mod", "[dir]file.mod" }
+      M2_FILENAME_STATUS_SUCCESS, "[dir]", "file", "mod", "[dir]file.mod" },
+    
+    { "[dir]", "1337;3", FILE_TYPE_MOD, OPENVMS_FILENAMING, "[dir]1337.mod;3",
+      M2_FILENAME_STATUS_INVALID_FILENAME, NULL, NULL, NULL, NULL }
 }; /* _filename_info */
 
 
