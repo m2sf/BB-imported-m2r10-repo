@@ -52,19 +52,19 @@ typedef opaque_t m2_lexer_t;
 // --------------------------------------------------------------------------
 
 typedef /* m2_lexer_status_t */ enum {
-    
+
     // operation completed successfully
     M2_LEXER_STATUS_SUCCESS = 0,
-    
+
     // invalid pointer to lexer object passed
     M2_LEXER_STATUS_INVALID_REFERENCE,
-    
+
     // unable to allocate memory
     M2_LEXER_STATUS_ALLOCATION_FAILED,
-    
+
     // illegal character found
     M2_LEXER_STATUS_ILLEGAL_CHARACTER,
-    
+
     // literal exceeds maximum length
     M2_LEXER_STATUS_LITERAL_TOO_LONG,
 
@@ -73,12 +73,12 @@ typedef /* m2_lexer_status_t */ enum {
 
     // string literal is missing delimiting quotation
     M2_LEXER_STATUS_STRING_NOT_DELIMITED,
-    
+
     // nested comment exceeds maximum nesting limit
     M2_LEXER_STATUS_COMMENT_NESTING_LIMIT_REACHED,
-    
+
     // EOF found while processing comment
-    M2_LEXER_STATUS_EOF_REACHED_WITHIN_COMMENT,
+    M2_LEXER_STATUS_EOF_REACHED_WITHIN_COMMENT
 } m2_lexer_status_t;
 
 
@@ -92,10 +92,9 @@ typedef /* m2_lexer_status_t */ enum {
 //
 // Returns NULL if the lexer object could not be created.
 
-m2_lexer_t m2_new_lexer(FILE *infile,
-                 kvs_table_t lextab,
-           m2_lexer_status_t *status);
-
+m2_lexer_t m2_new_lexer(FILE * infile,
+                        kvs_table_t lextab,
+                        m2_lexer_status_t *status);
 
 // ---------------------------------------------------------------------------
 // function:  m2_lexer_getsym(lexer, lexeme, status)
