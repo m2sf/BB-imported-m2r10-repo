@@ -1,7 +1,25 @@
-/*
- *  test_lexer.c
- *  m2c
+/* Modula-2 R10 Compiler (m2r10c)
  *
+ *  m2_lexer_test.c
+ *  Lexer interface tests
+ *
+ *  Author: Eric Streit, Roel Messiant
+ *
+ *  Copyright (C) 2010 E.Streit, R.Messiant. All rights reserved.
+ *
+ *  License:
+ *
+ *  Permission is hereby granted to review and test this software for the sole
+ *  purpose of supporting the effort by the licensor  to implement a reference
+ *  compiler for  Modula-2 R10.  It is not permissible under any circumstances
+ *  to  use the software  for the purpose  of creating derivative languages or 
+ *  dialects.  This permission is valid until 31 December 2010, 24:00h GMT.
+ *
+ *  Future licensing:
+ *
+ *  The licensor undertakes  to release  this software  under a BSD-style open
+ *  source license  AFTER  the M2R10 language definition has been finalised.
+ *  
  */
 
 // ---------------------------------------------------------------------------
@@ -10,72 +28,28 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "KVS.h"
-#include "m2_lexer.h"
-#include "m2_symbol_table.h"
 
-// ---------------------------------------------------------------------------
-// forward declarations
-// ---------------------------------------------------------------------------
-
- void print_symbol(m2_lexer_t lexer, kvs_table_t symtab, cardinal lexkey, m2_token_t token );
+#include "../driver.h"
+#include "../../_REFERENCE_COMPILER/KVS.h"
+#include "../../_REFERENCE_COMPILER/m2_lexer.h"
+#include "../../_REFERENCE_COMPILER/m2_symbol_table.h"
 
 
 // ---------------------------------------------------------------------------
-// function:  main(argc, argv)
+// Lexer input information type
 // ---------------------------------------------------------------------------
-//
-// Reads  one  argument  from  the command line,  interprets the argument as a
-// pathname to  an  Modula-2 source file,  opens the file,  performs
-// a lexical analysis and prints tokens, lexemes and attributes to stdout.
 
-int main (int argc, const char **argv) {
-    const char *pathname;
-    kvs_table_t symtab;
-    m2_lexer_t lexer;
-    m2_token_t token;
-//    symbol_s symbol;
-    cardinal lexkey; 
-    
-    m2_lexer_status_t status;
-    FILE *filetotest;
+typedef struct /* lexer_input_info_t */ {
+    char *file;
+} lexer_input_info_t;
 
-    if (argc <= 1) {
-        printf("usage: test_lexer sourcefile\n");
-        exit(1);
-    } // end if
 
-    pathname = argv[1];
+// ---------------------------------------------------------------------------
+// Lexer input information
+// ---------------------------------------------------------------------------
 
-    printf("lexical analysis for file %s\n", pathname);
-    
-    filetotest = fopen(pathname,"r");	
-    if (filetotest == (FILE *)0) {
-        printf (" not possible to open the file: %s", pathname);
-        exit(1);
-        }
-        
-    // create new symbol table
-    symtab = kvs_new_table(0,NULL);
-
-    // create a new lexer instance
-    lexer = m2_new_lexer(filetotest, symtab, &status);
-
-    token = 0;
-
-    // read until end of file
-    while (token != TOKEN_EOF_MARKER) {
-
-        token = m2_lexer_getsym(lexer, &lexkey, &status);
-
-        print_symbol(lexer, symtab, lexkey, token);
-
-    } // end while
-
-    m2_dispose_lexer(lexer, &status);
-
-    return 0;
-} // end main
+static const lexer_input_info_t _input_info[] = {
+}; /* _input_info */
 
 
 // ---------------------------------------------------------------------------
@@ -227,5 +201,73 @@ void print_symbol(m2_lexer_t lexer, kvs_table_t symtab, cardinal lexkey, m2_toke
     return;
 } 
 // end print_symbol
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_new_lexer_test()
+// ---------------------------------------------------------------------------
+//
+// Tests the m2_new_lexer() function.
+
+static void m2_new_lexer_test(void)
+{
+    int i;
+    const char *pathname;
+    kvs_table_t symtab;
+    m2_lexer_t lexer;
+    m2_token_t token;
+//    symbol_s symbol;
+    cardinal lexkey; 
+    
+    m2_lexer_status_t status;
+    FILE *filetotest;
+    
+    for (i = 0; i < sizeof(_input_info) / sizeof(_input_info[0]); i++)
+    {
+        pathname = _input_info[i].file;
+
+        printf("lexical analysis for file %s\n", pathname);
+        
+        filetotest = fopen(pathname,"r");	
+        if (filetotest == (FILE *)0) {
+            printf (" not possible to open the file: %s", pathname);
+            exit(1);
+            }
+            
+        // create new symbol table
+        symtab = kvs_new_table(0,NULL);
+
+        // create a new lexer instance
+        lexer = m2_new_lexer(filetotest, symtab, &status);
+
+        token = 0;
+
+        // read until end of file
+        while (token != TOKEN_EOF_MARKER) {
+
+            token = m2_lexer_getsym(lexer, &lexkey, &status);
+
+            print_symbol(lexer, symtab, lexkey, token);
+
+        } // end while
+
+        m2_dispose_lexer(lexer, &status);
+    }
+} // end main
+
+
+// --------------------------------------------------------------------------
+// function:  collect_tests()
+// --------------------------------------------------------------------------
+//
+// User-supplied function that registers test cases to be run.
+
+void
+collect_tests(void)
+{
+    // Add all of our test cases.
+    add_test(m2_new_lexer_test);
+}
+
 
 // END OF FILE

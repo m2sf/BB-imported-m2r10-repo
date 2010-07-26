@@ -24,14 +24,15 @@
 # A P P L I C A T I O N S
 # ---------------------------------------------------------------------------
 
-APP = test-lexer
+APP = m2_lexer_test
 
 SRC = \
-	KVS.c \
-	m2_reserved_words.c \
-	m2_tokens.c \
-	m2_lexer.c \
-	test-lexer.c
+	../driver.c \
+	../../_REFERENCE_COMPILER/KVS.c \
+	../../_REFERENCE_COMPILER/m2_reserved_words.c \
+	../../_REFERENCE_COMPILER/m2_tokens.c \
+	../../_REFERENCE_COMPILER/m2_lexer.c \
+	m2_lexer_test.c
 
 LIB =
 
