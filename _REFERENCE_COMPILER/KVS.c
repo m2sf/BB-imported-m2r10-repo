@@ -161,7 +161,7 @@ kvs_table_t kvs_new_table(cardinal size, kvs_status_t *status) {
     
     // allocate table base
     new_table =
-        ALLOCATE(sizeof(kvs_table_s) + sizeof(kvs_entry) * (bucket_count - 1));
+        ALLOCATE(sizeof(kvs_table_s) + sizeof(kvs_entry) * bucket_count);
     
     // exit if allocation failed
     if (new_table == NULL) {
