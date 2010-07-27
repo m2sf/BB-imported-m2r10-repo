@@ -256,7 +256,6 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
     this_lexer->lexeme.string[0] = CSTRING_TERMINATOR;
     
     ch = nextchar();
-    ignore_token = false;
     repeat {
         
         // skip all whitespace, tab and EOL characters
@@ -273,6 +272,7 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
         
         // start optimistically
         this_lexer->status = M2_LEXER_STATUS_SUCCESS;
+        ignore_token = false;
         
         // check for end-of-file
         if (EOF_REACHED(this_lexer)) {
