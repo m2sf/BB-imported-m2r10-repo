@@ -45,7 +45,7 @@ typedef struct /* m2_sym_s */ {
     fpos_t pos;
 } m2_sym_s;
 
-#define ZERO_SYMBOL { 0, 0, 0, { 0, 0 } }
+#define ZERO_SYMBOL (m2_sym_s) { 0, 0, 0, (fpos_t) 0 }
 
 
 // ---------------------------------------------------------------------------
@@ -66,6 +66,167 @@ typedef struct /* m2_parser_s */ {
     uint16_t errors;
 } m2_parser_s;
 
+
+// ---------------------------------------------------------------------------
+// FIRST sets
+// ---------------------------------------------------------------------------
+
+static m2_tokenset_t
+    FIRST_REQ_BINDING,
+    FIRST_IMPORT_LIST,
+    FIRST_BLOCK,
+    FIRST_IMPORT_LIST,
+    FIRST_DEFINITION,
+    FIRST_CONST_EXPRESSION,
+    FIRST_PROGRAM_MODULE,
+    FIRST_BINDABLE_IDENT,
+    FIRST_BINDABLE_OP,
+    FIRST_STATEMENT_SEQ,
+    FIRST_CONST_DECLARATION,
+    FIRST_TYPE,
+    FIRST_VAR_DECLARATION,
+    FIRST_RANGE,
+    FIRST_ENUMERATION_TYPE,
+    FIRST_ARRAY_TYPE,
+    FIRST_RECORD_TYPE,
+    FIRST_SET_TYPE,
+    FIRST_POINTER_TYPE,
+    FIRST_PROCEDURE_TYPE,
+    FIRST_ENUMERATION_COMPONENT,
+    FIRST_FIELD_LIST_SEQ,
+    FIRST_FIELD_LIST,
+    FIRST_IDENT_OR_LPAREN,
+    FIRST_FORMAL_TYPE_LIST,
+    FIRST_FORMAL_TYPE,
+    FIRST_ATTRIBUTED_FORMAL_TYPE,
+    FIRST_VARIADIC_FORMAL_TYPE,
+    FIRST_SIMPLE_FORMAL_TYPE,
+    FIRST_ATTRIBUTED_FORMAL_TYPE_OR_LPAREN,
+    FIRST_LBRACKET_OR_COMMA,
+    FIRST_IDENT_LIST,
+    FIRST_TYPECONV_OR_BINDABLE_OP_OR_IDENT,
+    FIRST_FORMAL_PARAM_LIST,
+    FIRST_FORMAL_PARAMS,
+    FIRST_SIMPLE_FORMAL_PARAMS,
+    FIRST_VARIADIC_FORMAL_PARAMS,
+    FIRST_SIMPLE_FORMAL_TYPE_OR_LPAREN,
+    FIRST_ASSIGNMENT_OR_PROCEDURE_CALL,
+    FIRST_EXPRESSION,
+    FIRST_STATEMENT,
+    ASSIGN_OR_INC_OR_DEC_OR_LPAREN,
+    FIRST_ACTUAL_PARAMETERS,
+    FIRST_CASE,
+    FIRST_CASE_LABELS,
+    FIRST_EXPRESSION_OR_RANGE,
+    FIRST_RELATION,
+    FIRST_SIMPLE_CONST_EXPRESSION,
+    FIRST_CONST_TERM,
+    FIRST_ADD_OPERATOR,
+    FIRST_MUL_OPERATOR,
+    FIRST_CONST_FACTOR,
+    FIRST_DESIGNATOR_TAIL,
+    FIRST_EXPRESSION_LIST,
+    FIRST_SIMPLE_EXPRESSION,
+    FIRST_TERM,
+    FIRST_FACTOR,
+    FIRST_CONST_VALUE_COMPONENT,
+    FIRST_VALUE_COMPONENT
+    ;
+
+// ---------------------------------------------------------------------------
+// Skip sets
+// ---------------------------------------------------------------------------
+
+// TO DO : initialise sets
+
+static m2_tokenset_t
+    SKIP_TO_TYPE_OR_REQ_BINDING,
+    SKIP_TO_REQ_BINDING,
+    FIRST_RECORD_OR_OPAQUE,
+    SKIP_TO_DOT_OR_EOF,
+    SKIP_TO_EOF,
+    SKIP_TO_IMPORT_OR_BLOCK,
+    SKIP_TO_IDENT_OR_DOT_OR_EOF,
+    SKIP_TO_DOT_OR_EOF,
+    SKIP_TO_IDENT,
+    SKIP_TO_SEMI_OR_IMPORT_OR_DEFN_OR_END,
+    SKIP_TO_IMPORT_OR_DEFN_OR_END,
+    SKIP_TO_SEMI_OR_IMPORT_OR_BLOCK,
+    SKIP_TO_RBRACKET,
+    SKIP_TO_RBRACKET_OR_CONST_OR_PROC,
+    SKIP_TO_CONST_OR_PROC,
+    FOLLOW_REQ_BINDING,
+    SKIP_TO_IMPORT,
+    FIRST_IDENT_OR_ASTERISK,
+    SKIP_TO_COMMA_OR_SEMI_OR_IMPORT_OR_BLOCK,
+    FOLLOW_IMPORT_LIST,
+    SKIP_TO_END,
+    SKIP_TO_SEMICOLON,
+    SKIP_TO_TYPE,
+    FOLLOW_CONST_EXPRESSION,
+    SKIP_TO_IDENTIFIER,
+    FOLLOW_TYPE,
+    SKIP_TO_RANGE_OP,
+    SKIP_TO_COMMA_OR_RPAREN,
+    FOLLOW_ENUMERATION_TYPE,
+    SKIP_TO_COMMA_OR_OF,
+    SKIP_TO_OF_OR_IDENT,
+    FOLLOW_ARRAY_TYPE,
+    SKIP_TO_RPAREN,
+    FOLLOW_RECORD_TYPE,
+    FOLLOW_FIELD_LIST_SEQ,
+    SKIP_TO_COMMA_OR_IDENT,
+    FOLLOW_FIELD_LIST,
+    SKIP_TO_LPAREN_OR_IDENT,
+    FOLLOW_SET_TYPE,
+    SKIP_TO_CONST_OR_IDENT,
+    FOLLOW_POINTER_TYPE,
+    FOLLOW_FORMAL_TYPE_LIST,
+    SKIP_TO_SEMI_OR_FOLLOW_PROCEDURE_TYPE,
+    FOLLOW_PROCEDURE_TYPE,
+    FOLLOW_FORMAL_TYPE,
+    FOLLOW_SIMPLE_FORMAL_TYPE,
+    SKIP_TO_FIRST_ATTRIBUTED_TYPE_OR_LPAREN,
+    FOLLOW_VARIADIC_FORMAL_TYPE,
+    FOLLOW_COMMA_OR_FOLLOW_ATTRIBUTED_FORMAL_TYPE,
+    SKIP_TO_COLON,
+    FOLLOW_IDENT_LIST,
+    SKIP_TO_ARRAY_OR_FOLLOW_VARIABLE_DECL,
+    FOLLOW_VARIABLE_DECLARATION,
+    FOLLOW_PROCEDURE_DECLARATION,
+    SKIP_TO_LPAREN_OR_COLON,
+    FOLLOW_FORMAL_PARAM_LIST,
+    SKIP_TO_COLON_OR_IDENT_OR_FOLLOW_PROCEDURE_HEADER,
+    FOLLOW_PROCEDURE_HEADER,
+    FOLLOW_FORMAL_PARAMS,
+    SKIP_TO_RBRACKET_OR_OF,
+    SKIP_TO_OF,
+    FOLLOW_SIMPLE_FORMAL_PARAMS,
+    FOLLOW_VARIADIC_FORMAL_PARAMS,
+    FOLLOW_STATEMENT,
+    FOLLOW_ASSIGNMENT_OR_PROCEDURE_CALL,
+    FOLLOW_EXPRESSION,
+    FOLLOW_STATEMENT_SEQ,
+    FOLLOW_IF_STATEMENT,
+    FOLLOW_CASE,
+    FOLLOW_CASE_STATEMENT,
+    FOLLOW_CASE_LABELS,
+    FOLLOW_WHILE_STATEMENT,
+    FOLLOW_REPEAT_STATEMENT,
+    FOLLOW_LOOP_STATEMENT,
+    FOLLOW_FOR_STATEMENT,
+    FOLLOW_SIMPLE_CONST_EXPRESSION,
+    FOLLOW_CONST_TERM,
+    SKIP_TO_COMMA,
+    FOLLOW_DESIGNATOR_TAIL,
+    FOLLOW_SIMPLE_EXPRESSION,
+    FOLLOW_CONST_FACTOR,
+    FOLLOW_TERM,
+    FOLLOW_FACTOR,
+    FOLLOW_CONST_VALUE_COMPONENT,
+    FOLLOW_VALUE_COMPONENT,
+    FOLLOW_QUALIDENT
+    ;
 
 // ===========================================================================
 // P U B L I C   F U N C T I O N S
@@ -129,8 +290,7 @@ m2_parser_t m2_new_parser(FILE *infile,
     } // end if
     
     // obtain newly allocated filename string
-    p->filename = m2_filename_string_from_path(infile,
-                                        DEFAULT_FILENAMING, &p->source_type);
+    p->filename = EMPTY_STRING; // FIX ME
     
     // bail out if allocation failed
     if (p->filename == NULL) {
@@ -162,8 +322,10 @@ m2_parser_t m2_new_parser(FILE *infile,
 // of the operation is passed back in <status>  unless  NULL is passed in for
 // <status>.
 
+void m2_parse_start_symbol(m2_parser_s *p); /* FORWARD */
+
 void m2_parse_file(m2_parser_t parser, m2_parser_status_t *status) {
-#define this_parser (m2_parser_s *)parser
+    m2_parser_s *this_parser = (m2_parser_s *) parser;
 
     // bail out if parser is NULL
     if (parser == NULL) {
@@ -184,8 +346,6 @@ void m2_parse_file(m2_parser_t parser, m2_parser_status_t *status) {
     } // end if
     
     return;
-    
-#undef this_parser
 } // end m2_parse_file
 
 
@@ -258,9 +418,13 @@ static fmacro m2_token_t _lookahead(m2_parser_s *p) {
 // message is printed to stderr  and  symbols in the input stream  are skipped
 // until the lookahead token matches one of the tokens in <skip_to_tokens>.
 
+static void report_mismatch(m2_parser_s *p,
+    m2_tokenset_iterator_t set_of_expected_tokens); /* FORWARD */
+
 static bool match_token(m2_parser_s *p,
                          m2_token_t expected_token,
                       m2_tokenset_t set_of_tokens_to_skip_to) {
+    m2_tokenset_t set_of_expected_tokens;
     
     // consume lookahead if it matches expected token
     if (p->lookahead_sym.token == expected_token) {
@@ -269,12 +433,16 @@ static bool match_token(m2_parser_s *p,
         return true;
     }
     else /* syntax error */ {
+        
+        // build tokenset from expected token
+        set_of_expected_tokens = m2_tokenset_from_list(expected_token, 0);
+        
         // report error
-        report_mismatch(p, expected_token, 0);
+        report_mismatch(p, set_of_expected_tokens);
         
         // skip symbols until the lookahead symbol matches skipset
-        while NOT (m2_tokenset_is_element(set_of_tokens_to_skip_to,
-                                          p->lookahead_sym.token)) {
+        while (NOT (m2_tokenset_is_element(set_of_tokens_to_skip_to,
+                                          p->lookahead_sym.token))) {
             _getsym(p);
         } // end while
         
@@ -312,11 +480,11 @@ static bool match_token_in_set(m2_parser_s *p,
     }
     else /* syntax error */ {
         // report error
-        report_mismatch(p, p->lookahead_sym.token, 0);
+        report_mismatch(p, set_of_expected_tokens);
         
         // skip symbols until the lookahead symbol matches followset
-        while NOT (m2_tokenset_is_element(set_of_tokens_to_skip_to,
-                                          p->lookahead_sym.token)) {
+        while (NOT (m2_tokenset_is_element(set_of_tokens_to_skip_to,
+                                          p->lookahead_sym.token))) {
             _getsym(p);
         } // end while
         
@@ -343,7 +511,7 @@ static void report_mismatch(m2_parser_s *p,
     m2_lexer_status_t status;
     m2_token_t token;
     
-    if (expected_tokens == NULL) return;
+    if (set_of_expected_tokens == NULL) return;
     
     token_count = m2_tokenset_iterator_token_count(set_of_expected_tokens);
     
@@ -373,6 +541,18 @@ static void report_mismatch(m2_parser_s *p,
 } // end report_mismatch
 
 
+// ---------------------------------------------------------------------------
+// private function: fatal_error( )
+// ---------------------------------------------------------------------------
+//
+// Reports fatal error and aborts
+
+void fatal_error() {
+    printf("fatal error: aborted\n");
+    exit(1); // FIX ME
+} // end fatal_error
+
+
 // ===========================================================================
 // P R O D U C T I O N   R U L E S
 // ===========================================================================
@@ -381,6 +561,8 @@ static void report_mismatch(m2_parser_s *p,
 // --------------------------------------------------------------------------
 // start symbol
 // --------------------------------------------------------------------------
+
+m2_token_t m2_compilation_unit(m2_parser_s *p); /* FORWARD */
 
 void m2_parse_start_symbol(m2_parser_s *p) {
     m2_token_t token;
@@ -394,7 +576,7 @@ void m2_parse_start_symbol(m2_parser_s *p) {
         } // end if
     }
     else if (p->source_type == SOURCE_TYPE_DEF) {
-        if (token != TOKEN_DEFINITION) && (token != TOKEN_PROTOTYPE)) {
+        if ((token != TOKEN_DEFINITION) && (token != TOKEN_PROTOTYPE)) {
             // illegal start symbol for source type DEF
             fatal_error(); // abort
         } // end if
@@ -423,7 +605,12 @@ void m2_parse_start_symbol(m2_parser_s *p) {
 //  prototype |
 //  program_module | definition_of_module | implementation_of_module
 
-m2_token_t m2_compilation_unit(m2_parser_t *p) {
+m2_token_t m2_prototype(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_program_module(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_definition_of_module(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_implementation_of_module(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_compilation_unit(m2_parser_s *p) {
         
     switch(_lookahead(p)) {
         case TOKEN_PROTOTYPE :
@@ -454,8 +641,10 @@ m2_token_t m2_compilation_unit(m2_parser_t *p) {
 //  TYPE "=" ( RECORD | OPAQUE RECORD? ( ":=" literalType )? ) ";"
 //  ( ASSOCIATIVE ";" )? requiredBinding* END prototypeId "."
 
-m2_token_t m2_prototype(m2_parser_t *p) {
-    m2_token_t token;
+m2_token_t m2_required_binding(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_literal_type(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_prototype(m2_parser_s *p) {
     
     // PROTOTYPE
     _getsym(p);
@@ -534,7 +723,7 @@ m2_token_t m2_prototype(m2_parser_t *p) {
         _getsym(p);
         
         // check against name in prototype header
-        *** TO DO ***
+        // *** TO DO ***
         
     } // end prototypeId
     
@@ -554,7 +743,12 @@ m2_token_t m2_prototype(m2_parser_t *p) {
 //  MODULE moduleId ( "[" constExpression "]" )? ";"
 //  importList* block moduleId "."
 
-m2_token_t m2_program_module(m2_parser_t *p) {
+m2_token_t m2_const_expression(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_import_list(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_block(m2_parser_s *p); /* FORWARD */
+
+
+m2_token_t m2_program_module(m2_parser_s *p) {
         
     // MODULE
     _getsym(p);
@@ -564,7 +758,7 @@ m2_token_t m2_program_module(m2_parser_t *p) {
         _getsym(p); // consume moduleId
         
         // store module name
-        *** TO DO ***
+        // *** TO DO ***
         
         // "["
         if (_lookahead(p) == TOKEN_LBRACKET) {
@@ -608,7 +802,7 @@ m2_token_t m2_program_module(m2_parser_t *p) {
         _getsym(p);
         
         // check against name in module header
-        *** TO DO ***
+        // *** TO DO ***
         
     } // end moduleId
     
@@ -628,7 +822,9 @@ m2_token_t m2_program_module(m2_parser_t *p) {
 //  DEFINITION MODULE moduleId ( "[" prototypeId "]" )? ";"
 //  importList* definition* END moduleId "."
 
-m2_token_t m2_definition_of_module(m2_parser_t *p) {
+m2_token_t m2_definition(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_definition_of_module(m2_parser_s *p) {
     
     // DEFINITION
     _getsym(p);
@@ -645,7 +841,7 @@ m2_token_t m2_definition_of_module(m2_parser_t *p) {
         _getsym(p);
         
         // store module name
-        *** TO DO ***
+        // *** TO DO ***
         
         // "["
         if (_lookahead(p) == TOKEN_LBRACKET) {
@@ -696,7 +892,7 @@ m2_token_t m2_definition_of_module(m2_parser_t *p) {
         _getsym(p);
         
         // check against name in module header
-        *** TO DO ***
+        // *** TO DO ***
         
     } // end moduleId
     
@@ -715,7 +911,7 @@ m2_token_t m2_definition_of_module(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  IMPLEMENTATION programModule
 
-m2_token_t m2_implementation_of_module(m2_parser_t *p) {
+m2_token_t m2_implementation_of_module(m2_parser_s *p) {
     
     // IMPLEMENTATION
     _getsym(p);
@@ -736,7 +932,9 @@ m2_token_t m2_implementation_of_module(m2_parser_t *p) {
 //  ( CONST "[" bindableIdent "] |
 //    PROCEDURE "[" ( bindableOperator | bindableIdent ) "]" ) ";"
 
-m2_token_t m2_required_binding(m2_parser_t *p) {
+m2_token_t m2_bindable_operator(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_required_binding(m2_parser_s *p) {
     
     switch (_lookahead(p)) {
         // CONST
@@ -782,7 +980,7 @@ m2_token_t m2_required_binding(m2_parser_t *p) {
                 _getsym(p);
                 
                 // check identifier
-                *** TO DO ***
+                // *** TO DO ***
             }
             else {
                 // syntax error: expected bindable operator or ident
@@ -817,7 +1015,7 @@ m2_token_t m2_required_binding(m2_parser_t *p) {
 //  DIV | MOD | IN | FOR |
 //  ":=" | "?" | "!" | "~" | "+" | "-" | "*" | "/" | "=" | "<" | ">"
 
-m2_token_t m2_bindable_operator(m2_parser_t *p) {
+m2_token_t m2_bindable_operator(m2_parser_s *p) {
     
     switch (_lookahead(p)) {
         case TOKEN_DIV :
@@ -874,13 +1072,18 @@ m2_token_t m2_bindable_operator(m2_parser_t *p) {
 } // end m2_bindable_operator
 
 
+m2_token_t m2_literal_type(m2_parser_s *p) {
+    return _lookahead(p);
+} // end m2_literal_type;
+
+
 // --------------------------------------------------------------------------
 // #8 import_list
 // --------------------------------------------------------------------------
 //  ( FROM moduleId IMPORT ( identList | "*" ) |
 //    IMPORT ident "+"? ( "," ident "+"? )* ) ";"
 
-m2_token_t m2_import_list(m2_parser_t *p) {
+m2_token_t m2_import_list(m2_parser_s *p) {
     
     switch (_lookahead(p)) {
         
@@ -977,7 +1180,9 @@ m2_token_t m2_import_list(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  definition* ( BEGIN statementSequence )? END
 
-m2_token_t m2_block(m2_parser_t *p) {
+m2_token_t m2_statement_sequence(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_block(m2_parser_s *p) {
     
     // definition*
     while (m2_tokenset_is_element(FIRST_DEFINITION, _lookahead(p))) {
@@ -1015,7 +1220,12 @@ m2_token_t m2_block(m2_parser_t *p) {
 //  VAR ( variableDeclaration ";" )* |
 //  procedureDeclaration ";"
 
-m2_token_t m2_declaration(m2_parser_t *p) {
+m2_token_t m2_const_declaration(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_type(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_variable_declaration(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_procedure_declaration(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_declaration(m2_parser_s *p) {
     
     switch (_lookahead(p)) {
         
@@ -1115,7 +1325,9 @@ m2_token_t m2_declaration(m2_parser_t *p) {
 //  VAR ( variableDeclaration ";" )* |
 //  procedureHeader ";"
 
-m2_token_t m2_definition(m2_parser_t *p) {
+m2_token_t m2_procedure_header(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_definition(m2_parser_s *p) {
     
     switch (_lookahead(p)) {
             
@@ -1123,11 +1335,15 @@ m2_token_t m2_definition(m2_parser_t *p) {
         case TOKEN_CONST :
             _getsym(p);
             
+            // TO DO
+            
             break;
             
             // TYPE
         case TOKEN_TYPE :
             _getsym(p);
+            
+            // TO DO
             
             break;
             
@@ -1135,12 +1351,13 @@ m2_token_t m2_definition(m2_parser_t *p) {
         case TOKEN_VAR :
             _getsym(p);
             
+            // TO DO
+            
             break;
             
             // PROCEDURE
         case TOKEN_PROCEDURE :
-            _getsym(p);
-            
+            m2_procedure_header(p);
             break;
             
         default :
@@ -1157,7 +1374,7 @@ m2_token_t m2_definition(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  ident "=" constExpression
 
-m2_token_t m2_const_declaration(m2_parser_t *p) {
+m2_token_t m2_const_declaration(m2_parser_s *p) {
     
     // ident
     _getsym(p);
@@ -1185,7 +1402,15 @@ m2_token_t m2_const_declaration(m2_parser_t *p) {
 //  ( ALIAS | range ) OF namedType | enumerationType |
 //  arrayType | recordType | setType | pointerType | procedureType
 
-m2_token_t m2_type(m2_parser_t *p) {
+m2_token_t m2_range(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_enumeration_type(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_array_type(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_record_type(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_set_type(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_pointer_type(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_procedure_type(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_type(m2_parser_s *p) {
     
     if (_lookahead(p) == TOKEN_ALIAS) {
         _getsym(p);
@@ -1249,7 +1474,7 @@ m2_token_t m2_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  "[" constExpression ".." constExpression "]"
 
-m2_token_t m2_range(m2_parser_t *p) {
+m2_token_t m2_range(m2_parser_s *p) {
     
     // "["
     _getsym(p);
@@ -1282,7 +1507,9 @@ m2_token_t m2_range(m2_parser_t *p) {
 //  "(" ( ( "+" namedType ) | ident )
 //        ( "," ( ( "+" namedType ) | ident ) )* ")"
 
-m2_token_t m2_enumeration_type(m2_parser_t *p) {
+m2_token_t m2_enumeration_component(m2_parser_s *p); /* FOWARD */
+
+m2_token_t m2_enumeration_type(m2_parser_s *p) {
 
     // "("
     _getsym(p);
@@ -1321,7 +1548,7 @@ m2_token_t m2_enumeration_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  ( "+" namedType | ident )
 
-m2_token_t m2_enumeration_component(m2_parser_t *p) {
+m2_token_t m2_enumeration_component(m2_parser_s *p) {
     
     // "+"
     if (_lookahead(p) == TOKEN_PLUS_OP) {
@@ -1353,7 +1580,7 @@ m2_token_t m2_enumeration_component(m2_parser_t *p) {
 //  ( ARRAY constComponentCount ( "," constComponentCount )* |
 //    ASSOCIATIVE ARRAY ) OF namedType
 
-m2_token_t m2_array_type(m2_parser_t *p) {
+m2_token_t m2_array_type(m2_parser_s *p) {
     
     // ARRAY
     if (_lookahead(p) == TOKEN_ARRAY) {
@@ -1417,7 +1644,9 @@ m2_token_t m2_array_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  RECORD ( "(" baseType ")" )? fieldListSequence? END
 
-m2_token_t m2_record_type(m2_parser_t *p) {
+m2_token_t m2_field_list_sequence(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_record_type(m2_parser_s *p) {
     
     // RECORD
     _getsym(p);
@@ -1447,7 +1676,7 @@ m2_token_t m2_record_type(m2_parser_t *p) {
     } // end fieldListSequence?
     
     // END
-    if (match_token(p, TOKEN_END, FOLLOW_RECORS_TYPE)) {
+    if (match_token(p, TOKEN_END, FOLLOW_RECORD_TYPE)) {
         _getsym(p);
         
     } // end END
@@ -1461,7 +1690,9 @@ m2_token_t m2_record_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  fieldList ( ";" fieldList )*
 
-m2_token_t m2_field_list_sequence(m2_parser_t *p) {
+m2_token_t m2_field_list(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_field_list_sequence(m2_parser_s *p) {
     
     // fieldList
     m2_field_list(p);
@@ -1489,7 +1720,7 @@ m2_token_t m2_field_list_sequence(m2_parser_t *p) {
 //  ( ( "," ident )+ ":" namedType |
 //    ":" ( ARRAY determinantField OF )? namedType )
 
-m2_token_t m2_field_list(m2_parser_t *p) {
+m2_token_t m2_field_list(m2_parser_s *p) {
     
     // ident
     _getsym(p);
@@ -1499,7 +1730,7 @@ m2_token_t m2_field_list(m2_parser_t *p) {
         _getsym(p);
         
         // ident
-        if (match_token(p, TOKEN_IDENTIFIER, SKIPT_TO_COMMA_OR_IDENT)) {
+        if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_COMMA_OR_IDENT)) {
             _getsym(p);
             
         } // end ident
@@ -1518,7 +1749,7 @@ m2_token_t m2_field_list(m2_parser_t *p) {
         
         // ":"
         if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_IDENT)) {
-            _getstm(p);
+            _getsym(p);
             
         } // end ":"
         
@@ -1568,7 +1799,9 @@ m2_token_t m2_field_list(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  SET OF ( namedEnumType | "(" identList ")" )
 
-m2_token_t m2_set_type(m2_parser_t *p) {
+m2_token_t m2_ident_list(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_set_type(m2_parser_s *p) {
     
     // SET
     _getsym(p);
@@ -1619,7 +1852,7 @@ m2_token_t m2_set_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  POINTER TO CONST? namedType
 
-m2_token_t m2_pointer_type(m2_parser_t *p) {
+m2_token_t m2_pointer_type(m2_parser_s *p) {
     
     // POINTER
     _getsym(p);
@@ -1651,7 +1884,9 @@ m2_token_t m2_pointer_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  PROCEDURE ( "(" formalTypeList ")" )? ( ":" returnedType )?
 
-m2_token_t m2_procedure_type(m2_parser_t *p) {
+m2_token_t m2_formal_type_list(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_procedure_type(m2_parser_s *p) {
     
     // PROCEDURE
     _getsym(p);
@@ -1697,7 +1932,9 @@ m2_token_t m2_procedure_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  formalType ( "," formalType )*
 
-m2_token_t m2_formal_type_list(m2_parser_t *p) {
+m2_token_t m2_formal_type(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_formal_type_list(m2_parser_s *p) {
     
     // formalType
     m2_formal_type(p);
@@ -1723,13 +1960,17 @@ m2_token_t m2_formal_type_list(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  attributedFormalType | variadicFormalType
 
-m2_token_t m2_formal_type(m2_parser_t *p) {
+m2_token_t m2_attributed_formal_type(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_variadic_formal_type(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_formal_type(m2_parser_s *p) {
+    m2_token_t token = _lookahead(p);
     
     // attributedFormalType | variadicFormalType
-    if (m2_tokenset_is_element(p, FIRST_ATTRIBUTED_FORMAL_TYPE)) {
+    if (m2_tokenset_is_element(FIRST_ATTRIBUTED_FORMAL_TYPE, token)) {
         m2_attributed_formal_type(p);
     }
-    else if (m2_tokenset_is_element(p, FIRST_VARIADIC_FORMAL_TYPE)) {
+    else if (m2_tokenset_is_element(FIRST_VARIADIC_FORMAL_TYPE, token)) {
         m2_variadic_formal_type(p);
     }
     else {
@@ -1746,7 +1987,9 @@ m2_token_t m2_formal_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  ( CONST | VAR )? simpleFormalType
 
-m2_token_t m2_attributed_formal_type(m2_parser_t *p) {
+m2_token_t m2_simple_formal_type(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_attributed_formal_type(m2_parser_s *p) {
     
     // ( CONST | VAR )?
     if (_lookahead(p) == TOKEN_CONST) {
@@ -1774,7 +2017,7 @@ m2_token_t m2_attributed_formal_type(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  ( CAST? ARRAY OF )? namedType
 
-m2_token_t m2_simple_formal_type(m2_parser_t *p) {
+m2_token_t m2_simple_formal_type(m2_parser_s *p) {
     
     // ( CAST ARRAY OF )?
     if (_lookahead(p) == TOKEN_CAST) {
@@ -1823,7 +2066,7 @@ m2_token_t m2_simple_formal_type(m2_parser_t *p) {
 //  ( attributedFormalType |
 //    "(" attributedFormalType ( "," attributedFormalType )* ")" )
 
-m2_token_t m2_variadic_formal_type(m2_parser_t *p) {
+m2_token_t m2_variadic_formal_type(m2_parser_s *p) {
     
     // VARIADIC
     _getsym(p);
@@ -1864,7 +2107,7 @@ m2_token_t m2_variadic_formal_type(m2_parser_t *p) {
             } // end ( "," attributedFormalType )*
             
             // ")"
-            if (match_token(p, TOKEN_RPAREN)) {
+            if (match_token(p, TOKEN_RPAREN, FOLLOW_VARIADIC_FORMAL_TYPE)) {
                 _getsym(p);
                 
             } // end ")"
@@ -1886,7 +2129,7 @@ m2_token_t m2_variadic_formal_type(m2_parser_t *p) {
 //  ident ( "[" machineAddress "]" | "," identList )?
 //  ":" ( ARRAY constComponentCount OF )? namedType
 
-m2_token_t m2_variable_declaration(m2_parser_t *p) {
+m2_token_t m2_variable_declaration(m2_parser_s *p) {
     
     // ident
     _getsym(p);
@@ -1905,7 +2148,7 @@ m2_token_t m2_variable_declaration(m2_parser_t *p) {
             } // machineAddress
             
             // "]"
-            if (match_token(p, TOKEN_RBRACKET)) {
+            if (match_token(p, TOKEN_RBRACKET, SKIP_TO_COLON)) {
                 _getsym(p);
                 
             } // "]"
@@ -1929,7 +2172,7 @@ m2_token_t m2_variable_declaration(m2_parser_t *p) {
     } // end first option
     
     // ":"
-    if (match_token(p, TOKEN_SEMICOLON,
+    if (match_token(p, TOKEN_COLON,
                        SKIP_TO_ARRAY_OR_FOLLOW_VARIABLE_DECL)) {
         _getsym(p);
     } // end ":"
@@ -1967,7 +2210,7 @@ m2_token_t m2_variable_declaration(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  procedureHeader ";" block ident
 
-m2_token_t m2_procedure_declaration(m2_parser_t *p) {
+m2_token_t m2_procedure_declaration(m2_parser_s *p) {
     
     // procedureHeader
     m2_procedure_header(p);
@@ -2000,7 +2243,9 @@ m2_token_t m2_procedure_declaration(m2_parser_t *p) {
 //  PROCEDURE ( "[" ( "::" | bindableOperator | bindableIdent ) "]" )?
 //  ident ( "(" formalParamList ")" )? ( ":" returnedType )?
 
-m2_token_t m2_procedure_header(m2_parser_t *p) {
+m2_token_t m2_formal_param_list(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_procedure_header(m2_parser_s *p) {
     
     // PROCEDURE
     _getsym(p);
@@ -2074,7 +2319,7 @@ m2_token_t m2_procedure_header(m2_parser_t *p) {
         if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_PROCEDURE_HEADER)) {
             _getsym(p);
             
-        } end returnedType
+        } // end returnedType
         
     } // end ( ":" returnedType )?
     
@@ -2087,7 +2332,9 @@ m2_token_t m2_procedure_header(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  formalParams ( ";" formalParams )*
 
-m2_token_t m2_formal_param_list(m2_parser_t *p) {
+m2_token_t m2_formal_params(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_formal_param_list(m2_parser_s *p) {
     
     // formalParams
     m2_formal_params(p);
@@ -2113,13 +2360,17 @@ m2_token_t m2_formal_param_list(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  simpleFormalParams | variadicFormalParams
 
-m2_token_t m2_formal_params(m2_parser_t *p) {
+m2_token_t m2_simple_formal_params(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_variadic_formal_params(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_formal_params(m2_parser_s *p) {
+    m2_token_t token = _lookahead(p);
     
     // simpleFormalParams | variadicFormalParams
-    if (m2_tokenset_is_element(p, FIRST_SIMPLE_FORMAL_PARAMS)) {
+    if (m2_tokenset_is_element(FIRST_SIMPLE_FORMAL_PARAMS, token)) {
         m2_simple_formal_params(p);
     }
-    else if (m2_tokenset_is_element(p, FIRST_VARIADIC_FORMAL_PARAMS)) {
+    else if (m2_tokenset_is_element(FIRST_VARIADIC_FORMAL_PARAMS, token)) {
         m2_variadic_formal_params(p);
     }
     else {
@@ -2136,7 +2387,7 @@ m2_token_t m2_formal_params(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  ( CONST | VAR )? identList ":" simpleFormalType
 
-m2_token_t m2_simple_formal_params(m2_parser_t *p) {
+m2_token_t m2_simple_formal_params(m2_parser_s *p) {
     
     // ( CONST | VAR )?
     if (_lookahead(p) == TOKEN_CONST) {
@@ -2178,7 +2429,7 @@ m2_token_t m2_simple_formal_params(m2_parser_t *p) {
 //  ( simpleFormalType |
 //    "(" simpleFormalParams ( ";" simpleFormalParams )* ")" )
 
-m2_token_t m2_variadic_formal_params(m2_parser_t *p) {
+m2_token_t m2_variadic_formal_params(m2_parser_s *p) {
     
     // VARIADIC
     _getsym(p);
@@ -2193,7 +2444,7 @@ m2_token_t m2_variadic_formal_params(m2_parser_t *p) {
         
         // variadicTerminator
         if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
-                               SKIP_TO_RBRACKET_OR_OF)) {
+                                  SKIP_TO_RBRACKET_OR_OF)) {
             m2_const_expression(p);
             
         } // end variadicTerminator
@@ -2268,7 +2519,16 @@ m2_token_t m2_variadic_formal_params(m2_parser_t *p) {
 //  whileStatement | repeatStatement | loopStatement |
 //  forStatement | RETURN expression? | EXIT 
 
-m2_token_t m2_statement(m2_parser_t *p) {
+m2_token_t m2_assignment_or_procedure_call(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_if_statement(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_case_statement(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_while_statement(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_repeat_statement(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_loop_statement(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_for_statement(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_expression(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_statement(m2_parser_s *p) {
     
     // assignmentOrProcedureCall
     if (m2_tokenset_is_element(FIRST_ASSIGNMENT_OR_PROCEDURE_CALL,
@@ -2329,7 +2589,7 @@ m2_token_t m2_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  statement ( ";" statement )*
 
-m2_token_t m2_statement_sequence(m2_parser_t *p) {
+m2_token_t m2_statement_sequence(m2_parser_s *p) {
     
     // statement
     m2_statement(p);
@@ -2355,7 +2615,10 @@ m2_token_t m2_statement_sequence(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  designator ( ":=" expression | "++" | "--" | actualParameters )?
 
-m2_token_t m2_assignment_or_procedure_call(m2_parser_t *p) {
+m2_token_t m2_designator(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_actual_params(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_assignment_or_procedure_call(m2_parser_s *p) {
     
     // designator
     m2_designator(p);
@@ -2411,7 +2674,7 @@ m2_token_t m2_assignment_or_procedure_call(m2_parser_t *p) {
 //  ( ELSE statementSequence )?
 //  END
 
-m2_token_t m2_if_statement(m2_parser_t *p) {
+m2_token_t m2_if_statement(m2_parser_s *p) {
     
     // IF
     _getsym(p);
@@ -2485,7 +2748,9 @@ m2_token_t m2_if_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  CASE expression OF case ( "|" case )* ( ELSE statementSequence )? END
 
-m2_token_t m2_case_statement(m2_parser_t *p) {
+m2_token_t m2_case(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_case_statement(m2_parser_s *p) {
     
     // CASE
     _getsym(p);
@@ -2510,7 +2775,7 @@ m2_token_t m2_case_statement(m2_parser_t *p) {
     
     // ( "|" case )*
     while (_lookahead(p) == TOKEN_CASE_LABEL_SEPARATOR) {
-        getsym(p);
+        _getsym(p);
         
         // case
         if (match_token_in_set(p, FIRST_CASE, FOLLOW_CASE)) {
@@ -2547,14 +2812,16 @@ m2_token_t m2_case_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  caseLabels ( "," caseLabels )* ":" statementSequence
 
-m2_token_t m2_case(m2_parser_t *p) {
+m2_token_t m2_case_labels(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_case(m2_parser_s *p) {
     
     // caseLabels
     m2_case_labels(p);
     
     // ( "," caseLabels )*
     while (_lookahead(p) == TOKEN_COMMA) {
-        -getsym(p);
+        _getsym(p);
         
         // caseLabels
         if (match_token_in_set(p, FIRST_CASE_LABELS, FOLLOW_CASE_LABELS)) {
@@ -2573,7 +2840,7 @@ m2_token_t m2_case(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  constExpression ( ".." constExpression )?
 
-m2_token_t m2_case_labels(m2_parser_t *p) {
+m2_token_t m2_case_labels(m2_parser_s *p) {
     
     // constExpression
     m2_const_expression(p);
@@ -2600,7 +2867,7 @@ m2_token_t m2_case_labels(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  WHILE expression DO statementSequence END
 
-m2_token_t m2_while_statement(m2_parser_t *p) {
+m2_token_t m2_while_statement(m2_parser_s *p) {
     
     // WHILE
     _getsym(p);
@@ -2638,7 +2905,7 @@ m2_token_t m2_while_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  REPEAT statementSequence UNTIL expression
 
-m2_token_t m2_repeat_statement(m2_parser_t *p) {
+m2_token_t m2_repeat_statement(m2_parser_s *p) {
     
     // REPEAT
     _getsym(p);
@@ -2670,7 +2937,7 @@ m2_token_t m2_repeat_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  LOOP statementSequence END
 
-m2_token_t m2_loop_statement(m2_parser_t *p) {
+m2_token_t m2_loop_statement(m2_parser_s *p) {
     
     // LOOP
     _getsym(p);
@@ -2696,7 +2963,7 @@ m2_token_t m2_loop_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  FOR controlVariable DESCENDING? IN ( expression | range OF namedType )
 
-m2_token_t m2_for_statement(m2_parser_t *p) {
+m2_token_t m2_for_statement(m2_parser_s *p) {
     
     // FOR
     _getsym(p);
@@ -2754,7 +3021,10 @@ m2_token_t m2_for_statement(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  simpleConstExpr ( relation simpleConstExpr )?
 
-m2_token_t m2_const_expression(m2_parser_t *p) {
+m2_token_t m2_relation(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_simple_const_expression(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_const_expression(m2_parser_s *p) {
     
     // simpleConstExpr
     m2_simple_const_expression(p);
@@ -2781,7 +3051,7 @@ m2_token_t m2_const_expression(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  "=" | "#" | "<" | "<=" | ">" | ">=" | "IN"
 
-m2_token_t m2_relation(m2_parser_t *p) {
+m2_token_t m2_relation(m2_parser_s *p) {
     
     switch (_lookahead(p)) {
         
@@ -2841,7 +3111,10 @@ m2_token_t m2_relation(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  ( "+" | "-" )? constTerm ( addOperator constTerm )*
 
-m2_token_t m2_simple_const_expression(m2_parser_t *p) {
+m2_token_t m2_const_term(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_add_operator(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_simple_const_expression(m2_parser_s *p) {
     
     // ( "+" | "-" )?
     if (_lookahead(p) == TOKEN_PLUS_OP) {
@@ -2880,7 +3153,7 @@ m2_token_t m2_simple_const_expression(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  "+" | "-" | OR
 
-m2_token_t m2_add_operator(m2_parser_t *p) {
+m2_token_t m2_add_operator(m2_parser_s *p) {
     
     switch (_lookahead(p)) {
         
@@ -2916,7 +3189,10 @@ m2_token_t m2_add_operator(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  constFactor ( mulOperator constFactor )*
 
-m2_token_t m2_const_term(m2_parser_t *p) {
+m2_token_t m2_const_factor(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_mul_operator(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_const_term(m2_parser_s *p) {
     
     // constFactor
     m2_const_factor(p);
@@ -2942,7 +3218,7 @@ m2_token_t m2_const_term(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  "*" | "/" | DIV | MOD | AND
 
-m2_token_t m2_mul_operator(m2_parser_t *p) {
+m2_token_t m2_mul_operator(m2_parser_s *p) {
     
     switch (_lookahead(p)) {
             
@@ -2992,11 +3268,14 @@ m2_token_t m2_mul_operator(m2_parser_t *p) {
 //    "(" constExpression ")" | CAST "(" namedType "," constExpression ")" )
 //  ( "::" namedType )? | NOT constFactor
 
-m2_token_t m2_const_factor(m2_parser_t *p) {
+m2_token_t m2_qualident(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_const_structured_value(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_const_factor(m2_parser_s *p) {
     
     // NOT constFactor
     if (_lookahead(p) == TOKEN_NOT) {
-        _getym(p);
+        _getsym(p);
         
         // constFactor
         if (match_token_in_set(p, FIRST_CONST_FACTOR, FOLLOW_CONST_FACTOR)) {
@@ -3116,7 +3395,9 @@ m2_token_t m2_const_factor(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  qualident designatorTail?
 
-m2_token_t m2_designator(m2_parser_t *p) {
+m2_token_t m2_designator_tail(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_designator(m2_parser_s *p) {
     
     // qualident
     m2_qualident(p);
@@ -3136,7 +3417,9 @@ m2_token_t m2_designator(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  ( ( "[" expressionList "]" | "^" ) ( "." ident )* )+
 
-m2_token_t m2_designator_tail(m2_parser_t *p) {
+m2_token_t m2_expression_list(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_designator_tail(m2_parser_s *p) {
     
     do {
         
@@ -3191,7 +3474,7 @@ m2_token_t m2_designator_tail(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  expression ( "," expression )*
 
-m2_token_t m2_expression_list(m2_parser_t *p) {
+m2_token_t m2_expression_list(m2_parser_s *p) {
     
     // expression
     m2_expression(p);
@@ -3217,7 +3500,9 @@ m2_token_t m2_expression_list(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  simpleExpression ( relation simpleExpression )?
 
-m2_token_t m2_expression(m2_parser_t *p) {
+m2_token_t m2_simple_expression(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_expression(m2_parser_s *p) {
     
     // simpleExpression
     m2_simple_expression(p);
@@ -3244,7 +3529,9 @@ m2_token_t m2_expression(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  ( "+" | "-" )? term ( addOperator term )*
 
-m2_token_t m2_simple_expression(m2_parser_t *p) {
+m2_token_t m2_term(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_simple_expression(m2_parser_s *p) {
     
     // ( "+" | "-" )?
     if (_lookahead(p) == TOKEN_PLUS_OP) {
@@ -3283,7 +3570,9 @@ m2_token_t m2_simple_expression(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  factor ( mulOperator factor )*
 
-m2_token_t m2_term(m2_parser_t *p) {
+m2_token_t m2_factor(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_term(m2_parser_s *p) {
     
     // factor
     m2_factor(p);
@@ -3311,11 +3600,14 @@ m2_token_t m2_term(m2_parser_t *p) {
 //    "(" constExpression ")" | CAST "(" namedType "," constExpression ")" )
 //  ( "::" namedType )? | NOT constFactor
 
-m2_token_t m2_factor(m2_parser_t *p) {
+m2_token_t m2_structured_value(m2_parser_s *p); /* FORWARD */
+m2_token_t m2_designator_or_procedure_call(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_factor(m2_parser_s *p) {
     
     // NOT factor
     if (_lookahead(p) == TOKEN_NOT) {
-        _getym(p);
+        _getsym(p);
         
         // factor
         if (match_token_in_set(p, FIRST_FACTOR, FOLLOW_FACTOR)) {
@@ -3435,7 +3727,7 @@ m2_token_t m2_factor(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  qualident designatorTail? actualParameters?
 
-m2_token_t m2_designator_or_procedure_call(m2_parser_t *p) {
+m2_token_t m2_designator_or_procedure_call(m2_parser_s *p) {
     
     // qualident
     m2_qualident(p);
@@ -3461,7 +3753,7 @@ m2_token_t m2_designator_or_procedure_call(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  "(" expressionList? ")"
 
-m2_token_t m2_actual_params(m2_parser_t *p) {
+m2_token_t m2_actual_params(m2_parser_s *p) {
     
     // "("
     _getsym(p);
@@ -3487,7 +3779,9 @@ m2_token_t m2_actual_params(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  "{" ( constValueComponent ( "," constValueComponent )* )? "}"
 
-m2_token_t m2_const_structured_value(m2_parser_t *p) {
+m2_token_t m2_const_value_component(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_const_structured_value(m2_parser_s *p) {
     
     // "{"
     _getsym(p);
@@ -3523,7 +3817,7 @@ m2_token_t m2_const_structured_value(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  constExpression ( ( BY | ".." ) constExpression )?
 
-m2_token_t m2_const_value_component(m2_parser_t *p) {
+m2_token_t m2_const_value_component(m2_parser_s *p) {
     
     // constExpression
     m2_const_expression(p);
@@ -3550,7 +3844,9 @@ m2_token_t m2_const_value_component(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  "{" ( valueComponent ( "," valueComponent )* )? "}"
 
-m2_token_t m2_structured_value(m2_parser_t *p) {
+m2_token_t m2_value_component(m2_parser_s *p); /* FORWARD */
+
+m2_token_t m2_structured_value(m2_parser_s *p) {
     
     // "{"
     _getsym(p);
@@ -3586,7 +3882,7 @@ m2_token_t m2_structured_value(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  expression ( ( BY | ".." ) constExpression )?
 
-m2_token_t m2_value_component(m2_parser_t *p) {
+m2_token_t m2_value_component(m2_parser_s *p) {
     
     // expression
     m2_expression(p);
@@ -3613,7 +3909,7 @@ m2_token_t m2_value_component(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  ident ( "." ident )*
 
-m2_token_t m2_qualident(m2_parser_t *p) {
+m2_token_t m2_qualident(m2_parser_s *p) {
 
     // ident
     _getsym(p);
@@ -3639,7 +3935,7 @@ m2_token_t m2_qualident(m2_parser_t *p) {
 // --------------------------------------------------------------------------
 //  ident ( "," ident )*
 
-m2_token_t m2_ident_list(m2_parser_t *p) {
+m2_token_t m2_ident_list(m2_parser_s *p) {
     
     // ident
     _getsym(p);
