@@ -49,6 +49,8 @@ typedef struct /* lexer_input_info_t */ {
 // ---------------------------------------------------------------------------
 
 static const lexer_input_info_t _input_info[] = {
+    { "../../_STANDARD_LIBRARY/ComplexMath.def" },
+    { "../../_STANDARD_LIBRARY/DateTime.def" }
 }; /* _input_info */
 
 
