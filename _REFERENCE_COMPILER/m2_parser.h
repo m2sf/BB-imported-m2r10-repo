@@ -58,7 +58,7 @@
 
 
 // --------------------------------------------------------------------------
-// Opaque lexer handle type
+// Opaque parser handle type
 // --------------------------------------------------------------------------
 //
 // WARNING: Objects of this opaque type should only be accessed through this
