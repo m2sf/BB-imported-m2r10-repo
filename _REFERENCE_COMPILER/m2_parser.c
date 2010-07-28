@@ -42,10 +42,15 @@ typedef struct /* m2_sym_s */ {
     m2_token_t token;
     cardinal lexeme;
     m2_lexer_status_t status;
-    fpos_t pos;
+    file_pos_t pos;
 } m2_sym_s;
 
-#define ZERO_SYMBOL (m2_sym_s) { 0, 0, 0, (fpos_t) 0 }
+
+// ---------------------------------------------------------------------------
+// Zero symbol
+// ---------------------------------------------------------------------------
+
+#define ZERO_SYMBOL (m2_sym_s) { 0, 0, 0, { 0, 0 } }
 
 
 // ---------------------------------------------------------------------------
