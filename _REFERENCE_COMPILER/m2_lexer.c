@@ -998,6 +998,23 @@ static fmacro uchar_t get_prefixed_number(m2_lexer_s *lexer) {
 //  real := digit+ "." digit+ | digit "." digit+ "E" ( "+" | "-" )? digit+ ;
 //  digit := "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 //  uppercaseBase16Digit := digit | "A" | "B" | "C" | "D" | "E" | "F" ;
+//
+// pre-conditions:
+//
+//  o  lexer is an initialised lexer object.
+//  o  the value of lexer->lexeme.string[0] is a digit.
+//  o  the value of lexer->lexeme.length is 1.
+//  o  the literal is well-formed, conforming to the syntax given above.
+//
+// post-conditions:
+//
+//  o  lexer->lexeme.string contains the literal,
+//     followed by a C string terminator (ASCII NUL).
+//  o  lexer->lexeme.length contains the length of lexer->lexeme.string.
+//  o  lexer->token contains TOKEN_NUMERIC_LITERAL.
+//  o  lexer->lexkey contains the key for the lexeme table.
+//  o  lexer->status contains M2_LEXER_STATUS_SUCCESS.
+//  o  the new lookahead character is the character following the literal.
 
 static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
     
@@ -1012,11 +1029,6 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
     if (lexer == NULL) return (uchar_t)0;
 #endif
-    
-    lexer->lexeme.length = 0;
-    lexer->lexkey = HASH_INITIAL;
-    
-    ch = nextchar();
     
     // get all digits until the first non-digit is found or length is exceeded
     ch = get_digits(lexer, &non_binary_digit_count, &non_decimal_digit_count);
@@ -1165,6 +1177,9 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
     } // end if
     
     // terminate the lexeme
+    
+    // Get the last character in the lexeme.
+    final_ch = lexer->lexeme.string[lexer->lexeme.length - 1];
     
     // if well formed, return token, lexeme key and status
     if (IS_DIGIT(final_ch)) {
