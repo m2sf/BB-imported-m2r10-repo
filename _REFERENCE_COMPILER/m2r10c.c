@@ -236,7 +236,8 @@ int main (int argc, const char * argv[]) {
     } // end if
     
     // init parser
-    parser = m2_new_parser(sourcefile, lexeme_table, &p_status);
+    parser = m2_new_parser(sourcefile,
+                           lexeme_table, NULL, NULL, NULL, &p_status);
     
     if (p_status != M2_PARSER_STATUS_SUCCESS) {
         show_error(p_status);

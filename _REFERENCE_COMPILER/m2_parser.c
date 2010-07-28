@@ -22,13 +22,16 @@
  *  
  */
 
-#include "m2_parser.h"
+
+#include "alloc.h"
+
 #include "m2_lexer.h"
 #include "m2_tokens.h"
 #include "m2_tokenset.h"
 #include "m2_ast.h"
+#include "m2_symbol_table.h"
 #include "m2_filenames.h"
-#include "alloc.h"
+#include "m2_parser.h"
 
 
 // ---------------------------------------------------------------------------
@@ -55,7 +58,10 @@ typedef struct /* m2_parser_s */ {
     m2_lexer_t *lexer;
     m2_sym_s current_sym;
     m2_sym_s lookahead_sym;
-    m2_ast_node_t *ast;
+    kvs_table_t lextab;
+    m2_symtab_t symtab;
+    m2_ast_node_t ast;
+    m2_notification_f handler;
     uint16_t warnings;
     uint16_t errors;
 } m2_parser_s;
@@ -66,7 +72,7 @@ typedef struct /* m2_parser_s */ {
 // ===========================================================================
 
 // --------------------------------------------------------------------------
-// function:  m2_new_parser(infile, lextab, status)
+// function:  m2_new_parser(infile, lextab, symtab, ast, handler, status)
 // --------------------------------------------------------------------------
 //
 // Creates  and returns  a  new  parser object  associated  with  source file 
@@ -76,7 +82,10 @@ typedef struct /* m2_parser_s */ {
 // Returns NULL if the parser object could not be created.
 
 m2_parser_t m2_new_parser(FILE *infile,
-             const kvs_table_t *lextab,
+                   kvs_table_t lextab,
+                   m2_symtab_t symtab,
+                 m2_ast_node_t ast,
+             m2_notification_f handler,
             m2_parser_status_t *status) {
     m2_parser_s *p;
     
@@ -85,9 +94,33 @@ m2_parser_t m2_new_parser(FILE *infile,
         ASSIGN_BY_REF(status, M2_PARSER_STATUS_INVALID_REFERENCE);
         return NULL;
     } // end if
+
+    // bail out if lextab is NULL
+    if (lextab == NULL) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_INVALID_LEXTAB_REFERENCE);
+        return NULL;
+    } // end if
+
+    // bail out if symtab is NULL
+    if (symtab == NULL) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_INVALID_SYMTAB_REFERENCE);
+        return NULL;
+    } // end if
+
+    // bail out if ast is NULL
+    if (ast == NULL) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_INVALID_AST_REFERENCE);
+        return NULL;
+    } // end if
+
+    // bail out if handler is NULL
+    if (ast == NULL) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_INVALID_HANDLER);
+        return NULL;
+    } // end if
     
     // allocate memory for parser state
-    p = (m2_parser_s *) malloc(sizeof(m2_parser_s));
+    p = malloc(sizeof(m2_parser_s));
     
     // bail out if allocation failed
     if (p == NULL) {
@@ -96,8 +129,8 @@ m2_parser_t m2_new_parser(FILE *infile,
     } // end if
     
     // obtain newly allocated filename string
-    p->filename =
-    m2_filename_string_from_path(infile, DEFAULT_FILENAMING, &p->source_type);
+    p->filename = m2_filename_string_from_path(infile,
+                                        DEFAULT_FILENAMING, &p->source_type);
     
     // bail out if allocation failed
     if (p->filename == NULL) {
@@ -109,13 +142,51 @@ m2_parser_t m2_new_parser(FILE *infile,
     // initialise
     p->current_sym = ZERO_SYMBOL;
     p->lookahead_sym = ZERO_SYMBOL;
-    p->ast = NULL;
+    p->lextab = lextab;
+    p->symtab = symtab;
+    p->ast = ast;
+    p->handler = handler;
     p->warnings = 0;
     p->errors = 0;
     
     ASSIGN_BY_REF(status, M2_PARSER_STATUS_SUCCESS);
     return (m2_parser_t) p;
 } // end m2_new_parser
+
+
+// --------------------------------------------------------------------------
+// function:  m2_parse_file(parser, status)
+// --------------------------------------------------------------------------
+//
+// Parses the input file  associated with parser object <parser>.  The status
+// of the operation is passed back in <status>  unless  NULL is passed in for
+// <status>.
+
+void m2_parse_file(m2_parser_t parser, m2_parser_status_t *status) {
+#define this_parser (m2_parser_s *)parser
+
+    // bail out if parser is NULL
+    if (parser == NULL) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_INVALID_REFERENCE);
+        return;
+    } // end if
+    
+    m2_parse_start_symbol(this_parser);
+    
+    if (this_parser->errors != 0) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_SYNTAX_ERRORS_FOUND);
+    }
+    else if (this_parser->warnings != 0) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_WARNINGS_REPORTED);
+    }
+    else /* no errors and no warnings */ {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_SUCCESS);
+    } // end if
+    
+    return;
+    
+#undef this_parser
+} // end m2_parse_file
 
 
 // ---------------------------------------------------------------------------
@@ -311,7 +382,7 @@ static void report_mismatch(m2_parser_s *p,
 // start symbol
 // --------------------------------------------------------------------------
 
-m2_parse(m2_parser_t *p) {
+void m2_parse_start_symbol(m2_parser_s *p) {
     m2_token_t token;
     
     token = _lookahead(p);
@@ -342,8 +413,8 @@ m2_parse(m2_parser_t *p) {
         
     } // end if
     
-    return
-} // end m2_parse(p);
+    return;
+} // end m2_parse_start_symbol;
 
 
 // --------------------------------------------------------------------------

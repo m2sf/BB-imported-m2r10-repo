@@ -26,10 +26,35 @@
 #define M2_PARSER_H
 
 
+// --------------------------------------------------------------------------
+// C standard library imports
+// --------------------------------------------------------------------------
+
+// FROM stdio IMPORT FILE;
 #include <stdio.h>
 
+// --------------------------------------------------------------------------
+// Embedded library imports
+// --------------------------------------------------------------------------
+
+// FROM common IMPORT opaque_t;
 #include "common.h"
+
+// FROM KVS IMPORT kvs_table_t;
 #include "KVS.h"
+
+// --------------------------------------------------------------------------
+// Project library imports
+// --------------------------------------------------------------------------
+
+// FROM m2_notifications IMPORT m2_notification_f;
+#include "m2_notifications.h"
+
+// FROM m2_symbol_table IMPORT m2_symtab_t;
+#include "m2_symbol_table.h"
+
+// FROM m2_ast IMPORT m2_ast_node_t;
+#include "m2_ast.h"
 
 
 // --------------------------------------------------------------------------
@@ -56,19 +81,34 @@ typedef /* m2_parser_status_t */ enum {
     // operation completed successfully
     M2_PARSER_STATUS_SUCCESS = 0,
     
-    // invalid pointer to parser object passed
+    // invalid parser object passed
     M2_PARSER_STATUS_INVALID_REFERENCE,
+    
+    // invalid lexeme table object passed
+    M2_PARSER_STATUS_INVALID_LEXTAB_REFERENCE,
+
+    // invalid symbol table object passed
+    M2_PARSER_STATUS_INVALID_SYMTAB_REFERENCE,
+
+    // invalid AST object passed
+    M2_PARSER_STATUS_INVALID_AST_REFERENCE,
+    
+    // invalid notification handler passed
+    M2_PARSER_STATUS_INVALID_HANDLER,
     
     // unable to allocate memory
     M2_PARSER_STATUS_ALLOCATION_FAILED,
     
     // one or more syntax errors encountered
-    M2_PARSER_STATUS_SYNTAX_ERRORS_FOUND
+    M2_PARSER_STATUS_SYNTAX_ERRORS_FOUND,
+    
+    // no errors encountered but warnings reported
+    M2_PARSER_STATUS_WARNINGS_REPORTED
 } m2_parser_status_t;
 
 
 // --------------------------------------------------------------------------
-// function:  m2_new_parser(infile, lextab, status)
+// function:  m2_new_parser(infile, lextab, symtab, ast, handler, status)
 // --------------------------------------------------------------------------
 //
 // Creates  and returns  a  new  parser object  associated  with  source file 
@@ -79,7 +119,21 @@ typedef /* m2_parser_status_t */ enum {
 
 m2_parser_t m2_new_parser(FILE *infile,
                     kvs_table_t lextab,
+                    m2_symtab_t symtab,
+                  m2_ast_node_t ast,
+              m2_notification_f handler,
              m2_parser_status_t *status);
+
+
+// --------------------------------------------------------------------------
+// function:  m2_parse_file(parser, status)
+// --------------------------------------------------------------------------
+//
+// Parses the input file  associated with parser object <parser>.  The status
+// of the operation is passed back in <status>  unless  NULL is passed in for
+// <status>.
+
+void m2_parse_file(m2_parser_t parser, m2_parser_status_t *status);
 
 
 // ---------------------------------------------------------------------------
