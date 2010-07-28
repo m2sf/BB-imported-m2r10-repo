@@ -29,17 +29,15 @@
 #include "m2_build_params.h"
 #include "m2_errmsg.h"
 #include "m2_filenames.h"
+#include "m2_fileio.h"
 #include "m2_parser.h"
 #include "m2_ast.h"
+#include "m2_code_generator.h"
 
 
 // ---------------------------------------------------------------------------
 // Interim declarations due to yet unimplemented module(s)
 // ---------------------------------------------------------------------------
-
-typedef opaque_t m2_codegen_t;
-#define M2_CODEGEN_STATUS_SUCCESS 0
-#define M2_FILEIO_STATUS_SUCCESS 0
 
 
 // ---------------------------------------------------------------------------
@@ -158,7 +156,8 @@ int main (int argc, const char * argv[]) {
     m2_filename_t source_filename, output_filename;
     m2_filename_status_t fn_status;
     m2_parser_status_t p_status;
-    int fio_status, cg_status;
+    m2_codegen_status_t cg_status;
+    m2_fileio_status_t fio_status;
     kvs_table_t lexeme_table;
     m2_parser_t parser; m2_ast_node_t ast; m2_codegen_t cgen;
     
@@ -245,7 +244,7 @@ int main (int argc, const char * argv[]) {
     } // end if
     
     // create new AST root
-    ast = m2_ast_new_root();
+    ast = m2_ast_new_node(0, 0, NULL);
     
     if (ast == NULL) {
         show_error(ERR_ALLOCATION_FAILED);
@@ -253,7 +252,7 @@ int main (int argc, const char * argv[]) {
     } // end if
     
     // invoke parser
-    m2_parser(parser, ast, &p_status);
+    m2_parse_file(parser, &p_status);
     
     if (p_status != M2_PARSER_STATUS_SUCCESS) {
         show_error(p_status);
@@ -279,7 +278,7 @@ int main (int argc, const char * argv[]) {
     } // end if
     
     // invoke code generator
-    cgen = m2_new_codegen(outfile, ast, &cg_status);
+    cgen = m2_new_codegen(outfile, NULL, NULL, NULL, NULL, &cg_status);
     
     if (cg_status != M2_CODEGEN_STATUS_SUCCESS) {
         show_error(cg_status);
@@ -291,7 +290,7 @@ int main (int argc, const char * argv[]) {
     m2_dispose_parser(parser, NULL);
     
     m2_close_file(outfile, NULL);
-    m2_dispose_codegen(cgen);
+    m2_dispose_codegen(cgen, &cg_status);
     
     m2_dispose_filename(sourcefile);
     m2_dispose_filename(outfile);
