@@ -27,14 +27,34 @@
 #define M2_LEXER_H
 
 
+// ---------------------------------------------------------------------------
+// C standard library imports
+// ---------------------------------------------------------------------------
+
+// FROM stdio IMPORT FILE;
+#include <stdio.h>
+
+// ---------------------------------------------------------------------------
+// Embedded library imports
+// ---------------------------------------------------------------------------
+
+// FROM common IMPORT opaque_t, cardinal;
 #include "common.h"
+
+// FROM KVS IMPORT kvs_table_t;
 #include "KVS.h"
+
+// ---------------------------------------------------------------------------
+// Project library imports
+// ---------------------------------------------------------------------------
+
+// FROM m2_tokens IMPORT m2_token_t;
 #include "m2_tokens.h"
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Opaque lexer handle type
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 // WARNING: Objects of this opaque type should only be accessed through this
 // public interface.  DO NOT EVER attempt to bypass the public interface.
@@ -47,24 +67,24 @@
 typedef opaque_t m2_lexer_t;
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Status codes
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 typedef /* m2_lexer_status_t */ enum {
-
+    
     // operation completed successfully
     M2_LEXER_STATUS_SUCCESS = 0,
-
+    
     // invalid pointer to lexer object passed
     M2_LEXER_STATUS_INVALID_REFERENCE,
-
+    
     // unable to allocate memory
     M2_LEXER_STATUS_ALLOCATION_FAILED,
-
+    
     // illegal character found
     M2_LEXER_STATUS_ILLEGAL_CHARACTER,
-
+    
     // literal exceeds maximum length
     M2_LEXER_STATUS_LITERAL_TOO_LONG,
 
@@ -73,18 +93,18 @@ typedef /* m2_lexer_status_t */ enum {
 
     // string literal is missing delimiting quotation
     M2_LEXER_STATUS_STRING_NOT_DELIMITED,
-
+    
     // nested comment exceeds maximum nesting limit
     M2_LEXER_STATUS_COMMENT_NESTING_LIMIT_REACHED,
-
+    
     // EOF found while processing comment
     M2_LEXER_STATUS_EOF_REACHED_WITHIN_COMMENT
 } m2_lexer_status_t;
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // function:  m2_new_lexer(infile, lextab, status)
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 // Creates  and  returns  a  new  lexer object  associated  with  source file 
 // <infile> and lexeme table <lextab>.  The status of the operation is passed
@@ -92,9 +112,10 @@ typedef /* m2_lexer_status_t */ enum {
 //
 // Returns NULL if the lexer object could not be created.
 
-m2_lexer_t m2_new_lexer(FILE * infile,
-                        kvs_table_t lextab,
-                        m2_lexer_status_t *status);
+m2_lexer_t m2_new_lexer(FILE *infile,
+                 kvs_table_t lextab,
+           m2_lexer_status_t *status);
+
 
 // ---------------------------------------------------------------------------
 // function:  m2_lexer_getsym(lexer, lexeme, status)
