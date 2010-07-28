@@ -659,7 +659,7 @@ m2_token_t m2_prototype(m2_parser_s *p) {
         _getsym(p);
         
         // ";"
-        if (match_token, TOKEN_SEMICOLON, SKIP_TO_TYPE_OR_REQ_BINDING) {
+        if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_TYPE_OR_REQ_BINDING)) {
             _getsym(p);
             
         } // end ";"
