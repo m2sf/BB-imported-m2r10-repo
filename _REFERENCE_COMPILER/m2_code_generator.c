@@ -82,6 +82,4 @@ void m2_dispose_codegen(m2_codegen_t cgen, m2_codegen_status_t *status) {
 } // end m2_dispose_codegen
 
 
-#endif /* M2_CODEGEN_H */
-
 // END OF FILE
