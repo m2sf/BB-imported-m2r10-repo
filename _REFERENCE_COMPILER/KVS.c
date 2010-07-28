@@ -45,9 +45,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,  EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *  
- *  Version history:
- *
- *   1.00   2009-09-25   BK   new file
  */
 
 
@@ -102,7 +99,7 @@ typedef struct /* kvs_table_s */ {
      kvs_entry last_retrieved_entry;
       cardinal entry_count;
       cardinal bucket_count;
-     kvs_entry bucket[0];
+     kvs_entry bucket[];
 } kvs_table_s;
 
 
