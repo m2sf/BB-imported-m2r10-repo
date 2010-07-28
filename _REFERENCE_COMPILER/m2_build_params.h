@@ -33,12 +33,14 @@
 // P U B L I C   S E C T I O N  -  U S E R   D E F I N A B L E   V A L U E S
 // ===========================================================================
 
-// ---------------------------------------------------------------------------
-// User definable parameters
-// ---------------------------------------------------------------------------
 
 // build version
 #define BUILD_VERSION "(0000)"
+
+
+// ---------------------------------------------------------------------------
+// User definable lexical parameters
+// ---------------------------------------------------------------------------
 
 // maximum length allowed for identifiers
 #define M2_MAX_IDENT_LENGTH    32
@@ -51,6 +53,17 @@
 
 // maximum length allowed for tokenised comments
 #define M2_MAX_COMMENT_LENGTH  2048
+
+
+// ---------------------------------------------------------------------------
+// User definable symbol table parameters
+// ---------------------------------------------------------------------------
+
+// minimum number of scope sub-tables
+#define M2_MIN_SCOPES_IN_SYMBOL_TABLE  20
+
+// default capacity of a scope's sub-table
+#define M2_DEFAULT_SCOPE_CAPACITY  23
 
 
 // ===========================================================================
@@ -88,9 +101,25 @@
 #if (M2_MAX_COMMENT_LENGTH < 10)
 #error "M2_MAX_COMMENT_LENGTH must not be less than 10"
 #elif (M2_MAX_COMMENT_LENGTH < 80)
-#warning "unreasonably high value for M2_MAX_COMMENT_LENGTH"
+#warning "unreasonably low value for M2_MAX_COMMENT_LENGTH"
 #elif (M2_MAX_COMMENT_LENGTH > 4096)
 #warning "unreasonably high value for M2_MAX_COMMENT_LENGTH"
+#endif
+
+#if (M2_MIN_SCOPES_IN_SYMBOL_TABLE < 2)
+#error "M2_MIN_SCOPES_IN_SYMBOL_TABLE must not be less than 2"
+#elif (M2_MIN_SCOPES_IN_SYMBOL_TABLE < 8)
+#warning "unreasonably low value for M2_MIN_SCOPES_IN_SYMBOL_TABLE"
+#elif (M2_MIN_SCOPES_IN_SYMBOL_TABLE > 40)
+#warning "unreasonably high value for M2_MIN_SCOPES_IN_SYMBOL_TABLE"
+#endif
+
+#if (M2_DEFAULT_SCOPE_CAPACITY < 5)
+#error "M2_DEFAULT_SCOPE_CAPACITY must not be less than 5"
+#elif (M2_DEFAULT_SCOPE_CAPACITY < 11)
+#warning "unreasonably low value for M2_DEFAULT_SCOPE_CAPACITY"
+#elif (M2_DEFAULT_SCOPE_CAPACITY > 211)
+#warning "unreasonably high value for M2_DEFAULT_SCOPE_CAPACITY"
 #endif
 
 
