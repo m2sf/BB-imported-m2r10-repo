@@ -1232,13 +1232,16 @@ static fmacro uchar_t get_digits(m2_lexer_s *lexer,
     if (lexer == NULL) return (uchar_t)0;
 #endif
     
+    *non_binary_digits = 0;
+    *non_decimal_digits = 0;
+    
     ch = nextchar();
     while ((IS_UPPERHEX(ch)) &&
            (lexer->lexeme.length < M2_MAX_NUM_LENGTH) && (NOT_EOF(lexer))) {
         if (ch >= UPPERCASE_A)
-            *non_decimal_digits++;
+            (*non_decimal_digits)++;
         if (ch >= DIGIT_TWO)
-            *non_binary_digits++;
+            (*non_binary_digits)++;
         ch = readchar();
         lexer->lexeme.string[lexer->lexeme.length] = ch;
         lexer->lexeme.length++;
