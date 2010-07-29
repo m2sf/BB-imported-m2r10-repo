@@ -312,7 +312,7 @@
 #define HOST_COMPILER_COMO
 #define HOST_COMPILER_COMEAU
 #define C99_SUPPORT
-#info "Host compiler: Comeaux C"
+#info "Host compiler: Comeau C"
 
 // ---------------------------------------------------------------------------
 // Test for DEC C
@@ -592,8 +592,8 @@
 
 #elif /* not enabled */
 
-#defined C99_NOT_ENABLED
-#defined C99_DISABLED
+#define C99_NOT_ENABLED
+#define C99_DISABLED
 
 #endif /* C99 test */
 
