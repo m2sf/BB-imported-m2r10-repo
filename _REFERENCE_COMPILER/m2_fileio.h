@@ -53,7 +53,7 @@
 // other than through the  functions  in this public interface is  UNSAFE and
 // may result in an inconsistent program state or a crash.
 
-typedef opaque_t m2_fileio_t;
+typedef opaque_t m2_file_t;
 
 
 // ---------------------------------------------------------------------------
@@ -84,8 +84,8 @@ typedef /* m2_fileio_status_t */ enum {
 //
 // Returns NULL if the file IO object could not be created.
 
-m2_fileio_t m2_open_sourcefile(m2_filename_t filename,
-                          m2_fileio_status_t *status);
+m2_file_t m2_open_sourcefile(m2_filename_t filename,
+                        m2_fileio_status_t *status);
 
 
 // ---------------------------------------------------------------------------
@@ -98,8 +98,58 @@ m2_fileio_t m2_open_sourcefile(m2_filename_t filename,
 //
 // Returns NULL if the file IO object could not be created.
 
-m2_fileio_t m2_new_outfile(m2_filename_t filename,
-                      m2_fileio_status_t *status);
+m2_file_t m2_new_outfile(m2_filename_t filename,
+                    m2_fileio_status_t *status);
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_fileio_read(file, codepoint)
+// ---------------------------------------------------------------------------
+//
+// Reads one octet of data at the current position of <file>, passes it back
+// in <codepoint> and advances the read/write position of <file> by one.
+
+void m2_fileio_read(m2_file_t file, int *codepoint);
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_fileio_lookahead(file, codepoint)
+// ---------------------------------------------------------------------------
+//
+// Passes in <codepoint> the octet  that is going to be read next  by function
+// m2_fileio_read().  This function does not update the read/write position of
+// <file>.
+
+void m2_fileio_lookahead(m2_file_t file, int *codepoint);
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_fileio_write(file, codepoint)
+// ---------------------------------------------------------------------------
+//
+// Writes one octet of data  passed in <codepoint>  at the current position of
+// <file> and advances the read/write position of <file> by one.
+
+void m2_fileio_write(m2_file_t file, octet_t codepoint);
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_fileio_getpos(file, line, col)
+// ---------------------------------------------------------------------------
+//
+// Obtains the  current read/write position  of file <file>.  The line counter
+// is passed back in <line> and the coloumn counter is passed back in <col>.
+
+void m2_fileio_getpos(m2_file_t file, cardinal *line, cardinal *col);
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_fileio_eof(file)
+// ---------------------------------------------------------------------------
+//
+// Returns true if <file> has reached end-of-file status, otherwise false.
+
+bool m2_fileio_eof(m2_file_t file);
 
 
 // ---------------------------------------------------------------------------
@@ -111,7 +161,7 @@ m2_fileio_t m2_new_outfile(m2_filename_t filename,
 //
 // Returns NULL if the file IO object could not be created.
 
-void m2_close_file(m2_fileio_t file, m2_fileio_status_t *status);
+void m2_close_file(m2_file_t file, m2_fileio_status_t *status);
 
 
 #endif /* M2_FILEIO_H */
