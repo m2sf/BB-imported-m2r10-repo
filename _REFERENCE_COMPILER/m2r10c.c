@@ -104,7 +104,7 @@ static void show_usage() {
            "Obtaining information:\n"
            "  m2r10c usage-info-option | version-info-option\n\n"
            "Target options:\n"
-           " -t, --target  tgt : generate code for specified target"
+           " -t, --target  tgt : generate code for specified target\n"
            "                     available targets are c99 and llvm\n"
            "Debug options:\n"
            " -c, --syntaxcheck : perform syntax check only\n\n"
@@ -185,7 +185,7 @@ int main (int argc, const char * argv[]) {
             show_version();
             return EXIT_SUCCESS;
         case OPT_ENDMARKER :
-            if (argc > 0)
+            if (argc > 1)
                 break;
             show_version();
             show_usage();
@@ -196,11 +196,11 @@ int main (int argc, const char * argv[]) {
             return EXIT_FAILURE;
     } // end switch
     
-    if (argc == 0) {
+    if (argc < 2) {
         show_error(ERR_SRC_NOT_SPECIFIED); // missing sourcefile argument
         return EXIT_FAILURE;
     }
-    else if (argc > 1) {
+    else if (argc > 2) {
         show_error(ERR_TOO_MANY_ARGS); // extra arguments ingored
     } // end if
     
