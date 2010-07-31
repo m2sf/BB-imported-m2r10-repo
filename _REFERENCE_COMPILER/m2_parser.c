@@ -752,7 +752,6 @@ m2_token_t m2_const_expression(m2_parser_s *p); /* FORWARD */
 m2_token_t m2_import_list(m2_parser_s *p); /* FORWARD */
 m2_token_t m2_block(m2_parser_s *p); /* FORWARD */
 
-
 m2_token_t m2_program_module(m2_parser_s *p) {
         
     // MODULE

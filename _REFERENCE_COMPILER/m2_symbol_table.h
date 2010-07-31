@@ -72,6 +72,7 @@ typedef /* m2_symtab_scope_t */ enum {
 // ---------------------------------------------------------------------------
 
 typedef /* m2_symbol_type_t */ enum {
+    M2_SYMTYPE_MODULE,
     M2_SYMTYPE_CONST,
     M2_SYMTYPE_TYPE,
     M2_SYMTYPE_VAR,

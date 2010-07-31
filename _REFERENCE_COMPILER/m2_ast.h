@@ -57,6 +57,44 @@ typedef /* m2_ast_status_t */ enum {
 
 
 // ---------------------------------------------------------------------------
+// Node types
+// ---------------------------------------------------------------------------
+
+typedef /* m2_ast_node_type_t */ enum {
+    M2_AST_NODE_CONST_DECL,
+    M2_AST_NODE_TYPE_DECL,
+    M2_AST_NODE_VAR_DECL,
+    M2_AST_NODE_PROC_DECL,
+    M2_AST_NODE_FUNC_DECL,
+    M2_AST_NODE_AND,
+    M2_AST_NODE_NOT,
+    M2_AST_NODE_OR,
+    M2_AST_NODE_PLUS,
+    M2_AST_NODE_MINUS,
+    M2_AST_NODE_ASTERISK,
+    M2_AST_NODE_SLASH,
+    M2_AST_NODE_DIV,
+    M2_AST_NODE_MOD,
+    M2_AST_NODE_CAST,
+    M2_AST_NODE_CONV,
+    M2_AST_NODE_ASSIGN,
+    M2_AST_NODE_INC,
+    M2_AST_NODE_DEC,
+    M2_AST_NODE_PROC_CALL,
+    M2_AST_NODE_FUNC_CALL,
+    M2_AST_NODE_IF,
+    M2_AST_NODE_CASE,
+    M2_AST_NODE_WHILE,
+    M2_AST_NODE_REPEAT,
+    M2_AST_NODE_LOOP,
+    M2_AST_NODE_FORIN,
+    M2_AST_NODE_EXIT,
+    M2_AST_NODE_RETURN,
+    
+} m2_ast_node_type_t;
+
+
+// ---------------------------------------------------------------------------
 // function:  m2_ast_new_node(token, lexeme, status)
 // ---------------------------------------------------------------------------
 //
