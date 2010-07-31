@@ -71,34 +71,31 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
     new_file = ALLOCATE(sizeof(m2_file_s));
     
     // Bail out if allocation failed.
-    if (new_file == NULL)
-    {
+    if (new_file == NULL) {
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
-    }
+    } // end if
     
     // Get the file path.
     path = m2_path_from_filename(filename, &filename_status);
     
     // Bail out if getting the file path failed.
-    if (filename_status != M2_FILENAME_STATUS_SUCCESS)
-    {
+    if (filename_status != M2_FILENAME_STATUS_SUCCESS) {
         DEALLOCATE(new_file);
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
-    }
+    } // end if
     
     // Open the file for reading.
     new_file->handle = fopen(path, "r");
     
     // Bail out if opening the file failed.
-    if (new_file->handle == NULL)
-    {
+    if (new_file->handle == NULL) {
         DEALLOCATE(new_file);
         DEALLOCATE(path);
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
-    }
+    } // end if
     
     // Deallocate the memory for the path.
     DEALLOCATE(path);
@@ -133,34 +130,31 @@ m2_file_t m2_new_outfile(m2_filename_t filename,
     new_file = ALLOCATE(sizeof(m2_file_s));
     
     // Bail out if allocation failed.
-    if (new_file == NULL)
-    {
+    if (new_file == NULL) {
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
-    }
+    } // end if
     
     // Get the file path.
     path = m2_path_from_filename(filename, &filename_status);
     
     // Bail out if getting the file path failed.
-    if (filename_status != M2_FILENAME_STATUS_SUCCESS)
-    {
+    if (filename_status != M2_FILENAME_STATUS_SUCCESS) {
         DEALLOCATE(new_file);
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
-    }
+    } // end if
     
     // Open the file for writing.
     new_file->handle = fopen(path, "w");
     
     // Bail out if opening the file failed.
-    if (new_file->handle == NULL)
-    {
+    if (new_file->handle == NULL) {
         DEALLOCATE(new_file);
         DEALLOCATE(path);
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
-    }
+    } // end if
     
     // Deallocate the memory for the path.
     DEALLOCATE(path);
@@ -302,18 +296,16 @@ void m2_fileio_write(m2_file_t file, octet_t codepoint) {
         return;
     
     // Handle LF style line-feed.
-    if (codepoint == ASCII_LF)
-    {
+    if (codepoint == ASCII_LF) {
         // Start a new line.
         this_file->col = 1;
         this_file->line++;
     }
     // Handle any other character.
-    else
-    {
+    else {
         // Move to the next column.
         this_file->col++;
-    }
+    } // end if
 } // end m2_fileio_write
 
 
