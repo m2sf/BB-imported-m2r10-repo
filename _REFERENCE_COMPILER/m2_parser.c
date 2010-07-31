@@ -355,6 +355,44 @@ void m2_parse_file(m2_parser_t parser, m2_parser_status_t *status) {
 
 
 // ---------------------------------------------------------------------------
+// function:  m2_value_of_pragma_cond(parser, status)
+// ---------------------------------------------------------------------------
+//
+// Parses  and evaluates an  intra-pragma  boolean expression  and returns its
+// value.  The expression must be located within a pragma,  it must be of type
+// boolean  and the parser's lookahead symbol  must be the first symbol of the
+// expression.  The status of the operation is passed back in <status>  unless
+// NULL is passed in for status.
+
+bool m2_value_of_pragma_cond(m2_parser_t parser,
+                      m2_parser_status_t *status) {
+    
+    // TO DO
+    
+    return false;
+} // end m2_value_of_pragma_cond
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_value_of_pragma_expr(parser, status)
+// ---------------------------------------------------------------------------
+//
+// Parses and evaluates an  intra-pragma  constant expression  and returns its
+// value.  The expression must be located within a pragma,  it must be of type
+// integer  and the parser's lookahead symbol  must be the first symbol of the
+// expression.  The status of the operation is passed back in <status>  unless
+// NULL is passed in for status.
+
+long int m2_value_of_pragma_expr(m2_parser_t parser,
+                          m2_parser_status_t *status) {
+    
+    // TO DO
+    
+    return 0;
+} // end m2_value_of_pragma_expr
+
+
+// ---------------------------------------------------------------------------
 // function:  m2_dispose_parser(lexer, status)
 // ---------------------------------------------------------------------------
 //

@@ -26,16 +26,16 @@
 #define M2_PARSER_H
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // C standard library imports
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 // FROM stdio IMPORT FILE;
 #include <stdio.h>
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Embedded library imports
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 // FROM common IMPORT opaque_t;
 #include "common.h"
@@ -43,9 +43,9 @@
 // FROM KVS IMPORT kvs_table_t;
 #include "KVS.h"
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Project library imports
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 // FROM m2_notifications IMPORT m2_notification_f;
 #include "m2_notifications.h"
@@ -57,9 +57,9 @@
 #include "m2_ast.h"
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Opaque parser handle type
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 // WARNING: Objects of this opaque type should only be accessed through this
 // public interface.  DO NOT EVER attempt to bypass the public interface.
@@ -72,9 +72,9 @@
 typedef opaque_t m2_parser_t;
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Status codes
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 typedef /* m2_parser_status_t */ enum {
     
@@ -107,9 +107,9 @@ typedef /* m2_parser_status_t */ enum {
 } m2_parser_status_t;
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // function:  m2_new_parser(infile, lextab, symtab, ast, handler, status)
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 // Creates  and returns  a  new  parser object  associated  with  source file 
 // <infile> and lexeme table <lextab>.  The status of the operation is passed
@@ -125,15 +125,43 @@ m2_parser_t m2_new_parser(FILE *infile,
              m2_parser_status_t *status);
 
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // function:  m2_parse_file(parser, status)
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
 // Parses the input file  associated with parser object <parser>.  The status
 // of the operation is passed back in <status>  unless  NULL is passed in for
 // <status>.
 
 void m2_parse_file(m2_parser_t parser, m2_parser_status_t *status);
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_value_of_pragma_cond(parser, status)
+// ---------------------------------------------------------------------------
+//
+// Parses  and evaluates an  intra-pragma  boolean expression  and returns its
+// value.  The expression must be located within a pragma,  it must be of type
+// boolean  and the parser's lookahead symbol  must be the first symbol of the
+// expression.  The status of the operation is passed back in <status>  unless
+// NULL is passed in for status.
+
+bool m2_value_of_pragma_cond(m2_parser_t parser,
+                      m2_parser_status_t *status);
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_value_of_pragma_expr(parser, status)
+// ---------------------------------------------------------------------------
+//
+// Parses and evaluates an  intra-pragma  constant expression  and returns its
+// value.  The expression must be located within a pragma,  it must be of type
+// integer  and the parser's lookahead symbol  must be the first symbol of the
+// expression.  The status of the operation is passed back in <status>  unless
+// NULL is passed in for status.
+
+long int m2_value_of_pragma_expr(m2_parser_t parser,
+                          m2_parser_status_t *status);
 
 
 // ---------------------------------------------------------------------------
