@@ -3,9 +3,9 @@
  *  m2_fileio.h
  *  File IO interface
  *
- *  Author: Benjamin Kowarsch
+ *  Author: Benjamin Kowarsch, Roel Messiant
  *
- *  Copyright (C) 2010 B.Kowarsch. All rights reserved.
+ *  Copyright (C) 2010 B.Kowarsch, R.Messiant. All rights reserved.
  *
  *  License:
  *
@@ -23,9 +23,20 @@
  */
 
 
+// ---------------------------------------------------------------------------
+// Standard library imports
+// ---------------------------------------------------------------------------
+
 #include <stdio.h>
 #include <stddef.h>
+
+// ---------------------------------------------------------------------------
+// ObjM2 project imports
+// ---------------------------------------------------------------------------
+
 #include "m2_fileio.h"
+#include "alloc.h"
+#include "ASCII.h"
 
 
 // ---------------------------------------------------------------------------
@@ -33,7 +44,7 @@
 // ---------------------------------------------------------------------------
 
 typedef struct /* m2_file_s */ {
-    *FILE handle;
+    FILE *handle;
     cardinal line;
     cardinal col;
     bool end_of_file;
@@ -50,13 +61,55 @@ typedef struct /* m2_file_s */ {
 //
 // Returns NULL if the file IO object could not be created.
 
-m2_fileio_t m2_open_sourcefile(m2_filename_t filename,
-                               m2_fileio_status_t *status) {
-    m2_file_s *this_file = (m2_file_s *) file;
+m2_file_t m2_open_sourcefile(m2_filename_t filename,
+                             m2_fileio_status_t *status) {
+    m2_file_s *new_file;
+    const char *path;
+    m2_filename_status_t filename_status;
     
-    // TO DO
+    // Allocate memory for a file descriptor.
+    new_file = ALLOCATE(sizeof(m2_file_s));
     
-    return NULL;
+    // Bail out if allocation failed.
+    if (new_file == NULL)
+    {
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    }
+    
+    // Get the file path.
+    path = m2_path_from_filename(filename, &filename_status);
+    
+    // Bail out if getting the file path failed.
+    if (filename_status != M2_FILENAME_STATUS_SUCCESS)
+    {
+        DEALLOCATE(new_file);
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    }
+    
+    // Open the file for reading.
+    new_file->handle = fopen(path, "r");
+    
+    // Bail out if opening the file failed.
+    if (new_file->handle == NULL)
+    {
+        DEALLOCATE(new_file);
+        DEALLOCATE(path);
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    }
+    
+    // Deallocate the memory for the path.
+    DEALLOCATE(path);
+    
+    // Initialise the file position.
+    new_file->line = 1;
+    new_file->col = 1;
+    new_file->end_of_file = false;
+    
+    ASSIGN_BY_REF(status, M2_FILEIO_STATUS_SUCCESS);
+    return (m2_file_t) new_file;
 } // end m2_open_sourcefile
 
 
@@ -70,13 +123,55 @@ m2_fileio_t m2_open_sourcefile(m2_filename_t filename,
 //
 // Returns NULL if the file IO object could not be created.
 
-m2_fileio_t m2_new_outfile(m2_filename_t filename,
-                           m2_fileio_status_t *status) {
-    m2_file_s *this_file = (m2_file_s *) file;
+m2_file_t m2_new_outfile(m2_filename_t filename,
+                         m2_fileio_status_t *status) {
+    m2_file_s *new_file;
+    const char *path;
+    m2_filename_status_t filename_status;
     
-    // TO DO
+    // Allocate memory for a file descriptor.
+    new_file = ALLOCATE(sizeof(m2_file_s));
     
-    return NULL;
+    // Bail out if allocation failed.
+    if (new_file == NULL)
+    {
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    }
+    
+    // Get the file path.
+    path = m2_path_from_filename(filename, &filename_status);
+    
+    // Bail out if getting the file path failed.
+    if (filename_status != M2_FILENAME_STATUS_SUCCESS)
+    {
+        DEALLOCATE(new_file);
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    }
+    
+    // Open the file for writing.
+    new_file->handle = fopen(path, "w");
+    
+    // Bail out if opening the file failed.
+    if (new_file->handle == NULL)
+    {
+        DEALLOCATE(new_file);
+        DEALLOCATE(path);
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    }
+    
+    // Deallocate the memory for the path.
+    DEALLOCATE(path);
+    
+    // Initialise the file position.
+    new_file->line = 1;
+    new_file->col = 1;
+    new_file->end_of_file = false;
+    
+    ASSIGN_BY_REF(status, M2_FILEIO_STATUS_SUCCESS);
+    return (m2_file_t) new_file;
 } // end m2_new_outfile
 
 
@@ -143,8 +238,6 @@ void m2_fileio_read(m2_file_t file, int *codepoint) {
     
     // pass consumed character
     *codepoint = c;
-    
-    return;
 } // end m2_fileio_read
 
 
@@ -187,8 +280,6 @@ void m2_fileio_lookahead(m2_file_t file, int *codepoint) {
     
     // pass lookahead character
     *codepoint = c;
-    
-    return;
 } // end m2_fileio_lookahead
 
 
@@ -201,10 +292,28 @@ void m2_fileio_lookahead(m2_file_t file, int *codepoint) {
 
 void m2_fileio_write(m2_file_t file, octet_t codepoint) {
     m2_file_s *this_file = (m2_file_s *) file;
-
-    // TO DO
+    int written;
     
-    return;
+    // Write one character to the output file
+    written = fputc(codepoint, this_file->handle);
+    
+    // Bail out on error.
+    if (written == EOF)
+        return;
+    
+    // Handle LF style line-feed.
+    if (codepoint == ASCII_LF)
+    {
+        // Start a new line.
+        this_file->col = 1;
+        this_file->line++;
+    }
+    // Handle any other character.
+    else
+    {
+        // Move to the next column.
+        this_file->col++;
+    }
 } // end m2_fileio_write
 
 
@@ -220,8 +329,6 @@ void m2_fileio_getpos(m2_file_t file, cardinal *line, cardinal *col) {
     
     *line = this_file->line;
     *col = this_file->col;
-    
-    return;
 } // end m2_fileio_getpos
 
 
@@ -242,7 +349,7 @@ bool m2_fileio_eof(m2_file_t file) {
 
 
 // ---------------------------------------------------------------------------
-// function:  m2_new_outfile(filename, status)
+// function:  m2_close_file(file, status)
 // ---------------------------------------------------------------------------
 //
 // Closes the file  associated with  file IO object <file>.  The status of the
@@ -250,12 +357,27 @@ bool m2_fileio_eof(m2_file_t file) {
 //
 // Returns NULL if the file IO object could not be created.
 
-void m2_close_file(m2_fileio_t file, m2_fileio_status_t *status) {
+void m2_close_file(m2_file_t file, m2_fileio_status_t *status) {
     m2_file_s *this_file = (m2_file_s *) file;
-
-    // TO DO
+    int closed;
     
-    return;
+    // Bail out if file descriptor is NULL.
+    if (this_file == NULL)
+    {
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_REFERENCE);
+        return;
+    }
+    
+    // Close the file handle.
+    closed = fclose(this_file->handle);
+    
+    if (closed == 0)
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_SUCCESS);
+    else
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_REFERENCE);
+    
+    // Deallocate the file descriptor.
+    DEALLOCATE(this_file);
 } // end m2_close_file
 
 

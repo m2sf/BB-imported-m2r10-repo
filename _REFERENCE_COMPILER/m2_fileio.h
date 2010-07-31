@@ -153,7 +153,7 @@ bool m2_fileio_eof(m2_file_t file);
 
 
 // ---------------------------------------------------------------------------
-// function:  m2_new_outfile(filename, status)
+// function:  m2_close_file(file, status)
 // ---------------------------------------------------------------------------
 //
 // Closes the file  associated with  file IO object <file>.  The status of the
