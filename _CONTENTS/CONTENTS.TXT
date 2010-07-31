@@ -27,6 +27,62 @@ BINDINGS.def          documents procedure headers required for bindings
 
 * REFERENCE_COMPILER *
 
+General utilities:
+
+check_build_env.h     macros for host OS and compiler, enforcing use of C99
+common.h              macros for commonly used types and primitives
+alloc.h               macro based interface to C storage allocator
+
+Embedded libraries:
+
+ASCII.h               macro library for ASCII character set codes and tests
+hash.h                macro library for incremental 32-bit hash calculation
+KVS.h                 key/value storage library interface
+KVS.c                 key/value storage library implementation
+
+Compiler parameters:
+
+m2_build_params.h     user adjustable build parameters
+m2_table_of_tokens.h  table of tokens and their numeric values
+m2_table_of_reserved_words.h  table of reserved word identifiers and hashes
+m2_table_of_builtin_identifiers.h  table of pervasive identifiers and hashes
+m2_table_of_pragma_names.h  table of pragma name identifiers and hashes
+m2_table_of_productions.h  table of productions and their FIRST and FOLLOW sets
+m2_first_and_follow.h  FIRST and FOLLOW set element lists
+
+Compiler modules:
+
+m2_tokens.h          token enumeration and token name interface
+m2_tokens.c          convert tokens to human readable names
+m2_reserved_words.h  reserved word enumeration and reserved word name interface
+m2_reserved_words.c  convert reserved words to human readable names
+m2_productions.h     production enumeration and production name interface
+m2_productions.c     convert productions to human readable names
+m2_tokenset.h        token set interface
+m2_tokenset.c        token set implementation
+m2_lexer.h           lexer interface
+m2_lexer.c           lexer implementation
+m2_parser.h          parser interface
+m2_parser.c          parser implementation
+m2_pragma_parser.h   pragma parser interface
+m2_pragma_parser.c   pragma parser implementation
+m2_symbol_table.h    symbol table interface
+m2_symbol_table.c    symbol table implementation
+m2_ast.h             abstract syntax tree builder/walker interface
+m2_ast.c             abstract syntax tree builder/walker implementation
+m2_code_generator.h  code generator interface
+m2_code_generator.c  code generator implementation
+m2_notifications.h   errors and warnings notification handler interface
+m2_notifications.c   errors and warnings notification handler implementation
+m2_filenames.h       filesystem independent filename handling interface
+m2_filenames.c       filesystem independent filename handling implementation
+m2_fileio.h          compiler input and output files abstraction interface
+m2_fileio.h          compiler input and output files abstraction implementation
+m2_errmsg.h          human readable error message generator interface
+m2_errmsg.c          human readable error message generator implementation
+m2r10c.c             compiler driver (main program)
+Makefile             make file for building the compiler
+
 
 * STANDARD_LIBRARY *
 
