@@ -286,10 +286,10 @@ int main (int argc, const char * argv[]) {
     } // end if
     
     // clean up
-    m2_close_file(sourcefile, NULL);
+    m2_close_file(sourcefile);
     m2_dispose_parser(parser, NULL);
     
-    m2_close_file(outfile, NULL);
+    m2_close_file(outfile);
     m2_dispose_codegen(cgen, &cg_status);
     
     m2_dispose_filename(sourcefile);

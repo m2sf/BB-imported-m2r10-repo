@@ -172,10 +172,7 @@ static void m2_new_outfile_test(void)
             m2_writefile_test(file, &_file_info[i]);
             
             // Clean up the file descriptor.
-            m2_close_file(file, &status);
-            
-            // Make sure the clean up succeeded.
-            assert_true(status == M2_FILEIO_STATUS_SUCCESS);
+            m2_close_file(file);
         }
         
         // Clean up the filename descriptor.
@@ -271,10 +268,7 @@ static void m2_open_sourcefile_test(void)
             m2_readfile_test(file, &_file_info[i]);
             
             // Clean up the file descriptor.
-            m2_close_file(file, &status);
-            
-            // Make sure the clean up succeeded.
-            assert_true(status == M2_FILEIO_STATUS_SUCCESS);
+            m2_close_file(file);
         }
         
         // Clean up the filename descriptor.

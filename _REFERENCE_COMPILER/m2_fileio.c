@@ -352,29 +352,17 @@ bool m2_fileio_eof(m2_file_t file) {
 // function:  m2_close_file(file, status)
 // ---------------------------------------------------------------------------
 //
-// Closes the file  associated with  file IO object <file>.  The status of the
-// operation is passed back in <status> unless NULL is passed in for <status>.
-//
-// Returns NULL if the file IO object could not be created.
+// Closes the file  associated with  file IO object <file>.
 
-void m2_close_file(m2_file_t file, m2_fileio_status_t *status) {
+void m2_close_file(m2_file_t file) {
     m2_file_s *this_file = (m2_file_s *) file;
-    int closed;
     
     // Bail out if file descriptor is NULL.
     if (this_file == NULL)
-    {
-        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_REFERENCE);
         return;
-    }
     
     // Close the file handle.
-    closed = fclose(this_file->handle);
-    
-    if (closed == 0)
-        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_SUCCESS);
-    else
-        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_REFERENCE);
+    fclose(this_file->handle);
     
     // Deallocate the file descriptor.
     DEALLOCATE(this_file);

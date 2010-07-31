@@ -156,12 +156,9 @@ bool m2_fileio_eof(m2_file_t file);
 // function:  m2_close_file(file, status)
 // ---------------------------------------------------------------------------
 //
-// Closes the file  associated with  file IO object <file>.  The status of the
-// operation is passed back in <status> unless NULL is passed in for <status>.
-//
-// Returns NULL if the file IO object could not be created.
+// Closes the file  associated with  file IO object <file>.
 
-void m2_close_file(m2_file_t file, m2_fileio_status_t *status);
+void m2_close_file(m2_file_t file);
 
 
 #endif /* M2_FILEIO_H */
