@@ -150,14 +150,16 @@ typedef struct {
 // ---------------------------------------------------------------------------
 // Sets the line and coloumn fields of <pos> to <line> and <col>
 
-#define SET_FPOS(_fpos,_line,_col) { _fpos.line=_line; _fpos.col=_col; }
+#define SET_FPOS(_fpos,_line,_col) \
+    do { _fpos.line=_line; _fpos.col=_col; } while (0)
 
 // ---------------------------------------------------------------------------
 // macro: ASSIGN_BY_REF(pointer, value)
 // ---------------------------------------------------------------------------
 // Sets the value of *<pointer> to <value> if <pointer> is not NULL
 
-#define ASSIGN_BY_REF(_p,_value) { if (_p != NULL) *_p = _value; }
+#define ASSIGN_BY_REF(_p,_value) \
+    do { if (_p != NULL) *_p = _value; } while (0)
 
 
 #endif /* COMMON_H */
