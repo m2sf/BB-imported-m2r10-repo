@@ -875,7 +875,7 @@ static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer) {
     
     // handle prefixed literal
     if ((first_ch == DIGIT_ZERO) &&
-        ((ch == LOWERCASE_X) || (ch == LOWERCASE_U) || (ch == LOWERCASE_X))) {
+        ((ch == LOWERCASE_X) || (ch == LOWERCASE_U) || (ch == LOWERCASE_B))) {
         ch = get_prefixed_number(lexer);
     }
     // handle non-prefixed literal
