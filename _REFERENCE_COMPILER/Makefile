@@ -39,6 +39,7 @@ SRC = \
 	m2_parser.c \
 	m2_code_generator.c \
 	m2_ast.c \
+	m2_pragma_parser.c \
 	m2r10c.c
 
 LIB =
