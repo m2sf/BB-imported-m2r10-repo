@@ -1498,41 +1498,38 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
 //
 // pre-conditions:
 //  o  lexer is an initialised lexer object
-//  o  current character is *assumed* to be backslash
+//  o  the lookahead character is the backslash character starting the assumed
+//     escape sequence
 //
 // post-conditions:
-//  if the assumed backslash starts an escape sequence
-//  o  the current character is the last character in the escape sequence
+//  if the backslash starts an escape sequence
 //  o  the lookahead character is the character following the escape sequence
 //  o  line and coloumn counters are updated
 //
 //  if the assumed backslash does not start an escape sequence
-//  o  current character, lookahead character, line and coloumn counter
-//     remain unchanged
+//  o  the lookahead character is the character following the backslash
+//  o  line and coloumn counters are updated
 //
 // return-value:
-//  if the assumed backslash starts an escape sequence
+//  if the backslash starts an escape sequence
 //  o  the escaped character is returned
 //
-//  if the assumed backslash does not start an escape sequence
+//  if the backslash does not start an escape sequence
 //  o  a backslash is returned
 
 static fmacro uchar_t get_escaped_char(m2_lexer_s *lexer) {
-    uchar_t ch, nextch;
+    uchar_t ch;
     bool escape_sequence_found = false;
     
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
     if (lexer == NULL) return (uchar_t)0;
 #endif
     
-    // must NOT consume current character
-    // simply assume that it is backslash
-    ch = BACKSLASH;
+    // eat the backslash and get the lookahead character
+    ch = readchar();
+    ch = nextchar();
     
-    // get the lookahead character
-    nextch = nextchar();
-    
-    switch (nextch) {
+    switch (ch) {
         case DOUBLE_QUOTE :
         case SINGLE_QUOTE :
             escape_sequence_found = true;
@@ -1556,6 +1553,9 @@ static fmacro uchar_t get_escaped_char(m2_lexer_s *lexer) {
             break;
         case BACKSLASH :
             escape_sequence_found = true;
+            ch = BACKSLASH;
+            break;
+        default :
             ch = BACKSLASH;
     } // end switch
     
