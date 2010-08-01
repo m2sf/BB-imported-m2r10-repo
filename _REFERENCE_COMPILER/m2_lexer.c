@@ -1169,7 +1169,8 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
     // a real number literal may have a scale factor *only*
     // if it has exactly one digit before the decimal point
     
-    if ((digits_before_decimal_point == 1) && (ch == UPPERCASE_E)) {
+    if ((digits_before_decimal_point == 1) &&
+        ((ch == UPPERCASE_E) || (ch == LOWERCASE_E))) {
         ch = get_scale_factor(lexer);
         
         // check length
