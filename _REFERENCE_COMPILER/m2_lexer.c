@@ -427,10 +427,12 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
                         ch = readchar();
                         ch = nextchar();
                         this_lexer->token = TOKEN_LESS_OR_EQUAL_OP;
+                        break;
                     case ASTERISK : // found '<*'
                         ch = readchar();
                         ch = nextchar();
                         this_lexer->token = TOKEN_START_PRAGMA;
+                        break;
                     default : // found '<'
                         this_lexer->token = TOKEN_LESS_OP;
                 } // end switch
