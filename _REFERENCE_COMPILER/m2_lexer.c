@@ -867,20 +867,19 @@ static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer) {
     lexer->lexkey = HASH_INITIAL;
     
     // get the first character
-    
     first_ch = readchar();
     lexer->lexeme.string[lexer->lexeme.length] = first_ch;
     lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, first_ch);
     lexer->lexeme.length++;
     ch = nextchar();
     
-    // get any remaining characters
-    
-    if /* literal is prefixed */ ((first_ch == DIGIT_ZERO) &&
-                                  ((ch == LOWERCASE_X) || (ch == LOWERCASE_U) || (ch == LOWERCASE_X))) {
+    // handle prefixed literal
+    if ((first_ch == DIGIT_ZERO) &&
+        ((ch == LOWERCASE_X) || (ch == LOWERCASE_U) || (ch == LOWERCASE_X))) {
         ch = get_prefixed_number(lexer);
     }
-    else /* literal is not prefixed */ {
+    // handle non-prefixed literal
+    else {
         ch = get_suffixed_number(lexer);
     } // end if
     
