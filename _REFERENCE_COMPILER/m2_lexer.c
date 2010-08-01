@@ -349,8 +349,6 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
                     this_lexer->paren_nesting_level++;
                 }
                 else { // found '(*'
-                    ch = readchar();
-                    ch = nextchar();
                     ch = skip_multiline_comment(this_lexer);
                     ignore_token = true;
                 } // end if
