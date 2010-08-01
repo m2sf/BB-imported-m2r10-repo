@@ -3,9 +3,9 @@
  *  m2_lexer.c
  *  Lexer implementation
  *
- *  Author: Benjamin Kowarsch
+ *  Author: Benjamin Kowarsch, Roel Messiant
  *
- *  Copyright (C) 2010 B.Kowarsch. All rights reserved.
+ *  Copyright (C) 2010 B.Kowarsch, R.Messiant. All rights reserved.
  *
  *  License:
  *
@@ -383,10 +383,20 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
                 this_lexer->token = TOKEN_CLOSING_BRACE;
                 this_lexer->brace_nesting_level--;
                 break;
+            case EXCLAMATION :
+                ch = readchar();
+                ch = nextchar();
+                this_lexer->token = TOKEN_STORAGE_PSEUDO_OP;
+                break;
             case TILDE :
                 ch = readchar();
                 ch = nextchar();
                 this_lexer->token = TOKEN_REMOVAL_PSEUDO_OP;
+                break;
+            case QUESTION_MARK :
+                ch = readchar();
+                ch = nextchar();
+                this_lexer->token = TOKEN_RETRIEVAL_PSEUDO_OP;
                 break;
             case EQUAL_SIGN :
                 ch = readchar();
