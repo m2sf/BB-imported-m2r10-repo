@@ -352,7 +352,8 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
                 }
                 else { // found '(*'
                     ch = skip_multiline_comment(this_lexer);
-                    ignore_token = true;
+                    if (this_lexer->status == M2_LEXER_STATUS_SUCCESS)
+                        ignore_token = true;
                 } // end if
                 break;
             case CLOSING_PARENTHESIS :
