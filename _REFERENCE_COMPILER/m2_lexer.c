@@ -133,7 +133,9 @@ static uchar_t get_scale_factor(m2_lexer_s *lexer);
 
 static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer);
 
-static uchar_t get_escaped_char(m2_lexer_s *lexer);
+static bool is_escaped_char(uchar_t ch);
+
+//static uchar_t get_escaped_char(m2_lexer_s *lexer);
 
 static fmacro void add_lexeme_to_lextab(m2_lexer_s *lexer);
 
@@ -1413,16 +1415,31 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
         if (IS_NOT_7BIT_ASCII(ch))
             all_7bit_ascii = false;
         
-        // check for escaped chars
-        if (ch != BACKSLASH)
-            ch = readchar();
-        else // backslash escaped char
-            ch = get_escaped_char(lexer);
+        // eat the character
+        ch = readchar();
         
-        // copy the char into lexeme string
+        // copy the char into the lexeme string
         lexer->lexeme.string[lexer->lexeme.length] = ch;
         lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
         lexer->lexeme.length++;
+        
+        // check for escaped chars
+        if ((ch == BACKSLASH) &&
+            (lexer->lexeme.length < M2_MAX_STRING_LENGTH)) {
+            // get the possibly escaped character
+            ch = nextchar();
+                        
+            // eat the escaped character or default to backslash
+            if (is_escaped_char(ch))
+                ch = readchar();
+            else
+                ch = BACKSLASH;
+            
+            // copy the char into the lexeme string
+            lexer->lexeme.string[lexer->lexeme.length] = ch;
+            lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+            lexer->lexeme.length++;
+        } // end if
         
         // prepare for next
         ch = nextchar();
@@ -1476,17 +1493,59 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
         
         // skip past string literal
         while ((ch != delimiter_ch) && (NOT_EOF(lexer))) {
-            if (ch != BACKSLASH)
-                ch = readchar();
-            else // backslash escaped char
-                ch = get_escaped_char(lexer);
+            // eat the character
+            ch = readchar();
+            
+            // check for escaped characters
+            if (ch == BACKSLASH) {
+                // get the possibly escaped character
+                ch = nextchar();
+                
+                // eat the escaped character
+                if (is_escaped_char(ch))
+                    ch = readchar();
+            } // endif
+            
+            // prepare for next
             ch = nextchar();
         } // end while
+        
+        // eat the closing delimiter and get the next
+        ch = readchar();
+        ch = nextchar();
         
         // return lookahead char
         return ch;
     } // end if
 } // end get_quoted_literal
+
+
+// ---------------------------------------------------------------------------
+// private function:  is_escaped_char(ch)
+// ---------------------------------------------------------------------------
+//
+// Determines if character <ch> is a valid escape character.
+//
+// return-value:
+// o true if the character is a valid escape character, false otherwise.
+
+static fmacro bool is_escaped_char(uchar_t ch) {
+    bool valid = false;
+    
+    // valid escape characters
+    switch (ch) {
+        case DOUBLE_QUOTE :
+        case SINGLE_QUOTE :
+        case DIGIT_ZERO :
+        case LOWERCASE_N :
+        case LOWERCASE_R :
+        case LOWERCASE_T :
+        case BACKSLASH :
+            valid = true;
+    } // end switch
+    
+    return valid;
+} // end is_escaped_char
 
 
 // ---------------------------------------------------------------------------
@@ -1516,7 +1575,7 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
 //
 //  if the backslash does not start an escape sequence
 //  o  a backslash is returned
-
+/*
 static fmacro uchar_t get_escaped_char(m2_lexer_s *lexer) {
     uchar_t ch;
     bool escape_sequence_found = false;
@@ -1565,7 +1624,7 @@ static fmacro uchar_t get_escaped_char(m2_lexer_s *lexer) {
     
     return ch;
 } // end get_escaped_char
-
+*/
 
 // ---------------------------------------------------------------------------
 // private function:  skip_c_comment(lexer)
