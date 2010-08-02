@@ -26,7 +26,6 @@
 // imports
 // ---------------------------------------------------------------------------
 
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "../driver.h"
@@ -41,6 +40,10 @@
 
 typedef struct /* lexer_input_info_t */ {
     char *file;
+    int good;
+    int bad;
+    int lines;
+    int columns;
 } lexer_input_info_t;
 
 
@@ -49,160 +52,70 @@ typedef struct /* lexer_input_info_t */ {
 // ---------------------------------------------------------------------------
 
 static const lexer_input_info_t _input_info[] = {
-    { "../../_STANDARD_LIBRARY/ComplexMath.def" },
-    { "../../_STANDARD_LIBRARY/DateTime.def" }
+    { "comment.tst", 0, 2, 29, 1 },
+    { "special.tst", 32, 0, 22, 1 },
+    { "numeric.tst", 17, 11, 30, 1 },
+    { "string.tst", 5, 6, 32, 1 },
+    { "identifier.tst", 13, 0, 18, 1 },
+    { "reserved.tst", 44, 0, 27, 1 }
 }; /* _input_info */
 
 
 // ---------------------------------------------------------------------------
-// function:  print_symbol(symtab, sym)
+// function:  m2_lexer_t_test()
 // ---------------------------------------------------------------------------
 //
-// Prints token, lexeme and attributes of symbol <sym> to stdout.
+// Tests the interaction between m2_lexer_t and the following functions:
+// - m2_lexer_getpos()
+// - m2_lexer_getsym()
 
-void print_symbol(m2_lexer_t lexer, kvs_table_t symtab, cardinal lexkey, m2_token_t token) {
-//    m2_token_t token = symbol_token(sym);
-    cardinal len;
-    cardinal xpos;
-    cardinal ypos;
-    char *lexeme;
-    bool null_terminated;
-    kvs_status_t *status;
+static void m2_lexer_t_test(m2_lexer_t lexer, const lexer_input_info_t *info)
+{
+    int i;
+    cardinal line;
+    cardinal column;
+    m2_lexer_status_t status;
+    m2_token_t token;
     
+    // Test the initial lexer position.
+    m2_lexer_getpos(lexer, &line, &column, &status);
+    assert_true(status == M2_LEXER_STATUS_SUCCESS);
+    assert_true(line == 1);
+    assert_true(column == 1);
     
-    m2_lexer_getpos(lexer, &xpos, &ypos, NULL);
-    printf("Token: %s at line: %i col: %i\n",
-            m2_token_name(token),
-            xpos, ypos);
-
-    if (token == TOKEN_EOF_MARKER) {
-        printf("\n");
+    // Read the expected amount of good lexemes.
+    for (i = 0; i < info->good; i++)
+    {
+        // Read the next lexeme.
+        token = m2_lexer_getsym(lexer, NULL, &status);
+        
+        // Make sure nothing went wrong.
+        assert_true(status == M2_LEXER_STATUS_SUCCESS);
     }
-    if (token == TOKEN_ILLEGAL_CHARACTER) {
-        printf(" offending character: '%c'\n",
-                m2_offending_char(lexer, &xpos, &ypos,NULL));
-   }
-//    else /* all other tokens */ {
-//        kvs_get_entry(symtab, 1, lexkey, &len, &null_terminated, status);
-//        if (lexeme != NULL)
-//            printf(" lexeme: %s\n", lexeme);
-//
-//        len = 0;
-//        printf(" flags:\n");
-//
-//        if (symbol_flag(sym, is_terminal)) {
-//            printf("terminal");
-//            len++;
-//        } // end if
-//
-//        if (symbol_flag(sym, is_reserved_word)) {
-//            if (len > 0)
-//                printf(", ");
-//
-//            printf("reserved word");
-//        } // end if
-//
-//        if (symbol_flag(sym, is_builtin_ident)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("builtin");
-//        } // end if
-//
-//       if (symbol_flag(sym, is_literal)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("literal");
-//        } // end if
-//
-//        if (symbol_flag(sym, is_operator)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("operator");
-//        } // end if
-//
-//        if (symbol_flag(sym, is_unary_operator)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("unary operator");
-//        } // end if
-//
-//        if (symbol_flag(sym, is_relational_operator)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("relational operator");
-//        } // end if
-//
-//        if (symbol_flag(sym, is_first_order_operator)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("first order operator");
-//        } // end if
-//
-//        if (symbol_flag(sym, is_second_order_operator)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("second order operator");
-//        } // end if
-//
-//        if (symbol_flag(sym, is_malformed_literal)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("malformed literal");
-//        } // end if
-//
-//        if (symbol_flag(sym, excess_chars_truncated)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("excess characters truncated");
-//       } // end if
-//
-//        if (symbol_flag(sym, has_non_7bit_ascii_chars)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("has non 7bit ascii characters");
-//        } // end if
-//
-//        if (symbol_flag(sym, has_one_or_more_underscores)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("has underscores");
-//        } // end if
-//
-//        if (symbol_flag(sym, has_one_or_more_dollar_signs)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("has dollar signs");
-//        } // end if
-//
-//        if (symbol_flag(sym, may_collide_with_priv_objc_name)) {
-//            if (len > 0)
-//                printf(", ");
-//            printf("may collide with private objc name");
-//        } // end if
-//
-//        printf("\n");
-//
-//    } // end if
-//
-//    if ((token == TOKEN_OPENING_PARENTHESIS) ||
-//        (token == TOKEN_CLOSING_PARENTHESIS)) {
-//        printf(" parenthesis nesting level: %i\n",
-//                symbol_paren_nesting_level(sym));
-//    }
-//    else if ((token == TOKEN_OPENING_BRACKET) ||
-//        (token == TOKEN_CLOSING_BRACKET)) {
-//        printf(" bracket nesting level: %i\n",
-//                symbol_bracket_nesting_level(sym));
-//    }
-//    else if ((token == TOKEN_OPENING_BRACE) ||
-//        (token == TOKEN_CLOSING_BRACE)) {
-//        printf(" brace nesting level: %i\n",
-//                symbol_brace_nesting_level(sym));
-//    } // end if
-
-    return;
-} 
-// end print_symbol
+    
+    // Read the expected amount of bad lexemes.
+    for (i = 0; i < info->bad; i++)
+    {
+        // Read the next lexeme.
+        token = m2_lexer_getsym(lexer, NULL, &status);
+        
+        // Make sure a lexing error happened.
+        assert_false(status == M2_LEXER_STATUS_SUCCESS);
+        assert_false(status == M2_LEXER_STATUS_INVALID_REFERENCE);
+        assert_false(status == M2_LEXER_STATUS_ALLOCATION_FAILED);
+    }
+    
+    // Make sure the next token is EOF.
+    token = m2_lexer_getsym(lexer, NULL, &status);
+    assert_true(status == M2_LEXER_STATUS_SUCCESS);
+    assert_true(token == TOKEN_EOF_MARKER);
+    
+    // Test the final lexer position.
+    m2_lexer_getpos(lexer, &line, &column, &status);
+    assert_true(status == M2_LEXER_STATUS_SUCCESS);
+    assert_true(line == info->lines);
+    assert_true(column == info->columns);
+}
 
 
 // ---------------------------------------------------------------------------
@@ -214,46 +127,53 @@ void print_symbol(m2_lexer_t lexer, kvs_table_t symtab, cardinal lexkey, m2_toke
 static void m2_new_lexer_test(void)
 {
     int i;
-    const char *pathname;
-    kvs_table_t symtab;
+    FILE *file;
+    kvs_table_t table;
     m2_lexer_t lexer;
-    m2_token_t token;
-//    symbol_s symbol;
-    cardinal lexkey; 
-    
     m2_lexer_status_t status;
-    FILE *filetotest;
     
+    // Check all input information for the expected associated behaviour.
     for (i = 0; i < sizeof(_input_info) / sizeof(_input_info[0]); i++)
     {
-        pathname = _input_info[i].file;
-
-        printf("lexical analysis for file %s\n", pathname);
+        // Open the input file.
+        file = fopen(_input_info[i].file, "r");
         
-        filetotest = fopen(pathname,"r");	
-        if (filetotest == (FILE *)0) {
-            printf (" not possible to open the file: %s", pathname);
-            exit(1);
-            }
+        // Make sure opening the file succeeded.
+        assert_false(file == NULL);
+        if (file == NULL)
+            continue;
+        
+        // Create a symbol table.
+        table = kvs_new_table(0, NULL);
+        
+        // Make sure creating the symbol table succeeded.
+        assert_false(table == NULL);
+        if (table == NULL)
+        {
+            fclose(file);
+            continue;
+        }
+        
+        // Create a lexer.
+        lexer = m2_new_lexer(file, table, &status);
+        
+        // Make sure creating the lexer succeeded.
+        assert_true(status == M2_LEXER_STATUS_SUCCESS);
+        
+        if (lexer != NULL)
+        {
+            // Test the lexer.
+            m2_lexer_t_test(lexer, &_input_info[i]);
             
-        // create new symbol table
-        symtab = kvs_new_table(0,NULL);
-
-        // create a new lexer instance
-        lexer = m2_new_lexer(filetotest, symtab, &status);
-
-        token = 0;
-
-        // read until end of file
-        while (token != TOKEN_EOF_MARKER) {
-
-            token = m2_lexer_getsym(lexer, &lexkey, &status);
-
-            print_symbol(lexer, symtab, lexkey, token);
-
-        } // end while
-
-        m2_dispose_lexer(lexer, &status);
+            // Clean up the lexer.
+            m2_dispose_lexer(lexer, &status);
+            
+            // Make sure disposing the lexer succeeded.
+            assert_true(status == M2_LEXER_STATUS_SUCCESS);
+        }
+        
+        // Clean up the symbol table.
+        kvs_dispose_table(table, NULL);
     }
 } // end main
 
