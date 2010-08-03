@@ -28,13 +28,6 @@
 
 
 // ---------------------------------------------------------------------------
-// C standard library imports
-// ---------------------------------------------------------------------------
-
-// FROM stdio IMPORT FILE;
-#include <stdio.h>
-
-// ---------------------------------------------------------------------------
 // Embedded library imports
 // ---------------------------------------------------------------------------
 
@@ -50,6 +43,9 @@
 
 // FROM m2_tokens IMPORT m2_token_t;
 #include "m2_tokens.h"
+
+// FROM m2_fileio IMPORT m2_file_t;
+#include "m2_fileio.h"
 
 
 // ---------------------------------------------------------------------------
@@ -112,9 +108,9 @@ typedef /* m2_lexer_status_t */ enum {
 //
 // Returns NULL if the lexer object could not be created.
 
-m2_lexer_t m2_new_lexer(FILE *infile,
-                 kvs_table_t lextab,
-           m2_lexer_status_t *status);
+m2_lexer_t m2_new_lexer(m2_file_t infile,
+                      kvs_table_t lextab,
+                m2_lexer_status_t *status);
 
 
 // ---------------------------------------------------------------------------
