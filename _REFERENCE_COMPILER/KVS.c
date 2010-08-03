@@ -1205,7 +1205,7 @@ static fmacro kvs_entry _kvs_new_entry_with_copy(kvs_key_t key,
     index = 0;
     source = value;
     target = new_entry->value;
-    while (index <= size) {
+    while (index < size) {
         target[index] = source[index];
         index++;
     } // end for
