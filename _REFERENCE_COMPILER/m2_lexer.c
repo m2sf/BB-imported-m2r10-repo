@@ -27,7 +27,6 @@
 // Standard library imports
 // ---------------------------------------------------------------------------
 
-//#include <stdio.h>
 #include <stdlib.h>
 
 // ---------------------------------------------------------------------------
@@ -107,10 +106,6 @@ typedef /* m2_lexer_s */ struct {
 // P R I V A T E   F U N C T I O N   P R O T O T Y P E S
 // ==========================================================================
 
-//static fmacro uchar_t _readchar(m2_lexer_s *lexer);
-
-//static fmacro uchar_t _nextchar(m2_lexer_s *lexer);
-
 static fmacro uchar_t get_ident(m2_lexer_s *lexer);
 
 static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer);
@@ -130,8 +125,6 @@ static uchar_t get_scale_factor(m2_lexer_s *lexer);
 static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer);
 
 static bool is_escaped_char(uchar_t ch);
-
-//static uchar_t get_escaped_char(m2_lexer_s *lexer);
 
 static fmacro void add_lexeme_to_lextab(m2_lexer_s *lexer);
 
@@ -609,114 +602,6 @@ void m2_dispose_lexer(m2_lexer_t lexer,
 ((lexer->seen_method && !(lexer->seen_open_paren_since_method)) || \
 (lexer->bracket_nesting_level > 0) || (lexer->seen_backquote))
 
-
-// ---------------------------------------------------------------------------
-// private function:  _readchar(lexer)
-// ---------------------------------------------------------------------------
-//
-// Reads one character from the input stream of <lexer>  and  returns it.  The
-// lexer's coloumn counter is incremented.  Returns linefeed (ASCII LF) if any
-// of linefeed (ASCII LF)  or carriage return (ASCII CR)  or  a combination of
-// CR and LF (CRLF or LFCR) is read.  If LF is returned,  the  lexer's coloumn
-// counter is reset and its line counter is incremented.
-//
-// pre-conditions:
-//  o  lexer is an initialised lexer object
-//
-// post-conditions:
-//  o  new current character is the character read (consumed)
-//  o  new lookahead character is the character following the character read
-//  o  position counters are updated accordingly
-//
-// return-value:
-//  o  read (consumed) character is returned
-/*
-static fmacro uchar_t _readchar(m2_lexer_s *lexer) {
-    register int c;
-    
-#ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
-    if (lexer == NULL) return (uchar_t)0;
-#endif
-    
-    // read one character from source file
-    c = getc(lexer->sourcefile);
-    
-    // handle LF style end-of-line
-    if (c == ASCII_LF) {
-        lexer->current_pos.col = 1;
-        lexer->current_pos.line++;
-    }
-    // handle CRLF and CR style end-of-line
-    else if (c == ASCII_CR) {
-        lexer->current_pos.col = 1;
-        lexer->current_pos.line++;
-        c = getc(lexer->sourcefile);
-        if (c != NEWLINE) {
-            ungetc(c, lexer->sourcefile);
-        } // end if
-        c = NEWLINE;
-    }
-    // handle end-of-file
-    else if (c == EOF) {
-        // set end-of-file flag if end-of-file reached
-        lexer->end_of_file = (feof(lexer->sourcefile) == true);
-        c = 0;
-    }
-    // handle any other character
-    else {
-        // increment row counter
-        lexer->current_pos.col++;
-    } // end if
-    
-    if (((uchar_t) c == 255) || (c == 0)) {
-        //printf("");
-        ;
-    } // end if
-    
-    // return character
-    return (uchar_t) c;
-} // end _readchar
-*/
-
-// ---------------------------------------------------------------------------
-// private function:  _nextchar(lexer)
-// ---------------------------------------------------------------------------
-//
-// Returns the lookahead character in the input stream of <lexer>  and returns
-// it without incrementing the file pointer  and  without changing the lexer's
-// coloumn and line counters.
-//
-// pre-conditions:
-//  o  lexer is an initialised lexer object
-//
-// post-conditions:
-//  o  position counters remain unchanged
-//
-// return-value:
-//  o  lookahead character is returned
-/*
-static fmacro uchar_t _nextchar(m2_lexer_s *lexer) {
-    register int status;
-    register int c;
-    
-#ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
-    if (lexer == NULL) return (uchar_t)0;
-#endif
-    
-    c = getc(lexer->sourcefile);
-    
-    status = ungetc(c, lexer->sourcefile);
-    if (status != EOF) {
-        lexer->end_of_file = false;
-    }
-    else {
-        lexer->end_of_file = true;
-        c = 0;
-    } // end if
-    
-    return (uchar_t) c;
-} // end _nextchar
-*/
 
 // ---------------------------------------------------------------------------
 // private function:  get_ident(lexer)
@@ -1536,84 +1421,6 @@ static fmacro bool is_escaped_char(uchar_t ch) {
     return valid;
 } // end is_escaped_char
 
-
-// ---------------------------------------------------------------------------
-// private function:  get_escaped_char(lexer)
-// ---------------------------------------------------------------------------
-//
-// Reads an  escaped character sequence  from the input stream of <lexer>  and
-// returns the character represented by the escape sequence.
-//
-// pre-conditions:
-//  o  lexer is an initialised lexer object
-//  o  the lookahead character is the backslash character starting the assumed
-//     escape sequence
-//
-// post-conditions:
-//  if the backslash starts an escape sequence
-//  o  the lookahead character is the character following the escape sequence
-//  o  line and coloumn counters are updated
-//
-//  if the assumed backslash does not start an escape sequence
-//  o  the lookahead character is the character following the backslash
-//  o  line and coloumn counters are updated
-//
-// return-value:
-//  if the backslash starts an escape sequence
-//  o  the escaped character is returned
-//
-//  if the backslash does not start an escape sequence
-//  o  a backslash is returned
-/*
-static fmacro uchar_t get_escaped_char(m2_lexer_s *lexer) {
-    uchar_t ch;
-    bool escape_sequence_found = false;
-    
-#ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
-    if (lexer == NULL) return (uchar_t)0;
-#endif
-    
-    // eat the backslash and get the lookahead character
-    ch = readchar();
-    ch = nextchar();
-    
-    switch (ch) {
-        case DOUBLE_QUOTE :
-        case SINGLE_QUOTE :
-            escape_sequence_found = true;
-            ch = nextchar();
-            break;
-        case DIGIT_ZERO :
-            escape_sequence_found = true;
-            ch = ASCII_NUL;
-            break;
-        case LOWERCASE_N :
-            escape_sequence_found = true;
-            ch = LINEFEED;
-            break;
-        case LOWERCASE_R :
-            escape_sequence_found = true;
-            ch = CARRIAGE_RETURN;
-            break;
-        case LOWERCASE_T :
-            escape_sequence_found = true;
-            ch = TAB;
-            break;
-        case BACKSLASH :
-            escape_sequence_found = true;
-            ch = BACKSLASH;
-            break;
-        default :
-            ch = BACKSLASH;
-    } // end switch
-    
-    // consume current character only if escape sequence was found
-    if (escape_sequence_found)
-        readchar();
-    
-    return ch;
-} // end get_escaped_char
-*/
 
 // ---------------------------------------------------------------------------
 // private function:  skip_c_comment(lexer)
