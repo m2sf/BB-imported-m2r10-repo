@@ -102,6 +102,23 @@ initialize_test_environment(void)
 
 
 // --------------------------------------------------------------------------
+// function:  cleanup_test_environment()
+// --------------------------------------------------------------------------
+//
+// Cleans up the registered test cases and statistics.
+
+void
+cleanup_test_environment(void)
+{
+    // Deallocate space for the test cases.
+    tests.total = 0;
+    tests.used = 0;
+    free(tests.cases);
+    tests.cases = NULL;
+}
+
+
+// --------------------------------------------------------------------------
 // function:  run_tests()
 // --------------------------------------------------------------------------
 //
@@ -264,6 +281,9 @@ main (void)
 
     // Generate a test report.
     generate_report();
+    
+    // Clean up the test environment.
+    cleanup_test_environment();
     
     return EXIT_SUCCESS;
 }
