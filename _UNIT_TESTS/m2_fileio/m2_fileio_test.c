@@ -49,9 +49,9 @@ typedef struct /* file_info_t */
 
 static const file_info_t _file_info[] = {
     // For POSIX
-    { "./empty.def", POSIX_FILENAMING,
+    { "./empty.tst", POSIX_FILENAMING,
       1, 1, "" },
-    { "./fourlines.mod", POSIX_FILENAMING,
+    { "./fourlines.tst", POSIX_FILENAMING,
       4, 11, "1010101010\n0101010101\n1010101010\n0101010101" }
 }; /* _file_info */
 
@@ -61,38 +61,37 @@ static const file_info_t _file_info[] = {
 // --------------------------------------------------------------------------
 //
 // Tests if reading or writing <codepoint> from <file> correctly updated the
-// file position from (<previous_line>, <previous_column>) to the current one.
+// file position from <previous> to the current one.
 
 static void m2_fileposition_test(m2_file_t file, octet_t codepoint,
-                                 cardinal prev_line, cardinal prev_column)
+                                 const m2_file_pos_t *previous)
 {
-    cardinal line;
-    cardinal column;
+    m2_file_pos_t current;
     
     // Get the current file position.
-    m2_fileio_getpos(file, &line, &column);
+    m2_fileio_getpos(file, &current);
     
     if (codepoint == ASCII_NUL)
     {
         // Check if the EOF is as expected.
         assert_true(m2_fileio_eof(file) == true);
-        assert_true(line == prev_line);
-        assert_true(column == prev_column);
+        assert_true(current.line == previous->line);
+        assert_true(current.col == previous->col);
     }
     else
     if (codepoint == ASCII_LF)
     {
         // Check if a new line has been started in the file position.
         assert_true(m2_fileio_eof(file) == false);
-        assert_true(line == prev_line + 1);
-        assert_true(column == 1);
+        assert_true(current.line == previous->line + 1);
+        assert_true(current.col == 1);
     }
     else
     {
         // Check if one column has been advanced in the file position.
         assert_true(m2_fileio_eof(file) == false);
-        assert_true(line == prev_line);
-        assert_true(column == prev_column + 1);
+        assert_true(current.line == previous->line);
+        assert_true(current.col == previous->col + 1);
     }
 }
 
@@ -107,13 +106,12 @@ static void m2_fileposition_test(m2_file_t file, octet_t codepoint,
 static void m2_writefile_test(m2_file_t file, const file_info_t *info)
 {
     int i;
-    cardinal line;
-    cardinal column;
+    m2_file_pos_t position;
     
     // Test the initial file position.
-    m2_fileio_getpos(file, &line, &column);
-    assert_true(line == 1);
-    assert_true(column == 1);
+    m2_fileio_getpos(file, &position);
+    assert_true(position.line == 1);
+    assert_true(position.col == 1);
     
     // Write all data to the file.
     for (i = 0; info->data[i] != CSTRING_TERMINATOR; i++)
@@ -122,15 +120,15 @@ static void m2_writefile_test(m2_file_t file, const file_info_t *info)
         m2_fileio_write(file, info->data[i]);
         
         // Check if the file position was advanced properly.
-        m2_fileposition_test(file, info->data[i], line, column);
+        m2_fileposition_test(file, info->data[i], &position);
         
         // Remember this new file position.
-        m2_fileio_getpos(file, &line, &column);
+        m2_fileio_getpos(file, &position);
     }
     
     // Test if the file pointer ended up as expected.
-    assert_true(line == info->lines);
-    assert_true(column == info->columns);
+    assert_true(position.line == info->lines);
+    assert_true(position.col == info->columns);
 }
 
 
@@ -194,39 +192,38 @@ static void m2_new_outfile_test(void)
 static void m2_readfile_test(m2_file_t file, const file_info_t *info)
 {
     int i;
-    cardinal line;
-    cardinal column;
+    m2_file_pos_t position;
     int codepoint;
     
     // Test the initial file position.
-    m2_fileio_getpos(file, &line, &column);
-    assert_true(line == 1);
-    assert_true(column == 1);
+    m2_fileio_getpos(file, &position);
+    assert_true(position.line == 1);
+    assert_true(position.col == 1);
     
     // Test if looking ahead works.
-    m2_fileio_lookahead(file, &codepoint);
-    m2_fileio_getpos(file, &line, &column);
-    assert_true(line == 1);
-    assert_true(column == 1);
+    codepoint = m2_fileio_lookahead(file);
+    m2_fileio_getpos(file, &position);
+    assert_true(position.line == 1);
+    assert_true(position.col == 1);
     
     for (i = 0; m2_fileio_eof(file) == false; i++)
     {
         // Read a character.
-        m2_fileio_read(file, &codepoint);
+        codepoint = m2_fileio_read(file);
         
         // Test if this character was expected.
         assert_equal(codepoint, info->data[i]);
         
         // Check if the file position was advanced properly.
-        m2_fileposition_test(file, info->data[i], line, column);
+        m2_fileposition_test(file, info->data[i], &position);
         
         // Remember this new file position.
-        m2_fileio_getpos(file, &line, &column);
+        m2_fileio_getpos(file, &position);
     }
     
     // Test if the file pointer ended up as expected.
-    assert_true(line == info->lines);
-    assert_true(column == info->columns);
+    assert_true(position.line == info->lines);
+    assert_true(position.col == info->columns);
 }
 
 
