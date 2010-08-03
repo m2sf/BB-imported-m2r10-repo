@@ -45,8 +45,7 @@
 
 typedef struct /* m2_file_s */ {
     FILE *handle;
-    cardinal line;
-    cardinal col;
+    m2_file_pos_t position;
     bool end_of_file;
 } m2_file_s;
 
@@ -101,8 +100,8 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
     DEALLOCATE(path);
     
     // Initialise the file position.
-    new_file->line = 1;
-    new_file->col = 1;
+    new_file->position.line = 1;
+    new_file->position.col = 1;
     new_file->end_of_file = false;
     
     ASSIGN_BY_REF(status, M2_FILEIO_STATUS_SUCCESS);
@@ -160,8 +159,8 @@ m2_file_t m2_new_outfile(m2_filename_t filename,
     DEALLOCATE(path);
     
     // Initialise the file position.
-    new_file->line = 1;
-    new_file->col = 1;
+    new_file->position.line = 1;
+    new_file->position.col = 1;
     new_file->end_of_file = false;
     
     ASSIGN_BY_REF(status, M2_FILEIO_STATUS_SUCCESS);
@@ -193,7 +192,7 @@ m2_file_t m2_new_outfile(m2_filename_t filename,
 // return-value:
 //  o  read (consumed) character is returned
 
-void m2_fileio_read(m2_file_t file, int *codepoint) {
+int m2_fileio_read(m2_file_t file) {
     m2_file_s *this_file = (m2_file_s *) file;
     register int c;
     
@@ -202,13 +201,13 @@ void m2_fileio_read(m2_file_t file, int *codepoint) {
     
     // handle LF style end-of-line
     if (c == ASCII_LF) {
-        this_file->col = 1;
-        this_file->line++;
+        this_file->position.col = 1;
+        this_file->position.line++;
     }
     // handle CRLF and CR style end-of-line
     else if (c == ASCII_CR) {
-        this_file->col = 1;
-        this_file->line++;
+        this_file->position.col = 1;
+        this_file->position.line++;
         c = getc(this_file->handle);
         if (c != NEWLINE) {
             ungetc(c, this_file->handle);
@@ -223,7 +222,7 @@ void m2_fileio_read(m2_file_t file, int *codepoint) {
     }
     else /* any other characters */ {
         // increment row counter
-        this_file->col++;
+        this_file->position.col++;
     } // end if
     
     if (((uchar_t) c == 255) || (c == 0)) {
@@ -231,7 +230,7 @@ void m2_fileio_read(m2_file_t file, int *codepoint) {
     } // end if
     
     // pass consumed character
-    *codepoint = c;
+    return c;
 } // end m2_fileio_read
 
 
@@ -256,7 +255,7 @@ void m2_fileio_read(m2_file_t file, int *codepoint) {
 // return-value:
 //  o  lookahead character is returned
 
-void m2_fileio_lookahead(m2_file_t file, int *codepoint) {
+int m2_fileio_lookahead(m2_file_t file) {
     m2_file_s *this_file = (m2_file_s *) file;
     register int c;
     register int status;
@@ -273,7 +272,7 @@ void m2_fileio_lookahead(m2_file_t file, int *codepoint) {
     } // end if
     
     // pass lookahead character
-    *codepoint = c;
+    return c;
 } // end m2_fileio_lookahead
 
 
@@ -298,13 +297,13 @@ void m2_fileio_write(m2_file_t file, octet_t codepoint) {
     // Handle LF style line-feed.
     if (codepoint == ASCII_LF) {
         // Start a new line.
-        this_file->col = 1;
-        this_file->line++;
+        this_file->position.col = 1;
+        this_file->position.line++;
     }
     // Handle any other character.
     else {
         // Move to the next column.
-        this_file->col++;
+        this_file->position.col++;
     } // end if
 } // end m2_fileio_write
 
@@ -316,11 +315,11 @@ void m2_fileio_write(m2_file_t file, octet_t codepoint) {
 // Obtains the  current read/write position  of file <file>.  The line counter
 // is passed back in <line> and the coloumn counter is passed back in <col>.
 
-void m2_fileio_getpos(m2_file_t file, cardinal *line, cardinal *col) {
+void m2_fileio_getpos(m2_file_t file, m2_file_pos_t *position) {
     m2_file_s *this_file = (m2_file_s *) file;
     
-    *line = this_file->line;
-    *col = this_file->col;
+    if (file != NULL)
+        ASSIGN_BY_REF(position, this_file->position);
 } // end m2_fileio_getpos
 
 

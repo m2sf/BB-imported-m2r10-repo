@@ -75,6 +75,16 @@ typedef /* m2_fileio_status_t */ enum {
 
 
 // ---------------------------------------------------------------------------
+// File position type
+// ---------------------------------------------------------------------------
+
+typedef /* m2_file_pos_t */ struct {
+    uint16_t line;
+    uint16_t col;
+} m2_file_pos_t;
+
+
+// ---------------------------------------------------------------------------
 // function:  m2_open_sourcefile(filename, status)
 // ---------------------------------------------------------------------------
 //
@@ -109,7 +119,7 @@ m2_file_t m2_new_outfile(m2_filename_t filename,
 // Reads one octet of data at the current position of <file>, passes it back
 // in <codepoint> and advances the read/write position of <file> by one.
 
-void m2_fileio_read(m2_file_t file, int *codepoint);
+int m2_fileio_read(m2_file_t file);
 
 
 // ---------------------------------------------------------------------------
@@ -120,7 +130,7 @@ void m2_fileio_read(m2_file_t file, int *codepoint);
 // m2_fileio_read().  This function does not update the read/write position of
 // <file>.
 
-void m2_fileio_lookahead(m2_file_t file, int *codepoint);
+int m2_fileio_lookahead(m2_file_t file);
 
 
 // ---------------------------------------------------------------------------
@@ -140,7 +150,7 @@ void m2_fileio_write(m2_file_t file, octet_t codepoint);
 // Obtains the  current read/write position  of file <file>.  The line counter
 // is passed back in <line> and the coloumn counter is passed back in <col>.
 
-void m2_fileio_getpos(m2_file_t file, cardinal *line, cardinal *col);
+void m2_fileio_getpos(m2_file_t file, m2_file_pos_t *position);
 
 
 // ---------------------------------------------------------------------------
