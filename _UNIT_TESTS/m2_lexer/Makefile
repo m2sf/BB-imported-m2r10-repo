@@ -32,6 +32,8 @@ SRC = \
 	../../_REFERENCE_COMPILER/m2_reserved_words.c \
 	../../_REFERENCE_COMPILER/m2_tokens.c \
 	../../_REFERENCE_COMPILER/m2_lexer.c \
+	../../_REFERENCE_COMPILER/m2_filenames.c \
+	../../_REFERENCE_COMPILER/m2_fileio.c \
 	m2_lexer_test.c
 
 LIB =

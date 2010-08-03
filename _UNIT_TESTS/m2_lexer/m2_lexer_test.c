@@ -127,7 +127,8 @@ static void m2_lexer_t_test(m2_lexer_t lexer, const lexer_input_info_t *info)
 static void m2_new_lexer_test(void)
 {
     int i;
-    FILE *file;
+    m2_filename_t filename;
+    m2_file_t file;
     kvs_table_t table;
     m2_lexer_t lexer;
     m2_lexer_status_t status;
@@ -135,8 +136,19 @@ static void m2_new_lexer_test(void)
     // Check all input information for the expected associated behaviour.
     for (i = 0; i < sizeof(_input_info) / sizeof(_input_info[0]); i++)
     {
-        // Open the input file.
-        file = fopen(_input_info[i].file, "r");
+        // Allocate the filename descriptor.
+        filename = m2_new_filename_from_path(
+            _input_info[i].file, POSIX_FILENAMING, NULL
+        );
+        
+        // Make sure allocating the filename descriptor succeeded.
+        assert_false(filename == NULL);
+        if (filename == NULL)
+            continue;
+        
+        // Open the input file and clean up the filename.
+        file = m2_open_sourcefile(filename, NULL);
+        m2_dispose_filename(filename);
         
         // Make sure opening the file succeeded.
         assert_false(file == NULL);
@@ -150,7 +162,7 @@ static void m2_new_lexer_test(void)
         assert_false(table == NULL);
         if (table == NULL)
         {
-            fclose(file);
+            m2_close_file(file);
             continue;
         }
         
