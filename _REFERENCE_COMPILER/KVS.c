@@ -1105,15 +1105,18 @@ static kvs_entry _kvs_find_entry(kvs_table_t table,
 // Returns the size of null-terminated data <data>.
 
 static fmacro cardinal _kvs_calc_null_terminated_data_size(kvs_data_t data) {
-    octet_t *_data = (octet_t *) &data;
+    octet_t *_data = (octet_t *) data;
     cardinal index = 0;
     
     while (_data[index] != 0) {
-        if (index < KVS_MAX_STRING_SIZE)
+        if (index < KVS_MAX_STRING_SIZE - 1)
             index++;
         else
             return 0;
     } // end while
+    
+    // include the null-terminator
+    index++;
     
     return index;
 } // end _kvs_calc_null_terminated_data_size
