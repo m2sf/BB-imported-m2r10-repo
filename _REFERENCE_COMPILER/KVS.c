@@ -988,7 +988,7 @@ void kvs_dispose_table(kvs_table_t table, kvs_status_t *status) {
     
     if (this_table->entry_count != 0) {
         
-        for (index = 0; index < this_table->entry_count; index++) {
+        for (index = 0; index < this_table->bucket_count; index++) {
         
             this_entry = this_table->bucket[index];
             
