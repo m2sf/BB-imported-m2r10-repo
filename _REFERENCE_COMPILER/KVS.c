@@ -1288,7 +1288,6 @@ static fmacro kvs_entry _kvs_new_entry_with_ref(kvs_key_t key,
 
 static fmacro kvs_data_t _kvs_retrieve_copy(kvs_entry_s *entry,
                                            kvs_status_t *status) {
-    kvs_entry_s *new_entry;
     octet_t *source, *new_copy;
     cardinal index, size;
     
@@ -1306,8 +1305,8 @@ static fmacro kvs_data_t _kvs_retrieve_copy(kvs_entry_s *entry,
     // copy data
     index = 0;
     size = entry->size;
-    source = new_entry->value;
-    while (index <= size) {
+    source = entry->value;
+    while (index < size) {
         new_copy[index] = source[index];
         index++;
     } // end for
