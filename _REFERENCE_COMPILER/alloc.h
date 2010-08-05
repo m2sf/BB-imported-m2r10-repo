@@ -1,6 +1,9 @@
-/*  Gemeral purpose memory allocation macros
+/*! Gemeral purpose memory allocation macros
  *
- *  alloc.h
+ *  @file  alloc.h
+ *  @brief Memory allocator interface
+ *
+ *  Legal Notice:
  *
  *  This file ("alloc.h") was released into the public domain
  *  by Sunrise Telephone Systems KK, Tokyo, Japan.

@@ -1,13 +1,11 @@
-/* Key Value Storage Library
+/*! Key Value Storage Library
  *
- *  @file KVS.h
- *  KVS interface
+ *  @file  KVS.h
+ *  @brief Universal Associative Array interface
  *
- *  Universal Associative Array
+ *  @b Author: Benjamin Kowarsch
  *
- *  Author: Benjamin Kowarsch
- *
- *  Copyright (C) 2009 Benjamin Kowarsch. All rights reserved.
+ *  @b Copyright: (C) 2009 Benjamin Kowarsch. All rights reserved.
  *
  *  License:
  *

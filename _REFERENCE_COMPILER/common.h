@@ -1,6 +1,9 @@
-/*  Definitions for common data types and macros
+/*! Definitions for common data types and macros
  *
- *  common.h
+ *  @file  common.h
+ *  @brief Common data types and macros
+ *
+ *  Legal Notice:
  *
  *  This file ("common.h") was released into the public domain
  *  by Sunrise Telephone Systems KK, Tokyo, Japan.

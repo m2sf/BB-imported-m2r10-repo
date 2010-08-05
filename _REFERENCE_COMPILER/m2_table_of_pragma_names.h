@@ -1,13 +1,13 @@
-/* Modula-2 R10 Compiler (m2r10c)
+/*! Modula-2 R10 Compiler (m2r10c)
  *
- *  m2_table_of_pragma_names.h
- *  Master table of pragma names
+ *  @file  m2_table_of_pragma_names.h
+ *  @brief Master table of pragma names
  *
- *  Author: Benjamin Kowarsch
+ *  @b Author: Benjamin Kowarsch
  *
- *  Copyright (C) 2010 B.Kowarsch. All rights reserved.
+ *  @b Copyright: (C) 2010 B.Kowarsch. All rights reserved.
  *
- *  License:
+ *  @b License:
  *
  *  Permission is hereby granted to review and test this software for the sole
  *  purpose of supporting the effort by the licensor  to implement a reference

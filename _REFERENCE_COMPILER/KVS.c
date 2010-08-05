@@ -1,15 +1,13 @@
-/* Key Value Storage Library
+/*! Key Value Storage Library
  *
- *  @file KVS.c
- *  KVS implementation
+ *  @file  KVS.c
+ *  @brief Universal Associative Array implementation
  *
- *  Universal Associative Array
+ *  @b Author: Benjamin Kowarsch
  *
- *  Author: Benjamin Kowarsch
+ *  @b Copyright: (C) 2009 Benjamin Kowarsch. All rights reserved.
  *
- *  Copyright (C) 2009 Benjamin Kowarsch. All rights reserved.
- *
- *  License:
+ *  @b License:
  *
  *  Redistribution  and  use  in source  and  binary forms,  with  or  without
  *  modification, are permitted provided that the following conditions are met
