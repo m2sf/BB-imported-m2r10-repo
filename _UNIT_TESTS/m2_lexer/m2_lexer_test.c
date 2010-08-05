@@ -1,7 +1,7 @@
 /* Modula-2 R10 Compiler (m2r10c)
  *
- *  m2_lexer_test.c
- *  Lexer interface tests
+ *  \file  m2_lexer_test.c
+ *  \brief Lexer interface tests
  *
  *  Author: Eric Streit, Roel Messiant
  *

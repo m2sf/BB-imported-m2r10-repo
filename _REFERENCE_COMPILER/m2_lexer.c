@@ -1,7 +1,7 @@
 /* Modula-2 R10 Compiler (m2r10c)
  *
- *  m2_lexer.c
- *  Lexer implementation
+ *  \file  m2_lexer.c
+ *  \brief Lexer implementation
  *
  *  Author: Benjamin Kowarsch, Roel Messiant
  *
