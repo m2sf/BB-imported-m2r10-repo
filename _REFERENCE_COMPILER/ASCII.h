@@ -1,6 +1,9 @@
-/*  Identifiers and macros for testing 7-bit-ASCII characters
+/*! Identifiers and macros for testing 7-bit-ASCII characters
  *
- *  ASCII.h
+ *  @file  ASCII.h
+ *  @brief Macros for 7-bit ASCII characters
+ *
+ *  Legal Notice:
  *
  *  This file ("ASCII.h") was released into the public domain
  *  by Sunrise Telephone Systems KK, Tokyo, Japan.

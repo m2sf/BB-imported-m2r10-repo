@@ -1,13 +1,13 @@
-/* Modula-2 R10 Compiler (m2r10c)
+/*! Modula-2 R10 Compiler (m2r10c)
  *
- *  \file  m2_lexer.c
- *  \brief Lexer implementation
+ *  @file  m2_lexer.c
+ *  @brief Lexer implementation
  *
- *  Author: Benjamin Kowarsch, Roel Messiant
+ *  @b Author: Benjamin Kowarsch, Roel Messiant
  *
- *  Copyright (C) 2010 B.Kowarsch, R.Messiant. All rights reserved.
+ *  @b Copyright: (C) 2010 B.Kowarsch, R.Messiant. All rights reserved.
  *
- *  License:
+ *  @b License:
  *
  *  Permission is hereby granted to review and test this software for the sole
  *  purpose of supporting the effort by the licensor  to implement a reference

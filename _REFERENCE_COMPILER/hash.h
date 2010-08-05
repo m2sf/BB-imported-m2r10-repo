@@ -1,6 +1,9 @@
-/*  Gemeral purpose 32-bit hash function
+/*! Gemeral purpose 32-bit hash function
  *
- *  hash.h
+ *  @file  hash.h
+ *  @brief 32-bit hash function
+ *
+ *  Legal Notice:
  *
  *  This file ("hash.h") was released into the public domain
  *  by Sunrise Telephone Systems KK, Tokyo, Japan.
