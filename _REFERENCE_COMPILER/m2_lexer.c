@@ -560,12 +560,13 @@ char m2_offending_char(m2_lexer_t lexer,
 
 
 // ---------------------------------------------------------------------------
-// function:  m2_dispose_lexer(lexer)
+// function:  m2_dispose_lexer(lexer, status)
 // ---------------------------------------------------------------------------
 //
-// Disposes of lexer object <lexer>  and  closes its sourcefile if it is open. 
-// The  symbol table  used  by  the lexer is  NOT  disposed of.  The status of
-// the operation is passed back in <status>.
+// Deallocates  lexer object <lexer>.  The function does  not  close the input
+// stream  and  it  does  not  deallocate the lexeme table associated with the
+// lexer object.  The  status  of  the  operation  is  passed back in <status>
+// unless NULL is passed in for <status>.
 
 void m2_dispose_lexer(m2_lexer_t lexer,
                       m2_lexer_status_t *status) {
@@ -577,7 +578,6 @@ void m2_dispose_lexer(m2_lexer_t lexer,
         return;
     } // end if
     
-    m2_close_file(this_lexer->sourcefile);
     DEALLOCATE(this_lexer);
     
     ASSIGN_BY_REF(status, M2_LEXER_STATUS_SUCCESS);

@@ -186,6 +186,9 @@ static void m2_new_lexer_test(void)
         
         // Clean up the symbol table.
         kvs_dispose_table(table, NULL);
+        
+        // Clean up the file descriptor.
+        m2_close_file(file);
     }
 } // end main
 
