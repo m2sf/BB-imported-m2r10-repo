@@ -100,7 +100,7 @@ static char _base16_digit(uint_fast8_t value) {
 void m2_tokenset_to_literal(m2_tokenset_t set,
                     m2_tokenset_literal_t *literal,
              m2_tokenset_literal_status_t *status) {
-    uint_fast8_t index = 0, bit = 0;
+    uint_fast8_t index = 0, segment, bit;
     uint_fast8_t bit0, bit1, bit2, bit3;
     char *_literal = (char *) literal;
         
@@ -122,64 +122,56 @@ void m2_tokenset_to_literal(m2_tokenset_t set,
     int tokdiv32 = (tokens - 1) / M2_TOKENSET_BITS_PER_SEGMENT;
     int tuples = M2_TOKENSET_LITERAL_NUM_OF_TUPLES;
 #endif
+    
+    segment = 0;
+    while (segment < M2_TOKENSET_SEGMENTS_PER_SET) {
         
-    while (bit < _M2_TOKENSET_TOTAL_BITS) {
-        
-        // if first bit in tuple ...
-        if ((bit % M2_TOKENSET_BITS_PER_SEGMENT) == 0) {
-            
-            // add separator comma and whitespace unless first tuple
-            if (bit != 0) {
-                _literal[index] = COMMA;
-                index++;
-                _literal[index] = WHITESPACE;
-                index++;
-            } // end if
-            
-            // add ' 0x' before each tuple
-            _literal[index] = DIGIT_ZERO;
+        // add separator comma and whitespace unless first segment
+        if (segment != 0) {
+            _literal[index] = COMMA;
             index++;
-            _literal[index] = LOWERCASE_X;
+            _literal[index] = WHITESPACE;
             index++;
         } // end if
         
-        if (bit < M2_NUMBER_OF_TOKENS)
-            bit0 = m2_tokenset_is_element(set, (m2_token_t) bit);
-        else
-            bit0 = 0;
-        bit++;
-        
-        if ( bit < M2_NUMBER_OF_TOKENS)
-            bit1 = m2_tokenset_is_element(set, (m2_token_t) bit);
-        else
-            bit1 = 0;
-        bit++;
-        
-        if ( bit < M2_NUMBER_OF_TOKENS)
-            bit2 = m2_tokenset_is_element(set, (m2_token_t) bit);
-        else
-            bit2 = 0;
-        bit++;
-        
-        if ( bit < M2_NUMBER_OF_TOKENS)
-            bit3 = m2_tokenset_is_element(set, (m2_token_t) bit);
-        else
-            bit3 = 0;
-        bit++;
-                
-        // determine the next digit in the tuple
-        _literal[index] =
-            _base16_digit((bit0 << 3) + (bit1 << 2) + (bit2 << 1) + bit3);
-        
-        if (_literal[index] == CSTRING_TERMINATOR) {
-            ASSIGN_BY_REF(status, M2_TOKENSET_LITERAL_STATUS_OUT_OF_RANGE);
-            _literal[0] = CSTRING_TERMINATOR;
-            return;
-        } // end if
-        
+        // add '0x' before each segment
+        _literal[index] = DIGIT_ZERO;
         index++;
-    } // end while
+        _literal[index] = LOWERCASE_X;
+        index++;
         
+        // add segment data
+        bit = M2_TOKENSET_BITS_PER_SEGMENT;
+        while (bit > 0) {
+            bit0 = m2_tokenset_is_element(
+                set, segment * M2_TOKENSET_BITS_PER_SEGMENT + bit - 4
+            );
+            
+            bit1 = m2_tokenset_is_element(
+                set, segment * M2_TOKENSET_BITS_PER_SEGMENT + bit - 3
+            );
+            
+            bit2 = m2_tokenset_is_element(
+                set, segment * M2_TOKENSET_BITS_PER_SEGMENT + bit - 2
+            );
+            
+            bit3 = m2_tokenset_is_element(
+                set, segment * M2_TOKENSET_BITS_PER_SEGMENT + bit - 1
+            );
+            
+            // determine the next digit in the tuple
+            _literal[index] =
+                _base16_digit((bit3 << 3) + (bit2 << 2) + (bit1 << 1) + bit0);
+            index++;
+            
+            // next nibble
+            bit = bit - 4;
+        } // end while
+        
+        // next segment
+        segment++;
+    } // end while
+    
     // terminate the literal
     _literal[index] = CSTRING_TERMINATOR;
     
