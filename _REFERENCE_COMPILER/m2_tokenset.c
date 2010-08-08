@@ -539,7 +539,7 @@ m2_tokenset_iterator_t m2_tokenset_iterator(m2_tokenset_t set) {
     } // end while
     
     new_iterator = (_M2_TOKENSET_ITERATOR_BASE_TYPE *)
-        ALLOCATE(index * sizeof(_M2_TOKENSET_ITERATOR_BASE_TYPE));
+        ALLOCATE((index + 1) * sizeof(_M2_TOKENSET_ITERATOR_BASE_TYPE));
     
     if (new_iterator == NULL) return NULL;
     
