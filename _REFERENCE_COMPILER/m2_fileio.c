@@ -45,6 +45,7 @@
 
 typedef struct /* m2_file_s */ {
     FILE *handle;
+    m2_file_type_t type;
     m2_file_pos_t position;
     bool end_of_file;
 } m2_file_s;
@@ -62,33 +63,49 @@ typedef struct /* m2_file_s */ {
 
 m2_file_t m2_open_sourcefile(m2_filename_t filename,
                              m2_fileio_status_t *status) {
-    m2_file_s *new_file;
     const char *path;
+    m2_file_s *new_file;
+    m2_file_type_t file_type;
     m2_filename_status_t filename_status;
     
-    // Allocate memory for a file descriptor.
+    // bail out if filename is invalid
+    if (filename == NULL) {
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_REFERENCE);
+        return NULL;
+    } // end if
+    
+    // get the file type
+    file_type = m2_file_type(filename);
+    
+    // bail out if the file type does not represent a source file
+    if ((file_type != FILE_TYPE_DEF) && (file_type != FILE_TYPE_MOD)) {
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_FILE_TYPE);
+        return NULL;
+    } // end if
+    
+    // allocate memory for a file descriptor
     new_file = ALLOCATE(sizeof(m2_file_s));
     
-    // Bail out if allocation failed.
+    // bail out if allocation failed
     if (new_file == NULL) {
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
     } // end if
     
-    // Get the file path.
+    // get the file path
     path = m2_path_from_filename(filename, &filename_status);
     
-    // Bail out if getting the file path failed.
+    // bail out if getting the file path failed
     if (filename_status != M2_FILENAME_STATUS_SUCCESS) {
         DEALLOCATE(new_file);
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
     } // end if
     
-    // Open the file for reading.
+    // open the file for reading
     new_file->handle = fopen(path, "r");
     
-    // Bail out if opening the file failed.
+    // bail out if opening the file failed
     if (new_file->handle == NULL) {
         DEALLOCATE(new_file);
         DEALLOCATE(path);
@@ -96,14 +113,16 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
         return NULL;
     } // end if
     
-    // Deallocate the memory for the path.
+    // deallocate the memory for the path
     DEALLOCATE(path);
     
-    // Initialise the file position.
+    // initialise the file descriptor
+    new_file->type = file_type;
     new_file->position.line = 1;
     new_file->position.col = 1;
     new_file->end_of_file = false;
     
+    // pass status and new file descriptor back to caller
     ASSIGN_BY_REF(status, M2_FILEIO_STATUS_SUCCESS);
     return (m2_file_t) new_file;
 } // end m2_open_sourcefile
@@ -121,33 +140,49 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
 
 m2_file_t m2_new_outfile(m2_filename_t filename,
                          m2_fileio_status_t *status) {
-    m2_file_s *new_file;
     const char *path;
+    m2_file_s *new_file;
+    m2_file_type_t file_type;
     m2_filename_status_t filename_status;
+
+    // bail out if filename is invalid
+    if (filename == NULL) {
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_REFERENCE);
+        return NULL;
+    } // end if
     
-    // Allocate memory for a file descriptor.
+    // get the file type
+    file_type = m2_file_type(filename);
+    
+    // bail out if the file type does not represent a source file
+    if ((file_type != FILE_TYPE_DEF) && (file_type != FILE_TYPE_MOD)) {
+        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_FILE_TYPE);
+        return NULL;
+    } // end if
+    
+    // allocate memory for a file descriptor
     new_file = ALLOCATE(sizeof(m2_file_s));
     
-    // Bail out if allocation failed.
+    // bail out if allocation failed
     if (new_file == NULL) {
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
     } // end if
     
-    // Get the file path.
+    // get the file path
     path = m2_path_from_filename(filename, &filename_status);
     
-    // Bail out if getting the file path failed.
+    // bail out if getting the file path failed
     if (filename_status != M2_FILENAME_STATUS_SUCCESS) {
         DEALLOCATE(new_file);
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
     } // end if
     
-    // Open the file for writing.
+    // open the file for writing
     new_file->handle = fopen(path, "w");
     
-    // Bail out if opening the file failed.
+    // bail out if opening the file failed.
     if (new_file->handle == NULL) {
         DEALLOCATE(new_file);
         DEALLOCATE(path);
@@ -155,17 +190,35 @@ m2_file_t m2_new_outfile(m2_filename_t filename,
         return NULL;
     } // end if
     
-    // Deallocate the memory for the path.
+    // deallocate the memory for the path
     DEALLOCATE(path);
     
-    // Initialise the file position.
+    // initialise the file descriptor
+    new_file->type = file_type;
     new_file->position.line = 1;
     new_file->position.col = 1;
     new_file->end_of_file = false;
     
+    // pass status and new file descriptor back to caller
     ASSIGN_BY_REF(status, M2_FILEIO_STATUS_SUCCESS);
     return (m2_file_t) new_file;
 } // end m2_new_outfile
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_fileio_file_type(file)
+// ---------------------------------------------------------------------------
+//
+// Returns the file type of <file> or FILE_TYPE_UNKNOWN if <file> is NULL.
+
+m2_file_type_t m2_fileio_file_type(m2_file_t file) {
+    m2_file_s *this_file = (m2_file_s *) file;
+    
+    if (file == NULL)
+        return FILE_TYPE_UNKNOWN;
+    
+    return this_file->type;
+} // end m2_fileio_file_type
 
 
 // ---------------------------------------------------------------------------
@@ -331,7 +384,7 @@ void m2_fileio_getpos(m2_file_t file, m2_file_pos_t *position) {
 
 bool m2_fileio_eof(m2_file_t file) {
     m2_file_s *this_file = (m2_file_s *) file;
-
+    
     if (file == NULL)
         return true;
     

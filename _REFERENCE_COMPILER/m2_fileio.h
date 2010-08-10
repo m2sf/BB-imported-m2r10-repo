@@ -68,6 +68,9 @@ typedef /* m2_fileio_status_t */ enum {
     // invalid file IO object passed
     M2_FILEIO_STATUS_INVALID_REFERENCE,
     
+    // file with invalid file type passed
+    M2_FILEIO_STATUS_INVALID_FILE_TYPE,
+    
     // unable to allocate memory
     M2_FILEIO_STATUS_ALLOCATION_FAILED
     
@@ -110,6 +113,15 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
 
 m2_file_t m2_new_outfile(m2_filename_t filename,
                     m2_fileio_status_t *status);
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_fileio_file_type(file)
+// ---------------------------------------------------------------------------
+//
+// Returns the file type of <file> or FILE_TYPE_UNKNOWN if <file> is NULL.
+
+m2_file_type_t m2_fileio_file_type(m2_file_t file);
 
 
 // ---------------------------------------------------------------------------
