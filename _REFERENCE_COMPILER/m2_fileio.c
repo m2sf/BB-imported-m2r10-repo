@@ -78,7 +78,7 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
     file_type = m2_file_type(filename);
     
     // bail out if the file type does not represent a source file
-    if ((file_type != FILE_TYPE_DEF) && (file_type != FILE_TYPE_MOD)) {
+    if ((file_type != FILE_TYPE_SYM) && (file_type != FILE_TYPE_MOD)) {
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_FILE_TYPE);
         return NULL;
     } // end if
@@ -154,8 +154,8 @@ m2_file_t m2_new_outfile(m2_filename_t filename,
     // get the file type
     file_type = m2_file_type(filename);
     
-    // bail out if the file type does not represent a source file
-    if ((file_type != FILE_TYPE_DEF) && (file_type != FILE_TYPE_MOD)) {
+    // bail out if the file type represents a source file
+    if ((file_type == FILE_TYPE_DEF) || (file_type == FILE_TYPE_MOD)) {
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_FILE_TYPE);
         return NULL;
     } // end if
