@@ -156,11 +156,11 @@ void m2_fileio_write(m2_file_t file, octet_t codepoint);
 
 
 // ---------------------------------------------------------------------------
-// function:  m2_fileio_getpos(file, line, col)
+// function:  m2_fileio_getpos(file, position)
 // ---------------------------------------------------------------------------
 //
-// Obtains the  current read/write position  of file <file>.  The line counter
-// is passed back in <line> and the coloumn counter is passed back in <col>.
+// Obtains the current read/write position of file <file>  and  passes it back
+// in <position>.  No data is passed back if <file> is NULL.
 
 void m2_fileio_getpos(m2_file_t file, m2_file_pos_t *position);
 
