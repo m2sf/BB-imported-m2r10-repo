@@ -215,12 +215,12 @@ static void init_first_sets() {
                           TOKEN_VARIADIC, 0);
 
     _FIRST[p_simple_formal_params] =
-    m2_tokenset_from_list(TOKEN_VARIADIC, 0);
-
-    _FIRST[p_variadic_formal_params] =
     m2_tokenset_from_list(TOKEN_CONST,
                           TOKEN_VAR,
                           TOKEN_IDENTIFIER, 0);
+
+    _FIRST[p_variadic_formal_params] =
+    m2_tokenset_from_list(TOKEN_VARIADIC, 0);
     
     _FIRST[p_statement] =
     m2_tokenset_from_list(TOKEN_IDENTIFIER,
@@ -450,7 +450,7 @@ static void init_first_sets() {
 
 
 // ---------------------------------------------------------------------------
-// private function:  init_first_sets()
+// private function:  init_follow_sets()
 // ---------------------------------------------------------------------------
 //
 // Initialises the array of FOLLOW sets.
@@ -571,17 +571,14 @@ static void init_follow_sets() {
     
     _FOLLOW[p_formal_params] =
     m2_tokenset_from_list(TOKEN_SEMICOLON,
-                          TOKEN_VARIADIC,
                           TOKEN_RPAREN, 0);
 
     _FOLLOW[p_simple_formal_params] =
     m2_tokenset_from_list(TOKEN_SEMICOLON,
-                          TOKEN_VARIADIC,
                           TOKEN_RPAREN, 0);
 
     _FOLLOW[p_variadic_formal_params] =
     m2_tokenset_from_list(TOKEN_SEMICOLON,
-                          TOKEN_VARIADIC,
                           TOKEN_RPAREN, 0);
         
     _FOLLOW[p_statement] =
@@ -980,10 +977,10 @@ void generate_production_table() {
                m2_production_name(prod_index));
         
         m2_tokenset_to_literal(_FIRST[prod_index], &tuples, &status);
-        printf("    %s,   // FIRST set\n", tuples);
+        printf("                %s,   // FIRST set\n", tuples);
         
         m2_tokenset_to_literal(_FOLLOW[prod_index], &tuples, &status);
-        printf("    %s )  // FOLLOW set\n", tuples);
+        printf("                %s )  // FOLLOW set\n", tuples);
         
         prod_index++;
     } // end while
