@@ -254,17 +254,17 @@ _add_production( _formal_param_list,
 // #32
 _add_production( _formal_params,
                 0x00000200, 0x00002C00, 0x00000000,   // FIRST set
-                0x00000000, 0x20000800, 0x00000040 )  // FOLLOW set
+                0x00000000, 0x20000000, 0x00000040 )  // FOLLOW set
 
 // #33
 _add_production( _simple_formal_params,
-                0x00000000, 0x00000800, 0x00000000,   // FIRST set
-                0x00000000, 0x20000800, 0x00000040 )  // FOLLOW set
+                0x00000200, 0x00002400, 0x00000000,   // FIRST set
+                0x00000000, 0x20000000, 0x00000040 )  // FOLLOW set
 
 // #34
 _add_production( _variadic_formal_params,
-                0x00000200, 0x00002400, 0x00000000,   // FIRST set
-                0x00000000, 0x20000800, 0x00000040 )  // FOLLOW set
+                0x00000000, 0x00000800, 0x00000000,   // FIRST set
+                0x00000000, 0x20000000, 0x00000040 )  // FOLLOW set
 
 // #35
 _add_production( _statement,

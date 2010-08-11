@@ -219,14 +219,14 @@
     TOKEN_IDENTIFIER
 
 #define FIRST_LIST_for_simple_formal_params \
-    1, \
-    TOKEN_VARIADIC
-
-#define FIRST_LIST_for_variadic_formal_params \
     3, \
     TOKEN_CONST, \
     TOKEN_VAR, \
     TOKEN_IDENTIFIER
+
+#define FIRST_LIST_for_variadic_formal_params \
+    1, \
+    TOKEN_VARIADIC
 
 #define FIRST_LIST_for_statement \
     9, \
@@ -631,20 +631,17 @@
     TOKEN_CLOSING_PARENTHESIS
 
 #define FOLLOW_LIST_for_formal_params \
-    3, \
-    TOKEN_VARIADIC, \
+    2, \
     TOKEN_SEMICOLON, \
     TOKEN_CLOSING_PARENTHESIS
 
 #define FOLLOW_LIST_for_simple_formal_params \
-    3, \
-    TOKEN_VARIADIC, \
+    2, \
     TOKEN_SEMICOLON, \
     TOKEN_CLOSING_PARENTHESIS
 
 #define FOLLOW_LIST_for_variadic_formal_params \
-    3, \
-    TOKEN_VARIADIC, \
+    2, \
     TOKEN_SEMICOLON, \
     TOKEN_CLOSING_PARENTHESIS
 
