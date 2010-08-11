@@ -148,7 +148,7 @@ static void show_error(m2_err_t error) {
 
 int main (int argc, const char * argv[]) {
     int opt, index = 0;
-    char *source_path;
+    const char *source_path;
     FILE *sourcefile, *outfile;
     bool syntax_check_only = false;
     m2_file_type_t outfile_type;
@@ -205,7 +205,7 @@ int main (int argc, const char * argv[]) {
     } // end if
     
     // get source path argument
-    source_path = (char *) argv[1];
+    source_path = argv[1];
     
     // get source filename descriptor from source path
     source_filename =
