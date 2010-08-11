@@ -176,7 +176,7 @@ void m2_tokenset_excl_list(m2_tokenset_t set, ...);
 //
 // Returns the union of token sets <set1> and <set2>,  set1 ∪ set2.
 
-m2_tokenset_t objm2_tokenset_union(m2_tokenset_t set1, m2_tokenset_t set2);
+m2_tokenset_t m2_tokenset_union(m2_tokenset_t set1, m2_tokenset_t set2);
 
 
 // ---------------------------------------------------------------------------
