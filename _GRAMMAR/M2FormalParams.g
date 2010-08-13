@@ -5,7 +5,7 @@ options {
 }
 
 tokens {
-    CONST = 'CONST'
+    CONST = 'CONST';
     OF = 'OF';
     VAR = 'VAR';
     VARIADIC = 'VARIADIC';
@@ -24,14 +24,14 @@ formalParams : // #32
     formalValueParams | formalConstOrVarParams
     ;
 
-formalValueParams : // #32a
-    ( CONST | VAR {}) identList ':' variadicHeader? simpleFormalType
-    ;
-
-formalConstOrVarParams : // #32b
+formalValueParams : // #32b
     identList ':'
     ( simpleFormalType | variadicHeader
       ( simpleFormalType | '(' simpleFormalParams ( ';' simpleFormalParams )* ')' ) )
+    ;
+
+formalConstOrVarParams : // #32a
+    ( CONST | VAR {}) identList ':' variadicHeader? simpleFormalType
     ;
 
 simpleFormalParams : // #33
@@ -64,10 +64,10 @@ Number :
     Digit*
     ;
 
-Letter :
+fragment Letter :
     'a' .. 'z' | 'A' .. 'Z' {}
     ;
 
-Digit :
+fragment Digit :
     '0' .. '9'
     ;
