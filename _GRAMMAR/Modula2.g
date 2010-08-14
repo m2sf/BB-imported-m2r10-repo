@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status June 20, 2010 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Aug 15, 2010 */
 
 
 // ---------------------------------------------------------------------------
@@ -81,7 +81,7 @@ tokens {
 	VARIADIC       = 'VARIADIC';
 	WHILE          = 'WHILE';
 
-// *** Language Defined Pragma Words, 14 tokens ***
+// *** Language Defined Pragma Words, 15 tokens ***
 
 	IF             = 'IF';
 	ELSIF          = 'ELSIF';
@@ -97,6 +97,7 @@ tokens {
 	INLINE         = 'INLINE';
 	NOINLINE       = 'NOINLINE';
 	VOLATILE       = 'VOLATILE';
+	ENCODING       = 'ENCODING';
 
 // *** Special Characters, 3 tokens ***
 
@@ -449,12 +450,14 @@ forStatement :
     DO statementSequence END
     ;
 
-fftbStatement :
+// under consideration
+forToByStatement :
     FOR controlVariable OF namedType
     FROM expression TO expression ( BY constExpression )?
     DO statementSequence END
     ;
 
+// under consideration
 combinedForStatement :
     FOR controlVariable
     ( DESCENDING? IN ( expression | range OF namedType) |
@@ -599,24 +602,30 @@ constQualident : qualident ; // no type and no variable identifiers
 // ---------------------------------------------------------------------------
 // P R A G M A   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 5 productions
+// 6 productions
 
 // *** Pragmas ***
 
 // production #1
 pragma :
 	'<*'
-	( conditionalPragma | compileTimeMessagePragma | codeGenerationPragma |
-	  implementationDefinedPragma )
+	( lexicalPragma | conditionalPragma | compileTimeMessagePragma |
+	  codeGenerationPragma | implementationDefinedPragma )
 	'*>'
 	;
 
-// production #2
+// production £2
+
+lexicalPragma :
+    ENCODING '=' encodingId ( ';' codepoint '=' quotedChar )+
+    ;
+
+// production #3
 conditionalPragma :
 	( IF | ELSIF {}) constExpression | ELSE | ENDIF
 	;
 
-// production #3
+// production #4
 compileTimeMessagePragma :
 	( INFO | WARN | ERROR | FATAL {}) compileTimeMessage
 	;
@@ -624,19 +633,28 @@ compileTimeMessagePragma :
 // alias
 compileTimeMessage : String ;
 
-// production #4
+// production #5
 codeGenerationPragma :
 	ALIGN '=' constExpression | FOREIGN ( '=' String )? | MAKE '=' String |
 	INLINE | NOINLINE | VOLATILE
 	;
 
-// production #5
+// production #6
 implementationDefinedPragma :
 	pragmaName ( '+' | '-' | '=' constExpression )?
 	;
 
 // alias
 pragmaName : Ident ; // lowercase or camelcase only
+
+// alias
+encodingId : String ; // "7BIT" or "UTF8"
+
+// alias
+codepoint : Number ; // character code literal only
+
+// alias
+quotedChar : String ; // single character string literal
 
 
 // ---------------------------------------------------------------------------
