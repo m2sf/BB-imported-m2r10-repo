@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status June 12, 2010 */
+/* M2R10 grammar in ANTLR EBNF notation -- status June 20, 2010 */
 
 
 // ---------------------------------------------------------------------------
@@ -205,7 +205,7 @@ declaration :
 
 // production #11
 definition :
-	CONST ( ( '[' Ident ']' )? constantDeclaration ';' )* |
+	CONST ( ( '[' bindableIdent ']' )? constantDeclaration ';' )* |
 	TYPE ( Ident '=' ( type | OPAQUE recordType? ) ';' )* |
 	VAR ( variableDeclaration ';' )* |
 	procedureHeader ';'
@@ -356,7 +356,17 @@ formalParamList :
 
 // production #32
 formalParams :
-	simpleFormalParams | variadicFormalParams
+	formalValueParams | formalConstOrVarParams
+    ;
+
+formalValueParams : // #32a
+    identList ':'
+    ( simpleFormalType | variadicAttribute
+      ( simpleFormalType | '(' simpleFormalParams ( ';' simpleFormalParams )* ')' ) )
+    ;
+
+formalConstOrVarParams : // #32b
+    ( CONST | VAR {}) identList ':' variadicAttribute? simpleFormalType
     ;
 
 // production #33
@@ -364,10 +374,9 @@ simpleFormalParams :
 	( CONST | VAR {})? identList ':' simpleFormalType
 	;
 
-// production #34
-variadicFormalParams :
-	VARIADIC ( variadicCounter | '[' variadicTerminator ']' )? OF
-	( simpleFormalType | '(' simpleFormalParams ( ';' simpleFormalParams )* ')' )
+// production £34
+variadicAttribute :
+     VARIADIC ( variadicCounter | '[' variadicTerminator ']' )? OF
 	;
 
 // alias
@@ -437,6 +446,19 @@ loopStatement :
 forStatement :
     FOR DESCENDING? controlVariable ( OF namedType )?
     IN ( expression | range OF namedType )
+    DO statementSequence END
+    ;
+
+fftbStatement :
+    FOR controlVariable OF namedType
+    FROM expression TO expression ( BY constExpression )?
+    DO statementSequence END
+    ;
+
+combinedForStatement :
+    FOR controlVariable
+    ( DESCENDING? IN ( expression | range OF namedType) |
+      OF namedType ':=' expression TO expression ( BY constExpression )? )
     DO statementSequence END
     ;
 
@@ -610,7 +632,7 @@ codeGenerationPragma :
 
 // production #5
 implementationDefinedPragma :
-	pragmaName ( '+' | '-' | '=' ( Ident | Number ) )?
+	pragmaName ( '+' | '-' | '=' constExpression )?
 	;
 
 // alias
