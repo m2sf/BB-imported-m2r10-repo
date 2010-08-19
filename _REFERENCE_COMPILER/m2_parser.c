@@ -1530,6 +1530,8 @@ m2_token_t const_definition_tail(m2_parser_s *p) {
 // --------------------------------------------------------------------------
 //  ident "=" ( type | OPAQUE recordType? ) ";"
 
+m2_token_t m2_record_type(m2_parser_s *p); /* FORWARD */
+
 m2_token_t type_definition_tail(m2_parser_s *p) {
     
     // ident
