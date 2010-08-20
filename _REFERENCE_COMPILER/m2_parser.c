@@ -77,171 +77,239 @@ typedef struct /* m2_parser_s */ {
 // ---------------------------------------------------------------------------
 
 static m2_tokenset_t
-    FIRST_REQ_BINDING,
+    FIRST_COMPILATION_UNIT,
+    FIRST_PROTOTYPE,
+    FIRST_PROGRAM_MODULE,
+    FIRST_DEFINITION_OF_MODULE,
+    FIRST_IMPLEMENTATION_OF_MODULE,
+    FIRST_REQUIRED_BINDING,
+    FIRST_BINDABLE_OP,
     FIRST_IMPORT_LIST,
     FIRST_BLOCK,
+    FIRST_DECLARATION,
     FIRST_DEFINITION,
-    FIRST_CONST_EXPRESSION,
-    FIRST_PROGRAM_MODULE,
-    FIRST_BINDABLE_IDENT,
-    FIRST_BINDABLE_OP,
-    FIRST_STATEMENT_SEQ,
-    FIRST_CONST_DECLARATION,
     FIRST_CONST_DEFINITION_TAIL,
     FIRST_TYPE_DEFINITION_TAIL,
+    FIRST_CONST_DECLARATION,
     FIRST_TYPE,
-    FIRST_TYPE_OR_OPAQUE,
-    FIRST_VAR_DECLARATION,
     FIRST_RANGE,
     FIRST_ENUMERATION_TYPE,
+    FIRST_ENUMERATION_COMPONENT,
     FIRST_ARRAY_TYPE,
     FIRST_RECORD_TYPE,
+    FIRST_FIELD_LIST_SEQ,
+    FIRST_FIELD_LIST,
     FIRST_SET_TYPE,
     FIRST_POINTER_TYPE,
     FIRST_PROCEDURE_TYPE,
-    FIRST_ENUMERATION_COMPONENT,
-    FIRST_FIELD_LIST_SEQ,
-    FIRST_FIELD_LIST,
-    FIRST_IDENT_OR_LPAREN,
     FIRST_FORMAL_TYPE_LIST,
     FIRST_FORMAL_TYPE,
-    FIRST_ATTRIBUTED_FORMAL_TYPE,
-    FIRST_VARIADIC_FORMAL_TYPE,
     FIRST_SIMPLE_FORMAL_TYPE,
-    FIRST_ATTRIBUTED_FORMAL_TYPE_OR_LPAREN,
-    FIRST_LBRACKET_OR_COMMA,
-    FIRST_IDENT_LIST,
-    FIRST_TYPECONV_OR_BINDABLE_OP_OR_IDENT,
+    FIRST_ATTRIBUTED_FORMAL_TYPE,
+    FIRST_CONST_VAR_PREFIXED_FORMAL_TYPE,
+    FIRST_VARIADIC_PREFIXED_FORMAL_TYPE,
+    FIRST_NON_VARIADIC_FORMAL_TYPE_LIST,
+    FIRST_NON_VARIADIC_FORMAL_TYPE,
+    FIRST_VARIABLE_DECLARATION,
+    FIRST_PROCEDURE_DECLARATION,
+    FIRST_PROCEDURE_HEADER,
     FIRST_FORMAL_PARAM_LIST,
     FIRST_FORMAL_PARAMS,
-    FIRST_FORMAL_VALUE_PARAMS,
-    FIRST_FORMAL_VALUE_PARAMS_TAIL,
-    FIRST_VARIADIC_PARAMS_TAIL,
-    FIRST_FORMAL_CONST_OR_VAR_PARAMS,
-    FIRST_SIMPLE_FORMAL_PARAMS,
+    FIRST_CONST_VAR_PREFIXED_FORMAL_PARAMS,
+    FIRST_NON_PREFIXED_FORMAL_PARAMS,
+    FIRST_NON_PREFIXED_FORMAL_PARAMS_TAIL,
+    FIRST_VARIADIC_FORMAL_PARAMS_TAIL,
     FIRST_VARIADIC_ATTRIBUTE,
-    FIRST_SIMPLE_FORMAL_TYPE_OR_LPAREN,
-    FIRST_ASSIGNMENT_OR_PROCEDURE_CALL,
-    FIRST_EXPRESSION,
+    FIRST_NON_VARIADIC_FORMAL_PARAMS_TAIL,
+    FIRST_NON_VARIADIC_FORMAL_PARAM_LIST,
+    FIRST_NON_VARIADIC_FORMAL_PARAMS,
     FIRST_STATEMENT,
-    ASSIGN_OR_INC_OR_DEC_OR_LPAREN,
-    FIRST_ACTUAL_PARAMETERS,
+    FIRST_STATEMENT_SEQ,
+    FIRST_ASSIGNMENT_OR_PROCEDURE_CALL,
+    FIRST_IF_STATEMENT,
+    FIRST_CASE_STATEMENT,
     FIRST_CASE,
     FIRST_CASE_LABELS,
-    FIRST_EXPRESSION_OR_RANGE,
+    FIRST_WHILE_STATEMENT,
+    FIRST_REPEAT_STATEMENT,
+    FIRST_LOOP_STATEMENT,
+    FIRST_FOR_STATEMENT,
+    FIRST_CONST_EXPRESSION,
+    FIRST_BOOL_CONST_TERM,
+    FIRST_BOOL_CONST_FACTOR,
+    FIRST_REL_CONST_EXPRESSION,
     FIRST_RELATION,
     FIRST_SIMPLE_CONST_EXPRESSION,
-    FIRST_CONST_TERM,
     FIRST_ADD_OPERATOR,
+    FIRST_CONST_TERM,
     FIRST_MUL_OPERATOR,
     FIRST_CONST_FACTOR,
+    FIRST_DESIGNATOR,
     FIRST_DESIGNATOR_TAIL,
     FIRST_EXPRESSION_LIST,
+    FIRST_EXPRESSION,
+    FIRST_BOOL_TERM,
+    FIRST_BOOL_FACTOR,
+    FIRST_REL_EXPRESSION,
     FIRST_SIMPLE_EXPRESSION,
     FIRST_TERM,
     FIRST_FACTOR,
+    FIRST_DESIGNATOR_OR_PROCEDURE_CALL,
+    FIRST_ACTUAL_PARAMETERS,
+    FIRST_CONST_STRUCTURED_VALUE,
     FIRST_CONST_VALUE_COMPONENT,
-    FIRST_VALUE_COMPONENT
+    FIRST_STRUCTURED_VALUE,
+    FIRST_VALUE_COMPONENT,
+    FIRST_QUALIDENT,
+    FIRST_IDENT_LIST,
+    // intra-production first sets
+    FIRST_RECORD_OR_OPAQUE,
+    FIRST_IDENT_OR_ASTERISK,
+    FIRST_TYPE_OR_OPAQUE,
+    FIRST_LBRACKET_OR_COMMA,
+    FIRST_TYPECONV_OR_BINDABLE_OP_OR_IDENT,
+    ASSIGN_OR_INC_OR_DEC_OR_LPAREN,
+    FIRST_EXPRESSION_OR_RANGE,
+    ;
+
+// ---------------------------------------------------------------------------
+// FOLLOW sets
+// ---------------------------------------------------------------------------
+
+static m2_tokenset_t
+    FOLLOW_COMPILATION_UNIT,
+    FOLLOW_PROTOTYPE,
+    FOLLOW_PROGRAM_MODULE,
+    FOLLOW_DEFINITION_OF_MODULE,
+    FOLLOW_IMPLEMENTATION_OF_MODULE,
+    FOLLOW_REQUIRED_BINDING,
+    FOLLOW_BINDABLE_OP,
+    FOLLOW_IMPORT_LIST,
+    FOLLOW_BLOCK,
+    FOLLOW_DECLARATION,
+    FOLLOW_DEFINITION,
+    FOLLOW_CONST_DEFINITION_TAIL,
+    FOLLOW_TYPE_DEFINITION_TAIL,
+    FOLLOW_CONST_DECLARATION,
+    FOLLOW_TYPE,
+    FOLLOW_RANGE,
+    FOLLOW_ENUMERATION_TYPE,
+    FOLLOW_ENUMERATION_COMPONENT,
+    FOLLOW_ARRAY_TYPE,
+    FOLLOW_RECORD_TYPE,
+    FOLLOW_FIELD_LIST_SEQ,
+    FOLLOW_FIELD_LIST,
+    FOLLOW_SET_TYPE,
+    FOLLOW_POINTER_TYPE,
+    FOLLOW_PROCEDURE_TYPE,
+    FOLLOW_FORMAL_TYPE_LIST,
+    FOLLOW_FORMAL_TYPE,
+    FOLLOW_SIMPLE_FORMAL_TYPE,
+    FOLLOW_ATTRIBUTED_FORMAL_TYPE,
+    FOLLOW_CONST_VAR_PREFIXED_FORMAL_TYPE,
+    FOLLOW_VARIADIC_PREFIXED_FORMAL_TYPE,
+    FOLLOW_NON_VARIADIC_FORMAL_TYPE_LIST,
+    FOLLOW_NON_VARIADIC_FORMAL_TYPE,
+    FOLLOW_VARIABLE_DECLARATION,
+    FOLLOW_PROCEDURE_DECLARATION,
+    FOLLOW_PROCEDURE_HEADER,
+    FOLLOW_FORMAL_PARAM_LIST,
+    FOLLOW_FORMAL_PARAMS,
+    FOLLOW_CONST_VAR_PREFIXED_FORMAL_PARAMS,
+    FOLLOW_NON_PREFIXED_FORMAL_PARAMS,
+    FOLLOW_NON_PREFIXED_FORMAL_PARAMS_TAIL,
+    FOLLOW_VARIADIC_FORMAL_PARAMS_TAIL,
+    FOLLOW_VARIADIC_ATTRIBUTE,
+    FOLLOW_NON_VARIADIC_FORMAL_PARAMS_TAIL,
+    FOLLOW_NON_VARIADIC_FORMAL_PARAM_LIST,
+    FOLLOW_NON_VARIADIC_FORMAL_PARAMS,
+    FOLLOW_STATEMENT,
+    FOLLOW_STATEMENT_SEQ,
+    FOLLOW_ASSIGNMENT_OR_PROCEDURE_CALL,
+    FOLLOW_IF_STATEMENT,
+    FOLLOW_CASE_STATEMENT,
+    FOLLOW_CASE,
+    FOLLOW_CASE_LABELS,
+    FOLLOW_WHILE_STATEMENT,
+    FOLLOW_REPEAT_STATEMENT,
+    FOLLOW_LOOP_STATEMENT,
+    FOLLOW_FOR_STATEMENT,
+    FOLLOW_CONST_EXPRESSION,
+    FOLLOW_BOOL_CONST_TERM,
+    FOLLOW_BOOL_CONST_FACTOR,
+    FOLLOW_REL_CONST_EXPRESSION,
+    FOLLOW_RELATION,
+    FOLLOW_SIMPLE_CONST_EXPRESSION,
+    FOLLOW_ADD_OPERATOR,
+    FOLLOW_CONST_TERM,
+    FOLLOW_MUL_OPERATOR,
+    FOLLOW_CONST_FACTOR,
+    FOLLOW_DESIGNATOR,
+    FOLLOW_DESIGNATOR_TAIL,
+    FOLLOW_EXPRESSION_LIST,
+    FOLLOW_EXPRESSION,
+    FOLLOW_BOOL_TERM,
+    FOLLOW_BOOL_FACTOR,
+    FOLLOW_REL_EXPRESSION,
+    FOLLOW_SIMPLE_EXPRESSION,
+    FOLLOW_TERM,
+    FOLLOW_FACTOR,
+    FOLLOW_DESIGNATOR_OR_PROCEDURE_CALL,
+    FOLLOW_ACTUAL_PARAMETERS,
+    FOLLOW_CONST_STRUCTURED_VALUE,
+    FOLLOW_CONST_VALUE_COMPONENT,
+    FOLLOW_STRUCTURED_VALUE,
+    FOLLOW_VALUE_COMPONENT,
+    FOLLOW_QUALIDENT,
+    FOLLOW_IDENT_LIST
     ;
 
 // ---------------------------------------------------------------------------
 // Skip sets
 // ---------------------------------------------------------------------------
 
-// TO DO : initialise sets
+// TO DO : initialisers
 
 static m2_tokenset_t
     SKIP_TO_TYPE_OR_REQ_BINDING,
     SKIP_TO_REQ_BINDING,
-    FIRST_RECORD_OR_OPAQUE,
     SKIP_TO_DOT_OR_EOF,
     SKIP_TO_EOF,
     SKIP_TO_IMPORT_OR_BLOCK,
+    SKIP_TO_SEMI_OR_IMPORT_OR_BLOCK,
     SKIP_TO_IDENT_OR_DOT_OR_EOF,
     SKIP_TO_DOT_OR_EOF,
-    SKIP_TO_IDENT,
     SKIP_TO_SEMI_OR_IMPORT_OR_DEFN_OR_END,
-    SKIP_TO_IMPORT_OR_DEFN_OR_END,
-    SKIP_TO_SEMI_OR_IMPORT_OR_BLOCK,
     SKIP_TO_RBRACKET,
+    SKIP_TO_IMPORT_OR_DEFN_OR_END,
+    SKIP_TO_IDENT,
     SKIP_TO_RBRACKET_OR_CONST_OR_PROC,
     SKIP_TO_CONST_OR_PROC,
-    FOLLOW_REQ_BINDING,
     SKIP_TO_IMPORT,
-    FIRST_IDENT_OR_ASTERISK,
+    SKIP_TO_SEMI_OR_IMPORT_OR_BLOCK,
     SKIP_TO_COMMA_OR_SEMI_OR_IMPORT_OR_BLOCK,
-    FOLLOW_IMPORT_LIST,
     SKIP_TO_END,
     SKIP_TO_SEMICOLON,
     SKIP_TO_TYPE,
     SKIP_TO_EQUAL,
-    FOLLOW_CONST_EXPRESSION,
-    SKIP_TO_IDENTIFIER,
-    FOLLOW_VAR_DECLARATION,
-    FOLLOW_TYPE,
+    SKIP_TO_IDENT,
     SKIP_TO_RANGE_OP,
     SKIP_TO_COMMA_OR_RPAREN,
-    FOLLOW_ENUMERATION_TYPE,
     SKIP_TO_COMMA_OR_OF,
     SKIP_TO_OF_OR_IDENT,
-    FOLLOW_ARRAY_TYPE,
     SKIP_TO_RPAREN,
-    FOLLOW_RECORD_TYPE,
-    FOLLOW_FIELD_LIST_SEQ,
     SKIP_TO_COMMA_OR_IDENT,
-    FOLLOW_FIELD_LIST,
     SKIP_TO_LPAREN_OR_IDENT,
-    FOLLOW_SET_TYPE,
     SKIP_TO_CONST_OR_IDENT,
-    FOLLOW_POINTER_TYPE,
-    FOLLOW_FORMAL_TYPE_LIST,
     SKIP_TO_SEMI_OR_FOLLOW_PROCEDURE_TYPE,
-    FOLLOW_PROCEDURE_TYPE,
-    FOLLOW_FORMAL_TYPE,
-    FOLLOW_SIMPLE_FORMAL_TYPE,
-    SKIP_TO_FIRST_ATTRIBUTED_TYPE_OR_LPAREN,
-    SKIP_TO_VARIADIC_OR_SIMPLE_FORMAL_TYPE,
-    FOLLOW_VARIADIC_FORMAL_TYPE,
-    FOLLOW_VARIADIC_ATTRIBUTE,
-    FOLLOW_FORMAL_VALUE_PARAMS,
-    FOLLOW_COMMA_OR_FOLLOW_ATTRIBUTED_FORMAL_TYPE,
     SKIP_TO_COLON,
-    FOLLOW_IDENT_LIST,
     SKIP_TO_ARRAY_OR_FOLLOW_VARIABLE_DECL,
-    FOLLOW_VARIABLE_DECLARATION,
-    FOLLOW_PROCEDURE_DECLARATION,
     SKIP_TO_LPAREN_OR_COLON,
-    FOLLOW_FORMAL_PARAM_LIST,
     SKIP_TO_COLON_OR_IDENT_OR_FOLLOW_PROCEDURE_HEADER,
-    FOLLOW_PROCEDURE_HEADER,
-    FOLLOW_FORMAL_PARAMS,
     SKIP_TO_RBRACKET_OR_OF,
     SKIP_TO_OF,
-    FOLLOW_SIMPLE_FORMAL_PARAMS,
-    FOLLOW_VARIADIC_FORMAL_PARAMS,
-    FOLLOW_STATEMENT,
-    FOLLOW_ASSIGNMENT_OR_PROCEDURE_CALL,
-    FOLLOW_EXPRESSION,
-    FOLLOW_STATEMENT_SEQ,
-    FOLLOW_IF_STATEMENT,
-    FOLLOW_CASE,
-    FOLLOW_CASE_STATEMENT,
-    FOLLOW_CASE_LABELS,
-    FOLLOW_WHILE_STATEMENT,
-    FOLLOW_REPEAT_STATEMENT,
-    FOLLOW_LOOP_STATEMENT,
-    FOLLOW_FOR_STATEMENT,
-    FOLLOW_SIMPLE_CONST_EXPRESSION,
-    FOLLOW_CONST_TERM,
     SKIP_TO_COMMA,
-    FOLLOW_DESIGNATOR_TAIL,
-    FOLLOW_SIMPLE_EXPRESSION,
-    FOLLOW_CONST_FACTOR,
-    FOLLOW_TERM,
-    FOLLOW_FACTOR,
-    FOLLOW_CONST_VALUE_COMPONENT,
-    FOLLOW_VALUE_COMPONENT,
-    FOLLOW_QUALIDENT
+    SKIP_TO_RBRACKET,
     ;
 
 // ===========================================================================
@@ -776,7 +844,7 @@ m2_token_t m2_prototype(m2_parser_s *p) {
     } // end ASSOCIATIVE
     
     // requiredBinding*
-    while (m2_tokenset_is_element(FIRST_REQ_BINDING, _lookahead(p))) {
+    while (m2_tokenset_is_element(FIRST_REQUIRED_BINDING, _lookahead(p))) {
         m2_required_binding(p);
            
     } // end requiredBinding
@@ -1068,7 +1136,7 @@ m2_token_t m2_required_binding(m2_parser_s *p) {
     } // switch
     
     // ";"
-    if (match_token(p, TOKEN_SEMICOLON, FOLLOW_REQ_BINDING)) {
+    if (match_token(p, TOKEN_SEMICOLON, FOLLOW_REQUIRED_BINDING)) {
         _getsym(p);
         
     } // end ";"
@@ -1758,7 +1826,7 @@ m2_token_t m2_enumeration_type(m2_parser_s *p) {
         
         // ( "+" namedType ) | ident )
         if (match_token_in_set(p, FIRST_ENUMERATION_COMPONENT,
-                               SKIP_TO_COMMA_OR_RPAREN)) {
+                                  SKIP_TO_COMMA_OR_RPAREN)) {
             m2_enumeration_component(p);
             
         } // end ( "+" namedType ) | ident )
@@ -1831,7 +1899,7 @@ m2_token_t m2_array_type(m2_parser_s *p) {
             
             // constComponentCount
             if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
-                                   SKIP_TO_COMMA_OR_OF)) {
+                                      SKIP_TO_COMMA_OR_OF)) {
                 _getsym(p);
                 
             } // end constComponentCount
@@ -2339,7 +2407,7 @@ m2_token_t m2_const_var_prefixed_formal_type(m2_parser_s *p) {
     
     // simpleFormalType
     if (match_token_in_set(p, FIRST_SIMPLE_FORMAL_TYPE,
-                           FOLLOW_SIMPLE_FORMAL_TYPE)) {
+                              FOLLOW_SIMPLE_FORMAL_TYPE)) {
         m2_simple_formal_type(p);
         
     } // end simpleFormalType
@@ -2805,7 +2873,7 @@ m2_token_t m2_const_var_prefixed_formal_params(m2_parser_s *p) {
     
     // simpleFormalType
     if (match_token_in_set(p, FIRST_SIMPLE_FORMAL_TYPE,
-                           FOLLOW_SIMPLE_FORMAL_TYPE)) {
+                              FOLLOW_SIMPLE_FORMAL_TYPE)) {
         m2_simple_formal_type(p);
         
     } // end simpleFormalType
@@ -2945,7 +3013,7 @@ m2_token_t m2_variadic_attribute(m2_parser_s *p) {
         
         // variadicTerminator
         if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
-                               SKIP_TO_RBRACKET_OR_OF)) {
+                                  SKIP_TO_RBRACKET_OR_OF)) {
             m2_const_expression(p);
             
         } // end variadicTerminator
@@ -3383,7 +3451,7 @@ m2_token_t m2_case_labels(m2_parser_s *p) {
         
         // constExpression
         if (match_token_in_set(p, FIRST_CONST_EXPRESSION,
-                               FOLLOW_CONST_EXPRESSION)) {
+                                  FOLLOW_CONST_EXPRESSION)) {
             m2_const_expression(p);
             
         } // end constExpression
@@ -3622,8 +3690,8 @@ m2_token_t m2_bool_const_factor(m2_parser_s *p) {
     } // end NOT?
     
     // relConstExpr
-    if (match_token_in_set(p, FIRST_REL_CONST_EXPR,
-                              FOLLOW_REL_CONST_EXPR)) {
+    if (match_token_in_set(p, FIRST_REL_CONST_EXPRESSION,
+                              FOLLOW_REL_CONST_EXPRESSION)) {
         m2_rel_const_expression(p);
         
     } // end relConstExpr
@@ -4192,7 +4260,7 @@ m2_token_t m2_expression(m2_parser_s *p) {
         
         // simpleExpression
         if (match_token_in_set(p, FIRST_SIMPLE_EXPRESSION,
-                               FOLLOW_SIMPLE_EXPRESSION)) {
+                                  FOLLOW_SIMPLE_EXPRESSION)) {
             m2_simple_expression(p);
             
         } // end simpleExpression
@@ -4319,7 +4387,7 @@ m2_token_t m2_factor(m2_parser_s *p) {
             
             // expression
             if (match_token_in_set(p, FIRST_EXPRESSION,
-                                   FOLLOW_EXPRESSION)) {
+                                      FOLLOW_EXPRESSION)) {
                 m2_expression(p);
             } // expression
             
@@ -4355,7 +4423,7 @@ m2_token_t m2_factor(m2_parser_s *p) {
             
             // expression
             if (match_token_in_set(p, FIRST_EXPRESSION,
-                                   FOLLOW_EXPRESSION)) {
+                                      FOLLOW_EXPRESSION)) {
                 m2_expression(p);
             } // expression
             
