@@ -553,10 +553,10 @@ static fmacro m2_token_t _lookahead(m2_parser_s *p) {
 // ---------------------------------------------------------------------------
 //
 // Compares the current lookahead token of parser <p> to <expected_token>.  If
-// the two match,  the lookahead symbol is read from the input stream.  If the
-// the two do not match,  the parser's error counter is incremented,  an error
-// message is printed to stderr  and  symbols in the input stream  are skipped
-// until the lookahead token matches one of the tokens in <skip_to_tokens>.
+// the two match,  'true' is returned.  If the two do not match,  the parser's
+// error counter is incremented,  an error message is printed to stderr,  sym-
+// bols in the input stream  are skipped until the lookahead token matches one
+// of the tokens in <skip_to_tokens> and 'false' is returned.
 
 static void report_mismatch(m2_parser_s *p,
     m2_tokenset_iterator_t set_of_expected_tokens); /* FORWARD */
@@ -599,11 +599,11 @@ static bool match_token(m2_parser_s *p,
 // ---------------------------------------------------------------------------
 //
 // Tests the current lookahead token  against  tokenset <expected_tokens>.  If
-// the lookahead token  matches  any  of the tokens in <expected_tokens>,  the
-// lookahead symbol is read from the input stream.  If it does  not match  any
-// of the tokens,  the parser's error counter is incremented, an error message
-// is printed to stderr  and symbols in the input stream are skipped until the
-// lookahead token matches one of the tokens in <skip_to_tokens>.
+// the lookahead token matches any of the tokens in <expected_tokens>,  'true'
+// is returned.  If it does  not match  any of the tokens,  the parser's error
+// counter is incremented,  an error message is printed to stderr,  symbols in
+// the input stream are skipped  until the lookahead token  matches one of the
+// tokens in <skip_to_tokens> and 'false' is returned.
 
 static bool match_token_in_set(m2_parser_s *p,
                              m2_tokenset_t set_of_expected_tokens,
@@ -638,8 +638,8 @@ static bool match_token_in_set(m2_parser_s *p,
 // private function: report_mismatch( p, expected_tokens )
 // ---------------------------------------------------------------------------
 //
-// Reports a mismatch  between encountered symbol  found_sym  and the expected
-// tokens passed in as tokenset iterator <expected_tokens>.
+// Reports  a mismatch  between the parser's current lookahead symbol  and the
+// expected tokens passed in as tokenset iterator <expected_tokens>.
 
 static void report_mismatch(m2_parser_s *p,
                  m2_tokenset_iterator_t set_of_expected_tokens) {
