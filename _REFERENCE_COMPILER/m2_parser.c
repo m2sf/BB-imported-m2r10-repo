@@ -66,7 +66,7 @@ typedef struct /* m2_parser_s */ {
     kvs_table_t lextab;
     m2_symtab_t symtab;
     m2_ast_node_t ast;
-    m2_notification_f handler;
+    m2_notification_f notify;
     uint16_t warnings;
     uint16_t errors;
 } m2_parser_s;
@@ -405,7 +405,7 @@ m2_parser_t m2_new_parser(m2_file_t infile,
     p->lextab = lextab;
     p->symtab = symtab;
     p->ast = ast;
-    p->handler = handler;
+    p->notify = handler;
     p->warnings = 0;
     p->errors = 0;
     
@@ -691,6 +691,31 @@ void fatal_error() {
 } // end fatal_error
 
 
+// ---------------------------------------------------------------------------
+// private function: report_error( parser, notification, details )
+// ---------------------------------------------------------------------------
+//
+// Consumes current lookahead token  and sends  an error notification  of type
+// <notification> by calling the notification handler of <parser>.
+
+void report_error(m2_parser_s *p,
+            m2_notification_t notification,
+                     opaque_t details) {
+    
+    m2_file_pos_t current_pos;
+    
+    // consume lookahead token
+    _getsym(p);
+    
+    // obtain current position
+    m2_fileio_getpos(p->source_file, &current_pos);
+    
+    // send notification
+    p->notify(notification, NULL, current_pos, M2_NOTIFIER_PARSER, details);
+        
+} // end report_error
+
+
 // ===========================================================================
 // P R O D U C T I O N   R U L E S
 // ===========================================================================
@@ -709,7 +734,7 @@ void m2_parse_start_symbol(m2_parser_s *p) {
         if ((token != TOKEN_IMPLEMENTATION) && (token != TOKEN_MODULE)) {
             // illegal start symbol for source type MOD
             
-            // TO DO: report error
+            report_error(p, M2_NOTIFY_SYNTAX_ERROR, NULL);
             
             fatal_error(); // abort
         } // end if
@@ -718,7 +743,7 @@ void m2_parse_start_symbol(m2_parser_s *p) {
         if ((token != TOKEN_DEFINITION) && (token != TOKEN_PROTOTYPE)) {
             // illegal start symbol for source type DEF
             
-            // TO DO: report error
+            report_error(p, M2_NOTIFY_SYNTAX_ERROR, NULL);
             
             fatal_error(); // abort
         } // end if
@@ -733,7 +758,7 @@ void m2_parse_start_symbol(m2_parser_s *p) {
     if (token != TOKEN_EOF_MARKER) {
         // illegal symbol after end of compilation unit
         
-        // TO DO: report error
+        report_error(p, M2_NOTIFY_SYNTAX_ERROR, NULL);
         
     } // end if
     
