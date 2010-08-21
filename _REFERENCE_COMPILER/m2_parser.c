@@ -728,40 +728,41 @@ void report_error(m2_parser_s *p,
 m2_token_t m2_compilation_unit(m2_parser_s *p); /* FORWARD */
 
 void m2_parse_start_symbol(m2_parser_s *p) {
-    m2_token_t token = _lookahead(p);
     
     if (p->source_type == SOURCE_TYPE_MOD) {
-        if ((token != TOKEN_IMPLEMENTATION) && (token != TOKEN_MODULE)) {
-            // illegal start symbol for source type MOD
-            
-            report_error(p, M2_NOTIFY_SYNTAX_ERROR, NULL);
-            
-            fatal_error(); // abort
-        } // end if
+        
+        // MODULE ... | IMPLEMENTATION ...
+        if (match_token_in_set(p, FIRST_PROGRAM_OR_IMPLEMENTATION_MODULE,
+                                  SKIP_TO_EOF)) {
+            m2_compilation_unit(p);
+                        
+        } // end MODULE ... | IMPLEMENTATION ...
+        
+        // EOF
+        match_token(p, TOKEN_EOF_MARKER, SKIP_TO_EOF);
     }
     else if (p->source_type == SOURCE_TYPE_DEF) {
-        if ((token != TOKEN_DEFINITION) && (token != TOKEN_PROTOTYPE)) {
-            // illegal start symbol for source type DEF
-            
-            report_error(p, M2_NOTIFY_SYNTAX_ERROR, NULL);
-            
-            fatal_error(); // abort
-        } // end if
+        
+        // PROTOTYPE ... | DEFINITION ...
+        if (match_token_in_set(p, FIRST_PROTOTYPE_OR_DEFINITION_MODULE,
+                                  SKIP_TO_EOF)) {
+            m2_compilation_unit(p);
+                        
+        } // end PROTOTYPE ... | DEFINITION ...
+        
+        // EOF
+        match_token(p, TOKEN_EOF_MARKER, SKIP_TO_EOF);
     }
-    else {
-        // unknown source type
-        fatal_error(); // abort
-    } // end if
-    
-    token = m2_compilation_unit(p);
-    
-    if (token != TOKEN_EOF_MARKER) {
-        // illegal symbol after end of compilation unit
+    else /* unknown source type */ {
         
-        report_error(p, M2_NOTIFY_SYNTAX_ERROR, NULL);
+        // report error
+        report_error(p, M2_NOTIFY_UNKNOWN_SOURCE_TYPE, NULL);
+        
+        // increment error count
+        p->errors++;
         
     } // end if
-    
+        
     return;
 } // end m2_parse_start_symbol;
 
