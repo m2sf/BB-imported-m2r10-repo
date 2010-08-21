@@ -335,6 +335,8 @@ m2_parser_t m2_new_parser(m2_file_t infile,
                  m2_parser_status_t *status) {
     m2_parser_s *p;
     m2_file_type_t file_type;
+    m2_lexer_t new_lexer;
+    m2_lexer_status_t lexer_status;
     
     // bail out if infile is NULL
     if (infile == NULL) {
@@ -375,11 +377,21 @@ m2_parser_t m2_new_parser(m2_file_t infile,
         return NULL;
     } // end if
     
+    // create a new lexer object
+    new_lexer = m2_new_lexer(infile, lextab, &lexer_status);
+    
+    // bail out if lexer object creation failed
+    if (lexer_status != M2_LEXER_STATUS_SUCCESS) {
+        ASSIGN_BY_REF(status, M2_PARSER_STATUS_LEXER_ALLOCATION_FAILED);
+        return NULL;
+    } // end if
+    
     // allocate memory for parser state
     p = malloc(sizeof(m2_parser_s));
     
     // bail out if allocation failed
     if (p == NULL) {
+        m2_dispose_lexer(new_lexer, NULL);
         ASSIGN_BY_REF(status, M2_PARSER_STATUS_ALLOCATION_FAILED);
         return NULL;
     } // end if
@@ -387,6 +399,7 @@ m2_parser_t m2_new_parser(m2_file_t infile,
     // initialise
     p->source_file = infile;
     p->source_type = file_type;
+    p->lexer = new_lexer;
     p->current_sym = ZERO_SYMBOL;
     p->lookahead_sym = ZERO_SYMBOL;
     p->lextab = lextab;
@@ -484,7 +497,8 @@ long int m2_value_of_pragma_expr(m2_parser_t parser,
 // unless NULL is passed in for <status>.
 
 void m2_dispose_parser(m2_parser_t parser, m2_parser_status_t *status) {
-    
+    m2_parser_s *this_parser = (m2_parser_s *) parser;
+
     // bail out if parser is NULL
     if (parser == NULL) {
         ASSIGN_BY_REF(status, M2_PARSER_STATUS_INVALID_REFERENCE);
@@ -492,7 +506,8 @@ void m2_dispose_parser(m2_parser_t parser, m2_parser_status_t *status) {
     } // end if
     
     // deallocate
-    DEALLOCATE(parser);
+    m2_dispose_lexer(this_parser->lexer, NULL);
+    DEALLOCATE(this_parser);
     
     ASSIGN_BY_REF(status, M2_PARSER_STATUS_SUCCESS);
     return;

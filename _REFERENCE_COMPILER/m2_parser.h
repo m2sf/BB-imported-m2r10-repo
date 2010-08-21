@@ -102,9 +102,12 @@ typedef /* m2_parser_status_t */ enum {
     // invalid notification handler passed
     M2_PARSER_STATUS_INVALID_HANDLER,
     
-    // unable to allocate memory
+    // unable to allocate parser object
     M2_PARSER_STATUS_ALLOCATION_FAILED,
-    
+
+    // unable to allocate lexer object
+    M2_PARSER_STATUS_LEXER_ALLOCATION_FAILED,
+
     // one or more syntax errors encountered
     M2_PARSER_STATUS_SYNTAX_ERRORS_FOUND,
     
