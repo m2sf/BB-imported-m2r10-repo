@@ -84,6 +84,12 @@ typedef /* m2_parser_status_t */ enum {
     // invalid parser object passed
     M2_PARSER_STATUS_INVALID_REFERENCE,
     
+    // invalid file object passed
+    M2_PARSER_STATUS_INVALID_FILE_REFERENCE,
+
+    // file type is not a source type
+    M2_PARSER_STATUS_INVALID_FILE_TYPE,
+
     // invalid lexeme table object passed
     M2_PARSER_STATUS_INVALID_LEXTAB_REFERENCE,
 
@@ -117,13 +123,12 @@ typedef /* m2_parser_status_t */ enum {
 //
 // Returns NULL if the parser object could not be created.
 
-m2_parser_t m2_new_parser(FILE *infile,
-                    kvs_table_t lextab,
-                    m2_symtab_t symtab,
-                  m2_ast_node_t ast,
-              m2_notification_f handler,
-             m2_parser_status_t *status);
-
+m2_parser_t m2_new_parser(m2_file_t infile,
+                        kvs_table_t lextab,
+                        m2_symtab_t symtab,
+                      m2_ast_node_t ast,
+                  m2_notification_f handler,
+                 m2_parser_status_t *status);
 
 // ---------------------------------------------------------------------------
 // function:  m2_parse_file(parser, status)
