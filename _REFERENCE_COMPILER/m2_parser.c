@@ -372,7 +372,7 @@ m2_parser_t m2_new_parser(m2_file_t infile,
     } // end if
 
     // bail out if handler is NULL
-    if (ast == NULL) {
+    if (handler == NULL) {
         ASSIGN_BY_REF(status, M2_PARSER_STATUS_INVALID_HANDLER);
         return NULL;
     } // end if

@@ -47,6 +47,9 @@
 // FROM m2_fileio IMPORT m2_file_t;
 #include "m2_fileio.h"
 
+// FROM m2_notifications IMPORT m2_notification_f;
+#include "m2_notifications.h"
+
 
 // ---------------------------------------------------------------------------
 // Opaque lexer handle type
@@ -75,6 +78,9 @@ typedef /* m2_lexer_status_t */ enum {
     // invalid pointer to lexer object passed
     M2_LEXER_STATUS_INVALID_REFERENCE,
     
+    // invalid notification handler passed
+    M2_LEXER_STATUS_INVALID_HANDLER,
+    
     // unable to allocate memory
     M2_LEXER_STATUS_ALLOCATION_FAILED,
     
@@ -99,7 +105,7 @@ typedef /* m2_lexer_status_t */ enum {
 
 
 // ---------------------------------------------------------------------------
-// function:  m2_new_lexer(infile, lextab, status)
+// function:  m2_new_lexer(infile, lextab, handler, status)
 // ---------------------------------------------------------------------------
 //
 // Creates  and  returns  a  new  lexer object  associated  with  source file 
@@ -110,6 +116,7 @@ typedef /* m2_lexer_status_t */ enum {
 
 m2_lexer_t m2_new_lexer(m2_file_t infile,
                       kvs_table_t lextab,
+                m2_notification_f handler,
                 m2_lexer_status_t *status);
 
 

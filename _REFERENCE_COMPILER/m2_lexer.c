@@ -30,7 +30,7 @@
 #include <stdlib.h>
 
 // ---------------------------------------------------------------------------
-// ObjM2 project imports
+// Project imports
 // ---------------------------------------------------------------------------
 
 #include "hash.h"
@@ -54,9 +54,9 @@
 //  o  one extra character for C string terminator (ASCII NUL).
 
 #define M2_MAX_LEXEME_LENGTH \
-(MAX3(M2_MAX_IDENT_LENGTH, \
-M2_MAX_NUM_LENGTH + 1, \
-M2_MAX_STRING_LENGTH + 3) + 1)
+    (MAX3(M2_MAX_IDENT_LENGTH, \
+          M2_MAX_NUM_LENGTH + 1, \
+          M2_MAX_STRING_LENGTH + 3) + 1)
 
 
 // ---------------------------------------------------------------------------
@@ -76,8 +76,9 @@ typedef struct /* lexbuf_t */ {
 typedef /* m2_lexer_s */ struct {
     
     // configuration parameters
-    m2_file_t sourcefile;               // source file
+    m2_file_t source_file;              // source file
     kvs_table_t lextab;                 // lexeme table
+    m2_notification_f notify;           // notification handler
     
     // return values
     m2_token_t token;                   // token to be returned
@@ -89,6 +90,7 @@ typedef /* m2_lexer_s */ struct {
     uint16_t paren_nesting_level;       // current parenthesis nesting level
     uint16_t bracket_nesting_level;     // current bracket nesting level
     uint16_t brace_nesting_level;       // current brace nesting level
+    uint16_t symbol_error_count;        // number of errors in current symbol
     
     // lexeme buffer
     lexbuf_t lexeme;
@@ -98,61 +100,62 @@ typedef /* m2_lexer_s */ struct {
     m2_file_pos_t offending_char_pos;   // position of offending character
 } m2_lexer_s;
 
-#define NOT_EOF(_lexer) (m2_fileio_eof(_lexer->sourcefile) == false)
-#define EOF_REACHED(_lexer) (m2_fileio_eof(_lexer->sourcefile) == true)
+#define NOT_EOF(_lexer) (m2_fileio_eof(_lexer->source_file) == false)
+#define EOF_REACHED(_lexer) (m2_fileio_eof(_lexer->source_file) == true)
 
 
-// ==========================================================================
+// ===========================================================================
 // P R I V A T E   F U N C T I O N   P R O T O T Y P E S
-// ==========================================================================
+// ===========================================================================
 
-static fmacro uchar_t get_ident(m2_lexer_s *lexer);
+static fmacro uchar_t get_ident(m2_lexer_s *lexer); /* FORWARD */
 
-static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer);
+static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer); /* FORWARD */
 
-static uchar_t get_prefixed_number(m2_lexer_s *lexer);
+static uchar_t get_prefixed_number(m2_lexer_s *lexer); /* FORWARD */
 
-static uchar_t get_suffixed_number(m2_lexer_s *lexer);
+static uchar_t get_suffixed_number(m2_lexer_s *lexer); /* FORWARD */
 
 static uchar_t get_digits(m2_lexer_s *lexer,
-                                 cardinal *non_binary_digits,
-                                 cardinal *non_decimal_digits);
+                            cardinal *non_binary_digits,
+                            cardinal *non_decimal_digits); /* FORWARD */
 
-static uchar_t get_decimal_digits(m2_lexer_s *lexer);
+static uchar_t get_decimal_digits(m2_lexer_s *lexer); /* FORWARD */
 
-static uchar_t get_scale_factor(m2_lexer_s *lexer);
+static uchar_t get_scale_factor(m2_lexer_s *lexer); /* FORWARD */
 
-static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer);
+static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer); /* FORWARD */
 
-static bool is_escaped_char(uchar_t ch);
+static bool is_escaped_char(uchar_t ch); /* FORWARD */
 
-static fmacro void add_lexeme_to_lextab(m2_lexer_s *lexer);
+static fmacro void add_lexeme_to_lextab(m2_lexer_s *lexer); /* FORWARD */
 
-static fmacro uchar_t skip_multiline_comment(m2_lexer_s *lexer);
+static fmacro uchar_t skip_multiline_comment(m2_lexer_s *lexer); /* FORWARD */
 
-static fmacro uchar_t skip_past_end_of_line(m2_lexer_s *lexer);
+static fmacro uchar_t skip_past_end_of_line(m2_lexer_s *lexer); /* FORWARD */
 
 
-// ==========================================================================
+// ===========================================================================
 // P U B L I C   F U N C T I O N   I M P L E M E N T A T I O N S
-// ==========================================================================
+// ===========================================================================
 
-#define readchar(v) m2_fileio_read(this_lexer->sourcefile) /* v = void */
-#define nextchar(v) m2_fileio_lookahead(this_lexer->sourcefile) /* v = void */
+#define readchar(v) m2_fileio_read(this_lexer->source_file) // v = void
+#define nextchar(v) m2_fileio_lookahead(this_lexer->source_file) // v = void
 
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // function:  m2_new_lexer(infile, lextab, status)
-// --------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
-// Creates  and  returns  a  new  lexer object  associated  with  source file 
-// <infile> and lexeme table <lextab>.  The status of the operation is passed
+// Creates  and  returns  a  new  lexer object  associated  with  source  file 
+// <infile> and lexeme table <lextab>.  The status of the operation  is passed
 // back in <status> unless NULL is passed in for <status>.
 //
 // Returns NULL if the lexer object could not be created.
 
 m2_lexer_t m2_new_lexer(m2_file_t infile,
-                        kvs_table_t lextab,
-                        m2_lexer_status_t *status) {
+                      kvs_table_t lextab,
+                m2_notification_f handler,
+                m2_lexer_status_t *status) {
     
     m2_lexer_s *new_lexer;    
     
@@ -175,22 +178,30 @@ m2_lexer_t m2_new_lexer(m2_file_t infile,
         ASSIGN_BY_REF(status, M2_LEXER_STATUS_ALLOCATION_FAILED);
         return NULL;
     } // end if
+
+    // bail out if handler is NULL
+    if (handler == NULL) {
+        ASSIGN_BY_REF(status, M2_LEXER_STATUS_INVALID_HANDLER);
+        return NULL;
+    } // end if
     
     // initialise the new lexer object
     
     // configuration parameters
-    new_lexer->sourcefile = infile;
+    new_lexer->source_file = infile;
     new_lexer->lextab = lextab;
+    new_lexer->notify = handler;
     
     // return values
     new_lexer->token = 0;
     new_lexer->lexkey = 0;
     
     // counters
-    m2_fileio_getpos(new_lexer->sourcefile, &new_lexer->token_pos);
+    m2_fileio_getpos(new_lexer->source_file, &new_lexer->token_pos);
     new_lexer->paren_nesting_level = 0;
     new_lexer->bracket_nesting_level = 0;
     new_lexer->brace_nesting_level = 0;
+    new_lexer->symbol_error_count = 0;
     
     // input buffer
     new_lexer->lexeme.length = 0;
@@ -216,8 +227,8 @@ m2_lexer_t m2_new_lexer(m2_file_t infile,
 // unless NULL is passed in for <status>.
 
 m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
-                           cardinal *lexeme,
-                           m2_lexer_status_t *status) {
+                             cardinal *lexeme,
+                    m2_lexer_status_t *status) {
     
     register m2_lexer_s *this_lexer = (m2_lexer_s *) lexer;
     register uchar_t ch;
@@ -235,6 +246,9 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
     this_lexer->lexeme.length = 0;
     this_lexer->lexeme.string[0] = CSTRING_TERMINATOR;
     
+    // clear error counter
+    this_lexer->symbol_error_count = 0;
+    
     ch = nextchar();
     repeat {
         
@@ -248,7 +262,7 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
         } // end while;
         
         // remember position at the start of the symbol
-        m2_fileio_getpos(this_lexer->sourcefile, &this_lexer->token_pos);
+        m2_fileio_getpos(this_lexer->source_file, &this_lexer->token_pos);
         
         // start optimistically
         this_lexer->status = M2_LEXER_STATUS_SUCCESS;
@@ -473,9 +487,8 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
                 break;
             default : // found illegal character
                 this_lexer->offending_char = readchar();
-                m2_fileio_getpos(
-                    this_lexer->sourcefile, &this_lexer->offending_char_pos
-                );
+                m2_fileio_getpos(this_lexer->source_file,
+                                 &this_lexer->offending_char_pos);
                 ch = nextchar();
                 this_lexer->token = TOKEN_ILLEGAL_CHARACTER;
         } // end if
@@ -500,9 +513,9 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
 // operation is passed back in <status> unless NULL is passed in for <status>.
 
 void m2_lexer_getpos(m2_lexer_t lexer,
-                     cardinal *row,
-                     cardinal *col,
-                     m2_lexer_status_t *status) {
+                       cardinal *row,
+                       cardinal *col,
+              m2_lexer_status_t *status) {
     
     m2_lexer_s *this_lexer = (m2_lexer_s *) lexer;
     
@@ -532,9 +545,9 @@ void m2_lexer_getpos(m2_lexer_t lexer,
 // in <status> unless NULL is passed in for <status>.
 
 char m2_offending_char(m2_lexer_t lexer,
-                       cardinal *row,
-                       cardinal *col,
-                       m2_lexer_status_t *status) {
+                         cardinal *row,
+                         cardinal *col,
+                m2_lexer_status_t *status) {
     
     m2_lexer_s *this_lexer = (m2_lexer_s *) lexer;
     
@@ -569,7 +582,7 @@ char m2_offending_char(m2_lexer_t lexer,
 // unless NULL is passed in for <status>.
 
 void m2_dispose_lexer(m2_lexer_t lexer,
-                      m2_lexer_status_t *status) {
+               m2_lexer_status_t *status) {
     
     m2_lexer_s *this_lexer = (m2_lexer_s *) lexer;
     
@@ -588,19 +601,16 @@ void m2_dispose_lexer(m2_lexer_t lexer,
 #undef nextchar
 
 
-// ==========================================================================
+// ===========================================================================
 // P R I V A T E   F U N C T I O N   I M P L E M E N T A T I O N S
-// ==========================================================================
+// ===========================================================================
 
 // ---------------------------------------------------------------------------
 // macros for private functions
 // ---------------------------------------------------------------------------
 
-#define readchar(v) m2_fileio_read(lexer->sourcefile) /* v = void */
-#define nextchar(v) m2_fileio_lookahead(lexer->sourcefile) /* v = void */
-#define IS_METHOD_SIGNATURE_CONTEXT(lexer) \
-((lexer->seen_method && !(lexer->seen_open_paren_since_method)) || \
-(lexer->bracket_nesting_level > 0) || (lexer->seen_backquote))
+#define readchar(v) m2_fileio_read(lexer->source_file) // v = void
+#define nextchar(v) m2_fileio_lookahead(lexer->source_file) // v = void
 
 
 // ---------------------------------------------------------------------------
@@ -685,8 +695,6 @@ static fmacro uchar_t get_ident(m2_lexer_s *lexer) {
     
     return ch;
 } // end get_ident
-
-
 
 
 // ---------------------------------------------------------------------------
@@ -861,7 +869,7 @@ static fmacro uchar_t get_prefixed_number(m2_lexer_s *lexer) {
     } // end if
     
     lexer->offending_char = ch;
-    m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+    m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
     lexer->lexkey = 0;
     return ch;
 } // end get_prefixed_number
@@ -934,7 +942,7 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
         // error: maximum length exceeded
         lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
         lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
         lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
         lexer->token = TOKEN_ILLEGAL_CHARACTER;
         lexer->lexkey = 0;
@@ -985,7 +993,7 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
         else /* malformed */ {
             lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
             lexer->offending_char = ch;
-            m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+            m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
             lexer->token = TOKEN_ILLEGAL_CHARACTER;
             lexer->lexkey = 0;
             return ch;
@@ -1009,7 +1017,7 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
         // error: maximum length exceeded
         lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
         lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
         lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
         lexer->token = TOKEN_ILLEGAL_CHARACTER;
         lexer->lexkey = 0;
@@ -1023,7 +1031,7 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
         // error: missing digits after decimal point
         lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
         lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
         lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
         lexer->token = TOKEN_ILLEGAL_CHARACTER;
         lexer->lexkey = 0;
@@ -1035,7 +1043,7 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
         // error: maximum length exceeded
         lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
         lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
         lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
         lexer->token = TOKEN_ILLEGAL_CHARACTER;
         lexer->lexkey = 0;
@@ -1054,7 +1062,7 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
             // error: maximum length exceeded
             lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
             lexer->offending_char = ch;
-            m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+            m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
             lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
             lexer->token = TOKEN_ILLEGAL_CHARACTER;
             lexer->lexkey = 0;
@@ -1085,7 +1093,7 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
     else /* malformed */ {
         lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
         lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
         lexer->token = TOKEN_ILLEGAL_CHARACTER;
         lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;        
         lexer->lexkey = 0;
@@ -1110,8 +1118,8 @@ static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
 //  digit : = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
 static fmacro uchar_t get_digits(m2_lexer_s *lexer,
-                                 cardinal *non_binary_digits,
-                                 cardinal *non_decimal_digits) {
+                                   cardinal *non_binary_digits,
+                                   cardinal *non_decimal_digits) {
     uchar_t ch;
     
 #ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
@@ -1289,7 +1297,7 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
         if (IS_NOT_7BIT_ASCII(ch))
             all_7bit_ascii = false;
         
-        // eat the character
+        // consume the character
         ch = readchar();
         
         // copy the char into the lexeme string
@@ -1297,29 +1305,46 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
         lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
         lexer->lexeme.length++;
         
-        // check for escaped chars
-        if ((ch == BACKSLASH) &&
-            (lexer->lexeme.length < M2_MAX_STRING_LENGTH)) {
-            // get the possibly escaped character
-            ch = nextchar();
-                        
-            // eat the escaped character or default to backslash
-            if (is_escaped_char(ch))
-                ch = readchar();
-            else
-                ch = BACKSLASH;
+        // check for escape sequence
+        if (ch == BACKSLASH) {
             
-            // copy the char into the lexeme string
-            lexer->lexeme.string[lexer->lexeme.length] = ch;
-            lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
-            lexer->lexeme.length++;
+            if ((lexer->lexeme.length < M2_MAX_STRING_LENGTH) &&
+                (is_escaped_char(nextchar()))) {
+                // valid escape sequence found
+                
+                // consume escaped character
+                ch = readchar();
+                
+                // copy escaped character into the lexeme string
+                lexer->lexeme.string[lexer->lexeme.length] = ch;
+                lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+                lexer->lexeme.length++;
+            }
+            else {
+                // error: sole backslash found
+                
+                m2_fileio_getpos(lexer->source_file,
+                                 &lexer->offending_char_pos);
+                
+                // notify offending character and position
+                lexer->notify(M2_NOTIFY_ILLEGAL_CHAR_IN_STRING_LITERAL,
+                              NULL, // TO DO : obtain and pass filename
+                              lexer->offending_char_pos,
+                              M2_NOTIFIER_LEXER,
+                              &lexer->offending_char);
+                
+                // increment error count
+                lexer->symbol_error_count++;
+                
+            } // end if
+            
         } // end if
-        
+                
         // prepare for next
         ch = nextchar();
     } // end while    
     
-    if (ch == delimiter_ch) {
+    if ((ch == delimiter_ch) && (lexer->symbol_error_count == 0)) {
         // copy closing delimiter
         ch = readchar();
         lexer->lexeme.string[lexer->lexeme.length] = ch;
@@ -1352,7 +1377,7 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
         lexer->token = TOKEN_ILLEGAL_CHARACTER;
         lexer->lexkey = 0;
         lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
         
         // terminate lexeme string
         lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
@@ -1375,7 +1400,7 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
                 // get the possibly escaped character
                 ch = nextchar();
                 
-                // eat the escaped character
+                // consume the escaped character
                 if (is_escaped_char(ch))
                     ch = readchar();
             } // endif
@@ -1384,7 +1409,7 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
             ch = nextchar();
         } // end while
         
-        // eat the closing delimiter and get the next
+        // consume the closing delimiter and get the next
         ch = readchar();
         ch = nextchar();
         
@@ -1404,10 +1429,9 @@ static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer) {
 // o true if the character is a valid escape character, false otherwise.
 
 static fmacro bool is_escaped_char(uchar_t ch) {
-    bool valid = false;
     
-    // valid escape characters
     switch (ch) {
+        // valid escape characters
         case DOUBLE_QUOTE :
         case SINGLE_QUOTE :
         case DIGIT_ZERO :
@@ -1415,10 +1439,13 @@ static fmacro bool is_escaped_char(uchar_t ch) {
         case LOWERCASE_R :
         case LOWERCASE_T :
         case BACKSLASH :
-            valid = true;
+            return true;
+            break;
+        // any other characters
+        default :
+            return false;
     } // end switch
     
-    return valid;
 } // end is_escaped_char
 
 
@@ -1532,12 +1559,12 @@ static fmacro uchar_t skip_multiline_comment(m2_lexer_s *lexer) {
     else if (open_comment_count > 10) {
         lexer->status = M2_LEXER_STATUS_COMMENT_NESTING_LIMIT_REACHED;
         lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
     }
     else {
         lexer->status = M2_LEXER_STATUS_EOF_REACHED_WITHIN_COMMENT;
         lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->sourcefile, &lexer->offending_char_pos);
+        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
     } // end if
     
     // return the lookahead character
