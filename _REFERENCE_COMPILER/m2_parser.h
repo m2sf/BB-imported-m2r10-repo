@@ -27,13 +27,6 @@
 
 
 // ---------------------------------------------------------------------------
-// C standard library imports
-// ---------------------------------------------------------------------------
-
-// FROM stdio IMPORT FILE;
-#include <stdio.h>
-
-// ---------------------------------------------------------------------------
 // Embedded library imports
 // ---------------------------------------------------------------------------
 
@@ -55,6 +48,9 @@
 
 // FROM m2_ast IMPORT m2_ast_node_t;
 #include "m2_ast.h"
+
+// FROM m2_fileio IMPORT m2_file_t;
+#include "m2_fileio.h"
 
 
 // ---------------------------------------------------------------------------
@@ -132,6 +128,7 @@ m2_parser_t m2_new_parser(m2_file_t infile,
                       m2_ast_node_t ast,
                   m2_notification_f handler,
                  m2_parser_status_t *status);
+
 
 // ---------------------------------------------------------------------------
 // function:  m2_parse_file(parser, status)
