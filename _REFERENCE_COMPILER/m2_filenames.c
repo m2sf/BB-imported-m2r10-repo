@@ -144,6 +144,8 @@ typedef struct /* delimiter_set */ {
 // Delimiter sets
 // ---------------------------------------------------------------------------
 
+#define DELIMITER_LENGTH 1
+
 static const delimiter_set _delimiter[] = {
     // dummy entry
     { CSTRING_TERMINATOR, CSTRING_TERMINATOR, CSTRING_TERMINATOR },
@@ -166,7 +168,10 @@ typedef struct /* m2_filename_s */ {
     char *directory;
     char *filename;
     char *extension;
-    cardinal path_length;
+    uint16_t path_length;
+    uint16_t directory_length;
+    uint16_t filename_length;
+    uint16_t extension_length;
     m2_file_type_t file_type;
     m2_filenaming_t filenaming;
 } m2_filename_s;
@@ -333,6 +338,9 @@ m2_filename_t m2_new_filename(const char *directory,
     while (directory[size] != CSTRING_TERMINATOR)
         size++;
     
+    // remember directory string length
+    new_filename->directory_length = size;
+    
     // allocate memory for directory string
     new_filename->directory = ALLOCATE(size + 2);
     
@@ -368,6 +376,9 @@ m2_filename_t m2_new_filename(const char *directory,
     while ((filename[size] != CSTRING_TERMINATOR) &&
            (filename[size] != ver_delimiter))
         size++;
+    
+    // remember filename string length
+    new_filename->filename_length = size;
     
     // allocate memory for the filename string
     new_filename->filename = ALLOCATE(size + 1);
@@ -421,6 +432,9 @@ m2_filename_t m2_new_filename(const char *directory,
         index++;
     } // end while
     
+    // remember file extension string length
+    new_filename->extension_length = index;
+        
     // accumulated length
     total_length = total_length + index;
 
@@ -663,162 +677,321 @@ m2_filename_t m2_new_filename_from_path(const char *path,
 
 
 // ---------------------------------------------------------------------------
-// function:  m2_directory_string( filename )
+// function:  m2_path_string_length( filename )
 // ---------------------------------------------------------------------------
 //
-// Returns  an  immutable pointer  to the  directory string  field of filename
-// descriptor <filename>.  Returns NULL if the descriptor is NULL.
+// Returns  the  length  of the  full path  of filename descriptor <filename>.
+// Returns zero if the descriptor is NULL.
 
-const char *m2_directory_string(m2_filename_t filename) {
+fmacro cardinal m2_path_string_length(m2_filename_t filename) {
     m2_filename_s *this_filename = (m2_filename_s *) filename;
     
     // bail out if filename descriptor is NULL
     if (filename == NULL)
-        return NULL;
+        return 0;
     
-    return (const char *) this_filename->directory;
-} // end m2_directory_string
+    return (cardinal) this_filename->path_length;
+} // m2_path_string_length
 
 
 // ---------------------------------------------------------------------------
-// function:  m2_filename_string( filename )
+// function:  m2_copy_path_string( filename, target )
 // ---------------------------------------------------------------------------
 //
-// Returns  an  immutable pointer  to the  filename string  field  of filename
-// descriptor <filename>.  Returns NULL if the descriptor is NULL.
+// Copies the full path of filename descriptor <filename>  to the char pointer
+// passed in <target>.  The full path consists of the directory path, filename
+// and file extension.  It is  the responsibility  of the caller  to make sure
+// that <target> points to a memory buffer  large enough to hold the full path
+// including its null terminator.
+//
+// If NULL is passed in <filename> a null terminator is copied to <target>.
+// If NULL is passed in <target> the function returns without action.
 
-const char *m2_filename_string(m2_filename_t filename) {
+void m2_copy_path_string(m2_filename_t filename, char *target) {
     m2_filename_s *this_filename = (m2_filename_s *) filename;
-    
-    // bail out if filename descriptor is NULL
-    if (filename == NULL)
-        return NULL;
-    
-    return (const char *) this_filename->filename;
-} // end m2_filename_string
-
-
-// ---------------------------------------------------------------------------
-// function:  m2_file_ext_string( filename )
-// ---------------------------------------------------------------------------
-//
-// Returns  an  immutable pointer  to the  file_ext string  field  of filename
-// descriptor <filename>.  Returns NULL if the descriptor is NULL.
-
-const char *m2_file_ext_string(m2_filename_t filename) {
-    m2_filename_s *this_filename = (m2_filename_s *) filename;
-    
-    // bail out if filename descriptor is NULL
-    if (filename == NULL)
-        return NULL;
-    
-    return (const char *) this_filename->extension;
-} // end m2_file_ext_string
-
-
-// ---------------------------------------------------------------------------
-// function:  m2_file_type( filename )
-// ---------------------------------------------------------------------------
-//
-// Returns the value of the file_type field of filename descriptor <filename>.
-// Returns FILE_TYPE_UNKNOWN if the descriptor is NULL.
-
-m2_file_type_t m2_file_type(m2_filename_t filename) {
-    m2_filename_s *this_filename = (m2_filename_s *) filename;
-    
-    // bail out if filename descriptor is NULL
-    if (filename == NULL)
-        return FILE_TYPE_UNKNOWN;
-    
-    return this_filename->file_type;
-} // end m2_file_type
-
-
-// ---------------------------------------------------------------------------
-// function:  m2_filenaming( filename )
-// ---------------------------------------------------------------------------
-//
-// Returns the  filenaming scheme  of filename descriptor <filename>.  Returns
-// DEFAULT_FILENAMING if the descriptor is NULL.
-
-m2_filenaming_t m2_filenaming(m2_filename_t filename) {
-    m2_filename_s *this_filename = (m2_filename_s *) filename;
-    
-    if (filename == NULL)
-        return DEFAULT_FILENAMING;
-    
-    return this_filename->filenaming;
-} // end m2_filenaming
-
-
-// ---------------------------------------------------------------------------
-// function:  m2_path_from_filename( filename, status )
-// ---------------------------------------------------------------------------
-//
-// Returns a newly allocated C string with a pathname composed from the fields
-// in   filename   descriptor   <filename>.  The  caller  is  responsible  for
-// deallocating the returned C string.
-//
-// The status of the operation  is passed back in <status>,  unless  NULL  was
-// passed in for <status>.
-
-const char *m2_path_from_filename(m2_filename_t filename,
-                           m2_filename_status_t *status) {
-    
-    m2_filename_s *this_filename = (m2_filename_s *) filename;
-    int index, path_index = 0;
-    char *path;
+    cardinal index, target_index;
     
     // bail out if filename descriptor is NULL
     if (filename == NULL) {
-        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_INVALID_REFERENCE);
-        return NULL;
+        target[0] = CSTRING_TERMINATOR;
+        return;
     } // end if
     
-    // allocate memory for path string
-    path = ALLOCATE(this_filename->path_length + 1);
+    target_index = 0;
+
+    // copy the directory string
+    index = 0;
+    while (this_filename->directory[index] != CSTRING_TERMINATOR) {
+        target[target_index] = this_filename->directory[index];
+        target_index++;
+        index++;
+    } // end while;
     
-    // bail out if allocation failed
-    if (path == NULL) {
-        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_ALLOCATION_FAILED);
-        return NULL;
+    // append the basename string
+    index = 0;
+    while (this_filename->filename[index] != CSTRING_TERMINATOR) {
+        target[target_index] = this_filename->filename[index];
+        target_index++;
+        index++;
+    } // end while;
+    
+    // append the file extension delimiter
+    target[target_index] =
+    _delimiter[this_filename->filenaming].for_file_extension;
+    target_index++;
+    
+    // append the file extension string
+    index = 0;
+    while (this_filename->extension[index] != CSTRING_TERMINATOR) {
+        target[path_index] = this_filename->extension[index];
+        target_index++;
+        index++;
+    } // end while;
+    
+    // terminate the string
+    target[target_index] = CSTRING_TERMINATOR;
+    
+    return;
+} // end m2_copy_path_string
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_directory_string_length( filename )
+// ---------------------------------------------------------------------------
+//
+// Returns the length of the directory path of filename descriptor <filename>.
+// Returns zero if the descriptor is NULL.
+
+fmacro cardinal m2_directory_string_length(m2_filename_t filename) {
+    m2_filename_s *this_filename = (m2_filename_s *) filename;
+    
+    // bail out if filename descriptor is NULL
+    if (filename == NULL)
+        return 0;
+    
+    return (cardinal) this_filename->directory_length;
+} // m2_directory_string_length
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_copy_directory_string( filename, target )
+// ---------------------------------------------------------------------------
+//
+// Copies  the  directory path  of filename descriptor <filename>  to the char
+// pointer  passed in <target>.  The  directory  path  consists  of  the  path
+// without filename and extension.  It is the responsibility of the caller  to
+// make sure  that <target> points to a memory buffer large enough to hold the
+// directory path including its null terminator.
+//
+// If NULL is passed in <filename> a null terminator is copied to <target>.
+// If NULL is passed in <target> the function returns without action.
+
+void m2_copy_directory_string(m2_filename_t filename, char *target) {
+    m2_filename_s *this_filename = (m2_filename_s *) filename;
+    cardinal index;
+
+    // bail out if filename descriptor is NULL
+    if (filename == NULL) {
+        target[0] = CSTRING_TERMINATOR;
+        return;
     } // end if
     
     // copy the directory string
     index = 0;
     while (this_filename->directory[index] != CSTRING_TERMINATOR) {
-        path[path_index] = this_filename->directory[index];
-        path_index++;
+        target[index] = this_filename->directory[index];
         index++;
     } // end while;
+    
+    // terminate the string
+    target[index] = CSTRING_TERMINATOR;
+    
+    return;
+} // end m2_copy_directory_string
 
-    // append the filename string
+
+// ---------------------------------------------------------------------------
+// function:  m2_filename_string_length( filename )
+// ---------------------------------------------------------------------------
+//
+// Returns the length  of the full filename of filename descriptor <filename>.
+// Returns zero if the descriptor is NULL.
+
+fmacro cardinal m2_filename_string_length(m2_filename_t filename) {
+    m2_filename_s *this_filename = (m2_filename_s *) filename;
+    cardinal length;
+    
+    // bail out if filename descriptor is NULL
+    if (filename == NULL)
+        return 0;
+    
+    length = this_filename->filename_length +
+             this_filename->extension_length + DELIMITER_LENGTH;
+
+    return length;
+} // m2_filename_string_length
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_copy_filename_string( filename, target )
+// ---------------------------------------------------------------------------
+//
+// Copies  the  full filename  of filename descriptor <filename>  to  the char
+// pointer passed in <target>.  The  full filename  consists  of  the basename
+// followed by the file extension delimiter and the file extension.  It is the
+// responsibility of the caller to make sure  that <target> points to a memory
+// buffer large enough to hold the filename including its null terminator.
+//
+// If NULL is passed in <filename> a null terminator is copied to <target>.
+// If NULL is passed in <target> the function returns without action.
+
+void m2_copy_filename_string(m2_filename_t filename, char *target) {
+    m2_filename_s *this_filename = (m2_filename_s *) filename;
+    cardinal index, target_index;
+
+    // bail out if filename descriptor is NULL
+    if (filename == NULL) {
+        target[0] = CSTRING_TERMINATOR;
+        return;
+    } // end if
+    
+    target_index = 0;
+    
+    // copy the basename string
     index = 0;
     while (this_filename->filename[index] != CSTRING_TERMINATOR) {
-        path[path_index] = this_filename->filename[index];
-        path_index++;
+        target[target_index] = this_filename->filename[index];
+        target_index++;
         index++;
     } // end while;
     
     // append the file extension delimiter
-    path[path_index] =
+    target[target_index] =
         _delimiter[this_filename->filenaming].for_file_extension;
-    path_index++;
+    target_index++;
     
     // append the file extension string
     index = 0;
     while (this_filename->extension[index] != CSTRING_TERMINATOR) {
-        path[path_index] = this_filename->extension[index];
-        path_index++;
+        target[path_index] = this_filename->extension[index];
+        target_index++;
+        index++;
+    } // end while;
+
+    // terminate the string
+    target[target_index] = CSTRING_TERMINATOR;
+    
+    return;
+} // end m2_copy_filename_string
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_basename_string_length( filename )
+// ---------------------------------------------------------------------------
+//
+// Returns  the  length  of the  basename  of  filename descriptor <filename>.
+// Returns zero if the descriptor is NULL.
+
+fmacro cardinal m2_basename_string_length(m2_filename_t filename) {
+    m2_filename_s *this_filename = (m2_filename_s *) filename;
+    
+    // bail out if filename descriptor is NULL
+    if (filename == NULL)
+        return 0;
+    
+    return (cardinal) this_filename->filename_length;
+} // m2_basename_string_length
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_copy_basename_string( filename, target )
+// ---------------------------------------------------------------------------
+//
+// Copies the  basename of filename descriptor <filename>  to the char pointer
+// passed in <target>.  The  basename  consists  of the  filename  without the
+// directory path,  without file extension  and without delimiters.  It is the
+// responsibility of the caller to make sure  that <target> points to a memory
+// buffer large enough to hold the basename including its null terminator.
+//
+// If NULL is passed in <filename> a null terminator is copied to <target>.
+// If NULL is passed in <target> the function returns without action.
+
+void m2_copy_basename_string(m2_filename_t filename, char *target) {
+    m2_filename_s *this_filename = (m2_filename_s *) filename;
+    cardinal index;
+
+    // bail out if filename descriptor is NULL
+    if (filename == NULL) {
+        target[0] = CSTRING_TERMINATOR;
+        return;
+    } // end if
+
+    // copy the basename string
+    index = 0;
+    while (this_filename->filename[index] != CSTRING_TERMINATOR) {
+        target[index] = this_filename->filename[index];
         index++;
     } // end while;
     
-    // terminate the path string
-    path[path_index] = CSTRING_TERMINATOR;
+    // terminate the string
+    target[index] = CSTRING_TERMINATOR;
     
-    ASSIGN_BY_REF(status, M2_FILENAME_STATUS_SUCCESS);
-    return (const char *) path;
-} // end m2_path_from_filename
+    return;
+} // end m2_copy_basename_string
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_file_ext_string_length( filename )
+// ---------------------------------------------------------------------------
+//
+// Returns the length of the file extension of filename descriptor <filename>.
+// Returns zero if the descriptor is NULL.
+
+fmacro cardinal m2_file_ext_string_length(m2_filename_t filename) {
+    m2_filename_s *this_filename = (m2_filename_s *) filename;
+    
+    // bail out if filename descriptor is NULL
+    if (filename == NULL)
+        return 0;
+    
+    return (cardinal) this_filename->extension_length;
+} // m2_extension_string_length    
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_copy_file_ext_string( filename, target )
+// ---------------------------------------------------------------------------
+//
+// Copies  the  file extension  of filename descriptor <filename>  to the char
+// pointer passed in <target>.  It is the responsibility of the caller to make
+// sure  that <target> points to a memory buffer large enough to hold the file
+// extenson including its null terminator.
+//
+// If NULL is passed in <filename> a null terminator is copied to <target>.
+// If NULL is passed in <target> the function returns without action.
+
+void m2_copy_file_ext_string(m2_filename_t filename, char *target) {
+    m2_filename_s *this_filename = (m2_filename_s *) filename;
+    cardinal index;
+
+    // bail out if filename descriptor is NULL
+    if (filename == NULL) {
+        target[0] = CSTRING_TERMINATOR;
+        return;
+    } // end if
+
+    // copy the file extension string
+    index = 0;
+    while (this_filename->extension[index] != CSTRING_TERMINATOR) {
+        target[index] = this_filename->extension[index];
+        index++;
+    } // end while;
+    
+    // terminate the string
+    target[index] = CSTRING_TERMINATOR;
+    
+    return;
+} // end m2_copy_file_ext_string
 
 
 // ---------------------------------------------------------------------------
