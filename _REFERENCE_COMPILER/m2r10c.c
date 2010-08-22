@@ -149,7 +149,7 @@ static void show_error(m2_err_t error) {
 int main (int argc, const char * argv[]) {
     int opt, index = 0;
     const char *source_path;
-    FILE *sourcefile, *outfile;
+    m2_file_t sourcefile, *outfile;
     bool syntax_check_only = false;
     m2_file_type_t outfile_type;
     m2_target_t target = M2_TARGET_C99;
@@ -292,8 +292,8 @@ int main (int argc, const char * argv[]) {
     m2_close_file(outfile);
     m2_dispose_codegen(cgen, &cg_status);
     
-    m2_dispose_filename(sourcefile);
-    m2_dispose_filename(outfile);
+    m2_dispose_filename(source_filename);
+    m2_dispose_filename(output_filename);
     
     return EXIT_SUCCESS;
 } // main
