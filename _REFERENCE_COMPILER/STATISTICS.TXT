@@ -1,0 +1,295 @@
+STATISTICS for M2R10C on Mon Aug 23 05:13:14 UTC
+
+file ASCII.h has
+      315 (100%) total lines
+      252 ( 80%) lines with code
+       14 (  4%) lines with C comments
+       25 (  7%) lines with BCPL comments
+       22 (  6%) empty lines
+
+file KVS.h has
+      379 (100%) total lines
+       69 ( 18%) lines with code
+       49 ( 12%) lines with C comments
+      195 ( 51%) lines with BCPL comments
+       46 ( 12%) empty lines
+
+file KVS.c has
+     1359 (100%) total lines
+      595 ( 43%) lines with code
+       95 (  6%) lines with C comments
+      520 ( 38%) lines with BCPL comments
+      262 ( 19%) empty lines
+
+file alloc.h has
+       26 (100%) total lines
+        7 ( 26%) lines with code
+       12 ( 46%) lines with C comments
+        3 ( 11%) lines with BCPL comments
+        6 ( 23%) empty lines
+
+file check_build_env.h has
+      617 (100%) total lines
+      274 ( 44%) lines with code
+       21 (  3%) lines with C comments
+      187 ( 30%) lines with BCPL comments
+      134 ( 21%) empty lines
+
+file common.h has
+      171 (100%) total lines
+       38 ( 22%) lines with code
+       12 (  7%) lines with C comments
+       73 ( 42%) lines with BCPL comments
+       45 ( 26%) empty lines
+
+file hash.h has
+       28 (100%) total lines
+        8 ( 28%) lines with code
+       12 ( 42%) lines with C comments
+        4 ( 14%) lines with BCPL comments
+        6 ( 21%) empty lines
+
+file m2_ast.h has
+      178 (100%) total lines
+       59 ( 33%) lines with code
+       26 ( 14%) lines with C comments
+       58 ( 32%) lines with BCPL comments
+       27 ( 15%) empty lines
+
+file m2_ast.c has
+      151 (100%) total lines
+       36 ( 23%) lines with code
+       23 ( 15%) lines with C comments
+       57 ( 37%) lines with BCPL comments
+       34 ( 22%) empty lines
+
+file m2_build_params.h has
+      180 (100%) total lines
+       82 ( 45%) lines with code
+       24 ( 13%) lines with C comments
+       35 ( 19%) lines with BCPL comments
+       30 ( 16%) empty lines
+
+file m2_code_generator.h has
+      148 (100%) total lines
+       31 ( 20%) lines with code
+       26 ( 17%) lines with C comments
+       58 ( 39%) lines with BCPL comments
+       28 ( 18%) empty lines
+
+file m2_code_generator.c has
+       86 (100%) total lines
+       18 ( 20%) lines with code
+       23 ( 26%) lines with C comments
+       29 ( 33%) lines with BCPL comments
+       14 ( 16%) empty lines
+
+file m2_errmsg.h has
+       58 (100%) total lines
+       14 ( 24%) lines with code
+       25 ( 43%) lines with C comments
+       10 ( 17%) lines with BCPL comments
+        8 ( 13%) empty lines
+
+file m2_errmsg.c has
+       61 (100%) total lines
+       14 ( 22%) lines with code
+       23 ( 37%) lines with C comments
+       14 ( 22%) lines with BCPL comments
+        9 ( 14%) empty lines
+
+file m2_fileio.h has
+      200 (100%) total lines
+       29 ( 14%) lines with code
+       26 ( 13%) lines with C comments
+       95 ( 47%) lines with BCPL comments
+       38 ( 19%) empty lines
+
+file m2_fileio.c has
+      427 (100%) total lines
+      177 ( 41%) lines with code
+       25 (  5%) lines with C comments
+      168 ( 39%) lines with BCPL comments
+       71 ( 16%) empty lines
+
+file m2_filenames.h has
+      364 (100%) total lines
+       70 ( 19%) lines with code
+       29 (  7%) lines with C comments
+      193 ( 53%) lines with BCPL comments
+       52 ( 14%) empty lines
+
+file m2_filenames.c has
+     1018 (100%) total lines
+      511 ( 50%) lines with code
+       33 (  3%) lines with C comments
+      355 ( 34%) lines with BCPL comments
+      168 ( 16%) empty lines
+
+file m2_first_follow.h has
+     1053 (100%) total lines
+      882 ( 83%) lines with code
+       25 (  2%) lines with C comments
+        3 (  0%) lines with BCPL comments
+      139 ( 13%) empty lines
+
+file m2_lexer.h has
+      186 (100%) total lines
+       39 ( 20%) lines with code
+       25 ( 13%) lines with C comments
+       80 ( 43%) lines with BCPL comments
+       34 ( 18%) empty lines
+
+file m2_lexer.c has
+     1612 (100%) total lines
+      852 ( 52%) lines with code
+       39 (  2%) lines with C comments
+      617 ( 38%) lines with BCPL comments
+      212 ( 13%) empty lines
+
+file m2_notifications.h has
+       88 (100%) total lines
+       24 ( 27%) lines with code
+       26 ( 29%) lines with C comments
+       23 ( 26%) lines with BCPL comments
+       14 ( 15%) empty lines
+
+file m2_parser.h has
+      187 (100%) total lines
+       37 ( 19%) lines with code
+       25 ( 13%) lines with C comments
+       81 ( 43%) lines with BCPL comments
+       37 ( 19%) empty lines
+
+file m2_parser.c has
+     4800 (100%) total lines
+     2296 ( 47%) lines with code
+      115 (  2%) lines with C comments
+     1613 ( 33%) lines with BCPL comments
+     1243 ( 25%) empty lines
+
+file m2_pragma_parser.h has
+      180 (100%) total lines
+       31 ( 17%) lines with code
+       25 ( 13%) lines with C comments
+       81 ( 45%) lines with BCPL comments
+       33 ( 18%) empty lines
+
+file m2_pragma_parser.c has
+       83 (100%) total lines
+       19 ( 22%) lines with code
+       23 ( 27%) lines with C comments
+       28 ( 33%) lines with BCPL comments
+       13 ( 15%) empty lines
+
+file m2_productions.h has
+       57 (100%) total lines
+       12 ( 21%) lines with code
+       25 ( 43%) lines with C comments
+       10 ( 17%) lines with BCPL comments
+        7 ( 12%) empty lines
+
+file m2_productions.c has
+       83 (100%) total lines
+       23 ( 27%) lines with code
+       24 ( 28%) lines with C comments
+       19 ( 22%) lines with BCPL comments
+       15 ( 18%) empty lines
+
+file m2_reserved_words.h has
+       85 (100%) total lines
+       16 ( 18%) lines with code
+       25 ( 29%) lines with C comments
+       25 ( 29%) lines with BCPL comments
+       16 ( 18%) empty lines
+
+file m2_reserved_words.c has
+      138 (100%) total lines
+       58 ( 42%) lines with code
+       50 ( 36%) lines with C comments
+       37 ( 26%) lines with BCPL comments
+       21 ( 15%) empty lines
+
+file m2_symbol_table.h has
+      193 (100%) total lines
+       42 ( 21%) lines with code
+       27 ( 13%) lines with C comments
+       91 ( 47%) lines with BCPL comments
+       28 ( 14%) empty lines
+
+file m2_table_of_builtin_idents.h has
+      100 (100%) total lines
+       38 ( 38%) lines with code
+       23 ( 23%) lines with C comments
+       28 ( 28%) lines with BCPL comments
+       12 ( 12%) empty lines
+
+file m2_table_of_pragma_names.h has
+       64 (100%) total lines
+       16 ( 25%) lines with code
+       23 ( 35%) lines with C comments
+       23 ( 35%) lines with BCPL comments
+        3 (  4%) empty lines
+
+file m2_table_of_productions.h has
+      474 (100%) total lines
+      226 ( 47%) lines with code
+       23 (  4%) lines with C comments
+      296 ( 62%) lines with BCPL comments
+       78 ( 16%) empty lines
+
+file m2_table_of_reserved_words.h has
+       93 (100%) total lines
+       45 ( 48%) lines with code
+       23 ( 24%) lines with C comments
+       23 ( 24%) lines with BCPL comments
+        3 (  3%) empty lines
+
+file m2_table_of_tokens.h has
+       92 (100%) total lines
+       37 ( 40%) lines with code
+       23 ( 25%) lines with C comments
+       25 ( 27%) lines with BCPL comments
+        8 (  8%) empty lines
+
+file m2_tokens.h has
+       97 (100%) total lines
+       27 ( 27%) lines with code
+       25 ( 25%) lines with C comments
+       26 ( 26%) lines with BCPL comments
+       15 ( 15%) empty lines
+
+file m2_tokens.c has
+      140 (100%) total lines
+       54 ( 38%) lines with code
+       25 ( 17%) lines with C comments
+       28 ( 20%) lines with BCPL comments
+       31 ( 22%) empty lines
+
+file m2_tokenset.h has
+      290 (100%) total lines
+       39 ( 13%) lines with code
+       24 (  8%) lines with C comments
+      149 ( 51%) lines with BCPL comments
+       53 ( 18%) empty lines
+
+file m2_tokenset.c has
+      639 (100%) total lines
+      300 ( 46%) lines with code
+       23 (  3%) lines with C comments
+      189 ( 29%) lines with BCPL comments
+      139 ( 21%) empty lines
+
+file m2r10c.c has
+      302 (100%) total lines
+      174 ( 57%) lines with code
+       23 (  7%) lines with C comments
+       67 ( 22%) lines with BCPL comments
+       47 ( 15%) empty lines
+
+Grand totals
+    16802 (100%) total lines
+     7571 ( 45%) lines with code
+     1187 (  7%) lines with C comments
+     5641 ( 33%) lines with BCPL comments
+     3201 ( 19%) empty lines
