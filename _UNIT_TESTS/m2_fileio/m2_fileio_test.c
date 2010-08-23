@@ -44,16 +44,29 @@ typedef struct /* file_info_t */
 
 
 // ---------------------------------------------------------------------------
-// File information
+// Source file information
 // ---------------------------------------------------------------------------
 
-static const file_info_t _file_info[] = {
+static const file_info_t _srcfile_info[] = {
+    // For POSIX
+    { "./empty.mod", POSIX_FILENAMING,
+      1, 1, "" },
+    { "./fourlines.mod", POSIX_FILENAMING,
+      4, 11, "1010101010\n0101010101\n1010101010\n0101010101" }
+}; /* _srcfile_info */
+
+
+// ---------------------------------------------------------------------------
+// Output file information
+// ---------------------------------------------------------------------------
+
+static const file_info_t _outfile_info[] = {
     // For POSIX
     { "./empty.tst", POSIX_FILENAMING,
       1, 1, "" },
     { "./fourlines.tst", POSIX_FILENAMING,
       4, 11, "1010101010\n0101010101\n1010101010\n0101010101" }
-}; /* _file_info */
+}; /* _outfile_info */
 
 
 // --------------------------------------------------------------------------
@@ -146,11 +159,11 @@ static void m2_new_outfile_test(void)
     m2_fileio_status_t status;
     
     // Check all file information for the expected associated behaviour.
-    for (i = 0; i < sizeof(_file_info) / sizeof(_file_info[0]); i++)
+    for (i = 0; i < sizeof(_outfile_info) / sizeof(_outfile_info[0]); i++)
     {
         // Allocate the filename descriptor.
         filename = m2_new_filename_from_path(
-            _file_info[i].path, _file_info[i].naming, NULL
+            _outfile_info[i].path, _outfile_info[i].naming, NULL
         );
         
         // Make sure the allocation succeeded.
@@ -167,7 +180,7 @@ static void m2_new_outfile_test(void)
         if (file != NULL)
         {
             // Test the file descriptor.
-            m2_writefile_test(file, &_file_info[i]);
+            m2_writefile_test(file, &_outfile_info[i]);
             
             // Clean up the file descriptor.
             m2_close_file(file);
@@ -241,11 +254,11 @@ static void m2_open_sourcefile_test(void)
     m2_fileio_status_t status;
     
     // Check all file information for the expected associated behaviour.
-    for (i = 0; i < sizeof(_file_info) / sizeof(_file_info[0]); i++)
+    for (i = 0; i < sizeof(_srcfile_info) / sizeof(_srcfile_info[0]); i++)
     {
         // Allocate the filename descriptor.
         filename = m2_new_filename_from_path(
-            _file_info[i].path, _file_info[i].naming, NULL
+            _srcfile_info[i].path, _srcfile_info[i].naming, NULL
         );
         
         // Make sure the allocation succeeded.
@@ -262,7 +275,7 @@ static void m2_open_sourcefile_test(void)
         if (file != NULL)
         {
             // Test the file descriptor.
-            m2_readfile_test(file, &_file_info[i]);
+            m2_readfile_test(file, &_srcfile_info[i]);
             
             // Clean up the file descriptor.
             m2_close_file(file);
