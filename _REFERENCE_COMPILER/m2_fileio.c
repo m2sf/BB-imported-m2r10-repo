@@ -66,7 +66,6 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
                              m2_fileio_status_t *status) {
     m2_file_s *new_file;
     m2_file_type_t file_type;
-    m2_filename_status_t filename_status;
     char pathname[m2_path_string_length(filename) + 1];
     
     // bail out if filename is invalid
@@ -99,13 +98,6 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
     
     // get the full file path
     m2_copy_path_string(filename, &pathname);
-    
-    // bail out if getting the file path failed
-    if (filename_status != M2_FILENAME_STATUS_SUCCESS) {
-        DEALLOCATE(new_file);
-        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
-        return NULL;
-    } // end if
     
     // open the file for reading
     new_file->handle = fopen(pathname, "r");
@@ -143,7 +135,6 @@ m2_file_t m2_new_outfile(m2_filename_t filename,
                          m2_fileio_status_t *status) {
     m2_file_s *new_file;
     m2_file_type_t file_type;
-    m2_filename_status_t filename_status;
     char pathname[m2_path_string_length(filename) + 1];
 
     // bail out if filename is invalid
