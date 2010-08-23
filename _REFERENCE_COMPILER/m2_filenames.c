@@ -1131,7 +1131,7 @@ m2_file_type_t m2_file_type(m2_filename_t filename) {
         return FILE_TYPE_UNKNOWN;
     
     return this_filename->file_type;
-}
+} // end m2_file_type
 
 
 // ---------------------------------------------------------------------------
@@ -1149,7 +1149,7 @@ m2_filenaming_t m2_filenaming(m2_filename_t filename) {
         return DEFAULT_FILENAMING;
     
     return this_filename->filenaming;
-}
+} // end m2_filenaming
 
 
 // ---------------------------------------------------------------------------
