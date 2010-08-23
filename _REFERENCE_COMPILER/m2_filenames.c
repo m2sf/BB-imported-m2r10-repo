@@ -471,7 +471,7 @@ m2_filename_t m2_new_filename_from_filename(m2_filename_t filename,
                                             m2_filename_status_t *status) {
     m2_filename_s *new_filename;
     m2_filename_s *from_filename = (m2_filename_s *) filename;
-    int size, index = 0;
+    int index;
     char ch;
     
     // bail out if filename is invalid
@@ -496,11 +496,11 @@ m2_filename_t m2_new_filename_from_filename(m2_filename_t filename,
         return NULL;
     } // end if
     
-    // determine allocation size of directory string
-    size = from_filename->directory_length;
+    // remember the directory string size
+    new_filename->directory_length = from_filename->directory_length;
     
     // allocate memory for directory string
-    new_filename->directory = ALLOCATE(size + 2);
+    new_filename->directory = ALLOCATE(new_filename->directory_length + 1);
     
     // bail out if allocation failed
     if (new_filename->directory == NULL) {
@@ -517,11 +517,11 @@ m2_filename_t m2_new_filename_from_filename(m2_filename_t filename,
         index++;
     } until (ch == CSTRING_TERMINATOR);
     
-    // determine the allocation size of the filename string
-    size = from_filename->filename_length;
+    // remember the filename string size
+    new_filename->filename_length = from_filename->filename_length;
     
     // allocate memory for the filename string
-    new_filename->filename = ALLOCATE(size + 1);
+    new_filename->filename = ALLOCATE(new_filename->filename_length + 1);
     
     // bail out if allocation failed
     if (new_filename->filename == NULL) {
