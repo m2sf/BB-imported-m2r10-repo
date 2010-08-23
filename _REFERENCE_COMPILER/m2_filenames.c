@@ -553,13 +553,14 @@ m2_filename_t m2_new_filename_from_filename(m2_filename_t filename,
     
     // copy the file extension string
     index = 0;
-    while (_ext_string[file_type][index] != CSTRING_TERMINATOR) {
-        new_filename->extension[index] = _ext_string[file_type][index];
+    repeat {
+        ch = _ext_string[file_type][index];
+        new_filename->extension[index] = ch;
         index++;
-    } // end while
+    } until (ch == CSTRING_TERMINATOR);
     
     // remember file extension string length
-    new_filename->extension_length = index;
+    new_filename->extension_length = index - 1;
     
     // calculate and set the path name length
     new_filename->path_length = from_filename->path_length -
