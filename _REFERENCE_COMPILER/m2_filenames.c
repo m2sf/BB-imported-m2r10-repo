@@ -287,9 +287,9 @@ m2_file_type_t m2_outfile_type_for(m2_target_t target,
 
 m2_filename_t m2_new_filename(const char *directory,
                               const char *filename,
-                          m2_file_type_t file_type,
-                         m2_filenaming_t filenaming,
-                    m2_filename_status_t *status) {
+                              m2_file_type_t file_type,
+                              m2_filenaming_t filenaming,
+                              m2_filename_status_t *status) {
     m2_filename_s *new_filename;
     int size, index = 0, total_length = 0;
     char fn_delimiter, ext_delimiter, ver_delimiter;
@@ -361,6 +361,7 @@ m2_filename_t m2_new_filename(const char *directory,
     // add a trailing delimiter if a directory without one is present
     if ((index != 0) && (directory[index - 1] != fn_delimiter)) {
         new_filename->directory[index] = fn_delimiter;
+        new_filename->directory_length++;
         index++;
     }
     
@@ -403,7 +404,7 @@ m2_filename_t m2_new_filename(const char *directory,
     
     // terminate the filename string
     new_filename->filename[index] = CSTRING_TERMINATOR;
-
+    
     // bail out if filename is invalid
     if (m2_is_valid_filename_string(new_filename->filename) == false) {
         DEALLOCATE(new_filename->directory);
@@ -434,10 +435,10 @@ m2_filename_t m2_new_filename(const char *directory,
     
     // remember file extension string length
     new_filename->extension_length = index;
-        
+    
     // accumulated length
     total_length = total_length + index;
-
+    
     // terminate the file extension string
     new_filename->extension[index] = CSTRING_TERMINATOR;
     
@@ -451,6 +452,127 @@ m2_filename_t m2_new_filename(const char *directory,
     ASSIGN_BY_REF(status, M2_FILENAME_STATUS_SUCCESS);
     return (m2_filename_t) new_filename;
 } // end m2_new_filename
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_new_filename_from_filename( filename, file_type, status )
+// ---------------------------------------------------------------------------
+//
+// Returns a newly allocated filename descriptor whose file extension and file
+// type are determined by <file_type> and whose remaining paramters are copied
+// from <filename>.  The caller is responsible for  deallocating  the returned
+// descriptor.  Returns NULL if any of <filename> and <file_type> is invalid.
+//
+// The status of the operation  is passed back in <status>,  unless  NULL  was
+// passed in for <status>.
+
+m2_filename_t m2_new_filename_from_filename(m2_filename_t filename,
+                                            m2_file_type_t file_type,
+                                            m2_filename_status_t *status) {
+    m2_filename_s *new_filename;
+    m2_filename_s *from_filename = (m2_filename_s *) filename;
+    int size, index = 0;
+    char ch;
+    
+    // bail out if filename is invalid
+    if (filename == NULL) {
+        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_INVALID_REFERENCE);
+        return NULL;
+    } // end if
+    
+    // bail out if file type is invalid
+    if ((file_type == FILE_TYPE_UNKNOWN) ||
+        (file_type >= INVALID_FILENAME)) {
+        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_INVALID_FILETYPE);
+        return NULL;
+    } // end if
+    
+    // allocate memory for filename descriptor
+    new_filename = ALLOCATE(sizeof(m2_filename_s));
+    
+    // bail out if allocation failed
+    if (new_filename == NULL) {
+        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    } // end if
+    
+    // determine allocation size of directory string
+    size = from_filename->directory_length;
+    
+    // allocate memory for directory string
+    new_filename->directory = ALLOCATE(size + 2);
+    
+    // bail out if allocation failed
+    if (new_filename->directory == NULL) {
+        DEALLOCATE(new_filename);
+        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    } // end if
+    
+    // copy the directory string
+    index = 0;
+    repeat {
+        ch = from_filename->directory[index];
+        new_filename->directory[index] = ch;
+        index++;
+    } until (ch == CSTRING_TERMINATOR);
+    
+    // determine the allocation size of the filename string
+    size = from_filename->filename_length;
+    
+    // allocate memory for the filename string
+    new_filename->filename = ALLOCATE(size + 1);
+    
+    // bail out if allocation failed
+    if (new_filename->filename == NULL) {
+        DEALLOCATE(new_filename->directory);
+        DEALLOCATE(new_filename);
+        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    } // end if
+    
+    // copy the filename string
+    index = 0;
+    repeat {
+        ch = from_filename->filename[index];
+        new_filename->filename[index] = ch;
+        index++;
+    } until (ch == CSTRING_TERMINATOR);
+    
+    // allocate memory for the file extension string
+    new_filename->extension = ALLOCATE(_MAX_EXTSTR_SIZE);
+    
+    // bail out if allocation failed
+    if (new_filename->extension == NULL) {
+        DEALLOCATE(new_filename->directory);
+        DEALLOCATE(new_filename->filename);
+        DEALLOCATE(new_filename);
+        ASSIGN_BY_REF(status, M2_FILENAME_STATUS_ALLOCATION_FAILED);
+        return NULL;
+    } // end if
+    
+    // copy the file extension string
+    index = 0;
+    while (_ext_string[file_type][index] != CSTRING_TERMINATOR) {
+        new_filename->extension[index] = _ext_string[file_type][index];
+        index++;
+    } // end while
+    
+    // remember file extension string length
+    new_filename->extension_length = index;
+    
+    // calculate and set the path name length
+    new_filename->path_length = from_filename->path_length -
+                                from_filename->extension_length +
+                                new_filename->extension_length;
+    
+    // set the file type and filenaming scheme
+    new_filename->file_type = file_type;
+    new_filename->filenaming = from_filename->filenaming;
+    
+    ASSIGN_BY_REF(status, M2_FILENAME_STATUS_SUCCESS);
+    return (m2_filename_t) new_filename;
+} // end m2_new_filename_from_filename
 
 
 // ---------------------------------------------------------------------------
@@ -743,7 +865,7 @@ void m2_copy_path_string(m2_filename_t filename, char *target) {
     // append the file extension string
     index = 0;
     while (this_filename->extension[index] != CSTRING_TERMINATOR) {
-        target[path_index] = this_filename->extension[index];
+        target[target_index] = this_filename->extension[index];
         target_index++;
         index++;
     } // end while;
@@ -873,7 +995,7 @@ void m2_copy_filename_string(m2_filename_t filename, char *target) {
     // append the file extension string
     index = 0;
     while (this_filename->extension[index] != CSTRING_TERMINATOR) {
-        target[path_index] = this_filename->extension[index];
+        target[target_index] = this_filename->extension[index];
         target_index++;
         index++;
     } // end while;

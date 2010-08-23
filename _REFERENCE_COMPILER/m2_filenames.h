@@ -167,6 +167,23 @@ m2_filename_t m2_new_filename(const char *directory,
 
 
 // ---------------------------------------------------------------------------
+// function:  m2_new_filename_from_filename( filename, file_type, status )
+// ---------------------------------------------------------------------------
+//
+// Returns a newly allocated filename descriptor whose file extension and file
+// type are determined by <file_type> and whose remaining paramters are copied
+// from <filename>.  The caller is responsible for  deallocating  the returned
+// descriptor.  Returns NULL if any of <filename> and <file_type> is invalid.
+//
+// The status of the operation  is passed back in <status>,  unless  NULL  was
+// passed in for <status>.
+
+m2_filename_t m2_new_filename_from_filename(m2_filename_t filename,
+                                           m2_file_type_t file_type,
+                                     m2_filename_status_t *status);
+
+
+// ---------------------------------------------------------------------------
 // function:  m2_new_filename_from_path( path, filenaming )
 // ---------------------------------------------------------------------------
 //
