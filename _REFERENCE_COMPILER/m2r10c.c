@@ -22,10 +22,25 @@
  *  
  */
 
+
+// ---------------------------------------------------------------------------
+// C standard library imports
+// ---------------------------------------------------------------------------
+
 #include <stdio.h>
 #include <getopt.h>
-#include "KVS.h"
+
+// ---------------------------------------------------------------------------
+// Embedded library imports
+// ---------------------------------------------------------------------------
+
 #include "ASCII.h"
+#include "KVS.h"
+
+// ---------------------------------------------------------------------------
+// Project imports
+// ---------------------------------------------------------------------------
+
 #include "m2_build_params.h"
 #include "m2_errmsg.h"
 #include "m2_filenames.h"
@@ -98,22 +113,25 @@ static struct option lopts_all[] = {
 //
 // Prints usage info to stdout.
 
+#define USAGE_STRING \
+"Usage\n" \
+"\nInvoking the compiler:\n" \
+"  m2r10c [ target-option target | debug-option ] sourcefile\n" \
+"\nObtaining information:\n" \
+"  m2r10c usage-info-option | version-info-option\n" \
+"\nTarget options:\n" \
+" -t, --target  target : generate code for specified target\n" \
+"                        available targets are c99 and llvm\n" \
+"\nDebug options:\n" \
+" -c, --syntaxcheck    : perform syntax check only\n" \
+" -a, --dumpast        : build and print AST only\n" \
+" -s, --dumpsymtab     : build and print symbol table only\n" \
+"\nInfo options:\n" \
+" -h, --help           : print usage info\n" \
+" -V, --version        : print version and copyright notice\n"
+
 static void show_usage() {
-    printf("Usage\n\n"
-           "  m2r10c [ debug-option | target_option tgt] sourcefile\n\n"
-           "Obtaining information:\n"
-           "  m2r10c usage-info-option | version-info-option\n\n"
-           "Target options:\n"
-           " -t, --target  tgt : generate code for specified target\n"
-           "                     available targets are c99 and llvm\n"
-           "Debug options:\n"
-           " -c, --syntaxcheck : perform syntax check only\n\n"
-           " -a, --dumpast     : build and print AST only\n"
-           " -s, --dumpsymtab  : build and print symbol table only\n"
-           "Info options:\n"
-           " -h, --help        : print usage info\n"
-           " -V, --version     : print version and copyright notice\n"
-           "\n");
+    printf(USAGE_STRING);
 } // end show_usage
 
 
@@ -260,9 +278,9 @@ int main (int argc, const char * argv[]) {
     } // end if
     
     // get output filename descriptor from source file components
-    output_filename = m2_new_filename(m2_directory_string(source_filename),
-                      m2_filename_string(source_filename),
-                      outfile_type, DEFAULT_FILENAMING, &fn_status);
+    output_filename = m2_new_filename_from_filename(source_filename,
+                                                    outfile_type,
+                                                    &fn_status);
     
     if (fn_status != M2_FILENAME_STATUS_SUCCESS) {
         show_error(fn_status);
