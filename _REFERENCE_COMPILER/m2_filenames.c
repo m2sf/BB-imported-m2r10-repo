@@ -1117,6 +1117,42 @@ void m2_copy_file_ext_string(m2_filename_t filename, char *target) {
 
 
 // ---------------------------------------------------------------------------
+// function:  m2_file_type( filename )
+// ---------------------------------------------------------------------------
+//
+// Returns the value of the file_type field of filename descriptor <filename>.
+// Returns FILE_TYPE_UNKNOWN if the descriptor is NULL.
+
+m2_file_type_t m2_file_type(m2_filename_t filename) {
+    m2_filename_s *this_filename = (m2_filename_s *) filename;
+    
+    // bail out if filename descriptor is NULL
+    if (filename == NULL)
+        return FILE_TYPE_UNKNOWN;
+    
+    return this_filename->file_type;
+}
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_filenaming( filename )
+// ---------------------------------------------------------------------------
+//
+// Returns the  filenaming scheme  of filename descriptor <filename>.  Returns
+// DEFAULT_FILENAMING if the descriptor is NULL.
+
+m2_filenaming_t m2_filenaming(m2_filename_t filename) {
+    m2_filename_s *this_filename = (m2_filename_s *) filename;
+    
+    // bail out if filename descriptor is NULL
+    if (filename == NULL)
+        return DEFAULT_FILENAMING;
+    
+    return this_filename->filenaming;
+}
+
+
+// ---------------------------------------------------------------------------
 // function:  m2_dispose_filename( filename )
 // ---------------------------------------------------------------------------
 //
