@@ -496,7 +496,7 @@ m2_filename_t m2_new_filename_from_filename(m2_filename_t filename,
         return NULL;
     } // end if
     
-    // remember the directory string size
+    // remember the directory string length
     new_filename->directory_length = from_filename->directory_length;
     
     // allocate memory for directory string
@@ -517,7 +517,7 @@ m2_filename_t m2_new_filename_from_filename(m2_filename_t filename,
         index++;
     } until (ch == CSTRING_TERMINATOR);
     
-    // remember the filename string size
+    // remember the filename string length
     new_filename->filename_length = from_filename->filename_length;
     
     // allocate memory for the filename string
@@ -668,6 +668,9 @@ m2_filename_t m2_new_filename_from_path(const char *path,
     length = fn_index + 1;
     total_length = length;
     
+    // remember the directory string length
+    new_filename->directory_length = length;
+    
     // allocate memory for directory string
     new_filename->directory = ALLOCATE(length + 1);
     
@@ -698,6 +701,8 @@ m2_filename_t m2_new_filename_from_path(const char *path,
     } // end if
     total_length = total_length + length;
 
+    // remember the filename string length
+    new_filename->filename_length = length;
     
     // allocate memory for filename string
     new_filename->filename = ALLOCATE(length + 1);
@@ -740,6 +745,9 @@ m2_filename_t m2_new_filename_from_path(const char *path,
         length = end_of_path - ext_index;
     } // end if
     total_length = total_length + length;
+    
+    // remember the file extension string length
+    new_filename->extension_length = length;
     
     // allocate memory for file extension string
     new_filename->extension = ALLOCATE(length + 1);
