@@ -178,10 +178,12 @@ static m2_tokenset_t
     FIRST_BINDABLE_OP_OR_IDENT,
     FIRST_IDENT_OR_ASTERISK,
     FIRST_TYPE_OR_OPAQUE,
+    FIRST_IDENT_OR_LPAREN,
+    FIRST_SIMPLE_FORMAL_TYPE_OR_LPAREN,
     FIRST_LBRACKET_OR_COMMA,
     FIRST_TYPECONV_OR_BINDABLE_OP_OR_IDENT,
     ASSIGN_OR_INC_OR_DEC_OR_LPAREN,
-    FIRST_EXPRESSION_OR_RANGE,
+    FIRST_EXPRESSION_OR_RANGE
     ;
 
 // ---------------------------------------------------------------------------
@@ -189,6 +191,7 @@ static m2_tokenset_t
 // ---------------------------------------------------------------------------
 
 static m2_tokenset_t
+    __volatile__
     FOLLOW_COMPILATION_UNIT,
     FOLLOW_PROTOTYPE,
     FOLLOW_PROGRAM_MODULE,
@@ -321,7 +324,7 @@ static m2_tokenset_t
     SKIP_TO_RBRACKET_OR_OF,
     SKIP_TO_OF,
     SKIP_TO_COMMA,
-    SKIP_TO_RBRACKET,
+    SKIP_TO_RBRACKET
     ;
 
 // ===========================================================================
@@ -389,7 +392,7 @@ m2_parser_t m2_new_parser(m2_file_t infile,
     } // end if
     
     // create a new lexer object
-    new_lexer = m2_new_lexer(infile, lextab, &lexer_status);
+    new_lexer = m2_new_lexer(infile, lextab, NULL, &lexer_status);
     
     // bail out if lexer object creation failed
     if (lexer_status != M2_LEXER_STATUS_SUCCESS) {
@@ -1517,7 +1520,7 @@ m2_token_t m2_declaration(m2_parser_s *p) {
             _getsym(p);
             
             // ( variableDeclaration ";" )*
-            while (m2_tokenset_is_element(FIRST_VAR_DECLARATION,
+            while (m2_tokenset_is_element(FIRST_VARIABLE_DECLARATION,
                                           _lookahead(p))) {
                 m2_variable_declaration(p);
                 
@@ -1623,7 +1626,7 @@ m2_token_t m2_definition(m2_parser_s *p) {
             _getsym(p);
             
             // ( variableDeclaration ";" )*
-            while (m2_tokenset_is_element(FIRST_VAR_DECLARATION,
+            while (m2_tokenset_is_element(FIRST_VARIABLE_DECLARATION,
                                           _lookahead(p))) {
                 m2_variable_declaration(p);
                 
@@ -1729,13 +1732,10 @@ m2_token_t type_definition_tail(m2_parser_s *p) {
             
         }
         // alternative: OPAQUE recordType?
-        else if () {
+        else if (_lookahead(p) == TOKEN_OPAQUE) {
            
             // OPAQUE
-            if (match_token(p, TOKEN_OPAQUE, FIRST_RECORD_TYPE)) {
-                _getsym(p);
-                
-            } // end OPAQUE
+            _getsym(p);
             
             // recordType?
             if (m2_tokenset_is_element(FIRST_RECORD_TYPE, _lookahead(p))) {
@@ -1807,7 +1807,7 @@ m2_token_t m2_type(m2_parser_s *p) {
         _getsym(p);
         
         // OF
-        if (match_token(p, TOKEN_OF, SKIP_TO_IDENTIFIER)) {
+        if (match_token(p, TOKEN_OF, SKIP_TO_IDENT)) {
             _getsym(p);
         
         } // end OF
@@ -1822,7 +1822,7 @@ m2_token_t m2_type(m2_parser_s *p) {
         m2_range(p);
         
         // OF
-        if (match_token(p, TOKEN_OF, SKIP_TO_IDENTIFIER)) {
+        if (match_token(p, TOKEN_OF, SKIP_TO_IDENT)) {
             _getsym(p);
             
         } // end OF
@@ -2545,11 +2545,11 @@ m2_token_t m2_variadic_prefixed_formal_type(m2_parser_s *p) {
                               FOLLOW_ATTRIBUTED_FORMAL_TYPE)) {
         
         // alternative: simpleFormalType
-        if () {
+        if (m2_tokenset_is_element(FIRST_SIMPLE_FORMAL_TYPE, _lookahead(p))) {
             m2_simple_formal_type(p);
         }
         // alternative: "(" nonVariadicFormalTypeList ")"
-        else if (token == TOKEN_LPAREN) {
+        else if (_lookahead(p) == TOKEN_LPAREN) {
             
             // "("
             _getsym(p);
@@ -2940,7 +2940,7 @@ m2_token_t m2_formal_params(m2_parser_s *p) {
 m2_token_t m2_variadic_attribute(m2_parser_s *p); /* FORWARD */
 
 m2_token_t m2_const_var_prefixed_formal_params(m2_parser_s *p) {
-    m2_token token = _lookahead(p);
+    m2_token_t token = _lookahead(p);
     
     // ( CONST | VAR )
     
@@ -3025,7 +3025,7 @@ m2_token_t m2_non_prefixed_formal_params(m2_parser_s *p) {
 m2_token_t m2_variadic_formal_params_tail(m2_parser_s *p); /* FORWARD */
 
 m2_token_t m2_non_prefixed_formal_params_tail(m2_parser_s *p) {
-    m2_token token = _lookahead(p);
+    m2_token_t token = _lookahead(p);
 
     // simpleFormalType | variadicAttribute
     
@@ -3063,7 +3063,7 @@ m2_token_t m2_non_prefixed_formal_params_tail(m2_parser_s *p) {
 m2_token_t m2_non_variadic_formal_param_list(m2_parser_s *p); /* FORWARD */
 
 m2_token_t m2_variadic_formal_params_tail(m2_parser_s *p) {
-    m2_token token = _lookahead(p);
+    m2_token_t token = _lookahead(p);
 
     // simpleFormalType | "("
     
@@ -3177,7 +3177,7 @@ m2_token_t m2_non_variadic_formal_param_list(m2_parser_s *p) {
 //  ( CONST | VAR )? identList ':' simpleFormalType
 
 m2_token_t m2_non_variadic_formal_params(m2_parser_s *p) {
-    m2_token token = _lookahead(p);
+    m2_token_t token = _lookahead(p);
 
     // ( CONST | VAR )?
     if (token == TOKEN_CONST) {
@@ -4355,7 +4355,7 @@ m2_token_t m2_bool_factor(m2_parser_s *p) {
 
 m2_token_t m2_simple_expression(m2_parser_s *p); /* FORWARD */
 
-m2_token_t m2_expression(m2_parser_s *p) {
+m2_token_t m2_rel_expression(m2_parser_s *p) {
     
     // simpleExpression
     m2_simple_expression(p);
@@ -4374,7 +4374,7 @@ m2_token_t m2_expression(m2_parser_s *p) {
     } // end ( relation simpleExpression )?
     
     return _lookahead(p);
-} // end m2_expression
+} // end m2_rel_expression
 
 
 // ---------------------------------------------------------------------------
