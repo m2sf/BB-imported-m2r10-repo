@@ -156,6 +156,17 @@ void m2_fileio_write(m2_file_t file, octet_t codepoint);
 
 
 // ---------------------------------------------------------------------------
+// function:  m2_fileio_filename(file)
+// ---------------------------------------------------------------------------
+//
+// Returns a pointer  to the  stored filename  of file descriptor <file>.  The
+// pointer is returned as a pointer to an  immutable  string.  Returns NULL if
+// the file descriptor is NULL.
+
+const char *m2_fileio_filename(m2_file_t file);
+    
+
+// ---------------------------------------------------------------------------
 // function:  m2_fileio_getpos(file, position)
 // ---------------------------------------------------------------------------
 //

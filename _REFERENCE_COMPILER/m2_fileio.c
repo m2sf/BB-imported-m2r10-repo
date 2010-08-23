@@ -31,7 +31,7 @@
 #include <stddef.h>
 
 // ---------------------------------------------------------------------------
-// ObjM2 project imports
+// Project imports
 // ---------------------------------------------------------------------------
 
 #include "m2_fileio.h"
@@ -48,6 +48,7 @@ typedef struct /* m2_file_s */ {
     m2_file_type_t type;
     m2_file_pos_t position;
     bool end_of_file;
+    char filename[];
 } m2_file_s;
 
 
@@ -63,10 +64,10 @@ typedef struct /* m2_file_s */ {
 
 m2_file_t m2_open_sourcefile(m2_filename_t filename,
                              m2_fileio_status_t *status) {
-    const char *path;
     m2_file_s *new_file;
     m2_file_type_t file_type;
     m2_filename_status_t filename_status;
+    char pathname[m2_path_string_length(filename) + 1];
     
     // bail out if filename is invalid
     if (filename == NULL) {
@@ -82,9 +83,10 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_INVALID_FILE_TYPE);
         return NULL;
     } // end if
-    
+        
     // allocate memory for a file descriptor
-    new_file = ALLOCATE(sizeof(m2_file_s));
+    new_file = ALLOCATE(sizeof(m2_file_s) +
+                        m2_filename_string_length(filename) + 1);
     
     // bail out if allocation failed
     if (new_file == NULL) {
@@ -92,8 +94,11 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
         return NULL;
     } // end if
     
-    // get the file path
-    path = m2_path_from_filename(filename, &filename_status);
+    // copy filename with extension into file descriptor
+    m2_copy_filename_string(filename, new_file->filename);
+    
+    // get the full file path
+    m2_copy_path_string(filename, &pathname);
     
     // bail out if getting the file path failed
     if (filename_status != M2_FILENAME_STATUS_SUCCESS) {
@@ -103,19 +108,15 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
     } // end if
     
     // open the file for reading
-    new_file->handle = fopen(path, "r");
+    new_file->handle = fopen(pathname, "r");
     
     // bail out if opening the file failed
     if (new_file->handle == NULL) {
         DEALLOCATE(new_file);
-        DEALLOCATE(path);
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
     } // end if
-    
-    // deallocate the memory for the path
-    DEALLOCATE(path);
-    
+        
     // initialise the file descriptor
     new_file->type = file_type;
     new_file->position.line = 1;
@@ -140,10 +141,10 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
 
 m2_file_t m2_new_outfile(m2_filename_t filename,
                          m2_fileio_status_t *status) {
-    const char *path;
     m2_file_s *new_file;
     m2_file_type_t file_type;
     m2_filename_status_t filename_status;
+    char pathname[m2_path_string_length(filename) + 1];
 
     // bail out if filename is invalid
     if (filename == NULL) {
@@ -161,7 +162,8 @@ m2_file_t m2_new_outfile(m2_filename_t filename,
     } // end if
     
     // allocate memory for a file descriptor
-    new_file = ALLOCATE(sizeof(m2_file_s));
+    new_file = ALLOCATE(sizeof(m2_file_s) +
+                        m2_filename_string_length(filename) + 1);
     
     // bail out if allocation failed
     if (new_file == NULL) {
@@ -169,30 +171,19 @@ m2_file_t m2_new_outfile(m2_filename_t filename,
         return NULL;
     } // end if
     
-    // get the file path
-    path = m2_path_from_filename(filename, &filename_status);
-    
-    // bail out if getting the file path failed
-    if (filename_status != M2_FILENAME_STATUS_SUCCESS) {
-        DEALLOCATE(new_file);
-        ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
-        return NULL;
-    } // end if
-    
+    // get the full file path
+    m2_copy_path_string(filename, &pathname);
+        
     // open the file for writing
-    new_file->handle = fopen(path, "w");
+    new_file->handle = fopen(pathname, "w");
     
     // bail out if opening the file failed.
     if (new_file->handle == NULL) {
         DEALLOCATE(new_file);
-        DEALLOCATE(path);
         ASSIGN_BY_REF(status, M2_FILEIO_STATUS_ALLOCATION_FAILED);
         return NULL;
     } // end if
-    
-    // deallocate the memory for the path
-    DEALLOCATE(path);
-    
+        
     // initialise the file descriptor
     new_file->type = file_type;
     new_file->position.line = 1;
@@ -359,6 +350,25 @@ void m2_fileio_write(m2_file_t file, octet_t codepoint) {
         this_file->position.col++;
     } // end if
 } // end m2_fileio_write
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_fileio_filename(file)
+// ---------------------------------------------------------------------------
+//
+// Returns a pointer  to the  stored filename  of file descriptor <file>.  The
+// pointer is returned as a pointer to an  immutable  string.  Returns NULL if
+// the file descriptor is NULL.
+
+const char *m2_fileio_filename(m2_file_t file) {
+    m2_file_s *this_file = (m2_file_s *) file;
+    
+    // bail out if file descriptor is NULL
+    if (file == NULL)
+        return NULL;
+    
+    return (const char *) this_file->filename;
+} // end m2_fileio_filename
 
 
 // ---------------------------------------------------------------------------
