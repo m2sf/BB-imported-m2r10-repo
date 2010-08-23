@@ -108,10 +108,16 @@ typedef struct /* filename_info_t */
     char *path;
     
     m2_filename_status_t expect_status;
-    char *expect_dir;
-    char *expect_file;
-    char *expect_ext;
-    char *expect_path;
+    cardinal expected_path_length;
+    cardinal expected_dir_length;
+    cardinal expected_file_length;
+    cardinal expected_base_length;
+    cardinal expected_ext_length;
+    char *expected_path;
+    char *expected_dir;
+    char *expected_file;
+    char *expected_base;
+    char *expected_ext;
 } filename_info_t;
 
 
@@ -122,28 +128,42 @@ typedef struct /* filename_info_t */
 static const filename_info_t _filename_info[] = {
     // For POSIX
     { "dir", "file", FILE_TYPE_MOD, POSIX_FILENAMING, "dir/file.mod",
-      M2_FILENAME_STATUS_SUCCESS, "dir/", "file", "mod", "dir/file.mod" },
+      M2_FILENAME_STATUS_SUCCESS, 12, 4, 8, 4, 3,
+      "dir/file.mod", "dir/", "file.mod", "file", "mod" },
+    
     { "dir/", "file", FILE_TYPE_DEF, POSIX_FILENAMING, "dir/file.def",
-      M2_FILENAME_STATUS_SUCCESS, "dir/", "file", "def", "dir/file.def" },
+      M2_FILENAME_STATUS_SUCCESS, 12, 4, 8, 4, 3,
+      "dir/file.def", "dir/", "file.def", "file", "def" },
     
     { "dir", "1337", FILE_TYPE_MOD, POSIX_FILENAMING, "dir/3.mod",
-      M2_FILENAME_STATUS_INVALID_FILENAME, NULL, NULL, NULL, NULL },
+      M2_FILENAME_STATUS_INVALID_FILENAME, 0, 0, 0, 0, 0,
+      NULL, NULL, NULL, NULL },
     
     // For MSDOS
     { "dir", "file", FILE_TYPE_MOD, MSDOS_FILENAMING, "dir\\file.mod",
-      M2_FILENAME_STATUS_SUCCESS, "dir\\", "file", "mod", "dir\\file.mod" },
+      M2_FILENAME_STATUS_SUCCESS, 12, 4, 8, 4, 3,
+      "dir\\file.mod", "dir\\", "file.mod", "file", "mod" },
+    
     { "dir\\", "file", FILE_TYPE_DEF, MSDOS_FILENAMING, "dir\\file.def",
-      M2_FILENAME_STATUS_SUCCESS, "dir\\", "file", "def", "dir\\file.def" },
+      M2_FILENAME_STATUS_SUCCESS, 12, 4, 8, 4, 3,
+      "dir\\file.def", "dir\\", "file.def", "file", "def" },
     
     { "dir", "1337", FILE_TYPE_MOD, MSDOS_FILENAMING, "dir\\3.mod",
-      M2_FILENAME_STATUS_INVALID_FILENAME, NULL, NULL, NULL, NULL },
+      M2_FILENAME_STATUS_INVALID_FILENAME, 0, 0, 0, 0, 0,
+      NULL, NULL, NULL, NULL },
     
     // For OpenVMS
     { "[dir]", "file;3", FILE_TYPE_MOD, OPENVMS_FILENAMING, "[dir]file.mod;3",
-      M2_FILENAME_STATUS_SUCCESS, "[dir]", "file", "mod", "[dir]file.mod" },
+      M2_FILENAME_STATUS_SUCCESS, 13, 5, 8, 4, 3,
+      "[dir]file.mod", "[dir]", "file.mod", "file", "mod" },
+    
+    { "[dir]", "file;3", FILE_TYPE_DEF, OPENVMS_FILENAMING, "[dir]file.def;3",
+      M2_FILENAME_STATUS_SUCCESS, 13, 5, 8, 4, 3,
+      "[dir]file.def", "[dir]", "file.def", "file", "def" },
     
     { "[dir]", "1337;3", FILE_TYPE_MOD, OPENVMS_FILENAMING, "[dir]1337.mod;3",
-      M2_FILENAME_STATUS_INVALID_FILENAME, NULL, NULL, NULL, NULL }
+      M2_FILENAME_STATUS_INVALID_FILENAME, 0, 0, 0, 0, 0,
+      NULL, NULL, NULL, NULL }
 }; /* _filename_info */
 
 
@@ -205,49 +225,80 @@ static void m2_outfile_type_for_test(void)
 // --------------------------------------------------------------------------
 //
 // Tests the interaction between m2_filename_t and the following functions:
-// - m2_directory_string()
-// - m2_filename_string()
-// - m2_file_ext_string()
+// - m2_path_string_length()
+// - m2_directory_string_length()
+// - m2_filename_string_length()
+// - m2_basename_string_length()
+// - m2_file_ext_string_length()
+// - m2_copy_path_string()
+// - m2_copy_directory_string()
+// - m2_copy_filename_string()
+// - m2_copy_basename_string()
+// - m2_copy_file_ext_string()
 // - m2_file_type()
 // - m2_filenaming()
-// - m2_path_from_filename()
 
 static void m2_filename_t_test(m2_filename_t filename,
                                const filename_info_t *info)
 {
-    m2_filename_status_t status;
-    const char *path;
+    cardinal length;
+    char *buffer;
+    
+    // Get the path.
+    length = m2_path_string_length(filename);
+    buffer = malloc(length + 1);
+    m2_copy_path_string(filename, buffer);
+    
+    // Check if the path is as expected.
+    assert_true(length == info->expected_path_length);
+    assert_same_string(buffer, info->expected_path);
+    free(buffer);
+    
+    // Get the directory.
+    length = m2_directory_string_length(filename);
+    buffer = malloc(length + 1);
+    m2_copy_directory_string(filename, buffer);
     
     // Check if the directory is as expected.
-    assert_same_string(m2_directory_string(filename), info->expect_dir);
+    assert_true(length == info->expected_dir_length);
+    assert_same_string(buffer, info->expected_dir);
+    free(buffer);
+    
+    // Get the filename.
+    length = m2_filename_string_length(filename);
+    buffer = malloc(length + 1);
+    m2_copy_filename_string(filename, buffer);
     
     // Check if the filename is as expected.
-    assert_same_string(m2_filename_string(filename), info->expect_file);
+    assert_true(length == info->expected_file_length);
+    assert_same_string(buffer, info->expected_file);
+    free(buffer);
     
-    // Check if the extension is as expected.
-    assert_same_string(m2_file_ext_string(filename), info->expect_ext);
+    // Get the basename.
+    length = m2_basename_string_length(filename);
+    buffer = malloc(length + 1);
+    m2_copy_basename_string(filename, buffer);
+    
+    // Check if the basename is as expected.
+    assert_true(length == info->expected_base_length);
+    assert_same_string(buffer, info->expected_base);
+    free(buffer);
+    
+    // Get the file extension.
+    length = m2_file_ext_string_length(filename);
+    buffer = malloc(length + 1);
+    m2_copy_file_ext_string(filename, buffer);
+    
+    // Check if the file extension is as expected.
+    assert_true(length == info->expected_ext_length);
+    assert_same_string(buffer, info->expected_ext);
+    free(buffer);
     
     // Check if the file type is as expected.
     assert_equal(m2_file_type(filename), info->type);
     
     // Check if the filenaming is as expected.
     assert_equal(m2_filenaming(filename), info->naming);
-    
-    // Get the filepath.
-    path = m2_path_from_filename(filename, &status);
-    
-    // Compare with our expectation.
-    assert_equal(status, info->expect_status);
-    
-    // Check if more tests are applicable.
-    if (path != NULL)
-    {
-        // Check if the path is as expected.
-        assert_same_string(path, info->expect_path);
-        
-        // Clean up.
-        free(path);
-    }
 }
 
 
@@ -290,6 +341,55 @@ static void m2_new_filename_test(void)
             
             // Clean up.
             m2_dispose_filename(filename);
+        }
+    }
+}
+
+
+// --------------------------------------------------------------------------
+// function:  m2_new_filename_from_filename_test()
+// --------------------------------------------------------------------------
+//
+// Tests the m2_new_filename_from_filename() function.
+
+static void m2_new_filename_from_filename_test(void)
+{
+    int i;
+    m2_filename_t from_filename;
+    m2_filename_t filename;
+    m2_filename_status_t status;
+    
+    // Check all filename information for the expected associated behaviour.
+    for (i = 0; i < sizeof(_filename_info) / sizeof(_filename_info[0]); i++)
+    {
+        // Allocate a filename descriptor.
+        from_filename = m2_new_filename(
+            _filename_info[i].dir, _filename_info[i].file,
+            _filename_info[i].type, _filename_info[i].naming, NULL
+        );
+        
+        // Allocate a filename descriptor based on the previous one.
+        filename = m2_new_filename_from_filename(
+            from_filename, _filename_info[i].type, &status
+        );
+        
+        if (from_filename == NULL)
+        {
+            // No descriptor should mean failure.
+            assert_true(filename == NULL);
+            assert_true(status == M2_FILENAME_STATUS_INVALID_REFERENCE);
+        }
+        else
+        {
+            // A descriptor should mean success.
+            assert_true(status == M2_FILENAME_STATUS_SUCCESS);
+            
+            // Check the filename descriptor.
+            m2_filename_t_test(filename, &_filename_info[i]);
+            
+            // Clean up.
+            m2_dispose_filename(filename);
+            m2_dispose_filename(from_filename);
         }
     }
 }
@@ -351,6 +451,7 @@ collect_tests(void)
     add_test(m2_is_valid_filename_string_test);
     add_test(m2_outfile_type_for_test);
     add_test(m2_new_filename_test);
+    add_test(m2_new_filename_from_filename_test);
     add_test(m2_new_filename_from_path_test);
 }
 
