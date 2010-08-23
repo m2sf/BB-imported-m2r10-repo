@@ -97,7 +97,7 @@ m2_file_t m2_open_sourcefile(m2_filename_t filename,
     m2_copy_filename_string(filename, new_file->filename);
     
     // get the full file path
-    m2_copy_path_string(filename, &pathname);
+    m2_copy_path_string(filename, pathname);
     
     // open the file for reading
     new_file->handle = fopen(pathname, "r");
@@ -163,7 +163,7 @@ m2_file_t m2_new_outfile(m2_filename_t filename,
     } // end if
     
     // get the full file path
-    m2_copy_path_string(filename, &pathname);
+    m2_copy_path_string(filename, pathname);
         
     // open the file for writing
     new_file->handle = fopen(pathname, "w");
