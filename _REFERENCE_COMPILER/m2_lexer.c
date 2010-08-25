@@ -171,6 +171,12 @@ m2_lexer_t m2_new_lexer(m2_file_t infile,
         return NULL;
     } // end if
     
+    // bail out if handler is NULL
+    if (handler == NULL) {
+        ASSIGN_BY_REF(status, M2_LEXER_STATUS_INVALID_HANDLER);
+        return NULL;
+    } // end if
+    
     // allocate a new lexer object
     new_lexer = ALLOCATE(sizeof(m2_lexer_s));
     
@@ -179,12 +185,6 @@ m2_lexer_t m2_new_lexer(m2_file_t infile,
         return NULL;
     } // end if
 
-    // bail out if handler is NULL
-    if (handler == NULL) {
-        ASSIGN_BY_REF(status, M2_LEXER_STATUS_INVALID_HANDLER);
-        return NULL;
-    } // end if
-    
     // initialise the new lexer object
     
     // configuration parameters
