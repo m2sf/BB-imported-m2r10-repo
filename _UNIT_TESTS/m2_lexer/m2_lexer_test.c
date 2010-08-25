@@ -55,10 +55,25 @@ static const lexer_input_info_t _input_info[] = {
     { "comment.mod", 0, 2, 29, 1 },
     { "special.mod", 32, 0, 22, 1 },
     { "numeric.mod", 17, 11, 30, 1 },
-    { "string.mod", 5, 6, 32, 1 },
+    { "string.mod", 4, 7, 33, 1 },
     { "identifier.mod", 13, 0, 18, 1 },
     { "reserved.mod", 44, 0, 27, 1 }
 }; /* _input_info */
+
+
+// ---------------------------------------------------------------------------
+// function:  notification_handler()
+// ---------------------------------------------------------------------------
+//
+// Handles lexer notifications.
+
+static void notification_handler(m2_notification_t notification,
+                                 m2_filename_t file, m2_file_pos_t position,
+                                 m2_notifier_t notifier, opaque_t cookie)
+{
+    // Make sure the notifier is a lexer.
+    assert_true(notifier == M2_NOTIFIER_LEXER);
+}
 
 
 // ---------------------------------------------------------------------------
@@ -167,7 +182,7 @@ static void m2_new_lexer_test(void)
         }
         
         // Create a lexer.
-        lexer = m2_new_lexer(file, table, &status);
+        lexer = m2_new_lexer(file, table, notification_handler, &status);
         
         // Make sure creating the lexer succeeded.
         assert_true(status == M2_LEXER_STATUS_SUCCESS);
