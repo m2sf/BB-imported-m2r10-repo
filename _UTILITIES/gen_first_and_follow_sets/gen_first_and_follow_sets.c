@@ -496,7 +496,11 @@ static void init_follow_sets() {
                           TOKEN_END, 0);
     
     _FOLLOW[p_definition] =
-    m2_tokenset_from_list(TOKEN_END, 0);
+    m2_tokenset_from_list(TOKEN_CONST,
+                          TOKEN_TYPE,
+                          TOKEN_VAR,
+                          TOKEN_PROCEDURE,
+                          TOKEN_END, 0);
     
     _FOLLOW[p_const_declaration] =
     m2_tokenset_from_list(TOKEN_SEMICOLON, 0);
