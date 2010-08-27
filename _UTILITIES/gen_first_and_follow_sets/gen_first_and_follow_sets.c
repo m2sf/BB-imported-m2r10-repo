@@ -178,20 +178,29 @@ static void init_first_sets() {
                           TOKEN_IDENTIFIER,
                           TOKEN_VARIADIC, 0);
     
+    _FIRST[p_simple_formal_type] =
+    m2_tokenset_from_list(TOKEN_CAST,
+                          TOKEN_ARRAY,
+                          TOKEN_IDENTIFIER, 0);
+    
     _FIRST[p_attributed_formal_type] =
+    m2_tokenset_from_list(TOKEN_CONST,
+                          TOKEN_VAR,
+                          TOKEN_VARIADIC, 0);
+    
+    _FIRST[p_non_variadic_formal_type_list] =
     m2_tokenset_from_list(TOKEN_CONST,
                           TOKEN_VAR,
                           TOKEN_CAST,
                           TOKEN_ARRAY,
-                          TOKEN_IDENTIFIER, 0);    
- 
-    _FIRST[p_simple_formal_type] =
-    m2_tokenset_from_list(TOKEN_CAST,
+                          TOKEN_IDENTIFIER, 0);
+    
+    _FIRST[p_non_variadic_formal_type] =
+    m2_tokenset_from_list(TOKEN_CONST,
+                          TOKEN_VAR,
+                          TOKEN_CAST,
                           TOKEN_ARRAY,
-                          TOKEN_IDENTIFIER, 0);    
-
-    _FIRST[p_variadic_formal_type] =
-    m2_tokenset_from_list(TOKEN_VARIADIC, 0);
+                          TOKEN_IDENTIFIER, 0);
 
     _FIRST[p_variable_declaration] =
     m2_tokenset_from_list(TOKEN_IDENTIFIER, 0);
@@ -205,22 +214,25 @@ static void init_first_sets() {
     _FIRST[p_formal_param_list] =
     m2_tokenset_from_list(TOKEN_CONST,
                           TOKEN_VAR,
-                          TOKEN_IDENTIFIER,
-                          TOKEN_VARIADIC, 0);
+                          TOKEN_IDENTIFIER, 0);
     
     _FIRST[p_formal_params] =
     m2_tokenset_from_list(TOKEN_CONST,
                           TOKEN_VAR,
-                          TOKEN_IDENTIFIER,
-                          TOKEN_VARIADIC, 0);
-
-    _FIRST[p_simple_formal_params] =
+                          TOKEN_IDENTIFIER, 0);
+    
+    _FIRST[p_variadic_attribute] =
+    m2_tokenset_from_list(TOKEN_VARIADIC, 0);
+    
+    _FIRST[p_non_variadic_formal_param_list] =
     m2_tokenset_from_list(TOKEN_CONST,
                           TOKEN_VAR,
                           TOKEN_IDENTIFIER, 0);
-
-    _FIRST[p_variadic_formal_params] =
-    m2_tokenset_from_list(TOKEN_VARIADIC, 0);
+    
+    _FIRST[p_non_variadic_formal_params] =
+    m2_tokenset_from_list(TOKEN_CONST,
+                          TOKEN_VAR,
+                          TOKEN_IDENTIFIER, 0);
     
     _FIRST[p_statement] =
     m2_tokenset_from_list(TOKEN_IDENTIFIER,
@@ -298,6 +310,38 @@ static void init_first_sets() {
                           TOKEN_CAST,
                           TOKEN_NOT, 0);
     
+    _FIRST[p_bool_const_term] =
+    m2_tokenset_from_list(TOKEN_PLUS_OP,
+                          TOKEN_MINUS_OP,
+                          TOKEN_NUMERIC_LITERAL,
+                          TOKEN_STRING_LITERAL,
+                          TOKEN_IDENTIFIER,
+                          TOKEN_LBRACE,
+                          TOKEN_LPAREN,
+                          TOKEN_CAST,
+                          TOKEN_NOT, 0);
+    
+    _FIRST[p_bool_const_factor] =
+    m2_tokenset_from_list(TOKEN_PLUS_OP,
+                          TOKEN_MINUS_OP,
+                          TOKEN_NUMERIC_LITERAL,
+                          TOKEN_STRING_LITERAL,
+                          TOKEN_IDENTIFIER,
+                          TOKEN_LBRACE,
+                          TOKEN_LPAREN,
+                          TOKEN_CAST,
+                          TOKEN_NOT, 0);
+    
+    _FIRST[p_rel_const_expr] =
+    m2_tokenset_from_list(TOKEN_PLUS_OP,
+                          TOKEN_MINUS_OP,
+                          TOKEN_NUMERIC_LITERAL,
+                          TOKEN_STRING_LITERAL,
+                          TOKEN_IDENTIFIER,
+                          TOKEN_LBRACE,
+                          TOKEN_LPAREN,
+                          TOKEN_CAST, 0);
+    
     _FIRST[p_relation] =
     m2_tokenset_from_list(TOKEN_EQUAL_OP,
                           TOKEN_NOT_EQUAL_OP,
@@ -315,13 +359,11 @@ static void init_first_sets() {
                           TOKEN_IDENTIFIER,
                           TOKEN_LBRACE,
                           TOKEN_LPAREN,
-                          TOKEN_CAST,
-                          TOKEN_NOT, 0);
+                          TOKEN_CAST, 0);
     
     _FIRST[p_add_operator] =
     m2_tokenset_from_list(TOKEN_PLUS_OP,
-                          TOKEN_MINUS_OP,
-                          TOKEN_OR, 0);
+                          TOKEN_MINUS_OP, 0);
     
     _FIRST[p_const_term] =
     m2_tokenset_from_list(TOKEN_NUMERIC_LITERAL,
@@ -329,15 +371,13 @@ static void init_first_sets() {
                           TOKEN_IDENTIFIER,
                           TOKEN_LBRACE,
                           TOKEN_LPAREN,
-                          TOKEN_CAST,
-                          TOKEN_NOT, 0);
+                          TOKEN_CAST, 0);
     
     _FIRST[p_mul_operator] =
     m2_tokenset_from_list(TOKEN_ASTERISK_OP,
                           TOKEN_SLASH_OP,
                           TOKEN_DIV,
-                          TOKEN_MOD,
-                          TOKEN_AND, 0);
+                          TOKEN_MOD, 0);
     
     _FIRST[p_const_factor] =
     m2_tokenset_from_list(TOKEN_NUMERIC_LITERAL,
@@ -345,8 +385,7 @@ static void init_first_sets() {
                           TOKEN_IDENTIFIER,
                           TOKEN_LBRACE,
                           TOKEN_LPAREN,
-                          TOKEN_CAST,
-                          TOKEN_NOT, 0);
+                          TOKEN_CAST, 0);
     
     _FIRST[p_designator] =
     m2_tokenset_from_list(TOKEN_IDENTIFIER, 0);
@@ -377,7 +416,7 @@ static void init_first_sets() {
                           TOKEN_CAST,
                           TOKEN_NOT, 0);
     
-    _FIRST[p_simple_expression] =
+    _FIRST[p_bool_term] =
     m2_tokenset_from_list(TOKEN_PLUS_OP,
                           TOKEN_MINUS_OP,
                           TOKEN_NUMERIC_LITERAL,
@@ -388,8 +427,10 @@ static void init_first_sets() {
                           TOKEN_CAST,
                           TOKEN_NOT, 0);
     
-    _FIRST[p_term] =
-    m2_tokenset_from_list(TOKEN_NUMERIC_LITERAL,
+    _FIRST[p_bool_factor] =
+    m2_tokenset_from_list(TOKEN_PLUS_OP,
+                          TOKEN_MINUS_OP,
+                          TOKEN_NUMERIC_LITERAL,
                           TOKEN_STRING_LITERAL,
                           TOKEN_LBRACE,
                           TOKEN_IDENTIFIER,
@@ -397,14 +438,41 @@ static void init_first_sets() {
                           TOKEN_CAST,
                           TOKEN_NOT, 0);
     
+    _FIRST[p_rel_expression] =
+    m2_tokenset_from_list(TOKEN_PLUS_OP,
+                          TOKEN_MINUS_OP,
+                          TOKEN_NUMERIC_LITERAL,
+                          TOKEN_STRING_LITERAL,
+                          TOKEN_LBRACE,
+                          TOKEN_IDENTIFIER,
+                          TOKEN_LPAREN,
+                          TOKEN_CAST, 0);
+    
+    _FIRST[p_simple_expression] =
+    m2_tokenset_from_list(TOKEN_PLUS_OP,
+                          TOKEN_MINUS_OP,
+                          TOKEN_NUMERIC_LITERAL,
+                          TOKEN_STRING_LITERAL,
+                          TOKEN_LBRACE,
+                          TOKEN_IDENTIFIER,
+                          TOKEN_LPAREN,
+                          TOKEN_CAST, 0);
+    
+    _FIRST[p_term] =
+    m2_tokenset_from_list(TOKEN_NUMERIC_LITERAL,
+                          TOKEN_STRING_LITERAL,
+                          TOKEN_LBRACE,
+                          TOKEN_IDENTIFIER,
+                          TOKEN_LPAREN,
+                          TOKEN_CAST, 0);
+    
     _FIRST[p_factor] =
     m2_tokenset_from_list(TOKEN_NUMERIC_LITERAL,
                           TOKEN_STRING_LITERAL,
                           TOKEN_LBRACE,
                           TOKEN_IDENTIFIER,
                           TOKEN_LPAREN,
-                          TOKEN_CAST,
-                          TOKEN_NOT, 0);
+                          TOKEN_CAST, 0);
     
     _FIRST[p_designator_or_procedure_call] =
     m2_tokenset_from_list(TOKEN_IDENTIFIER, 0);
@@ -537,29 +605,27 @@ static void init_follow_sets() {
     m2_tokenset_from_list(TOKEN_SEMICOLON, 0);
     
     _FOLLOW[p_formal_type_list] =
-    m2_tokenset_from_list(TOKEN_COLON,
-                          TOKEN_SEMICOLON, 0);
+    m2_tokenset_from_list(TOKEN_CLOSING_PARENTHESIS, 0);
     
     _FOLLOW[p_formal_type] =
     m2_tokenset_from_list(TOKEN_COMMA,
-                          TOKEN_COLON,
-                          TOKEN_SEMICOLON, 0);
+                          TOKEN_CLOSING_PARENTHESIS, 0);
+    
+    _FOLLOW[p_simple_formal_type] =
+    m2_tokenset_from_list(TOKEN_COMMA,
+                          TOKEN_SEMICOLON,
+                          TOKEN_CLOSING_PARENTHESIS, 0);
     
     _FOLLOW[p_attributed_formal_type] =
     m2_tokenset_from_list(TOKEN_COMMA,
-                          TOKEN_COLON,
-                          TOKEN_SEMICOLON, 0);
-
-    _FOLLOW[p_simple_formal_type] =
-    m2_tokenset_from_list(TOKEN_COMMA,
-                          TOKEN_COLON,
-                          TOKEN_SEMICOLON, 0);
-
-    _FOLLOW[p_variadic_formal_type] =
-    m2_tokenset_from_list(TOKEN_COMMA,
-                          TOKEN_COLON,
-                          TOKEN_SEMICOLON, 0);
+                          TOKEN_CLOSING_PARENTHESIS, 0);
     
+    _FOLLOW[p_non_variadic_formal_type_list] =
+    m2_tokenset_from_list(TOKEN_CLOSING_PARENTHESIS, 0);
+    
+    _FOLLOW[p_non_variadic_formal_type] =
+    m2_tokenset_from_list(TOKEN_COMMA,
+                          TOKEN_CLOSING_PARENTHESIS, 0);
     
     _FOLLOW[p_variable_declaration] =
     m2_tokenset_from_list(TOKEN_SEMICOLON, 0);
@@ -576,12 +642,16 @@ static void init_follow_sets() {
     _FOLLOW[p_formal_params] =
     m2_tokenset_from_list(TOKEN_SEMICOLON,
                           TOKEN_RPAREN, 0);
-
-    _FOLLOW[p_simple_formal_params] =
-    m2_tokenset_from_list(TOKEN_SEMICOLON,
-                          TOKEN_RPAREN, 0);
-
-    _FOLLOW[p_variadic_formal_params] =
+    
+    _FOLLOW[p_variadic_attribute] =
+    m2_tokenset_from_list(TOKEN_ARRAY,
+                          TOKEN_CAST,
+                          TOKEN_IDENTIFIER, 0);
+    
+    _FOLLOW[p_non_variadic_formal_param_list] =
+    m2_tokenset_from_list(TOKEN_RPAREN, 0);
+    
+    _FOLLOW[p_non_variadic_formal_params] =
     m2_tokenset_from_list(TOKEN_SEMICOLON,
                           TOKEN_RPAREN, 0);
         
@@ -670,36 +740,104 @@ static void init_follow_sets() {
                           TOKEN_LBRACE,
                           TOKEN_RBRACE, 0);
     
+    _FOLLOW[p_bool_const_term] =
+    m2_tokenset_from_list(TOKEN_RBRACKET,
+                          TOKEN_SEMICOLON,
+                          TOKEN_COMMA,
+                          TOKEN_OF,
+                          TOKEN_OR,
+                          TOKEN_COLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_DO,
+                          TOKEN_RPAREN,
+                          TOKEN_BY,
+                          TOKEN_LBRACE,
+                          TOKEN_RBRACE, 0);
+    
+    _FOLLOW[p_bool_const_factor] =
+    m2_tokenset_from_list(TOKEN_RBRACKET,
+                          TOKEN_SEMICOLON,
+                          TOKEN_COMMA,
+                          TOKEN_AND,
+                          TOKEN_OF,
+                          TOKEN_OR,
+                          TOKEN_COLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_DO,
+                          TOKEN_RPAREN,
+                          TOKEN_BY,
+                          TOKEN_LBRACE,
+                          TOKEN_RBRACE, 0);
+    
+    _FOLLOW[p_rel_const_expr] =
+    m2_tokenset_from_list(TOKEN_RBRACKET,
+                          TOKEN_SEMICOLON,
+                          TOKEN_COMMA,
+                          TOKEN_AND,
+                          TOKEN_OF,
+                          TOKEN_OR,
+                          TOKEN_COLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_DO,
+                          TOKEN_RPAREN,
+                          TOKEN_BY,
+                          TOKEN_LBRACE,
+                          TOKEN_RBRACE, 0);
+    
     _FOLLOW[p_relation] =
     m2_tokenset_from_list(TOKEN_PLUS_OP,
                           TOKEN_MINUS_OP,
                           TOKEN_NUMERIC_LITERAL,
                           TOKEN_STRING_LITERAL,
                           TOKEN_IDENTIFIER,
+                          TOKEN_LBRACE,
                           TOKEN_LPAREN,
-                          TOKEN_NOT, 0);
+                          TOKEN_CAST, 0);
     
     _FOLLOW[p_simple_const_expr] =
-    m2_tokenset_from_list(TOKEN_EQUAL_OP,
+    m2_tokenset_from_list(TOKEN_RBRACKET,
+                          TOKEN_SEMICOLON,
+                          TOKEN_COMMA,
+                          TOKEN_AND,
+                          TOKEN_OF,
+                          TOKEN_OR,
+                          TOKEN_COLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_DO,
+                          TOKEN_RPAREN,
+                          TOKEN_BY,
+                          TOKEN_LBRACE,
+                          TOKEN_RBRACE,
+                          TOKEN_EQUAL_OP,
                           TOKEN_NOT_EQUAL_OP,
                           TOKEN_LESS_OP,
                           TOKEN_LESS_OR_EQUAL_OP,
                           TOKEN_GREATER_OP,
                           TOKEN_GREATER_OR_EQUAL_OP,
-                          TOKEN_IN,
-                          TOKEN_TYPE_CONVERSION_OP, 0);
+                          TOKEN_IN, 0);
     
     _FOLLOW[p_add_operator] =
     m2_tokenset_from_list(TOKEN_NUMERIC_LITERAL,
                           TOKEN_STRING_LITERAL,
                           TOKEN_IDENTIFIER,
+                          TOKEN_LBRACE,
                           TOKEN_LPAREN,
-                          TOKEN_NOT, 0);
+                          TOKEN_CAST, 0);
     
     _FOLLOW[p_const_term] =
-    m2_tokenset_from_list(TOKEN_PLUS_OP,
-                          TOKEN_MINUS_OP,
+    m2_tokenset_from_list(TOKEN_RBRACKET,
+                          TOKEN_SEMICOLON,
+                          TOKEN_COMMA,
+                          TOKEN_AND,
+                          TOKEN_OF,
                           TOKEN_OR,
+                          TOKEN_COLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_DO,
+                          TOKEN_RPAREN,
+                          TOKEN_BY,
+                          TOKEN_LBRACE,
+                          TOKEN_RBRACE,
                           TOKEN_EQUAL_OP,
                           TOKEN_NOT_EQUAL_OP,
                           TOKEN_LESS_OP,
@@ -707,24 +845,31 @@ static void init_follow_sets() {
                           TOKEN_GREATER_OP,
                           TOKEN_GREATER_OR_EQUAL_OP,
                           TOKEN_IN,
-                          TOKEN_TYPE_CONVERSION_OP, 0);
+                          TOKEN_PLUS_OP,
+                          TOKEN_MINUS_OP, 0);
     
     _FOLLOW[p_mul_operator] =
     m2_tokenset_from_list(TOKEN_NUMERIC_LITERAL,
                           TOKEN_STRING_LITERAL,
                           TOKEN_IDENTIFIER,
+                          TOKEN_LBRACE,
                           TOKEN_LPAREN,
-                          TOKEN_NOT, 0);
+                          TOKEN_CAST, 0);
     
     _FOLLOW[p_const_factor] =
-    m2_tokenset_from_list(TOKEN_PLUS_OP,
-                          TOKEN_MINUS_OP,
-                          TOKEN_OR,
-                          TOKEN_ASTERISK_OP,
-                          TOKEN_SLASH_OP,
-                          TOKEN_DIV,
-                          TOKEN_MOD,
+    m2_tokenset_from_list(TOKEN_RBRACKET,
+                          TOKEN_SEMICOLON,
+                          TOKEN_COMMA,
                           TOKEN_AND,
+                          TOKEN_OF,
+                          TOKEN_OR,
+                          TOKEN_COLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_DO,
+                          TOKEN_RPAREN,
+                          TOKEN_BY,
+                          TOKEN_LBRACE,
+                          TOKEN_RBRACE,
                           TOKEN_EQUAL_OP,
                           TOKEN_NOT_EQUAL_OP,
                           TOKEN_LESS_OP,
@@ -732,7 +877,12 @@ static void init_follow_sets() {
                           TOKEN_GREATER_OP,
                           TOKEN_GREATER_OR_EQUAL_OP,
                           TOKEN_IN,
-                          TOKEN_TYPE_CONVERSION_OP, 0);
+                          TOKEN_PLUS_OP,
+                          TOKEN_MINUS_OP,
+                          TOKEN_ASTERISK_OP,
+                          TOKEN_SLASH_OP,
+                          TOKEN_DIV,
+                          TOKEN_MOD, 0);
     
     _FOLLOW[p_designator] =
     m2_tokenset_from_list(TOKEN_SEMICOLON,
@@ -758,7 +908,10 @@ static void init_follow_sets() {
     m2_tokenset_from_list(TOKEN_COMMA,
                           TOKEN_RPAREN,
                           TOKEN_RBRACKET,
+                          TOKEN_RBRACE,
                           TOKEN_SEMICOLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_BY,
                           TOKEN_THEN,
                           TOKEN_ELSIF,
                           TOKEN_ELSE,
@@ -769,23 +922,87 @@ static void init_follow_sets() {
                           TOKEN_TO,
                           TOKEN_END, 0);
     
-    _FOLLOW[p_simple_expression] =
-    m2_tokenset_from_list(TOKEN_PLUS_OP,
-                          TOKEN_MINUS_OP,
-                          TOKEN_NUMERIC_LITERAL,
-                          TOKEN_STRING_LITERAL,
-                          TOKEN_IDENTIFIER,
-                          TOKEN_NOT,
-                          TOKEN_TYPE_CONVERSION_OP,
-                          TOKEN_COMMA,
+    _FOLLOW[p_bool_term] =
+    m2_tokenset_from_list(TOKEN_COMMA,
                           TOKEN_RPAREN,
                           TOKEN_RBRACKET,
+                          TOKEN_RBRACE,
                           TOKEN_SEMICOLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_BY,
                           TOKEN_THEN,
                           TOKEN_ELSIF,
                           TOKEN_ELSE,
                           TOKEN_CASE_LABEL_SEPARATOR,
                           TOKEN_OF,
+                          TOKEN_OR,
+                          TOKEN_DO,
+                          TOKEN_UNTIL,
+                          TOKEN_TO,
+                          TOKEN_END, 0);
+    
+    _FOLLOW[p_bool_factor] =
+    m2_tokenset_from_list(TOKEN_COMMA,
+                          TOKEN_RPAREN,
+                          TOKEN_RBRACKET,
+                          TOKEN_RBRACE,
+                          TOKEN_SEMICOLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_AND,
+                          TOKEN_BY,
+                          TOKEN_THEN,
+                          TOKEN_ELSIF,
+                          TOKEN_ELSE,
+                          TOKEN_CASE_LABEL_SEPARATOR,
+                          TOKEN_OF,
+                          TOKEN_OR,
+                          TOKEN_DO,
+                          TOKEN_UNTIL,
+                          TOKEN_TO,
+                          TOKEN_END, 0);
+    
+    _FOLLOW[p_rel_expression] =
+    m2_tokenset_from_list(TOKEN_COMMA,
+                          TOKEN_RPAREN,
+                          TOKEN_RBRACKET,
+                          TOKEN_RBRACE,
+                          TOKEN_SEMICOLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_AND,
+                          TOKEN_BY,
+                          TOKEN_THEN,
+                          TOKEN_ELSIF,
+                          TOKEN_ELSE,
+                          TOKEN_CASE_LABEL_SEPARATOR,
+                          TOKEN_OF,
+                          TOKEN_OR,
+                          TOKEN_DO,
+                          TOKEN_UNTIL,
+                          TOKEN_TO,
+                          TOKEN_END, 0);
+    
+    _FOLLOW[p_simple_expression] =
+    m2_tokenset_from_list(TOKEN_COMMA,
+                          TOKEN_RPAREN,
+                          TOKEN_RBRACKET,
+                          TOKEN_RBRACE,
+                          TOKEN_SEMICOLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_EQUAL_OP,
+                          TOKEN_NOT_EQUAL_OP,
+                          TOKEN_LESS_OP,
+                          TOKEN_LESS_OR_EQUAL_OP,
+                          TOKEN_GREATER_OP,
+                          TOKEN_GREATER_OR_EQUAL_OP,
+                          TOKEN_IN,
+                          TOKEN_AND,
+                          TOKEN_BY,
+                          TOKEN_THEN,
+                          TOKEN_ELSIF,
+                          TOKEN_ELSE,
+                          TOKEN_CASE_LABEL_SEPARATOR,
+                          TOKEN_OF,
+                          TOKEN_OR,
                           TOKEN_DO,
                           TOKEN_UNTIL,
                           TOKEN_TO,
@@ -794,44 +1011,60 @@ static void init_follow_sets() {
     _FOLLOW[p_term] =
     m2_tokenset_from_list(TOKEN_PLUS_OP,
                           TOKEN_MINUS_OP,
-                          TOKEN_OR,
-                          TOKEN_NUMERIC_LITERAL,
-                          TOKEN_STRING_LITERAL,
-                          TOKEN_IDENTIFIER,
-                          TOKEN_NOT,
-                          TOKEN_TYPE_CONVERSION_OP,
                           TOKEN_COMMA,
                           TOKEN_RPAREN,
                           TOKEN_RBRACKET,
+                          TOKEN_RBRACE,
                           TOKEN_SEMICOLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_EQUAL_OP,
+                          TOKEN_NOT_EQUAL_OP,
+                          TOKEN_LESS_OP,
+                          TOKEN_LESS_OR_EQUAL_OP,
+                          TOKEN_GREATER_OP,
+                          TOKEN_GREATER_OR_EQUAL_OP,
+                          TOKEN_IN,
+                          TOKEN_AND,
+                          TOKEN_BY,
                           TOKEN_THEN,
                           TOKEN_ELSIF,
                           TOKEN_ELSE,
                           TOKEN_CASE_LABEL_SEPARATOR,
                           TOKEN_OF,
+                          TOKEN_OR,
                           TOKEN_DO,
                           TOKEN_UNTIL,
                           TOKEN_TO,
                           TOKEN_END, 0);
     
     _FOLLOW[p_factor] =
-    m2_tokenset_from_list(TOKEN_PLUS_OP,
+    m2_tokenset_from_list(TOKEN_ASTERISK_OP,
+                          TOKEN_SLASH_OP,
+                          TOKEN_DIV,
+                          TOKEN_MOD,
+                          TOKEN_PLUS_OP,
                           TOKEN_MINUS_OP,
-                          TOKEN_OR,
-                          TOKEN_NUMERIC_LITERAL,
-                          TOKEN_STRING_LITERAL,
-                          TOKEN_IDENTIFIER,
-                          TOKEN_NOT,
-                          TOKEN_TYPE_CONVERSION_OP,
                           TOKEN_COMMA,
                           TOKEN_RPAREN,
                           TOKEN_RBRACKET,
+                          TOKEN_RBRACE,
                           TOKEN_SEMICOLON,
+                          TOKEN_RANGE_OP,
+                          TOKEN_EQUAL_OP,
+                          TOKEN_NOT_EQUAL_OP,
+                          TOKEN_LESS_OP,
+                          TOKEN_LESS_OR_EQUAL_OP,
+                          TOKEN_GREATER_OP,
+                          TOKEN_GREATER_OR_EQUAL_OP,
+                          TOKEN_IN,
+                          TOKEN_AND,
+                          TOKEN_BY,
                           TOKEN_THEN,
                           TOKEN_ELSIF,
                           TOKEN_ELSE,
                           TOKEN_CASE_LABEL_SEPARATOR,
                           TOKEN_OF,
+                          TOKEN_OR,
                           TOKEN_DO,
                           TOKEN_UNTIL,
                           TOKEN_TO,
