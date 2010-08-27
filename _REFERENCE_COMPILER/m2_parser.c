@@ -51,7 +51,7 @@ typedef struct /* m2_sym_s */ {
     m2_token_t token;
     cardinal lexeme;
     m2_lexer_status_t status;
-    file_pos_t pos;
+    m2_file_pos_t pos;
 } m2_sym_s;
 
 
@@ -401,7 +401,7 @@ m2_parser_t m2_new_parser(m2_file_t infile,
     } // end if
     
     // allocate memory for parser state
-    p = malloc(sizeof(m2_parser_s));
+    p = ALLOCATE(sizeof(m2_parser_s));
     
     // bail out if allocation failed
     if (p == NULL) {
@@ -1666,7 +1666,7 @@ m2_token_t m2_definition(m2_parser_s *p) {
 // ---------------------------------------------------------------------------
 //  ( "[" ident "]" )? constantDeclaration ";"
 
-m2_token_t const_definition_tail(m2_parser_s *p) {
+m2_token_t m2_const_definition_tail(m2_parser_s *p) {
     
     // ( "[" ident "]" )?
     if (_lookahead(p) == TOKEN_LBRACKET) {
@@ -1699,7 +1699,7 @@ m2_token_t const_definition_tail(m2_parser_s *p) {
     } // ";"
     
     return _lookahead(p);
-} // end const_definition_tail
+} // end m2_const_definition_tail
 
 
 // ---------------------------------------------------------------------------
@@ -1709,7 +1709,7 @@ m2_token_t const_definition_tail(m2_parser_s *p) {
 
 m2_token_t m2_record_type(m2_parser_s *p); /* FORWARD */
 
-m2_token_t type_definition_tail(m2_parser_s *p) {
+m2_token_t m2_type_definition_tail(m2_parser_s *p) {
     
     // ident
     if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_EQUAL)) {
@@ -1757,7 +1757,7 @@ m2_token_t type_definition_tail(m2_parser_s *p) {
     } // ";"
     
     return _lookahead(p);
-} // end type_definition_tail
+} // end m2_type_definition_tail
 
 
 // ---------------------------------------------------------------------------
