@@ -174,7 +174,19 @@
     TOKEN_VARIADIC, \
     TOKEN_IDENTIFIER
 
+#define FIRST_LIST_for_simple_formal_type \
+    3, \
+    TOKEN_ARRAY, \
+    TOKEN_CAST, \
+    TOKEN_IDENTIFIER
+
 #define FIRST_LIST_for_attributed_formal_type \
+    3, \
+    TOKEN_CONST, \
+    TOKEN_VAR, \
+    TOKEN_VARIADIC
+
+#define FIRST_LIST_for_non_variadic_formal_type_list \
     5, \
     TOKEN_ARRAY, \
     TOKEN_CAST, \
@@ -182,15 +194,13 @@
     TOKEN_VAR, \
     TOKEN_IDENTIFIER
 
-#define FIRST_LIST_for_simple_formal_type \
-    3, \
+#define FIRST_LIST_for_non_variadic_formal_type \
+    5, \
     TOKEN_ARRAY, \
     TOKEN_CAST, \
+    TOKEN_CONST, \
+    TOKEN_VAR, \
     TOKEN_IDENTIFIER
-
-#define FIRST_LIST_for_variadic_formal_type \
-    1, \
-    TOKEN_VARIADIC
 
 #define FIRST_LIST_for_variable_declaration \
     1, \
@@ -205,28 +215,32 @@
     TOKEN_PROCEDURE
 
 #define FIRST_LIST_for_formal_param_list \
-    4, \
-    TOKEN_CONST, \
-    TOKEN_VAR, \
-    TOKEN_VARIADIC, \
-    TOKEN_IDENTIFIER
-
-#define FIRST_LIST_for_formal_params \
-    4, \
-    TOKEN_CONST, \
-    TOKEN_VAR, \
-    TOKEN_VARIADIC, \
-    TOKEN_IDENTIFIER
-
-#define FIRST_LIST_for_simple_formal_params \
     3, \
     TOKEN_CONST, \
     TOKEN_VAR, \
     TOKEN_IDENTIFIER
 
-#define FIRST_LIST_for_variadic_formal_params \
+#define FIRST_LIST_for_formal_params \
+    3, \
+    TOKEN_CONST, \
+    TOKEN_VAR, \
+    TOKEN_IDENTIFIER
+
+#define FIRST_LIST_for_variadic_attribute \
     1, \
     TOKEN_VARIADIC
+
+#define FIRST_LIST_for_non_variadic_formal_param_list \
+    3, \
+    TOKEN_CONST, \
+    TOKEN_VAR, \
+    TOKEN_IDENTIFIER
+
+#define FIRST_LIST_for_non_variadic_formal_params \
+    3, \
+    TOKEN_CONST, \
+    TOKEN_VAR, \
+    TOKEN_IDENTIFIER
 
 #define FIRST_LIST_for_statement \
     9, \
@@ -316,17 +330,7 @@
     TOKEN_OPENING_PARENTHESIS, \
     TOKEN_OPENING_BRACE
 
-#define FIRST_LIST_for_relation \
-    7, \
-    TOKEN_IN, \
-    TOKEN_NOT_EQUAL_OP, \
-    TOKEN_LESS_OP, \
-    TOKEN_LESS_OR_EQUAL_OP, \
-    TOKEN_EQUAL_OP, \
-    TOKEN_GREATER_OP, \
-    TOKEN_GREATER_OR_EQUAL_OP
-
-#define FIRST_LIST_for_simple_const_expr \
+#define FIRST_LIST_for_bool_const_term \
     9, \
     TOKEN_CAST, \
     TOKEN_NOT, \
@@ -338,16 +342,58 @@
     TOKEN_OPENING_PARENTHESIS, \
     TOKEN_OPENING_BRACE
 
+#define FIRST_LIST_for_bool_const_factor \
+    9, \
+    TOKEN_CAST, \
+    TOKEN_NOT, \
+    TOKEN_IDENTIFIER, \
+    TOKEN_NUMERIC_LITERAL, \
+    TOKEN_STRING_LITERAL, \
+    TOKEN_PLUS_OP, \
+    TOKEN_MINUS_OP, \
+    TOKEN_OPENING_PARENTHESIS, \
+    TOKEN_OPENING_BRACE
+
+#define FIRST_LIST_for_rel_const_expr \
+    8, \
+    TOKEN_CAST, \
+    TOKEN_IDENTIFIER, \
+    TOKEN_NUMERIC_LITERAL, \
+    TOKEN_STRING_LITERAL, \
+    TOKEN_PLUS_OP, \
+    TOKEN_MINUS_OP, \
+    TOKEN_OPENING_PARENTHESIS, \
+    TOKEN_OPENING_BRACE
+
+#define FIRST_LIST_for_relation \
+    7, \
+    TOKEN_IN, \
+    TOKEN_NOT_EQUAL_OP, \
+    TOKEN_LESS_OP, \
+    TOKEN_LESS_OR_EQUAL_OP, \
+    TOKEN_EQUAL_OP, \
+    TOKEN_GREATER_OP, \
+    TOKEN_GREATER_OR_EQUAL_OP
+
+#define FIRST_LIST_for_simple_const_expr \
+    8, \
+    TOKEN_CAST, \
+    TOKEN_IDENTIFIER, \
+    TOKEN_NUMERIC_LITERAL, \
+    TOKEN_STRING_LITERAL, \
+    TOKEN_PLUS_OP, \
+    TOKEN_MINUS_OP, \
+    TOKEN_OPENING_PARENTHESIS, \
+    TOKEN_OPENING_BRACE
+
 #define FIRST_LIST_for_add_operator \
-    3, \
-    TOKEN_OR, \
+    2, \
     TOKEN_PLUS_OP, \
     TOKEN_MINUS_OP
 
 #define FIRST_LIST_for_const_term \
-    7, \
+    6, \
     TOKEN_CAST, \
-    TOKEN_NOT, \
     TOKEN_IDENTIFIER, \
     TOKEN_NUMERIC_LITERAL, \
     TOKEN_STRING_LITERAL, \
@@ -355,17 +401,15 @@
     TOKEN_OPENING_BRACE
 
 #define FIRST_LIST_for_mul_operator \
-    5, \
-    TOKEN_AND, \
+    4, \
     TOKEN_DIV, \
     TOKEN_MOD, \
     TOKEN_ASTERISK_OP, \
     TOKEN_SLASH_OP
 
 #define FIRST_LIST_for_const_factor \
-    7, \
+    6, \
     TOKEN_CAST, \
-    TOKEN_NOT, \
     TOKEN_IDENTIFIER, \
     TOKEN_NUMERIC_LITERAL, \
     TOKEN_STRING_LITERAL, \
@@ -405,7 +449,7 @@
     TOKEN_OPENING_PARENTHESIS, \
     TOKEN_OPENING_BRACE
 
-#define FIRST_LIST_for_simple_expression \
+#define FIRST_LIST_for_bool_term \
     9, \
     TOKEN_CAST, \
     TOKEN_NOT, \
@@ -417,10 +461,43 @@
     TOKEN_OPENING_PARENTHESIS, \
     TOKEN_OPENING_BRACE
 
-#define FIRST_LIST_for_term \
-    7, \
+#define FIRST_LIST_for_bool_factor \
+    9, \
     TOKEN_CAST, \
     TOKEN_NOT, \
+    TOKEN_IDENTIFIER, \
+    TOKEN_NUMERIC_LITERAL, \
+    TOKEN_STRING_LITERAL, \
+    TOKEN_PLUS_OP, \
+    TOKEN_MINUS_OP, \
+    TOKEN_OPENING_PARENTHESIS, \
+    TOKEN_OPENING_BRACE
+
+#define FIRST_LIST_for_rel_expression \
+    8, \
+    TOKEN_CAST, \
+    TOKEN_IDENTIFIER, \
+    TOKEN_NUMERIC_LITERAL, \
+    TOKEN_STRING_LITERAL, \
+    TOKEN_PLUS_OP, \
+    TOKEN_MINUS_OP, \
+    TOKEN_OPENING_PARENTHESIS, \
+    TOKEN_OPENING_BRACE
+
+#define FIRST_LIST_for_simple_expression \
+    8, \
+    TOKEN_CAST, \
+    TOKEN_IDENTIFIER, \
+    TOKEN_NUMERIC_LITERAL, \
+    TOKEN_STRING_LITERAL, \
+    TOKEN_PLUS_OP, \
+    TOKEN_MINUS_OP, \
+    TOKEN_OPENING_PARENTHESIS, \
+    TOKEN_OPENING_BRACE
+
+#define FIRST_LIST_for_term \
+    6, \
+    TOKEN_CAST, \
     TOKEN_IDENTIFIER, \
     TOKEN_NUMERIC_LITERAL, \
     TOKEN_STRING_LITERAL, \
@@ -428,9 +505,8 @@
     TOKEN_OPENING_BRACE
 
 #define FIRST_LIST_for_factor \
-    7, \
+    6, \
     TOKEN_CAST, \
-    TOKEN_NOT, \
     TOKEN_IDENTIFIER, \
     TOKEN_NUMERIC_LITERAL, \
     TOKEN_STRING_LITERAL, \
@@ -537,8 +613,12 @@
     TOKEN_END
 
 #define FOLLOW_LIST_for_definition \
-    1, \
-    TOKEN_END
+    5, \
+    TOKEN_CONST, \
+    TOKEN_END, \
+    TOKEN_PROCEDURE, \
+    TOKEN_TYPE, \
+    TOKEN_VAR
 
 #define FOLLOW_LIST_for_const_declaration \
     1, \
@@ -586,33 +666,33 @@
     TOKEN_SEMICOLON
 
 #define FOLLOW_LIST_for_formal_type_list \
-    2, \
-    TOKEN_COLON, \
-    TOKEN_SEMICOLON
+    1, \
+    TOKEN_CLOSING_PARENTHESIS
 
 #define FOLLOW_LIST_for_formal_type \
-    3, \
+    2, \
     TOKEN_COMMA, \
-    TOKEN_COLON, \
-    TOKEN_SEMICOLON
-
-#define FOLLOW_LIST_for_attributed_formal_type \
-    3, \
-    TOKEN_COMMA, \
-    TOKEN_COLON, \
-    TOKEN_SEMICOLON
+    TOKEN_CLOSING_PARENTHESIS
 
 #define FOLLOW_LIST_for_simple_formal_type \
     3, \
     TOKEN_COMMA, \
-    TOKEN_COLON, \
-    TOKEN_SEMICOLON
+    TOKEN_SEMICOLON, \
+    TOKEN_CLOSING_PARENTHESIS
 
-#define FOLLOW_LIST_for_variadic_formal_type \
-    3, \
+#define FOLLOW_LIST_for_attributed_formal_type \
+    2, \
     TOKEN_COMMA, \
-    TOKEN_COLON, \
-    TOKEN_SEMICOLON
+    TOKEN_CLOSING_PARENTHESIS
+
+#define FOLLOW_LIST_for_non_variadic_formal_type_list \
+    1, \
+    TOKEN_CLOSING_PARENTHESIS
+
+#define FOLLOW_LIST_for_non_variadic_formal_type \
+    2, \
+    TOKEN_COMMA, \
+    TOKEN_CLOSING_PARENTHESIS
 
 #define FOLLOW_LIST_for_variable_declaration \
     1, \
@@ -635,12 +715,17 @@
     TOKEN_SEMICOLON, \
     TOKEN_CLOSING_PARENTHESIS
 
-#define FOLLOW_LIST_for_simple_formal_params \
-    2, \
-    TOKEN_SEMICOLON, \
+#define FOLLOW_LIST_for_variadic_attribute \
+    3, \
+    TOKEN_ARRAY, \
+    TOKEN_CAST, \
+    TOKEN_IDENTIFIER
+
+#define FOLLOW_LIST_for_non_variadic_formal_param_list \
+    1, \
     TOKEN_CLOSING_PARENTHESIS
 
-#define FOLLOW_LIST_for_variadic_formal_params \
+#define FOLLOW_LIST_for_non_variadic_formal_params \
     2, \
     TOKEN_SEMICOLON, \
     TOKEN_CLOSING_PARENTHESIS
@@ -742,75 +827,158 @@
     TOKEN_OPENING_BRACE, \
     TOKEN_CLOSING_BRACE
 
+#define FOLLOW_LIST_for_bool_const_term \
+    12, \
+    TOKEN_BY, \
+    TOKEN_DO, \
+    TOKEN_OF, \
+    TOKEN_OR, \
+    TOKEN_COMMA, \
+    TOKEN_RANGE_OP, \
+    TOKEN_COLON, \
+    TOKEN_SEMICOLON, \
+    TOKEN_CLOSING_PARENTHESIS, \
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_OPENING_BRACE, \
+    TOKEN_CLOSING_BRACE
+
+#define FOLLOW_LIST_for_bool_const_factor \
+    13, \
+    TOKEN_AND, \
+    TOKEN_BY, \
+    TOKEN_DO, \
+    TOKEN_OF, \
+    TOKEN_OR, \
+    TOKEN_COMMA, \
+    TOKEN_RANGE_OP, \
+    TOKEN_COLON, \
+    TOKEN_SEMICOLON, \
+    TOKEN_CLOSING_PARENTHESIS, \
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_OPENING_BRACE, \
+    TOKEN_CLOSING_BRACE
+
+#define FOLLOW_LIST_for_rel_const_expr \
+    13, \
+    TOKEN_AND, \
+    TOKEN_BY, \
+    TOKEN_DO, \
+    TOKEN_OF, \
+    TOKEN_OR, \
+    TOKEN_COMMA, \
+    TOKEN_RANGE_OP, \
+    TOKEN_COLON, \
+    TOKEN_SEMICOLON, \
+    TOKEN_CLOSING_PARENTHESIS, \
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_OPENING_BRACE, \
+    TOKEN_CLOSING_BRACE
+
 #define FOLLOW_LIST_for_relation \
-    7, \
-    TOKEN_NOT, \
+    8, \
+    TOKEN_CAST, \
     TOKEN_IDENTIFIER, \
     TOKEN_NUMERIC_LITERAL, \
     TOKEN_STRING_LITERAL, \
     TOKEN_PLUS_OP, \
     TOKEN_MINUS_OP, \
-    TOKEN_OPENING_PARENTHESIS
+    TOKEN_OPENING_PARENTHESIS, \
+    TOKEN_OPENING_BRACE
 
 #define FOLLOW_LIST_for_simple_const_expr \
-    8, \
+    20, \
+    TOKEN_AND, \
+    TOKEN_BY, \
+    TOKEN_DO, \
     TOKEN_IN, \
+    TOKEN_OF, \
+    TOKEN_OR, \
     TOKEN_NOT_EQUAL_OP, \
-    TOKEN_TYPE_CONVERSION_OP, \
+    TOKEN_COMMA, \
+    TOKEN_RANGE_OP, \
+    TOKEN_COLON, \
+    TOKEN_SEMICOLON, \
     TOKEN_LESS_OP, \
     TOKEN_LESS_OR_EQUAL_OP, \
     TOKEN_EQUAL_OP, \
     TOKEN_GREATER_OP, \
-    TOKEN_GREATER_OR_EQUAL_OP
+    TOKEN_GREATER_OR_EQUAL_OP, \
+    TOKEN_CLOSING_PARENTHESIS, \
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_OPENING_BRACE, \
+    TOKEN_CLOSING_BRACE
 
 #define FOLLOW_LIST_for_add_operator \
-    5, \
-    TOKEN_NOT, \
+    6, \
+    TOKEN_CAST, \
     TOKEN_IDENTIFIER, \
     TOKEN_NUMERIC_LITERAL, \
     TOKEN_STRING_LITERAL, \
-    TOKEN_OPENING_PARENTHESIS
+    TOKEN_OPENING_PARENTHESIS, \
+    TOKEN_OPENING_BRACE
 
 #define FOLLOW_LIST_for_const_term \
-    11, \
+    22, \
+    TOKEN_AND, \
+    TOKEN_BY, \
+    TOKEN_DO, \
     TOKEN_IN, \
+    TOKEN_OF, \
     TOKEN_OR, \
     TOKEN_NOT_EQUAL_OP, \
     TOKEN_PLUS_OP, \
+    TOKEN_COMMA, \
     TOKEN_MINUS_OP, \
-    TOKEN_TYPE_CONVERSION_OP, \
+    TOKEN_RANGE_OP, \
+    TOKEN_COLON, \
+    TOKEN_SEMICOLON, \
     TOKEN_LESS_OP, \
     TOKEN_LESS_OR_EQUAL_OP, \
     TOKEN_EQUAL_OP, \
     TOKEN_GREATER_OP, \
-    TOKEN_GREATER_OR_EQUAL_OP
+    TOKEN_GREATER_OR_EQUAL_OP, \
+    TOKEN_CLOSING_PARENTHESIS, \
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_OPENING_BRACE, \
+    TOKEN_CLOSING_BRACE
 
 #define FOLLOW_LIST_for_mul_operator \
-    5, \
-    TOKEN_NOT, \
+    6, \
+    TOKEN_CAST, \
     TOKEN_IDENTIFIER, \
     TOKEN_NUMERIC_LITERAL, \
     TOKEN_STRING_LITERAL, \
-    TOKEN_OPENING_PARENTHESIS
+    TOKEN_OPENING_PARENTHESIS, \
+    TOKEN_OPENING_BRACE
 
 #define FOLLOW_LIST_for_const_factor \
-    16, \
+    26, \
     TOKEN_AND, \
+    TOKEN_BY, \
     TOKEN_DIV, \
+    TOKEN_DO, \
     TOKEN_IN, \
     TOKEN_MOD, \
+    TOKEN_OF, \
     TOKEN_OR, \
     TOKEN_NOT_EQUAL_OP, \
     TOKEN_ASTERISK_OP, \
     TOKEN_PLUS_OP, \
+    TOKEN_COMMA, \
     TOKEN_MINUS_OP, \
+    TOKEN_RANGE_OP, \
     TOKEN_SLASH_OP, \
-    TOKEN_TYPE_CONVERSION_OP, \
+    TOKEN_COLON, \
+    TOKEN_SEMICOLON, \
     TOKEN_LESS_OP, \
     TOKEN_LESS_OR_EQUAL_OP, \
     TOKEN_EQUAL_OP, \
     TOKEN_GREATER_OP, \
-    TOKEN_GREATER_OR_EQUAL_OP
+    TOKEN_GREATER_OR_EQUAL_OP, \
+    TOKEN_CLOSING_PARENTHESIS, \
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_OPENING_BRACE, \
+    TOKEN_CLOSING_BRACE
 
 #define FOLLOW_LIST_for_designator \
     6, \
@@ -836,7 +1004,8 @@
     TOKEN_CLOSING_BRACKET
 
 #define FOLLOW_LIST_for_expression \
-    13, \
+    16, \
+    TOKEN_BY, \
     TOKEN_DO, \
     TOKEN_ELSE, \
     TOKEN_ELSIF, \
@@ -846,81 +1015,166 @@
     TOKEN_TO, \
     TOKEN_UNTIL, \
     TOKEN_COMMA, \
+    TOKEN_RANGE_OP, \
     TOKEN_SEMICOLON, \
     TOKEN_CASE_LABEL_SEPARATOR, \
     TOKEN_CLOSING_PARENTHESIS, \
-    TOKEN_CLOSING_BRACKET
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_CLOSING_BRACE
+
+#define FOLLOW_LIST_for_bool_term \
+    17, \
+    TOKEN_BY, \
+    TOKEN_DO, \
+    TOKEN_ELSE, \
+    TOKEN_ELSIF, \
+    TOKEN_END, \
+    TOKEN_OF, \
+    TOKEN_OR, \
+    TOKEN_THEN, \
+    TOKEN_TO, \
+    TOKEN_UNTIL, \
+    TOKEN_COMMA, \
+    TOKEN_RANGE_OP, \
+    TOKEN_SEMICOLON, \
+    TOKEN_CASE_LABEL_SEPARATOR, \
+    TOKEN_CLOSING_PARENTHESIS, \
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_CLOSING_BRACE
+
+#define FOLLOW_LIST_for_bool_factor \
+    18, \
+    TOKEN_AND, \
+    TOKEN_BY, \
+    TOKEN_DO, \
+    TOKEN_ELSE, \
+    TOKEN_ELSIF, \
+    TOKEN_END, \
+    TOKEN_OF, \
+    TOKEN_OR, \
+    TOKEN_THEN, \
+    TOKEN_TO, \
+    TOKEN_UNTIL, \
+    TOKEN_COMMA, \
+    TOKEN_RANGE_OP, \
+    TOKEN_SEMICOLON, \
+    TOKEN_CASE_LABEL_SEPARATOR, \
+    TOKEN_CLOSING_PARENTHESIS, \
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_CLOSING_BRACE
+
+#define FOLLOW_LIST_for_rel_expression \
+    18, \
+    TOKEN_AND, \
+    TOKEN_BY, \
+    TOKEN_DO, \
+    TOKEN_ELSE, \
+    TOKEN_ELSIF, \
+    TOKEN_END, \
+    TOKEN_OF, \
+    TOKEN_OR, \
+    TOKEN_THEN, \
+    TOKEN_TO, \
+    TOKEN_UNTIL, \
+    TOKEN_COMMA, \
+    TOKEN_RANGE_OP, \
+    TOKEN_SEMICOLON, \
+    TOKEN_CASE_LABEL_SEPARATOR, \
+    TOKEN_CLOSING_PARENTHESIS, \
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_CLOSING_BRACE
 
 #define FOLLOW_LIST_for_simple_expression \
-    20, \
+    25, \
+    TOKEN_AND, \
+    TOKEN_BY, \
     TOKEN_DO, \
     TOKEN_ELSE, \
     TOKEN_ELSIF, \
     TOKEN_END, \
-    TOKEN_NOT, \
+    TOKEN_IN, \
     TOKEN_OF, \
+    TOKEN_OR, \
     TOKEN_THEN, \
     TOKEN_TO, \
     TOKEN_UNTIL, \
-    TOKEN_IDENTIFIER, \
-    TOKEN_NUMERIC_LITERAL, \
-    TOKEN_STRING_LITERAL, \
-    TOKEN_PLUS_OP, \
+    TOKEN_NOT_EQUAL_OP, \
     TOKEN_COMMA, \
-    TOKEN_MINUS_OP, \
-    TOKEN_TYPE_CONVERSION_OP, \
+    TOKEN_RANGE_OP, \
     TOKEN_SEMICOLON, \
+    TOKEN_LESS_OP, \
+    TOKEN_LESS_OR_EQUAL_OP, \
+    TOKEN_EQUAL_OP, \
+    TOKEN_GREATER_OP, \
+    TOKEN_GREATER_OR_EQUAL_OP, \
     TOKEN_CASE_LABEL_SEPARATOR, \
     TOKEN_CLOSING_PARENTHESIS, \
-    TOKEN_CLOSING_BRACKET
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_CLOSING_BRACE
 
 #define FOLLOW_LIST_for_term \
-    21, \
+    27, \
+    TOKEN_AND, \
+    TOKEN_BY, \
     TOKEN_DO, \
     TOKEN_ELSE, \
     TOKEN_ELSIF, \
     TOKEN_END, \
-    TOKEN_NOT, \
+    TOKEN_IN, \
     TOKEN_OF, \
     TOKEN_OR, \
     TOKEN_THEN, \
     TOKEN_TO, \
     TOKEN_UNTIL, \
-    TOKEN_IDENTIFIER, \
-    TOKEN_NUMERIC_LITERAL, \
-    TOKEN_STRING_LITERAL, \
+    TOKEN_NOT_EQUAL_OP, \
     TOKEN_PLUS_OP, \
     TOKEN_COMMA, \
     TOKEN_MINUS_OP, \
-    TOKEN_TYPE_CONVERSION_OP, \
+    TOKEN_RANGE_OP, \
     TOKEN_SEMICOLON, \
+    TOKEN_LESS_OP, \
+    TOKEN_LESS_OR_EQUAL_OP, \
+    TOKEN_EQUAL_OP, \
+    TOKEN_GREATER_OP, \
+    TOKEN_GREATER_OR_EQUAL_OP, \
     TOKEN_CASE_LABEL_SEPARATOR, \
     TOKEN_CLOSING_PARENTHESIS, \
-    TOKEN_CLOSING_BRACKET
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_CLOSING_BRACE
 
 #define FOLLOW_LIST_for_factor \
-    21, \
+    31, \
+    TOKEN_AND, \
+    TOKEN_BY, \
+    TOKEN_DIV, \
     TOKEN_DO, \
     TOKEN_ELSE, \
     TOKEN_ELSIF, \
     TOKEN_END, \
-    TOKEN_NOT, \
+    TOKEN_IN, \
+    TOKEN_MOD, \
     TOKEN_OF, \
     TOKEN_OR, \
     TOKEN_THEN, \
     TOKEN_TO, \
     TOKEN_UNTIL, \
-    TOKEN_IDENTIFIER, \
-    TOKEN_NUMERIC_LITERAL, \
-    TOKEN_STRING_LITERAL, \
+    TOKEN_NOT_EQUAL_OP, \
+    TOKEN_ASTERISK_OP, \
     TOKEN_PLUS_OP, \
     TOKEN_COMMA, \
     TOKEN_MINUS_OP, \
-    TOKEN_TYPE_CONVERSION_OP, \
+    TOKEN_RANGE_OP, \
+    TOKEN_SLASH_OP, \
     TOKEN_SEMICOLON, \
+    TOKEN_LESS_OP, \
+    TOKEN_LESS_OR_EQUAL_OP, \
+    TOKEN_EQUAL_OP, \
+    TOKEN_GREATER_OP, \
+    TOKEN_GREATER_OR_EQUAL_OP, \
     TOKEN_CASE_LABEL_SEPARATOR, \
     TOKEN_CLOSING_PARENTHESIS, \
-    TOKEN_CLOSING_BRACKET
+    TOKEN_CLOSING_BRACKET, \
+    TOKEN_CLOSING_BRACE
 
 #define FOLLOW_LIST_for_designator_or_procedure_call \
     21, \
