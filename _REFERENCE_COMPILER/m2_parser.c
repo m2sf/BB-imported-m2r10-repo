@@ -594,6 +594,9 @@ static bool match_token(m2_parser_s *p,
         // report error
         report_mismatch(p, set_of_expected_tokens);
         
+        // clean up tokenset
+        m2_tokenset_dispose(set_of_expected_tokens);
+        
         // skip symbols until the lookahead symbol matches skipset
         while (NOT (m2_tokenset_is_element(set_of_tokens_to_skip_to,
                                           p->lookahead_sym.token))) {
