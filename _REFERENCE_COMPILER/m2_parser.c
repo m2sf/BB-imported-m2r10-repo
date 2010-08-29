@@ -743,6 +743,9 @@ m2_token_t m2_compilation_unit(m2_parser_s *p); /* FORWARD */
 
 void m2_parse_start_symbol(m2_parser_s *p) {
     
+    // read the first symbol
+    _getsym(p);
+    
     if (p->source_type == SOURCE_TYPE_MOD) {
         
         // MODULE ... | IMPLEMENTATION ...
