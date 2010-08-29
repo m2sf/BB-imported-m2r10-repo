@@ -574,7 +574,7 @@ static fmacro m2_token_t _lookahead(m2_parser_s *p) {
 // of the tokens in <skip_to_tokens> and 'false' is returned.
 
 static void report_mismatch(m2_parser_s *p,
-    m2_tokenset_iterator_t set_of_expected_tokens); /* FORWARD */
+                          m2_tokenset_t set_of_expected_tokens); /* FORWARD */
 
 static bool match_token(m2_parser_s *p,
                          m2_token_t expected_token,
@@ -657,40 +657,43 @@ static bool match_token_in_set(m2_parser_s *p,
 // ---------------------------------------------------------------------------
 //
 // Reports  a mismatch  between the parser's current lookahead symbol  and the
-// expected tokens passed in as tokenset iterator <expected_tokens>.
+// expected tokens passed in as tokenset <expected_tokens>.
 
 static void report_mismatch(m2_parser_s *p,
-                 m2_tokenset_iterator_t set_of_expected_tokens) {
+                          m2_tokenset_t set_of_expected_tokens) {
     
     cardinal row = 0, col = 0, index, token_count;
     m2_lexer_status_t status;
     m2_token_t token;
+    m2_tokenset_iterator_t set_iterator;
     
-    if (set_of_expected_tokens == NULL) return;
+    set_iterator = m2_tokenset_iterator(set_of_expected_tokens);
     
-    token_count = m2_tokenset_iterator_token_count(set_of_expected_tokens);
+    if (set_iterator == NULL) return;
     
-    if (token_count == 0) return;
+    token_count = m2_tokenset_iterator_token_count(set_iterator);
     
-    token = m2_tokenset_iterator_token_at_index(set_of_expected_tokens, 0);
-    m2_lexer_getpos(p->lexer, &row, &col, &status);
+    if (token_count > 0) {
+        m2_lexer_getpos(p->lexer, &row, &col, &status);
+        
+        printf("syntax error in line %i, col %i : found '%s', expected ",
+               row, col, m2_token_name(p->lookahead_sym.token));
+        
+        index = 0;
+        while (index < token_count) {
+            token = m2_tokenset_iterator_token_at_index(set_iterator, index);
+            printf("'%s'", m2_token_name(token));
+            if (index + 2 < token_count)
+                printf(", ");
+            else if (index + 2 == token_count)
+                printf(" or ");
+            else
+                printf("\n");
+            index++;
+        } // end while
+    } // end if
     
-    printf("syntax error in line %i, col %i : found '%s', expected ",
-           row, col, m2_token_name(p->lookahead_sym.token));
-    
-    index = 0;
-    while (index < token_count) {
-        token =
-          m2_tokenset_iterator_token_at_index(set_of_expected_tokens, index);
-        printf("'%s'", m2_token_name(token));
-        if (index + 2 < token_count)
-            printf(", ");
-        else if (index + 2 == token_count)
-            printf(" or ");
-        else
-            printf("\n");
-        index++;
-    } // end while
+    m2_tokenset_iterator_dispose(set_iterator);
     
     return;
 } // end report_mismatch
