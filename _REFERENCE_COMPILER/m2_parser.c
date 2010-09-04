@@ -1892,10 +1892,16 @@ m2_token_t m2_range(m2_parser_s *p) {
     } // end ".."
     
     // constExpression
-    if (match_token_in_set(p, FIRST_CONST_EXPRESSION, SKIP_TO_RANGE_OP)) {
+    if (match_token_in_set(p, FIRST_CONST_EXPRESSION, SKIP_TO_RBRACKET)) {
         m2_const_expression(p);
         
     } // end constExpression
+    
+    // "]"
+    if (match_token(p, TOKEN_RBRACKET, FOLLOW_RANGE)) {
+        _getsym(p);
+        
+    } // end "]"
     
     return _lookahead(p);
 } // end m2_range
