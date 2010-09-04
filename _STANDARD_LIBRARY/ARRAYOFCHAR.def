@@ -22,7 +22,7 @@ PROCEDURE Write ( outfile : File; s : ARRAY OF CHAR );
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC CONST OF ARRAY OF CHAR );
+                   items        : VARIADIC OF ARRAY OF CHAR );
 (* Writes a formatted textual representation of one or more ARRAY OF CHAR
    values to output stream outfile. The output format is determined by fmtStr.
    This procedure is substituted for invocations of WRITEF with one or more

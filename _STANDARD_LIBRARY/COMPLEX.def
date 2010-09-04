@@ -75,7 +75,7 @@ PROCEDURE Write( outfile : File; CONST z : COMPLEX );
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST COMPLEX );
+                   items        : VARIADIC OF COMPLEX );
 (* Writes a formatted textual representation of one or more COMPLEX values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more

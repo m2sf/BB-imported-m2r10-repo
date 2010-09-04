@@ -110,7 +110,7 @@ PROCEDURE Write ( outfile : File; CONST set : BS64 );
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST BS64 );
+                   items        : VARIADIC OF BS64 );
 (* Writes a formatted textual representation of one or more BS64 values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more

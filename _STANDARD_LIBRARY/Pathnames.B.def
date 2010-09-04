@@ -90,12 +90,12 @@ PROCEDURE isValidVersion ( CONST version : ARRAY OF CHAR ) : BOOLEAN;
 (* Path constructors *)
 
 PROCEDURE New
-            ( VAR   path    : FSPath;
-              CONST volName : ARRAY OF CHAR;
-              dirPath       : VARIADIC OF CONST ARRAY OF CHAR;
-              filename      : VARIADIC OF CONST ARRAY OF CHAR;
-              version       : INTEGER;
-              VAR   status  : Status );
+            ( VAR   path     : FSPath;
+              CONST volName  : ARRAY OF CHAR;
+              CONST dirPath  : VARIADIC OF ARRAY OF CHAR;
+              CONST filename : VARIADIC OF ARRAY OF CHAR;
+              version        : INTEGER;
+              VAR   status   : Status );
 (* Allocates a new path object initialised with volume <volName>, directory
    path <dirPath>, filename <filename> and version number <version>, and
    passes the new object back in <path>. The procedure is called as:
@@ -109,7 +109,7 @@ PROCEDURE New
 PROCEDURE New
             ( VAR   path    : FSPath;
               CONST volName : ARRAY OF CHAR;
-              dirPath       : VARIADIC OF CONST ARRAY OF CHAR;
+              CONST dirPath : VARIADIC OF ARRAY OF CHAR;
               filename,
               extension     : ARRAY OF CHAR;
               version       : INTEGER;
@@ -131,9 +131,9 @@ PROCEDURE NewWithEmptyPath ( VAR path : FSPath; VAR status : Status );
    NewWithEmptyPath( p, status ); *)
 
 PROCEDURE NewWithDirectories
-            ( VAR path   : FSPath;
-              dirPath    : VARIADIC OF CONST ARRAY OF CHAR;
-              VAR status : Status );
+            ( VAR   path    : FSPath;
+              CONST dirPath : VARIADIC OF ARRAY OF CHAR;
+              VAR   status  : Status );
 (* Allocates a new path object, initialised with directory path <dirPath>
    and passes the new object back in <path>. The procedure is called as:
    
@@ -153,9 +153,9 @@ PROCEDURE SetVol ( VAR path      : FSPath;
 
 
 PROCEDURE SetDirPath
-            ( VAR path   : FSPath;
-              dirPath    : VARIADIC OF CONST ARRAY OF CHAR;
-              VAR status : Status );
+            ( VAR   path    : FSPath;
+              CONST dirPath : VARIADIC OF ARRAY OF CHAR;
+              VAR   status  : Status );
 (* Sets the directory path of <path> to direcotry path <dirPath>. The
    procedure is called as:
    
@@ -163,10 +163,10 @@ PROCEDURE SetDirPath
 
 
 PROCEDURE SetFilename
-            ( VAR path   : FSPath;
-              filename   : VARIADIC OF CONST ARRAY OF CHAR;
-              version    : INTEGER;
-              VAR status : Status );
+            ( VAR   path     : FSPath;
+              CONST filename : VARIADIC OF ARRAY OF CHAR;
+              version        : INTEGER;
+              VAR   status   : Status );
 (* Sets the filename of <path> to <filename>. The procedure is called as:
 
    SetFilename( p, { basename, "mod" }, 0, status ); *)
@@ -182,9 +182,9 @@ PROCEDURE AppendDir ( VAR path      : FSPath;
 
 
 PROCEDURE AppendDirPath
-            ( VAR path   : FSPath;
-              dirPath    : VARIADIC OF CONST ARRAY OF CHAR;
-              VAR status : Status );
+            ( VAR   path    : FSPath;
+              CONST dirPath : VARIADIC OF ARRAY OF CHAR;
+              VAR   status  : Status );
 (* Appends the directory path <dirPath> to the directory path of <path>. The
    procedure is called as:
    

@@ -34,7 +34,7 @@ PROCEDURE Write ( outfile : File; CONST set : LONGBITSET );
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST LONGBITSET );
+                   items        : VARIADIC OF LONGBITSET );
 (* Writes a formatted textual representation of one or more LONGBITSET values
    to output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more

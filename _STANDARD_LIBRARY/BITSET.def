@@ -32,7 +32,7 @@ PROCEDURE Write ( outfile : File; CONST set : BITSET );
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST BITSET );
+                   items        : VARIADIC OF BITSET );
 (* Writes a formatted textual representation of one or more BITSET values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more

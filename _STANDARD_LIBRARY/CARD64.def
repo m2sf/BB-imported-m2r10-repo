@@ -135,7 +135,7 @@ PROCEDURE Write( outfile : File; CONST n : CARD64 );
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST CARD64 );
+                   items        : VARIADIC OF CARD64 );
 (* Writes a formatted textual representation of one or more BYTE values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more

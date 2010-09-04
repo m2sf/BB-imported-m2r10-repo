@@ -140,7 +140,7 @@ PROCEDURE Write( outfile : File; CONST n : INT64 );
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST INT64 );
+                   items        : VARIADIC OF INT64 );
 (* Writes a formatted textual representation of one or more INT64 values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more

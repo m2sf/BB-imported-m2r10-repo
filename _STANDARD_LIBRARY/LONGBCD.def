@@ -132,7 +132,7 @@ PROCEDURE Write( outfile : File; CONST b : LONGBCD );
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST LONGBCD );
+                   items        : VARIADIC OF LONGBCD );
 (* Writes a formatted textual representation of one or more LONGBCD values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
