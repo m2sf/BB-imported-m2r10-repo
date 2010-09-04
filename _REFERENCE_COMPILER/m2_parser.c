@@ -2169,7 +2169,7 @@ m2_token_t m2_field_list(m2_parser_s *p) {
         } // end ","
         
         // ":"
-        if (match_token(p, TOKEN_SEMICOLON, SKIP_TO_IDENT)) {
+        if (match_token(p, TOKEN_COLON, SKIP_TO_IDENT)) {
             _getsym(p);
             
         } // end ":"
@@ -2333,7 +2333,7 @@ m2_token_t m2_procedure_type(m2_parser_s *p) {
     } // end ( "(" formalTypeList ")" )?
     
     // ( ":" returnedType )?
-    if (_lookahead(p) == TOKEN_SEMICOLON) {
+    if (_lookahead(p) == TOKEN_COLON) {
         _getsym(p);
         
         // returnedType
