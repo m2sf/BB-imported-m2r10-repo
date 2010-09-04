@@ -1801,7 +1801,7 @@ m2_token_t m2_const_declaration(m2_parser_s *p) {
 // ---------------------------------------------------------------------------
 // #13 type
 // ---------------------------------------------------------------------------
-//  ( ALIAS | range ) OF namedType | enumerationType |
+//  (( ALIAS | range ) OF)? namedType | enumerationType |
 //  arrayType | recordType | setType | pointerType | procedureType
 
 m2_token_t m2_range(m2_parser_s *p); /* FORWARD */
@@ -1843,6 +1843,9 @@ m2_token_t m2_type(m2_parser_s *p) {
             _getsym(p);
             
         } // end namedType
+    }
+    else if (_lookahead(p) == TOKEN_IDENTIFIER) {
+        _getsym(p);
     }
     else if (m2_tokenset_is_element(FIRST_ENUMERATION_TYPE, _lookahead(p))) {
         m2_enumeration_type(p);
