@@ -2817,6 +2817,12 @@ m2_token_t m2_procedure_header(m2_parser_s *p) {
             
         } // end "::" | bindableOperator | bindableIdent
         
+        // "]"
+        if (match_token(p, TOKEN_RBRACKET, SKIP_TO_IDENT)) {
+            _getsym(p);
+            
+        } // end "]"
+        
     } // end ( "[" ( "::" | bindableOperator | bindableIdent ) "]" )?
     
     // ident
