@@ -1812,6 +1812,8 @@ m2_token_t m2_set_type(m2_parser_s *p); /* FORWARD */
 m2_token_t m2_pointer_type(m2_parser_s *p); /* FORWARD */
 m2_token_t m2_procedure_type(m2_parser_s *p); /* FORWARD */
 
+m2_token_t m2_qualident(m2_parser_s *p); /* FORWARD */
+
 m2_token_t m2_type(m2_parser_s *p) {
     
     if (_lookahead(p) == TOKEN_ALIAS) {
@@ -1824,8 +1826,8 @@ m2_token_t m2_type(m2_parser_s *p) {
         } // end OF
         
         // namedType
-        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_TYPE)) {
-            _getsym(p);
+        if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_TYPE)) {
+            m2_qualident(p);
             
         } // end namedType
     }
@@ -1839,13 +1841,13 @@ m2_token_t m2_type(m2_parser_s *p) {
         } // end OF
         
         // namedType
-        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_TYPE)) {
-            _getsym(p);
+        if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_TYPE)) {
+            m2_qualident(p);
             
         } // end namedType
     }
-    else if (_lookahead(p) == TOKEN_IDENTIFIER) {
-        _getsym(p);
+    else if (m2_tokenset_is_element(FIRST_QUALIDENT, _lookahead(p))) {
+        m2_qualident(p);
     }
     else if (m2_tokenset_is_element(FIRST_ENUMERATION_TYPE, _lookahead(p))) {
         m2_enumeration_type(p);
@@ -1981,7 +1983,8 @@ m2_token_t m2_enumeration_component(m2_parser_s *p) {
         _getsym(p);
         
         // namedType
-        if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_COMMA_OR_RPAREN)) {
+        if (match_token_in_set(p, FIRST_QUALIDENT, SKIP_TO_COMMA_OR_RPAREN)) {
+            m2_qualident(p);
             
         } // end namedType
         
@@ -2056,8 +2059,8 @@ m2_token_t m2_array_type(m2_parser_s *p) {
     } // end OF
     
     // namedType
-    if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_ARRAY_TYPE)) {
-        _getsym(p);
+    if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_ARRAY_TYPE)) {
+        m2_qualident(p);
         
     } // end namedType
     
@@ -2180,8 +2183,8 @@ m2_token_t m2_field_list(m2_parser_s *p) {
         } // end ":"
         
         // namedType
-        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_FIELD_LIST)) {
-            _getsym(p);
+        if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_FIELD_LIST)) {
+            m2_qualident(p);
             
         } // end namedType
         
@@ -2209,8 +2212,8 @@ m2_token_t m2_field_list(m2_parser_s *p) {
         } // end ARRAY
 
         // namedType
-        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_FIELD_LIST)) {
-            _getsym(p);
+        if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_FIELD_LIST)) {
+            m2_qualident(p);
             
         } // end namedType
         
@@ -2240,8 +2243,8 @@ m2_token_t m2_set_type(m2_parser_s *p) {
     if (match_token_in_set(p, FIRST_IDENT_OR_LPAREN, FOLLOW_SET_TYPE)) {
         
         // namedEnumType | "("
-        if (_lookahead(p) == TOKEN_IDENTIFIER) {
-            _getsym(p);
+        if (m2_tokenset_is_element(FIRST_QUALIDENT, _lookahead(p))) {
+            m2_qualident(p);
             
         }
         else if (_lookahead(p) == TOKEN_LPAREN) {
@@ -2294,8 +2297,8 @@ m2_token_t m2_pointer_type(m2_parser_s *p) {
     } // end CONST?
     
     // namedType
-    if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_POINTER_TYPE)) {
-        _getsym(p);
+    if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_POINTER_TYPE)) {
+        m2_qualident(p);
         
     } // end namedType
     
@@ -2340,8 +2343,8 @@ m2_token_t m2_procedure_type(m2_parser_s *p) {
         _getsym(p);
         
         // returnedType
-        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_PROCEDURE_TYPE)) {
-            _getsym(p);
+        if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_PROCEDURE_TYPE)) {
+            m2_qualident(p);
             
         } // end returnedType
         
@@ -2445,8 +2448,8 @@ m2_token_t m2_simple_formal_type(m2_parser_s *p) {
     } // end ( CAST? ARRAY OF )?
     
     // namedType
-    if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_SIMPLE_FORMAL_TYPE)) {
-        _getsym(p);
+    if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_SIMPLE_FORMAL_TYPE)) {
+        m2_qualident(p);
         
     } // end namedType
     
@@ -2733,8 +2736,8 @@ m2_token_t m2_variable_declaration(m2_parser_s *p) {
     // end second option
 
     // namedType
-    if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_VARIABLE_DECLARATION)) {
-        _getsym(p);
+    if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_VARIABLE_DECLARATION)) {
+        m2_qualident(p);
         
     } // end namedType
     
@@ -2859,8 +2862,8 @@ m2_token_t m2_procedure_header(m2_parser_s *p) {
         _getsym(p);
         
         // returnedType
-        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_PROCEDURE_HEADER)) {
-            _getsym(p);
+        if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_PROCEDURE_HEADER)) {
+            m2_qualident(p);
             
         } // end returnedType
         
@@ -3729,8 +3732,9 @@ m2_token_t m2_for_statement(m2_parser_s *p) {
             } // end OF
             
             // namedType
-            if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_FOR_STATEMENT)) {
-                _getsym(p);
+            if (match_token_in_set(p, FIRST_QUALIDENT,
+                                      FOLLOW_FOR_STATEMENT)) {
+                m2_qualident(p);
                 
             } // end namedType
         }
@@ -4074,7 +4078,6 @@ m2_token_t m2_mul_operator(m2_parser_s *p) {
 //    "(" constExpression ")" | CAST "(" namedType "," constExpression ")" )
 //  ( "::" namedType )?
 
-m2_token_t m2_qualident(m2_parser_s *p); /* FORWARD */
 m2_token_t m2_const_structured_value(m2_parser_s *p); /* FORWARD */
 
 m2_token_t m2_const_factor(m2_parser_s *p) {
@@ -4137,8 +4140,8 @@ m2_token_t m2_const_factor(m2_parser_s *p) {
             } // end "("
                 
             // namedType
-            if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_COMMA)) {
-                _getsym(p);
+            if (match_token_in_set(p, FIRST_QUALIDENT, SKIP_TO_COMMA)) {
+                m2_qualident(p);
                 
             } // end namedType
                 
@@ -4172,8 +4175,8 @@ m2_token_t m2_const_factor(m2_parser_s *p) {
         _getsym(p);
         
         // namedType
-        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_CONST_FACTOR)) {
-            _getsym(p);
+        if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_CONST_FACTOR)) {
+            m2_qualident(p);
             
         } // end namedType
         
@@ -4540,8 +4543,8 @@ m2_token_t m2_factor(m2_parser_s *p) {
             } // end "("
             
             // namedType
-            if (match_token(p, TOKEN_IDENTIFIER, SKIP_TO_COMMA)) {
-                _getsym(p);
+            if (match_token_in_set(p, FIRST_QUALIDENT, SKIP_TO_COMMA)) {
+                m2_qualident(p);
                 
             } // end namedType
             
@@ -4575,8 +4578,8 @@ m2_token_t m2_factor(m2_parser_s *p) {
         _getsym(p);
         
         // namedType
-        if (match_token(p, TOKEN_IDENTIFIER, FOLLOW_CONST_FACTOR)) {
-            _getsym(p);
+        if (match_token_in_set(p, FIRST_QUALIDENT, FOLLOW_FACTOR)) {
+            m2_qualident(p);
             
         } // end namedType
         
