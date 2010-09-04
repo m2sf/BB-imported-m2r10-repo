@@ -1327,6 +1327,8 @@ m2_token_t m2_literal_type(m2_parser_s *p) {
 //  ( FROM moduleId IMPORT ( identList | "*" ) |
 //    IMPORT ident "+"? ( "," ident "+"? )* ) ";"
 
+m2_token_t m2_ident_list(m2_parser_s *p); /* FORWARD */
+
 m2_token_t m2_import_list(m2_parser_s *p) {
     
     // FROM ... | IMPORT ...
@@ -1351,7 +1353,7 @@ m2_token_t m2_import_list(m2_parser_s *p) {
                 if (match_token_in_set(p, FIRST_IDENT_OR_ASTERISK,
                                           SKIP_TO_SEMI_OR_IMPORT_OR_BLOCK)) {
                     if (_lookahead(p) == TOKEN_IDENTIFIER) {
-                        _getsym(p);
+                        m2_ident_list(p);
                     }
                     else if (_lookahead(p) == TOKEN_ASTERISK_OP) {
                         _getsym(p);
@@ -2219,8 +2221,6 @@ m2_token_t m2_field_list(m2_parser_s *p) {
 // #20 set_type
 // ---------------------------------------------------------------------------
 //  SET OF ( namedEnumType | "(" identList ")" )
-
-m2_token_t m2_ident_list(m2_parser_s *p); /* FORWARD */
 
 m2_token_t m2_set_type(m2_parser_s *p) {
     
