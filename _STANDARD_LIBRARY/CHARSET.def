@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 
 TYPE
     CHARSET = OPAQUE RECORD
-        ARRAY 16 OF OCTET; (* 128 bits *)
+        elements: ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* CHARSET *)
 
 
