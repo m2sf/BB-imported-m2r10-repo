@@ -54,7 +54,7 @@ typedef struct /* lexer_input_info_t */ {
 static const lexer_input_info_t _input_info[] = {
     { "comment.mod", 0, 2, 29, 1 },
     { "special.mod", 32, 0, 22, 1 },
-    { "numeric.mod", 17, 11, 30, 1 },
+    { "numeric.mod", 17, 47, 53, 1 },
     { "string.mod", 4, 7, 33, 1 },
     { "identifier.mod", 13, 0, 18, 1 },
     { "reserved.mod", 44, 0, 27, 1 }
