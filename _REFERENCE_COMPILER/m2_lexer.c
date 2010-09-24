@@ -114,19 +114,11 @@ static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer); /* FORWARD */
 
 static uchar_t get_prefixed_number(m2_lexer_s *lexer); /* FORWARD */
 
-static uchar_t get_suffixed_number(m2_lexer_s *lexer); /* FORWARD */
-
-static uchar_t get_digits(m2_lexer_s *lexer,
-                            cardinal *non_binary_digits,
-                            cardinal *non_decimal_digits); /* FORWARD */
-
-static uchar_t get_decimal_digits(m2_lexer_s *lexer); /* FORWARD */
-
-static uchar_t get_scale_factor(m2_lexer_s *lexer); /* FORWARD */
+static uchar_t get_real_number(m2_lexer_s *lexer); /* FORWARD */
 
 static fmacro uchar_t get_quoted_literal(m2_lexer_s *lexer); /* FORWARD */
 
-static bool is_escaped_char(uchar_t ch); /* FORWARD */
+static fmacro bool is_escaped_char(uchar_t ch); /* FORWARD */
 
 static fmacro void add_lexeme_to_lextab(m2_lexer_s *lexer); /* FORWARD */
 
@@ -710,7 +702,7 @@ static fmacro uchar_t get_ident(m2_lexer_s *lexer) {
 //  integer := binary-integer | decimal-integer | base-16-integer
 //  binary-integer := ( "0" | "1" )+ "B"
 //  decimal-integer := digit+
-//  sbase-16-integer := digit base-16-digit+ ( "H" | "U" )
+//  base-16-integer := digit base-16-digit* ( "H" | "U" )
 //  real := digit+ "." digit+ | digit "." digit+ "E" ( "+" | "-")? digit+
 //  digit := "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 //  base-16-digit := digit | "A" | "B" | "C" | "D" | "E" | "F"
@@ -745,29 +737,106 @@ static fmacro uchar_t get_ident(m2_lexer_s *lexer) {
 //  o  the new lookahead character is the offending character.
 
 static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer) {
-    uchar_t ch, first_ch;
+    uchar_t ch;
+    uchar_t last_digit;
+    cardinal non_decimal_digits = 0;
+    cardinal non_binary_digits = 0;
+    
+    lexer->status = M2_LEXER_STATUS_SUCCESS;
     
     lexer->lexeme.length = 0;
     lexer->lexkey = HASH_INITIAL;
     
-    // get the first character
-    first_ch = readchar();
-    lexer->lexeme.string[lexer->lexeme.length] = first_ch;
-    lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, first_ch);
-    lexer->lexeme.length++;
+    // read the leading sequence of digits
     ch = nextchar();
+    while (IS_UPPERHEX(ch)) {
+        ch = readchar();
+        if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
+            lexer->lexeme.string[lexer->lexeme.length] = ch;
+            lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+        } // end if
+        lexer->lexeme.length++;
+        
+        if (!IS_DIGIT(ch)) {
+            non_decimal_digits++;
+        }
+        if (!IS_BINARY(ch)) {
+            non_binary_digits++;
+        }
+        
+        last_digit = ch;
+        ch = nextchar();
+    } // end while
     
-    // handle prefixed literal
-    if ((first_ch == DIGIT_ZERO) &&
-        ((ch == LOWERCASE_X) || (ch == LOWERCASE_U) || (ch == LOWERCASE_B))) {
-        ch = get_prefixed_number(lexer);
+    // classify the sequence of digits
+    switch (ch) {
+        case LOWERCASE_B:
+        case LOWERCASE_U:
+        case LOWERCASE_X:
+            if ((lexer->lexeme.length == 1) && (last_digit == DIGIT_ZERO)) {
+                // prefixed number
+                ch = get_prefixed_number(lexer);
+            }
+            else if (non_decimal_digits != 0) {
+                // hexadecimal without suffix
+                lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
+            } // end if
+            break;
+        
+        case DOT:
+            if (non_decimal_digits == 0) {
+                // real number
+                ch = get_real_number(lexer);
+            }
+            else {
+                // hexadecimal without suffix
+                lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
+            } // end if
+            break;
+        
+        case UPPERCASE_H:
+        case UPPERCASE_U:
+            // suffixed hexadecimal
+            ch = readchar();
+            if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
+                lexer->lexeme.string[lexer->lexeme.length] = ch;
+                lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+            } // end if
+            lexer->lexeme.length++;
+            
+            ch = nextchar();
+            break;
+        
+        default:
+            if ((non_decimal_digits != 0) &&
+                !((non_binary_digits == 1) && (last_digit == UPPERCASE_B))) {
+                // hexadecimal without suffix
+                lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
+            } // end if
     }
-    // handle non-prefixed literal
-    else {
-        ch = get_suffixed_number(lexer);
-    } // end if
     
-    // return the lokkahead character
+    // numeric literal length checks
+    if (lexer->lexeme.length > M2_MAX_NUM_LENGTH + 1) {
+        // long binary, decimal, hexadecimal or real
+        lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
+    }
+    else if ((lexer->lexeme.length == M2_MAX_NUM_LENGTH + 1) &&
+        (lexer->lexeme.string[M2_MAX_NUM_LENGTH] != UPPERCASE_R)) {
+        // long binary, decimal or hexadecimal
+        lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
+    }
+    
+    if (lexer->status == M2_LEXER_STATUS_SUCCESS) {
+        // good binary, decimal or hexadecimal
+        lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
+        lexer->lexkey = HASH_FINAL(lexer->lexkey);
+        lexer->token = TOKEN_NUMERIC_LITERAL;
+    }
+    else {
+        lexer->lexkey = 0;
+        lexer->token = TOKEN_ILLEGAL_CHARACTER;
+    }
+    
     return ch;
 } // end get_numeric_literal
 
@@ -797,437 +866,174 @@ static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer) {
 //
 // post-conditions:
 //
-//  o  lexer->lexeme.string contains the literal,
-//     followed by a C string terminator (ASCII NUL).
+//  o  lexer->lexeme.string contains the prefixed numeric literal.
 //  o  lexer->lexeme.length contains the length of lexer->lexeme.string.
-//  o  lexer->token contains TOKEN_NUMERIC_LITERAL.
 //  o  lexer->lexkey contains the key for the lexeme table.
 //  o  lexer->status contains M2_LEXER_STATUS_SUCCESS.
 //  o  the new lookahead character is the character following the literal.
 
-static fmacro uchar_t get_prefixed_number(m2_lexer_s *lexer) {
-    uchar_t ch, prefix;
+static uchar_t get_prefixed_number(m2_lexer_s *lexer) {
+    uchar_t ch;
     
-    // consume prefix
-    prefix = readchar();
-    
-    // add prefix to lexeme buffer
-    lexer->lexeme.string[lexer->lexeme.length] = prefix;
-    lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, prefix);
+    // read the prefix
+    ch = readchar();
+    if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
+        lexer->lexeme.string[lexer->lexeme.length] = ch;
+        lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+    } // end if
     lexer->lexeme.length++;
     
-    // peek at first character following prefix
-    ch = nextchar();
-    
-    // get any remaining digits
-    if ((prefix == LOWERCASE_X) || (prefix == LOWERCASE_U)) {
-        // base-16 digits only
-        while (((IS_DIGIT(ch)) || (IS_LOWERHEX(ch))) &&
-               (lexer->lexeme.length <= M2_MAX_NUM_LENGTH) &&
-               (NOT_EOF(lexer))) {
+    if (ch == LOWERCASE_B) {
+        // prefixed binary
+        ch = nextchar();
+        while (IS_BINARY(ch)) {
             ch = readchar();
-            lexer->lexeme.string[lexer->lexeme.length] = ch;
-            lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+            if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
+                lexer->lexeme.string[lexer->lexeme.length] = ch;
+                lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+            } // end if
             lexer->lexeme.length++;
+            
             ch = nextchar();
         } // end while
     }
-    else if (prefix == LOWERCASE_B) {
-        // base-2 digits only
-        while (((ch == DIGIT_ZERO) || (ch == DIGIT_ONE)) &&
-               (lexer->lexeme.length <= M2_MAX_NUM_LENGTH) &&
-               (NOT_EOF(lexer))) {
+    else {
+        // prefixed hexadecimal
+        ch = nextchar();
+        while (IS_LOWERHEX(ch)) {
             ch = readchar();
-            lexer->lexeme.string[lexer->lexeme.length] = ch;
-            lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+            if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
+                lexer->lexeme.string[lexer->lexeme.length] = ch;
+                lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+            } // end if
             lexer->lexeme.length++;
+            
             ch = nextchar();
         } // end while
     } // end if
     
-    // check literal length
-    if ((lexer->lexeme.length > 2) &&
-        (lexer->lexeme.length <= M2_MAX_NUM_LENGTH)) {
-        // literal is valid
-        lexer->token = TOKEN_NUMERIC_LITERAL;
-        lexer->status = M2_LEXER_STATUS_SUCCESS;
-        lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
-        return ch;
-    } // end if
-    
-    // FAILURE
-    
-    if (lexer->lexeme.length > M2_MAX_NUM_LENGTH) {
-        // literal exceeds maximum length
-        lexer->token = TOKEN_ILLEGAL_CHARACTER;
-        lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
-    }
-    else if (lexer->lexeme.length <= 2) {
-        // literal has no digits
-        lexer->token = TOKEN_ILLEGAL_CHARACTER;
+    if (lexer->lexeme.length <= 2) {
+        // only a prefix is present
         lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
     } // end if
     
-    lexer->offending_char = ch;
-    m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
-    lexer->lexkey = 0;
     return ch;
 } // end get_prefixed_number
 
 
 // ---------------------------------------------------------------------------
-// private function:  get_suffixed_number(lexer)
+// private function:  get_real_number(lexer)
 // ---------------------------------------------------------------------------
 //
-// Reads a  numeric literal  from the input stream of <lexer>  and returns the
-// character following the literal.
+// Reads a real number literal from the input stream of <lexer>  and returns
+// the character following the literal.
 //
 // This function accepts input conforming to the following syntax:
 //
-//  number := integer | real ;
-//  integer := digit+ | suffixedBase2Integer | suffixedBase16Integer ;
-//  suffixedBase2Integer := ( "0" | "1" )+ "B" ;
-//  suffixedBase16Integer := uppercaseBase16Digit+ ( "H" | "U" ) ;
-//  real := digit+ "." digit+ | digit "." digit+ "E" ( "+" | "-" )? digit+ ;
-//  digit := "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
-//  uppercaseBase16Digit := digit | "A" | "B" | "C" | "D" | "E" | "F" ;
+//  real := digit+ "." digit+ | digit "." digit+ "E" ( "+" | "-")? digit+
+//  digit := "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 //
 // pre-conditions:
-//
 //  o  lexer is an initialised lexer object.
-//  o  the value of lexer->lexeme.string[0] is a digit.
-//  o  the value of lexer->lexeme.length is 1.
+//  o  the value of lexer->lexeme.string is a sequence of decimal digits.
+//  o  the value of lexer->lexeme.length is greater than 0.
+//  o  the current lookahead character is '.'.
 //  o  the literal is well-formed, conforming to the syntax given above.
 //
 // post-conditions:
-//
-//  o  lexer->lexeme.string contains the literal,
-//     followed by a C string terminator (ASCII NUL).
+//  o  lexer->lexeme.string contains the real number literal,
+//     followed by type designator 'R'.
 //  o  lexer->lexeme.length contains the length of lexer->lexeme.string.
-//  o  lexer->token contains TOKEN_NUMERIC_LITERAL.
 //  o  lexer->lexkey contains the key for the lexeme table.
 //  o  lexer->status contains M2_LEXER_STATUS_SUCCESS.
 //  o  the new lookahead character is the character following the literal.
 
-static fmacro uchar_t get_suffixed_number(m2_lexer_s *lexer) {
-    
-    cardinal non_binary_digit_count = 0;
-    cardinal non_decimal_digit_count = 0;
-    cardinal digits_before_decimal_point = 0;
-    bool found_H_or_U = false;
-    bool well_formed = false;
-    uchar_t final_ch;
+static uchar_t get_real_number(m2_lexer_s *lexer) {
     uchar_t ch;
+    cardinal fraction_offset;
+    cardinal fraction_size;
+    cardinal exponent_offset = 0;
     
-#ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
-    if (lexer == NULL) return (uchar_t)0;
-#endif
-    
-    // get all digits until the first non-digit is found or length is exceeded
-    ch = get_digits(lexer, &non_binary_digit_count, &non_decimal_digit_count);
-    
-    // check for 'H' and 'U' designator
-    if ((lexer->lexeme.length < M2_MAX_NUM_LENGTH) &&
-        ((ch == UPPERCASE_H) || (ch == UPPERCASE_U))) {
-        found_H_or_U = true;
-        ch = readchar();
-        lexer->lexeme.string[lexer->lexeme.length] = ch;
-        lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
-        lexer->lexeme.length++;
-        ch = nextchar();
-    } // end if
-    
-    // check length
-    if (lexer->lexeme.length > M2_MAX_NUM_LENGTH) {
-        // error: maximum length exceeded
-        lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
-        lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
-        lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
-        lexer->token = TOKEN_ILLEGAL_CHARACTER;
-        lexer->lexkey = 0;
-        return ch;
-    } // end if
-    
-    // the digit sequence is an integer literal if:
-    // o  it contains any non-decimal digits, or
-    // o  it is followed by a 'H' designator, or
-    // o  it is not followed by a decimal point
-    
-    if ((non_decimal_digit_count > 0) || (found_H_or_U) || (ch != DOT)) {
-        
-        // terminate the lexeme
-        lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
-        
-        // check well-formedness
-        final_ch = lexer->lexeme.string[lexer->lexeme.length - 1];
-        if (IS_DIGIT(final_ch))
-            // well formed if there is no designator and all digits are decimal
-            well_formed = (non_decimal_digit_count == 0);
-        else switch (final_ch) {
-            case UPPERCASE_B :
-                // well formed if designator is 'B' and all digits are binary
-                well_formed = (non_binary_digit_count <= 1);
-                break;
-            case UPPERCASE_U :
-                // well formed if designator is 'U'
-                well_formed = true;
-                break;
-            case UPPERCASE_H :
-                // well formed if designator is 'H'
-                well_formed = true;
-                break;
-            default :
-                // malformed in any other case
-                well_formed = false;
-        } // end if
-        
-        // if well formed, return token, lexeme key and status
-        if (well_formed) {
-            lexer->token = TOKEN_NUMERIC_LITERAL;
-            lexer->lexkey = HASH_FINAL(lexer->lexkey);
-            lexer->status = M2_LEXER_STATUS_SUCCESS;
-            return ch;
-        }
-        // if malformed, return offending char, null-token, null-key, status
-        else /* malformed */ {
-            lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
-            lexer->offending_char = ch;
-            m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
-            lexer->token = TOKEN_ILLEGAL_CHARACTER;
-            lexer->lexkey = 0;
-            return ch;
-        } // end if
-    } // end if
-    
-    // at this point the digit sequence is part of a real number literal
-    
-    // get decimal point
-    if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
-        ch = readchar();
-        digits_before_decimal_point = lexer->lexeme.length;
-        lexer->lexeme.string[lexer->lexeme.length] = ch;
-        lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
-        lexer->lexeme.length++;
-        ch = nextchar();
-    } // end if
-    
-    // check length
-    if (lexer->lexeme.length > M2_MAX_NUM_LENGTH) {
-        // error: maximum length exceeded
-        lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
-        lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
-        lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
-        lexer->token = TOKEN_ILLEGAL_CHARACTER;
-        lexer->lexkey = 0;
-        return ch;
-    } // end if
-    
-    // get digits following decimal point
-    if (IS_DIGIT(ch))
-        ch = get_decimal_digits(lexer);
-    else {
-        // error: missing digits after decimal point
-        lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
-        lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
-        lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
-        lexer->token = TOKEN_ILLEGAL_CHARACTER;
-        lexer->lexkey = 0;
-        return ch;
-    } // end if
-    
-    // check length
-    if (lexer->lexeme.length > M2_MAX_NUM_LENGTH) {
-        // error: maximum length exceeded
-        lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
-        lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
-        lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
-        lexer->token = TOKEN_ILLEGAL_CHARACTER;
-        lexer->lexkey = 0;
-        return ch;
-    } // end if
-    
-    // a real number literal may have a scale factor *only*
-    // if it has exactly one digit before the decimal point
-    
-    if ((digits_before_decimal_point == 1) &&
-        ((ch == UPPERCASE_E) || (ch == LOWERCASE_E))) {
-        ch = get_scale_factor(lexer);
-        
-        // check length
-        if (lexer->lexeme.length > M2_MAX_NUM_LENGTH) {
-            // error: maximum length exceeded
-            lexer->status = M2_LEXER_STATUS_LITERAL_TOO_LONG;
-            lexer->offending_char = ch;
-            m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
-            lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;
-            lexer->token = TOKEN_ILLEGAL_CHARACTER;
-            lexer->lexkey = 0;
-            return ch;
-        } // end if
-    } // end if
-    
-    // terminate the lexeme
-    
-    // Get the last character in the lexeme.
-    final_ch = lexer->lexeme.string[lexer->lexeme.length - 1];
-    
-    // if well formed, return token, lexeme key and status
-    if (IS_DIGIT(final_ch)) {
-        lexer->status = M2_LEXER_STATUS_SUCCESS;
-        
-        // append type designator 'R'
-        ch = 'R';
-        lexer->lexeme.string[lexer->lexeme.length] = ch;
-        lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
-        lexer->lexeme.length++;
-        lexer->token = TOKEN_NUMERIC_LITERAL;
-        lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;        
-        lexer->lexkey = HASH_FINAL(lexer->lexkey);
-        return ch;
-    }
-    // if malformed, return offending char, null-token, null-key, status
-    else /* malformed */ {
-        lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
-        lexer->offending_char = ch;
-        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
-        lexer->token = TOKEN_ILLEGAL_CHARACTER;
-        lexer->lexeme.string[lexer->lexeme.length] = CSTRING_TERMINATOR;        
-        lexer->lexkey = 0;
-        return ch;
-    } // end if
-    
-} // end get_numeric_literal
-
-
-// ---------------------------------------------------------------------------
-// private function:  get_digits(lexer, non_binary_digits, non_decimal_digits)
-// ---------------------------------------------------------------------------
-//
-// Reads a sequence of digits from the input stream of <lexer> and returns the
-// character following the digit sequence.  The number of non-binary digits is
-// passed back in <non_binary_digits>.  The  number  of  non-decimal digits is
-// passed back in <non_decimal_digits>.
-//
-// This function accepts input conforming to the following syntax:
-//
-//  digit-sequence := ( digit | "A" | "B" | "C" | "D" | "E" | "F" )*
-//  digit : = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-
-static fmacro uchar_t get_digits(m2_lexer_s *lexer,
-                                   cardinal *non_binary_digits,
-                                   cardinal *non_decimal_digits) {
-    uchar_t ch;
-    
-#ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
-    if (lexer == NULL) return (uchar_t)0;
-#endif
-    
-    *non_binary_digits = 0;
-    *non_decimal_digits = 0;
-    
-    ch = nextchar();
-    while ((IS_UPPERHEX(ch)) &&
-           (lexer->lexeme.length < M2_MAX_NUM_LENGTH) && (NOT_EOF(lexer))) {
-        if (ch >= UPPERCASE_A)
-            (*non_decimal_digits)++;
-        if (ch >= DIGIT_TWO)
-            (*non_binary_digits)++;
-        ch = readchar();
-        lexer->lexeme.string[lexer->lexeme.length] = ch;
-        lexer->lexeme.length++;
-        lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
-        ch = nextchar();
-    } // end while
-    
-    return ch;
-} // end get_digits
-
-
-// ---------------------------------------------------------------------------
-// private function:  get_decimal_digits(lexer)
-// ---------------------------------------------------------------------------
-//
-// Reads  a  sequence of decimal digits  from the input stream of <lexer>  and
-// returns the character following the decimal digit sequence.
-//
-// This function accepts input conforming to the following syntax:
-//
-//  decimal-digit-sequence := digit*
-//  digit : = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-
-static fmacro uchar_t get_decimal_digits(m2_lexer_s *lexer) {
-    uchar_t ch;
-    
-#ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
-    if (lexer == NULL) return (uchar_t)0;
-#endif
-    
-    ch = nextchar();
-    while ((IS_DIGIT(ch)) &&
-           (lexer->lexeme.length < M2_MAX_NUM_LENGTH) && (NOT_EOF(lexer))) {
-        ch = readchar();
-        lexer->lexeme.string[lexer->lexeme.length] = ch;
-        lexer->lexeme.length++;
-        lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
-        ch = nextchar();
-    } // end while
-    
-    return ch;
-} // end get_decimal_digits
-
-
-// ---------------------------------------------------------------------------
-// private function:  get_scale_factor(lexer)
-// ---------------------------------------------------------------------------
-//
-// Reads the  scale factor  of a real number literal  from the input stream of
-// <lexer>  and  returns the character following the scale factor.
-//
-// This function accepts input conforming to the following syntax:
-//
-//  scale-factor := "E" ( "+" | "-" )? digit*
-//  digit : = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-
-static fmacro uchar_t get_scale_factor(m2_lexer_s *lexer) {
-    uchar_t ch;
-    
-#ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
-    if (lexer == NULL) return (uchar_t)0;
-#endif
-    
-    // get 'E' designator
+    // read the decimal separator
     ch = readchar();
-    lexer->lexeme.string[lexer->lexeme.length] = ch;
-    lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
-    lexer->lexeme.length++;
-    ch = nextchar();
-    
-    // get exponent sign, if present
-    if (((ch == PLUS) || (ch == MINUS)) &&
-        (lexer->lexeme.length < M2_MAX_NUM_LENGTH) && (NOT_EOF(lexer))) {
-        ch = readchar();
+    if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
         lexer->lexeme.string[lexer->lexeme.length] = ch;
         lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+    } // end if
+    lexer->lexeme.length++;
+    
+    fraction_offset = lexer->lexeme.length;
+    
+    ch = nextchar();
+    while (IS_DIGIT(ch)) {
+        ch = readchar();
+        if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
+            lexer->lexeme.string[lexer->lexeme.length] = ch;
+            lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+        } // end if
         lexer->lexeme.length++;
+        
         ch = nextchar();
+    } // end while
+    
+    fraction_size = lexer->lexeme.length - fraction_offset;
+    
+    if ((ch == LOWERCASE_E) || (ch == UPPERCASE_E)) {
+        ch = readchar();
+        if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
+            lexer->lexeme.string[lexer->lexeme.length] = ch;
+            lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+        } // end if
+        lexer->lexeme.length++;
+        
+        ch = nextchar();
+        if ((ch == PLUS) || (ch == MINUS)) {
+            ch = readchar();
+            if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
+                lexer->lexeme.string[lexer->lexeme.length] = ch;
+                lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+            } // end if
+            lexer->lexeme.length++;
+            
+            ch = nextchar();
+        } // end if
+        
+        exponent_offset = lexer->lexeme.length;
+        
+        while (IS_DIGIT(ch)) {
+            ch = readchar();
+            if (lexer->lexeme.length < M2_MAX_NUM_LENGTH) {
+                lexer->lexeme.string[lexer->lexeme.length] = ch;
+                lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+            } // end if
+            lexer->lexeme.length++;
+            
+            ch = nextchar();
+        } // end while
     } // end if
     
-    // get exponent digits
-    while ((IS_DIGIT(ch)) &&
-           (lexer->lexeme.length < M2_MAX_NUM_LENGTH) && (NOT_EOF(lexer))) {
-        ch = readchar();
-        lexer->lexeme.string[lexer->lexeme.length] = ch;
-        lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
-        lexer->lexeme.length++;
-        ch = nextchar();
-    } // while exponent digits
+    // append 'R' designator
+    if (lexer->lexeme.length < M2_MAX_NUM_LENGTH + 1) {
+        lexer->lexeme.string[lexer->lexeme.length] = UPPERCASE_R;
+        lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, UPPERCASE_R);
+    } // end if
+    lexer->lexeme.length++;
+    
+    if (fraction_size == 0) {
+        // short fractional part
+        lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
+    }
+    else if (exponent_offset == lexer->lexeme.length - 1) {
+        // short exponent part
+        lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
+    }
+    else if ((fraction_offset > 2) && (exponent_offset != 0)) {
+        // long integral part with exponent
+        lexer->status = M2_LEXER_STATUS_MALFORMED_NUMBER;
+    } // end if
     
     return ch;
-} // end get_scale_factor
+} // end get_real_number
 
 
 // ---------------------------------------------------------------------------
