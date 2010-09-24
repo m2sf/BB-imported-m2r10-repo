@@ -76,7 +76,7 @@ PROCEDURE diffInMinutes ( d1, d2 : DateTime ) : REAL;
 PROCEDURE diffInHours ( d1, d2 : DateTime ) : REAL;
 (* Returns the value of d1-d2 in fractional hours. *)
 
-PROCEDURE diffInDays ( d1 : d2 DateTime ) : REAL;
+PROCEDURE diffInDays ( d1, d2 : DateTime ) : REAL;
 (* Returns the value of d1-d2 in fractional days. *)
 
 
