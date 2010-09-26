@@ -1,4 +1,4 @@
-﻿/*! Modula-2 R10 Compiler (m2r10c)
+/*! Modula-2 R10 Compiler (m2r10c)
  *
  *  @file  m2_lexer.c
  *  @brief Lexer implementation
