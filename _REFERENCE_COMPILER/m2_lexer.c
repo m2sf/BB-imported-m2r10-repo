@@ -1488,6 +1488,8 @@ static fmacro uchar_t skip_pragma(m2_lexer_s *lexer) {
                 
             } // end while
             
+            break;
+            
         } // end if
         
     } // end while
