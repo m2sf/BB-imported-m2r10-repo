@@ -1,4 +1,4 @@
-/*! Modula-2 R10 Compiler (m2r10c)
+﻿/*! Modula-2 R10 Compiler (m2r10c)
  *
  *  @file  m2_lexer.c
  *  @brief Lexer implementation
@@ -125,6 +125,8 @@ static fmacro void add_lexeme_to_lextab(m2_lexer_s *lexer); /* FORWARD */
 static fmacro uchar_t skip_multiline_comment(m2_lexer_s *lexer); /* FORWARD */
 
 static fmacro uchar_t skip_past_end_of_line(m2_lexer_s *lexer); /* FORWARD */
+
+static fmacro uchar_t skip_pragma(m2_lexer_s *lexer); /* FORWARD */
 
 
 // ===========================================================================
@@ -416,9 +418,14 @@ m2_token_t m2_lexer_getsym(m2_lexer_t lexer,
                         this_lexer->token = TOKEN_LESS_OR_EQUAL_OP;
                         break;
                     case ASTERISK : // found '<*'
+                        #ifdef M2LEXER_SKIP_PRAGMAS
+                        ch = skip_pragma(this_lexer);
+                        ignore_token = true;
+                        #else
                         ch = readchar();
                         ch = nextchar();
                         this_lexer->token = TOKEN_START_PRAGMA;
+                        #endif
                         break;
                     default : // found '<'
                         this_lexer->token = TOKEN_LESS_OP;
@@ -1412,6 +1419,89 @@ static fmacro uchar_t skip_past_end_of_line(m2_lexer_s *lexer) {
     // return the lookahead character
     return nextchar();
 } // end skip_past_end_of_line
+
+
+// ---------------------------------------------------------------------------
+// private function:  skip_pragma(lexer)
+// ---------------------------------------------------------------------------
+//
+// Skips the  current pragma  in the input stream of <lexer>  and  returns the
+// character following the closing pragma delimiter.
+//
+// pre-condition:
+//  o  lexer is an initialised lexer object.
+//  o  the lookahead character is the asterisk of the opening pragma
+//     delimiter at the beginning of the pragma.
+//
+// post-conditions:
+//  o  the new lookahead character is the character following the closing
+//     pragma delimiter at the end of the comment.
+//  o  the lexer's line and coloumn counters have been updated.
+//  o  lexer->status contains M2_LEXER_STATUS_SUCCESS.
+//
+// error-conditions:
+//  if end-of-file was reached within the pragma
+//  o  the new lookahead character is the end-of-file marker.
+//  o  lexer->offending_char contains the last character in the input.
+//  o  lexer->offending_char contains the position of the offending character.
+//  o  the lexer's line and coloumn counters have been updated.
+//  o  lexer->status contains M2_LEXER_STATUS_EOF_REACHED_WITHIN_COMMENT.
+
+static fmacro uchar_t skip_pragma(m2_lexer_s *lexer) {
+    uchar_t ch, nextch, quote;
+    
+#ifndef PRIV_FUNCS_DONT_CHECK_NULL_PARAMS
+    if (lexer == NULL) return (uchar_t)0;
+#endif
+    
+    // consume the opening pragma delimiter
+    readchar();
+    
+    // skip until closing pragma delimiter is found
+    // or end-of-file is reached
+    while (NOT_EOF(lexer)) {
+        
+        // read next char
+        ch = readchar();
+        nextch = nextchar();
+        
+        if ((ch == ASTERISK) && (nextch == GREATER_THAN)) {
+            
+            // consume '>'
+            readchar();
+            break;
+        }
+        else if ((ch == SINGLE_QUOTE) || (ch == DOUBLE_QUOTE)) {
+            
+            quote = ch;
+            ch = readchar();
+            nextch = nextchar();
+            
+            // skip all characters until end of string
+            while ((ch != quote) && (NOT_EOF(lexer))) {
+                
+                // skip escaped character
+                if (ch == BACKSLASH) {
+                    ch = readchar();
+                    nextch = nextchar();
+                } // end if
+                
+            } // end while
+            
+        } // end if
+        
+    } // end while
+        
+    // determine status
+    if (EOF_REACHED(lexer)) {
+        lexer->status = M2_LEXER_STATUS_EOF_REACHED_WITHIN_COMMENT;
+        lexer->offending_char = ch;
+        m2_fileio_getpos(lexer->source_file, &lexer->offending_char_pos);
+    } // end if
+    
+    // return the lookahead character
+    return nextchar();
+} // end skip_pragma
 
 
 // END OF FILE
