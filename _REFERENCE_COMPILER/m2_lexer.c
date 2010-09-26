@@ -1480,16 +1480,17 @@ static fmacro uchar_t skip_pragma(m2_lexer_s *lexer) {
             // skip all characters until end of string
             while ((ch != quote) && (NOT_EOF(lexer))) {
                 
-                // skip escaped character
+                // skip any escaping backslashes
                 if (ch == BACKSLASH) {
                     ch = readchar();
-                    nextch = nextchar();
                 } // end if
                 
+                // skip character
+                ch = readchar();
+                nextch = nextchar();
+                
             } // end while
-            
-            break;
-            
+                        
         } // end if
         
     } // end while
