@@ -1,5 +1,6 @@
 11 Pragmas
-Pragmas are directives to the compiler, used to control or influence the translation process but they do not change the meaning of the program text.
+Pragmas are directives to the compiler, used to control or influence the
+translation process but they do not change the meaning of the program text.
 There are two types of pragmas:
 o  language defined pragmaso  implementation defined pragmas
 11.1 Language Defined Pragmas
