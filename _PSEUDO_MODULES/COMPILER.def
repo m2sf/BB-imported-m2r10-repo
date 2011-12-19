@@ -29,6 +29,11 @@ CONST
     maxNumLiteralLength = <implementation defined constant>;
     maxCommentLength = <implementation defined constant>;
 
+(* Optional compiler facilities *)
+
+TYPE Facility = (
+   InlineAssembler, FortranFFI,
+   AddressMapping, RegisterMapping, VolatileAttribute );
 
 (* Compile Time Macros *)
 
@@ -46,6 +51,12 @@ CONST
 
 (* MACRO *) PROCEDURE ROWNO : CARDINAL;
 (* Expands to a numeric value with the value of the current row number. *)
+
+
+(* Availability of optional facilities *)
+
+(* MACRO *) PROCEDURE IsAvailable( f : Facility ) : BOOLEAN;
+(* Expands to TRUE if facility f is supported, expands to FALSE otherwise *)
 
 
 (* introspection *)
