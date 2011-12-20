@@ -34,11 +34,5 @@ TYPE
  (* Inserts the assembly code generated from instructionList,
     usage example: FROM ASSEMBLER IMPORT *; ... CODE( mov, eax, foobar ); *)
 
-<*INLINE*> PROCEDURE SETREG( r : REGISTER; value : <PervasiveType> );
- (* Copies <value> to register <r> *)
-
-<*INLINE*> PROCEDURE GETREG( r : REGISTER; VAR value : <PervasiveType> );
- (* Copies the contents of register <r> to <value> *)
-
 
 END ASSEMBLER.
