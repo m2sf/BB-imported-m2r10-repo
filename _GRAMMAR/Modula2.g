@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Nov 25, 2012 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 3, 2012 */
 
 
 // ---------------------------------------------------------------------------
@@ -82,28 +82,65 @@ tokens {
     VARIADIC       = 'VARIADIC';
     WHILE          = 'WHILE';
 
-// *** Language Defined Pragma Words, 20 tokens ***
+// *** CAST ***
 
-    ENDIF          = 'ENDIF';
-    MSG            = 'MSG';
-    INFO           = 'INFO';
-    WARN           = 'WARN';
-    ERROR          = 'ERROR';
-    FATAL          = 'FATAL';
-    FFI            = 'FFI';
-    GENLIB         = 'GENLIB';
-    INLINE         = 'INLINE';
-    NOINLINE       = 'NOINLINE';
-    ALIGN          = 'ALIGN';
-    PADBITS        = 'PADBITS';
-    ADDR           = 'ADDR';
-    REG            = 'REG';
-    PURE           = 'PURE';
-    WEAK           = 'WEAK';
-    STRONG         = 'STRONG';
-    VOLATILE       = 'VOLATILE';
-    ENCODING       = 'ENCODING';
-    FORWARD        = 'FOWARD';
+//  CAST is both an Identifier and a Reserved Word
+//  Ambiguity is resolvable using the Schroedinger's Token technique
+
+    CAST           = 'CAST';
+
+// *** Bindable Identifiers ***
+
+//  Bindable Identifiers are both Identifiers and Reserved Words
+//  Ambiguity is resolvable using the Schroedinger's Token technique
+
+    ABS            = 'ABS';      /* bindableIdent */
+    NEG            = 'NEG';      /* bindableIdent */
+    ODD            = 'ODD';      /* bindableIdent */
+    COUNT          = 'COUNT';    /* bindableIdent */
+    LENGTH         = 'LENGTH';   /* bindableIdent */
+    NEW            = 'NEW';      /* bindableIdent */
+    DISPOSE        = 'DISPOSE';  /* bindableIdent */
+    RETAIN         = 'RETAIN';   /* bindableIdent */
+    RELEASE        = 'RELEASE';  /* bindableIdent */
+    TLIMIT         = 'TLIMIT';   /* bindableIdent */
+    TMAX           = 'TMAX';     /* constBindableIdent */
+    TMIN           = 'TMIN';     /* constBindableIdent */
+    SXF            = 'SXF';      /* bindableIdent */
+    VAL            = 'VAL';      /* bindableIdent */
+
+// *** Language Defined Pragma Words, 27 tokens ***
+
+//  Pragma Words are Reserved Words only within pragmas
+//  Ambiguity is resolvable using the Schroedinger's Token technique
+
+    MSG            = 'MSG';      /* pragma only */
+    INFO           = 'INFO';     /* pragma only */
+    WARN           = 'WARN';     /* pragma only */
+    ERROR          = 'ERROR';    /* pragma only */
+    FATAL          = 'FATAL';    /* pragma only */
+    IF             = 'IF';       /* RW and pragma */
+    ELSIF          = 'ELSIF';    /* RW and pragma */
+    ELSE           = 'ELSE';     /* RW and pragma */
+    ENDIF          = 'ENDIF';    /* pragma only */
+    ENCODING       = 'ENCODING'; /* pragma only */
+    GENLIB         = 'GENLIB';   /* pragma only */
+    FROM           = 'FROM';     /* RW and pragma */
+    FFI            = 'FFI';      /* pragma only */
+    INLINE         = 'INLINE';   /* pragma only */
+    NOINLINE       = 'NOINLINE'; /* pragma only */
+    ALIGN          = 'ALIGN';    /* pragma only */
+    PADBITS        = 'PADBITS';  /* pragma only */
+    ADDR           = 'ADDR';     /* pragma only */
+    REG            = 'REG';      /* pragma only */
+    PURITY         = 'PURITY';   /* pragma only */
+    VOLATILE       = 'VOLATILE'; /* pragma only */
+    FORWARD        = 'FOWARD';   /* pragma only */
+    TYPE           = 'TYPE';     /* RW and pragma */
+    DIV            = 'DIV';      /* RW and pragma */
+    MOD            = 'MOD';      /* RW and pragma */
+    AND            = 'AND';      /* RW and pragma */
+    NOT            = 'NOT';      /* RW and pragma */
 
 // *** Special Characters, 3 tokens ***
 
@@ -141,9 +178,11 @@ prototype :
     ;
 
 // alias #2.1
+fragment
 prototypeIdent : Ident ;
 
 // alias #2.2
+fragment
 requiredConformance : prototypeIdent ;
 
 // production #3
@@ -163,6 +202,7 @@ protoliteral :
     ;
 
 // alias #5.1
+fragment
 simpleProtoliteral : Ident ;
 
 // production #6
@@ -178,9 +218,11 @@ requiredBinding :
     ;
 
 // alias #7.1
-constBindableIdent : Ident ;
+fragment
+constBindableIdent : TMAX | TMIN {} ;
 
 // alias #7.2
+fragment
 pervasiveType : Ident ;
 
 // production #8
@@ -191,6 +233,7 @@ definitionOfModule :
     ;
 
 // alias 8.1
+fragment
 moduleIdent : Ident ;
 
 // production #9
@@ -206,6 +249,18 @@ importList :
     ( FROM moduleIdent IMPORT ( identList | '*' ) |
     IMPORT Ident '+'? ( ',' Ident '+'? )* ) ';'
     ;
+
+/* Import with experimental aliased import qualifier '=>'
+   IMPORT Foo => Bar would import module Foo to be referenced as Bar
+   Strongest use case: import of target architecture specific modules, eg.
+   IMPORT Registers_x86 => Registers, Opcodes_x86 => Opcodes, etc
+   requires further deliberation
+   
+importListWithAlias :
+    ( FROM moduleIdent IMPORT ( identList | '*' ) |
+    IMPORT moduleIdent ( '+' | '=>' Ident )? ( ',' moduleIdent ( '+' | '=>' Ident )? )* ) ';'
+    ;
+*/
 
 // production #11
 block :
@@ -223,7 +278,7 @@ declaration :
 
 // production #13
 definition :
-    CONST ( ( '[' bindableIdent ']' )? constantDeclaration ';' )+ |
+    CONST ( ( '[' constBindableIdent ']' )? constantDeclaration ';' )+ |
     TYPE ( Ident '=' ( type | OPAQUE recordType? ) ';' )+ |
     VAR ( variableDeclaration ';' )+ |
     procedureHeader ';'
@@ -250,13 +305,15 @@ range :
 
 // production #17
 enumerationType :
-    '(' ( ( '+' typeIdent ) | Ident ) ( ',' ( ( '+' typeIdent ) | Ident ) )* ')'
+    '(' ( ( '+' enumTypeIdent ) | Ident ) ( ',' ( ( '+' enumTypeIdent ) | Ident ) )* ')'
     ;
 
 // alias 17.1
+fragment
 enumTypeIdent : qualident ;
 
 // alias 17.2
+fragment
 typeIdent : qualident ;
 
 // production #18
@@ -266,6 +323,7 @@ arrayType :
     ;
 
 // alias #18.1
+fragment
 componentCount : constExpression ;
 
 // production #19
@@ -275,9 +333,11 @@ recordType :
     ;
 
 // aliase #19.1
+fragment
 fieldList : variableDeclaration ;
 
 // aliase #19.2
+fragment
 baseType : typeIdent ;
 
 // production #20
@@ -286,6 +346,7 @@ indeterminateField :
     ;
 
 // alias #20.1
+fragment
 discriminantField : Ident ;
 
 // production #21
@@ -306,6 +367,7 @@ procedureType :
     ;
 
 // alias #23.1
+fragment
 returnedType : typeIdent ;
 
 // production #24
@@ -325,12 +387,8 @@ attributedFormalType :
 
 // production #27
 simpleFormalType :
-    // ( autocast? ARRAY OF )? typeIdent
-    ( 'CAST'? ARRAY OF )? typeIdent
+    CAST? ARRAY OF typeIdent
     ;
-
-// alias #27.1
-autocast : Ident ; // CAST
 
 // production #28
 variadicFormalType :
@@ -363,9 +421,15 @@ bindableEntity :
     bindableIdent
     ;
 
-// alias #32.1
-bindableIdent : Ident ;
-// TMIN, TMAX, TLIMIT, ABS, NEG, ODD, COUNT, LENGTH, NEW, DISPOSE, RETAIN, RELEASE, SXF, VAL
+// token #32.1
+// both an identifier and a reserved word
+// resolve using Schroedinger's Token
+fragment
+bindableIdent :
+    ABS | NEG | ODD | COUNT | LENGTH | NEW | DISPOSE | RETAIN | RELEASE |
+    SXF | VAL
+    {} // make ANTLRworks display alternatives as separate branches
+    ;
 
 // *** Formal Parameters ***
 
@@ -391,6 +455,7 @@ variadicFormalParams :
     ;
 
 // alias #36.1
+fragment
 variadicTerminator : constExpression ;
 
 // *** Statements ***
@@ -422,11 +487,13 @@ ifStatement :
 
 // production #41
 caseStatement :
-    CASE expression OF ( '|' case )+ ( ELSE statementSequence )? END
+    CASE expression OF ( '|' case777 )+ ( ELSE statementSequence )? END
     ;
 
 // production #42
-case :
+case777 :
+/* ANTLR has a design flaw in that it cannot handle any rule identifiers that
+   coincide with reserved words of the language it uses to generate the parser */
     caseLabels ( ',' caseLabels )* ':' statementSequence
     ;
 
@@ -458,6 +525,7 @@ forStatement :
     ;
 
 // alias #47.1
+fragment
 controlVariable : Ident ;
 
 // production #48
@@ -479,33 +547,36 @@ expressionList :
 
 // production #51
 expression :
-    simpleExpression ( RelOp simpleExpression )?
+    simpleExpression ( relOp simpleExpression )?
     ;
 
 // fragment #51.1
-fragment RelOp :
+fragment
+relOp :
     '=' | '#' | '<' | '<=' | '>' | '>=' | IN
     {} // make ANTLRworks display separate branches
     ;
 
 // production #52
 simpleExpression :
-    ( '+' | '-' {})? term ( AddOp term )*
+    ( '+' | '-' {})? term ( addOp term )*
     ;
 
 // fragment #52.1
-fragment AddOp :
+fragment
+addOp :
     '+' | '-' | OR
     {} // make ANTLRworks display separate branches
 	;
 
 // production #53
 term :
-    factor ( MulOp factor )*
+    factor ( mulOp factor )*
     ;
 
 // fragment #53.1
-fragment MulOp :
+fragment
+mulOp :
     '*' | '/' | DIV | MOD | AND
     {} // make ANTLRworks display separate branches
     ;
@@ -571,8 +642,8 @@ pragma :
       bitPaddingPragma |
       memoryMappingPragma |
       registerMappingPragma |
+      purityAttributePragma |
       volatileAttributePragma |
-      pureFunctionAttributePragma |
       implementationDefinedPragma |
       forwardDeclarationPragma )
     '*>'
@@ -588,8 +659,10 @@ compileTimeMsgComponent :
     '?' ( ALIGN | ENCODING | implDefinedPragmaName )
     ;
 
+fragment
 constQualident : qualident ; // no type and no variable identifiers
 
+fragment
 implDefinedPragmaName : Ident ; // lowercase or mixed case only
 
 condtitionalCompilationPragma :
@@ -602,15 +675,20 @@ characterEncodingPragma :
     ;
 
 codePointSample :
-    quotedCharacterLiteral '=' CharacterCodeLiteral
+    quotedCharacterLiteral '=' characterCodeLiteral
     ;
 
+fragment
 quotedCharacterLiteral : String ; // single character only
+
+fragment
+characterCodeLiteral : Number ; // unicode code points only
 
 libraryTemplateExpansionPragma :
     GENLIB moduleIdent FROM template ':' templateParamList
     ;
 
+fragment
 template : Ident ;
 
 templateParamList :
@@ -621,8 +699,10 @@ templateParam :
     placeholder '=' replacement
     ;
 
+fragment
 placeholder : Ident ;
 
+fragment
 replacement : String ;
 
 foreignFunctionInterfacePragma :
@@ -650,12 +730,12 @@ registerMappingPragma :
     REG '=' inPragmaExpression
     ;
 
-volatileAttributePragma :
-    VOLATILE
+purityAttributePragma :
+    PURITY '=' inPragmaExpression /* values 0 .. 3 */
     ;
 
-pureFunctionAttributePragma :
-    PURE '=' ( WEAK | STRONG {})
+volatileAttributePragma :
+    VOLATILE
     ;
 
 implementationDefinedPragma :
@@ -673,7 +753,7 @@ inPragmaRelOp :
     ;
 
 inPragmaSimpleExpression :
-    ( '+' | '-' {})? inPragmaTerm ( AddOp inPragmaTerm )*
+    ( '+' | '-' {})? inPragmaTerm ( addOp inPragmaTerm )*
     ;
 
 inPragmaTerm :
@@ -694,6 +774,7 @@ inPragmaFactor :
     NOT inPragmaFactor
     ;
 
+fragment
 wholeNumber : Number ;
 
 forwardDeclarationPragma :
@@ -705,7 +786,7 @@ forwardDeclarationPragma :
 // T E R M I N A L   S Y M B O L S
 // ---------------------------------------------------------------------------
 // 8 productions
-	
+
 // production #1
 Ident :
     IdentLeadChar IdentTailChar*
@@ -733,19 +814,31 @@ Digit :
     {} // make ANTLRworks display separate branches
     ;
 
+/* production #2 */
 Number :
-    DecimalNumber | Base2Number | Base16Number | CharacterCodeLiteral
+    /* number literals starting with digit 0 ... */
+    '0' (
+        /* without prefix are decimal numbers */
+        DecimalNumberTail |
+        /* with prefix 0b are base-2 numbers */
+        'b' Base2DigitSeq |
+        /* with prefix 0x are base-16 numbers */
+        'x' Base16DigitSeq |
+        /* with prefix 0u are unicode code points */
+        'u' Base16DigitSeq
+         )
+    /* number literals starting with digits 1 to 9 ... */
+    | '1'..'9' DecimalNumberTail /* are always decimal numbers */
     ;
 
 fragment
-DecimalNumber :
-    DigitSeq '.' DigitSeq
-    'E' ( '+' | '-' {})? DigitSeq
+DecimalNumberTail :
+    DigitSep? DigitSeq? ( '.' DigitSeq ( 'e' ( '+' | '-' {})? DigitSeq )? )?
     ;
 
 fragment
 DigitSeq :
-    DigitGroup ( SINGLE_QUOTE DigitGroup )*
+    DigitGroup ( DigitSep DigitGroup )*
     ;
 
 fragment
@@ -754,13 +847,12 @@ DigitGroup :
     ;
 
 fragment
-Base2Number :
-    '0b' Base2DigitSeq
-    ;
+DigitSep : SINGLE_QUOTE {};
+
 
 fragment
 Base2DigitSeq :
-    Base2DigitGroup ( SINGLE_QUOTE Base2DigitGroup )*
+    Base2DigitGroup ( DigitSep Base2DigitGroup )*
     ;
 
 fragment
@@ -775,13 +867,8 @@ Base2Digit :
     ;
 
 fragment
-Base16Number :
-    '0x' Base16DigitSeq
-    ;
-
-fragment
 Base16DigitSeq :
-    Base16DigitGroup ( SINGLE_QUOTE Base16DigitGroup )*
+    Base16DigitGroup ( DigitSep Base16DigitGroup )*
     ;
 
 fragment
@@ -793,11 +880,6 @@ fragment
 Base16Digit :
     Digit | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
     {} // make ANTLRworks display separate branches
-    ;
-
-fragment
-CharacterCodeLiteral :
-    '0u' Base16DigitSeq
     ;
 
 // production #3
@@ -846,9 +928,7 @@ Space : ' ';
 
 // production #1
 Whitespace :
-    Space | ASCII_TAB
-    {} // make ANTLRworks display separate branches
-    { $channel = HIDDEN; } // ignore
+    ({} Space | ASCII_TAB) { $channel = HIDDEN; } // ignore
     ;
 
 // *** Comments ***
@@ -879,7 +959,7 @@ SingleLineComment :
 // production #5
 fragment
 EndOfLine :
-    ASCII_LF ASCII_CR? | ASCII_CR ASCII_LF?
+    ( ASCII_LF ASCII_CR? | ASCII_CR ASCII_LF? )
     ;
 
 // END OF FILE
