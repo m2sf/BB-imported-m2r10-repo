@@ -1,38 +1,54 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR CTYPE; (* C-Type *)
+PROTOTYPE CTYPE; (* C-Type *)
 
-(* Semantic Properties for Complex Number Types *)
+(* Prototype Definition for Complex Number ADTs *)
 
 
-(* ADTs must be transparent records,
-   structured literals will be used by default *)
+(* CTYPE ADTs must be opaque records,
+   structured literals of two real number components may be used *)
 
-TYPE = RECORD; 
+TYPE = OPAQUE RECORD := { REAL, REAL };
 
 
 (* Bindings required for C-Type ADTs *)
 
-CONST [TMIN]; (* require binding to TMIN function *)
 
-CONST [TMAX]; (* require binding to TMAX function *)
+(* Binding to assignment operator *)
 
-PROCEDURE [:=]; (* require binding to assignment operator *)
+PROCEDURE [:=] assign ( VAR left : CTYPE; CONST right : CTYPE );
 
-PROCEDURE [::]; (* optional bindings to conversion operator *)
 
-PROCEDURE [ABS]; (* require binding to ABS function *)
+(* Bindings to monadic operations *)
 
-PROCEDURE [NEG]; (* require binding to NEG function *)
+PROCEDURE [ABS] abs ( z : CTYPE ) : CTYPE;
+(* procedure to bind to pervasive function ABS for arguments of the ADT *)
 
-PROCEDURE [+]; (* require binding to plus operator *)
+PROCEDURE [NEG] neg ( z : CTYPE ) : CTYPE;
+(* procedure to bind to pervasive function NEG for arguments of the ADT *)
 
-PROCEDURE [-]; (* require binding to minus operator *)
 
-PROCEDURE [*]; (* require binding to multiply operator *)
+(* Bindings to dyadic operations *)
 
-PROCEDURE [/]; (* require binding to division operator *)
+PROCEDURE [+] plus ( z1, z2 : CTYPE ) : CTYPE;
+(* procedure to bind to the + operator for operands of the ADT *)
 
-PROCEDURE [=]; (* require binding to equal operator *)
+PROCEDURE [-] minus ( z1, z2 : CTYPE ) : CTYPE;
+(* procedure to bind to the - operator for operands of the ADT *)
+
+PROCEDURE [*] multiply ( z1, z2 : CTYPE ) : CTYPE;
+(* procedure to bind to the * operator for operands of the ADT *)
+
+PROCEDURE [/] divide ( z1, z2 : CTYPE ) : CTYPE;
+(* procedure to bind to the / operator for operands of the ADT *)
+
+
+(* Bindings to relational operations *)
+
+PROCEDURE [=] isEqual ( z1, z2 : ZTYPE ) : BOOLEAN;
+(* procedure to bind to the = operator for operands of the ADT *)
+
+(* The operation for the # operator is synthesized as NOT (r1 = r2) *)
+
 
 END CTYPE.
