@@ -2,7 +2,7 @@
 
 PROTOTYPE ZTYPE; (* Z-Type *)
 
-(* Semantic Properties for Whole Number Types *)
+(* Prototype Definition for Whole Number Types *)
 
 
 (* ADTs must be opaque records,
