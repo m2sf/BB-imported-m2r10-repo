@@ -24,7 +24,7 @@ PROCEDURE [:=] assign ( VAR left : VTYPE; CONST right : VTYPE );
 PROCEDURE [ABS] abs ( v : VTYPE ) : VTYPE;
 (* procedure to bind to pervasive function ABS for arguments of the ADT *)
 
-PROCEDURE [NEG] neg ( v : CTYPE ) : VTYPE;
+PROCEDURE [NEG] neg ( v : VTYPE ) : VTYPE;
 (* procedure to bind to pervasive function NEG for arguments of the ADT *)
 
 
