@@ -28,10 +28,10 @@ PROCEDURE [:=] assign ( VAR left : ZTYPE; CONST right : ZTYPE );
 (* Bindings to scalar conversion primitives *)
 
 PROCEDURE [SXF] toSXF ( x : ZTYPE; VAR sxf : ARRAY OF CHAR );
-(* conversion of a ZTYPE ADT value to scalar conversion format *)
+(* conversion of a ZTYPE ADT value to scalar exchange format *)
 
 PROCEDURE [VAL] fromSXF ( CONST sxf : ARRAY OF CHAR; VAR x : ZTYPE );
-(* conversion of scalar conversion format to a ZTYPE ADT value *)
+(* conversion of scalar exchange format to a ZTYPE ADT value *)
 
 
 (* Bindings to monadic operations *)
