@@ -1,32 +1,54 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR CollectionType;
+(*  E X P E R I M E N T A L   S Y N T A X  *)
 
-(* Semantic Properties for Collection Types *)
+PROTOTYPE CollectionType;
+
+(* Prototype Definition for Collection ADTs *)
 
 
-(* ADTs must be opaque records with associative semantics,
-   no literals may be assigned *)
+(* ADTs must be opaque,
+   variadic structured literals with key/value pairs are compatible *)
 
-TYPE = OPAQUE ASSOCIATIVE ARRAY;
+TYPE PLACEHOLDERS Key, Value;
+
+TYPE = OPAQUE := { VARIADIC OF { Key, Value } };
 
 
 (* Bindings required for CollectionType ADTs *)
 
-PROCEDURE [NEW]; (* require binding to NEW procedure *)
+PROCEDURE [:=] assignLiteral ( c : CollectionType;
+                literal : VARIADIC OF { key : Key; value : Value } );
+(* procedure to bind to literal assignment syntax for CollectionType ADTs *)
 
-PROCEDURE [DISPOSE]; (* require binding to DISPOSE procedure *)
 
-PROCEDURE [?]; (* require accessor binding to [ ] operator *)
+PROCEDURE [!] storeValue ( c : CollectionType;
+                           key : Key; CONST value : Value );
+(* procedure to bind to left hand side [ ] notation for CollectionType ADTs *)
 
-PROCEDURE [!]; (* require storage mutator binding to [ ] operator *)
 
-PROCEDURE [~]; (* require removal mutator binding to [ ] operator *)
+PROCEDURE [?] valueForKey ( c : CollectionType;
+                            key : Key; VAR keyIsValid : BOOLEAN ) : Value;
+(* procedure to bind to right hand side [ ] notation for CollectionType ADTs *)
 
-PROCEDURE [COUNT]; (* require binding to COUNT function *)
 
-PROCEDURE [FOR]; (* require binding to FOR .. IN iterator *)
+PROCEDURE [~] removeKeyValuePair ( c : CollectionType; key : Key );
+(* procedure to bind to left hand side [ ] notation when NIL is assigned *)
 
-PROCEDURE [=]; (* require binding to equal operator *)
+
+PROCEDURE [COUNT] count ( collection : CollectionType ) : LONGCARD;
+(* procedure to bind to pervasive COUNT for arguments of CollectionType ADTs *)
+
+
+PROCEDURE [FOR] nextKeyValuePair ( c : CollectionType;
+                                   VAR key : Key; VAR value : Value );
+(* procedure to bind to the FOR .. IN .. iterator
+   for iterations of the form FOR key IN collection DO ... END *)
+
+PROCEDURE [=] isEqual ( CONST c1, c2 : CollectionType ) : BOOLEAN;
+(* procedure to bind to the = operator for operands of CollectionType ADTs *)
+
+(* The operation for the # operator is synthesized as NOT (r1 = r2) *)
+
 
 END CollectionType.
