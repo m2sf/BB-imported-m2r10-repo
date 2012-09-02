@@ -36,7 +36,7 @@ PROCEDURE [~] removeKeyValuePair ( c : CollectionType; key : Key );
 (* procedure to bind to left hand side [ ] notation when NIL is assigned *)
 
 
-PROCEDURE [COUNT] count ( collection : CollectionType ) : LONGCARD;
+PROCEDURE [COUNT] count ( c : CollectionType ) : LONGCARD;
 (* procedure to bind to pervasive COUNT for arguments of CollectionType ADTs *)
 
 
@@ -48,7 +48,7 @@ PROCEDURE [FOR] nextKeyValuePair ( c : CollectionType;
 PROCEDURE [=] isEqual ( CONST c1, c2 : CollectionType ) : BOOLEAN;
 (* procedure to bind to the = operator for operands of CollectionType ADTs *)
 
-(* The operation for the # operator is synthesized as NOT (r1 = r2) *)
+(* The operation for the # operator is synthesized as NOT (c1 = c2) *)
 
 
 END CollectionType.
