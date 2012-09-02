@@ -45,7 +45,7 @@ PROCEDURE [/] divide ( z1, z2 : CTYPE ) : CTYPE;
 
 (* Bindings to relational operations *)
 
-PROCEDURE [=] isEqual ( z1, z2 : ZTYPE ) : BOOLEAN;
+PROCEDURE [=] isEqual ( z1, z2 : CTYPE ) : BOOLEAN;
 (* procedure to bind to the = operator for operands of the ADT *)
 
 (* The operation for the # operator is synthesized as NOT (r1 = r2) *)
