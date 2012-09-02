@@ -1,46 +1,83 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR RTYPE; (* R-Type *)
+PROTOTYPE RTYPE; (* R-Type *)
 
-(* Semantic Properties for Real Number Types *)
+(* Prototype Definition for Real Number ADTs *)
 
 
-(* ADTs must be opaque records,
-   real number literals may be used *)
+(* RTYPE ADTs must be opaque records, real number literals may be used *)
 
 TYPE = OPAQUE RECORD := REAL;
 
 
 (* Bindings required for R-Type ADTs *)
 
-CONST [TMIN]; (* require binding to TMIN function *)
 
-CONST [TMAX]; (* require binding to TMAX function *)
+(* Bindings for pervasive functions TMIN and TMAX *)
 
-PROCEDURE [:=]; (* require binding to assignment operator *)
+CONST [TMIN]; (* value to be returned by pervasive function TMIN *)
 
-PROCEDURE [::]; (* optional bindings to conversion operator *)
+CONST [TMAX]; (* value to be returned by pervasive function TMAX *)
 
-PROCEDURE [ABS]; (* require binding to ABS function *)
 
-PROCEDURE [NEG]; (* require binding to NEG function *)
+(* Binding to assignment operator *)
 
-PROCEDURE [+]; (* require binding to plus operator *)
+PROCEDURE [:=] assign ( VAR left : RTYPE; CONST right : RTYPE );
 
-PROCEDURE [-]; (* require binding to minus operator *)
 
-PROCEDURE [*]; (* require binding to multiply operator *)
+(* Bindings to scalar conversion primitives *)
 
-PROCEDURE [/]; (* require binding to division operator *)
+PROCEDURE [SXF] toSXF ( r : RTYPE; VAR sxf : ARRAY OF CHAR );
+(* conversion of an RTYPE ADT value to scalar exchange format *)
 
-PROCEDURE [=]; (* require binding to equal operator *)
+PROCEDURE [VAL] fromSXF ( CONST sxf : ARRAY OF CHAR; VAR r : RTYPE );
+(* conversion of scalar exchange format to an RTYPE ADT value *)
 
-PROCEDURE [<]; (* require binding to less operator *)
 
-PROCEDURE [>]; (* require binding to greater operator *)
+(* Bindings to monadic operations *)
 
-PROCEDURE [SXF]; (* require binding to scalar conversion primitive SXF *)
+PROCEDURE [ABS] abs ( r : RTYPE ) : RTYPE;
+(* procedure to bind to pervasive function ABS for arguments of the ADT *)
 
-PROCEDURE [VAL]; (* require binding to scalar conversion primitive VAL *)
+PROCEDURE [NEG] neg ( r : RTYPE ) : RTYPE;
+(* procedure to bind to pervasive function NEG for arguments of the ADT *)
+
+
+(* Bindings to dyadic operations *)
+
+PROCEDURE [+] plus ( r1, r2 : RTYPE ) : RTYPE;
+(* procedure to bind to the + operator for operands of the ADT *)
+
+(* The operation for the ++ statement is synthesized as r := r + 1.0 *)
+
+PROCEDURE [-] minus ( r1, r2 : RTYPE ) : RTYPE;
+(* procedure to bind to the - operator for operands of the ADT *)
+
+(* The operation for the -- statement is synthesized as r := r - 1.0 *)
+
+PROCEDURE [*] multiply ( r1, r2 : RTYPE ) : RTYPE;
+(* procedure to bind to the * operator for operands of the ADT *)
+
+PROCEDURE [/] divide ( r1, r2 : RTYPE ) : RTYPE;
+(* procedure to bind to the / operator for operands of the ADT *)
+
+
+(* Bindings to relational operations *)
+
+PROCEDURE [=] isEqual ( r1, r2 : RTYPE ) : BOOLEAN;
+(* procedure to bind to the = operator for operands of the ADT *)
+
+(* The operation for the # operator is synthesized as NOT (r1 = r2) *)
+
+PROCEDURE [<] isLess ( r1, r2 : RTYPE ) : BOOLEAN;
+(* procedure to bind to the < operator for operands of the ADT *)
+
+(* The operation for the <= operator is synthesized as NOT (r1 > r2) *)
+
+PROCEDURE [>] isGreater ( r1, r2 : RTYPE ) : BOOLEAN;
+(* procedure to bind to the > operator for operands of the ADT *)
+
+(* The operation for the >= operator is synthesized as NOT (r1 < r2) *)
+
 
 END RTYPE.
