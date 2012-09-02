@@ -15,9 +15,11 @@ TYPE = OPAQUE RECORD := INTEGER;
 
 (* Bindings for pervasive functions TMIN and TMAX *)
 
-CONST [TMIN]; (* value to be returned by pervasive function TMIN *)
+PROCEDURE [TMIN] minValue : ZTYPE;
+(* return the value that pervasive function TMIN shall return for the ADT *)
 
-CONST [TMAX]; (* value to be returned by pervasive function TMAX *)
+PROCEDURE [TMAX] maxValue : ZTYPE;
+(* return the value that pervasive function TMAX shall return for the ADT *)
 
 
 (* Binding to assignment operator *)
