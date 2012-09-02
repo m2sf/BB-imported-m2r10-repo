@@ -5,10 +5,11 @@ PROTOTYPE CTYPE; (* C-Type *)
 (* Prototype Definition for Complex Number ADTs *)
 
 
-(* CTYPE ADTs must be opaque records,
-   structured literals of two real number components may be used *)
+(* CTYPE ADTs must be transparent records,
+   have two fields compatible with real number literals,
+   structurally equivalent literals are compatible by default *)
 
-TYPE = OPAQUE RECORD := { REAL, REAL };
+TYPE = RECORD := { REAL, REAL };
 
 
 (* Bindings required for C-Type ADTs *)
