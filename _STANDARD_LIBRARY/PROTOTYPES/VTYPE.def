@@ -1,30 +1,48 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR VTYPE; (* V-Type *)
+PROTOTYPE VTYPE; (* V-Type *)
 
-(* Semantic Properties for Vector Types *)
+(* Prototype Definition for Vector ADTs *)
 
 
-(* ADTs must be transparent records,
-   structured literals will be used by default *)
+(* VTYPE ADTs must be transparent records,
+   structurally equivalent literals are compatible by default *)
 
 TYPE = RECORD;
 
 
 (* Bindings required for V-Type ADTs *)
 
-PROCEDURE [:=]; (* require binding to assignment operator *)
 
-PROCEDURE [::]; (* optional bindings to conversion operator *)
+(* Binding to assignment operator *)
 
-PROCEDURE [ABS]; (* require binding to ABS function *)
+PROCEDURE [:=] assign ( VAR left : VTYPE; CONST right : VTYPE );
 
-PROCEDURE [NEG]; (* require binding to NEG function *)
 
-PROCEDURE [+]; (* require binding to plus operator *)
+(* Bindings to monadic operations *)
 
-PROCEDURE [-]; (* require binding to minus operator *)
+PROCEDURE [ABS] abs ( v : VTYPE ) : VTYPE;
+(* procedure to bind to pervasive function ABS for arguments of the ADT *)
 
-PROCEDURE [=]; (* require binding to equal operator *)
+PROCEDURE [NEG] neg ( v : CTYPE ) : VTYPE;
+(* procedure to bind to pervasive function NEG for arguments of the ADT *)
+
+
+(* Bindings to dyadic operations *)
+
+PROCEDURE [+] plus ( v1, v2 : VTYPE ) : VTYPE;
+(* procedure to bind to the + operator for operands of the ADT *)
+
+PROCEDURE [-] minus ( v1, v2 : VTYPE ) : VTYPE;
+(* procedure to bind to the - operator for operands of the ADT *)
+
+
+(* Bindings to relational operations *)
+
+PROCEDURE [=] isEqual ( v1, v2 : VTYPE ) : BOOLEAN;
+(* procedure to bind to the = operator for operands of the ADT *)
+
+(* The operation for the # operator is synthesized as NOT (v1 = v2) *)
+
 
 END VTYPE.
