@@ -2,11 +2,10 @@
 
 PROTOTYPE ZTYPE; (* Z-Type *)
 
-(* Prototype Definition for Whole Number Types *)
+(* Prototype Definition for Whole Number ADTs *)
 
 
-(* ADTs must be opaque records,
-   integer number literals may be used *)
+(* ZTYPE ADTs must be opaque records, integer number literals may be used *)
 
 TYPE = OPAQUE RECORD := INTEGER;
 
@@ -47,26 +46,23 @@ PROCEDURE [ODD] odd ( x : ZTYPE ) : BOOLEAN;
 (* procedure to bind to pervasive function ODD for arguments of the ADT *)
 
 
-
 (* Bindings to dyadic operations *)
 
 PROCEDURE [+] plus ( x1, x2 : ZTYPE ) : ZTYPE;
 (* procedure to bind to the + operator for operands of the ADT *)
 
+(* The operation for the ++ statement is synthesized as x := x + 1 *)
+
 PROCEDURE [-] minus ( x1, x2 : ZTYPE ) : ZTYPE;
 (* procedure to bind to the - operator for operands of the ADT *)
 
-PROCEDURE [*] asterisk ( x1, x2 : ZTYPE ) : ZTYPE;
+(* The operation for the -- statement is synthesized as x := x - 1 *)
+
+PROCEDURE [*] multiply ( x1, x2 : ZTYPE ) : ZTYPE;
 (* procedure to bind to the * operator for operands of the ADT *)
 
 PROCEDURE [DIV] div ( x1, x2 : ZTYPE ) : ZTYPE;
 (* procedure to bind to the DIV operator for operands of the ADT *)
-
-(* The operation for the ++ statement is synthesized as follows:
-   the statement x++  is replaced by statement  x := x + 1 *)
-
-(* The operation for the -- statement is synthesized as follows:
-   the statement x--  is replaced by statement  x := x - 1 *)
 
 
 (* Bindings to relational operations *)
