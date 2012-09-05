@@ -1,88 +1,90 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOTYPE ZTYPE; (* Z-Type *)
+(* Specialised Prototype Definition for Whole Number ADTs *)
 
-(* Prototype Definition for Whole Number ADTs *)
+PROTOTYPE ZTYPE [SCALAR]; (* conforms to SCALAR *)
 
-
-(* ZTYPE ADTs must be opaque records, integer number literals may be used *)
+(* ZTYPE ADTs must be opaque records to be statically allocatable,
+   integer literals are used *)
 
 TYPE = OPAQUE RECORD := INTEGER;
 
 
-(* Bindings required for Z-Type ADTs *)
+(* Bindings required for ZTYPE ADTs *)
 
-
-(* Bindings for pervasive functions TMIN and TMAX *)
+(* Bindings to pervasive functions TMIN and TMAX *)
 
 PROCEDURE [TMIN] minValue : ZTYPE;
-(* return the value that pervasive function TMIN shall return for the ADT *)
+(* procedure to return minimal value of a whole number ADT *)
 
 PROCEDURE [TMAX] maxValue : ZTYPE;
-(* return the value that pervasive function TMAX shall return for the ADT *)
-
-
-(* Binding to assignment operator *)
-
-PROCEDURE [:=] assign ( VAR left : ZTYPE; CONST right : ZTYPE );
+(* procedure to return maximal value of a whole number ADT *)
 
 
 (* Bindings to scalar conversion primitives *)
 
-PROCEDURE [SXF] toSXF ( x : ZTYPE; VAR sxf : ARRAY OF CHAR );
-(* conversion of a ZTYPE ADT value to scalar exchange format *)
+PROCEDURE [SXF] toSXF ( lexeme : ARRAY OF CHAR; VAR sxf : ARRAY OF OCTET );
+(* procedure to convert a literal to a value in scalar exchange format *)
 
-PROCEDURE [VAL] fromSXF ( CONST sxf : ARRAY OF CHAR; VAR x : ZTYPE );
-(* conversion of scalar exchange format to a ZTYPE ADT value *)
+PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ZTYPE );
+(* procedure to convert value in scalar exchange format to the ADT *)
 
 
-(* Bindings to monadic operations *)
+(* Binding to assignment operator for non-literal values *)
 
-PROCEDURE [ABS] abs ( x : ZTYPE ) : ZTYPE;
-(* procedure to bind to pervasive function ABS for arguments of the ADT *)
+PROCEDURE [:=] assign ( VAR left : ZTYPE; right : ZTYPE );
 
-PROCEDURE [NEG] neg ( x : ZTYPE ) : ZTYPE;
-(* procedure to bind to pervasive function NEG for arguments of the ADT *)
+(* The assignment of literal values is synthesised from SXF and VAL *)
 
-PROCEDURE [ODD] odd ( x : ZTYPE ) : BOOLEAN;
-(* procedure to bind to pervasive function ODD for arguments of the ADT *)
+
+PROCEDURE [ABS] abs ( i : ZTYPE ) : ZTYPE;
+(* procedure to bind to the ABS operator for operands of the ZTYPE ADT *)
+
+PROCEDURE [NEG] neg ( i : ZTYPE ) : ZTYPE;
+(* procedure to bind to the NEG operator for operands of the ZTYPE ADT *)
+
+PROCEDURE [ODD] odd ( i : ZTYPE ) : BOOLEAN;
+(* procedure to bind to the ODD operator for operands of the ZTYPE ADT *)
 
 
 (* Bindings to dyadic operations *)
 
-PROCEDURE [+] plus ( x1, x2 : ZTYPE ) : ZTYPE;
-(* procedure to bind to the + operator for operands of the ADT *)
+PROCEDURE [+] add ( i, j : ZTYPE ) : ZTYPE;
+(* procedure to bind to the + operator for operands of the ZTYPE ADT *)
 
-(* The operation for the ++ statement is synthesized as x := x + 1 *)
+(* The operation for the ++ statement is synthesized as i := i + VAL(1) *)
 
-PROCEDURE [-] minus ( x1, x2 : ZTYPE ) : ZTYPE;
-(* procedure to bind to the - operator for operands of the ADT *)
+PROCEDURE [-] subtract ( i, j : ZTYPE ) : ZTYPE;
+(* procedure to bind to the - operator for operands of the ZTYPE ADT *)
 
-(* The operation for the -- statement is synthesized as x := x - 1 *)
+(* The operation for the -- statement is synthesized as i := i - VAL(1) *)
 
-PROCEDURE [*] multiply ( x1, x2 : ZTYPE ) : ZTYPE;
-(* procedure to bind to the * operator for operands of the ADT *)
+PROCEDURE [*] multiply ( i, j : ZTYPE ) : ZTYPE;
+(* procedure to bind to the * operator for operands of the ZTYPE ADT *)
 
-PROCEDURE [DIV] div ( x1, x2 : ZTYPE ) : ZTYPE;
-(* procedure to bind to the DIV operator for operands of the ADT *)
+PROCEDURE [DIV] divide ( i, j : ZTYPE ) : ZTYPE;
+(* procedure to bind to the DIV operator for operands of the ZTYPE ADT *)
+
+PROCEDURE [MOD] modulo ( i, j : ZTYPE ) : ZTYPE;
+(* procedure to bind to the MOD operator for operands of the ZTYPE ADT *)
 
 
 (* Bindings to relational operations *)
 
-PROCEDURE [=] isEqual ( x1, x2 : ZTYPE ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the ADT *)
+PROCEDURE [=] isEqual ( i, j : ZTYPE ) : BOOLEAN;
+(* procedure to bind to the = operator for operands of the ZTYPE ADT *)
 
-(* The operation for the # operator is synthesized as NOT (x1 = x2) *)
+(* The operation for the # operator is synthesized as NOT (i = j) *)
 
-PROCEDURE [<] isLess ( x1, x2 : ZTYPE ) : BOOLEAN;
-(* procedure to bind to the < operator for operands of the ADT *)
+PROCEDURE [>] isGreater ( i, j : ZTYPE ) : BOOLEAN;
+(* procedure to bind to the = operator for operands of the ZTYPE ADT *)
 
-(* The operation for the <= operator is synthesized as NOT (x1 > x2) *)
+(* The operation for the <= operator is synthesized as NOT (i > j) *)
 
-PROCEDURE [>] isGreater ( x1, x2 : ZTYPE ) : BOOLEAN;
-(* procedure to bind to the > operator for operands of the ADT *)
+PROCEDURE [>] isLess ( i, j : ZTYPE ) : BOOLEAN;
+(* procedure to bind to the = operator for operands of the ZTYPE ADT *)
 
-(* The operation for the >= operator is synthesized as NOT (x1 < x2) *)
+(* The operation for the >= operator is synthesized as NOT (i < j) *)
 
 
 END ZTYPE.
