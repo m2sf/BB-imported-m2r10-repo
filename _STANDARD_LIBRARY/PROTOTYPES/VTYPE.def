@@ -13,10 +13,8 @@ TYPE = RECORD;
 
 (* Bindings required for V-Type ADTs *)
 
-
-(* Binding to assignment operator *)
-
-PROCEDURE [:=] assign ( VAR left : VTYPE; CONST right : VTYPE );
+(* Via-SXF conversion between structurally equivalent non-scalar number types
+   is synthesised using SXF and VAL conversions on their scalar components *)
 
 
 (* Bindings to monadic operations *)
