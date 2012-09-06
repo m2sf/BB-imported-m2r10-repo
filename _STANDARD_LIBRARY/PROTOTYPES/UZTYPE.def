@@ -74,12 +74,12 @@ PROCEDURE [=] isEqual ( n, m : UZTYPE ) : BOOLEAN;
 (* The operation for the # operator is synthesized as NOT (n = m) *)
 
 PROCEDURE [>] isGreater ( n, m : UZTYPE ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the UZTYPE ADT *)
+(* procedure to bind to the > operator for operands of the UZTYPE ADT *)
 
 (* The operation for the <= operator is synthesized as NOT (n > m) *)
 
-PROCEDURE [>] isLess ( n, m : UZTYPE ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the UZTYPE ADT *)
+PROCEDURE [<] isLess ( n, m : UZTYPE ) : BOOLEAN;
+(* procedure to bind to the < operator for operands of the UZTYPE ADT *)
 
 (* The operation for the >= operator is synthesized as NOT (n < m) *)
 

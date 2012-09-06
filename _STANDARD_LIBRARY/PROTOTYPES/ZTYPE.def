@@ -77,12 +77,12 @@ PROCEDURE [=] isEqual ( i, j : ZTYPE ) : BOOLEAN;
 (* The operation for the # operator is synthesized as NOT (i = j) *)
 
 PROCEDURE [>] isGreater ( i, j : ZTYPE ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the ZTYPE ADT *)
+(* procedure to bind to the > operator for operands of the ZTYPE ADT *)
 
 (* The operation for the <= operator is synthesized as NOT (i > j) *)
 
-PROCEDURE [>] isLess ( i, j : ZTYPE ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the ZTYPE ADT *)
+PROCEDURE [<] isLess ( i, j : ZTYPE ) : BOOLEAN;
+(* procedure to bind to the < operator for operands of the ZTYPE ADT *)
 
 (* The operation for the >= operator is synthesized as NOT (i < j) *)
 

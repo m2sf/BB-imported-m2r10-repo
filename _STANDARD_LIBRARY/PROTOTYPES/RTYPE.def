@@ -74,12 +74,12 @@ PROCEDURE [=] isEqual ( r1, r2 : RTYPE ) : BOOLEAN;
 (* The operation for the # operator is synthesized as NOT (r1 = r2) *)
 
 PROCEDURE [>] isGreater ( r1, r2 : RTYPE ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the RTYPE ADT *)
+(* procedure to bind to the > operator for operands of the RTYPE ADT *)
 
 (* The operation for the <= operator is synthesized as NOT (r1 > r2) *)
 
-PROCEDURE [>] isLess ( r1, r2 : RTYPE ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the RTYPE ADT *)
+PROCEDURE [<] isLess ( r1, r2 : RTYPE ) : BOOLEAN;
+(* procedure to bind to the < operator for operands of the RTYPE ADT *)
 
 (* The operation for the >= operator is synthesized as NOT (r1 < r2) *)
 
