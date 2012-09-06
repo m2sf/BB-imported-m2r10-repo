@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOTYPE CTYPE; (* C-Type *)
+PROTOTYPE CTYPE [NUMBERS]; (* conforms to NUMBERS *)
 
 (* Prototype Definition for Complex Number ADTs *)
 
@@ -12,12 +12,10 @@ PROTOTYPE CTYPE; (* C-Type *)
 TYPE = RECORD := { REAL, REAL };
 
 
-(* Bindings required for C-Type ADTs *)
+(* Bindings required for complex number ADTs *)
 
-
-(* Binding to assignment operator *)
-
-PROCEDURE [:=] assign ( VAR left : CTYPE; CONST right : CTYPE );
+(* Via-SXF conversion between non-scalar number types is synthesised
+   using SXF and VAL conversions on their scalar components *)
 
 
 (* Bindings to monadic operations *)
@@ -49,7 +47,7 @@ PROCEDURE [/] divide ( z1, z2 : CTYPE ) : CTYPE;
 PROCEDURE [=] isEqual ( z1, z2 : CTYPE ) : BOOLEAN;
 (* procedure to bind to the = operator for operands of the ADT *)
 
-(* The operation for the # operator is synthesized as NOT (r1 = r2) *)
+(* The operation for the # operator is synthesized as NOT (z1 = z2) *)
 
 
 END CTYPE.
