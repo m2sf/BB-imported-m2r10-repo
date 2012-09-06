@@ -1,6 +1,6 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Prototype Definition for Scalar ADTs *)
+(* General Prototype Definition for Scalar Number ADTs *)
 
 PROTOTYPE SCALAR [NUMBERS]; (* conforms to NUMBERS *)
 
@@ -68,12 +68,12 @@ PROCEDURE [=] isEqual ( op1, op2 : SCALAR ) : BOOLEAN;
 (* The operation for the # operator is synthesized as NOT (op1 = op2) *)
 
 PROCEDURE [>] isGreater ( op1, op2 : SCALAR ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the scalar ADT *)
+(* procedure to bind to the > operator for operands of the scalar ADT *)
 
 (* The operation for the <= operator is synthesized as NOT (op1 > op2) *)
 
-PROCEDURE [>] isLess ( op1, op2 : SCALAR ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the scalar ADT *)
+PROCEDURE [<] isLess ( op1, op2 : SCALAR ) : BOOLEAN;
+(* procedure to bind to the < operator for operands of the scalar ADT *)
 
 (* The operation for the >= operator is synthesized as NOT (op1 < op2) *)
 
