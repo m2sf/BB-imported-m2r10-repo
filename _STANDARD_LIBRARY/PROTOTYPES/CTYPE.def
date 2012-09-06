@@ -12,7 +12,7 @@ PROTOTYPE CTYPE [NUMBERS]; (* conforms to NUMBERS *)
 TYPE = RECORD := { REAL, REAL };
 
 
-(* Bindings required for complex number ADTs *)
+(* Bindings required for CTYPE ADTs *)
 
 (* Via-SXF conversion between structurally equivalent non-scalar number types
    is synthesised using SXF and VAL conversions on their scalar components *)
