@@ -2,15 +2,15 @@
 
 (* General Prototype Definition for Scalar ADTs *)
 
-PROTOTYPE SCALAR;
+PROTOTYPE SCALAR [NUMBERS]; (* conforms to NUMBERS *)
 
-(* SCALAR ADTs must be opaque records to be statically allocatable,
+(* Scalar ADTs must be opaque records to be statically allocatable,
    either integer or real number literals may be used, but not both *)
 
 TYPE = OPAQUE RECORD := INTEGER | REAL;
 
 
-(* Bindings required for SCALAR ADTs *)
+(* Bindings required for scalar ADTs *)
 
 (* Bindings to pervasive functions TMIN and TMAX *)
 
@@ -37,7 +37,7 @@ PROCEDURE [:=] assign ( VAR left : SCALAR; right : SCALAR );
 (* The assignment of literal values is synthesised from SXF and VAL *)
 
 
-(* The operations ABS, NEG and ODD are not common to all scalar types
+(* The operations ABS, NEG and ODD are not common to all scalar types,
    their bindings may be required by more specialised prototypes *)
 
 
@@ -56,7 +56,7 @@ PROCEDURE [-] subtract ( op1, op2 : SCALAR ) : SCALAR;
 PROCEDURE [*] multiply ( op1, op2 : SCALAR ) : SCALAR;
 (* procedure to bind to the * operator for operands of the scalar ADT *)
 
-(* The operations /, DIV and MOD are not common to all scalar types
+(* The operations /, DIV and MOD are not common to all scalar types,
    their bindings may be required by more specialised prototypes *)
 
 
