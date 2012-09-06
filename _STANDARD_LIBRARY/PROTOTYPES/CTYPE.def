@@ -5,7 +5,7 @@ PROTOTYPE CTYPE [NUMBERS]; (* conforms to NUMBERS *)
 (* Prototype Definition for Complex Number ADTs *)
 
 
-(* CTYPE ADTs must be transparent records,
+(* Complex Number ADTs must be transparent records,
    have two fields compatible with real number literals,
    structurally equivalent literals are compatible by default *)
 

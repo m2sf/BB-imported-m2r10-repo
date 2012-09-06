@@ -1,11 +1,11 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOTYPE VTYPE; (* V-Type *)
+PROTOTYPE VTYPE [NUMBERS]; (* conforms to NUMBERS *)
 
-(* Prototype Definition for Vector ADTs *)
+(* Prototype Definition for Vector Number ADTs *)
 
 
-(* VTYPE ADTs must be transparent records,
+(* Vector Number ADTs must be transparent records,
    structurally equivalent literals are compatible by default *)
 
 TYPE = RECORD;
