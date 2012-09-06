@@ -4,10 +4,10 @@
 
 PROTOTYPE NUMBERS; (* root of numeric prototypes *)
 
-(* Number ADTs must be opaque records to be statically allocatable,
+(* Number ADTs must be records to be statically allocatable,
    use of literals may be specified by more specialised prototypes *)
 
-TYPE = OPAQUE RECORD;
+TYPE = RECORD | OPAQUE RECORD;
 
 
 (* Bindings required for Number ADTs *)

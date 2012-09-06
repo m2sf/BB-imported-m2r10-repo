@@ -14,8 +14,8 @@ TYPE = RECORD := { REAL, REAL };
 
 (* Bindings required for complex number ADTs *)
 
-(* Via-SXF conversion between non-scalar number types is synthesised
-   using SXF and VAL conversions on their scalar components *)
+(* Via-SXF conversion between structurally equivalent non-scalar number types
+   is synthesised using SXF and VAL conversions on their scalar components *)
 
 
 (* Bindings to monadic operations *)
