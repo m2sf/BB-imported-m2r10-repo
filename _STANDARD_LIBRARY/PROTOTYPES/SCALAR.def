@@ -4,7 +4,7 @@
 
 PROTOTYPE SCALAR [NUMBERS]; (* conforms to NUMBERS *)
 
-(* Scalar ADTs must be opaque records to be statically allocatable,
+(* Scalar number ADTs must be opaque records to be statically allocatable,
    either integer or real number literals may be used, but not both *)
 
 TYPE = OPAQUE RECORD := INTEGER | REAL;
