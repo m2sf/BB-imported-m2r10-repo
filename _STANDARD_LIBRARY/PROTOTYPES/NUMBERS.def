@@ -5,9 +5,11 @@
 PROTOTYPE NUMBERS; (* root of numeric prototypes *)
 
 (* Number ADTs must be records to be statically allocatable,
-   use of literals may be specified by more specialised prototypes *)
+   the following literals may be used:
+   o  integer or real number literals
+   o  structured literals constructed from real number literals *)
 
-TYPE = RECORD | OPAQUE RECORD;
+TYPE = RECORD | OPAQUE RECORD := INTEGER | REAL | * OF REAL;
 
 
 (* Bindings required for Number ADTs *)
