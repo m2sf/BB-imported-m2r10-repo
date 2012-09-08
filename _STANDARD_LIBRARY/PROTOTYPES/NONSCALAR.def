@@ -4,7 +4,7 @@
 
 PROTOTYPE NONSCALAR [NUMBERS]; (* conforms to NUMBERS *)
 
-(* Non-Scalar ADTs must be records to be statically allocatable,
+(* Non-Scalar number ADTs must be records to be statically allocatable,
    structured literals constructed from real number literals may be used *)
 
 TYPE = RECORD | OPAQUE RECORD := * OF REAL;
@@ -19,7 +19,7 @@ TYPE = RECORD | OPAQUE RECORD := * OF REAL;
 
 (* Bindings to monadic operations *)
 
-(* The operations ABS and NEG are not common to all scalar types,
+(* The operations ABS and NEG are not common to all non-scalar types,
    their bindings may be required by more specialised prototypes *)
 
 (* The operation ODD is not meaningful for non-scalar types *)
