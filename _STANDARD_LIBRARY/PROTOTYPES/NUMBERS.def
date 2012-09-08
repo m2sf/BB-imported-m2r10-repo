@@ -18,12 +18,6 @@ TYPE = RECORD | OPAQUE RECORD;
 (* The operations SXF and VAL are meaningful only for scalar types
    their bindings may be required by more specialised prototypes *)
 
-
-(* Binding to assignment operator for non-literal values *)
-
-PROCEDURE [:=] assign ( VAR left : NUMBERS; right : NUMBERS );
-
-
 (* The operations ABS, NEG and ODD are not common to all number types,
    their bindings may be required by more specialised prototypes *)
 
