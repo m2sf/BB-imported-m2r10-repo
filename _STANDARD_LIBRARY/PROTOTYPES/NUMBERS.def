@@ -9,7 +9,7 @@ PROTOTYPE NUMBERS; (* root of numeric prototypes *)
    o  integer or real number literals
    o  structured literals constructed from real number literals *)
 
-TYPE = RECORD | OPAQUE RECORD := INTEGER | REAL | * OF REAL;
+TYPE = RECORD | OPAQUE RECORD := INTEGER | REAL | { .. } OF REAL;
 
 
 (* Bindings required for Number ADTs *)

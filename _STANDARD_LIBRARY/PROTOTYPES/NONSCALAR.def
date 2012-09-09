@@ -7,7 +7,7 @@ PROTOTYPE NONSCALAR [NUMBERS]; (* conforms to NUMBERS *)
 (* Non-Scalar number ADTs must be records to be statically allocatable,
    structured literals constructed from real number literals may be used *)
 
-TYPE = RECORD | OPAQUE RECORD := * OF REAL;
+TYPE = RECORD | OPAQUE RECORD := { .. } OF REAL;
 
 
 (* Bindings required for Non-Scalar ADTs *)
