@@ -43,6 +43,10 @@ PROCEDURE [ABS] abs ( n : UZTYPE ) : UZTYPE;
 PROCEDURE [ODD] odd ( n : UZTYPE ) : BOOLEAN;
 (* procedure to bind to the ODD operator for operands of the UZTYPE ADT *)
 
+(* The operation NEG is not meaningful for cardinal number types *)
+
+<* WARNONEXTN NEG; *>
+
 
 (* Bindings to dyadic operations *)
 
