@@ -1,6 +1,6 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARD128 [ZTYPE];
+DEFINITION MODULE CARD128 [UZTYPE];
 
 (* 128-bit Unsigned Integer Numbers *) 
 
@@ -16,27 +16,30 @@ TYPE
     END; (* CARD128 *)
 
 
-(* Z-Type bindings to operators, pervasives and primitives: *)
+(* UZ-Type bindings to operators, pervasives and primitives: *)
+
+(* Precision *)
+
+CONST [MDE] maxDigitsOfExponent = 0;
+(* maximum number of decimal digits of the exponent of a CARD128 value *)
+
+CONST [MDS] maxDigitsOfSignificand = 39;
+(* maximum number of decimal digits of the significand of a CARD128 value *)
 
 
 (* Range *) 
 
-CONST [TMIN] minValue = 0;
-(* Smallest value of type CARD128.
-   This value is bound to TMIN for type CARD128. *) 
+(* TMIN(CARD128) = 0 *)
 
-CONST [TMAX] maxValue =
-    { 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH,
-      0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH };
-(* Largest value of type CARD128.
-   This value is bound to TMAX for type CARD128. *)
+PROCEDURE [TMIN] minValue : CARD128;
+(* returns the smallest possible value of type CARD128.
+   This function is bound to pervasive function TMAX for type CARD128. *)
 
+(* TMAX(CARD128) = 340,282,366,920,938,463,463,374,607,431,768,211,455 *)
 
-(* Literal assignment *)
-
-PROCEDURE [:=] assign ( VAR assignTo : CARD128; literal : ARRAY OF CHAR );
-(* Converts string literal to a CARD128 value and assigns it to assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
+PROCEDURE [TMAX] maxValue : CARD128;
+(* returns the largest possible value of type CARD128.
+   This function is bound to pervasive function TMAX for type CARD128. *)
 
 
 (* Type conversions *)
@@ -60,14 +63,11 @@ PROCEDURE [::] fromINT  ( n : INTEGER ) : CARD128;
 
 (* Scalar conversion primitives *)
 
-CONST maxSXFDigits = 32;
-    (* maximum digits when converted to scalar exchange format *)
-
-PROCEDURE [SXF] toSXF ( n : CARD128; VAR s : ARRAY OF CHAR );
+PROCEDURE [SXF] toSXF ( n : CARD128; VAR s : ARRAY OF OCTET );
 (* Converts CARD128 value n to a string in scalar exchange format.
    This procedure is bound to pervasive primitive SXF for type CARD128. *)
 
-PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR n : CARD128 );
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR n : CARD128 );
 (* Converts a string in scalar exchange format to a CARD128 value.
    This procedure is bound to pervasive primitive VAL for type CARD128. *)
 
@@ -106,10 +106,10 @@ PROCEDURE [DIV] divide ( n1, n2 : CARD128 ) : CARD128;
 
 PROCEDURE [=] isEqual ( n1, n2 : CARD128 ) : BOOLEAN;
 (* Returns TRUE if CARD128 values n1 and n2 are equal, otherwise FALSE.
-   This function is bound to operators = and # for tyep CARD128. *)
+   This function is bound to operators = and # for type CARD128. *)
 
 PROCEDURE [<] isLess ( n1, n2 : CARD128 ) : BOOLEAN;
-(* Returns TRUE if CARD128 value n1 is less than n2, otherwise FASLE.
+(* Returns TRUE if CARD128 value n1 is less than n2, otherwise FALSE.
    This function is bound to operators < and >= for type CARD128. *)
 
 PROCEDURE [>] isGreater ( n1, n2 : CARD128 ) : BOOLEAN;
@@ -137,7 +137,7 @@ PROCEDURE Write( outfile : File; CONST n : CARD128 );
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
                    items        : VARIADIC OF CARD128 );
-(* Writes a formatted textual representation of one or more CARD128 values to
+(* Writes a formatted textual representation of one or more BYTE values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    CARD128 arguments. *)

@@ -1,6 +1,6 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARD32 [ZTYPE];
+DEFINITION MODULE CARD32 [UZTYPE];
 
 (* 32-bit Unsigned Integer Numbers *) 
 
@@ -16,25 +16,30 @@ TYPE
     END; (* CARD32 *)
 
 
-(* Z-Type bindings to operators, pervasives and primitives: *)
+(* UZ-Type bindings to operators, pervasives and primitives: *)
+
+(* Precision *)
+
+CONST [MDE] maxDigitsOfExponent = 0;
+(* maximum number of decimal digits of the exponent of a CARD32 value *)
+
+CONST [MDS] maxDigitsOfSignificand = 10;
+(* maximum number of decimal digits of the significand of a CARD32 value *)
 
 
 (* Range *) 
 
-CONST [TMIN] minValue = 0;
-(* Smallest value of type CARD32.
-   This value is bound to TMIN for type CARD32. *) 
+(* TMIN(CARD32) = 0 *)
 
-CONST [TMAX] maxValue = 4294967295;
-(* Largest value of type CARD32.
-   This value is bound to TMAX for type CARD32. *)
+PROCEDURE [TMIN] minValue : CARD32;
+(* returns the smallest possible value of type CARD32.
+   This function is bound to pervasive function TMAX for type CARD32. *)
 
+(* TMAX(CARD32) = 4,294,967,295 *)
 
-(* Literal assignment *)
-
-PROCEDURE [:=] assign ( VAR assignTo : CARD32; literal : ARRAY OF CHAR );
-(* Converts string literal to a CARD32 value and assigns it to assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
+PROCEDURE [TMAX] maxValue : CARD32;
+(* returns the largest possible value of type CARD32.
+   This function is bound to pervasive function TMAX for type CARD32. *)
 
 
 (* Type conversions *)
@@ -56,16 +61,13 @@ PROCEDURE [::] fromINT  ( n : INTEGER ) : CARD32;
    is bound to the :: operator for INTEGER to CARD32 conversion. *)
 
 
-(* Scalar conversion primitives *)
+(* Indirect conversions via scalar exchange format *)
 
-CONST maxSXFDigits = 8;
-    (* maximum digits when converted to scalar exchange format *)
-
-PROCEDURE [SXF] toSXF ( n : CARD32; VAR s : ARRAY OF CHAR );
+PROCEDURE [SXF] toSXF ( n : CARD32; VAR s : ARRAY OF OCTET );
 (* Converts CARD32 value n to a string in scalar exchange format.
    This procedure is bound to pervasive primitive SXF for type CARD32. *)
 
-PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR n : CARD32 );
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR n : CARD32 );
 (* Converts a string in scalar exchange format to a CARD32 value.
    This procedure is bound to pervasive primitive VAL for type CARD32. *)
 
@@ -107,7 +109,7 @@ PROCEDURE [=] isEqual ( n1, n2 : CARD32 ) : BOOLEAN;
    This function is bound to operators = and # for type CARD32. *)
 
 PROCEDURE [<] isLess ( n1, n2 : CARD32 ) : BOOLEAN;
-(* Returns TRUE if CARD32 value n1 is less than n2, otherwise FASLE.
+(* Returns TRUE if CARD32 value n1 is less than n2, otherwise FALSE.
    This function is bound to operators < and >= for type CARD32. *)
 
 PROCEDURE [>] isGreater ( n1, n2 : CARD32 ) : BOOLEAN;

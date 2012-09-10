@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE BCD [RTYPE];
 
@@ -15,29 +15,37 @@ TYPE
         value : ARRAY 8 OF OCTET; (* 64 bits *)
     END; (* BCD *)
 
-    (* 1-bit sign, 56-bit significand, 7-bit exponent *)
+    (* 1-bit sign, 56-bit significand, signed 7-bit exponent *)
 
 
-(* R-Type bindings to operators, pervasives and primitives: *)
+(* R-Type bindings to operators, pervasives and primitives *)
+
+
+(* Precision *)
+
+CONST [MDE] maxDigitsOfExponent = 2;
+(* maximum number of decimal digits of the exponent of a BCD value *)
+
+CONST [MDS] maxDigitsOfSignificand = 14;
+(* maximum number of decimal digits of the significand of a BCD value *)
 
 
 (* Range *) 
 
-CONST [TMIN] minValue = -9.9999999999999E+63;
-(* Smallest value of type BCD. This value is bound to TMIN for type BCD. *) 
+(* TMIN(BCD) = -9.999,999,999,999,9E+63 *)
 
-CONST [TMAX] maxValue = +9.9999999999999E+63;
-(* Largest value of type BCD. This value is bound to TMAX for type BCD. *)
+PROCEDURE [TMIN] minValue : BCD;
+(* returns the smallest possible value of type BCD.
+   This function is bound to pervasive function TMAX for type BCD. *)
+
+(* TMAX(BCD) = +9.999,999,999,999,9E+63 *)
+
+PROCEDURE [TMAX] maxValue : BCD;
+(* returns the largest possible value of type BCD.
+   This function is bound to pervasive function TMAX for type BCD. *)
 
 
-(* Literal assignment *)
-
-PROCEDURE [:=] assign ( VAR assignTo : BCD; literal : ARRAY OF CHAR );
-(* Converts string literal to a BCD value and assigns it to assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
-
-
-(* Type conversions *)
+(* Direct conversions to common types *)
 
 PROCEDURE [::] toCARD  ( a : BCD ) : CARDINAL;
 (* Converts BCD value a to a CARDINAL value and returns it.
@@ -52,18 +60,15 @@ PROCEDURE [::] toREAL ( a : BCD ) : REAL;
    This function is bound to the :: operator for BCD to REAL conversion. *)
 
 
-(* Scalar conversion primitives *)
+(* Indirect conversions via scalar exchange format *)
 
-CONST maxSXFDigits = 16;
-    (* maximum digits when converted to scalar exchange format *)
-
-PROCEDURE [SXF] toSXF ( a : BCD; VAR s : ARRAY OF CHAR );
+PROCEDURE [SXF] toSXF ( a : BCD; VAR s : ARRAY OF OCTET );
 (* Converts BCD value a to a string in scalar exchange format.
-   This procedure is bound to pervasive primitive SXF for type BCD. *)
+   This procedure is bound to built-in primitive SXF for type BCD. *)
 
-PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR a : BCD );
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR a : BCD );
 (* Converts a string in scalar exchange format to a BCD value.
-   This procedure is bound to pervasive primitive VAL for type BCD. *)
+   This procedure is bound to built-in primitive VAL for type BCD. *)
 
 
 (* Monadic arithmetic operations *) 
@@ -103,7 +108,7 @@ PROCEDURE [=] isEqual ( a, b : BCD ) : BOOLEAN;
    This function is bound to operators = and # for type BCD. *)
 
 PROCEDURE [<] isLess ( a, b : BCD ) : BOOLEAN;
-(* Returns TRUE if BCD value a is less than b, otherwise FASLE.
+(* Returns TRUE if BCD value a is less than b, otherwise FALSE.
    This function is bound to operators < and >= for type BCD. *)
 
 PROCEDURE [>] isGreater ( a, b : BCD ) : BOOLEAN;

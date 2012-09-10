@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE LONGBCD [RTYPE];
 
@@ -15,63 +15,65 @@ TYPE
         value : ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* LONGBCD *)
 
-    (* 1-bit sign, 116-bit significand, 11-bit exponent *)
+    (* 1-bit sign, 116-bit significand, signed 11-bit exponent *)
 
 
 (* R-Type bindings to operators, pervasives and primitives: *)
 
+(* Precision *)
+
+CONST [MDE] maxDigitsOfExponent = 4;
+(* maximum number of decimal digits of the exponent of a LONGBCD value *)
+
+CONST [MDS] maxDigitsOfSignificand = 29;
+(* maximum number of decimal digits of the significand of a LONGBCD value *)
+
 
 (* Range *) 
 
-CONST [TMIN] minValue = -9.9999999999999999999999999999E+999;
-(* Smallest value of type LONGBCD.
-   This value is bound to TMIN for type LONGBCD. *) 
+(* TMIN(LONGBCD) = -9.999,999,999,999,999,999,999,999,999,9E+1023 *)
 
-CONST [TMAX] maxValue = +9.9999999999999999999999999999E+999;
-(* Largest value of type LONGBCD.
-   This value is bound to TMAX for type LONGBCD. *)
+PROCEDURE [TMIN] minValue : LONGBCD;
+(* returns the smallest possible value of type LONGBCD.
+   This function is bound to pervasive function TMIN for type LONGBCD. *)
 
+(* TMAX(LONGBCD) = +9.999,999,999,999,999,999,999,999,999,9E+1023 *)
 
-(* Literal assignment *)
-
-PROCEDURE [:=] assign ( VAR assignTo : LONGBCD; literal : ARRAY OF CHAR );
-(* Converts string literal to a LONGBCD value and assigns it to assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
+PROCEDURE [TMAX] maxValue : LONGBCD;
+(* returns the largest possible value of type LONGBCD.
+   This function is bound to pervasive function TMAX for type LONGBCD. *)
 
 
-(* Type conversions *)
+(* Direct conversions to common types *)
 
-PROCEDURE [::] toCARD  ( a : LONGBCD ) : CARDINAL;
-(* Converts LONGBCD value a to a CARDINAL value and returns it. This
-   function is bound to the :: operator for LONGBCD to CARDINAL conversion. *)
+PROCEDURE [::] toLONGCARD  ( a : LONGBCD ) : LONGCARD;
+(* Converts LONGBCD value a to a LONGCARD value and returns it.  This func-
+   tion is bound to the :: operator for LONGBCD to LONGCARD conversion. *)
 
-PROCEDURE [::] toINT ( a : LONGBCD ) : INTEGER; 
-(* Converts LONGBCD value a to an INTEGER value and returns it. This
-   function is bound to the :: operator for LONGBCD to INTEGER conversion. *)
+PROCEDURE [::] toLONGINT ( a : LONGBCD ) : LONGINT; 
+(* Converts LONGBCD value a to an LONGINT value and returns it.  This func-
+   tion is bound to the :: operator for LONGBCD to LONGINT conversion. *)
 
-PROCEDURE [::] toREAL ( a : LONGBCD ) : REAL;
-(* Converts LONGBCD value a to a REAL value and returns it. This
-   function is bound to the :: operator for LONGBCD to REAL conversion. *)
+PROCEDURE [::] toLONGREAL ( a : LONGBCD ) : LONGREAL;
+(* Converts LONGBCD value a to a REAL value and returns it.  This func-
+   tion is bound to the :: operator for LONGBCD to LONGREAL conversion. *)
 
 
-(* Scalar conversion primitives *)
+(* Indirect conversions via scalar exchange format *)
 
-CONST maxSXFDigits = 32;
-    (* maximum digits when converted to scalar exchange format *)
-
-PROCEDURE [SXF] toSXF ( a : LONGBCD; VAR s : ARRAY OF CHAR );
+PROCEDURE [SXF] toSXF ( a : LONGBCD; VAR s : ARRAY OF OCTET );
 (* Converts LONGBCD value a to a string in scalar exchange format.
-   This procedure is bound to pervasive primitive SXF for type LONGBCD. *)
+   This procedure is bound to built-in primitive SXF for type LONGBCD. *)
 
-PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR a : LONGBCD );
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR a : LONGBCD );
 (* Converts a string in scalar exchange format to a LONGBCD value.
-   This procedure is bound to pervasive primitive VAL for type LONGBCD. *)
+   This procedure is bound to built-in primitive VAL for type LONGBCD. *)
 
 
 (* Monadic arithmetic operations *) 
 
-PROCEDURE [ABS] abs ( a : LONGBCD ) : LONGBCD;
-(* Returns the absolute value of LONGBCD value a.
+PROCEDURE [ABS] abs ( a : BCD ) : BCD;
+(* Returns the absolute value of BCD value a.
    This function is bound to pervasive function ABS for type LONGBCD. *)
 
 PROCEDURE [NEG] neg ( a : LONGBCD ) : LONGBCD;
@@ -105,7 +107,7 @@ PROCEDURE [=] isEqual ( a, b : LONGBCD ) : BOOLEAN;
    This function is bound to operators = and # for type LONGBCD. *)
 
 PROCEDURE [<] isLess ( a, b : LONGBCD ) : BOOLEAN;
-(* Returns TRUE if LONGBCD value a is less than b, otherwise FASLE.
+(* Returns TRUE if LONGBCD value a is less than b, otherwise FALSE.
    This function is bound to operators < and >= for type LONGBCD. *)
 
 PROCEDURE [>] isGreater ( a, b : LONGBCD ) : BOOLEAN;
@@ -124,11 +126,11 @@ PROCEDURE Read( infile : File; VAR b : LONGBCD );
      passed in for b
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with a LONGBCD argument. *)
+     procedure is substituted for invocations of READ with a LONGBCD argument. *)
 
 PROCEDURE Write( outfile : File; CONST b : LONGBCD );
 (* Writes the textual representation of value b to output stream outfile. This
-   procedure is substituted for invocations of WRITE with a LONGBCD argument.*)
+   procedure is substituted for invocations of WRITE with a LONGBCD argument. *)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;

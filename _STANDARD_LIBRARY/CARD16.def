@@ -1,6 +1,6 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARD16 [ZTYPE];
+DEFINITION MODULE CARD16 [UZTYPE];
 
 (* 16-bit Unsigned Integer Numbers *) 
 
@@ -16,32 +16,37 @@ TYPE
     END; (* CARD16 *)
 
 
-(* Z-Type bindings to operators, pervasives and primitives: *)
+(* UZ-Type bindings to operators, pervasives and primitives: *)
+
+(* Precision *)
+
+CONST [MDE] maxDigitsOfExponent = 0;
+(* maximum number of decimal digits of the exponent of a CARD16 value *)
+
+CONST [MDS] maxDigitsOfSignificand = 5;
+(* maximum number of decimal digits of the significand of a CARD16 value *)
 
 
-(* Range *) 
+(* Range *)
 
-CONST [TMIN] minValue = 0;
-(* Smallest value of type CARD16.
-   This value is bound to TMIN for type CARD16. *) 
+(* TMIN(CARD16) = 0 *)
 
-CONST [TMAX] maxValue = 65535;
-(* Largest value of type CARD16.
-   This value is bound to TMAX for type CARD16. *)
+PROCEDURE [TMIN] minValue : CARD16;
+(* returns the smallest possible value of type CARD16.
+   This function is bound to pervasive function TMAX for type CARD16. *)
 
+(* TMAX(CARD16) = 65535 *)
 
-(* Literal assignment *)
-
-PROCEDURE [:=] assign ( VAR assignTo : CARD16; literal : ARRAY OF CHAR );
-(* Converts string literal to a CARD16 value and assigns it to assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
+PROCEDURE [TMAX] maxValue : CARD16;
+(* returns the largest possible value of type CARD16.
+   This function is bound to pervasive function TMAX for type CARD16. *)
 
 
-(* Type conversions *)
+(* Direct conversions to common types *)
 
 PROCEDURE [::] toCARD  ( n : CARD16 ) : CARDINAL;
 (* Converts CARD16 value n to a CARDINAL value and returns it. This
-   function is bound to the :: operator for CARD16 to CARDINAL conversion.*)
+   function is bound to the :: operator for CARD16 to CARDINAL conversion. *)
 
 PROCEDURE [::] toINT ( n : CARD16 ) : INTEGER; 
 (* Converts CARD16 value n to an INTEGER value and returns it. This
@@ -56,16 +61,13 @@ PROCEDURE [::] fromINT  ( n : INTEGER ) : CARD16;
    is bound to the :: operator for INTEGER to CARD16 conversion. *)
 
 
-(* Scalar conversion primitives *)
+(* Indirect conversions via scalar exchange format *)
 
-CONST maxSXFDigits = 4;
-    (* maximum digits when converted to scalar exchange format *)
-
-PROCEDURE [SXF] toSXF ( n : CARD16; VAR s : ARRAY OF CHAR );
+PROCEDURE [SXF] toSXF ( n : CARD16; VAR s : ARRAY OF OCTET );
 (* Converts CARD16 value n to a string in scalar exchange format.
    This procedure is bound to pervasive primitive SXF for type CARD16. *)
 
-PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR n : CARD16 );
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR n : CARD16 );
 (* Converts a string in scalar exchange format to a CARD16 value.
    This procedure is bound to pervasive primitive VAL for type CARD16. *)
 
@@ -107,7 +109,7 @@ PROCEDURE [=] isEqual ( n1, n2 : CARD16 ) : BOOLEAN;
    This function is bound to operators = and # for type CARD16. *)
 
 PROCEDURE [<] isLess ( n1, n2 : CARD16 ) : BOOLEAN;
-(* Returns TRUE if CARD16 value n1 is less than n2, otherwise FASLE.
+(* Returns TRUE if CARD16 value n1 is less than n2, otherwise FALSE.
    This function is bound to operators < and >= for type CARD16. *)
 
 PROCEDURE [>] isGreater ( n1, n2 : CARD16 ) : BOOLEAN;

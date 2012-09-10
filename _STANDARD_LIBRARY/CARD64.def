@@ -1,6 +1,6 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARD64 [ZTYPE];
+DEFINITION MODULE CARD64 [UZTYPE];
 
 (* 64-bit Unsigned Integer Numbers *) 
 
@@ -16,26 +16,30 @@ TYPE
     END; (* CARD64 *)
 
 
-(* Z-Type bindings to operators, pervasives and primitives: *)
+(* UZ-Type bindings to operators, pervasives and primitives: *)
+
+(* Precision *)
+
+CONST [MDE] maxDigitsOfExponent = 0;
+(* maximum number of decimal digits of the exponent of a CARD64 value *)
+
+CONST [MDS] maxDigitsOfSignificand = 20;
+(* maximum number of decimal digits of the significand of a CARD64 value *)
 
 
 (* Range *) 
 
-CONST [TMIN] minValue = 0;
-(* Smallest value of type CARD64.
-   This value is bound to TMIN for type CARD64. *) 
+(* TMIN(CARD64) = 0 *)
 
-CONST [TMAX] maxValue =
-    { 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH };
-(* Largest value of type CARD64.
-   This value is bound to TMAX for type CARD64. *)
+PROCEDURE [TMIN] minValue : CARD64;
+(* returns the smallest possible value of type CARD64.
+   This function is bound to pervasive function TMAX for type CARD64. *)
 
+(* TMAX(CARD64) = 18,446,744,073,709,551,615 *)
 
-(* Literal assignment *)
-
-PROCEDURE [:=] assign ( VAR assignTo : CARD64; literal : ARRAY OF CHAR );
-(* Converts string literal to a CARD64 value and assigns it to assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
+PROCEDURE [TMAX] maxValue : CARD64;
+(* returns the largest possible value of type CARD64.
+   This function is bound to pervasive function TMAX for type CARD64. *)
 
 
 (* Type conversions *)
@@ -59,14 +63,11 @@ PROCEDURE [::] fromINT  ( n : INTEGER ) : CARD64;
 
 (* Scalar conversion primitives *)
 
-CONST maxSXFDigits = 16;
-    (* maximum digits when converted to scalar exchange format *)
-
-PROCEDURE [SXF] toSXF ( n : CARD64; VAR s : ARRAY OF CHAR );
+PROCEDURE [SXF] toSXF ( n : CARD64; VAR s : ARRAY OF OCTET );
 (* Converts CARD64 value n to a string in scalar exchange format.
    This procedure is bound to pervasive primitive SXF for type CARD64. *)
 
-PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR n : CARD64 );
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR n : CARD64 );
 (* Converts a string in scalar exchange format to a CARD64 value.
    This procedure is bound to pervasive primitive VAL for type CARD64. *)
 
@@ -108,7 +109,7 @@ PROCEDURE [=] isEqual ( n1, n2 : CARD64 ) : BOOLEAN;
    This function is bound to operators = and # for type CARD64. *)
 
 PROCEDURE [<] isLess ( n1, n2 : CARD64 ) : BOOLEAN;
-(* Returns TRUE if CARD64 value n1 is less than n2, otherwise FASLE.
+(* Returns TRUE if CARD64 value n1 is less than n2, otherwise FALSE.
    This function is bound to operators < and >= for type CARD64. *)
 
 PROCEDURE [>] isGreater ( n1, n2 : CARD64 ) : BOOLEAN;

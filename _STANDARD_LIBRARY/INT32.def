@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE INT32 [ZTYPE];
 
@@ -18,23 +18,28 @@ TYPE
 
 (* Z-Type bindings to operators, pervasives and primitives: *)
 
+(* Precision *)
+
+CONST [MDE] maxDigitsOfExponent = 0;
+(* maximum number of decimal digits of the exponent of a INT32 value *)
+
+CONST [MDS] maxDigitsOfSignificand = 10;
+(* maximum number of decimal digits of the significand of a INT32 value *)
+
 
 (* Range *) 
 
-CONST [TMIN] minValue = -2147483648;
-(* Smallest value of type INT32.
-   This value is bound to TMIN for type INT32. *) 
+(* TMIN(INT32) = -2,147,483,648 *)
 
-CONST [TMAX] maxValue = 2147483647;
-(* Largest value of type INT32.
-   This value is bound to TMAX for type INT32. *)
+PROCEDURE [TMIN] minValue : INT32;
+(* returns the smallest possible value of type INT32.
+   This function is bound to pervasive function TMAX for type INT32. *)
 
+(* TMAX(INT32) = 2,147,483,647 *)
 
-(* Literal assignment *)
-
-PROCEDURE [:=] assign ( VAR assignTo : INT32; literal : ARRAY OF CHAR );
-(* Converts string literal to an INT32 value and assigns it to assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
+PROCEDURE [TMAX] maxValue : INT32;
+(* returns the largest possible value of type INT32.
+   This function is bound to pervasive function TMAX for type INT32. *)
 
 
 (* Type conversions *)
@@ -58,14 +63,11 @@ PROCEDURE [::] fromINT  ( n : INTEGER ) : INT32;
 
 (* Scalar conversion primitives *)
 
-CONST maxSXFDigits = 8;
-    (* maximum digits when converted to scalar exchange format *)
-
-PROCEDURE [SXF] toSXF ( n : INT32; VAR s : ARRAY OF CHAR );
+PROCEDURE [SXF] toSXF ( n : INT32; VAR s : ARRAY OF OCTET );
 (* Converts INT32 value n to a string in scalar exchange format.
    This procedure is bound to pervasive primitive SXF for type INT32. *)
 
-PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR n : INT32 );
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR n : INT32 );
 (* Converts a string in scalar exchange format to an INT32 value.
    This procedure is bound to pervasive primitive VAL for type INT32. *)
 
@@ -111,7 +113,7 @@ PROCEDURE [=] isEqual ( n1, n2 : INT32 ) : BOOLEAN;
    This function is bound to operators = and # for type INT32. *)
 
 PROCEDURE [<] isLess ( n1, n2 : INT32 ) : BOOLEAN;
-(* Returns TRUE if INT32 value n1 is less than n2, otherwise FASLE.
+(* Returns TRUE if INT32 value n1 is less than n2, otherwise FALSE.
    This function is bound to operators < and >= for type INT32. *)
 
 PROCEDURE [>] isGreater ( n1, n2 : INT32 ) : BOOLEAN;

@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE INT16 [ZTYPE];
 
@@ -18,23 +18,28 @@ TYPE
 
 (* Z-Type bindings to operators, pervasives and primitives: *)
 
+(* Precision *)
+
+CONST [MDE] maxDigitsOfExponent = 0;
+(* maximum number of decimal digits of the exponent of a INT16 value *)
+
+CONST [MDS] maxDigitsOfSignificand = 5;
+(* maximum number of decimal digits of the significand of a INT16 value *)
+
 
 (* Range *) 
 
-CONST [TMIN] minValue = -32768;
-(* Smallest value of type INT16.
-   This value is bound to TMIN for type INT16. *) 
+(* TMIN(INT16) = -32768 *)
 
-CONST [TMAX] maxValue = 32767;
-(* Largest value of type INT16.
-   This value is bound to TMAX for type INT16. *)
+PROCEDURE [TMIN] minValue : INT16;
+(* returns the smallest possible value of type INT16.
+   This function is bound to pervasive function TMAX for type INT16. *)
 
+(* TMAX(INT16) = 32767 *)
 
-(* Literal assignment *)
-
-PROCEDURE [:=] assign ( VAR assignTo : INT16; literal : ARRAY OF CHAR );
-(* Converts string literal to an INT16 value and assigns it to assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
+PROCEDURE [TMAX] maxValue : INT16;
+(* returns the largest possible value of type INT16.
+   This function is bound to pervasive function TMAX for type INT16. *)
 
 
 (* Type conversions *)
@@ -58,14 +63,11 @@ PROCEDURE [::] fromINT  ( n : INTEGER ) : INT16;
 
 (* Scalar conversion primitives *)
 
-CONST maxSXFDigits = 4;
-    (* maximum digits when converted to scalar exchange format *)
-
-PROCEDURE [SXF] toSXF ( n : INT16; VAR s : ARRAY OF CHAR );
+PROCEDURE [SXF] toSXF ( n : INT16; VAR s : ARRAY OF OCTET );
 (* Converts INT16 value n to a string in scalar exchange format.
    This procedure is bound to pervasive primitive SXF for type INT16. *)
 
-PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR n : INT16 );
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR n : INT16 );
 (* Converts a string in scalar exchange format to an INT16 value.
    This procedure is bound to pervasive primitive VAL for type INT16. *)
 
@@ -111,7 +113,7 @@ PROCEDURE [=] isEqual ( n1, n2 : INT16 ) : BOOLEAN;
    This function is bound to operators = and # for type INT16. *)
 
 PROCEDURE [<] isLess ( n1, n2 : INT16 ) : BOOLEAN;
-(* Returns TRUE if INT16 value n1 is less than n2, otherwise FASLE.
+(* Returns TRUE if INT16 value n1 is less than n2, otherwise FALSE.
    This function is bound to operators < and >= for type INT16. *)
 
 PROCEDURE [>] isGreater ( n1, n2 : INT16 ) : BOOLEAN;

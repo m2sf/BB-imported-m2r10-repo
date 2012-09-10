@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE INT128 [ZTYPE];
 
@@ -18,27 +18,28 @@ TYPE
 
 (* Z-Type bindings to operators, pervasives and primitives: *)
 
+(* Precision *)
+
+CONST [MDE] maxDigitsOfExponent = 0;
+(* maximum number of decimal digits of the exponent of a INT128 value *)
+
+CONST [MDS] maxDigitsOfSignificand = 39;
+(* maximum number of decimal digits of the significand of a INT128 value *)
+
 
 (* Range *) 
 
-CONST [TMIN] minValue =
-    { 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH,
-      0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH };
-(* Smallest value of type INT128.
-   This value is bound to TMIN for type INT128. *) 
+(* TMIN(INT128) = -170,141,183,460,469,231,731,687,303,715,884,105,728 *)
 
-CONST [TMAX] maxValue =
-    {    0,    0,    0,    0,    0,    0,    0,    0,
-      0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH, 0FFH };
-(* Largest value of type INT128.
-   This value is bound to TMAX for type INT128. *)
+PROCEDURE [TMIN] minValue : INT128;
+(* returns the smallest possible value of type INT128.
+   This function is bound to pervasive function TMAX for type INT128. *)
 
+(* TMAX(INT128) = 170,141,183,460,469,231,731,687,303,715,884,105,727 *)
 
-(* Literal assignment *)
-
-PROCEDURE [:=] assign ( VAR assignTo : INT128; literal : ARRAY OF CHAR );
-(* Converts string literal to an INT128 value and assigns it to assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
+PROCEDURE [TMAX] maxValue : INT128;
+(* returns the largest possible value of type INT128.
+   This function is bound to pervasive function TMAX for type INT128. *)
 
 
 (* Type conversions *)
@@ -62,14 +63,11 @@ PROCEDURE [::] fromINT  ( n : INTEGER ) : INT128;
 
 (* Scalar conversion primitives *)
 
-CONST maxSXFDigits = 32;
-    (* maximum digits when converted to scalar exchange format *)
-
-PROCEDURE [SXF] toSXF ( n : INT128; VAR s : ARRAY OF CHAR );
+PROCEDURE [SXF] toSXF ( n : INT128; VAR s : ARRAY OF OCTET );
 (* Converts INT128 value n to a string in scalar exchange format.
    This procedure is bound to pervasive primitive SXF for type INT128. *)
 
-PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR n : INT128 );
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR n : INT128 );
 (* Converts a string in scalar exchange format to an INT128 value.
    This procedure is bound to pervasive primitive VAL for type INT128. *)
 
@@ -115,7 +113,7 @@ PROCEDURE [=] isEqual ( n1, n2 : INT128 ) : BOOLEAN;
    This function is bound to operators = and # for type INT128. *)
 
 PROCEDURE [<] isLess ( n1, n2 : INT128 ) : BOOLEAN;
-(* Returns TRUE if INT128 value n1 is less than n2, otherwise FASLE.
+(* Returns TRUE if INT128 value n1 is less than n2, otherwise FALSE.
    This function is bound to operators < and >= for type INT128. *)
 
 PROCEDURE [>] isGreater ( n1, n2 : INT128 ) : BOOLEAN;
@@ -136,7 +134,7 @@ PROCEDURE Read( infile : File; VAR n : INT128 );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an INT128 argument. *)
 
-PROCEDURE Write( outfile : File; CONST n : INT128 );
+PROCEDURE Write( outfile : File; n : INT128 );
 (* Writes the textual representation of value n to stream outfile. This
    procedure is substituted for invocations of WRITE with an INT128 argument.*)
 
