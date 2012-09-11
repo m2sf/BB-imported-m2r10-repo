@@ -1,64 +1,38 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE Cardinals;
 
-(* Alias types for Unsigned Integer Numbers *) 
+(* Import Aggregator for Unsigned Integer Types *) 
 
 
-IMPORT CARD16, CARD32, CARD64, CARD128;
-
-
-(* SHORTCARD - Alias for smallest cardinal type *)
+(* SHORTCARD - Alias for smallest unsigned integer type *)
 
 IMPORT SHORTCARD+; (* import into client module *)
 
 
-(* LONGLONGCARD - Alias for largest cardinal type *)
+(* LONGLONGCARD - Alias for largest unsigned integer type *)
 
 IMPORT LONGLONGCARD+; (* import into client module *)
 
 
-TYPE
+(* CARDINAL16 - Alias for 16-bit unsigned integer type *)
 
-(* CARDINAL16 - Alias type for 16-bit unsigned integers *)
-
-<* IF TSIZE(CARDINAL)*8 = 16 *>
-    CARDINAL16 = ALIAS OF CARDINAL;
-<* ELSE *>
-    CARDINAL16 = ALIAS OF CARD16;
-<* ENDIF *>
+IMPORT CARDINAL16+; (* import into client module *)
 
 
-(* CARDINAL32 - Alias type for 32-bit unsigned integers *)
+(* CARDINAL32 - Alias for 32-bit unsigned integer type *)
 
-<* IF TSIZE(CARDINAL)*8 = 32 *>
-    CARDINAL32 = ALIAS OF CARDINAL;
-<* ELSIF TSIZE(LONGCARD)*8 = 32 *>
-    CARDINAL32 = ALIAS OF LONGCARD;
-<* ELSE *>
-    CARDINAL32 = ALIAS OF CARD32;
-<* ENDIF *>
+IMPORT CARDINAL32+; (* import into client module *)
 
 
-(* CARDINAL64 - Alias type for 64-bit unsigned integers *)
+(* CARDINAL64 - Alias for 64-bit unsigned integer type *)
 
-<* IF TSIZE(CARDINAL)*8 = 64 *>
-    CARDINAL64 = ALIAS OF CARDINAL;
-<* ELSIF TSIZE(LONGCARD)*8 = 64 *>
-    CARDINAL64 = ALIAS OF LONGCARD;
-<* ELSE *>
-    CARDINAL64 = ALIAS OF CARD64;
-<* ENDIF *>
+IMPORT CARDINAL64+; (* import into client module *)
 
 
-(* CARDINAL128 - Alias type for 128-bit unsigned integers *)
+(* CARDINAL128 - Alias for 128-bit unsigned integer type *)
 
-<* IF TSIZE(CARDINAL)*8 = 128 *>
-    CARDINAL128 = ALIAS OF CARDINAL;
-<* ELSIF TSIZE(LONGCARD)*8 = 128 *>
-    CARDINAL128 = ALIAS OF LONGCARD;
-<* ELSE *>
-    CARDINAL128 = ALIAS OF CARD128;
-<* ENDIF *>
+IMPORT CARDINAL128+; (* import into client module *)
+
 
 END Cardinals.

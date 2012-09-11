@@ -1,0 +1,23 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CARDINAL32;
+
+(* CARDINAL32 - Alias type for 32-bit unsigned integers *)
+
+<* IF TSIZE(CARDINAL)*8 = 32 *>
+
+TYPE CARDINAL32 = ALIAS OF CARDINAL;
+
+<* ELSIF TSIZE(LONGCARD)*8 = 32 *>
+
+TYPE CARDINAL32 = ALIAS OF LONGCARD;
+
+<* ELSE *>
+
+IMPORT CARD32;
+
+TYPE CARDINAL32 = ALIAS OF CARD32;
+
+<* ENDIF *>
+
+END CARDINAL32.

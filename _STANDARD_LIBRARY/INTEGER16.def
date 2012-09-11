@@ -1,0 +1,19 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE INTEGER16;
+
+(* INTEGER16 - Alias type for 16-bit signed integers *)
+
+<* IF TSIZE(INTEGER)*8 = 16 *>
+
+TYPE INTEGER16 = ALIAS OF INTEGER;
+
+<* ELSE *>
+
+IMPORT INT16;
+
+TYPE INTEGER16 = ALIAS OF INT16;
+
+<* ENDIF *>
+
+END INTEGER16.

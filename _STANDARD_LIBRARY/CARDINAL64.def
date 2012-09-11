@@ -1,0 +1,23 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CARDINAL64;
+
+(* CARDINAL64 - Alias type for 64-bit unsigned integers *)
+
+<* IF TSIZE(CARDINAL)*8 = 64 *>
+
+TYPE CARDINAL64 = ALIAS OF CARDINAL;
+
+<* ELSIF TSIZE(LONGCARD)*8 = 64 *>
+
+TYPE CARDINAL64 = ALIAS OF LONGCARD;
+
+<* ELSE *>
+
+IMPORT CARD64;
+
+TYPE CARDINAL64 = ALIAS OF CARD64;
+
+<* ENDIF *>
+
+END CARDINAL64.

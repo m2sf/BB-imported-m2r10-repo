@@ -1,0 +1,23 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE INTEGER128;
+
+(* INTEGER128 - Alias type for 128-bit signed integers *)
+
+<* IF TSIZE(INTEGER)*8 = 128 *>
+
+TYPE INTEGER128 = ALIAS OF INTEGER;
+
+<* ELSIF TSIZE(LONGINT)*8 = 128 *>
+
+TYPE INTEGER128 = ALIAS OF LONGINT;
+
+<* ELSE *>
+
+IMPORT INT128;
+
+TYPE INTEGER128 = ALIAS OF INT128;
+
+<* ENDIF *>
+
+END INTEGER128.

@@ -1,0 +1,23 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE INTEGER64;
+
+(* INTEGER64 - Alias type for 64-bit signed integers *)
+
+<* IF TSIZE(INTEGER)*8 = 64 *>
+
+TYPE INTEGER64 = ALIAS OF INTEGER;
+
+<* ELSIF TSIZE(LONGINT)*8 = 64 *>
+
+TYPE INTEGER64 = ALIAS OF LONGINT;
+
+<* ELSE *>
+
+IMPORT INT64;
+
+TYPE INTEGER64 = ALIAS OF INT64;
+
+<* ENDIF *>
+
+END INTEGER64.

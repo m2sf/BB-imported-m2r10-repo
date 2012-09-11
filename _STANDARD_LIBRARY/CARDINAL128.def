@@ -1,0 +1,23 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CARDINAL128;
+
+(* CARDINAL128 - Alias type for 128-bit unsigned integers *)
+
+<* IF TSIZE(CARDINAL)*8 = 128 *>
+
+TYPE CARDINAL128 = ALIAS OF CARDINAL;
+
+<* ELSIF TSIZE(LONGCARD)*8 = 128 *>
+
+TYPE CARDINAL128 = ALIAS OF LONGCARD;
+
+<* ELSE *>
+
+IMPORT CARD128;
+
+TYPE CARDINAL128 = ALIAS OF CARD128;
+
+<* ENDIF *>
+
+END CARDINAL128.

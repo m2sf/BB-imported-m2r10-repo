@@ -1,0 +1,23 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE INTEGER32;
+
+(* INTEGER32 - Alias type for 32-bit signed integers *)
+
+<* IF TSIZE(INTEGER)*8 = 32 *>
+
+TYPE INTEGER32 = ALIAS OF INTEGER;
+
+<* ELSIF TSIZE(LONGINT)*8 = 32 *>
+
+TYPE INTEGER32 = ALIAS OF LONGINT;
+
+<* ELSE *>
+
+IMPORT INT32;
+
+TYPE INTEGER32 = ALIAS OF INT32;
+
+<* ENDIF *>
+
+END INTEGER32.

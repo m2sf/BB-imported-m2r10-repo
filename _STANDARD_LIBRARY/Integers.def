@@ -1,11 +1,8 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE Integers;
 
-(* Alias types for Signed Integer Numbers *) 
-
-
-IMPORT INT16, INT32, INT64, INT128;
+(* Import Aggregator for Signed Integer Types *) 
 
 
 (* SHORTINT - Alias for smallest integer type *)
@@ -18,47 +15,24 @@ IMPORT SHORTINT+; (* import into client module *)
 IMPORT LONGLONGINT+; (* import into client module *)
 
 
-TYPE
+(* INTEGER16 - Alias for 16-bit integer type *)
 
-(* INTEGER16 - Alias type for 16-bit signed integers *)
-
-<* IF TSIZE(INTEGER)*8 = 16 *>
-    INTEGER16 = ALIAS OF INTEGER;
-<* ELSE *>
-    INTEGER16 = ALIAS OF INT16;
-<* ENDIF *>
+IMPORT INTEGER16+; (* import into client module *)
 
 
-(* INTEGER32 - Alias type for 32-bit signed integers *)
+(* INTEGER32 - Alias for 32-bit integer type *)
 
-<* IF TSIZE(INTEGER)*8 = 32 *>
-    INTEGER32 = ALIAS OF INTEGER;
-<* ELSIF TSIZE(LONGINT)*8 = 32 *>
-    INTEGER32 = ALIAS OF LONGINT;
-<* ELSE *>
-    INTEGER32 = ALIAS OF INT32;
-<* ENDIF *>
+IMPORT INTEGER32+; (* import into client module *)
 
 
-(* INTEGER64 - Alias type for 64-bit signed integers *)
+(* INTEGER64 - Alias for 64-bit integer type *)
 
-<* IF TSIZE(INTEGER)*8 = 64 *>
-    INTEGER64 = ALIAS OF INTEGER;
-<* ELSIF TSIZE(LONGINT)*8 = 64 *>
-    INTEGER64 = ALIAS OF LONGINT;
-<* ELSE *>
-    INTEGER64 = ALIAS OF INT64;
-<* ENDIF *>
+IMPORT INTEGER64+; (* import into client module *)
 
 
-(* INTEGER128 - Alias type for 128-bit signed integers *)
+(* INTEGER128 - Alias for 128-bit integer type *)
 
-<* IF TSIZE(INTEGER)*8 = 128 *>
-    INTEGER128 = ALIAS OF INTEGER;
-<* ELSIF TSIZE(LONGINT)*8 = 128 *>
-    INTEGER128 = ALIAS OF LONGINT;
-<* ELSE *>
-    INTEGER128 = ALIAS OF INT128;
-<* ENDIF *>
+IMPORT INTEGER128+; (* import into client module *)
+
 
 END Integers.

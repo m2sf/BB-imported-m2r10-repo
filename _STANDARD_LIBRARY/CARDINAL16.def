@@ -1,0 +1,19 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CARDINAL16;
+
+(* CARDINAL16 - Alias type for 16-bit unsigned integers *)
+
+<* IF TSIZE(CARDINAL)*8 = 16 *>
+
+TYPE CARDINAL16 = ALIAS OF CARDINAL;
+
+<* ELSE *>
+
+IMPORT CARD16;
+
+TYPE CARDINAL16 = ALIAS OF CARD16;
+
+<* ENDIF *>
+
+END CARDINAL16.
