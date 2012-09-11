@@ -1,0 +1,21 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE POSINT16;
+
+(* POSINT16 - Positive subrange of 16-bit signed integers *)
+
+IMPORT POSINT;
+
+<* IF TSIZE(POSINT)*8 = 16 *>
+
+TYPE POSINT16 = ALIAS OF POSINT;
+
+<* ELSE *>
+
+IMPORT INT16;
+
+TYPE POSINT16 = [0 .. TMAX(INT16)] OF INT16;
+
+<* ENDIF *>
+
+END POSINT16.

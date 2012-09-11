@@ -1,0 +1,9 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LONGPOSINT;
+
+(* LONGPOSINT - Positive subrange of LONGINT *)
+
+TYPE LONGPOSINT = [0 .. TMAX(LONGINT)] OF LONGINT;
+
+END LONGPOSINT.

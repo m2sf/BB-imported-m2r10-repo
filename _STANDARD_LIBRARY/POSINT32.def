@@ -1,0 +1,25 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE POSINT32;
+
+(* POSINT32 - Positive subrange of 32-bit signed integers *)
+
+IMPORT POSINT, LONGPOSINT;
+
+<* IF TSIZE(POSINT)*8 = 32 *>
+
+TYPE POSINT32 = ALIAS OF POSINT;
+
+<* ELSIF TSIZE(LONGPOSINT)*8 = 32 *>
+
+TYPE POSINT32 = ALIAS OF LONGPOSINT;
+
+<* ELSE *>
+
+IMPORT INT32;
+
+TYPE POSINT32 = [0 .. TMAX(INT32)] OF INT32;
+
+<* ENDIF *>
+
+END POSINT32.

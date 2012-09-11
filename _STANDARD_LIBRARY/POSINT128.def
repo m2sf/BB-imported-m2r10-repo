@@ -1,0 +1,25 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE POSINT128;
+
+(* POSINT128 - Positive subrange of 128-bit signed integers *)
+
+IMPORT POSINT, LONGPOSINT;
+
+<* IF TSIZE(POSINT)*8 = 128 *>
+
+TYPE POSINT128 = ALIAS OF POSINT;
+
+<* ELSIF TSIZE(LONGPOSINT)*8 = 128 *>
+
+TYPE POSINT128 = ALIAS OF LONGPOSINT;
+
+<* ELSE *>
+
+IMPORT INT128;
+
+TYPE POSINT128 = [0 .. TMAX(INT128)] OF INT128;
+
+<* ENDIF *>
+
+END POSINT128.

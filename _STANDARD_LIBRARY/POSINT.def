@@ -1,0 +1,9 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE POSINT;
+
+(* POSINT - Positive subrange of INTEGER *)
+
+TYPE POSINT = [0 .. TMAX(INTEGER)] OF INTEGER;
+
+END POSINT.

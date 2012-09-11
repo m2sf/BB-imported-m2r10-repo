@@ -1,0 +1,46 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE PositiveIntegers;
+
+(* Import Aggregator for Positive Subranges of Signed Integer Types *) 
+
+
+(* POSINT - Positive subrange of INTEGER *)
+
+IMPORT POSINT+; (* import into client module *)
+
+(* LONGPOSINT - Positive subrange of LONGINT *)
+
+IMPORT LONGPOSINT+; (* import into client module *)
+
+
+(* SHORTPOSINT - Alias for smallest positive subrange integer type *)
+
+IMPORT SHORTPOSINT+; (* import into client module *)
+
+(* LONGLONGPOSINT - Alias for largest positive subrange integer type *)
+
+IMPORT LONGLONGPOSINT+; (* import into client module *)
+
+
+(* POSINT16 - Positive subrange of 16-bit integer type *)
+
+IMPORT POSINT16+; (* import into client module *)
+
+
+(* POSINT32 - Positive subrange of 32-bit integer type *)
+
+IMPORT POSINT32+; (* import into client module *)
+
+
+(* POSINT64 - Positive subrange of 64-bit integer type *)
+
+IMPORT POSINT64+; (* import into client module *)
+
+
+(* POSINT128 - Positive subrange of 128-bit integer type *)
+
+IMPORT POSINT128+; (* import into client module *)
+
+
+END PositiveIntegers.

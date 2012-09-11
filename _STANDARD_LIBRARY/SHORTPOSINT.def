@@ -1,0 +1,11 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE SHORTPOSINT;
+
+IMPORT SHORTINT;
+
+(* SHORTPOSINT - Positive subrange of SHORTINT *)
+
+TYPE SHORTPOSINT = [0 .. TMAX(SHORTINT)] OF SHORTINT;
+
+END SHORTPOSINT.

@@ -1,0 +1,25 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE POSINT64;
+
+(* POSINT64 - Positive subrange of 64-bit signed integers *)
+
+IMPORT POSINT, LONGPOSINT;
+
+<* IF TSIZE(POSINT)*8 = 64 *>
+
+TYPE POSINT64 = ALIAS OF POSINT;
+
+<* ELSIF TSIZE(LONGPOSINT)*8 = 64 *>
+
+TYPE POSINT64 = ALIAS OF LONGPOSINT;
+
+<* ELSE *>
+
+IMPORT INT64;
+
+TYPE POSINT64 = [0 .. TMAX(INT64)] OF INT64;
+
+<* ENDIF *>
+
+END POSINT64.
