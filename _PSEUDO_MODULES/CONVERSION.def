@@ -1,3 +1,5 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
 DEFINITION MODULE CONVERSION;
 
 (* Primitives for Converting to and from Scalar eXchange Format *)
