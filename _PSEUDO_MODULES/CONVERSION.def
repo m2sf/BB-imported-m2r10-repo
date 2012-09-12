@@ -1,0 +1,52 @@
+DEFINITION MODULE CONVERSION;
+
+(* Primitives for Converting to and from Scalar eXchange Format *)
+
+
+(* Version of the scalar exchange format used by the compiler *)
+
+CONST SXFVersion = 100; (* Version 1.00 *)
+
+
+(* Maximum number of digits stored in exponent *)
+
+(* MACRO *) PROCEDURE MDE ( <NumericScalarType> ) : CARDINAL;
+(* Expands to a numeric value with the maximum number of decimal digits that
+   can be stored in the exponent of the passed in type.  Expands to 0 if the
+   type does not store an exponent.  A compile time error occurs if the type
+   is not a numeric scalar type. *)
+
+
+(* Maximum number of digits stored in significand *)
+
+(* MACRO *) PROCEDURE MDS ( <NumericScalarType> ) : CARDINAL;
+(* Expands to a numeric value with the maximum number of decimal digits that
+   can be stored in the significand of the passed in type.  A compile time
+   error occurs if the type is not a numeric scalar type. *)
+
+
+(* Required size to hold value in SXF format *)
+
+(* MACRO *) PROCEDURE SXFSizeForType ( <NumericScalarType> ) : CARDINAL;
+(* Expands to a numeric value with the allocation size for an array of octets
+   needed to store any value of the passed in type in scalar exchange format.
+   A compile time error occurs if the type is not a numeric scalar type. *)
+
+
+(* Conversion to SXF format *)
+
+PROCEDURE SXF ( CONST value : <T>; VAR sxfValue : ARRAY OF OCTET );
+(* Converts a value of type T to a value in scalar exchange format.
+   A compile time error occurs if T is not a numeric scalar type.
+   A runtime error occurs if the size of the array is insufficient. *)
+
+
+(* Conversion from SXF format *)
+
+PROCEDURE VAL ( CONST sxfValue : ARRAY OF OCTET; VAR value : <T> );
+(* Converts a value in scalar exchange format to a value of type T.
+   A compile time error occurs if T is not a numeric scalar type.
+   A runtime error occurs if the value is out of the type's range. *)
+
+
+END CONVERSION.

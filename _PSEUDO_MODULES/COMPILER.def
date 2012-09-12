@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE COMPILER;
 
@@ -6,75 +6,129 @@ DEFINITION MODULE COMPILER;
 
 (* All provided facilities are compile time expressions *)
 
+
+(* Identity of the compiler *)
+
 CONST
+    Name = "<short name of compiler>";
+    FullName = "<full name of compiler>";
+    EditionName = "<name of compiler edition>";
 
-(* Information about the compiler *)
+    MajorVersion = <major version number>;
+    MinorVersion = <minor version number>;
+    SubMinorVersion = <sub-minor version number>;
 
-    name = "<short name of compiler>";
-    fullName = "<full name of compiler>";
-    editionName = "<name of compiler edition>";
+    ReleaseYear = <four digit year of release>;
+    ReleaseMonth = <two digit month of release>;
+    ReleaseDay = <two digit day of release>;
+    
+    IsBootstrapSubset = <implementation defined boolean value>;
 
-    majorVersion = <major version number>;
-    minorVersion = <minor version number>;
-    subMinorVersion = <sub-minor version number>;
-
-    releaseYear = <four digit year of release>;
-    releaseMonth = <two digit month of release>;
-    releaseDay = <two digit day of release>;
-
-(* Information about the compiler's lexical parameters *)
-
-    maxIdentLength = <implementation defined constant>;
-    maxStrLiteralLength = <implementation defined constant>;
-    maxNumLiteralLength = <implementation defined constant>;
-    maxCommentLength = <implementation defined constant>;
 
 (* Optional compiler capabilities *)
 
-TYPE Capability = (
-   InlineAssembler, FortranFFI,
-   AddressMapping, RegisterMapping, VolatileAttribute );
+CONST SupportsInlineAssembler = <implementation defined boolean value>;
+(* Denotes whether the compiler provides optional pseudo-module ASSEMBLER *)
+
+CONST SupportsUTF8EncodedSource = <implementation defined boolean value>;
+(* Denotes whether the compiler provides optional pragma ENCODING *)
+
+CONST SupportsCFFI = <implementation defined boolean value>;
+(* Denotes whether the compiler provides an FFI to C *)
+
+CONST SupportsFortranFFI = <implementation defined boolean value>;
+(* Denotes whether the compiler provides an FFI to Fortran *)
+
+CONST SupportsAlignmentControl = <implementation defined boolean value>;
+(* Denotes whether the compiler provides optional pragma ALIGN *)
+
+CONST SupportsBitPadding = <implementation defined boolean value>;
+(* Denotes whether the compiler provides optional pragma PADBITS *)
+
+CONST SupportsAddressMapping = <implementation defined boolean value>;
+(* Denotes whether the compiler provides optional pragma ADDR *)
+
+CONST SupportsRegisterMapping = <implementation defined boolean value>;
+(* Denotes whether the compiler provides optional pragma REG *)
+
+CONST SupportsVolatileAttribute = <implementation defined boolean value>;
+(* Denotes whether the compiler provides optional pragma VOLATILE *)
+
+CONST SupportsCVarArgFormatCheck = <implementation defined boolean value>;
+(* Denotes whether the compiler provides optional pragma CVARGFMTCHK *)
+
+
+(* Information about the implementation model of REAL and LONGREAL *)
+
+TYPE IEEE754Support = ( None, Binary16, Binary32, Binary64, Binary128 );
+
+CONST ImplModelOfTypeReal = <implementation defined value>;
+(* Denotes the compiler's implementation model of type REAL *)
+
+CONST ImplModelOfTypeLongReal = <implementation defined value>;
+(* Denotes the compiler's implementation model of type LONGREAL *)
 
 
 (* Compile Time Macros *)
 
 
-(* information about the compiling source *)
+(* Information about the compiling source *)
 
-(* MACRO *) PROCEDURE MODNAME : ARRAY OF CHAR; 
+(* MACRO *) PROCEDURE MODNAME : ARRAY OF CHAR;
 (* Expands to a string literal with the name of the enclosing module. *)
 
-(* MACRO *) PROCEDURE PROCNAME: ARRAY OF CHAR;
-(* Expands to a string literal with the name of the enclosing procedure.*)
+(* MACRO *) PROCEDURE PROCNAME : ARRAY OF CHAR;
+(* Expands to a string literal with the name of the enclosing procedure. *)
 
 (* MACRO *) PROCEDURE LINENO : CARDINAL;
 (* Expands to a numeric value with the value of the current line number. *)
 
-(* MACRO *) PROCEDURE ROWNO : CARDINAL;
-(* Expands to a numeric value with the value of the current row number. *)
 
+(* Introspection *)
 
-(* Availability of optional capabilities *)
-
-(* MACRO *) PROCEDURE IsAvailable( c : Capability ) : BOOLEAN;
-(* Expands to TRUE if capability c is supported, otherwise FALSE. *)
-
-
-(* introspection *)
-
-(* MACRO *) PROCEDURE IsCompatibleWithType( <T>; var : <AnyType> ) : BOOLEAN; 
+(* MACRO *) PROCEDURE IsCompatibleWithType( <T>; var : <AnyType> ) : BOOLEAN;
 (* Expands to TRUE if the type of variable <var> is compatible with type <T>,
    expands to FALSE otherwise. *)
 
+(* MACRO *) PROCEDURE IsConvertibleToType( <T>; var : <AnyType> ) : BOOLEAN;
+(* Expands to TRUE if the type of variable <var> is convertible to type <T>,
+   expands to FALSE otherwise. *)
 
-(* interface to the compiler's built-in hash function *)
+(* MACRO *) PROCEDURE IsExtensionOfType( <T>; var : <AnyType> ) : BOOLEAN;
+(* Expands to TRUE if the type of variable <var> is an extension of type <T>,
+   expands to FALSE otherwise. *)
+
+(* MACRO *) PROCEDURE ConformsToPrototype( <P>; <T> ) : BOOLEAN;
+(* Expands to TRUE if type <T> conforms to prototype <P>,
+   expands to FALSE otherwise. *)
+
+
+(* Calculating the minimum of a list of constant expressions *)
+
+(* MACRO *) PROCEDURE MIN ( constant : VARIADIC OF <T> ) : <T>;
+(* Replaced by the smallest value of its variadic argument list,
+   all arguments must be of the same ordinal or scalar type. *)
+
+
+(* Calculating the maximum of a list of constant expressions *)
+
+(* MACRO *) PROCEDURE MAX ( constant : VARIADIC OF <T> ) : <T>;
+(* Replaced by the largest value of its variadic argument list,
+   all arguments must be of the same ordinal or scalar type. *)
+
+
+(* Calculating the power of two of a non-negative constant expression *)
+
+(* MACRO *) PROCEDURE EXP2 ( constant : <T> ) : <T>;
+(* Expands to the value of two raised to the power of its argument,
+   the argument must be a non-negative whole number constant. *)
+
+
+(* Calculating a hash value for a string literal *)
 
 (* MACRO *) PROCEDURE HASH ( literal : ARRAY OF CHAR ) : LONGCARD;
-(* Expands to the hash value of literal excluding quotation marks,
-   calculated by the compiler's internal hash function. *)
+(* Expands to the hash value of a string literal, excluding the enclosing
+   quotation marks, calculated by the compiler's internal hash function. *)
 
-(* MACRO *) PROCEDURE UPPERHASH ( literal : ARRAY OF CHAR ) : LONGCARD;
-(* Expands to the hash value of the uppercase representation of literal,
-   excluding quotation marks, using the compiler's internal hash function. *)
 
 END COMPILER.
