@@ -1,6 +1,6 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Prototype Definition for Non-Scalar Number ADTs *)
+(* General Prototype Definition for Non-Scalar Numeric ADTs *)
 
 PROTOTYPE NONSCALAR [NUMERIC]; (* conforms to NUMERIC *)
 
@@ -8,6 +8,12 @@ PROTOTYPE NONSCALAR [NUMERIC]; (* conforms to NUMERIC *)
    structured literals constructed from real number literals may be used *)
 
 TYPE = RECORD | OPAQUE RECORD := { .. } OF REAL;
+
+(* Examples of compatible literals:
+ *  complex numbers: { REAL, REAL }
+ *  tuples or vectors of real numbers: { VARIADIC OF REAL }
+ *  tuples or vectors of complex numbers: { VARIADIC OF { REAL, REAL } }
+ *)
 
 
 (* Bindings required for Non-Scalar Numeric ADTs *)
@@ -50,7 +56,7 @@ PROCEDURE [-] subtract ( op1, op2 : NONSCALAR ) : NONSCALAR;
 (* Bindings to relational operations *)
 
 PROCEDURE [=] isEqual ( op1, op2 : NONSCALAR ) : NONSCALAR;
-(* procedure to bind to the = operator for operands of the scalar ADT *)
+(* procedure to bind to the = operator for operands of the non-scalar ADT *)
 
 (* The operation for the # operator is synthesized as NOT (op1 = op2) *)
 
