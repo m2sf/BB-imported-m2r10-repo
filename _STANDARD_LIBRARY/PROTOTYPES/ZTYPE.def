@@ -12,6 +12,15 @@ TYPE = OPAQUE RECORD := INTEGER;
 
 (* Bindings required for ZTYPE ADTs *)
 
+(* Bindings to pervasive functions TEXP and TSIG *)
+
+CONST [TEXP] : [0 .. 63] OF CARDINAL;
+(* constant denoting the maximum digit count of the exponent of the ADT *)
+
+CONST [TSIG] : [1 .. 4000] OF CARDINAL;
+(* constant denoting the maximum digit count of the significand of the ADT *)
+
+
 (* Bindings to pervasive functions TMIN and TMAX *)
 
 PROCEDURE [TMIN] minValue : ZTYPE;
