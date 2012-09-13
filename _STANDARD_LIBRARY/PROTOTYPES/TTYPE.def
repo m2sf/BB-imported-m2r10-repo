@@ -1,6 +1,6 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOTYPE TTYPE [NUMERIC]; (* conforms to NUMERIC *)
+PROTOTYPE TTYPE [NONSCALAR]; (* conforms to NONSCALAR *)
 
 (* Prototype Definition for Numeric Tuple ADTs *)
 
@@ -13,7 +13,7 @@ TYPE = RECORD;
 
 (* Bindings required for TTYPE ADTs *)
 
-(* Via-SXF conversion between structurally equivalent non-scalar number types
+(* Via-SXF conversion between structurally equivalent non-scalar numeric types
    is synthesised using SXF and VAL conversions on their scalar components *)
 
 

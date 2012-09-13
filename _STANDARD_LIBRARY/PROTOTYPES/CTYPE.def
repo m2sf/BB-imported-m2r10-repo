@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOTYPE CTYPE [NUMBERS]; (* conforms to NUMBERS *)
+PROTOTYPE CTYPE [NONSCALAR]; (* conforms to NONSCALAR *)
 
 (* Prototype Definition for Complex Number ADTs *)
 
@@ -14,7 +14,7 @@ TYPE = RECORD := { REAL, REAL };
 
 (* Bindings required for CTYPE ADTs *)
 
-(* Via-SXF conversion between structurally equivalent non-scalar number types
+(* Via-SXF conversion between structurally equivalent non-scalar numeric types
    is synthesised using SXF and VAL conversions on their scalar components *)
 
 
