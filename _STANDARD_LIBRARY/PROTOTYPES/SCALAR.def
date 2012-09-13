@@ -2,7 +2,7 @@
 
 (* General Prototype Definition for Scalar Number ADTs *)
 
-PROTOTYPE SCALAR [NUMBERS]; (* conforms to NUMBERS *)
+PROTOTYPE SCALAR [NUMERIC]; (* conforms to NUMERIC *)
 
 (* Scalar number ADTs must be opaque records to be statically allocatable,
    either integer or real number literals may be used, but not both *)

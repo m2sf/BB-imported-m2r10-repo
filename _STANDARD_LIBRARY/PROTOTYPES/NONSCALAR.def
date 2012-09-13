@@ -2,15 +2,15 @@
 
 (* General Prototype Definition for Non-Scalar Number ADTs *)
 
-PROTOTYPE NONSCALAR [NUMBERS]; (* conforms to NUMBERS *)
+PROTOTYPE NONSCALAR [NUMERIC]; (* conforms to NUMERIC *)
 
-(* Non-Scalar number ADTs must be records to be statically allocatable,
+(* Non-Scalar numeric ADTs must be records to be statically allocatable,
    structured literals constructed from real number literals may be used *)
 
 TYPE = RECORD | OPAQUE RECORD := { .. } OF REAL;
 
 
-(* Bindings required for Non-Scalar ADTs *)
+(* Bindings required for Non-Scalar Numeric ADTs *)
 
 (* The operations TMIN and TMAX are not meaningful for non-scalar types *)
 
