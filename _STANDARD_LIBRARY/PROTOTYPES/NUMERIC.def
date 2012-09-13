@@ -1,10 +1,10 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Prototype Definition for Scalar and Non-Scalar Number ADTs *)
+(* General Prototype Definition for Scalar and Non-Scalar Numeric ADTs *)
 
-PROTOTYPE NUMBERS; (* root of numeric prototypes *)
+PROTOTYPE NUMERIC; (* root of numeric prototypes *)
 
-(* Number ADTs must be records to be statically allocatable,
+(* Numeric ADTs must be records to be statically allocatable,
    the following literals may be used:
    o  integer or real number literals
    o  structured literals constructed from real number literals *)
@@ -12,7 +12,7 @@ PROTOTYPE NUMBERS; (* root of numeric prototypes *)
 TYPE = RECORD | OPAQUE RECORD := INTEGER | REAL | { .. } OF REAL;
 
 
-(* Bindings required for Number ADTs *)
+(* Bindings required for numeric ADTs *)
 
 (* The operations TMIN and TMAX are meaningful only for scalar types,
    their bindings may be required by more specialised prototypes *)
@@ -20,31 +20,31 @@ TYPE = RECORD | OPAQUE RECORD := INTEGER | REAL | { .. } OF REAL;
 (* The operations SXF and VAL are meaningful only for scalar types
    their bindings may be required by more specialised prototypes *)
 
-(* The operations ABS, NEG and ODD are not common to all number types,
+(* The operations ABS, NEG and ODD are not common to all numeric types,
    their bindings may be required by more specialised prototypes *)
 
 
 (* Bindings to dyadic operations *)
 
-PROCEDURE [+] add ( op1, op2 : NUMBERS ) : NUMBERS;
-(* procedure to bind to the + operator for operands of the number ADT *)
+PROCEDURE [+] add ( op1, op2 : NUMERIC ) : NUMERIC;
+(* procedure to bind to the + operator for operands of the numeric ADT *)
 
-PROCEDURE [-] subtract ( op1, op2 : NUMBERS ) : NUMBERS;
-(* procedure to bind to the - operator for operands of the number ADT *)
+PROCEDURE [-] subtract ( op1, op2 : NUMERIC ) : NUMERIC;
+(* procedure to bind to the - operator for operands of the numeric ADT *)
 
-(* The operations *, /, DIV and MOD are not common to all number types,
+(* The operations *, /, DIV and MOD are not common to all numeric types,
    their bindings may be required by more specialised prototypes *)
 
 
 (* Bindings to relational operations *)
 
-PROCEDURE [=] isEqual ( op1, op2 : NUMBERS ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the scalar ADT *)
+PROCEDURE [=] isEqual ( op1, op2 : NUMERIC ) : BOOLEAN;
+(* procedure to bind to the = operator for operands of the numeric ADT *)
 
 (* The operation for the # operator is synthesized as NOT (op1 = op2) *)
 
-(* The operations < and > are meaningful only to scalar types,
+(* The operations < and > are meaningful only for scalar types,
    their bindings may be required by more specialised prototypes *)
 
 
-END NUMBERS.
+END NUMERIC.
