@@ -4,24 +4,104 @@ DEFINITION MODULE CONVERSION;
 
 (* Primitives for Converting to and from Scalar eXchange Format *)
 
+(* EBNF of Scalar Exchange Format Version 1.00
+ *
+ *  serialisedScalarFormat :
+ *     version length sigDigitCount expDigitCount digitRadix
+ *     sigSign sigDigits ( expSign expDigits )? terminator ;
+ *
+ * Protocol Version, valid range [100..4095], 100 for Version 1.00
+ *
+ *  version:
+ *     digitB64 digitB64 ;
+ *
+ * Allocated Length in Octets, valid range [16..4095]
+ *
+ *  length :
+ *     digitB64 digitB64 ;
+ *
+ * Digit Count of the Significand, valid range [1..4000]
+ *
+ *  sigDigitCount :
+ *     digitB64 digitB64 ;
+ *
+ * Digit Count of the Exponent, valid range [0..63]
+ *
+ *  expDigitCount :
+ *     digitB64 ;
+ *
+ * Radix of Encoded Digits, "D" for radix 10, "H" for radix 16
+ *
+ *  digitRadix :
+ *     "D" | "H" ;
+ *
+ * Sign of the Significand
+ *
+ *  sigSign :
+ *     "+" | "-" ;
+ *
+ * Digits of the Significand
+ *
+ *  sigDigits :
+ *     digitB10+ | digitB16+ ;
+ *
+ * Sign of the Exponent
+ *
+ *  expSign :
+ *     "+" | "-" ;
+ *
+ * Digits of the Exponent
+ *
+ *  expDigits :
+ *     digitB10+ | digitB16+ ;
+ *
+ * Radix 10 Encoded Digit, representing values between 0 and 9
+ *
+ *  digitB10 :
+ *     "0" .. "9" ;
+ *
+ * Radix 16 Encoded Digit, representing value between 0 and 15
+ *
+ *  digitB16 :
+ *     "0" .. "?" ;
+ *
+ * Radix 64 Encoded Digit, representing values between 0 and 63
+ *
+ *  digitB64 :
+ *     "0" .. "o" ;
+ *
+ * Record Terminator
+ *
+ *  terminator :
+ *     ASCII(0) ;
+ *)
+
 
 (* Version of the scalar exchange format used by the compiler *)
 
-CONST SXFVersion = 100; (* Version 1.00 *)
+CONST SXFVersion = 100; (* SXF Version 1.00 *)
+
+(* Maximum number of encodable exponent digits *)
+
+CONST MaxExpDigits = 63;
+
+(* Maximum number of encodable significand digits *)
+
+CONST MaxSigDigits = 4000;
 
 
-(* Maximum number of digits stored in exponent *)
+(* Maximum number of digits stored in exponent of a type *)
 
-(* MACRO *) PROCEDURE MDE ( <NumericScalarType> ) : CARDINAL;
+(* MACRO *) PROCEDURE TEXP ( <NumericScalarType> ) : CARDINAL;
 (* Expands to a numeric value with the maximum number of decimal digits that
    can be stored in the exponent of the passed in type.  Expands to 0 if the
    type does not store an exponent.  A compile time error occurs if the type
    is not a numeric scalar type. *)
 
 
-(* Maximum number of digits stored in significand *)
+(* Maximum number of digits stored in significand of a type *)
 
-(* MACRO *) PROCEDURE MDS ( <NumericScalarType> ) : CARDINAL;
+(* MACRO *) PROCEDURE TSIG ( <NumericScalarType> ) : CARDINAL;
 (* Expands to a numeric value with the maximum number of decimal digits that
    can be stored in the significand of the passed in type.  A compile time
    error occurs if the type is not a numeric scalar type. *)
