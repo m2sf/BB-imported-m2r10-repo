@@ -1,0 +1,17 @@
+Numeric Prototypes                     Collection Prototypes
+
+ NUMBERS                                COLLECTIONS
+ |                                      |
+ +--NONSCALAR                           +--STATIC
+ |  |                                   |  |
+ |  +--VTYPE                            |  +--STATSET
+ |  |                                   |  |
+ |  +--CTYPE                            |  +--STATARRAY
+ |                                      |
+ +--SCALAR                              +--DYNAMIC
+    |                                      |
+    +--RTYPE                               +--DYNSET
+    |                                      |
+    +--ZTYPE                               +--DYNARRAY
+    |                                      |
+    +--UZTYPE                              +--DICTIONARY
