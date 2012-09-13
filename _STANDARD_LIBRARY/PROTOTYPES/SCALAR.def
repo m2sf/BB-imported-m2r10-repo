@@ -12,7 +12,7 @@ TYPE = OPAQUE RECORD := INTEGER | REAL;
 
 (* Bindings required for scalar ADTs *)
 
-(* Bindings to pervasive functions TEXP and TSIG *)
+(* Bindings to built-in functions TEXP and TSIG *)
 
 CONST [TEXP] : [0 .. 63] OF CARDINAL;
 (* constant denoting the maximum digit count of the exponent of the ADT *)
