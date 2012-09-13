@@ -20,10 +20,10 @@ TYPE
 
 (* Precision *)
 
-CONST [MDE] maxDigitsOfExponent = 0;
+CONST [TEXP] maxExponentDigits = 0;
 (* maximum number of decimal digits of the exponent of a INT64 value *)
 
-CONST [MDS] maxDigitsOfSignificand = 19;
+CONST [TSIG] maxSignificandDigits = 19;
 (* maximum number of decimal digits of the significand of a INT64 value *)
 
 

@@ -23,10 +23,10 @@ TYPE
 
 (* Precision *)
 
-CONST [MDE] maxDigitsOfExponent = 2;
+CONST [TEXP] maxExponentDigits = 2;
 (* maximum number of decimal digits of the exponent of a BCD value *)
 
-CONST [MDS] maxDigitsOfSignificand = 14;
+CONST [TSIG] maxSignificandDigits = 14;
 (* maximum number of decimal digits of the significand of a BCD value *)
 
 
