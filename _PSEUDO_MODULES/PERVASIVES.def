@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* DOCUMENTATION *) MODULE PERVASIVES;
 
@@ -22,16 +22,16 @@ CONST FALSE = BOOLEAN.FALSE;
 TYPE BOOLEAN = ( FALSE, TRUE );
 (* Boolean type *)
 
-TYPE BITSET = SET OF { 0 .. TMAX(CARDINAL) - 1 };
+TYPE BITSET = SET OF ( 0 .. TSIZE(CARDINAL) - 1 );
 (* Bitset type of same size as type CARDINAL *)
 
-TYPE LONGBITSET = SET OF { 0 .. TMAX(LONGCARD) - 1 };
+TYPE LONGBITSET = SET OF ( 0 .. TSIZE(LONGCARD) - 1 );
 (* Bitset type of same size as type LONGCARD *)
 
-TYPE CHAR = ( 0C .. 7FC );
+TYPE CHAR = 0U .. 7FU ;
 (* Ordinal type with 7-bit character value set *)
 
-TYPE UNICHAR = ( <all UTF-32 code points> );
+TYPE UNICHAR = <range of all UTF-32 code points>;
 (* Ordinal type with 4-octet character value set *)
 
 TYPE OCTET = 0 .. 255;
@@ -84,7 +84,7 @@ PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
 PROCEDURE NEG ( x : <NumericType> ) : <OperandType>;
 (* Returns sign reversed value of x *)
 
-PROCEDURE ODD ( x : <Z-Type> ) : BOOLEAN;
+PROCEDURE ODD ( x : <WholeNumberType> ) : BOOLEAN;
 (* Returns TRUE if z is odd, otherwise FALSE *)
 
 PROCEDURE PRED ( x : <OrdinalType>; n : <UnsignedType> ) : <typeOf(x)>;
@@ -93,7 +93,7 @@ PROCEDURE PRED ( x : <OrdinalType>; n : <UnsignedType> ) : <typeOf(x)>;
 PROCEDURE SUCC ( x : <OrdinalType>; n : <UnsignedType> ) : <typeOf(x)>;
 (* Returns n-th successor of x *)
 
-PROCEDURE ORD ( x : <OrdinalType> ) : <Z-Type>;
+PROCEDURE ORD ( x : <OrdinalType> ) : <WholeNumberType>;
 (* Returns ordinal value of x *)
 
 PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType>; 
@@ -122,26 +122,11 @@ PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T>;
 PROCEDURE TMAX ( T : <TypeIdentifier> ) : <T>;
 (* Returns largest legal value of type T *)
 
+PROCEDURE TCOUNT ( T : <SetOrCollectionTypeIdentifier> ) : LONGCARD;
+(* Returns maximum number of items of a set, array or collection type *)
+
 PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
 (* Returns allocation size required for a variable of type T *)
-
-
-(* Pervasive conversion primitives *)
-
-PROCEDURE SXF ( value : <ScalarType>; VAR s : ARRAY OF CHAR );
-(* Converts value to scalar exchange format and passes the result in s. *)
-
-PROCEDURE VAL ( CONST s : ARRAY OF CHAR; VAR value : <ScalarType> );
-(* Converts the value represented by s in scalar exchange format to value. *)
-
-
-(* Lexical Macros *)
-
-(* MACRO *) PROCEDURE MIN ( x : VARIADIC OF <Constant> ) : <OperandType>;
-(* Replaced with the smallest constant in the variadic list *)
-
-(* MACRO *) PROCEDURE MAX ( x : VARIADIC OF <Constant> ) : <OperandType>;
-(* Replaced with the largest constant in the variadic list *)
 
 
 END PERVASIVES.
