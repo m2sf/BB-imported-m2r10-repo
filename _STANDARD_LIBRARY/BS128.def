@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE BS128 [SetType]; (* One-twenty-eight one-two-eight *)
 
@@ -13,6 +13,15 @@ TYPE
     BS128 = OPAQUE RECORD
         bits : ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* BS128 *)
+
+
+(* capacity *)
+
+(* TCOUNT(BS128) = 128 *)
+
+PROCEDURE [TCOUNT] capacity ( CONST set : BS128 ) : CARDINAL;
+(* Returns the maximum number of elements that can be stored in a BS128 set.
+   This function is bound to pervasive function TCOUNT for type BS128. *)
 
 
 (* Literal assignment *)

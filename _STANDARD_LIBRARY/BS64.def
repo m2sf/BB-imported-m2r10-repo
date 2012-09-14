@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE BS64 [SetType]; (* Sixty-four six-four *)
 
@@ -13,6 +13,15 @@ TYPE
     BS64 = OPAQUE RECORD
         bits : ARRAY 8 OF OCTET; (* 64 bits *)
     END; (* BS64 *)
+
+
+(* capacity *)
+
+(* TCOUNT(BS64) = 64 *)
+
+PROCEDURE [TCOUNT] capacity ( CONST set : BS64 ) : CARDINAL;
+(* Returns the maximum number of elements that can be stored in a BS64 set.
+   This function is bound to pervasive function TCOUNT for type BS64. *)
 
 
 (* Literal assignment *)

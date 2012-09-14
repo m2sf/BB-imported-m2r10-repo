@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE BS16 [SetType]; (* Sixteen one-six *)
 
@@ -13,6 +13,15 @@ TYPE
     BS16 = OPAQUE RECORD
         bits : ARRAY 2 OF OCTET; (* 16 bits *)
     END; (* BS16 *)
+
+
+(* capacity *)
+
+(* TCOUNT(BS16) = 16 *)
+
+PROCEDURE [TCOUNT] capacity ( CONST set : BS16 ) : CARDINAL;
+(* Returns the maximum number of elements that can be stored in a BS16 set.
+   This function is bound to pervasive function TCOUNT for type BS16. *)
 
 
 (* Literal assignment *)
