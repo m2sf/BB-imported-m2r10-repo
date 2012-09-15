@@ -21,7 +21,7 @@ TYPE = OPAQUE RECORD := { VARIADIC OF ElementType };
 PROCEDURE [TCOUNT] capacity : LONGCARD;
 (* Procedure to return the maximum element count a SetType ADT can hold *)
 
-(* A procedure invocation of the form TCOUNT(SetTypeADT))
+(* An expression of the form TCOUNT(SetTypeADT))
    is synthesised as SetTypeADT.capacity() *)
 
 
@@ -44,10 +44,8 @@ PROCEDURE [!] setElement ( VAR set : SetType;
 (* Procedure to include and exclude an element in a SetType ADT variable,
    where values of TRUE include and values of FALSE exclude the element. *)
 
-(* A statement of the form set[element] := TRUE
-   is synthesised as setElement( set, element, TRUE),
-   A statement of the form set[element] := FALSE
-   is synthesised as setElement( set, element, FALSE) *)
+(* A statement of the form set[element] := value
+   is synthesised as setElement( set, element, value) *)
 
 
 (* Binding to [ ] notation within expressions *)
@@ -81,7 +79,7 @@ PROCEDURE [FOR] forEnumerator ( VAR set : SetType; doStatements : PROC );
 (* Procedure to enumerate over all elements of a SetType ADT variable
    and execute the passed in doStatements for each element. *)
    
-(* A statement of the form FOR element IN set DO statements END
+(* A statement of the form FOR element IN set DO statementSeq END
    is synthesised as
    <* INLINE *> PROCEDURE statements; BEGIN statementSeq END statements;
    SetTypeADT.forEnumerator( set, statements ); *)
