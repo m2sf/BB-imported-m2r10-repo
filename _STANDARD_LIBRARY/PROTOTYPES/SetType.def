@@ -74,6 +74,8 @@ PROCEDURE [COUNT] count ( set : SetType ) : LONGCARD;
 
 (* Binding to FOR IN iterator *)
 
+TYPE ProcType = PROCEDURE ( CONST ElementType );
+
 PROCEDURE [FOR] forIterator ( VAR set : SetType; doStatements : ProcType );
 
 (* Procedure to enumerate over all elements of a SetType ADT variable
