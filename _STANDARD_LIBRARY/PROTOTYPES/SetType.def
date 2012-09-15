@@ -29,7 +29,7 @@ PROCEDURE [TCOUNT] capacity : LONGCARD;
 
 PROCEDURE [:=] assign ( VAR set : SetType;
                         elementList  : VARIADIC OF ElementType );
-(* Procedure to assign a structured literal to a value of a SetType ADT. *)
+(* Procedure to assign a structured literal to a SetType ADT variable. *)
 
 (* A statement of the form set := { element1, element2, ..., elementN }
    is synthesised as assign( set, element1, element2, ... elementN ) *)
@@ -52,8 +52,7 @@ PROCEDURE [!] setElement ( VAR set : SetType;
 
 PROCEDURE [?] isElement ( set : SetType;
                       element : ElementType ) : BOOLEAN;
-(* Procedure to test whether an element is included in a SetType ADT
-   variable, bound to right hand side [ ] notation for SetType ADTs. *)
+(* Procedure to test whether an element is included in a SetType ADT value *)
 
 (* An expression of the form set[element]
    is synthesised as isElement( set, element ) *)
@@ -64,7 +63,7 @@ PROCEDURE [?] isElement ( set : SetType;
 (* Binding to pervasive function COUNT *)
 
 PROCEDURE [COUNT] count ( set : SetType ) : LONGCARD;
-(* Procedure to return the element count of a SetType ADT variable *)
+(* Procedure to return the element count of a SetType ADT value *)
 
 (* An expression of the form COUNT(set)
    is synthesised as SetTypeADT.count(set) *)
@@ -78,7 +77,7 @@ TYPE ProcType = PROCEDURE ( CONST ElementType );
 
 PROCEDURE [FOR] forIterator ( VAR set : SetType; doStatements : ProcType );
 
-(* Procedure to enumerate over all elements of a SetType ADT variable
+(* Procedure to enumerate over all elements of a SetType ADT value
    and execute the passed in doStatements for each element. *)
    
 (* A statement of the form FOR element IN set DO statementSeq END
