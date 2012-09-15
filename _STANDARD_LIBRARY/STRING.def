@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE STRING [StringType];
 
@@ -13,7 +13,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 TYPE STRING = OPAQUE;
 
 
-(* S-Type bindings to operators and pervasives: *)
+(* StringType bindings to operators and pervasives: *)
 
 
 (* allocator *)
