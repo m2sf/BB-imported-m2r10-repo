@@ -83,7 +83,7 @@ PROCEDURE [FOR] forIterator ( VAR set : SetType; doStatements : ProcType );
    
 (* A statement of the form FOR element IN set DO statementSeq END
    is synthesised as
-   <* INLINE *> PROCEDURE statements ( element : ElementType );
+   <* INLINE *> PROCEDURE statements ( CONST element : ElementType );
    BEGIN statementSeq END statements;
    SetTypeADT.forIterator( set, statements ); *)
 
