@@ -7,7 +7,7 @@ PROTOTYPE SetType;
 (* Static Set ADTs must be opaque records to be statically allocatable,
    structured literals may be used *)
 
-PLACEHOLDERS ElementType;
+PLACEHOLDERS ElementType, ProcType;
 
 TYPE = OPAQUE RECORD := { VARIADIC OF ElementType };
 
@@ -74,15 +74,16 @@ PROCEDURE [COUNT] count ( set : SetType ) : LONGCARD;
 
 (* Binding to FOR IN iterator *)
 
-PROCEDURE [FOR] forEnumerator ( VAR set : SetType; doStatements : PROC );
+PROCEDURE [FOR] forIterator ( VAR set : SetType; doStatements : ProcType );
 
 (* Procedure to enumerate over all elements of a SetType ADT variable
    and execute the passed in doStatements for each element. *)
    
 (* A statement of the form FOR element IN set DO statementSeq END
    is synthesised as
-   <* INLINE *> PROCEDURE statements; BEGIN statementSeq END statements;
-   SetTypeADT.forEnumerator( set, statements ); *)
+   <* INLINE *> PROCEDURE statements ( element : ElementType );
+   BEGIN statementSeq END statements;
+   SetTypeADT.forIterator( set, statements ); *)
 
 
 (* Dyadic operations *)
