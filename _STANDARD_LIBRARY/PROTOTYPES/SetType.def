@@ -129,7 +129,7 @@ PROCEDURE [/] symmetricDiff ( set1, set2 : SetType ) : SetType;
 
 (* Binding to = operator *)
 
-PROCEDURE [=] isEqual ( CONST set1, set2 : SetType ) : BOOLEAN;
+PROCEDURE [=] isEqual ( set1, set2 : SetType ) : BOOLEAN;
 (* Procedure to test the equivalence of two SetType ADT values *)
 
 (* An expression of the form set1 = set2
@@ -140,7 +140,7 @@ PROCEDURE [=] isEqual ( CONST set1, set2 : SetType ) : BOOLEAN;
 
 (* Binding to < operator *)
 
-PROCEDURE [<] isSubset ( CONST set1, set2 : SetType ) : BOOLEAN;
+PROCEDURE [<] isSubset ( set1, set2 : SetType ) : BOOLEAN;
 (* Procedure to test whether one SetType ADT value is a subset of another *)
 
 (* An expression of the form set1 > set2
@@ -152,7 +152,7 @@ PROCEDURE [<] isSubset ( CONST set1, set2 : SetType ) : BOOLEAN;
 
 (* Binding to > operator *)
 
-PROCEDURE [>] isSuperset ( CONST set1, set2 : SetType ) : BOOLEAN;
+PROCEDURE [>] isSuperset ( set1, set2 : SetType ) : BOOLEAN;
 (* Procedure to test whether one SetType ADT value is a superset of another *)
 
 (* The operation for the >= operator
