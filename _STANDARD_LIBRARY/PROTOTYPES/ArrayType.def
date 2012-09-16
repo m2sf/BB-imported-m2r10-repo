@@ -73,32 +73,32 @@ PROCEDURE [COUNT] count ( array : ArrayType ) : LONGCARD;
 
 (* Binding to FOR IN iterator *)
 
-TYPE ProcType = PROCEDURE ( CONST ValueType );
+TYPE ProcType = PROCEDURE ( CONST IndexType );
 
 PROCEDURE [FOR] forIterator ( VAR array : ArrayType;
                            doStatements : ProcType );
 
-(* Procedure to iterate over all values of an ArrayType ADT value
-   and execute the passed in doStatements for each value. *)
+(* Procedure to iterate over all index/value pairs of an ArrayType ADT value
+   and execute the passed in doStatements for each pair. *)
    
 (* A statement of the form
-     FOR value IN array DO statementSeq END
+     FOR index IN array DO statementSeq END
    is synthesised as
-     <* INLINE *> PROCEDURE forLoopBody ( CONST value : ValueType );
+     <* INLINE *> PROCEDURE forLoopBody ( CONST index : IndexType );
      BEGIN statementSeq END forLoopBody;
      ArrayTypeADT.forIterator( array, forLoopBody ); *)
 
 PROCEDURE [DESCENDING] reverseFor ( VAR array : ArrayType;
                                  doStatements : ProcType );
 
-(* Procedure to iterate in descending order over all values of an
-   ArrayType ADT value and execute the passed in doStatements for
-   each value. *)
+(* Procedure to iterate in descending order over all index/value pairs of an
+   ArrayType ADT value and execute the passed in doStatements for each
+   pair. *)
    
 (* A statement of the form
      FOR DESCENDING value IN array DO statementSeq END
    is synthesised as
-     <* INLINE *> PROCEDURE forLoopBody ( CONST value : ValueType );
+     <* INLINE *> PROCEDURE forLoopBody ( CONST index : IndexType );
      BEGIN statementSeq END forLoopBody;
      ArrayTypeADT.reverseFor( array, forLoopBody ); *)
 
