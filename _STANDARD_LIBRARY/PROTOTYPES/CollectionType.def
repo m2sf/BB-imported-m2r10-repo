@@ -31,14 +31,14 @@ PROCEDURE [TCOUNT] capacity : LONGCARD;
 PROCEDURE [NEW] new ( VAR c : CollectionType );
 (* Procedure to allocate and initialise a new CollectionType ADT variable. *)
 
-(* A statement of the form NEW(c)
-   is synthesised as CollectionTypeADT.new(c) *)
+(* A statement of the form NEW(collection)
+   is synthesised as CollectionTypeADT.new(collection) *)
 
 PROCEDURE [DISPOSE] dispose ( VAR c : CollectionType );
 (* Procedure to deallocate a CollectionType ADT variable. *)
 
-(* A statement of the form DISPOSE(c)
-   is synthesised as CollectionTypeADT.dispose(c) *)
+(* A statement of the form DISPOSE(collection)
+   is synthesised as CollectionTypeADT.dispose(collection) *)
 
 
 (* Binding to assignment operator *)
@@ -48,8 +48,8 @@ PROCEDURE [:=] assign ( VAR c : CollectionType;
 (* Procedure to assign a structured literal of key/value pairs to a
    CollectionType ADT variable. *)
 
-(* A statement of the form c := { key1, value1, ..., keyN, valueN }
-   is synthesised as assign( c, key1, value1, ... keyN, valueN ) *)
+(* A statement of the form collection := { key1, value1, ..., keyN, valueN }
+   is synthesised as assign( collection, key1, value1, ..., keyN, valueN ) *)
 
 
 (* Storage and retrieval *)
@@ -61,15 +61,15 @@ PROCEDURE [!] storeValue ( VAR c : CollectionType;
 (* Procedure to store a value for a given key in a CollectionType
    ADT variable. *)
 
-(* A statement of the form c[key] := value
-   is synthesised as storeValue( c, key, value) *)
+(* A statement of the form collection[key] := value
+   is synthesised as storeValue( collection, key, value) *)
 
 PROCEDURE [~] removeKeyValuePair ( VAR c : CollectionType; key : KeyType );
 (* Procedure to remove the key/value pair for a given key from a
    CollectionType ADT variable. *)
 
-(* A statement of the form c[key] := NIL
-   is synthesised as removeKeyValuePair( c, key ) *)
+(* A statement of the form collection[key] := NIL
+   is synthesised as removeKeyValuePair( collection, key ) *)
 
 
 (* Binding to [ ] notation within expressions *)
@@ -78,8 +78,8 @@ PROCEDURE [?] valueForKey ( c : CollectionType; key : KeyType ) : ValueType;
 (* Procedure to return the value stored for a given key in a CollectionType
    ADT value *)
 
-(* An expression of the form c[key]
-   is synthesised as valueForKey( c, index ) *)
+(* An expression of the form collection[key]
+   is synthesised as valueForKey( collecton, index ) *)
 
 
 (* Element count *)
@@ -89,8 +89,8 @@ PROCEDURE [?] valueForKey ( c : CollectionType; key : KeyType ) : ValueType;
 PROCEDURE [COUNT] count ( c : CollectionType ) : LONGCARD;
 (* Procedure to return the key/value count of a CollectionType ADT value *)
 
-(* An expression of the form COUNT(c)
-   is synthesised as CollectionTypeADT.count(c) *)
+(* An expression of the form COUNT(collection)
+   is synthesised as CollectionTypeADT.count(collection) *)
 
 
 (* Iteration *)
@@ -139,11 +139,11 @@ PROCEDURE [DESCENDING] reverseFor ( VAR c : CollectionType;
 PROCEDURE [=] isEqual ( c1, c2 : CollectionType ) : BOOLEAN;
 (* Procedure to test the equivalence of two CollectionType ADT values *)
 
-(* An expression of the form c1 = c2
-   is synthesised as CollectionTypeADT.isEqual(c1, c2) *)
+(* An expression of the form collection1 = collection2
+   is synthesised as CollectionTypeADT.isEqual(collection1, collection2) *)
 
 (* The operation for the # operator
-   is synthesized as NOT (c1 = c2) *)
+   is synthesized as NOT (collection1 = collection2) *)
 
 
 (* Binding to < operator *)
