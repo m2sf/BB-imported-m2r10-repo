@@ -1,0 +1,162 @@
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Prototype Definition for Dynamically Allocatable Ordered Dictionary ADTs *)
+
+PROTOTYPE ProtoOrderedDict [ProtoDictionary];
+
+(* Ordered Dictionary ADTs must be opaque,
+   variadic structured literals with key/value pairs are compatible *)
+
+PLACEHOLDERS KeyType, ValueType, ProcType;
+
+TYPE = OPAQUE := { VARIADIC OF { KeyType, ValueType } };
+
+
+(* Bindings required for Ordered Dictionary ADTs *)
+
+(* Capacity *)
+
+(* Binding to pervasive function TCOUNT *)
+
+PROCEDURE [TCOUNT] capacity : LONGCARD;
+(* Procedure to return the maximum key/value pair count an Ordered Dictionary
+   ADT can hold. The Procedure must return zero if no hard limit is imposed.
+ *)
+
+(* An expression of the form TCOUNT(DictionaryADT))
+   is synthesised as DictionaryADT.capacity() *)
+
+
+(* Construction and Destruction *)
+
+PROCEDURE [NEW] new ( VAR d : ProtoOrderedDict );
+(* Procedure to allocate and initialise a new Ordered Dictionary ADT
+   variable. *)
+
+(* A statement of the form NEW(dictionary)
+   is synthesised as DictionaryADT.new(dictionary) *)
+
+PROCEDURE [DISPOSE] dispose ( VAR d : ProtoOrderedDict );
+(* Procedure to deallocate an Ordered Dictionary ADT variable. *)
+
+(* A statement of the form DISPOSE(dictionary)
+   is synthesised as DictionaryADT.dispose(dictionary) *)
+
+
+(* Binding to assignment operator *)
+
+PROCEDURE [:=] assign ( VAR d : ProtoOrderedDict;
+                 keyValueList : VARIADIC OF { k : KeyType; v : ValueType } );
+(* Procedure to assign a structured literal of key/value pairs to an Ordered
+   Dictionary ADT variable. *)
+
+(* A statement of the form dictionary := { key1, value1, ..., keyN, valueN }
+   is synthesised as assign( dictionary, key1, value1, ..., keyN, valueN ) *)
+
+
+(* Storage and retrieval *)
+
+(* Binding to [ ] notation within left hand entities *)
+
+PROCEDURE [!] storeValue ( VAR d : ProtoOrderedDict;
+                             key : KeyType; value : ValueType );
+(* Procedure to store a value for a given key in an Ordered Dictionary ADT
+   variable. *)
+
+(* A statement of the form dictionary[key] := value
+   is synthesised as storeValue( dictionary, key, value) *)
+
+PROCEDURE [~] removeKeyValuePair ( VAR d : ProtoOrderedDict; key : KeyType );
+(* Procedure to remove the key/value pair for a given key from an Ordered
+   Dictionary ADT variable. *)
+
+(* A statement of the form dictionary[key] := NIL
+   is synthesised as removeKeyValuePair( dictionary, key ) *)
+
+
+(* Binding to [ ] notation within expressions *)
+
+PROCEDURE [?] valueForKey( d : ProtoOrderedDict; key : KeyType ) : ValueType;
+(* Procedure to return the value stored for a given key in an Ordered
+   Dictionary ADT value. *)
+
+(* An expression of the form dictionary[key]
+   is synthesised as valueForKey( dictionary, key ) *)
+
+
+(* Key/Value count *)
+
+(* Binding to pervasive function COUNT *)
+
+PROCEDURE [COUNT] count ( d : ProtoOrderedDict ) : LONGCARD;
+(* Procedure to return the key/value count of an Ordered Dictionary ADT
+   value. *)
+
+(* An expression of the form COUNT(dictionary)
+   is synthesised as DictionaryADT.count(dictionary) *)
+
+
+(* Iteration *)
+
+(* Binding to FOR IN iterator *)
+
+TYPE ProcType = PROCEDURE ( CONST KeyType );
+
+PROCEDURE [FOR] forIterator ( VAR d : ProtoOrderedDict;
+                       doStatements : ProcType );
+
+(* Procedure to iterate over all key/value pairs of an Ordered Dictionary ADT
+   value in ascending order and execute the passed in doStatements for each
+   pair. *)
+   
+(* A statement of the form
+     FOR key IN dictionary DO statementSeq END
+   is synthesised as
+     <* INLINE *> PROCEDURE forLoopBody ( CONST key : KeyType );
+     BEGIN statementSeq END forLoopBody;
+     DictionaryADT.forIterator( dictionary, forLoopBody ); *)
+
+PROCEDURE [DESCENDING] reverseFor ( VAR d : ProtoOrderedDict;
+                             doStatements : ProcType );
+
+(* Procedure to iterate all key value pairs of an Ordered Dictionary ADT value
+   in descending order and execute doStatements for each pair. *)
+   
+(* A statement of the form
+     FOR DESCENDING key IN dictionary DO statementSeq END
+   is synthesised as
+     <* INLINE *> PROCEDURE forLoopBody ( CONST key : KeyType );
+     BEGIN statementSeq END forLoopBody;
+     DictionaryADT.reverseFor( dictionary, forLoopBody ); *)
+
+
+(* Dyadic operations *)
+
+(* The operations +, -, * and / are not meaningful for dictionaries *)
+
+
+(* Relational operations *)
+
+(* Binding to = operator *)
+
+PROCEDURE [=] isEqual ( d1, d2 : ProtoOrderedDict ) : BOOLEAN;
+(* Procedure to test the equivalence of two Ordered Dictionary ADT values. *)
+
+(* An expression of the form dictionary1 = dictionary2
+   is synthesised as DictionaryADT.isEqual(dictionary1, dictionary2) *)
+
+(* The operation for the # operator
+   is synthesized as NOT (dictionary1 = dictionary2) *)
+
+
+(* Binding to < operator *)
+
+(* The operations < and <= are not meaningful for dictionaries *)
+
+
+(* Binding to > operator *)
+
+(* The operations > and >= are not meaningful for dictionaries *)
+
+
+END ProtoOrderedDict.

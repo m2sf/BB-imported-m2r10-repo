@@ -1,0 +1,171 @@
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Prototype Definition for Statically Allocatable Set ADTs *)
+
+PROTOTYPE ProtoStaticSet [ProtoCollection];
+
+(* Static Set ADTs must be opaque records to be statically allocatable,
+   set literals are compatible *)
+
+PLACEHOLDERS ElementType, ProcType;
+
+TYPE = OPAQUE RECORD := { VARIADIC OF ElementType };
+
+
+(* Bindings required for Set ADTs *)
+
+(* Capacity *)
+
+(* Binding to pervasive function TCOUNT *)
+
+PROCEDURE [TCOUNT] capacity : LONGCARD;
+(* Procedure to return the maximum element count a Set ADT can hold.
+   The Procedure must return zero if no hard limit is imposed. *)
+
+(* An expression of the form TCOUNT(SetADT))
+   is synthesised as SetADT.capacity() *)
+
+
+(* Binding to assignment operator *)
+
+PROCEDURE [:=] assign ( VAR set : ProtoStaticSet;
+                    elementList : VARIADIC OF ElementType );
+(* Procedure to assign a structured literal to a Set ADT variable. *)
+
+(* A statement of the form set := { element1, element2, ..., elementN }
+   is synthesised as assign( set, element1, element2, ..., elementN ) *)
+
+
+(* Storage and retrieval *)
+
+(* Binding to [ ] notation within left hand entities *)
+
+PROCEDURE [!] storeElement ( VAR set : ProtoStaticSet;
+                             element : ElementType; value : BOOLEAN );
+(* Procedure to include and exclude an element in a Set ADT variable,
+   where values of TRUE include and values of FALSE exclude the element. *)
+
+(* A statement of the form set[element] := value
+   is synthesised as storeElement( set, element, value) *)
+
+
+(* Binding to [ ] notation within expressions *)
+
+PROCEDURE [?] isElement( set : ProtoStaticSet; element : ElementType ) : BOOLEAN;
+(* Procedure to test whether an element is included in a Set ADT value *)
+
+(* An expression of the form set[element]
+   is synthesised as isElement( set, element ) *)
+
+
+(* Element count *)
+
+(* Binding to pervasive function COUNT *)
+
+PROCEDURE [COUNT] count ( set : ProtoStaticSet ) : LONGCARD;
+(* Procedure to return the element count of a Set ADT value. *)
+
+(* An expression of the form COUNT(set)
+   is synthesised as SetADT.count(set) *)
+
+
+(* Iteration *)
+
+(* Binding to FOR IN iterator *)
+
+TYPE ProcType = PROCEDURE ( VAR ProtoStaticSet; CONST ElementType );
+
+PROCEDURE [FOR] forIterator ( VAR set : ProtoStaticSet;
+                         doStatements : ProcType );
+
+(* Procedure to iterate over all elements of a Set ADT value in ascending
+   order and execute the passed in doStatements for each element. *)
+   
+(* A statement of the form
+     FOR element IN set DO statementSeq END
+   is synthesised in two steps.
+   The loop header is synthesised as
+     SetADT.forIterator( set, forLoopBody );
+   The loop body is synthesised as
+     <* INLINE *> PROCEDURE forLoopBody ( VAR set : SetADT;
+                                    CONST element : ElementType );
+     BEGIN statementSeq END forLoopBody; *)
+
+(* Descending order loop iteration is only meaningful for ordered sets
+   and its binding may be required by more specialised prototypes. *)
+   
+
+(* Dyadic operations *)
+
+(* Binding to + operator *)
+
+PROCEDURE [+] union ( set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
+(* Procedure to return the union of two Set ADT values *)
+
+(* An expression of the form set1 + set2
+   is synthesised as SetADT.union(set1, set2) *)
+
+
+(* Binding to - operator *)
+
+PROCEDURE [-] difference ( set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
+(* Procedure to return the set difference of two Set ADT values *)
+
+(* An expression of the form set1 - set2
+   is synthesised as SetADT.difference(set1, set2) *)
+
+
+(* Binding to * operator *)
+
+PROCEDURE [*] intersection ( set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
+(* Procedure to return the intersection of two Set ADT values *)
+
+(* An expression of the form set1 * set2
+   is synthesised as SetADT.intersection(set1, set2) *)
+
+
+(* Binding to / operator *)
+
+PROCEDURE [/] symmetricDiff ( set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
+(* Procedure to return the symmetric difference of two Set ADT values *)
+
+(* An expression of the form set1 / set2
+   is synthesised as SetADT.symmetricDiff(set1, set2) *)
+
+
+(* Relational operations *)
+
+(* Binding to = operator *)
+
+PROCEDURE [=] isEqual ( c1, c2 : ProtoStaticSet ) : BOOLEAN;
+(* Procedure to test the equivalence of two Set ADT values. *)
+
+(* An expression of the form collection1 = collection2
+   is synthesised as SetADT.isEqual(collection1, collection2) *)
+
+(* The operation for the # operator
+   is synthesized as NOT (collection1 = collection2) *)
+
+
+(* Binding to < operator *)
+
+PROCEDURE [<] isSubset ( set1, set2 : ProtoStaticSet ) : BOOLEAN;
+(* Procedure to test whether one Set ADT value is a subset of another *)
+
+(* An expression of the form set1 > set2
+   is synthesised as SetADT.isSubset(set1, set2) *)
+
+(* The operation for the <= operator
+   is synthesized as (set1 < set2) OR (set1 = set2) *)
+
+
+(* Binding to > operator *)
+
+PROCEDURE [>] isSuperset ( set1, set2 : ProtoStaticSet ) : BOOLEAN;
+(* Procedure to test whether one Set ADT value is a superset of another *)
+
+(* The operation for the >= operator
+   is synthesized as (set1 > set2) OR (set1 = set2) *)
+
+
+END ProtoStaticSet.
