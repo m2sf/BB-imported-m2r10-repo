@@ -1,19 +1,19 @@
 Numeric Prototypes                     Collection Prototypes
 
- NUMERIC                                COLLECTIONS
+ NUMERIC                                ProtoCollection
  |                                      |
- +--NONSCALAR                           +--STATIC
+ +--NONSCALAR                           +--ProtoStaticCollection
  |  |                                   |  |
- |  +--TTYPE                            |  +--STATSET
+ |  +--TTYPE                            |  +--ProtoStaticSet (always ordered)
  |  |                                   |  |
- |  +--VTYPE                            |  +--STATARRAY
+ |  +--VTYPE                            |  +--ProtoStaticArray (always ordered)
  |  |                                   |
- |  +--CTYPE                            +--DYNAMIC
- |                                         |
- +--SCALAR                                 +--DYNSET
+ |  +--CTYPE                            +--ProtoSet (always dynamic)
+ |                                      |  |
+ +--SCALAR                              |  +--ProtoOrderedSet (always dynamic)
+    |                                   |
+    +--RTYPE                            +--ProtoArray (always dynamic)
+    |                                   |
+    +--ZTYPE                            +--ProtoDictionary (always dynamic)
     |                                      |
-    +--RTYPE                               +--DYNARRAY
-    |                                      |
-    +--ZTYPE                               +--DICTIONARY
-    |
-    +--UZTYPE
+    +--UZTYPE                              +--ProtoOrderedDict (always dynamic)
