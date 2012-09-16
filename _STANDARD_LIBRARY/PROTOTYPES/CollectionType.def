@@ -82,7 +82,7 @@ PROCEDURE [?] valueForKey ( c : CollectionType; key : KeyType ) : ValueType;
    is synthesised as valueForKey( collecton, index ) *)
 
 
-(* Element count *)
+(* Key/Value count *)
 
 (* Binding to pervasive function COUNT *)
 
