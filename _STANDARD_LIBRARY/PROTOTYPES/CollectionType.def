@@ -1,54 +1,159 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(*  E X P E R I M E N T A L   S Y N T A X  *)
+(* Prototype Definition for Dynamic Collection ADTs *)
 
 PROTOTYPE CollectionType;
 
-(* Prototype Definition for Collection ADTs *)
-
-
-(* ADTs must be opaque,
+(* Collection ADTs must be opaque,
    variadic structured literals with key/value pairs are compatible *)
 
-TYPE PLACEHOLDERS Key, Value;
+PLACEHOLDERS KeyType, ValueType, ProcType;
 
-TYPE = OPAQUE := { VARIADIC OF { Key, Value } };
+TYPE = OPAQUE := { VARIADIC OF { KeyType, ValueType } };
 
 
 (* Bindings required for CollectionType ADTs *)
 
-PROCEDURE [:=] assignLiteral ( c : CollectionType;
-                literal : VARIADIC OF { key : Key; value : Value } );
-(* procedure to bind to literal assignment syntax for CollectionType ADTs *)
+(* Capacity *)
+
+(* Binding to pervasive function TCOUNT *)
+
+PROCEDURE [TCOUNT] capacity : LONGCARD;
+(* Procedure to return the maximum key/value pair count a CollectionType ADT
+   can hold. The Procedure must return zero if no hard limit is imposed. *)
+
+(* An expression of the form TCOUNT(CollectionTypeADT))
+   is synthesised as CollectionTypeADT.capacity() *)
 
 
-PROCEDURE [!] storeValue ( c : CollectionType;
-                           key : Key; CONST value : Value );
-(* procedure to bind to left hand side [ ] notation for CollectionType ADTs *)
+(* Construction and Destruction *)
+
+PROCEDURE [NEW] new ( VAR c : CollectionType );
+(* Procedure to allocate and initialise a new CollectionType ADT variable. *)
+
+(* A statement of the form NEW(c)
+   is synthesised as CollectionTypeADT.new(c) *)
+
+PROCEDURE [DISPOSE] dispose ( VAR c : CollectionType );
+(* Procedure to deallocate a CollectionType ADT variable. *)
+
+(* A statement of the form DISPOSE(c)
+   is synthesised as CollectionTypeADT.dispose(c) *)
 
 
-PROCEDURE [?] valueForKey ( c : CollectionType;
-                            key : Key; VAR keyIsValid : BOOLEAN ) : Value;
-(* procedure to bind to right hand side [ ] notation for CollectionType ADTs *)
+(* Binding to assignment operator *)
+
+PROCEDURE [:=] assign ( VAR c : CollectionType;
+                 keyValueList : VARIADIC OF { k : KeyType; v : ValueType } );
+(* Procedure to assign a structured literal of key/value pairs to a
+   CollectionType ADT variable. *)
+
+(* A statement of the form c := { key1, value1, ..., keyN, valueN }
+   is synthesised as assign( c, key1, value1, ... keyN, valueN ) *)
 
 
-PROCEDURE [~] removeKeyValuePair ( c : CollectionType; key : Key );
-(* procedure to bind to left hand side [ ] notation when NIL is assigned *)
+(* Storage and retrieval *)
 
+(* Binding to [ ] notation within left hand entities *)
+
+PROCEDURE [!] storeValue ( VAR c : CollectionType;
+                             key : KeyType; value : ValueType );
+(* Procedure to store a value for a given key in a CollectionType
+   ADT variable. *)
+
+(* A statement of the form c[key] := value
+   is synthesised as storeValue( c, key, value) *)
+
+PROCEDURE [~] removeKeyValuePair ( VAR c : CollectionType; key : KeyType );
+(* Procedure to remove the key/value pair for a given key from a
+   CollectionType ADT variable. *)
+
+(* A statement of the form c[key] := NIL
+   is synthesised as removeKeyValuePair( c, key ) *)
+
+
+(* Binding to [ ] notation within expressions *)
+
+PROCEDURE [?] valueForKey ( c : CollectionType; key : KeyType ) : ValueType;
+(* Procedure to return the value stored for a given key in a CollectionType
+   ADT value *)
+
+(* An expression of the form c[key]
+   is synthesised as valueForKey( c, index ) *)
+
+
+(* Element count *)
+
+(* Binding to pervasive function COUNT *)
 
 PROCEDURE [COUNT] count ( c : CollectionType ) : LONGCARD;
-(* procedure to bind to pervasive COUNT for arguments of CollectionType ADTs *)
+(* Procedure to return the key/value count of a CollectionType ADT value *)
+
+(* An expression of the form COUNT(c)
+   is synthesised as CollectionTypeADT.count(c) *)
 
 
-PROCEDURE [FOR] nextKeyValuePair ( c : CollectionType;
-                                   VAR key : Key; VAR value : Value );
-(* procedure to bind to the FOR .. IN .. iterator
-   for iterations of the form FOR key IN collection DO ... END *)
+(* Iteration *)
 
-PROCEDURE [=] isEqual ( CONST c1, c2 : CollectionType ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of CollectionType ADTs *)
+(* Binding to FOR IN iterator *)
 
-(* The operation for the # operator is synthesized as NOT (c1 = c2) *)
+TYPE ProcType = PROCEDURE ( CONST KeyType );
+
+PROCEDURE [FOR] forIterator ( VAR c : CollectionType;
+                       doStatements : ProcType );
+
+(* Procedure to iterate over all key/value pairs of a CollectionType ADT
+   value and execute the passed in doStatements for each pair. *)
+   
+(* A statement of the form
+     FOR key IN collection DO statementSeq END
+   is synthesised as
+     <* INLINE *> PROCEDURE forLoopBody ( CONST key : KeyType );
+     BEGIN statementSeq END forLoopBody;
+     CollectionTypeADT.forIterator( collection, forLoopBody ); *)
+
+PROCEDURE [DESCENDING] reverseFor ( VAR c : CollectionType;
+                             doStatements : ProcType );
+
+(* Procedure to iterate in descending order over all key value pairs of a
+   CollectionType ADT value and execute the passed in doStatements for
+   each pair. *)
+   
+(* A statement of the form
+     FOR DESCENDING key IN collection DO statementSeq END
+   is synthesised as
+     <* INLINE *> PROCEDURE forLoopBody ( CONST key : KeyType );
+     BEGIN statementSeq END forLoopBody;
+     CollectionTypeADT.reverseFor( collection, forLoopBody ); *)
+
+
+(* Dyadic operations *)
+
+(* The operations +, -, * and / are not meaningful for collections *)
+
+
+(* Relational operations *)
+
+(* Binding to = operator *)
+
+PROCEDURE [=] isEqual ( c1, c2 : CollectionType ) : BOOLEAN;
+(* Procedure to test the equivalence of two CollectionType ADT values *)
+
+(* An expression of the form c1 = c2
+   is synthesised as CollectionTypeADT.isEqual(c1, c2) *)
+
+(* The operation for the # operator
+   is synthesized as NOT (c1 = c2) *)
+
+
+(* Binding to < operator *)
+
+(* The operations < and <= are not meaningful for collections *)
+
+
+(* Binding to > operator *)
+
+(* The operations > and >= are not meaningful for collections *)
 
 
 END CollectionType.
