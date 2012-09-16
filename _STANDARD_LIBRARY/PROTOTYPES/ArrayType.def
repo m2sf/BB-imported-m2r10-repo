@@ -1,26 +1,120 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR ArrayType;
+(* Prototype Definition for Static Array ADTs *)
 
-(* Semantic Properties for Static Array Types *)
+PROTOTYPE ArrayType;
 
+(* Static Array ADTs must be opaque records to be statically allocatable,
+   structured literals may be used *)
 
-(* ADTs must be opaque records,
-   no literals may be used *)
+PLACEHOLDERS IndexType, ValueType, ProcType;
 
-TYPE = OPAQUE RECORD;
+TYPE = OPAQUE RECORD := { VARIADIC OF ValueType };
 
 
 (* Bindings required for ArrayType ADTs *)
 
-PROCEDURE [?]; (* require accessor binding to [ ] operator *)
+(* Capacity *)
 
-PROCEDURE [!]; (* require mutator binding to [ ] operator *)
+(* Binding to pervasive function TCOUNT *)
 
-PROCEDURE [COUNT]; (* require binding to COUNT function *)
+PROCEDURE [TCOUNT] capacity : LONGCARD;
+(* Procedure to return the maximum item count an ArrayType ADT can hold *)
 
-PROCEDURE [FOR]; (* require binding to FOR .. IN iterator *)
+(* An expression of the form TCOUNT(ArrayTypeADT))
+   is synthesised as ArrayTypeADT.capacity() *)
 
-PROCEDURE [=]; (* require binding to equal operator *)
+
+(* Binding to assignment operator *)
+
+PROCEDURE [:=] assign ( VAR array : ArrayType;
+                        valueList  : VARIADIC OF ValueType );
+(* Procedure to assign a structured literal to a ArrayType ADT variable. *)
+
+(* A statement of the form array := { value1, value2, ..., valueN }
+   is synthesised as assign( array, value1, value2, ..., valueN ) *)
+
+
+(* Storage and retrieval *)
+
+(* Binding to [ ] notation within left hand entities *)
+
+PROCEDURE [!] storeValue ( VAR array : ArrayType;
+                               index : IndexType; value : ValueType );
+(* Procedure to store a value at a given index in an ArrayType ADT variable *)
+
+(* A statement of the form array[index] := value
+   is synthesised as storeValue( array, index, value) *)
+
+
+(* Binding to [ ] notation within expressions *)
+
+PROCEDURE [?] valueAtIndex ( array : SetType;
+                             index : IndexType ) : ValueType;
+(* Procedure to return the value stored at a given index in an ArrayType
+   ADT value *)
+
+(* An expression of the form array[index]
+   is synthesised as valueAtIndex( array, index ) *)
+
+
+(* Element count *)
+
+(* Binding to pervasive function COUNT *)
+
+PROCEDURE [COUNT] count ( array : ArrayType ) : LONGCARD;
+(* Procedure to return the element count of an ArrayType ADT value *)
+
+(* An expression of the form COUNT(array)
+   is synthesised as ArrayTypeADT.count(array) *)
+
+
+(* Iteration *)
+
+(* Binding to FOR IN iterator *)
+
+TYPE ProcType = PROCEDURE ( CONST ValueType );
+
+PROCEDURE [FOR] forIterator ( VAR array : ArrayType;
+                           doStatements : ProcType );
+
+(* Procedure to iterate over all values of an ArrayType ADT value
+   and execute the passed in doStatements for each value. *)
+   
+(* A statement of the form FOR value IN array DO statementSeq END
+   is synthesised as
+   <* INLINE *> PROCEDURE forLoopBody ( CONST value : ValueType );
+   BEGIN statementSeq END forLoopBody;
+   ArrayTypeADT.forIterator( array, forLoopBody ); *)
+
+
+(* Dyadic operations *)
+
+(* The operations +, -, * and / are not meaningful for arrays *)
+
+
+(* Relational operations *)
+
+(* Binding to = operator *)
+
+PROCEDURE [=] isEqual ( array1, array2 : ArrayType ) : BOOLEAN;
+(* Procedure to test the equivalence of two ArrayType ADT values *)
+
+(* An expression of the form array1 = array2
+   is synthesised as ArrayTypeADT.isEqual(array1, array2) *)
+
+(* The operation for the # operator
+   is synthesized as NOT (array1 = array2) *)
+
+
+(* Binding to < operator *)
+
+(* The operations < and <= are not meaningful for arrays *)
+
+
+(* Binding to > operator *)
+
+(* The operations > and >= are not meaningful for arrays *)
+
 
 END ArrayType.
