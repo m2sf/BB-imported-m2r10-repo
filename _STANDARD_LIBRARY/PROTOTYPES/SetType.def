@@ -77,7 +77,7 @@ TYPE ProcType = PROCEDURE ( CONST ElementType );
 
 PROCEDURE [FOR] forIterator ( VAR set : SetType; doStatements : ProcType );
 
-(* Procedure to enumerate over all elements of a SetType ADT value
+(* Procedure to iterate over all elements of a SetType ADT value
    and execute the passed in doStatements for each element. *)
    
 (* A statement of the form FOR element IN set DO statementSeq END
