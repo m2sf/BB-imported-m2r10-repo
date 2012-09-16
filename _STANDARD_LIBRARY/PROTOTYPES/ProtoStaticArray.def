@@ -55,7 +55,7 @@ PROCEDURE [!] storeValue ( VAR array : ProtoStaticArray;
 
 PROCEDURE [?] valueAtIndex ( array : ProtoStaticArray;
                              index : IndexType ) : ValueType;
-(* Procedure to return the value stored at a given index in an Static Array
+(* Procedure to return the value stored at a given index in a Static Array
    ADT value. *)
 
 (* An expression of the form array[index]
@@ -67,7 +67,7 @@ PROCEDURE [?] valueAtIndex ( array : ProtoStaticArray;
 (* Binding to pervasive function COUNT *)
 
 PROCEDURE [COUNT] count ( array : ProtoStaticArray ) : LONGCARD;
-(* Procedure to return the index/value count of an Static Array ADT value. *)
+(* Procedure to return the index/value count of a Static Array ADT value. *)
 
 (* An expression of the form COUNT(array)
    is synthesised as ArrayADT.count(array) *)
@@ -82,7 +82,7 @@ TYPE ProcType = PROCEDURE ( VAR ProtoStaticArray; CONST IndexType );
 PROCEDURE [FOR] forIterator ( VAR array : ProtoStaticArray;
                            doStatements : ProcType );
 
-(* Procedure to iterate over all index/value pairs of an Static Array ADT
+(* Procedure to iterate over all index/value pairs of a Static Array ADT
    value in ascending order and execute the passed in doStatements for each
    pair. *)
    
@@ -99,9 +99,8 @@ PROCEDURE [FOR] forIterator ( VAR array : ProtoStaticArray;
 PROCEDURE [DESCENDING] reverseFor ( VAR array : ArrayType;
                                  doStatements : ProcType );
 
-(* Procedure to iterate over all index/value pairs of an ArrayType ADT value
-   in descending order and execute the passed in doStatements for each
-   pair. *)
+(* Procedure to iterate over all index/value pairs of a Static Array ADT value
+   in descending order and execute doStatements for each pair. *)
    
 (* A statement of the form
      FOR DESCENDING index IN array DO statementSeq END

@@ -35,7 +35,7 @@ PROCEDURE [NEW] new ( VAR array : ProtoArray );
    is synthesised as ArrayADT.new(array) *)
 
 PROCEDURE [DISPOSE] dispose ( VAR array : ProtoArray );
-(* Procedure to deallocate a Array ADT variable. *)
+(* Procedure to deallocate an Array ADT variable. *)
 
 (* A statement of the form DISPOSE(array)
    is synthesised as ArrayADT.dispose(array) *)
@@ -45,7 +45,7 @@ PROCEDURE [DISPOSE] dispose ( VAR array : ProtoArray );
 
 PROCEDURE [:=] assign ( VAR array : ProtoArray;
                         valueList : VARIADIC OF ValueType );
-(* Procedure to assign a structured literal to an ArrayType ADT variable. *)
+(* Procedure to assign a structured literal to an Array ADT variable. *)
 
 (* A statement of the form array := { value1, value2, ..., valueN }
    is synthesised as assign( array, value1, value2, ..., valueN ) *)
@@ -57,7 +57,7 @@ PROCEDURE [:=] assign ( VAR array : ProtoArray;
 
 PROCEDURE [!] storeValue ( VAR array : ProtoArray;
                                index : IndexType; value : ValueType );
-(* Procedure to store a value at a given index in a Array ADT variable. *)
+(* Procedure to store a value at a given index in an Array ADT variable. *)
 
 (* A statement of the form array[index] := value
    is synthesised as storeValue( array, index, value) *)

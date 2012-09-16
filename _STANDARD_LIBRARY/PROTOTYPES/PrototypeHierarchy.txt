@@ -16,6 +16,6 @@ Numeric Prototypes                   Collection Prototypes
     |                                 |
     +--RTYPE                          +--ProtoString (always ordered & dynamic)
     |                                 |
-    +--ZTYPE                          +--ProtodDictionary (always dynamic)
+    +--ZTYPE                          +--ProtoDictionary (always dynamic)
     |                                    |
     +--UZTYPE                            +--ProtoOrderedDict (always dynamic)
