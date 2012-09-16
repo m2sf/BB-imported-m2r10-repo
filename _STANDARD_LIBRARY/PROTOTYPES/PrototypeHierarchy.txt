@@ -1,19 +1,19 @@
-Numeric Prototypes                     Collection Prototypes
+Numeric Prototypes                    Collection Prototypes
 
- NUMERIC                                ProtoCollection
- |                                      |
- +--NONSCALAR                           +--ProtoStaticCollection
- |  |                                   |  |
- |  +--TTYPE                            |  +--ProtoStaticSet (always ordered)
- |  |                                   |  |
- |  +--VTYPE                            |  +--ProtoStaticArray (always ordered)
- |  |                                   |
- |  +--CTYPE                            +--ProtoSet (always dynamic)
- |                                      |  |
- +--SCALAR                              |  +--ProtoOrderedSet (always dynamic)
-    |                                   |
-    +--RTYPE                            +--ProtoArray (always dynamic)
-    |                                   |
-    +--ZTYPE                            +--ProtoDictionary (always dynamic)
-    |                                      |
-    +--UZTYPE                              +--ProtoOrderedDict (always dynamic)
+ NUMERIC                               ProtoCollection
+ |                                     |
+ +--NONSCALAR                          +--ProtoStaticCollection
+ |  |                                  |  |
+ |  +--TTYPE                           |  +--ProtoStaticSet (always ordered)
+ |  |                                  |  |
+ |  +--VTYPE                           |  +--ProtoStaticArray (always ordered)
+ |  |                                  |
+ |  +--CTYPE                           +--ProtoSet (always dynamic)
+ |                                     |  |
+ +--SCALAR                             |  +--ProtoOrderedSet (always dynamic)
+    |                                  |
+    +--RTYPE                           +--ProtoArray (always ordered & dynamic)
+    |                                  |
+    +--ZTYPE                           +--ProtoDictionary (always dynamic)
+    |                                     |
+    +--UZTYPE                             +--ProtoOrderedDict (always dynamic)
