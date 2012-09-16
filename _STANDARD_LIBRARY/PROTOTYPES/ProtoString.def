@@ -1,0 +1,204 @@
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Prototype Definition for Dynamically Allocatable String ADTs *)
+
+PROTOTYPE ProtoString [ProtoCollection];
+
+(* String ADTs must be opaque,
+   Character and string literals are compatible *)
+
+PLACEHOLDERS IndexType, ProcType;
+
+TYPE = OPAQUE := CHAR;
+
+
+(* Bindings required for String ADTs *)
+
+(* Capacity *)
+
+(* Binding to pervasive function TCOUNT *)
+
+PROCEDURE [TCOUNT] capacity : LONGCARD;
+(* Procedure to return the maximum character count a String ADT can hold.
+   The Procedure must return zero if no hard limit is imposed. *)
+
+(* An expression of the form TCOUNT(StringADT))
+   is synthesised as StringADT.capacity() *)
+
+
+(* Construction and Destruction *)
+
+PROCEDURE [NEW] new ( VAR string : ProtoString );
+(* Procedure to allocate and initialise a new String ADT variable. *)
+
+(* A statement of the form NEW(string)
+   is synthesised as StringADT.new(string) *)
+
+PROCEDURE [DISPOSE] dispose ( VAR string : ProtoString );
+(* Procedure to deallocate a String ADT variable. *)
+
+(* A statement of the form DISPOSE(string)
+   is synthesised as StringADT.dispose(string) *)
+
+
+(* Binding to assignment operator *)
+
+PROCEDURE [:=] assign ( VAR string : ProtoString;
+                        strLiteral : ARRAY OF CHAR );
+
+(* Procedure to assign a string literal to a String ADT variable. *)
+
+(* A statement of the form string := "the quick brown fox ..."
+   is synthesised as assign( string, "the quick brown fox ..." ) *)
+
+
+(* Character access *)
+
+(* Binding to [ ] notation within left hand entities *)
+
+PROCEDURE [!] replaceChar ( VAR string : ProtoString;
+                                 index : IndexType; char : CHAR );
+
+(* Procedure to replace the character at a given index in a String ADT
+   variable. *)
+
+(* A statement of the form string[index] := char
+   is synthesised as replaceChar( string, index, char ) *)
+
+
+(* Binding to [ ] notation within expressions *)
+
+PROCEDURE [?] charAtIndex ( string : ProtoString;
+                             index : IndexType ) : CHAR;
+(* Procedure to return the character at a given index in a String ADT
+   value. *)
+
+(* An expression of the form string[index]
+   is synthesised as charAtIndex( string, index ) *)
+
+
+(* Length *)
+
+(* Binding to pervasive function LENGTH *)
+
+PROCEDURE [LENGTH] length ( string : ProtoString ) : LONGCARD;
+(* Procedure to return the length of a String ADT value. *)
+
+(* An expression of the form LENGTH(string)
+   is synthesised as StringADT.length(string) *)
+
+
+(* Iteration *)
+
+(* Binding to FOR IN iterator *)
+
+TYPE ProcType = PROCEDURE ( VAR ProtoString; CONST IndexType );
+
+PROCEDURE [FOR] forIterator ( VAR string : ProtoString;
+                            doStatements : ProcType );
+
+(* Procedure to iterate over all characters of a String ADT value in
+   ascending order and execute the passed in doStatements for each
+   character. *)
+   
+(* A statement of the form
+     FOR index IN string DO statementSeq END
+   is synthesised in two steps.
+   The loop header is synthesised as
+     StringADT.forIterator( string, forLoopBody );
+   The loop body is synthesised as
+     <* INLINE *> PROCEDURE forLoopBody ( VAR string : StringADT;
+                                         CONST index : IndexType );
+     BEGIN statementSeq END forLoopBody; *)
+
+PROCEDURE [DESCENDING] reverseFor ( VAR string : StringType;
+                                  doStatements : ProcType );
+
+(* Procedure to iterate over all characters of a String ADT value in
+   descending order and execute the passed in doStatements for each
+   character. *)
+   
+(* A statement of the form
+     FOR DESCENDING index IN string DO statementSeq END
+   is synthesised in two steps.
+   The loop header is synthesised as
+     StringADT.reverseFor( string, forLoopBody );
+   The loop body is synthesised as
+     <* INLINE *> PROCEDURE forLoopBody ( VAR string : StringADT;
+                                         CONST index : IndexType );
+     BEGIN statementSeq END forLoopBody; *)
+   
+
+(* Dyadic operations *)
+
+(* Concatenation *)
+
+PROCEDURE [+] concatenate ( s1, s2 : ProtoString ) : ProtoString;
+(* Procedure to append s2 to s1 and return the result in a newly allocated
+   String ADT variable. *)
+
+(* An simple expression of the form s1 + s2
+   is synthesised as StringADT.concatenate( s1, s2 )
+   An expression of the form
+     s1 + s2 + s3
+   is synthesised as
+     NEW(tmpStr1); tmpStr1 := concatenate( s1, s2 );
+     NEW(tmpStr2); tmpStr2 := concatenate( tmpStr1, s3 ); DISPOSE(tmpStr1);
+   eventually followed by
+     DISPOSE(tmpStr2);
+   if tmpStr2 has not been assigned to a variable,
+   nor passed as a parameter to a procedure. *)
+
+
+(* Sub-String removal *)
+
+PROCEDURE [-] removeSubStr ( s1, s2 : ProtoString ) : ProtoString;
+(* Procedure to remove any occurrence of s2 in s1 and return the result in a
+   newly allocated String ADT variable. *)
+
+(* An simple expression of the form s1 - s2
+   is synthesised as StringADT.removeSubStr( s1, s2 )
+   An expression of the form
+     s1 - s2 - s3
+   is synthesised as
+     NEW(tmpStr1); tmpStr1 := removeSubStr( s1, s2 );
+     NEW(tmpStr2); tmpStr2 := removeSubStr( tmpStr1, s3 ); DISPOSE(tmpStr1);
+   eventually followed by
+     DISPOSE(tmpStr2);
+   if tmpStr2 has not been assigned to a variable,
+   nor passed as a parameter to a procedure. *)
+
+
+(* The operations * and / are not meaningful for strings. *)
+
+
+(* Relational operations *)
+
+(* Binding to = operator *)
+
+PROCEDURE [=] isEqual ( s1, s2 : ProtoString ) : BOOLEAN;
+(* Procedure to test the equivalence of two String ADT values. *)
+
+(* An expression of the form string1 = string2
+   is synthesised as StringADT.isEqual(string1, string2) *)
+
+(* The operation for the # operator
+   is synthesized as NOT (string1 = string2) *)
+
+
+(* Binding to < operator *)
+
+PROCEDURE [<] isLess ( s1, s2 : ProtoString ) : BOOLEAN;
+(* Procedure to test if String ADT value s1 comes lexically before String ADT
+   value s2. *)
+
+(* The operation for the <= operator is synthesized as NOT (s1 > s2) *)
+
+PROCEDURE [>] isGreater ( s1, s2 : ProtoString ) : BOOLEAN;
+(* Procedure to test if String ADT value s1 comes lexically after String ADT
+   value s2. *)
+
+(* The operation for the >= operator is synthesized as NOT (s1 < s2) *)
+
+
+END ProtoString.
