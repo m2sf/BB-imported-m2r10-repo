@@ -67,13 +67,9 @@ PROCEDURE [?] valueForAccessor( c : ProtoCollection;
 
 (* Accessor/Value count *)
 
-(* Binding to pervasive function COUNT *)
-
-PROCEDURE [COUNT] count ( c : ProtoCollection ) : LONGCARD;
-(* Procedure to return the accessor/value count of a Collection ADT value. *)
-
-(* An expression of the form COUNT(collection)
-   is synthesised as CollectionADT.count(collection) *)
+(* The operations COUNT and LENGTH are dependent on the kind of Collection
+   ADT and are mutually exclusive. Their bindings may be required by more
+   specialised prototypes. *)
 
 
 (* Iteration *)
