@@ -49,7 +49,7 @@ PROCEDURE [!] storeValue ( VAR array : ArrayType;
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] valueAtIndex ( array : SetType;
+PROCEDURE [?] valueAtIndex ( array : ArrayType;
                              index : IndexType ) : ValueType;
 (* Procedure to return the value stored at a given index in an ArrayType
    ADT value *)
