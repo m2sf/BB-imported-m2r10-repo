@@ -98,6 +98,10 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 (* Expands to TRUE if the type of variable <var> is an extension of type <T>,
    expands to FALSE otherwise. *)
 
+(* MACRO *) PROCEDURE IsRefCountedType( <T> ) : BOOLEAN;
+(* Expands to TRUE if type <T> has bindings to pervasives RETAIN and RELEASE,
+   expands to FALSE otherwise. *)
+
 (* MACRO *) PROCEDURE ConformsToPrototype( <P>; <T> ) : BOOLEAN;
 (* Expands to TRUE if type <T> conforms to prototype <P>,
    expands to FALSE otherwise. *)

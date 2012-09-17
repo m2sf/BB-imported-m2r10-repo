@@ -66,6 +66,12 @@ PROCEDURE NEW ( VAR p : <AnyPointerType>; (*OPTIONAL*) n : <UnsignedType> );
 PROCEDURE DISPOSE ( VAR p : <AnyPointerType> );
 (* DISPOSE(p) => DEALLOCATE(p, TSIZE(p^)) *)
 
+PROCEDURE RETAIN ( VAR p : <RefCountedADT> );
+(* RETAIN(p) => typeOf(p).retain(p) *)
+
+PROCEDURE RELEASE ( VAR p : <RefCountedADT> );
+(* RETAIN(p) => typeOf(p).release(p) *)
+
 PROCEDURE READ ( f : File; VAR v : <AnyType> );
 (* READ(f, v) => typeOf(v).Read(f, v) *)
 
