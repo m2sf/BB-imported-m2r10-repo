@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BS32 [SetType]; (* Thirty-two three-two *)
+DEFINITION MODULE BS32 [ProtoStaticSet]; (* Thirty-two three-two *)
 
 (* 32-bit Bitset *)
 
@@ -13,6 +13,15 @@ TYPE
     BS32 = OPAQUE RECORD
         bits : ARRAY 4 OF OCTET; (* 32 bits *)
     END; (* BS32 *)
+
+
+(* capacity limit *)
+
+(* TLIMIT(BS32) = 32 *)
+
+PROCEDURE [TLIMIT] capacityLimit ( CONST set : BS32 ) : CARDINAL;
+(* Returns the maximum number of elements that can be stored in a BS32 set.
+   This function is bound to pervasive function TLIMIT for type BS32. *)
 
 
 (* Literal assignment *)
