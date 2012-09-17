@@ -34,11 +34,20 @@ PROCEDURE [NEW] new ( VAR string : ProtoString );
 (* A statement of the form NEW(string)
    is synthesised as StringADT.new(string) *)
 
-PROCEDURE [DISPOSE] dispose ( VAR string : ProtoString );
-(* Procedure to deallocate a String ADT variable. *)
+(* EXPERIMENTAL *)
+PROCEDURE [RETAIN] retain ( VAR string : ProtoString );
+(* Procedure to retain a String ADT variable, incrementing its ref count. *)
 
-(* A statement of the form DISPOSE(string)
-   is synthesised as StringADT.dispose(string) *)
+(* A statement of the form RETAIN(string)
+   is synthesised as StringADT.retain(string) *)
+
+(* EXPERIMENTAL *)
+PROCEDURE [RELEASE] release ( VAR string : ProtoString );
+(* Procedure to release a String ADT variable, decrementing its ref count
+   and deallocating it if the ref count value has reached zero. *)
+
+(* A statement of the form RELEASE(string)
+   is synthesised as StringADT.release(string) *)
 
 
 (* Binding to assignment operator *)
@@ -133,40 +142,102 @@ PROCEDURE [DESCENDING] reverseFor ( VAR string : StringType;
 
 (* Concatenation *)
 
-PROCEDURE [+] concatenate ( s1, s2 : ProtoString ) : ProtoString;
-(* Procedure to append s2 to s1 and return the result in a newly allocated
-   String ADT variable. *)
+(* EXPERIMENTAL *)
+PROCEDURE [+] strFromConcatExpr (
+   strList : VARIADIC OF { CONST literal : ARRAY OF CHAR;
+                           CONST str     : ProtoString } ) : ProtoString;
 
-(* An simple expression of the form s1 + s2
-   is synthesised as StringADT.concatenate( s1, s2 )
-   An expression of the form
-     s1 + s2 + s3
+(* Procedure to concatenate a variadic list of string literals and String ADT
+   values and return the result in a newly allocated String ADT variable. *)
+
+(* An expression of the form
+     s := s1 + s2 + s3;
    is synthesised as
-     NEW(tmpStr1); tmpStr1 := concatenate( s1, s2 );
-     NEW(tmpStr2); tmpStr2 := concatenate( tmpStr1, s3 ); DISPOSE(tmpStr1);
-   eventually followed by
-     DISPOSE(tmpStr2);
-   if tmpStr2 has not been assigned to a variable,
-   nor passed as a parameter to a procedure. *)
+     s := strFromConcatExpr( "", s1, "", s2, "", s3 );
+
+   An expression of the form
+     s := "foo" + s1 + s2;
+   is synthesised as
+     s := strFromConcatExpr( "foo", s1, "", s2 );
+
+   An expression of the form
+     s := s1 + "foo" + s2;
+   is synthesised as
+     s := strFromConcatExpr( "", s1, "foo", s2 );
+
+   An expression of the form
+     s := s1 + s2 + "foo";
+   is synthesised as
+     s := strFromConcatExpr( "", s1, "", s2, "foo", NIL );
+   
+   An statement of the form
+     foobar(s1 + s2);
+   is synthesised as
+     tempStr := strFromConcatExpr( "", s1, "", s2);
+     foobar(tempStr); RELEASE(tempStr); *)
+
+(* EXPERIMENTAL *)
+PROCEDURE [+] concatenateInSitu ( VAR str : ProtoString;
+    strList : VARIADIC OF { CONST literal : ARRAY OF CHAR;
+                            CONST str     : ProtoString } );
+
+(* Procedure to concatenate a variadic list of string literals and String ADT
+   values to a String ADT variable and return the result in this variable. *)
+
+(* An expression of the form
+     s := s + s1 + s2 + s3;
+   is synthesised as
+     concatenateInSitu( s, "", s1, "", s2, "", s3 );
+
+   An expression of the form
+     s := s + "foo" + s1 + s2;
+   is synthesised as
+     concatenateInSitu( s, "foo", s1, "", s2 );
+
+   An expression of the form
+     s := s + s1 + "foo" + s2;
+   is synthesised as
+     concatenateInSitu( s, "", s1, "foo", s2 );
+
+   An expression of the form
+     s := s + s1 + s2 + "foo";
+   is synthesised as
+     concatenateInSitu( s, "", s1, "", s2, "foo", NIL ); *)
 
 
 (* Sub-String removal *)
 
-PROCEDURE [-] removeSubStr ( s1, s2 : ProtoString ) : ProtoString;
-(* Procedure to remove any occurrence of s2 in s1 and return the result in a
-   newly allocated String ADT variable. *)
+(* EXPERIMENTAL *)
+PROCEDURE [-] reductionOf ( str : ProtoString
+                     removeList : VARIADIC OF ProtoString ) : ProtoString;
 
-(* An simple expression of the form s1 - s2
-   is synthesised as StringADT.removeSubStr( s1, s2 )
-   An expression of the form
-     s1 - s2 - s3
+(* Procedure to remove all sub-strings in a variadic list of String ADT values
+   from a first String ADT value and return the result in a newly allocated
+   String ADT variable. *)
+
+(* An expression of the form
+     s := s1 - s2 - ... - sN;
    is synthesised as
-     NEW(tmpStr1); tmpStr1 := removeSubStr( s1, s2 );
-     NEW(tmpStr2); tmpStr2 := removeSubStr( tmpStr1, s3 ); DISPOSE(tmpStr1);
-   eventually followed by
-     DISPOSE(tmpStr2);
-   if tmpStr2 has not been assigned to a variable,
-   nor passed as a parameter to a procedure. *)
+     s := StringADT.reductionOf( s1, s2, ..., sN );
+
+   A statement of the form
+     foobar(s1 - s2);
+   is synthesised as
+     tempStr := reductionOf(s1, s2);
+     foobar(tempStr); RELEASE(tempStr); *)
+
+(* EXPERIMENTAL *)
+PROCEDURE [-] reduceInSitu ( VAR str : ProtoString;
+                          removeList : VARIADIC OF ProtoString );
+
+(* Procedure to remove all sub-strings in a variadic list of String ADT values
+   from a first String ADT value and return the result in the first String ADT
+   variable passed. *)
+
+(* An expression of the form
+     s := s - s1 - s2 - ... - sN;
+   is synthesised as
+     StringADT.reduceInSitu( s, s1, s2, ..., sN ); *)
 
 
 (* The operations * and / are not meaningful for strings. *)
