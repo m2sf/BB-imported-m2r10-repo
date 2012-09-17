@@ -14,17 +14,16 @@ TYPE = OPAQUE := { VARIADIC OF { KeyType, ValueType } };
 
 (* Bindings required for Ordered Dictionary ADTs *)
 
-(* Capacity *)
+(* Capacity limit *)
 
-(* Binding to pervasive function TCOUNT *)
+(* Binding to pervasive function TLIMIT *)
 
-PROCEDURE [TCOUNT] capacity : LONGCARD;
-(* Procedure to return the maximum key/value pair count an Ordered Dictionary
-   ADT can hold. The Procedure must return zero if no hard limit is imposed.
- *)
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Procedure to return the key/value pair limit of an Ordered Dictionary
+   ADT. *)
 
-(* An expression of the form TCOUNT(DictionaryADT))
-   is synthesised as DictionaryADT.capacity() *)
+(* An expression of the form TLIMIT(DictionaryADT))
+   is synthesised as DictionaryADT.capacityLimit() *)
 
 
 (* Construction and Destruction *)

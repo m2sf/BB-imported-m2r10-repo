@@ -14,16 +14,15 @@ TYPE = OPAQUE := { VARIADIC OF ValueType };
 
 (* Bindings required for Array ADTs *)
 
-(* Capacity *)
+(* Capacity limit *)
 
-(* Binding to pervasive function TCOUNT *)
+(* Binding to pervasive function TLIMIT *)
 
-PROCEDURE [TCOUNT] capacity : LONGCARD;
-(* Procedure to return the maximum index/value pair count an Array ADT
-   can hold. The Procedure must return zero if no hard limit is imposed. *)
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Procedure to return the index/value pair limit of an Array ADT. *)
 
-(* An expression of the form TCOUNT(ArrayADT))
-   is synthesised as ArrayADT.capacity() *)
+(* An expression of the form TLIMIT(ArrayADT))
+   is synthesised as ArrayADT.capacityLimit() *)
 
 
 (* Construction and Destruction *)

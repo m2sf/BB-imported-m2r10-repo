@@ -15,16 +15,15 @@ TYPE = OPAQUE | OPAQUE RECORD := { VARIADIC OF AccessorType } |
 
 (* Bindings required for Collection ADTs *)
 
-(* Capacity *)
+(* Capacity limit *)
 
-(* Binding to pervasive function TCOUNT *)
+(* Binding to pervasive function TLIMIT *)
 
-PROCEDURE [TCOUNT] capacity : LONGCARD;
-(* Procedure to return the maximum accessor/value pair count a Collection ADT
-   can hold. The Procedure must return zero if no hard limit is imposed. *)
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Procedure to return the accessor/value pair limit of a Collection ADT. *)
 
-(* An expression of the form TCOUNT(CollectionADT))
-   is synthesised as CollectionADT.capacity() *)
+(* An expression of the form TLIMIT(CollectionADT))
+   is synthesised as CollectionADT.capacityLimit() *)
 
 
 (* Construction and Destruction *)

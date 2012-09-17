@@ -14,16 +14,15 @@ TYPE = OPAQUE := CHAR;
 
 (* Bindings required for String ADTs *)
 
-(* Capacity *)
+(* Capacity limit *)
 
-(* Binding to pervasive function TCOUNT *)
+(* Binding to pervasive function TLIMIT *)
 
-PROCEDURE [TCOUNT] capacity : LONGCARD;
-(* Procedure to return the maximum character count a String ADT can hold.
-   The Procedure must return zero if no hard limit is imposed. *)
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Procedure to return the character limit of a String ADT. *)
 
-(* An expression of the form TCOUNT(StringADT))
-   is synthesised as StringADT.capacity() *)
+(* An expression of the form TLIMIT(StringADT))
+   is synthesised as StringADT.capacityLimit() *)
 
 
 (* Construction and Destruction *)

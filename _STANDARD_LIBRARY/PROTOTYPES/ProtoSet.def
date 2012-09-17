@@ -14,16 +14,15 @@ TYPE = OPAQUE := { VARIADIC OF ElementType };
 
 (* Bindings required for Set ADTs *)
 
-(* Capacity *)
+(* Capacity limit *)
 
-(* Binding to pervasive function TCOUNT *)
+(* Binding to pervasive function TLIMIT *)
 
-PROCEDURE [TCOUNT] capacity : LONGCARD;
-(* Procedure to return the maximum element count a Set ADT can hold.
-   The Procedure must return zero if no hard limit is imposed. *)
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Procedure to return the element limit of a Set ADT. *)
 
-(* An expression of the form TCOUNT(SetADT))
-   is synthesised as SetADT.capacity() *)
+(* An expression of the form TLIMIT(SetADT))
+   is synthesised as SetADT.capacityLimit() *)
 
 
 (* Construction and Destruction *)
