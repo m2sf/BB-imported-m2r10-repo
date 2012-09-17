@@ -128,8 +128,8 @@ PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T>;
 PROCEDURE TMAX ( T : <TypeIdentifier> ) : <T>;
 (* Returns largest legal value of type T *)
 
-PROCEDURE TCOUNT ( T : <SetOrCollectionTypeIdentifier> ) : LONGCARD;
-(* Returns maximum number of items of a set, array or collection type *)
+PROCEDURE TLIMIT ( T : <SetOrCollectionTypeIdentifier> ) : LONGCARD;
+(* Returns capacity limit of a set, array or collection type *)
 
 PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
 (* Returns allocation size required for a variable of type T *)
