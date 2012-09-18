@@ -52,9 +52,6 @@ PROCEDURE [ABS] abs ( r : ProtoReal ) : ProtoReal;
 PROCEDURE [NEG] neg ( r : ProtoReal ) : ProtoReal;
 (* procedure to bind to the NEG operator for operands of the ProtoReal ADT *)
 
-PROCEDURE [ODD] odd ( r : ProtoReal ) : BOOLEAN;
-(* procedure to bind to the ODD operator for operands of the ProtoReal ADT *)
-
 
 (* Bindings to dyadic operations *)
 
