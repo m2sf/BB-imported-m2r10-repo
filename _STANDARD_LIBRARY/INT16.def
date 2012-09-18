@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INT16 [ZTYPE];
+DEFINITION MODULE INT16 [ProtoInteger];
 
 (* 16-bit Integer Numbers *) 
 

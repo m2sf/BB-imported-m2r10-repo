@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARD32 [UZTYPE];
+DEFINITION MODULE CARD32 [ProtoCardinal];
 
 (* 32-bit Unsigned Integer Numbers *) 
 

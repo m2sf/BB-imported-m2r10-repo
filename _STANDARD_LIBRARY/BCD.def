@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BCD [RTYPE];
+DEFINITION MODULE BCD [ProtoReal];
 
 (* Single Precision Binary Coded Decimals *) 
 

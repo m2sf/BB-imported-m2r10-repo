@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INT32 [ZTYPE];
+DEFINITION MODULE INT32 [ProtoInteger];
 
 (* 32-bit Integer Numbers *) 
 

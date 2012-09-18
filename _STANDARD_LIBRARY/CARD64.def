@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARD64 [UZTYPE];
+DEFINITION MODULE CARD64 [ProtoCardinal];
 
 (* 64-bit Unsigned Integer Numbers *) 
 

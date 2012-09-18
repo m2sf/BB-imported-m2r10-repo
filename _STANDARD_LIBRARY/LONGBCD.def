@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGBCD [RTYPE];
+DEFINITION MODULE LONGBCD [ProtoReal];
 
 (* Double Precision Binary Coded Decimals *) 
 

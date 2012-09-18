@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INT64 [ZTYPE];
+DEFINITION MODULE INT64 [ProtoInteger];
 
 (* 64-bit Integer Numbers *) 
 

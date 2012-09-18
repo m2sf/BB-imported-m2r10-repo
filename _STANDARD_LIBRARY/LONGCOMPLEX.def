@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGCOMPLEX [CTYPE];
+DEFINITION MODULE LONGCOMPLEX [ProtoComplex];
 
 (* Double Precision Complex Numbers *) 
 

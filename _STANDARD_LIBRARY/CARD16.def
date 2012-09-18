@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARD16 [UZTYPE];
+DEFINITION MODULE CARD16 [ProtoCardinal];
 
 (* 16-bit Unsigned Integer Numbers *) 
 

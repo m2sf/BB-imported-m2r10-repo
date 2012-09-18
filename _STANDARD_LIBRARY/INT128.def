@@ -1,6 +1,6 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INT128 [ZTYPE];
+DEFINITION MODULE INT128 [ProtoInteger];
 
 (* 128-bit Integer Numbers *) 
 
