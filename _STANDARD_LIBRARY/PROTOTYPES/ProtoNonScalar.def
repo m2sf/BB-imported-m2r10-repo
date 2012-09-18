@@ -2,7 +2,7 @@
 
 (* General Prototype Definition for Non-Scalar Numeric ADTs *)
 
-PROTOTYPE NONSCALAR [NUMERIC]; (* conforms to NUMERIC *)
+PROTOTYPE ProtoNonScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
 (* Non-Scalar numeric ADTs must be records to be statically allocatable,
    structured literals constructed from real number literals may be used *)
@@ -39,10 +39,10 @@ TYPE = RECORD | OPAQUE RECORD := { .. } OF REAL;
 
 (* Bindings to dyadic operations *)
 
-PROCEDURE [+] add ( op1, op2 : NONSCALAR ) : NONSCALAR;
+PROCEDURE [+] add ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
 (* procedure to bind to the + operator for operands of the non-scalar ADT *)
 
-PROCEDURE [-] subtract ( op1, op2 : NONSCALAR ) : NONSCALAR;
+PROCEDURE [-] subtract ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
 (* procedure to bind to the - operator for operands of the non-scalar ADT *)
 
 (* The operations * and / are not common to all non-scalar types,
@@ -55,7 +55,7 @@ PROCEDURE [-] subtract ( op1, op2 : NONSCALAR ) : NONSCALAR;
 
 (* Bindings to relational operations *)
 
-PROCEDURE [=] isEqual ( op1, op2 : NONSCALAR ) : NONSCALAR;
+PROCEDURE [=] isEqual ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
 (* procedure to bind to the = operator for operands of the non-scalar ADT *)
 
 (* The operation for the # operator is synthesized as NOT (op1 = op2) *)
@@ -65,4 +65,4 @@ PROCEDURE [=] isEqual ( op1, op2 : NONSCALAR ) : NONSCALAR;
 <* WARNONEXTN <, >; *>
 
 
-END NONSCALAR.
+END ProtoNonScalar.

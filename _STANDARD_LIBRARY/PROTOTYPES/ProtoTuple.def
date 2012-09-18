@@ -1,6 +1,6 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOTYPE TTYPE [NONSCALAR]; (* conforms to NONSCALAR *)
+PROTOTYPE ProtoTuple [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
 
 (* Prototype Definition for Numeric Tuple ADTs *)
 
@@ -11,7 +11,7 @@ PROTOTYPE TTYPE [NONSCALAR]; (* conforms to NONSCALAR *)
 TYPE = RECORD;
 
 
-(* Bindings required for TTYPE ADTs *)
+(* Bindings required for ProtoTuple ADTs *)
 
 (* Via-SXF conversion between structurally equivalent non-scalar numeric types
    is synthesised using SXF and VAL conversions on their scalar components *)
@@ -19,10 +19,10 @@ TYPE = RECORD;
 
 (* Bindings to monadic operations *)
 
-PROCEDURE [ABS] abs ( t : TTYPE ) : TTYPE;
+PROCEDURE [ABS] abs ( t : ProtoTuple ) : ProtoTuple;
 (* procedure to bind to pervasive function ABS for arguments of the ADT *)
 
-PROCEDURE [NEG] neg ( t : VTYPE ) : VTYPE;
+PROCEDURE [NEG] neg ( t : ProtoTuple ) : ProtoTuple;
 (* procedure to bind to pervasive function NEG for arguments of the ADT *)
 
 
@@ -33,10 +33,10 @@ PROCEDURE [NEG] neg ( t : VTYPE ) : VTYPE;
 
 (* Bindings to relational operations *)
 
-PROCEDURE [=] isEqual ( t1, t2 : TTYPE ) : BOOLEAN;
+PROCEDURE [=] isEqual ( t1, t2 : ProtoTuple ) : BOOLEAN;
 (* procedure to bind to the = operator for operands of the ADT *)
 
 (* The operation for the # operator is synthesized as NOT (v1 = v2) *)
 
 
-END TTYPE.
+END ProtoTuple.

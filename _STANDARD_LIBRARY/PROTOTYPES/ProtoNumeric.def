@@ -2,7 +2,7 @@
 
 (* General Prototype Definition for Scalar and Non-Scalar Numeric ADTs *)
 
-PROTOTYPE NUMERIC; (* root of numeric prototypes *)
+PROTOTYPE ProtoNumeric; (* root of numeric prototypes *)
 
 (* Numeric ADTs must be records to be statically allocatable,
    the following literals may be used:
@@ -26,10 +26,10 @@ TYPE = RECORD | OPAQUE RECORD := INTEGER | REAL | { .. } OF REAL;
 
 (* Bindings to dyadic operations *)
 
-PROCEDURE [+] add ( op1, op2 : NUMERIC ) : NUMERIC;
+PROCEDURE [+] add ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
 (* procedure to bind to the + operator for operands of the numeric ADT *)
 
-PROCEDURE [-] subtract ( op1, op2 : NUMERIC ) : NUMERIC;
+PROCEDURE [-] subtract ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
 (* procedure to bind to the - operator for operands of the numeric ADT *)
 
 (* The operations *, /, DIV and MOD are not common to all numeric types,
@@ -38,7 +38,7 @@ PROCEDURE [-] subtract ( op1, op2 : NUMERIC ) : NUMERIC;
 
 (* Bindings to relational operations *)
 
-PROCEDURE [=] isEqual ( op1, op2 : NUMERIC ) : BOOLEAN;
+PROCEDURE [=] isEqual ( op1, op2 : ProtoNumeric ) : BOOLEAN;
 (* procedure to bind to the = operator for operands of the numeric ADT *)
 
 (* The operation for the # operator is synthesized as NOT (op1 = op2) *)
@@ -47,4 +47,4 @@ PROCEDURE [=] isEqual ( op1, op2 : NUMERIC ) : BOOLEAN;
    their bindings may be required by more specialised prototypes *)
 
 
-END NUMERIC.
+END ProtoNumeric.

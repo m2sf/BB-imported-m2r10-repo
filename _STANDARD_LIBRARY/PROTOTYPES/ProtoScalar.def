@@ -2,7 +2,7 @@
 
 (* General Prototype Definition for Scalar Number ADTs *)
 
-PROTOTYPE SCALAR [NUMERIC]; (* conforms to NUMERIC *)
+PROTOTYPE ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
 (* Scalar number ADTs must be opaque records to be statically allocatable,
    either integer or real number literals may be used, but not both *)
@@ -23,10 +23,10 @@ CONST [TSIG] : [1 .. 4000] OF CARDINAL;
 
 (* Bindings to pervasive functions TMIN and TMAX *)
 
-PROCEDURE [TMIN] minValue : SCALAR;
+PROCEDURE [TMIN] minValue : ProtoScalar;
 (* procedure to return minimal value of a scalar ADT *)
 
-PROCEDURE [TMAX] maxValue : SCALAR;
+PROCEDURE [TMAX] maxValue : ProtoScalar;
 (* procedure to return maximal value of a scalar ADT *)
 
 
@@ -35,13 +35,13 @@ PROCEDURE [TMAX] maxValue : SCALAR;
 PROCEDURE [SXF] toSXF ( lexeme : ARRAY OF CHAR; VAR sxf : ARRAY OF OCTET );
 (* procedure to convert a literal to a value in scalar exchange format *)
 
-PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : SCALAR );
+PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoScalar );
 (* procedure to convert value in scalar exchange format to the scalar ADT *)
 
 
 (* Binding to assignment operator for non-literal values *)
 
-PROCEDURE [:=] assign ( VAR left : SCALAR; right : SCALAR );
+PROCEDURE [:=] assign ( VAR left : ProtoScalar; right : ProtoScalar );
 
 (* The assignment of literal values is synthesised from SXF and VAL *)
 
@@ -52,17 +52,17 @@ PROCEDURE [:=] assign ( VAR left : SCALAR; right : SCALAR );
 
 (* Bindings to dyadic operations *)
 
-PROCEDURE [+] add ( op1, op2 : SCALAR ) : SCALAR;
+PROCEDURE [+] add ( op1, op2 : ProtoScalar ) : ProtoScalar;
 (* procedure to bind to the + operator for operands of the scalar ADT *)
 
 (* The operation for the ++ statement is synthesized as op := op + VAL(1) *)
 
-PROCEDURE [-] subtract ( op1, op2 : SCALAR ) : SCALAR;
+PROCEDURE [-] subtract ( op1, op2 : ProtoScalar ) : ProtoScalar;
 (* procedure to bind to the - operator for operands of the scalar ADT *)
 
 (* The operation for the -- statement is synthesized as op := op - VAL(1) *)
 
-PROCEDURE [*] multiply ( op1, op2 : SCALAR ) : SCALAR;
+PROCEDURE [*] multiply ( op1, op2 : ProtoScalar ) : ProtoScalar;
 (* procedure to bind to the * operator for operands of the scalar ADT *)
 
 (* The operations /, DIV and MOD are not common to all scalar types,
@@ -71,20 +71,20 @@ PROCEDURE [*] multiply ( op1, op2 : SCALAR ) : SCALAR;
 
 (* Bindings to relational operations *)
 
-PROCEDURE [=] isEqual ( op1, op2 : SCALAR ) : BOOLEAN;
+PROCEDURE [=] isEqual ( op1, op2 : ProtoScalar ) : BOOLEAN;
 (* procedure to bind to the = operator for operands of the scalar ADT *)
 
 (* The operation for the # operator is synthesized as NOT (op1 = op2) *)
 
-PROCEDURE [>] isGreater ( op1, op2 : SCALAR ) : BOOLEAN;
+PROCEDURE [>] isGreater ( op1, op2 : ProtoScalar ) : BOOLEAN;
 (* procedure to bind to the > operator for operands of the scalar ADT *)
 
 (* The operation for the <= operator is synthesized as NOT (op1 > op2) *)
 
-PROCEDURE [<] isLess ( op1, op2 : SCALAR ) : BOOLEAN;
+PROCEDURE [<] isLess ( op1, op2 : ProtoScalar ) : BOOLEAN;
 (* procedure to bind to the < operator for operands of the scalar ADT *)
 
 (* The operation for the >= operator is synthesized as NOT (op1 < op2) *)
 
 
-END SCALAR.
+END ProtoScalar.
