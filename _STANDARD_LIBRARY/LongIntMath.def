@@ -1,0 +1,23 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LongIntMath;
+
+(* Mathematical Functions for Type LONGINT *)
+
+
+PROCEDURE sgn ( i : LONGINT ) : LONGINT;
+(* Returns the signum value of i. *)
+
+PROCEDURE exp2 ( i : LONGINT ) : LONGINT;
+(* Returns the value of i raised to the power of two. *)
+
+PROCEDURE power ( i, exponent : LONGINT ) : LONGINT;
+(* Returns the value of i raised to the power of exponent. *)
+
+PROCEDURE nearestSmallerPowerOf2 ( i : LONGINT ) : LONGINT;
+(* Returns the nearest power of 2 smaller than i. *)
+
+PROCEDURE nearestLargerPowerOf2 ( i : LONGINT ) : LONGINT;
+(* Returns the nearest power of 2 larger than i. *)
+
+END LongIntMath.
