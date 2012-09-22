@@ -107,28 +107,30 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
    expands to FALSE otherwise. *)
 
 
-(* Calculating the minimum of a list of constant expressions *)
+(* Compile Time Arithmetic *)
+
+(* minimum of a list of constant expressions *)
 
 (* MACRO *) PROCEDURE MIN ( constant : VARIADIC OF <T> ) : <T>;
 (* Replaced by the smallest value of its variadic argument list,
    all arguments must be of the same ordinal or scalar type. *)
 
 
-(* Calculating the maximum of a list of constant expressions *)
+(* maximum of a list of constant expressions *)
 
 (* MACRO *) PROCEDURE MAX ( constant : VARIADIC OF <T> ) : <T>;
 (* Replaced by the largest value of its variadic argument list,
    all arguments must be of the same ordinal or scalar type. *)
 
 
-(* Calculating the power of two of a non-negative constant expression *)
+(* power of two of a non-negative constant expression *)
 
 (* MACRO *) PROCEDURE EXP2 ( constant : <T> ) : <T>;
 (* Expands to the value of two raised to the power of its argument,
    the argument must be a non-negative whole number constant. *)
 
 
-(* Calculating a hash value for a string literal *)
+(* hash value of a string literal *)
 
 (* MACRO *) PROCEDURE HASH ( literal : ARRAY OF CHAR ) : LONGCARD;
 (* Expands to the hash value of a string literal, excluding the enclosing

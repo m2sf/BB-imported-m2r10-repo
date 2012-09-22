@@ -114,7 +114,7 @@ PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD;
 PROCEDURE SIZE ( variable : <AnyType> ) : LONGCARD;
 (* Returns allocated size of variable *)
 
-PROCEDURE LENGTH ( CONST s : <CharacterArray> ) : LONGCARD;
+PROCEDURE LENGTH ( CONST s : <CharacterArrayOrStringADT> ) : LONGCARD;
 (* Returns length of character string in s *)
 
 PROCEDURE NEXTV ( ident : <VariadicList> ) : <PointerToVariadicBaseType>;
