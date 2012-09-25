@@ -16,11 +16,36 @@ TYPE STRING = OPAQUE;
 (* StringType bindings to operators and pervasives: *)
 
 
+(* capacity limit *)
+
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Returns the character capacity limit of type STRING.
+   This procedure is bound to pervasive procedure TLIMIT for type STRING. *)
+
+
 (* allocator *)
 
 PROCEDURE [NEW] new ( VAR s : STRING );
 (* Allocates a new object of type STRING and returns a pointer to it in s.
    This procedure is bound to pervasive procedure NEW for type STRING. *)
+
+(* destructor *)
+
+PROCEDURE [DISPOSE] dispose ( VAR s : STRING );
+(* Deallocates STRING s and assigns NIL to s.
+   This procedure is bound to pervasive procedure DISPOSE for type STRING. *)
+
+(* retain reference *)
+
+PROCEDURE [RETAIN] retain ( VAR s : STRING );
+(* Retains the reference to STRING s.
+   This procedure is bound to pervasive procedure RETAIN for type STRING. *)
+
+(* release reference *)
+
+PROCEDURE [RELEASE] release ( VAR s : STRING );
+(* Releases the reference to STRING s.
+   This procedure is bound to pervasive procedure RELEASE for type STRING. *)
 
 
 (* accessor *)
@@ -78,13 +103,6 @@ PROCEDURE [<] isLess ( s1, s2 : STRING ) : BOOLEAN;
 PROCEDURE [>] isGreater ( s1, s2 : STRING ) : BOOLEAN;
 (* Returns TRUE if s1 comes lexically after s2, otherwise FALSE.
    This function is bound to operators > and <= for type STRING. *)
-
-
-(* destructor *)
-
-PROCEDURE [DISPOSE] dispose ( VAR s : STRING );
-(* Deallocates STRING s and assigns NIL to s.
-   This procedure is bound to pervasive procedure DISPOSE for type STRING. *)
 
 
 (* IO procedures *)
