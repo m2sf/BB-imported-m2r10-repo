@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status June 16, 2010
+# Syntax diagram generator for Modula-2 (R10), status Sep 30, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -11,7 +11,7 @@
 # The present version of the script was cleaned up,  enhanced,  documented
 # and modified by B.Kowarsch to become accessible to those unfamiliar with
 # TCL/TK, and in particular to generate syntax diagrams for Modula-2 (R10).
-# Is located at http://modula2.net/resources/modula2_syntax_diagrams.tcl
+# It is located at http://modula2.net/resources/modula2_syntax_diagrams.tcl
 #
 # Ideally the design would have been changed such that the script can read
 # grammars from a text file in EBNF notation.  Ideally,  this script would
@@ -137,76 +137,85 @@ wm withdraw .
 # ---------------------------------------------------------------------------
 #  replace this with your own grammar, do not add comments or blank lines!
 #
+# to do: build the grammar list one by one production to be able to insert
+# comments for documentation before each production rule, using lappend:
+#
+#  set grammar {}
+#  lappend grammar production1 { ... }
+#  lappend grammar production2 { ... }
+#  etc etc
+#
 set all_graphs {
   compilationUnit {
     or
       {line prototype}
-      {line programModule}
       {line definitionOfModule}
-      {line implementationOfModule}
+      {line IMPLEMENTATION programModule}
   }
   prototype {
     stack
-      {line PROTOTYPE prototypeId ;}
-      {line TYPE = {or RECORD {line OPAQUE {optx RECORD}
-        {optx := literalType}}} ;}
-      {line {opt ASSOCIATIVE ;}
-        {loop nil {nil requiredBinding nil}} END prototypeId .}
-  }
-  programModule {
-    stack
-      {line MODULE moduleId {opt [ priority ]} ;}
-      {line {loop nil {nil importList nil}} block moduleId .}
-  }
-  definitionOfModule {
-    stack
-      {line DEFINITION MODULE moduleId {opt [ prototypeId ]} ;}
-      {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
-        END moduleId .}
-  }
-  implementationOfModule {
-    line IMPLEMENTATION programModule
-  }
-  moduleId {
-    line Ident
-  }
-  priority {
-    line Ident
+      {line PROTOTYPE prototypeId [ requiredConformance ] ;}
+      {line {opt PLACEHOLDERS identList ;} requiredTypeDefinition}
+      {line {loop nil {nil ; requiredBinding}} END prototypeId .}
   }
   prototypeId {
     line Ident
   }
-  requiredBinding {
-    line {or
-           {line CONST [ bindableIdent ]}
-           {line PROCEDURE [ {or bindableOperator bindableIdent} ]}
-         } ;
+  requiredConformance {
+    line Ident
   }
-  bindableOperator {
-    or
-      DIV MOD IN FOR := ? ! ~ + - * / = < >
+  programModule {
+    line MODULE moduleId ;
+    {loop nil {nil importList nil}} block moduleId .
   }
-  bindableIdent {
-    line {
+  moduleId {
+    line Ident
+  }
+  definitionOfModule {
+    stack
+      {line DEFINITION MODULE moduleId {opt [ requireConformance ]} ;}
+      {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
+        END moduleId .}
+  }
+  requiredTypeDefinition {
+    stack
+      {line TYPE = permittedTypeDef {loop nil {nil | permittedTypeDef}}}
+      {line {opt := protoliteral {loop nil {nil | protoliteral}}}}
+  }
+  protoliteral {
+    or simpleProtoliteral structuredProtoliteral
+  }
+  simpleProtoliteral {
+    or /CHAR /INTEGER /REAL
+  }
+  structuredProtoliteral {
+    line LBRACE {
       or
-        TMIN TMAX ABS NEG ODD COUNT LENGTH NEW DISPOSE SXF VAL
+        {line VARIADIC OF {loop simpleProtoliteral ,}}
+        {line structuredProtoliteral {loop {line , structuredProtoliteral} {}}}
     }
+    RBRACE
   }
-  literalType {
+  requiredBinding {
     line {
       or
-        CHAR INTEGER REAL
+        {line CONST [ {or /TSIG /TEXP} ] : namedType}
+        {line procedureHeader}
     }
   }
   importList {
     line {
       or
-        {line FROM moduleId IMPORT {or identList *}}
+        {line FROM moduleId IMPORT {
+          or
+            {line identList}
+            {line CAST {opt , identList}}
+            {line *}}}
         {line IMPORT Ident {loop {opt +} {nil , Ident}}}
     } ;
   }
   block {
-    line {loop nil {nil definition nil}}
+    line {loop nil {nil declaration nil}}
     {opt BEGIN statementSequence} END
   }
   declaration {
@@ -221,7 +230,7 @@ set all_graphs {
   definition {
     line {
       or
-        {line CONST {or nil {loop {line [ bindableIdent ]
+        {line CONST {or nil {loop {line {opt [ {or /TSIG /TEXP} ]}
           constantDeclaration ;} nil} }}
         {line TYPE {or nil {loop {line Ident =
           {or type {line OPAQUE {optx recordType}}} ;} nil} }}
@@ -269,7 +278,7 @@ set all_graphs {
    line Ident {
      or
        {line {loop {line , Ident} {}} :}
-       {line : {optx ARRAY determinantField OF}}
+       {line : {optx ARRAY discriminantField OF}}
    }
    namedType
   }
@@ -304,21 +313,12 @@ set all_graphs {
     line VARIADIC OF {
       or
         {line attributedFormalType}
-        {line ( attributedFormalType {loop {} {nil , attributedFormalType}} )}
+        {line LEFT_BRACE attributedFormalType
+          {loop {} {nil , attributedFormalType}} RIGHT_BRACE}
     }
   }
   variableDeclaration {
-    stack
-      {line Ident {
-        or
-          {}
-          {line [ machineAddress ]}
-          {line , identList}
-      }}
-      {line : {optx ARRAY constComponentCount OF} namedType}
-  }
-  machineAddress {
-    line constExpression
+      line identList : {optx ARRAY constComponentCount OF} namedType
   }
   procedureDeclaration {
     line procedureHeader ; block Ident
@@ -326,8 +326,19 @@ set all_graphs {
   procedureHeader {
     stack
       {line PROCEDURE
-        {optx {line [ {or :: bindableOperator bindableIdent} ]} } }
+        {optx {line [ bindableEntity ]} } }
       {line Ident {optx ( formalParamList )} {optx : returnedType}}
+  }
+  bindableEntity {
+    or
+      DIV MOD IN FOR DESCENDING :: := ? ! ~ + - * / = < > bindableIdent
+  }
+  bindableIdent {
+    line {
+      or
+        /TMIN /TMAX /TLIMIT /ABS /NEG /ODD /COUNT /LENGTH
+        /NEW /DISPOSE /RETAIN /RELEASE /SXF /VAL
+    }
   }
   formalParamList {
     line formalParams {loop {} {nil , formalParams}}
@@ -341,10 +352,11 @@ set all_graphs {
   variadicFormalParams {
     stack
       {line VARIADIC
-        {or variadicCounter {line [ variadicTerminator ]} {} }}
+        {or {} {line [ variadicTerminator ]} }}
       {line OF
         {or simpleFormalType
-          {line ( simpleFormalParams {loop {} {nil ; simpleFormalParams}} )}}}
+          {line LEFT_BRACE simpleFormalParams
+            {loop {} {nil ; simpleFormalParams}} RIGHT_BRACE}}}
   }
   variadicCounter {
     line Ident
@@ -407,8 +419,8 @@ set all_graphs {
   }
   forStatement {
     stack
-      {line FOR {opt DESCENDING} controlVariable {opt OF namedType}}
-      {line IN {or expression {line range OF namedType}}}
+      {line FOR {opt DESCENDING} controlVariable}
+      {line IN {or designator {line range OF namedType}}}
       {line DO statementSequence END}
   }
   controlVariable {
@@ -525,43 +537,95 @@ set all_graphs {
   constQualident {
     line qualident
   }
-  pragma {
-    line <* {
-      or
-        conditionalPragma
-        compileTimeMessagePragma
-        codeGenerationPragma
-        implementationDefinedPragma
-    } *>
+  compileTimeMessagePragma {
+    line <* MSG = {or INFO WARN ERROR FATAL} :
+      {loop compileTimeMsgComponent ,} *>
   }
-  conditionalPragma {
+  compileTimeMsgComponent {
     line {
       or
-        {line {or IF ELSIF} constExpression}
-        ELSE
-        ENDIF
+        String
+        ConstQualident
+        {line ? {or ALIGN ENCODING implDefinedPragmaName}}
     }
   }
-  compileTimeMessagePragma {
-    line {or INFO WARN ERROR FATAL} compileTimeMessage
+  conditionalPragma {
+    line <* {
+      or
+        {line {or IF ELSIF} inPragmaExpression}
+        ELSE
+        ENDIF
+    } *>
   }
-  compileTimeMessage {
-    line String
+  pragmaENCODING {
+    line <* ENCODING = {or `ASCII `UTF8} {opt : codePointSampleList} *>
   }
-  codeGenerationPragma {
-    or
-      {line ALIGN = constExpression}
-      {line FOREIGN {optx = String}}
-      {line MAKE = String}
-      INLINE
-      NOINLINE
-      VOLATILE
+  codePointSampleList {
+    loop {line quotedCharacterLiteral = characterCodeLiteral} ,
+  }
+  pragmaGENLIB {
+    line <* GENLIB moduleName FROM template : templateParamList *>
+  }
+  templateParamList {
+    loop {line placeholder = replacement} ,
+  }
+  pragmaFFI {
+    line <* FFI = {or `C `Fortran } *>
+  }
+  pragmaINLINE {
+    line <* {or INLINE NOINLINE} *>
+  }
+  pragmaALIGN {
+    line <* ALIGN = inPragmaExpression *>
+  }
+  pragmaPADBITS {
+    line <* PADBITS = inPragmaExpression *>
+  }
+  pragmaADDR {
+    line <* ADDR = inPragmaExpression *>
+  }
+  pragmaREG {
+    line <* REG = {or registerNumber registerMnemonic} *>
+  }
+  pragmaVOLATILE {
+    line <* VOLATILE *>
   }
   implementationDefinedPragma {
-    line pragmaName {or {} + - {line = {or Ident Number}}}
+    line implDefinedPragmaName {opt = inPragmaExpression}
   }
-  pragmaName {
+  implDefinedPragmaName {
     line Ident
+  }
+  inPragmaExpression {
+    line inPragmaSimpleExpr {loop {} {nil , inPragmaSimpleExpr}}
+  }
+  inPragmaRelation {
+    or = # < <= > >=
+  }
+  inPragmaSimpleExpr {
+    line {or {} + -} inPragmaTerm {loop {} {nil addOperator inPragmaTerm}}
+  }
+  inPragmaTerm {
+    line inPragmaFactor {loop {} {nil inPragmaMulOperator inPragmaFactor}}
+  }
+  inPragmaMulOperator {
+    or * DIV MOD AND
+  }
+  inPragmaFactor {
+    or
+      wholeNumber
+      constQualident
+      inPragmaPervasiveOrMacroCall
+      {line ( inPragmaExpression )}
+      {line NOT inPragmaFactor}
+  }
+  inPragmaPervasiveCallGeneric {
+    line Ident ( {loop inPragmaExpression ,} ) 
+  }
+  inPragmaPervasiveOrMacroCall {
+    or
+      {line {or ABS NEG ODD ORD LENGTH TSIZE TMIN TMAX EXP2} ( inPragmaExpression )}
+      {line {or MIN MAX} ( {loop inPragmaExpression ,} )}
   }
   Ident {
     line {or _ $ Letter} {optx {loop {or _ $ Letter Digit} {}}}
@@ -578,8 +642,12 @@ set all_graphs {
   }
   String {
     or
-      {line SINGLE_QUOTE {loop {or Character DOUBLE_QUOTE} {}} SINGLE_QUOTE}
-      {line DOUBLE_QUOTE {loop {or Character SINGLE_QUOTE} {}} DOUBLE_QUOTE}
+      {line SINGLE_QUOTE
+        {loop {or nil PrintableCharacter EscapeSequence DOUBLE_QUOTE} {}}
+       SINGLE_QUOTE}
+      {line DOUBLE_QUOTE
+        {loop {or nil PrintableCharacter EscapeSequence SINGLE_QUOTE} {}}
+       DOUBLE_QUOTE}
   }
   Letter {
     or /A..Z /a..z 
@@ -606,10 +674,13 @@ set all_graphs {
     or SingleLineComment MultiLineComment
   }
   SingleLineComment {
-    line // {loop AnyCharacter {}} END_OF_LINE
+    line // {loop {or nil AnyPrintableCharacter} {}} END_OF_LINE
   }
   MultiLineComment {
-    line (* {loop AnyCharacter {}} {opt MultiLineComment} *)
+    line (* {loop {or nil AnyPrintableCharacter MultiLineComment END_OF_LINE} {}} *)
+  }
+  AnyPrintableCharacter {
+    or GraphicCharacter Whitespace
   }
   END_OF_LINE {
     or
@@ -650,7 +721,8 @@ foreach {name graph} $all_graphs {
 #
 set TERMFONT {Helvetica 12 bold}  ;# default terminal font
 set NONTERMFONT {Helvetica 12}    ;# default non-terminal font
-set TOKENFONT {Monaco 15 bold}    ;# default token font
+set TOKENFONT {Monaco 12 bold}    ;# default token font
+set STRINGFONT {Courier 12 bold}  ;# default string font
 set RADIUS 9                      ;# default turn radius
 set HSEP 15                       ;# horizontal separation
 set VSEP 7                        ;# vertical separation
@@ -750,6 +822,7 @@ proc draw_bubble {txt} {
     return [list $tag 6 0]
   }
 # check for special symbols
+  set isQuotedString 0
   if {$txt=="SPACE"} {
     set label "' '"
   } elseif {$txt=="BSLASH" || $txt=="BACKSLASH"} {
@@ -762,6 +835,18 @@ proc draw_bubble {txt} {
     set label "\{"
   } elseif {$txt=="RBRACE" || $txt=="RIGHT_BRACE"} {
     set label "\}"
+  } elseif {$txt=="`ASCII"} {
+    set label "\"ASCII\""
+    set isQuotedString 1
+  } elseif {$txt=="`UTF8"} {
+    set label "\"UTF8\""
+    set isQuotedString 1
+  } elseif {$txt=="`C"} {
+    set label "\"C\""
+    set isQuotedString 1
+  } elseif {$txt=="`Fortran"} {
+    set label "\"Fortran\""
+    set isQuotedString 1
   } else {
     set label $txt
   }
@@ -782,14 +867,23 @@ proc draw_bubble {txt} {
     set baseline 0
  } else {
     set isToken 1
-    set font $::TOKENFONT
+    if {$isQuotedString} {
+      set font $::STRINGFONT
+    } else {
+      set font $::TOKENFONT
+    }
     set baseline [expr {$LWIDTH/2}]
     if {[regexp {^/[a-zA-Z]} $label]} {
       set label [string range $label 1 end]
     }
   }
   set id1 [.c create text 0 $baseline -anchor c -text $label -font $font -tags $tag]
+# lassign [.c bbox $id1] x0 y0 x1 y1 # to do: replace all foreach with lassign
   foreach {x0 y0 x1 y1} [.c bbox $id1] break
+# move parentheses, brackets, braces and underscore up by one pixel
+  if {$label in {( ) [ ] \{ \} _ }} { .c move $id1 0 -1 }
+# move the asterisk down by one pixel
+  if {$label=="*"} { .c move $id1 0 1 }
   set h [expr {$y1-$y0+$LWIDTH}]
   set rad [expr {($h+1)/2}]
   if {$isNonTerminal} {
@@ -800,7 +894,7 @@ proc draw_bubble {txt} {
     .c create rect $left $top $right $btm -width $LWIDTH -tags $tag
   } else {
     set top [expr {$y0-$LWIDTH}]
-    set btm [expr {$y1}]
+    set btm [expr {$y1+1}]
     set left [expr {$x0+$LWIDTH}]
     set right [expr {$x1-$LWIDTH}]
     if {$left>$right} {
