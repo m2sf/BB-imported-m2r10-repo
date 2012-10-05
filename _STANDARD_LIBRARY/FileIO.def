@@ -91,10 +91,14 @@ PROCEDURE ModeOf ( file : File ) : Mode;
 PROCEDURE StatusOf ( file : File ) : Status;
 (* Returns the status of the most recent operation for file accessor <file>.*)
 
+PROCEDURE NameLen ( file : File ) : CARDINAL;
+(* Returns the length of the filename associated with file accessor <file>.
+   Returns 0 if <file> is invalid. *)
+
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
-(* Passes the name of the file associated with <file> back in <filename>.
-   Passes an empty string if <file> is invalid or if the name exceeds the
-   capacity of <filename>. *)
+(* Passes the name of the file associated with file accessor <file> back in
+   <filename>. Passes an empty string if <file> is invalid or if the name
+   exceeds the capacity of <filename>. *)
 
 
 (* File position operations *)
