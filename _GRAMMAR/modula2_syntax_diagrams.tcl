@@ -133,12 +133,12 @@ wm withdraw .
 #
 
 # ---------------------------------------------------------------------------
-# Modula-2 grammar
+# Modula-2 grammar (Status: Oct 10, 2012)
 # ---------------------------------------------------------------------------
 #  replace this with your own grammar, do not add comments or blank lines!
 #
-# to do: build the grammar list one by one production to be able to insert
-# comments for documentation before each production rule, using lappend:
+#  to do: build the grammar list one by one production to be able to insert
+#  comments for documentation before each production rule, using lappend:
 #
 #  set grammar {}
 #  lappend grammar production1 { ... }
@@ -154,7 +154,7 @@ set all_graphs {
   }
   prototype {
     stack
-      {line PROTOTYPE prototypeId [ requiredConformance ] ;}
+      {line PROTOTYPE prototypeId {opt [ requiredConformance ]} ;}
       {line {opt PLACEHOLDERS identList ;} requiredTypeDefinition}
       {line {loop nil {nil ; requiredBinding}} END prototypeId .}
   }
@@ -173,14 +173,15 @@ set all_graphs {
   }
   definitionOfModule {
     stack
-      {line DEFINITION MODULE moduleId {opt [ requireConformance ]} ;}
+      {line DEFINITION MODULE moduleId {opt [ requiredConformance ]} ;}
       {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
         END moduleId .}
   }
   requiredTypeDefinition {
-    stack
-      {line TYPE = permittedTypeDef {loop nil {nil | permittedTypeDef}}}
-      {line {opt := protoliteral {loop nil {nil | protoliteral}}}}
+      line TYPE = {loop permittedTypeDef |} {opt := {loop protoliteral |}}
+  }
+  permittedTypeDef {
+    or RECORD { line OPAQUE {optx RECORD}}
   }
   protoliteral {
     or simpleProtoliteral structuredProtoliteral
@@ -199,9 +200,12 @@ set all_graphs {
   requiredBinding {
     line {
       or
-        {line CONST [ {or /TSIG /TEXP} ] : namedType}
+        {line CONST [ constBindableIdent ] : pervasiveType}
         {line procedureHeader}
     }
+  }
+  constBindableIdent {
+    or /TSEG /TEXP
   }
   importList {
     line {
@@ -211,7 +215,7 @@ set all_graphs {
             {line identList}
             {line CAST {opt , identList}}
             {line *}}}
-        {line IMPORT Ident {loop {opt +} {nil , Ident}}}
+        {line IMPORT {loop {line Ident {opt +}} ,}}
     } ;
   }
   block {
@@ -221,20 +225,18 @@ set all_graphs {
   declaration {
     line {
       or
-        {line CONST {loop {} {nil constantDeclaration ;}} }
-        {line TYPE {loop {} {nil Ident = type ;}} }
-        {line VAR {loop {} {nil variableDeclaration ;}} }
+        {line CONST {loop {line constantDeclaration ;} {}} }
+        {line TYPE {loop {line Ident = type ;} {}} }
+        {line VAR {loop {line variableDeclaration ;} {}} }
         {line procedureDeclaration ;}
     }
   }
   definition {
     line {
       or
-        {line CONST {or nil {loop {line {opt [ {or /TSIG /TEXP} ]}
-          constantDeclaration ;} nil} }}
-        {line TYPE {or nil {loop {line Ident =
-          {or type {line OPAQUE {optx recordType}}} ;} nil} }}
-        {line VAR {loop {} {nil variableDeclaration ;}} }
+        {line CONST {loop {line {opt [ bindableIdent ]} constantDeclaration ;} {}}}
+        {line TYPE {loop {line Ident = {or type {line OPAQUE {optx recordType}}} ;} {}}}
+        {line VAR {loop {line variableDeclaration ;} {}} }
         {line procedureHeader ;}
     }
   }
@@ -257,27 +259,23 @@ set all_graphs {
     line [ constExpression .. constExpression ]
   }
   enumerationType {
-    line ( {or Ident {line + namedType}}
-      {or nil {loop {line , {or Ident {line + namedType}}} }} )
+    line ( {loop {or {line + namedType} Ident} ,} )
   }
   arrayType {
     line {
       or
-        {line ARRAY constComponentCount {loop {} {nil , constComponentCount}}}
+        {line ARRAY {loop constComponentCount ,}}
         {line ASSOCIATIVE ARRAY}
     }
     OF namedType
   }
   recordType {
-    line RECORD {optx ( baseType )} {optx fieldListSequence} END
-  }
-  fieldListSequence {
-    line fieldList {loop {} {nil ; fieldList}}
+    line RECORD {optx ( baseType )} {loop fieldList ;} END
   }
   fieldList {
    line Ident {
      or
-       {line {loop {line , Ident} {}} :}
+       {line , identList :}
        {line : {optx ARRAY discriminantField OF}}
    }
    namedType
@@ -296,7 +294,7 @@ set all_graphs {
     line PROCEDURE {optx ( formalTypeList )} {optx : returnedType}
   }
   formalTypeList {
-    line formalType {loop {} {nil , formalType}}
+    loop formalType ,
   }
   formalType {
     or
@@ -313,8 +311,7 @@ set all_graphs {
     line VARIADIC OF {
       or
         {line attributedFormalType}
-        {line LEFT_BRACE attributedFormalType
-          {loop {} {nil , attributedFormalType}} RIGHT_BRACE}
+        {line LEFT_BRACE {loop attributedFormalType ,} RIGHT_BRACE}
     }
   }
   variableDeclaration {
@@ -334,14 +331,12 @@ set all_graphs {
       DIV MOD IN FOR DESCENDING :: := ? ! ~ + - * / = < > bindableIdent
   }
   bindableIdent {
-    line {
-      or
-        /TMIN /TMAX /TLIMIT /ABS /NEG /ODD /COUNT /LENGTH
-        /NEW /DISPOSE /RETAIN /RELEASE /SXF /VAL
-    }
+    or
+      /TMIN /TMAX /TLIMIT /ABS /NEG /ODD /COUNT /LENGTH
+      /NEW /DISPOSE /RETAIN /RELEASE /SXF /VAL
   }
   formalParamList {
-    line formalParams {loop {} {nil , formalParams}}
+    loop formalParams ,
   }
   formalParams {
     line {or simpleFormalParams variadicFormalParams}
@@ -355,8 +350,7 @@ set all_graphs {
         {or {} {line [ variadicTerminator ]} }}
       {line OF
         {or simpleFormalType
-          {line LEFT_BRACE simpleFormalParams
-            {loop {} {nil ; simpleFormalParams}} RIGHT_BRACE}}}
+          {line LEFT_BRACE {loop simpleFormalParams ;} RIGHT_BRACE}}}
   }
   variadicCounter {
     line Ident
@@ -379,7 +373,7 @@ set all_graphs {
     }
   }
   statementSequence {
-    line statement {loop {} {nil , statement}}
+    loop statement ,
   }
   assignmentOrProcedureCall {
     line designator {
@@ -398,12 +392,11 @@ set all_graphs {
       {line {optx ELSE statementSequence} END}
   }
   caseStatement {
-    stack
-      {line CASE expression OF case {loop {} {nil | case}}}
-      {line {optx ELSE statementSequence} END}
+      line CASE expression OF {loop case ,}
+      {optx ELSE statementSequence} END
   }
   case {
-    line caseLabels {loop {} {nil , caseLables}} : statementSequence
+    line {loop caseLabels ,} : statementSequence
   }
   caseLabels {
     line constExpression {optx .. constExpression}
@@ -434,15 +427,15 @@ set all_graphs {
       = # < <= > >= IN
   }
   simpleConstExpr {
-    line {or {} + -} constTerm {loop {} {nil addOperator constTerm}}
+    line {or {} + -} {loop constTerm addOp}
   }
-  addOperator {
+  addOp {
     line {or + - OR}
   }
   constTerm {
-    line constFactor {loop {} {nil mulOperator constFactor}}
+    loop constFactor mulOp
   }
-  mulOperator {
+  mulOp {
     line {or * / DIV MOD AND}
   }
   constFactor {
@@ -484,16 +477,16 @@ set all_graphs {
     }
   }
   expressionList {
-    line expression {loop {} {nil , expression}}
+    loop expression ,
   }
   expression {
-    line simpleExpression {loop {} {nil , simpleExpression}}
+    line simpleExpression {optx relation simpleExpression}
   }
   simpleExpression {
-    line {or {} + -} term {loop {} {nil addOperator term}}
+    line {or {} + -} {loop term addOp}
   }
   term {
-    line factor {loop {} {nil mulOperator factor}}
+    loop factor mulOp
   }
   factor {
     line {or
@@ -513,26 +506,24 @@ set all_graphs {
     line ( {optx expressionList} )
   }
   constStructuredValue {
-    line LBRACE constValueComponent
-      {loop {} {nil , constValueComponent}} RBRACE
+    line LBRACE {loop constValueComponent ,} RBRACE
   }
   constValueComponent {
     line constExpression
       {optx {or BY ..} constExpression}
   }
   structuredValue {
-    line LBRACE valueComponent
-      {loop {} {nil , valueComponent}} RBRACE
+    line LBRACE {loop valueComponent ,} RBRACE
   }
   valueComponent {
     line expression
-      {optx {or BY ..} constExpression}
+      {optx BY constExpression}
   }
   qualident {
-    line Ident {loop {} {nil . Ident}}
+    loop Ident .
   }
   identList {
-    line Ident {loop {} {nil , Ident}}
+    loop Ident ,
   }
   constQualident {
     line qualident
@@ -603,12 +594,12 @@ set all_graphs {
     or = # < <= > >=
   }
   inPragmaSimpleExpr {
-    line {or {} + -} inPragmaTerm {loop {} {nil addOperator inPragmaTerm}}
+    line {or {} + -} inPragmaTerm {loop {} {nil addOp inPragmaTerm}}
   }
   inPragmaTerm {
-    line inPragmaFactor {loop {} {nil inPragmaMulOperator inPragmaFactor}}
+    line inPragmaFactor {loop {} {nil inPragmaMulOp inPragmaFactor}}
   }
-  inPragmaMulOperator {
+  inPragmaMulOp {
     or * DIV MOD AND
   }
   inPragmaFactor {
@@ -624,20 +615,22 @@ set all_graphs {
   }
   inPragmaPervasiveOrMacroCall {
     or
-      {line {or ABS NEG ODD ORD LENGTH TSIZE TMIN TMAX EXP2} ( inPragmaExpression )}
-      {line {or MIN MAX} ( {loop inPragmaExpression ,} )}
+      {line {or /ABS /ODD /ORD /LENGTH /TMIN /TMAX /TSIZE /TLIMIT /EXP2 /HASH}
+        ( inPragmaExpression )}
+      {line {or /MIN /MAX} ( {loop inPragmaExpression ,} )}
   }
   Ident {
     line {or _ $ Letter} {optx {loop {or _ $ Letter Digit} {}}}
   }
   Number {
     line {
-      or
-        {loop Digit {}}
-        {line {loop {or 0 1} {}} /B}
-        {line Digit {loop Base16Digit {}} {or /C /H}}
-        {line {loop Digit {}} . {loop Digit {}}
-          {optx /E {or {} + -} {loop Digit {}} }}
+      or        
+        {line {loop Digit {}}
+          {opt . {loop Digit {}} {opt /E {or {} + -} {loop Digit {}} }}}
+        {line {loop Base2Digit {}} /B}
+        {line 0b {loop Base2Digit {}}}
+        {line Digit {loop Base16Digit {}} {or /H /U}}
+        {line {or 0x 0u} {loop LowercaseBase16Digit {}}}
     }
   }
   String {
@@ -655,14 +648,23 @@ set all_graphs {
   Digit {
     line {or 0 1 2 3 4 5 6 7 8 9}
   }
+  Base2Digit {
+    or 0 1
+  }
   Base16Digit {
     or Digit /A /B /C /D /E /F
   }
+  LowercaseBase16Digit {
+    or Digit /a /b /c /d /e /f
+  }
   Character {
-    or Digit Letter SPACE
+    or Digit Letter Space
        ! # $ % & ( ) * + , - . / : ; < = > ? @ [ ] ^ _ `
        LBRACE | RBRACE ~
        EscapeSequence
+  }
+  Space {
+    line SPACE
   }
   EscapeSequence {
     line BACKSLASH {or 0 /n /r /t BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE}
@@ -687,8 +689,59 @@ set all_graphs {
       {line ASCII_LF {optx ASCII_CR}}
       {line ASCII_CR {optx ASCII_LF}}
   }
+  AliasForIdent {
+    line Ident
+  }
+  AliasForQualident {
+    line qualident
+  }
+  AliasForConstExpr {
+    line constExpression
+  }
+  legendReservedWord {
+    line RESERVED
+  }
+  legendTerminal1 {
+    line #
+  }
+  legendTerminal2 {
+    line Terminal
+  }
+  legendIdentifier {
+    line /IDENTIFIER
+  }
+  legendNonTerminal {
+    line nonTerminal
+  }
 }
 # end Modula-2 grammar
+
+# ---------------------------------------------------------------------------
+# Retired Production Rules
+# ---------------------------------------------------------------------------
+#
+#  definitionWithEmptySectionsAllowed {
+#    line {
+#      or
+#        {line CONST {or nil {loop {line {opt [ {or /TSIG /TEXP} ]}
+#          constantDeclaration ;} nil} }}
+#        {line TYPE {or nil {loop {line Ident =
+#          {or type {line OPAQUE {optx recordType}}} ;} nil} }}
+#        {line VAR {loop {} {nil variableDeclaration ;}} }
+#        {line procedureHeader ;}
+#    }
+#  }
+#
+#  declarationWithEmptySectionsAllowed {
+#    line {
+#      or
+#        {line CONST {loop {} {nil constantDeclaration ;}} }
+#        {line TYPE {loop {} {nil Ident = type ;}} }
+#       {line VAR {loop {} {nil variableDeclaration ;}} }
+#        {line procedureDeclaration ;}
+#    }
+#  }
+
 
 #  
 # ===========================================================================
