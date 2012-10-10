@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Sep 30, 2012
+# Syntax diagram generator for Modula-2 (R10), status Oct 10, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -133,7 +133,7 @@ wm withdraw .
 #
 
 # ---------------------------------------------------------------------------
-# Modula-2 grammar (Status: Oct 10, 2012)
+# Modula-2 grammar
 # ---------------------------------------------------------------------------
 #  replace this with your own grammar, do not add comments or blank lines!
 #
@@ -180,7 +180,10 @@ set all_graphs {
   requiredTypeDefinition {
       line TYPE = {loop permittedTypeDef |} {opt := {loop protoliteral |}}
   }
-  permittedTypeDef {
+  requiredTypeDefinitionTEST {
+      line TYPE = {loop permittedTypeDef ,} {opt := {loop protoliteral ,}}
+  }
+ permittedTypeDef {
     or RECORD { line OPAQUE {optx RECORD}}
   }
   protoliteral {
