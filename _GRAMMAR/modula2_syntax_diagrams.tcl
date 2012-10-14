@@ -728,32 +728,6 @@ set all_graphs {
 }
 # end Modula-2 grammar
 
-# ---------------------------------------------------------------------------
-# Retired Production Rules
-# ---------------------------------------------------------------------------
-#
-#  definitionWithEmptySectionsAllowed {
-#    line {
-#      or
-#        {line CONST {or nil {loop {line {opt [ {or /TSIG /TEXP} ]}
-#          constantDeclaration ;} nil} }}
-#        {line TYPE {or nil {loop {line Ident =
-#          {or type {line OPAQUE {optx recordType}}} ;} nil} }}
-#        {line VAR {loop {} {nil variableDeclaration ;}} }
-#        {line procedureHeader ;}
-#    }
-#  }
-#
-#  declarationWithEmptySectionsAllowed {
-#    line {
-#      or
-#        {line CONST {loop {} {nil constantDeclaration ;}} }
-#        {line TYPE {loop {} {nil Ident = type ;}} }
-#       {line VAR {loop {} {nil variableDeclaration ;}} }
-#        {line procedureDeclaration ;}
-#    }
-#  }
-
 
 #  
 # ===========================================================================
