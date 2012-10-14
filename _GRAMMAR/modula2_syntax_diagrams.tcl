@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Oct 10, 2012
+# Syntax diagram generator for Modula-2 (R10), status Oct 14, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -585,22 +585,22 @@ set all_graphs {
     line <* VOLATILE *>
   }
   implementationDefinedPragma {
-    line implDefinedPragmaName {opt = inPragmaExpression}
+    line <* implDefinedPragmaName {optx = inPragmaExpression} *>
   }
   implDefinedPragmaName {
     line Ident
   }
   inPragmaExpression {
-    line inPragmaSimpleExpr {loop {} {nil , inPragmaSimpleExpr}}
+    line inPragmaSimpleExpr {optx inPragmaRelation inPragmaSimpleExpr}
   }
   inPragmaRelation {
     or = # < <= > >=
   }
   inPragmaSimpleExpr {
-    line {or {} + -} inPragmaTerm {loop {} {nil addOp inPragmaTerm}}
+    line {or {} + -} {loop inPragmaTerm addOp}
   }
   inPragmaTerm {
-    line inPragmaFactor {loop {} {nil inPragmaMulOp inPragmaFactor}}
+    loop inPragmaFactor inPragmaMulOp
   }
   inPragmaMulOp {
     or * DIV MOD AND
@@ -697,6 +697,15 @@ set all_graphs {
   }
   AliasForQualident {
     line qualident
+  }
+  AliasForNumber {
+    line Number
+  }
+  AliasForWholeNumber {
+    line wholeNumber
+  }
+  AliasForString {
+    line String
   }
   AliasForConstExpr {
     line constExpression
