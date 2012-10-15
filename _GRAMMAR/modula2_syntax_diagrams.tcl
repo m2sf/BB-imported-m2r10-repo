@@ -1158,7 +1158,7 @@ proc draw_loop {forward back} {
   set tag x$tagcnt
   set sep $::HSEP
   set vsep $::VSEP
-  if {$back==","} {
+  if {$back in {. , ; |}} {
     set vsep 0
   } elseif {$back=="nil"} {
     set vsep [expr {$vsep/2}]
