@@ -395,8 +395,14 @@ set all_graphs {
       {line {optx ELSE statementSequence} END}
   }
   caseStatement {
-      line CASE expression OF {loop case |}
-      {optx ELSE statementSequence} END
+    stack
+      {line CASE expression OF}
+      {line {loop case |} {optx ELSE statementSequence} END}
+  }
+  altCaseStatement {
+    stack
+      {line CASE expression OF}
+      {line {loop {line | case} {}} {optx ELSE statementSequence} END}
   }
   case {
     line {loop caseLabels ,} : statementSequence
