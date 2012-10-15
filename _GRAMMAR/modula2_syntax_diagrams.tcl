@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Oct 14, 2012
+# Syntax diagram generator for Modula-2 (R10), status Oct 15, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -183,7 +183,7 @@ set all_graphs {
   requiredTypeDefinitionTEST {
       line TYPE = {loop permittedTypeDef ,} {opt := {loop protoliteral ,}}
   }
- permittedTypeDef {
+  permittedTypeDef {
     or RECORD { line OPAQUE {optx RECORD}}
   }
   protoliteral {
@@ -339,7 +339,7 @@ set all_graphs {
       /NEW /DISPOSE /RETAIN /RELEASE /SXF /VAL
   }
   formalParamList {
-    loop formalParams ,
+    loop formalParams ;
   }
   formalParams {
     line {or simpleFormalParams variadicFormalParams}
@@ -376,7 +376,7 @@ set all_graphs {
     }
   }
   statementSequence {
-    loop statement ,
+    loop statement ;
   }
   assignmentOrProcedureCall {
     line designator {
@@ -395,7 +395,7 @@ set all_graphs {
       {line {optx ELSE statementSequence} END}
   }
   caseStatement {
-      line CASE expression OF {loop case ,}
+      line CASE expression OF {loop case |}
       {optx ELSE statementSequence} END
   }
   case {
@@ -621,6 +621,9 @@ set all_graphs {
       {line {or /ABS /ODD /ORD /LENGTH /TMIN /TMAX /TSIZE /TLIMIT /EXP2 /HASH}
         ( inPragmaExpression )}
       {line {or /MIN /MAX} ( {loop inPragmaExpression ,} )}
+  }
+  pragmaFORWARD {
+    line <* FORWARD {or {line TYPE Ident} procedureHeader} *>
   }
   Ident {
     line {or _ $ Letter} {optx {loop {or _ $ Letter Digit} {}}}
