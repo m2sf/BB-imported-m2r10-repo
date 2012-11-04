@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 3, 2012
+# Syntax diagram generator for Modula-2 (R10), status Nov 4, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -373,7 +373,7 @@ lappend non_terminals discriminantField {
 lappend non_terminals setType {
   line SET OF {
     or
-      {line namedEnumType}
+      {line enumTypeIdent}
       {line ( identList )}
   }
 }
@@ -1087,36 +1087,37 @@ lappend legend legendNonTerminal {
 #
 set bn 0
 set b .bb.b$bn
+wm title .bb "Modula-2"
 button $b -text "Draw All Diagrams" -command {draw_all_graphs}
-pack $b -side top -fill x -expand 1 -pady 0
+pack $b -side top -fill x -expand 0 -pady 0
 incr bn
 set b .bb.b$bn
 button $b -text "Draw Non-Terminals" -command {draw_graphs $non_terminals}
-pack $b -side top -fill x -expand 1 -pady 0
+pack $b -side top -fill x -expand 0 -pady 0
 incr bn
 set b .bb.b$bn
 button $b -text "Draw Terminals" -command {draw_graphs $terminals}
-pack $b -side top -fill x -expand 1 -pady 0
+pack $b -side top -fill x -expand 0 -pady 0
 incr bn
 set b .bb.b$bn
 button $b -text "Draw Pragmas" -command {draw_graphs $pragmas}
-pack $b -side top -fill x -expand 1 -pady 0
+pack $b -side top -fill x -expand 0 -pady 0
 incr bn
 set b .bb.b$bn
 button $b -text "Draw Ignore Symbols" -command {draw_graphs $ignore_symbols}
-pack $b -side top -fill x -expand 1 -pady 0
+pack $b -side top -fill x -expand 0 -pady 0
 incr bn
 set b .bb.b$bn
 button $b -text "Draw Aliases" -command {draw_graphs $aliases}
-pack $b -side top -fill x -expand 1 -pady 0
+pack $b -side top -fill x -expand 0 -pady 0
 incr bn
 set b .bb.b$bn
 button $b -text "Draw Legend" -command {draw_graphs $legend}
-pack $b -side top -fill x -expand 1 -pady 0
+pack $b -side top -fill x -expand 0 -pady 0
 incr bn
 set b .bb.b$bn
 button $b -text "Quit" -command {exit}
-pack $b -side top -fill x -expand 1 -pady 0
+pack $b -side top -fill x -expand 0 -pady {0 14}
 
 
 # ---------------------------------------------------------------------------
