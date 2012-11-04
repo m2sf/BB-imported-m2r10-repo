@@ -172,7 +172,7 @@ lappend non_terminals prototypeIdent {
 
 # (2.2) Required Conformance
 lappend non_terminals requiredConformance {
-  line Ident
+  line prototypeIdent
 }
 
 # (3) Required Type
@@ -321,6 +321,11 @@ lappend non_terminals enumerationType {
 
 # (17.1) Enumeration Type Identifier
 lappend non_terminals enumTypeIdent {
+  line typeIdent
+}
+
+# (17.2) Type Identifier
+lappend non_terminals typeIdent {
   line qualident
 }
 
@@ -334,12 +339,7 @@ lappend non_terminals arrayType {
   OF typeIdent
 }
 
-# (18.1) Type Identifier
-lappend non_terminals typeIdent {
-  line qualident
-}
-
-# (18.2) Component Count
+# (18.1) Component Count
 lappend non_terminals componentCount {
   line constExpression
 }
@@ -351,7 +351,7 @@ lappend non_terminals recordType {
 
 # (19.1) Base Type
 lappend non_terminals baseType {
-  line qualident
+  line typeIdent
 }
 
 # (20) Field List
@@ -390,7 +390,7 @@ lappend non_terminals procedureType {
 
 # (23.1) Returned Type
 lappend non_terminals returnedType {
-  line qualident
+  line typeIdent
 }
 
 # (24) Formal Type List
