@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Oct 24, 2012
+# Syntax diagram generator for Modula-2 (R10), status Nov 3, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -46,7 +46,7 @@ wm withdraw .
 #
 # The grammar is encoded as a nested TCL list structure of the general form:
 #
-#   set all_graphs { production1 { ... } production2 { ... } ... }
+#   { production1 { ... } production2 { ... } ... }
 #
 # Production rules can be translated from (ANTLR) EBNF to TCL list items as
 # follows:
@@ -123,7 +123,9 @@ wm withdraw .
 # Running the script
 #
 #   the most fool-proof method to run this script is to call the wish shell
-#   with the name of the script as an argument: $ wish modula2.tcl
+#   with the name of the script as an argument:
+#
+#   $ wish modula2_syntax_diagrams.tcl
 #
 #   in the window that appears, click on the top button "Draw All Diagrams"
 #
@@ -297,7 +299,7 @@ lappend non_terminals constExpression {
 lappend non_terminals type {
   line {
     or
-      {line {opt {or ALIAS range} OF} namedType}
+      {line {opt {or ALIAS range} OF} typeIdent}
       {line enumerationType}
       {line arrayType}
       {line recordType}
@@ -329,11 +331,11 @@ lappend non_terminals arrayType {
       {line ARRAY {loop componentCount ,}}
       {line ASSOCIATIVE ARRAY}
     }
-  OF namedType
+  OF typeIdent
 }
 
-# (18.1) Named Type
-lappend non_terminals namedType {
+# (18.1) Type Identifier
+lappend non_terminals typeIdent {
   line qualident
 }
 
@@ -359,7 +361,7 @@ lappend non_terminals fieldList {
       {line , identList :}
       {line : {optx ARRAY discriminantField OF}}
     }
-  namedType
+  typeIdent
 }
 
 # (20.1) Discriminant Field
@@ -378,7 +380,7 @@ lappend non_terminals setType {
 
 # (22) Pointer Type
 lappend non_terminals pointerType {
-  line POINTER TO {opt CONST} namedType
+  line POINTER TO {opt CONST} typeIdent
 }
 
 # (23) Procedure Type
@@ -410,7 +412,7 @@ lappend non_terminals attributedFormalType {
 
 # (27) Simple Formal Type
 lappend non_terminals simpleFormalType {
-  line {opt {opt autocast} ARRAY OF} namedType
+  line {opt {opt autocast} ARRAY OF} typeIdent
 }
 
 # (27.1) Auto-Cast Option
@@ -429,7 +431,7 @@ lappend non_terminals variadicFormalType {
 
 # (29) Variable Declaration
 lappend non_terminals variableDeclaration {
-  line identList : {optx ARRAY componentCount OF} namedType
+  line identList : {optx ARRAY componentCount OF} typeIdent
 }
 
 # (30) Procedure Declaration
@@ -565,7 +567,7 @@ lappend non_terminals loopStatement {
 lappend non_terminals forStatement {
   stack
     {line FOR {opt DESCENDING} controlVariable}
-    {line IN {or designator {line range OF namedType}}}
+    {line IN {or designator {line range OF typeIdent}}}
     {line DO statementSequence END}
 }
 
@@ -638,7 +640,7 @@ lappend non_terminals factor {
       structuredValue
       designatorOrFunctionCall
       {line ( expression )}
-    } {opt :: namedType} }
+    } {opt :: typeIdent} }
     {line NOT factor}
   }
 }
