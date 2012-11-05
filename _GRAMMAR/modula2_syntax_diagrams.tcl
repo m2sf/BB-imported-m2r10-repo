@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 4, 2012
+# Syntax diagram generator for Modula-2 (R10), status Nov 5, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -216,7 +216,7 @@ lappend non_terminals requiredBinding {
 
 # (7.1) CONST Bindable Identifiers
 lappend non_terminals constBindableIdent {
-  or /TSEG /TEXP
+  or /TSIG /TEXP
 }
 
 # (7.2) Pervasive Type
@@ -732,7 +732,7 @@ lappend terminals Base2Digit {
   or 0 1
 }
 
-# (7) Base-10 Digit
+# (7) Base-16 Digit
 lappend terminals Base16Digit {
   or Digit /A /B /C /D /E /F
 }
