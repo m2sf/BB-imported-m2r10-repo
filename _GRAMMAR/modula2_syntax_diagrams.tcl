@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 5, 2012
+# Syntax diagram generator for Modula-2 (R10), status Nov 6, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -278,7 +278,7 @@ lappend non_terminals declaration {
 lappend non_terminals definition {
   line {
     or
-      {line CONST {loop {line constantDeclaration ;} {}}}
+      {line CONST {loop {line {opt [ constBindableIdent ]} constantDeclaration ;} {}}}
       {line TYPE {loop {line Ident = {or type {line OPAQUE {optx recordType}}} ;} {}}}
       {line VAR {loop {line variableDeclaration ;} {}} }
       {line procedureHeader ;}
@@ -287,7 +287,7 @@ lappend non_terminals definition {
 
 # (14) Constant Declaration
 lappend non_terminals constantDeclaration {
-  line {opt [ constBindableIdent ]} Ident = constExpression
+  line Ident = constExpression
 }
 
 # (14.1) Constant Expression
