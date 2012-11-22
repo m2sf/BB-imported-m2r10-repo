@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 6, 2012
+# Syntax diagram generator for Modula-2 (R10), status Nov 22, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -690,74 +690,121 @@ set terminals {}
 
 # (1) Identifier
 lappend terminals Ident {
-  line {or _ $ Letter} {optx {loop {or _ $ Letter Digit} {}}}
+  line IdentLeadChar {optx {loop IdentTailChar {}}}
 }
 
-# (2) Number
-lappend terminals Number {
-  line {
-    or        
-      {line {loop Digit {}}
-        {opt . {loop Digit {}} {opt /E {or {} + -} {loop Digit {}} }}}
-      {line {loop Base2Digit {}} /B}
-      {line 0b {loop Base2Digit {}}}
-      {line Digit {loop Base16Digit {}} {or /H /U}}
-      {line {or 0x 0u} {loop LowercaseBase16Digit {}}}
-  }
+# (1.1) IdentLeadChar
+lappend terminals IdentLeadChar {
+  or Letter _ $
 }
 
-# (3) String
-lappend terminals String {
-  or
-    {line SINGLE_QUOTE
-      {loop {or nil PrintableCharacter EscapeSequence DOUBLE_QUOTE} {}}
-        SINGLE_QUOTE}
-    {line DOUBLE_QUOTE
-      {loop {or nil PrintableCharacter EscapeSequence SINGLE_QUOTE} {}}
-        DOUBLE_QUOTE}
+# (1.2) IdentTailChar
+lappend terminals IdentTailChar {
+  or IdentLeadChar Digit
 }
 
-# (4) Letter
+# (1.3) Letter
 lappend terminals Letter {
   or /A..Z /a..z 
 }
 
-# (5) Digit
+# (1.4) Digit
 lappend terminals Digit {
-  line {or 0 1 2 3 4 5 6 7 8 9}
+  or 0 1 2 3 4 5 6 7 8 9
 }
 
-# (6) Base-2 Digit
+# (2) Numeric Literal
+lappend terminals Number {
+  or
+    DecimalNumber
+    Base2Number
+    Base16Number
+    CharacterCodeLiteral
+}
+
+# (3) Decimal Number
+lappend terminals DecimalNumber {
+  stack
+   {loop DigitGroup SINGLE_QUOTE}
+   {opt . {loop DigitGroup SINGLE_QUOTE}
+     {optx /e {or {} + -} {loop DigitGroup SINGLE_QUOTE} }}
+}
+
+# (3.1) Digit Group
+lappend terminals DigitGroup {
+  loop Digit {}
+}
+
+# (4) Base-2 Number
+lappend terminals Base2Number {
+  line 0b {loop Base2DigitGroup SINGLE_QUOTE}
+}
+
+# (4.1) Base-2 Digit Group
+lappend terminals Base2DigitGroup {
+  loop Base2Digit {}
+}
+
+# (4.2) Base-2 Digit
 lappend terminals Base2Digit {
   or 0 1
 }
 
-# (7) Base-16 Digit
-lappend terminals Base16Digit {
-  or Digit /A /B /C /D /E /F
+# (5) Base-16 Number
+lappend terminals Base16Number {
+  line 0x {loop Base16DigitGroup SINGLE_QUOTE}
 }
 
-# (8) Lowercase Base-16 Digit
-lappend terminals LowercaseBase16Digit {
+# (5.1) Base-16 Digit Group
+lappend terminals Base16DigitGroup {
+  loop Base16Digit {}
+}
+
+# (5.2) Base-16 Digit
+lappend terminals Base16Digit {
   or Digit /a /b /c /d /e /f
 }
 
-# (9) Character
-lappend terminals Character {
+# (6) Character Code Literal
+lappend terminals CharacterCodeLiteral {
+  line 0u {loop Base16DigitGroup SINGLE_QUOTE}
+}
+
+# (7) String
+lappend terminals String {
+  or SingleQuotedString DoubleQuotedString
+}
+
+# (7.1) Single Quoted String
+lappend terminals SingleQuotedString {
+  line SINGLE_QUOTE
+    {loop {or nil QuotableCharacter EscapeSequence DOUBLE_QUOTE} {}}
+  SINGLE_QUOTE
+}
+
+# (7.2) Double Quoted String
+lappend terminals DoubleQuotedString {
+  line DOUBLE_QUOTE
+    {loop {or nil QuotableCharacter EscapeSequence SINGLE_QUOTE} {}}
+  DOUBLE_QUOTE
+}
+
+# (7.3) Quotable Character
+lappend terminals QuotableCharacter {
   or Digit Letter Space
      ! # $ % & ( ) * + , - . / : ; < = > ? @ [ ] ^ _ `
      LBRACE | RBRACE ~
      EscapeSequence
 }
-
-# (9.1) Space
-lappend terminals Space {
-  line SPACE
-}
   
-# (9.2) Escape Sequence
+# (7.4) Escape Sequence
 lappend terminals EscapeSequence {
   line BACKSLASH {or 0 /n /r /t BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE}
+}
+
+# (7.5) Space
+lappend terminals Space {
+  line /CHR(32)
 }
 
 # ---------------------------------------------------------------------------
@@ -816,9 +863,19 @@ lappend pragmas compileTimeMsgComponent {
   line {
     or
       String
-      ConstQualident
+      constQualident
       {line ? {or ALIGN ENCODING implDefinedPragmaName}}
   }
+}
+
+# (2.1) Constant Qualified Identifier
+lappend pragmas constQualident {
+  line qualident
+}
+
+# (2.2) Implementation Defined Pragma Name
+lappend pragmas implDefinedPragmaName {
+  line Ident
 }
 
 # (3) Conditional Compilation Pragma
@@ -838,7 +895,7 @@ lappend pragmas pragmaENCODING {
 
 # (5) Code Point Sample List
 lappend pragmas codePointSampleList {
-  loop {line quotedCharacterLiteral = characterCodeLiteral} ,
+  loop {line quotedCharacterLiteral = CharacterCodeLiteral} ,
 }
 
 # (5.1) Quoted Character Literal
@@ -881,49 +938,49 @@ lappend pragmas pragmaFFI {
   line <* FFI = {or `C `Fortran } *>
 }
 
-# (9) Function Inlining Pragma
+# (9) Procedure Inlining Pragma
 lappend pragmas pragmaINLINE {
   line <* {or INLINE NOINLINE} *>
 }
 
-# (10) Function Purity Pragma
-lappend pragmas pragmaPURE {
-  line <* PURE = {or `Strong `Weak} *>
-}
-
-# (11) Memory Alignment Pragma
+# (10) Memory Alignment Pragma
 lappend pragmas pragmaALIGN {
   line <* ALIGN = inPragmaExpression *>
 }
 
-# (12) Bit Padding Pragma
+# (11) Bit Padding Pragma
 lappend pragmas pragmaPADBITS {
   line <* PADBITS = inPragmaExpression *>
 }
 
-# (13) Memory Mapping Pragma
+# (12) Memory Mapping Pragma
 lappend pragmas pragmaADDR {
   line <* ADDR = inPragmaExpression *>
 }
 
-# (14) Register Mapping Pragma
+# (13) Register Mapping Pragma
 lappend pragmas pragmaREG {
   line <* REG = {or registerNumber registerMnemonic} *>
 }
 
-# (14.1) Register Number
+# (13.1) Register Number
 lappend pragmas registerNumber {
   line wholeNumber
 }
 
-# (14.2) Register Mnemonic
+# (13.2) Register Mnemonic
 lappend pragmas registerMnemonic {
   line String
 }
 
-# (15) Volatile Attribute Pragma
+# (14) Volatile Attribute Pragma
 lappend pragmas pragmaVOLATILE {
   line <* VOLATILE *>
+}
+
+# (15) Pure Attribute Pragma
+lappend pragmas pragmaPURE {
+  line <* PURE = {or STRONG WEAK} *>
 }
 
 # (16) Implementation Defined Pragma
@@ -971,7 +1028,7 @@ lappend pragmas inPragmaFactor {
   or
     wholeNumber
     constQualident
-    inPragmaPervasiveOrMacroCall
+    inPragmaCompileTimeFunctionCall
     {line ( inPragmaExpression )}
     {line NOT inPragmaFactor}
 }
@@ -981,28 +1038,15 @@ lappend pragmas wholeNumber {
   line Number
 }
 
-# (20.2) Constant Qualified Identifier
-lappend pragmas constQualident {
-  line qualident
-}
-
-# (21) In-Pragma Pervasive Or Macro Call
-lappend pragmas inPragmaPervasiveOrMacroCall {
-  line Ident ( {loop inPragmaExpression ,} ) 
+# (21) In-Pragma Compile Time Function Call
+lappend pragmas inPragmaCompileTimeFunctionCall {
+  line qualident ( {loop inPragmaExpression ,} ) 
 }
 
 # (22) Forward Declaration Pragma
 lappend pragmas pragmaFORWARD {
-  line <* FORWARD {or {line TYPE Ident} procedureHeader} *>
+  line <* FORWARD {or {line TYPE identList} procedureHeader} *>
 }
-
-# Possibly Obsolete
-#  inPragmaPervasiveOrMacroCall {
-#    or
-#      {line {or /ABS /ODD /ORD /LENGTH /TMIN /TMAX /TSIZE /TLIMIT /EXP2 /HASH}
-#        ( inPragmaExpression )}
-#      {line {or /MIN /MAX} ( {loop inPragmaExpression ,} )}
-#  }
 
 # ---------------------------------------------------------------------------
 # Alias Diagrams
@@ -1251,12 +1295,6 @@ proc draw_bubble {txt} {
     set isQuotedString 1
   } elseif {$txt=="`Fortran"} {
     set label "\"Fortran\""
-    set isQuotedString 1
-  } elseif {$txt=="`Weak"} {
-    set label "\"Weak\""
-    set isQuotedString 1
-  } elseif {$txt=="`Strong"} {
-    set label "\"Strong\""
     set isQuotedString 1
   } else {
     set label $txt
@@ -1528,6 +1566,8 @@ proc draw_loop {forward back} {
   set sep $::HSEP
   set vsep $::VSEP
   if {$back in {. , ; |}} {
+    set vsep 0
+  } elseif {$back=="SINGLE_QUOTE"} {
     set vsep 0
   } elseif {$back=="nil"} {
     set vsep [expr {$vsep/2}]
