@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 22, 2012
+# Syntax diagram generator for Modula-2 (R10), status Nov 24, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -299,7 +299,7 @@ lappend non_terminals constExpression {
 lappend non_terminals type {
   line {
     or
-      {line {opt {or ALIAS range} OF} typeIdent}
+      {line {optx {or ALIAS range} OF} typeIdent}
       {line enumerationType}
       {line arrayType}
       {line recordType}
@@ -356,13 +356,20 @@ lappend non_terminals baseType {
 
 # (20) Field List
 lappend non_terminals fieldList {
-  line Ident {
-    or
-      {line , identList :}
-      {line : {optx ARRAY discriminantField OF}}
-    }
+  line identList : {optx {or range {line ARRAY discriminantField}} OF}
   typeIdent
 }
+
+# Field List (reflecting semantics)
+# lappend non_terminals fieldList {
+#   line Ident {
+#     or
+#       {line , identList : {optx range OF}}
+#       {line : {optx {or {line ARRAY discriminantField} range} OF}}
+#     }
+#   typeIdent
+# }
+
 
 # (20.1) Discriminant Field
 lappend non_terminals discriminantField {
@@ -431,7 +438,7 @@ lappend non_terminals variadicFormalType {
 
 # (29) Variable Declaration
 lappend non_terminals variableDeclaration {
-  line identList : {optx ARRAY componentCount OF} typeIdent
+  line identList : {optx range OF} typeIdent
 }
 
 # (30) Procedure Declaration
@@ -727,7 +734,7 @@ lappend terminals DecimalNumber {
   stack
    {loop DigitGroup SINGLE_QUOTE}
    {opt . {loop DigitGroup SINGLE_QUOTE}
-     {optx /e {or {} + -} {loop DigitGroup SINGLE_QUOTE} }}
+     {optx /E {or {} + -} {loop DigitGroup SINGLE_QUOTE} }}
 }
 
 # (3.1) Digit Group
@@ -762,7 +769,7 @@ lappend terminals Base16DigitGroup {
 
 # (5.2) Base-16 Digit
 lappend terminals Base16Digit {
-  or Digit /a /b /c /d /e /f
+  or Digit /A /B /C /D /E /F
 }
 
 # (6) Character Code Literal
@@ -791,21 +798,21 @@ lappend terminals DoubleQuotedString {
 
 # (7.3) Quotable Character
 lappend terminals QuotableCharacter {
-  or Digit Letter Space
-     ! # $ % & ( ) * + , - . / : ; < = > ? @ [ ] ^ _ `
-     LBRACE | RBRACE ~
-     EscapeSequence
-}
-  
-# (7.4) Escape Sequence
-lappend terminals EscapeSequence {
-  line BACKSLASH {or 0 /n /r /t BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE}
+  or Digit Letter Space QuotableGraphicChar
 }
 
-# (7.5) Space
-lappend terminals Space {
-  line /CHR(32)
+# (7.4) Quotable Graphic Character
+lappend terminals QuotableGraphicChar {
+  or ! # $ % & ( ) * + , - . / : ; < = > ? @ [ ] ^ _ ` LBRACE | RBRACE ~
 }
+
+# (7.5) Escape Sequence
+lappend terminals EscapeSequence {
+  line BACKSLASH {or 0 /n /t BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE}
+}
+
+# (7.6) Space
+# CONST Space = CHR(32);
 
 # ---------------------------------------------------------------------------
 # Ignore Symbols
@@ -815,36 +822,42 @@ set ignore_symbols {}
 
 # (1) Whitespace
 lappend ignore_symbols Whitespace {
-  or SPACE ASCII_TAB
+  or Space ASCII_TAB
 }
 
-# (2) Comment
-lappend ignore_symbols Comment {
-  or SingleLineComment MultiLineComment
-}
+# (1.2) ASCII_TAB
+# CONST ASCII_TAB = CHR(8);
 
-# (3) Single-Line Comment
+# (2) Single-Line Comment
 lappend ignore_symbols SingleLineComment {
-  line // {loop {or nil AnyPrintableCharacter} {}} END_OF_LINE
+  line // {optx {loop CommentCharacter {}}} EndOfLine
 }
 
-# (4) Multi-Line Comment
+# (2.1) Comment Character
+lappend ignore_symbols CommentCharacter {
+  or {line QuotableCharacter} ASCII_TAB DOUBLE_QUOTE SINGLE_QUOTE BACKSLASH
+}
+
+# (3) Multi-Line Comment
 lappend ignore_symbols MultiLineComment {
-  line (* {loop {or nil AnyPrintableCharacter MultiLineComment END_OF_LINE} {}} *)
+  line (* {optx {loop {or MultiLineComment CommentCharacter EndOfLine} {}}} *)
 }
 
-# (5) Any Printable Character
-lappend ignore_symbols AnyPrintableCharacter {
-  or GraphicCharacter Whitespace
-}
-
-# (6) End-Of-Line Marker
-lappend ignore_symbols END_OF_LINE {
+# (4) End-Of-Line Marker
+lappend ignore_symbols EndOfLine {
   or
     {line ASCII_LF {optx ASCII_CR}}
     {line ASCII_CR {optx ASCII_LF}}
 }
 
+# (4.1) ASCII_LF
+# CONST ASCII_LF = CHR(10);
+
+# (4.2) ASCII_CR
+# CONST ASCII_CR = CHR(13);
+
+# (5) UTF8 BOM
+# CONST UTF8_BOM = { 0uEF, 0uBB, 0uBF };
 
 # ---------------------------------------------------------------------------
 # Pragma Grammar
