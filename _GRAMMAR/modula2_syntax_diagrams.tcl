@@ -354,28 +354,28 @@ lappend non_terminals recordType {
   END
 }
 
-# (19.1) Base Type
+# (19.1) Field List
+lappend non_terminals fieldList {
+  line variableDeclaration
+}
+
+# (19.2) Base Type
 lappend non_terminals baseType {
   line typeIdent
 }
 
-# (20) Field List
-lappend non_terminals fieldList {
-  line identList : {optx range OF} typeIdent
-}
-
-# (21) Indeterminate Field Declaration
-lappend non_terminals indeterminateFieldDecl {
+# (20) Indeterminate Field Declaration
+lappend non_terminals indeterminateField {
   line INDETERMINATE Ident : ARRAY discriminantField OF typeIdent
 }
 
 
-# (21.1) Discriminant Field
+# (20.1) Discriminant Field
 lappend non_terminals discriminantField {
   line Ident
 }
 
-# (22) Set Type
+# (21) Set Type
 lappend non_terminals setType {
   line SET OF {
     or
@@ -384,49 +384,49 @@ lappend non_terminals setType {
   }
 }
 
-# (23) Pointer Type
+# (22) Pointer Type
 lappend non_terminals pointerType {
   line POINTER TO {opt CONST} typeIdent
 }
 
-# (24) Procedure Type
+# (23) Procedure Type
 lappend non_terminals procedureType {
   line PROCEDURE {optx ( formalTypeList )} {optx : returnedType}
 }
 
-# (24.1) Returned Type
+# (23.1) Returned Type
 lappend non_terminals returnedType {
   line typeIdent
 }
 
-# (25) Formal Type List
+# (24) Formal Type List
 lappend non_terminals formalTypeList {
   loop formalType ,
 }
 
-# (26) Formal Type
+# (25) Formal Type
 lappend non_terminals formalType {
   or
     {line attributedFormalType}
     {line variadicFormalType}
 }
 
-# (27) Attributed Formal Type
+# (26) Attributed Formal Type
 lappend non_terminals attributedFormalType {
   line {or {} CONST VAR} simpleFormalType
 }
 
-# (28) Simple Formal Type
+# (27) Simple Formal Type
 lappend non_terminals simpleFormalType {
   line {opt {opt autocast} ARRAY OF} typeIdent
 }
 
-# (28.1) Auto-Cast Option
+# (27.1) Auto-Cast Option
 lappend non_terminals autocast {
   line /CAST
 }
 
-# (29) Variadic Formal Type
+# (28) Variadic Formal Type
 lappend non_terminals variadicFormalType {
   line VARIADIC OF {
     or
@@ -435,17 +435,17 @@ lappend non_terminals variadicFormalType {
   }
 }
 
-# (30) Variable Declaration
+# (29) Variable Declaration
 lappend non_terminals variableDeclaration {
   line identList : {optx range OF} typeIdent
 }
 
-# (31) Procedure Declaration
+# (30) Procedure Declaration
 lappend non_terminals procedureDeclaration {
   line procedureHeader ; block Ident
 }
 
-# (32) Procedure Header
+# (31) Procedure Header
 lappend non_terminals procedureHeader {
   stack
     {line PROCEDURE
@@ -453,13 +453,13 @@ lappend non_terminals procedureHeader {
     {line Ident {optx ( formalParamList )} {optx : returnedType}}
 }
 
-# (32.1) Bindable Entity
+# (32) Bindable Entity
 lappend non_terminals bindableEntity {
   or
     DIV MOD IN FOR DESCENDING :: := ? ! ~ + - * / = < > bindableIdent
 }
 
-# (32.2) PROCEDURE Bindable Identifiers
+# (32.1) PROCEDURE Bindable Identifiers
 lappend non_terminals bindableIdent {
   or
     /TMIN /TMAX /TLIMIT /ABS /NEG /ODD /COUNT /LENGTH
