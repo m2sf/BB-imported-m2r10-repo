@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 24, 2012
+# Syntax diagram generator for Modula-2 (R10), status Nov 25, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -346,7 +346,12 @@ lappend non_terminals componentCount {
 
 # (19) Record Type
 lappend non_terminals recordType {
-  line RECORD {optx ( baseType )} {loop fieldList ;} END
+  line RECORD
+    {or
+      {line {loop fieldList ;} {opt indeterminateField}}
+      {line ( baseType ) {loop fieldList ;}}
+    }
+  END
 }
 
 # (19.1) Base Type
@@ -356,27 +361,21 @@ lappend non_terminals baseType {
 
 # (20) Field List
 lappend non_terminals fieldList {
-  line identList : {optx {or range {line ARRAY discriminantField}} OF}
-  typeIdent
+  line identList : {optx range OF} typeIdent
 }
 
-# Field List (reflecting semantics)
-# lappend non_terminals fieldList {
-#   line Ident {
-#     or
-#       {line , identList : {optx range OF}}
-#       {line : {optx {or {line ARRAY discriminantField} range} OF}}
-#     }
-#   typeIdent
-# }
+# (21) Indeterminate Field Declaration
+lappend non_terminals indeterminateFieldDecl {
+  line INDETERMINATE Ident : ARRAY discriminantField OF typeIdent
+}
 
 
-# (20.1) Discriminant Field
+# (21.1) Discriminant Field
 lappend non_terminals discriminantField {
   line Ident
 }
 
-# (21) Set Type
+# (22) Set Type
 lappend non_terminals setType {
   line SET OF {
     or
@@ -385,49 +384,49 @@ lappend non_terminals setType {
   }
 }
 
-# (22) Pointer Type
+# (23) Pointer Type
 lappend non_terminals pointerType {
   line POINTER TO {opt CONST} typeIdent
 }
 
-# (23) Procedure Type
+# (24) Procedure Type
 lappend non_terminals procedureType {
   line PROCEDURE {optx ( formalTypeList )} {optx : returnedType}
 }
 
-# (23.1) Returned Type
+# (24.1) Returned Type
 lappend non_terminals returnedType {
   line typeIdent
 }
 
-# (24) Formal Type List
+# (25) Formal Type List
 lappend non_terminals formalTypeList {
   loop formalType ,
 }
 
-# (25) Formal Type
+# (26) Formal Type
 lappend non_terminals formalType {
   or
     {line attributedFormalType}
     {line variadicFormalType}
 }
 
-# (26) Attributed Formal Type
+# (27) Attributed Formal Type
 lappend non_terminals attributedFormalType {
   line {or {} CONST VAR} simpleFormalType
 }
 
-# (27) Simple Formal Type
+# (28) Simple Formal Type
 lappend non_terminals simpleFormalType {
   line {opt {opt autocast} ARRAY OF} typeIdent
 }
 
-# (27.1) Auto-Cast Option
+# (28.1) Auto-Cast Option
 lappend non_terminals autocast {
   line /CAST
 }
 
-# (28) Variadic Formal Type
+# (29) Variadic Formal Type
 lappend non_terminals variadicFormalType {
   line VARIADIC OF {
     or
@@ -436,17 +435,17 @@ lappend non_terminals variadicFormalType {
   }
 }
 
-# (29) Variable Declaration
+# (30) Variable Declaration
 lappend non_terminals variableDeclaration {
   line identList : {optx range OF} typeIdent
 }
 
-# (30) Procedure Declaration
+# (31) Procedure Declaration
 lappend non_terminals procedureDeclaration {
   line procedureHeader ; block Ident
 }
 
-# (31) Procedure Header
+# (32) Procedure Header
 lappend non_terminals procedureHeader {
   stack
     {line PROCEDURE
@@ -454,13 +453,13 @@ lappend non_terminals procedureHeader {
     {line Ident {optx ( formalParamList )} {optx : returnedType}}
 }
 
-# (32) Bindable Entity
+# (32.1) Bindable Entity
 lappend non_terminals bindableEntity {
   or
     DIV MOD IN FOR DESCENDING :: := ? ! ~ + - * / = < > bindableIdent
 }
 
-# (32.1) PROCEDURE Bindable Identifiers
+# (32.2) PROCEDURE Bindable Identifiers
 lappend non_terminals bindableIdent {
   or
     /TMIN /TMAX /TLIMIT /ABS /NEG /ODD /COUNT /LENGTH
