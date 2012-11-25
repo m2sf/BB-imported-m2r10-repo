@@ -972,17 +972,7 @@ lappend pragmas pragmaADDR {
 
 # (13) Register Mapping Pragma
 lappend pragmas pragmaREG {
-  line <* REG = {or registerNumber registerMnemonic} *>
-}
-
-# (13.1) Register Number
-lappend pragmas registerNumber {
-  line wholeNumber
-}
-
-# (13.2) Register Mnemonic
-lappend pragmas registerMnemonic {
-  line String
+  line <* REG = inPragmaExpression *>
 }
 
 # (14) Volatile Attribute Pragma
