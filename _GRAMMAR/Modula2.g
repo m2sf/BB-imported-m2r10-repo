@@ -129,17 +129,17 @@ tokens {
 
 // production #1
 compilationUnit :	
-	prototype | definitionOfModule | IMPLEMENTATION? programModule
-	;
+    prototype | definitionOfModule | IMPLEMENTATION? programModule
+    ;
 
 // production #2
 prototype :
-	PROTOTYPE prototypeIdent '[' requiredConformance ']' ';'
+    PROTOTYPE prototypeIdent '[' requiredConformance ']' ';'
     ( PLACEHOLDERS identList ';' )?
     requiredTypeDefinition
-	( requiredBinding ';' )*
-	END prototypeIdent '.'
-	;
+    ( requiredBinding ';' )*
+    END prototypeIdent '.'
+    ;
 
 // alias #2.1
 prototypeIdent : Ident ;
@@ -156,109 +156,105 @@ requiredTypeDefinition :
 // production #4
 permittedTypeDefinition :
     RECORD | OPAQUE RECORD?
-	;
+    ;
 
 // production #5
 protoliteral :
     simpleProtoliteral | structuredProtoliteral
-	;
+    ;
 
 // alias #5.1
 simpleProtoliteral :
     Ident
-	;
+    ;
 
 // production #6
 structuredProtoliteral :
     '{' ( VARIADIC OF simpleProtoliteral ( ',' simpleProtoliteral )* |
     structuredProtoliteral ( ',' structuredProtoliteral )* ) '}'
-	;
+    ;
 
 // production #7
 requiredBinding :
     CONST '[' constBindableIdent ']' ':' pervasiveType |
     procedureHeader
-	;
+    ;
 
 // alias #7.1
-constBindableIdent :
-	Ident
-	;
+constBindableIdent : Ident ;
 
 // alias #7.2
-pervasiveType :
-    Ident
-	;
+pervasiveType : Ident ;
 
 // production #8
 definitionOfModule :
-	DEFINITION MODULE moduleIdent ( '[' prototypeIdent ']' )? ';'
-	importList* definition*
-	END moduleIdent '.'
-	;
+    DEFINITION MODULE moduleIdent ( '[' prototypeIdent ']' )? ';'
+    importList* definition*
+    END moduleIdent '.'
+    ;
 
 // alias 8.1
 moduleIdent : Ident ;
 
 // production #9
 programModule :
-	MODULE moduleIdent ';'
-	importList* block moduleIdent '.'
-	;
+    MODULE moduleIdent ';'
+    importList* block moduleIdent '.'
+    ;
 
 // *** Import Lists, Blocks, Declarations and Definitions ***
 
 // production #10
 importList :
-	( FROM moduleIdent IMPORT ( identList | '*' ) |
-	IMPORT Ident '+'? ( ',' Ident '+'? )* ) ';'
-	;
+    ( FROM moduleIdent IMPORT ( identList | '*' ) |
+    IMPORT Ident '+'? ( ',' Ident '+'? )* ) ';'
+    ;
 
 // production #11
 block :
-	declaration*
-	( BEGIN statementSequence )? END
-	;
+    declaration*
+    ( BEGIN statementSequence )? END
+    ;
 
 // production #12
 declaration :
-	CONST ( constantDeclaration ';' )+ |
-	TYPE ( Ident '=' type ';' )+ |
-	VAR ( variableDeclaration ';' )+ |
-	procedureDeclaration ';'
-	;
+    CONST ( constantDeclaration ';' )+ |
+    TYPE ( Ident '=' type ';' )+ |
+    VAR ( variableDeclaration ';' )+ |
+    procedureDeclaration ';'
+    ;
 
 // production #13
 definition :
-	CONST ( ( '[' bindableIdent ']' )? constantDeclaration ';' )+ |
-	TYPE ( Ident '=' ( type | OPAQUE recordType? ) ';' )+ |
-	VAR ( variableDeclaration ';' )+ |
-	procedureHeader ';'
-	;
+    CONST ( ( '[' bindableIdent ']' )? constantDeclaration ';' )+ |
+    TYPE ( Ident '=' ( type | OPAQUE recordType? ) ';' )+ |
+    VAR ( variableDeclaration ';' )+ |
+    procedureHeader ';'
+    ;
 
 // production #14
 constantDeclaration :	
-	Ident '=' constExpression // no type identifiers
-	;
+    Ident '=' constExpression // no type identifiers
+    ;
 
 // alias #14.1
 constExpression : expression ;
 
 // production #15
 type :
-	(( ALIAS | range ) OF )? typeIdent | enumerationType |
-	arrayType | recordType | setType | pointerType | procedureType
-	;
+    (( ALIAS | range ) OF )? typeIdent | enumerationType |
+    arrayType | recordType | setType | pointerType | procedureType
+    ;
 
 // production #16
 range :
-	'[' constExpression '..' constExpression ']'
-	;
+    '[' constExpression '..' constExpression ']'
+    ;
 
 // production #17
 enumerationType :
-	'(' ( ( '+' typeIdent ) | Ident ) ( ',' ( ( '+' typeIdent ) | Ident ) )* ')'
-	;
+    '(' ( ( '+' typeIdent ) | Ident ) ( ',' ( ( '+' typeIdent ) | Ident ) )* ')'
+    ;
 
 // alias 17.1
 enumTypeIdent : qualident ;
@@ -268,9 +264,9 @@ typeIdent : qualident ;
 
 // production #18
 arrayType :
-	( ARRAY componentCount ( ',' componentCount )* |
-	  ASSOCIATIVE ARRAY ) OF typeIdent
-	;
+    ( ARRAY componentCount ( ',' componentCount )* |
+      ASSOCIATIVE ARRAY ) OF typeIdent
+    ;
 
 // alias #18.1
 componentCount : constExpression ;
@@ -279,7 +275,7 @@ componentCount : constExpression ;
 recordType :
     RECORD ( fieldList ( ';' fieldList )* indeterminateField? |
     '(' baseType ')' fieldList ( ';' fieldList )* ) END
-	;
+    ;
 
 // aliase #19.1
 fieldList : variableDeclaration ;
@@ -290,85 +286,85 @@ baseType : typeIdent ;
 // production #20
 indeterminateField :
     INDETERMINATE Ident ':' ARRAY discriminantField OF typeIdent
-	;
+    ;
 
 // alias #20.1
 discriminantField : Ident ;
 
 // production #21
 setType :	
-	SET OF ( enumTypeIdent | '(' identList ')' )
-	;
+    SET OF ( enumTypeIdent | '(' identList ')' )
+    ;
 
 // production #22
 pointerType :
-	POINTER TO CONST? typeIdent
-	;
+    POINTER TO CONST? typeIdent
+    ;
 
 // production #23
 procedureType :
-	PROCEDURE
-	( '(' formalTypeList ')' )?
-	( ':' returnedType )?
-	;
+    PROCEDURE
+    ( '(' formalTypeList ')' )?
+    ( ':' returnedType )?
+    ;
 
 // alias #23.1
 returnedType : typeIdent ;
 
 // production #24
 formalTypeList :
-	formalType ( ',' formalType )*
-	;
+    formalType ( ',' formalType )*
+    ;
 
 // production #25
 formalType :
-	attributedFormalType | variadicFormalType
-	;
+    attributedFormalType | variadicFormalType
+    ;
 
 // production #26
 attributedFormalType :
     ( CONST | VAR {})? simpleFormalType
-	;
+    ;
 
 // production #27
 simpleFormalType :
-	( 'CAST'? ARRAY OF )? typeIdent
-	;
+    // ( autocast? ARRAY OF )? typeIdent
+    ( 'CAST'? ARRAY OF )? typeIdent
+    ;
 
 // alias #27.1
 autocast : Ident ; // CAST
-
 
 // production #28
 variadicFormalType :
     VARIADIC OF
     ( attributedFormalType |
     '{' attributedFormalType ( ',' attributedFormalType )* '}')
-	;
+    ;
 
 // production #29
 variableDeclaration :
-	identList ':' ( range OF )? typeIdent
-	;
+    identList ':' ( range OF )? typeIdent
+    ;
 
 // production #30
 procedureDeclaration :
-	procedureHeader ';' block Ident
-	;
+    procedureHeader ';' block Ident
+    ;
 
 // production #31
 procedureHeader :
-	PROCEDURE ( '[' bindableEntity ']' )?
+    PROCEDURE ( '[' bindableEntity ']' )?
     Ident ( '(' formalParamList ')' )?
     ( ':' returnedType )?
-	;
+    ;
 
 // production #32
 bindableEntity :
-	DIV | MOD | IN | FOR | DESCENDING |
-	'::' | ':=' | '?' | '!' | '~' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
-	bindableIdent
-	;
+    DIV | MOD | IN | FOR | DESCENDING |
+    '::' | ':=' | '?' | '!' | '~' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
+    bindableIdent
+    ;
 
 // alias #32.1
 bindableIdent : Ident ;
@@ -379,23 +375,23 @@ bindableIdent : Ident ;
 // production #33
 formalParamList :
     formalParams ( ';' formalParams )*
-	;
+    ;
 
 // production #34
 formalParams :
     simpleFormalParams | variadicFormalParams
-	;
+    ;
 
 // production #35
 simpleFormalParams :
     ( CONST | VAR {})? identList ':' simpleFormalType
-	;
+    ;
 
 // production #36
 variadicFormalParams :
     VARIADIC ( '[' variadicTerminator ']' )? OF
     ( simpleFormalType | '{' simpleFormalParams ( ';' simpleFormalParams )* '}' )
-	;
+    ;
 
 // alias #36.1
 variadicTerminator : constExpression ;
@@ -404,58 +400,58 @@ variadicTerminator : constExpression ;
 
 // production #37
 statement :
-	( assignmentOrProcedureCall | ifStatement | caseStatement |
-	  whileStatement | repeatStatement | loopStatement |
-	  forStatement | RETURN expression? | EXIT )?
-	;
+    ( assignmentOrProcedureCall | ifStatement | caseStatement |
+      whileStatement | repeatStatement | loopStatement |
+      forStatement | RETURN expression? | EXIT )?
+    ;
 
 // production #38
 statementSequence :
-	statement ( ';' statement )*
-	;
+    statement ( ';' statement )*
+    ;
 
 // production #39
 assignmentOrProcedureCall :
-	designator ( ':=' expression | '++' | '--' | actualParameters )?
-	;
+    designator ( ':=' expression | '++' | '--' | actualParameters )?
+    ;
 
 // production #40
 ifStatement :
-	IF expression THEN statementSequence
-	( ELSIF expression THEN statementSequence )*
-	( ELSE statementSequence )?
-	END
-	;
+    IF expression THEN statementSequence
+    ( ELSIF expression THEN statementSequence )*
+    ( ELSE statementSequence )?
+    END
+    ;
 
 // production #41
 caseStatement :
-	CASE expression OF ( '|' case )+ ( ELSE statementSequence )? END
-	;
+    CASE expression OF ( '|' case )+ ( ELSE statementSequence )? END
+    ;
 
 // production #42
 case :
-	caseLabels ( ',' caseLabels )* ':' statementSequence
-	;
+    caseLabels ( ',' caseLabels )* ':' statementSequence
+    ;
 
 // production #43
 caseLabels :
-	constExpression ( '..' constExpression )?
-	;
+    constExpression ( '..' constExpression )?
+    ;
 
 // production #44
 whileStatement :
-	WHILE expression DO statementSequence END
-	;
+    WHILE expression DO statementSequence END
+    ;
 
 // production #45
 repeatStatement :
-	REPEAT statementSequence UNTIL expression
-	;
+    REPEAT statementSequence UNTIL expression
+    ;
 
 // production #46
 loopStatement :
-	LOOP statementSequence END
-	;
+    LOOP statementSequence END
+    ;
 
 // production #47
 forStatement :
@@ -469,20 +465,20 @@ controlVariable : Ident ;
 
 // production #48
 designator :
-	qualident designatorTail?
-	;
+    qualident designatorTail?
+    ;
 
 // production #49
 designatorTail :
-	( ( '[' expressionList ']' | '^' ) ( '.' Ident )* )+
-	;
+    ( ( '[' expressionList ']' | '^' ) ( '.' Ident )* )+
+    ;
 
 // *** Expressions ***
 
 // production #50
 expressionList :
     expression ( ',' expression )*
-	;
+    ;
 
 // production #51
 expression :
@@ -497,66 +493,66 @@ fragment RelOp :
 
 // production #52
 simpleExpression :
-	( '+' | '-' {})? term ( AddOp term )*
-	;
+    ( '+' | '-' {})? term ( AddOp term )*
+    ;
 
 // fragment #52.1
 fragment AddOp :
-	'+' | '-' | OR
-	{} // make ANTLRworks display separate branches
+    '+' | '-' | OR
+    {} // make ANTLRworks display separate branches
 	;
 
 // production #53
 term :
-	factor ( MulOp factor )*
-	;
+    factor ( MulOp factor )*
+    ;
 
 // fragment #53.1
 fragment MulOp :
-	'*' | '/' | DIV | MOD | AND
-	{} // make ANTLRworks display separate branches
-	;
+    '*' | '/' | DIV | MOD | AND
+    {} // make ANTLRworks display separate branches
+    ;
 
 // production #54
 factor :
-	(( Number | String | structuredValue |
-	designatorOrFunctionCall | '(' expression ')' )
-	( '::' typeIdent )? ) | NOT factor
-	;
+    (( Number | String | structuredValue |
+    designatorOrFunctionCall | '(' expression ')' )
+    ( '::' typeIdent )? ) | NOT factor
+    ;
 
 // production #55
 designatorOrFunctionCall :
-	designator actualParameters?
-	;
+    designator actualParameters?
+    ;
 
 // production #56
 actualParameters :
-	'(' expressionList? ')'
-	;
+    '(' expressionList? ')'
+    ;
 
 // *** Structured Values ***
 
 // production #57
 structuredValue :
-	'{' ( valueComponent ( ',' valueComponent )* )? '}'	
-	;
+    '{' ( valueComponent ( ',' valueComponent )* )? '}'	
+    ;
 
 // production #58
 valueComponent :
-	expression ( ( BY | '..' {}) constExpression )?
-	;
+    expression ( ( BY | '..' {}) constExpression )?
+    ;
 
 // *** Identifiers ***
 
 // production #59
 qualident :
-	Ident ( '.' Ident )*
-	;
+    Ident ( '.' Ident )*
+    ;
 
 // production #60
 identList :
-	Ident ( ',' Ident )*
-	;
+    Ident ( ',' Ident )*
+    ;
 
 
 // ---------------------------------------------------------------------------
@@ -583,17 +579,17 @@ pragma :
       implementationDefinedPragma |
       forwardDeclarationPragma )
     '*>'
-	;
+    ;
 
 compileTimeMessagePragma :
     MSG '=' ( INFO | WARN | ERROR | FATAL {}) ':'
     compileTimeMsgComponent ( ',' compileTimeMsgComponent )*
-	;
+    ;
 
 compileTimeMsgComponent :
     String | constQualident |
     '?' ( ALIGN | ENCODING | implDefinedPragmaName )
-	;
+    ;
 
 constQualident : qualident ; // no type and no variable identifiers
 
@@ -601,117 +597,97 @@ implDefinedPragmaName : Ident ; // lowercase or mixed case only
 
 condtitionalCompilationPragma :
     ( IF | ELSIF {}) inPragmaExpression | ELSE | ENDIF
-	;
+    ;
 
 characterEncodingPragma : 
     ENCODING '=' String // "ASCII" or "UTF8"
     ( ':' codePointSample ( ',' codePointSample )* )?
-	;
+    ;
 
 codePointSample :
     quotedCharacterLiteral '=' CharacterCodeLiteral
-	;
+    ;
 
-quotedCharacterLiteral :
-    String
-	;
+quotedCharacterLiteral : String ; // single character only
 
 libraryTemplateExpansionPragma :
     GENLIB moduleIdent FROM template ':' templateParamList
-	;
+    ;
 
-template :
-    Ident
-	;
+template : Ident ;
 
 templateParamList :
     templateParam ( ',' templateParam )*
-	;
+    ;
 
 templateParam :
     placeholder '=' replacement
-	;
+    ;
 
-placeholder :
-    Ident
-	;
+placeholder : Ident ;
 
-replacement :
-    String
-	;
+replacement : String ;
 
 foreignFunctionInterfacePragma :
     FFI '=' String // "C" or "Fortran"
-	;
+    ;
 
 procedureInliningPragma :
     INLINE | NOINLINE
-    {}
-	;
+    {} // make ANTLRworks display separate branches
+    ;
 
 memoryAlignmentPragma :
     ALIGN '=' inPragmaExpression
-	;
+    ;
 
 bitPaddingPragma :
     PADBITS '=' inPragmaExpression
-	;
+    ;
 
 memoryMappingPragma :
     ADDR '=' inPragmaExpression
-	;
+    ;
 
 registerMappingPragma :
-    REG '=' ( registerNumber | registerMnemonic )
-	;
-
-registerNumber :
-    wholeNumber
-	;
-
-registerMnemonic :
-    String
-	;
-
-wholeNumber :
-    Number
-	;
+    REG '=' inPragmaExpression
+    ;
 
 volatileAttributePragma :
     VOLATILE
-	;
+    ;
 
 pureFunctionAttributePragma :
     PURE '=' ( WEAK | STRONG {})
-	;
+    ;
 
 implementationDefinedPragma :
     implDefinedPragmaName ( '=' inPragmaExpression )?
-	;
+    ;
 
 inPragmaExpression :
     inPragmaSimpleExpression ( inPragmaRelOp inPragmaSimpleExpression )?
-	;
+    ;
 
 fragment
 inPragmaRelOp :
     '=' | '#' | '<' | '<=' | '>' | '>='
-    {}
-	;
+    {} // make ANTLRworks display separate branches
+    ;
 
 inPragmaSimpleExpression :
     ( '+' | '-' {})? inPragmaTerm ( AddOp inPragmaTerm )*
-	;
+    ;
 
 inPragmaTerm :
     inPragmaFactor ( inPragmaMulOp inPragmaFactor )*
-	;
+    ;
 
 fragment
 inPragmaMulOp :
     '*' | DIV | MOD | AND
-    {}
-	;
+    {} // make ANTLRworks display separate branches
+    ;
 
 inPragmaFactor :
     wholeNumber |
@@ -719,11 +695,13 @@ inPragmaFactor :
     qualident ( '(' inPragmaExpression ( ',' inPragmaExpression )* ')' )? |
     '(' inPragmaExpression ')' |
     NOT inPragmaFactor
-	;
+    ;
+
+wholeNumber : Number ;
 
 forwardDeclarationPragma :
     FORWARD ( TYPE identList | procedureHeader )
-	;
+    ;
 
 
 // ---------------------------------------------------------------------------
@@ -734,108 +712,108 @@ forwardDeclarationPragma :
 // production #1
 Ident :
     IdentLeadChar IdentTailChar*
-	;
+    ;
 
 fragment
 IdentLeadChar :
     Letter | '_' | '$'
-	;
+    ;
 
 fragment
 IdentTailChar :
     Letter | '_' | '$' | Digit
-	;
+    ;
 
 fragment
 Letter :
     'A' .. 'Z' | 'a' .. 'z'
-    {}
-	;
+    {} // make ANTLRworks display separate branches
+    ;
 
 fragment 
 Digit :
     '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-    {}
-	;
+    {} // make ANTLRworks display separate branches
+    ;
 
 Number :
     DecimalNumber | Base2Number | Base16Number | CharacterCodeLiteral
-	;
+    ;
 
 fragment
 DecimalNumber :
     DigitSeq '.' DigitSeq
     'E' ( '+' | '-' {})? DigitSeq
-	;
+    ;
 
 fragment
 DigitSeq :
     DigitGroup ( SINGLE_QUOTE DigitGroup )*
-	;
+    ;
 
 fragment
 DigitGroup :
     Digit+
-	;
+    ;
 
 fragment
 Base2Number :
     '0b' Base2DigitSeq
-	;
+    ;
 
 fragment
 Base2DigitSeq :
     Base2DigitGroup ( SINGLE_QUOTE Base2DigitGroup )*
-	;
+    ;
 
 fragment
 Base2DigitGroup :
     Base2Digit+
-	;
+    ;
 
 fragment
 Base2Digit :
     '0' | '1'
-    {}
-	;
+    {} // make ANTLRworks display separate branches
+    ;
 
 fragment
 Base16Number :
     '0x' Base16DigitSeq
-	;
+    ;
 
 fragment
 Base16DigitSeq :
     Base16DigitGroup ( SINGLE_QUOTE Base16DigitGroup )*
-	;
+    ;
 
 fragment
 Base16DigitGroup :
     Base2Digit+
-	;
+    ;
 
 fragment
 Base16Digit :
     Digit | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
-    {}
-	;
+    {} // make ANTLRworks display separate branches
+    ;
 
 fragment
 CharacterCodeLiteral :
     '0u' Base16DigitSeq
-	;
+    ;
 
 // production #3
 String :
     SingleQuotedString | DoubleQuotedString
-	;
+    ;
 
 fragment
 SingleQuotedString :
     SINGLE_QUOTE
     ( Character | DOUBLE_QUOTE )*
     SINGLE_QUOTE
-	;
+    ;
 
 fragment
 DoubleQuotedString :
@@ -847,16 +825,16 @@ DoubleQuotedString :
 fragment
 Character :
     Digit | Letter | Space |
-	'!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' |
-	'-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' |
-	'[' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~' |
-	EscapeSequence
-	;
+    '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' |
+    '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' |
+    '[' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~' |
+    EscapeSequence
+    ;
 
 fragment
 EscapeSequence :
     BACKSLASH ( '0' | 'n' | 't' | BACKSLASH | SINGLE_QUOTE | DOUBLE_QUOTE {})
-	;
+    ;
 
 fragment
 Space : ' ';
@@ -871,40 +849,40 @@ Space : ' ';
 
 // production #1
 Whitespace :
-	Space | ASCII_TAB
-	{} // make ANTLRworks display separate branches
-	{ $channel = HIDDEN; } // ignore
-	;
+    Space | ASCII_TAB
+    {} // make ANTLRworks display separate branches
+    { $channel = HIDDEN; } // ignore
+    ;
 
 // *** Comments ***
 
 // production #2
 Comment :
-	MultiLineComment | SingleLineComment
-	{ $channel = HIDDEN; } // ignore
-	;
+    MultiLineComment | SingleLineComment
+    { $channel = HIDDEN; } // ignore
+    ;
 
 // production #3
 fragment
 MultiLineComment :
-	'(*'
-	( options { greedy=false; }: . )* // anything other than '(*' or '*)'
-	MultiLineComment*
-	'*)'
-	;	
+    '(*'
+    ( options { greedy=false; }: . )* // anything other than '(*' or '*)'
+    MultiLineComment*
+    '*)'
+    ;	
 
 // production #5
 fragment
 SingleLineComment :
-	'//'
-	( options { greedy=false; }: . )* // anything other than EOL
-	EndOfLine
-	;
+    '//'
+    ( options { greedy=false; }: . )* // anything other than EOL
+    EndOfLine
+    ;
 
 // production #5
 fragment
 EndOfLine :
-	ASCII_LF ASCII_CR? | ASCII_CR ASCII_LF?
-	;
+    ASCII_LF ASCII_CR? | ASCII_CR ASCII_LF?
+    ;
 
 // END OF FILE
