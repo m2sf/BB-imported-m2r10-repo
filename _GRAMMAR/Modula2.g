@@ -23,7 +23,7 @@ options {
 
 // *** enforce strict LL(1) ***
 
-	k = 1; backtrack = no;
+    k = 1; backtrack = no;
 }
 
 
@@ -36,87 +36,86 @@ tokens {
 	
 // *** Reserved Words, 45 tokens ***
 
-	ALIAS          = 'ALIAS';
-	AND            = 'AND';
-	ARRAY          = 'ARRAY';
-	ASSOCIATIVE    = 'ASSOCIATIVE';
-	BEGIN          = 'BEGIN';
-	BY             = 'BY';
-	CASE           = 'CASE';
-	CONST          = 'CONST';
-	DEFINITION     = 'DEFINITION';
-	DESCENDING     = 'DESCENDING';
-	DIV            = 'DIV';
-	DO             = 'DO';
-	ELSE           = 'ELSE';
-	ELSIF          = 'ELSIF';
-	END            = 'END';
-	EXIT           = 'EXIT';
-	FOR            = 'FOR';
-	FROM           = 'FROM';
-	IF             = 'IF';
-	IMPLEMENTATION = 'IMPLEMENTATION';
-	IMPORT         = 'IMPORT';
-	IN             = 'IN';
-	INDETERMINATE  = 'INDETERMINATE';
-	LOOP           = 'LOOP';
-	MOD            = 'MOD';
-	MODULE         = 'MODULE';
-	NOT            = 'NOT';
-	OF             = 'OF';
-	OPAQUE         = 'OPAQUE';
-	OR             = 'OR';
-	PLACEHOLDERS   = 'PLACEHOLDERS';
-	POINTER        = 'POINTER';
-	PROCEDURE      = 'PROCEDURE';
-	PROTOTYPE      = 'PROTOTYPE';
-	RECORD         = 'RECORD';
-	REPEAT         = 'REPEAT';
-	RETURN         = 'RETURN';
-	SET            = 'SET';
-	THEN           = 'THEN';
-	TO             = 'TO';
-	TYPE           = 'TYPE';
-	UNTIL          = 'UNTIL';
-	VAR            = 'VAR';
-	VARIADIC       = 'VARIADIC';
-	WHILE          = 'WHILE';
+    ALIAS          = 'ALIAS';
+    AND            = 'AND';
+    ARRAY          = 'ARRAY';
+    ASSOCIATIVE    = 'ASSOCIATIVE';
+    BEGIN          = 'BEGIN';
+    BY             = 'BY';
+    CASE           = 'CASE';
+    CONST          = 'CONST';
+    DEFINITION     = 'DEFINITION';
+    DESCENDING     = 'DESCENDING';
+    DIV            = 'DIV';
+    DO             = 'DO';
+    ELSE           = 'ELSE';
+    ELSIF          = 'ELSIF';
+    END            = 'END';
+    EXIT           = 'EXIT';
+    FOR            = 'FOR';
+    FROM           = 'FROM';
+    IF             = 'IF';
+    IMPLEMENTATION = 'IMPLEMENTATION';
+    IMPORT         = 'IMPORT';
+    IN             = 'IN';
+    INDETERMINATE  = 'INDETERMINATE';
+    LOOP           = 'LOOP';
+    MOD            = 'MOD';
+    MODULE         = 'MODULE';
+    NOT            = 'NOT';
+    OF             = 'OF';
+    OPAQUE         = 'OPAQUE';
+    OR             = 'OR';
+    PLACEHOLDERS   = 'PLACEHOLDERS';
+    POINTER        = 'POINTER';
+    PROCEDURE      = 'PROCEDURE';
+    PROTOTYPE      = 'PROTOTYPE';
+    RECORD         = 'RECORD';
+    REPEAT         = 'REPEAT';
+    RETURN         = 'RETURN';
+    SET            = 'SET';
+    THEN           = 'THEN';
+    TO             = 'TO';
+    TYPE           = 'TYPE';
+    UNTIL          = 'UNTIL';
+    VAR            = 'VAR';
+    VARIADIC       = 'VARIADIC';
+    WHILE          = 'WHILE';
 
-// *** Language Defined Pragma Words, 21 tokens ***
+// *** Language Defined Pragma Words, 20 tokens ***
 
-	ENDIF          = 'ENDIF';
-	MSG            = 'MSG';
-	INFO           = 'INFO';
-	WARN           = 'WARN';
-	ERROR          = 'ERROR';
-	FATAL          = 'FATAL';
-	FFI            = 'FFI';
-	GENLIB         = 'GENLIB';
-	FROM           = 'FROM';
-	INLINE         = 'INLINE';
-	NOINLINE       = 'NOINLINE';
-	ALIGN          = 'ALIGN';
-	PADBITS        = 'PADBITS';
-	ADDR           = 'ADDR';
-	REG            = 'REG';
-	PURE           = 'PURE';
-	WEAK           = 'WEAK';
-	STRONG         = 'STRONG';
-	VOLATILE       = 'VOLATILE';
-	ENCODING       = 'ENCODING';
-	FORWARD        = 'FOWARD';
+    ENDIF          = 'ENDIF';
+    MSG            = 'MSG';
+    INFO           = 'INFO';
+    WARN           = 'WARN';
+    ERROR          = 'ERROR';
+    FATAL          = 'FATAL';
+    FFI            = 'FFI';
+    GENLIB         = 'GENLIB';
+    INLINE         = 'INLINE';
+    NOINLINE       = 'NOINLINE';
+    ALIGN          = 'ALIGN';
+    PADBITS        = 'PADBITS';
+    ADDR           = 'ADDR';
+    REG            = 'REG';
+    PURE           = 'PURE';
+    WEAK           = 'WEAK';
+    STRONG         = 'STRONG';
+    VOLATILE       = 'VOLATILE';
+    ENCODING       = 'ENCODING';
+    FORWARD        = 'FOWARD';
 
 // *** Special Characters, 3 tokens ***
 
-	BACKSLASH      = '\\';
-	SINGLE_QUOTE   = '\'' ;
-	DOUBLE_QUOTE   = '\"' ;
+    BACKSLASH      = '\\';
+    SINGLE_QUOTE   = '\'' ;
+    DOUBLE_QUOTE   = '\"' ;
 
 // *** Ignore Characters, 3 tokens ***
 
-	ASCII_TAB      = '\t';
-	ASCII_LF       = '\n';
-	ASCII_CR       = '\r';
+    ASCII_TAB      = '\t';
+    ASCII_LF       = '\n';
+    ASCII_CR       = '\r';
 }
 
 
