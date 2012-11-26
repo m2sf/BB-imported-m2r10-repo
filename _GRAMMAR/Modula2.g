@@ -30,7 +30,7 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 45 reserved words, 21 pragma words
+// 45 reserved words, 20 pragma words
 
 tokens {
 	
@@ -163,9 +163,7 @@ protoliteral :
     ;
 
 // alias #5.1
-simpleProtoliteral :
-    Ident
-    ;
+simpleProtoliteral : Ident ;
 
 // production #6
 structuredProtoliteral :
@@ -487,7 +485,7 @@ expression :
 // fragment #51.1
 fragment RelOp :
     '=' | '#' | '<' | '<=' | '>' | '>=' | IN
-    {}
+    {} // make ANTLRworks display separate branches
     ;
 
 // production #52
