@@ -30,14 +30,14 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 45 reserved words, 20 pragma words
+// 45 reserved words, 15 identifiers, 18 pragma words
 
 tokens {
 	
 // *** Reserved Words, 45 tokens ***
 
     ALIAS          = 'ALIAS';
-    AND            = 'AND';
+    AND            = 'AND';            /* also a RW within pragmas */
     ARRAY          = 'ARRAY';
     ASSOCIATIVE    = 'ASSOCIATIVE';
     BEGIN          = 'BEGIN';
@@ -46,26 +46,26 @@ tokens {
     CONST          = 'CONST';
     DEFINITION     = 'DEFINITION';
     DESCENDING     = 'DESCENDING';
-    DIV            = 'DIV';
+    DIV            = 'DIV';            /* also a RW within pragmas */
     DO             = 'DO';
-    ELSE           = 'ELSE';
-    ELSIF          = 'ELSIF';
+    ELSE           = 'ELSE';           /* also a RW within pragma */
+    ELSIF          = 'ELSIF';          /* also a RW within pragma */
     END            = 'END';
     EXIT           = 'EXIT';
     FOR            = 'FOR';
-    FROM           = 'FROM';
-    IF             = 'IF';
+    FROM           = 'FROM';           /* also a RW within pragma */
+    IF             = 'IF';             /* also a RW within pragma */
     IMPLEMENTATION = 'IMPLEMENTATION';
     IMPORT         = 'IMPORT';
     IN             = 'IN';
     INDETERMINATE  = 'INDETERMINATE';
     LOOP           = 'LOOP';
-    MOD            = 'MOD';
+    MOD            = 'MOD';            /* also a RW within pragmas */
     MODULE         = 'MODULE';
-    NOT            = 'NOT';
+    NOT            = 'NOT';            /* also a RW within pragmas */
     OF             = 'OF';
     OPAQUE         = 'OPAQUE';
-    OR             = 'OR';
+    OR             = 'OR';             /* also a RW within pragmas */
     PLACEHOLDERS   = 'PLACEHOLDERS';
     POINTER        = 'POINTER';
     PROCEDURE      = 'PROCEDURE';
@@ -76,7 +76,7 @@ tokens {
     SET            = 'SET';
     THEN           = 'THEN';
     TO             = 'TO';
-    TYPE           = 'TYPE';
+    TYPE           = 'TYPE';           /* also a RW within pragma */
     UNTIL          = 'UNTIL';
     VAR            = 'VAR';
     VARIADIC       = 'VARIADIC';
@@ -87,72 +87,63 @@ tokens {
 //  CAST is both an Identifier and a Reserved Word
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
-    CAST           = 'CAST';
+    CAST           = 'CAST';           /* RW within procedure header */
 
 // *** Bindable Identifiers ***
 
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
-    ABS            = 'ABS';      /* bindableIdent */
-    NEG            = 'NEG';      /* bindableIdent */
-    ODD            = 'ODD';      /* bindableIdent */
-    COUNT          = 'COUNT';    /* bindableIdent */
-    LENGTH         = 'LENGTH';   /* bindableIdent */
-    NEW            = 'NEW';      /* bindableIdent */
-    DISPOSE        = 'DISPOSE';  /* bindableIdent */
-    RETAIN         = 'RETAIN';   /* bindableIdent */
-    RELEASE        = 'RELEASE';  /* bindableIdent */
-    TLIMIT         = 'TLIMIT';   /* bindableIdent */
-    TMAX           = 'TMAX';     /* constBindableIdent */
-    TMIN           = 'TMIN';     /* constBindableIdent */
-    SXF            = 'SXF';      /* bindableIdent */
-    VAL            = 'VAL';      /* bindableIdent */
+    ABS            = 'ABS';            /* RW within procedure header */
+    NEG            = 'NEG';            /* RW within procedure header */
+    ODD            = 'ODD';            /* RW within procedure header */
+    COUNT          = 'COUNT';          /* RW within procedure header */
+    LENGTH         = 'LENGTH';         /* RW within procedure header */
+    NEW            = 'NEW';            /* RW within procedure header */
+    DISPOSE        = 'DISPOSE';        /* RW within procedure header */
+    RETAIN         = 'RETAIN';         /* RW within procedure header */
+    RELEASE        = 'RELEASE';        /* RW within procedure header */
+    TLIMIT         = 'TLIMIT';         /* RW within procedure header */
+    TMAX           = 'TMAX';           /* RW within constant definition */
+    TMIN           = 'TMIN';           /* RW within constant definition */
+    SXF            = 'SXF';            /* RW within procedure header */
+    VAL            = 'VAL';            /* RW within procedure header */
 
-// *** Language Defined Pragma Words, 27 tokens ***
+// *** Language Defined Pragma Words, 18 tokens ***
 
 //  Pragma Words are Reserved Words only within pragmas
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
-    MSG            = 'MSG';      /* pragma only */
-    INFO           = 'INFO';     /* pragma only */
-    WARN           = 'WARN';     /* pragma only */
-    ERROR          = 'ERROR';    /* pragma only */
-    FATAL          = 'FATAL';    /* pragma only */
-    IF             = 'IF';       /* RW and pragma */
-    ELSIF          = 'ELSIF';    /* RW and pragma */
-    ELSE           = 'ELSE';     /* RW and pragma */
-    ENDIF          = 'ENDIF';    /* pragma only */
-    ENCODING       = 'ENCODING'; /* pragma only */
-    GENLIB         = 'GENLIB';   /* pragma only */
-    FROM           = 'FROM';     /* RW and pragma */
-    FFI            = 'FFI';      /* pragma only */
-    INLINE         = 'INLINE';   /* pragma only */
-    NOINLINE       = 'NOINLINE'; /* pragma only */
-    ALIGN          = 'ALIGN';    /* pragma only */
-    PADBITS        = 'PADBITS';  /* pragma only */
-    ADDR           = 'ADDR';     /* pragma only */
-    REG            = 'REG';      /* pragma only */
-    PURITY         = 'PURITY';   /* pragma only */
-    VOLATILE       = 'VOLATILE'; /* pragma only */
-    FORWARD        = 'FOWARD';   /* pragma only */
-    TYPE           = 'TYPE';     /* RW and pragma */
-    DIV            = 'DIV';      /* RW and pragma */
-    MOD            = 'MOD';      /* RW and pragma */
-    AND            = 'AND';      /* RW and pragma */
-    NOT            = 'NOT';      /* RW and pragma */
+    MSG            = 'MSG';            /* RW within pragma only */
+    INFO           = 'INFO';           /* RW within pragma only */
+    WARN           = 'WARN';           /* RW within pragma only */
+    ERROR          = 'ERROR';          /* RW within pragma only */
+    FATAL          = 'FATAL';          /* RW within pragma only */
+    ENDIF          = 'ENDIF';          /* RW within pragma only */
+    ENCODING       = 'ENCODING';       /* RW within pragma only */
+    GENLIB         = 'GENLIB';         /* RW within pragma only */
+    FFI            = 'FFI';            /* RW within pragma only */
+    INLINE         = 'INLINE';         /* RW within pragma only */
+    NOINLINE       = 'NOINLINE';       /* RW within pragma only */
+    ALIGN          = 'ALIGN';          /* RW within pragma only */
+    PADBITS        = 'PADBITS';        /* RW within pragma only */
+    ADDR           = 'ADDR';           /* RW within pragma only */
+    REG            = 'REG';            /* RW within pragma only */
+    PURITY         = 'PURITY';         /* RW within pragma only */
+    VOLATILE       = 'VOLATILE';       /* RW within pragma only */
+    FORWARD        = 'FOWARD';         /* RW within pragma only */
 
 // *** Special Characters, 3 tokens ***
 
-    BACKSLASH      = '\\';
-    SINGLE_QUOTE   = '\'' ;
-    DOUBLE_QUOTE   = '\"' ;
+    BACKSLASH      = '\\';             /* for readability */
+    SINGLE_QUOTE   = '\'' ;            /* for readability */
+    DOUBLE_QUOTE   = '\"' ;            /* for readability */
 
 // *** Ignore Characters, 3 tokens ***
 
-    ASCII_TAB      = '\t';
-    ASCII_LF       = '\n';
-    ASCII_CR       = '\r';
+    ASCII_TAB      = '\t';             /* for readability */
+    ASCII_LF       = '\n';             /* for readability */
+    ASCII_CR       = '\r';             /* for readability */
 }
 
 
@@ -178,11 +169,9 @@ prototype :
     ;
 
 // alias #2.1
-fragment
 prototypeIdent : Ident ;
 
 // alias #2.2
-fragment
 requiredConformance : prototypeIdent ;
 
 // production #3
@@ -202,7 +191,6 @@ protoliteral :
     ;
 
 // alias #5.1
-fragment
 simpleProtoliteral : Ident ;
 
 // production #6
@@ -218,11 +206,11 @@ requiredBinding :
     ;
 
 // alias #7.1
-fragment
-constBindableIdent : TMAX | TMIN {} ;
+constBindableIdent : TMAX | TMIN
+    {} /* make ANTLRworks display separate branches */
+    ;
 
 // alias #7.2
-fragment
 pervasiveType : Ident ;
 
 // production #8
@@ -233,7 +221,6 @@ definitionOfModule :
     ;
 
 // alias 8.1
-fragment
 moduleIdent : Ident ;
 
 // production #9
@@ -286,7 +273,7 @@ definition :
 
 // production #14
 constantDeclaration :	
-    Ident '=' constExpression // no type identifiers
+    Ident '=' constExpression /* no type identifiers */
     ;
 
 // alias #14.1
@@ -309,11 +296,9 @@ enumerationType :
     ;
 
 // alias 17.1
-fragment
 enumTypeIdent : qualident ;
 
 // alias 17.2
-fragment
 typeIdent : qualident ;
 
 // production #18
@@ -323,7 +308,6 @@ arrayType :
     ;
 
 // alias #18.1
-fragment
 componentCount : constExpression ;
 
 // production #19
@@ -333,11 +317,9 @@ recordType :
     ;
 
 // aliase #19.1
-fragment
 fieldList : variableDeclaration ;
 
 // aliase #19.2
-fragment
 baseType : typeIdent ;
 
 // production #20
@@ -346,7 +328,6 @@ indeterminateField :
     ;
 
 // alias #20.1
-fragment
 discriminantField : Ident ;
 
 // production #21
@@ -367,7 +348,6 @@ procedureType :
     ;
 
 // alias #23.1
-fragment
 returnedType : typeIdent ;
 
 // production #24
@@ -424,11 +404,10 @@ bindableEntity :
 // token #32.1
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
-fragment
 bindableIdent :
     ABS | NEG | ODD | COUNT | LENGTH | NEW | DISPOSE | RETAIN | RELEASE |
     SXF | VAL
-    {} // make ANTLRworks display alternatives as separate branches
+    {} /* make ANTLRworks display separate branches */
     ;
 
 // *** Formal Parameters ***
@@ -455,7 +434,6 @@ variadicFormalParams :
     ;
 
 // alias #36.1
-fragment
 variadicTerminator : constExpression ;
 
 // *** Statements ***
@@ -525,7 +503,6 @@ forStatement :
     ;
 
 // alias #47.1
-fragment
 controlVariable : Ident ;
 
 // production #48
@@ -551,22 +528,21 @@ expression :
     ;
 
 // fragment #51.1
-fragment
 relOp :
     '=' | '#' | '<' | '<=' | '>' | '>=' | IN
-    {} // make ANTLRworks display separate branches
+    {} /* make ANTLRworks display separate branches */
     ;
 
 // production #52
 simpleExpression :
-    ( '+' | '-' {})? term ( addOp term )*
+    ( '+' | '-' {} /* make ANTLRworks display separate branches */ )?
+    term ( addOp term )*
     ;
 
 // fragment #52.1
-fragment
 addOp :
     '+' | '-' | OR
-    {} // make ANTLRworks display separate branches
+    {} /* make ANTLRworks display separate branches */
 	;
 
 // production #53
@@ -575,10 +551,9 @@ term :
     ;
 
 // fragment #53.1
-fragment
 mulOp :
     '*' | '/' | DIV | MOD | AND
-    {} // make ANTLRworks display separate branches
+    {} /* make ANTLRworks display separate branches */
     ;
 
 // production #54
@@ -630,6 +605,7 @@ identList :
 
 // *** Pragmas ***
 
+// common wrapper
 pragma :
     '<*'
     ( compileTimeMessagePragma |
@@ -659,18 +635,16 @@ compileTimeMsgComponent :
     '?' ( ALIGN | ENCODING | implDefinedPragmaName )
     ;
 
-fragment
-constQualident : qualident ; // no type and no variable identifiers
+constQualident : qualident ; /* no type and no variable identifiers */
 
-fragment
-implDefinedPragmaName : Ident ; // lowercase or mixed case only
+implDefinedPragmaName : Ident ; /* lowercase or mixed case only */
 
 condtitionalCompilationPragma :
     ( IF | ELSIF {}) inPragmaExpression | ELSE | ENDIF
     ;
 
 characterEncodingPragma : 
-    ENCODING '=' String // "ASCII" or "UTF8"
+    ENCODING '=' String /* "ASCII" or "UTF8" */
     ( ':' codePointSample ( ',' codePointSample )* )?
     ;
 
@@ -678,17 +652,14 @@ codePointSample :
     quotedCharacterLiteral '=' characterCodeLiteral
     ;
 
-fragment
-quotedCharacterLiteral : String ; // single character only
+quotedCharacterLiteral : String ; /* single character only */
 
-fragment
-characterCodeLiteral : Number ; // unicode code points only
+characterCodeLiteral : Number ; /* unicode code points only */
 
 libraryTemplateExpansionPragma :
     GENLIB moduleIdent FROM template ':' templateParamList
     ;
 
-fragment
 template : Ident ;
 
 templateParamList :
@@ -699,19 +670,17 @@ templateParam :
     placeholder '=' replacement
     ;
 
-fragment
 placeholder : Ident ;
 
-fragment
 replacement : String ;
 
 foreignFunctionInterfacePragma :
-    FFI '=' String // "C" or "Fortran"
+    FFI '=' String /* "C" or "Fortran" */
     ;
 
 procedureInliningPragma :
     INLINE | NOINLINE
-    {} // make ANTLRworks display separate branches
+    {} /* make ANTLRworks display separate branches */
     ;
 
 memoryAlignmentPragma :
@@ -749,7 +718,7 @@ inPragmaExpression :
 fragment
 inPragmaRelOp :
     '=' | '#' | '<' | '<=' | '>' | '>='
-    {} // make ANTLRworks display separate branches
+    {} /* make ANTLRworks display separate branches */
     ;
 
 inPragmaSimpleExpression :
@@ -763,18 +732,17 @@ inPragmaTerm :
 fragment
 inPragmaMulOp :
     '*' | DIV | MOD | AND
-    {} // make ANTLRworks display separate branches
+    {} /* make ANTLRworks display separate branches */
     ;
 
 inPragmaFactor :
     wholeNumber |
-    // constQualident or inPragmaCompileTimeFunctionCall
+    /* constQualident or inPragmaCompileTimeFunctionCall */
     qualident ( '(' inPragmaExpression ( ',' inPragmaExpression )* ')' )? |
     '(' inPragmaExpression ')' |
     NOT inPragmaFactor
     ;
 
-fragment
 wholeNumber : Number ;
 
 forwardDeclarationPragma :
@@ -785,7 +753,7 @@ forwardDeclarationPragma :
 // ---------------------------------------------------------------------------
 // T E R M I N A L   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 8 productions
+// 3 productions
 
 // production #1
 Ident :
@@ -805,13 +773,13 @@ IdentTailChar :
 fragment
 Letter :
     'A' .. 'Z' | 'a' .. 'z'
-    {} // make ANTLRworks display separate branches
+    {} /* make ANTLRworks display separate branches */
     ;
 
 fragment 
 Digit :
     '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-    {} // make ANTLRworks display separate branches
+    {} /* make ANTLRworks display separate branches */
     ;
 
 /* production #2 */
@@ -847,7 +815,7 @@ DigitGroup :
     ;
 
 fragment
-DigitSep : SINGLE_QUOTE {};
+DigitSep : SINGLE_QUOTE {} /* make ANTLRworks display name, not literal */ ;
 
 
 fragment
@@ -863,7 +831,7 @@ Base2DigitGroup :
 fragment
 Base2Digit :
     '0' | '1'
-    {} // make ANTLRworks display separate branches
+    {} /* make ANTLRworks display separate branches */
     ;
 
 fragment
@@ -879,7 +847,7 @@ Base16DigitGroup :
 fragment
 Base16Digit :
     Digit | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
-    {} // make ANTLRworks display separate branches
+    {} /* make ANTLRworks display separate branches */
     ;
 
 // production #3
@@ -916,7 +884,7 @@ EscapeSequence :
     ;
 
 fragment
-Space : ' ';
+Space : ' ' ;
 
 
 // ---------------------------------------------------------------------------
@@ -928,7 +896,7 @@ Space : ' ';
 
 // production #1
 Whitespace :
-    ({} Space | ASCII_TAB) { $channel = HIDDEN; } // ignore
+    ({} Space | ASCII_TAB) { $channel = HIDDEN; } /* ignore */
     ;
 
 // *** Comments ***
@@ -936,14 +904,14 @@ Whitespace :
 // production #2
 Comment :
     MultiLineComment | SingleLineComment
-    { $channel = HIDDEN; } // ignore
+    { $channel = HIDDEN; } /* ignore */
     ;
 
 // production #3
 fragment
 MultiLineComment :
     '(*'
-    ( options { greedy=false; }: . )* // anything other than '(*' or '*)'
+    ( options { greedy=false; }: . )* /* anything other than '(*' or '*)' */
     MultiLineComment*
     '*)'
     ;	
@@ -952,7 +920,7 @@ MultiLineComment :
 fragment
 SingleLineComment :
     '//'
-    ( options { greedy=false; }: . )* // anything other than EOL
+    ( options { greedy=false; }: . )* /* anything other than EOL */
     EndOfLine
     ;
 
