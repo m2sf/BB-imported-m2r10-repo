@@ -131,7 +131,7 @@ tokens {
     REG            = 'REG';            /* RW within pragma only */
     PURITY         = 'PURITY';         /* RW within pragma only */
     VOLATILE       = 'VOLATILE';       /* RW within pragma only */
-    FORWARD        = 'FOWARD';         /* RW within pragma only */
+    FORWARD        = 'FORWARD';        /* RW within pragma only */
 
 // *** Special Characters, 3 tokens ***
 
