@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 25, 2012
+# Syntax diagram generator for Modula-2 (R10), status Dec 3, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -175,27 +175,46 @@ lappend non_terminals requiredConformance {
   line prototypeIdent
 }
 
-# (3) Required Type
+# (3) Program Module
+lappend non_terminals programModule {
+  line MODULE moduleIdent ;
+  {loop nil {nil importList nil}} block moduleIdent .
+}
+
+# (3.1) Module Identifier
+lappend non_terminals moduleIdent {
+  line Ident
+}
+
+# (4) Definition Of Module
+lappend non_terminals definitionOfModule {
+  stack
+    {line DEFINITION MODULE moduleIdent {opt [ prototypeIdent ]} ;}
+    {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
+    END moduleIdent .}
+}
+
+# (5) Required Type
 lappend non_terminals requiredTypeDefinition {
   line TYPE = {loop permittedTypeDefinition |} {opt := {loop protoliteral |}}
 }
 
-# (4) Permitted Type Definition
+# (6) Permitted Type Definition
 lappend non_terminals permittedTypeDefinition {
   or RECORD { line OPAQUE {optx RECORD}}
 }
 
-# (5) Proto Literal
+# (7) Proto Literal
 lappend non_terminals protoliteral {
   or simpleProtoliteral structuredProtoliteral
 }
 
-# (5.1) Simple Proto Literal
+# (7.1) Simple Proto Literal
 lappend non_terminals simpleProtoliteral {
   or /CHAR /INTEGER /REAL
 }
 
-# (6) Structured Proto Literal
+# (8) Structured Proto Literal
 lappend non_terminals structuredProtoliteral {
   line LBRACE {
     or
@@ -205,7 +224,7 @@ lappend non_terminals structuredProtoliteral {
   RBRACE
 }
 
-# (7) Required Binding
+# (9) Required Binding
 lappend non_terminals requiredBinding {
   line {
     or
@@ -214,33 +233,14 @@ lappend non_terminals requiredBinding {
   }
 }
 
-# (7.1) CONST Bindable Identifiers
+# (9.1) CONST Bindable Identifiers
 lappend non_terminals constBindableIdent {
   or /TSIG /TEXP
 }
 
-# (7.2) Pervasive Type
+# (9.2) Pervasive Type
 lappend non_terminals pervasiveType {
   line Ident
-}
-
-# (8) Definition Of Module
-lappend non_terminals definitionOfModule {
-  stack
-    {line DEFINITION MODULE moduleIdent {opt [ prototypeIdent ]} ;}
-    {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
-    END moduleIdent .}
-}
-
-# (8.1) Module Identifier
-lappend non_terminals moduleIdent {
-  line Ident
-}
-
-# (9) Program Module
-lappend non_terminals programModule {
-  line MODULE moduleIdent ;
-  {loop nil {nil importList nil}} block moduleIdent .
 }
 
 # (10) Import List
@@ -722,95 +722,94 @@ lappend terminals Digit {
 # (2) Numeric Literal
 lappend terminals Number {
   or
-    DecimalNumber
-    Base2Number
-    Base16Number
-    CharacterCodeLiteral
+    {line 0 {
+      or
+        DecimalNumberTail
+        {line /b Base2DigitSeq }
+        {line /x Base16DigitSeq }
+        {line /u Base16DigitSeq }
+      }}
+    {line 1..9 DecimalNumberTail }
 }
 
-# (3) Decimal Number
-lappend terminals DecimalNumber {
+# (2.1) Decimal Number Tail
+lappend terminals DecimalNumberTail {
   stack
-   {loop DigitGroup SINGLE_QUOTE}
+   {line {opt SINGLE_QUOTE} {loop DigitGroup SINGLE_QUOTE}}
    {opt . {loop DigitGroup SINGLE_QUOTE}
-     {optx /E {or {} + -} {loop DigitGroup SINGLE_QUOTE} }}
+     {optx /e {or {} + -} {loop DigitGroup SINGLE_QUOTE} }}
 }
 
-# (3.1) Digit Group
+# (2.2) Digit Group
 lappend terminals DigitGroup {
   loop Digit {}
 }
 
-# (4) Base-2 Number
-lappend terminals Base2Number {
-  line 0b {loop Base2DigitGroup SINGLE_QUOTE}
+# (2.3) Base-2 Digit Sequence
+lappend terminals Base2DigitSeq {
+  loop Base2DigitGroup SINGLE_QUOTE
 }
 
-# (4.1) Base-2 Digit Group
+# (2.4) Base-2 Digit Group
 lappend terminals Base2DigitGroup {
   loop Base2Digit {}
 }
 
-# (4.2) Base-2 Digit
+# (2.5) Base-2 Digit
 lappend terminals Base2Digit {
   or 0 1
 }
 
-# (5) Base-16 Number
-lappend terminals Base16Number {
-  line 0x {loop Base16DigitGroup SINGLE_QUOTE}
+# (2.6) Base-16 Digit Sequence
+lappend terminals Base16DigitSeq {
+  loop Base16DigitGroup SINGLE_QUOTE
 }
 
-# (5.1) Base-16 Digit Group
+# (2.7) Base-16 Digit Group
 lappend terminals Base16DigitGroup {
   loop Base16Digit {}
 }
 
-# (5.2) Base-16 Digit
+# (2.8) Base-16 Digit
 lappend terminals Base16Digit {
   or Digit /A /B /C /D /E /F
 }
 
-# (6) Character Code Literal
-lappend terminals CharacterCodeLiteral {
-  line 0u {loop Base16DigitGroup SINGLE_QUOTE}
-}
-
-# (7) String
+# (3) String
 lappend terminals String {
   or SingleQuotedString DoubleQuotedString
 }
 
-# (7.1) Single Quoted String
+# (3.1) Single Quoted String
 lappend terminals SingleQuotedString {
   line SINGLE_QUOTE
-    {loop {or nil QuotableCharacter EscapeSequence DOUBLE_QUOTE} {}}
+    {loop {or nil QuotableCharacter DOUBLE_QUOTE} {}}
   SINGLE_QUOTE
 }
 
-# (7.2) Double Quoted String
+# (3.2) Double Quoted String
 lappend terminals DoubleQuotedString {
   line DOUBLE_QUOTE
-    {loop {or nil QuotableCharacter EscapeSequence SINGLE_QUOTE} {}}
+    {loop {or nil QuotableCharacter SINGLE_QUOTE} {}}
   DOUBLE_QUOTE
 }
 
-# (7.3) Quotable Character
+# (3.3) Quotable Character
 lappend terminals QuotableCharacter {
-  or Digit Letter Space QuotableGraphicChar
+  or Digit Letter Space QuotableGraphicChar EscapedCharacter
 }
 
-# (7.4) Quotable Graphic Character
+# (3.4) Quotable Graphic Character
 lappend terminals QuotableGraphicChar {
   or ! # $ % & ( ) * + , - . / : ; < = > ? @ [ ] ^ _ ` LBRACE | RBRACE ~
 }
 
-# (7.5) Escape Sequence
-lappend terminals EscapeSequence {
+# (3.5) Escaped Character
+lappend terminals EscapedCharacter {
   line BACKSLASH {or 0 /n /t BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE}
 }
 
-# (7.6) Space
+# (3.6) Space
 # CONST Space = CHR(32);
 
 # ---------------------------------------------------------------------------
@@ -975,14 +974,14 @@ lappend pragmas pragmaREG {
   line <* REG = inPragmaExpression *>
 }
 
-# (14) Volatile Attribute Pragma
-lappend pragmas pragmaVOLATILE {
-  line <* VOLATILE *>
+# (14) Purity Attribute Pragma
+lappend pragmas pragmaPURITY {
+  line <* PURITY = inPragmaExpression *>
 }
 
-# (15) Pure Attribute Pragma
-lappend pragmas pragmaPURE {
-  line <* PURE = {or STRONG WEAK} *>
+# (15) Volatile Attribute Pragma
+lappend pragmas pragmaVOLATILE {
+  line <* VOLATILE *>
 }
 
 # (16) Implementation Defined Pragma
