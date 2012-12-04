@@ -401,7 +401,7 @@ bindableEntity :
     bindableIdent
     ;
 
-// token #32.1
+// fragment #32.1
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 bindableIdent :
@@ -794,14 +794,14 @@ Number :
         'x' Base16DigitSeq |
         /* with prefix 0u are unicode code points */
         'u' Base16DigitSeq
-         )
+         )?
     /* number literals starting with digits 1 to 9 ... */
-    | '1'..'9' DecimalNumberTail /* are always decimal numbers */
+    | '1'..'9' DecimalNumberTail? /* are always decimal numbers */
     ;
 
 fragment
 DecimalNumberTail :
-    DigitSep? DigitSeq? ( '.' DigitSeq ( 'e' ( '+' | '-' {})? DigitSeq )? )?
+    DigitSep? DigitSeq ( '.' DigitSeq ( 'e' ( '+' | '-' {})? DigitSeq )? )?
     ;
 
 fragment
