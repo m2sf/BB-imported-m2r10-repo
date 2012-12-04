@@ -30,7 +30,7 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 45 reserved words, 15 identifiers, 18 pragma words
+// 45 reserved words, 17 identifiers, 18 pragma words
 
 tokens {
 	
@@ -94,6 +94,9 @@ tokens {
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
+    TSIG           = 'TSIG';           /* RW within constant definition */
+    TEXP           = 'TEXP';           /* RW within constant definition */
+
     ABS            = 'ABS';            /* RW within procedure header */
     NEG            = 'NEG';            /* RW within procedure header */
     ODD            = 'ODD';            /* RW within procedure header */
@@ -104,8 +107,8 @@ tokens {
     RETAIN         = 'RETAIN';         /* RW within procedure header */
     RELEASE        = 'RELEASE';        /* RW within procedure header */
     TLIMIT         = 'TLIMIT';         /* RW within procedure header */
-    TMAX           = 'TMAX';           /* RW within constant definition */
-    TMIN           = 'TMIN';           /* RW within constant definition */
+    TMAX           = 'TMAX';           /* RW within procedure header */
+    TMIN           = 'TMIN';           /* RW within procedure header */
     SXF            = 'SXF';            /* RW within procedure header */
     VAL            = 'VAL';            /* RW within procedure header */
 
@@ -206,7 +209,7 @@ requiredBinding :
     ;
 
 // alias #7.1
-constBindableIdent : TMAX | TMIN
+constBindableIdent : TSIG | TEXP
     {} /* make ANTLRworks display separate branches */
     ;
 
@@ -406,7 +409,7 @@ bindableEntity :
 // resolve using Schroedinger's Token
 bindableIdent :
     ABS | NEG | ODD | COUNT | LENGTH | NEW | DISPOSE | RETAIN | RELEASE |
-    SXF | VAL
+    TLIMIT | TMIN | TMAX | SXF | VAL
     {} /* make ANTLRworks display separate branches */
     ;
 
