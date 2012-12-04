@@ -724,18 +724,19 @@ lappend terminals Number {
   or
     {line 0 {
       or
+        {}
         DecimalNumberTail
         {line /b Base2DigitSeq }
         {line /x Base16DigitSeq }
         {line /u Base16DigitSeq }
       }}
-    {line 1..9 DecimalNumberTail }
+    {line 1..9 {optx DecimalNumberTail} }
 }
 
 # (2.1) Decimal Number Tail
-lappend terminals DecimalNumberTail {
-  stack
-    {optx {opt SINGLE_QUOTE} DigitSeq}
+lappend terminals DecimalNumberTail2 {
+  line
+    {opt SINGLE_QUOTE} DigitSeq
     {optx . DigitSeq {optx /e {or {} + -} DigitSeq }}
 }
 
