@@ -178,59 +178,60 @@ prototypeIdent : Ident ;
 requiredConformance : prototypeIdent ;
 
 // production #3
-requiredTypeDefinition :
-    TYPE '=' permittedTypeDefinition ( '|' permittedTypeDefinition )*
-    ( ':=' protoliteral ( '|' protoliteral )* )?
+programModule :
+    MODULE moduleIdent ';'
+    importList* block moduleIdent '.'
     ;
+
+// alias 3.1
+moduleIdent : Ident ;
 
 // production #4
-permittedTypeDefinition :
-    RECORD | OPAQUE RECORD?
-    ;
-
-// production #5
-protoliteral :
-    simpleProtoliteral | structuredProtoliteral
-    ;
-
-// alias #5.1
-simpleProtoliteral : Ident ;
-
-// production #6
-structuredProtoliteral :
-    '{' ( VARIADIC OF simpleProtoliteral ( ',' simpleProtoliteral )* |
-    structuredProtoliteral ( ',' structuredProtoliteral )* ) '}'
-    ;
-
-// production #7
-requiredBinding :
-    CONST '[' constBindableIdent ']' ':' pervasiveType |
-    procedureHeader
-    ;
-
-// alias #7.1
-constBindableIdent : TSIG | TEXP
-    {} /* make ANTLRworks display separate branches */
-    ;
-
-// alias #7.2
-pervasiveType : Ident ;
-
-// production #8
 definitionOfModule :
     DEFINITION MODULE moduleIdent ( '[' prototypeIdent ']' )? ';'
     importList* definition*
     END moduleIdent '.'
     ;
 
-// alias 8.1
-moduleIdent : Ident ;
+// production #5
+requiredTypeDefinition :
+    TYPE '=' permittedTypeDefinition ( '|' permittedTypeDefinition )*
+    ( ':=' protoliteral ( '|' protoliteral )* )?
+    ;
+
+// production #6
+permittedTypeDefinition :
+    RECORD | OPAQUE RECORD?
+    ;
+
+// production #7
+protoliteral :
+    simpleProtoliteral | structuredProtoliteral
+    ;
+
+// alias #7.1
+simpleProtoliteral : Ident ;
+
+// production #8
+structuredProtoliteral :
+    '{' ( VARIADIC OF simpleProtoliteral ( ',' simpleProtoliteral )* |
+    structuredProtoliteral ( ',' structuredProtoliteral )* ) '}'
+    ;
 
 // production #9
-programModule :
-    MODULE moduleIdent ';'
-    importList* block moduleIdent '.'
+requiredBinding :
+    CONST '[' constBindableIdent ']' ':' pervasiveType |
+    procedureHeader
     ;
+
+// alias #9.1
+constBindableIdent : TSIG | TEXP
+    {} /* make ANTLRworks display separate branches */
+    ;
+
+// alias #9.2
+pervasiveType : Ident ;
+
 
 // *** Import Lists, Blocks, Declarations and Definitions ***
 
