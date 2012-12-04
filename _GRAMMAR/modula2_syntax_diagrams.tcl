@@ -641,8 +641,8 @@ lappend non_terminals mulOp {
 lappend non_terminals factor {
   line {or
     {line {or
-      Number
-      String
+      NumericLiteral
+      StringLiteral
       structuredValue
       designatorOrFunctionCall
       {line ( expression )}
@@ -720,7 +720,7 @@ lappend terminals Digit {
 }
 
 # (2) Numeric Literal
-lappend terminals Number {
+lappend terminals NumericLiteral {
   or
     {line 0 {
       or
@@ -734,7 +734,7 @@ lappend terminals Number {
 }
 
 # (2.1) Decimal Number Tail
-lappend terminals DecimalNumberTail2 {
+lappend terminals DecimalNumberTail {
   line
     {opt SINGLE_QUOTE} DigitSeq
     {optx . DigitSeq {optx /e {or {} + -} DigitSeq }}
@@ -780,8 +780,8 @@ lappend terminals Base16Digit {
   or Digit /A /B /C /D /E /F
 }
 
-# (3) String
-lappend terminals String {
+# (3) String Literal
+lappend terminals StringLiteral {
   or SingleQuotedString DoubleQuotedString
 }
 
@@ -878,7 +878,7 @@ lappend pragmas compileTimeMessagePragma {
 lappend pragmas compileTimeMsgComponent {
   line {
     or
-      String
+      StringLiteral
       constQualident
       {line ? {or ALIGN ENCODING implDefinedPragmaName}}
   }
@@ -916,7 +916,7 @@ lappend pragmas codePointSampleList {
 
 # (5.1) Quoted Character Literal
 lappend pragmas quotedCharacterLiteral {
-  line String
+  line StringLiteral
 }
 
 # (5.2) Character Code Literal
@@ -946,7 +946,7 @@ lappend pragmas placeholder {
 
 # (7.2) Replacement
 lappend pragmas replacement {
-  line String
+  line StringLiteral
 }
 
 # (8) Foreign Function Interface Pragma
@@ -1071,8 +1071,8 @@ lappend aliases AliasForQualident {
 }
 
 # Alias For Number
-lappend aliases AliasForNumber {
-  line Number
+lappend aliases AliasForNumericLiteral {
+  line NumericLiteral
 }
 
 # Alias For Whole Number
@@ -1081,8 +1081,8 @@ lappend aliases AliasForWholeNumber {
 }
 
 # Alias For String
-lappend aliases AliasForString {
-  line String
+lappend aliases AliasForStringLiteral {
+  line StringLiteral
 }
 
 # Alias For Constant Expression
