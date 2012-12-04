@@ -558,7 +558,7 @@ mulOp :
 
 // production #54
 factor :
-    (( Number | String | structuredValue |
+    (( NumericLiteral | String | structuredValue |
     designatorOrFunctionCall | '(' expression ')' )
     ( '::' typeIdent )? ) | NOT factor
     ;
@@ -654,7 +654,7 @@ codePointSample :
 
 quotedCharacterLiteral : String ; /* single character only */
 
-characterCodeLiteral : Number ; /* unicode code points only */
+characterCodeLiteral : NumericLiteral ; /* unicode code points only */
 
 libraryTemplateExpansionPragma :
     GENLIB moduleIdent FROM template ':' templateParamList
@@ -743,7 +743,7 @@ inPragmaFactor :
     NOT inPragmaFactor
     ;
 
-wholeNumber : Number ;
+wholeNumber : NumericLiteral ;
 
 forwardDeclarationPragma :
     FORWARD ( TYPE identList | procedureHeader )
@@ -783,7 +783,7 @@ Digit :
     ;
 
 /* production #2 */
-Number :
+NumericLiteral :
     /* number literals starting with digit 0 ... */
     '0' (
         /* without prefix are decimal numbers */
