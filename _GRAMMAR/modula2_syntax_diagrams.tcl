@@ -735,42 +735,46 @@ lappend terminals Number {
 # (2.1) Decimal Number Tail
 lappend terminals DecimalNumberTail {
   stack
-   {line {opt SINGLE_QUOTE} {loop DigitGroup SINGLE_QUOTE}}
-   {opt . {loop DigitGroup SINGLE_QUOTE}
-     {optx /e {or {} + -} {loop DigitGroup SINGLE_QUOTE} }}
+    {optx {opt SINGLE_QUOTE} DigitSeq}
+    {optx . DigitSeq {optx /e {or {} + -} DigitSeq }}
 }
 
-# (2.2) Digit Group
+# (2.2) Digit Sequence
+lappend terminals DigitSeq {
+  loop DigitGroup SINGLE_QUOTE
+}
+
+# (2.3) Digit Group
 lappend terminals DigitGroup {
   loop Digit {}
 }
 
-# (2.3) Base-2 Digit Sequence
+# (2.4) Base-2 Digit Sequence
 lappend terminals Base2DigitSeq {
   loop Base2DigitGroup SINGLE_QUOTE
 }
 
-# (2.4) Base-2 Digit Group
+# (2.5) Base-2 Digit Group
 lappend terminals Base2DigitGroup {
   loop Base2Digit {}
 }
 
-# (2.5) Base-2 Digit
+# (2.6) Base-2 Digit
 lappend terminals Base2Digit {
   or 0 1
 }
 
-# (2.6) Base-16 Digit Sequence
+# (2.7) Base-16 Digit Sequence
 lappend terminals Base16DigitSeq {
   loop Base16DigitGroup SINGLE_QUOTE
 }
 
-# (2.7) Base-16 Digit Group
+# (2.8) Base-16 Digit Group
 lappend terminals Base16DigitGroup {
   loop Base16Digit {}
 }
 
-# (2.8) Base-16 Digit
+# (2.9) Base-16 Digit
 lappend terminals Base16Digit {
   or Digit /A /B /C /D /E /F
 }
