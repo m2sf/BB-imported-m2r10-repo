@@ -418,12 +418,7 @@ lappend non_terminals attributedFormalType {
 
 # (27) Simple Formal Type
 lappend non_terminals simpleFormalType {
-  line {opt {opt autocast} ARRAY OF} typeIdent
-}
-
-# (27.1) Auto-Cast Option
-lappend non_terminals autocast {
-  line /CAST
+  line {optx {optx /CAST} ARRAY OF} typeIdent
 }
 
 # (28) Variadic Formal Type
