@@ -558,7 +558,7 @@ mulOp :
 
 // production #54
 factor :
-    (( NumericLiteral | String | structuredValue |
+    (( NumericLiteral | StringLiteral | structuredValue |
     designatorOrFunctionCall | '(' expression ')' )
     ( '::' typeIdent )? ) | NOT factor
     ;
@@ -631,7 +631,7 @@ compileTimeMessagePragma :
     ;
 
 compileTimeMsgComponent :
-    String | constQualident |
+    StringLiteral | constQualident |
     '?' ( ALIGN | ENCODING | implDefinedPragmaName )
     ;
 
@@ -644,7 +644,7 @@ condtitionalCompilationPragma :
     ;
 
 characterEncodingPragma : 
-    ENCODING '=' String /* "ASCII" or "UTF8" */
+    ENCODING '=' StringLiteral /* "ASCII" or "UTF8" */
     ( ':' codePointSample ( ',' codePointSample )* )?
     ;
 
@@ -652,7 +652,7 @@ codePointSample :
     quotedCharacterLiteral '=' characterCodeLiteral
     ;
 
-quotedCharacterLiteral : String ; /* single character only */
+quotedCharacterLiteral : StringLiteral ; /* single character only */
 
 characterCodeLiteral : NumericLiteral ; /* unicode code points only */
 
@@ -672,10 +672,10 @@ templateParam :
 
 placeholder : Ident ;
 
-replacement : String ;
+replacement : StringLiteral ;
 
 foreignFunctionInterfacePragma :
-    FFI '=' String /* "C" or "Fortran" */
+    FFI '=' StringLiteral /* "C" or "Fortran" */
     ;
 
 procedureInliningPragma :
@@ -851,7 +851,7 @@ Base16Digit :
     ;
 
 // production #3
-String :
+StringLiteral :
     SingleQuotedString | DoubleQuotedString
     ;
 
