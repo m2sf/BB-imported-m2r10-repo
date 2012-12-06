@@ -3,6 +3,24 @@
 Welcome to the  development repository  for the  Modula-2 R10 language report,
 reference compiler and standard library.
 
+Quick links:
+
+o  Source Repo
+
+https://bitbucket.org/trijezdci/m2r10/src
+
+o  EBNF Grammar
+
+https://bitbucket.org/trijezdci/m2r10/src/tip/_GRAMMAR/M2R10.2012-12-05.Grammar.pdf
+
+o  Syntax Diagrams
+
+https://bitbucket.org/trijezdci/m2r10/src/tip/_GRAMMAR/M2R10.2012-12-05.Diagrams.pdf
+
+o  Library Definition Modules
+
+https://bitbucket.org/trijezdci/m2r10/src/tip/_STANDARD_LIBRARY
+
 
 * About Classic Modula-2 *
 
