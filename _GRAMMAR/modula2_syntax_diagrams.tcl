@@ -194,7 +194,7 @@ lappend non_terminals definitionOfModule {
     END moduleIdent .}
 }
 
-# (5) Required Type
+# (5) Required Type Definition
 lappend non_terminals requiredTypeDefinition {
   line TYPE = {loop permittedTypeDefinition |} {opt := {loop protoliteral |}}
 }
@@ -451,14 +451,14 @@ lappend non_terminals procedureHeader {
 # (32) Bindable Entity
 lappend non_terminals bindableEntity {
   or
-    DIV MOD IN FOR DESCENDING :: := ? ! ~ + - * / = < > bindableIdent
+    DIV MOD FOR DESCENDING :: := ? ! ~ + - * / = < > bindableIdent
 }
 
 # (32.1) PROCEDURE Bindable Identifiers
 lappend non_terminals bindableIdent {
   or
-    /TMIN /TMAX /TLIMIT /ABS /NEG /ODD /COUNT /LENGTH
-    /NEW /DISPOSE /RETAIN /RELEASE /SXF /VAL
+    /ABS /NEG /ODD /COUNT /LENGTH /NEW /DISPOSE /RETAIN /RELEASE
+    /TLIMIT /TMIN /TMAX /SXF /VAL
 }
 
 # (33) Formal Parameter List
@@ -689,32 +689,38 @@ lappend non_terminals identList {
 #
 set terminals {}
 
-# (1) Identifier
+# (1a) Reserved Words
+lappend terminals ReservedWords1 {
+  or
+    ALIAS AND ARRAY ASSOCIATIVE BEGIN BY CASE CONST DEFINITION DESCENDING
+    DIV DO ELSE ELSIF END EXIT FOR FROM IF IMPLEMENTATION IMPORT IN
+    INDETERMINATE
+}
+
+# (1b) Reserved Words
+lappend terminals ReservedWords2 {
+  or
+    LOOP MOD MODULE NOT OF OPAQUE OR PLACEHOLDERS POINTER PROCEDURE
+    PROTOTYPE RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR
+    VARIADIC WHILE
+}
+
+# (2) Identifier
 lappend terminals Ident {
   line IdentLeadChar {optx {loop IdentTailChar {}}}
 }
 
-# (1.1) IdentLeadChar
+# (2.1) IdentLeadChar
 lappend terminals IdentLeadChar {
   or Letter _ $
 }
 
-# (1.2) IdentTailChar
+# (2.2) IdentTailChar
 lappend terminals IdentTailChar {
   or IdentLeadChar Digit
 }
 
-# (1.3) Letter
-lappend terminals Letter {
-  or /A..Z /a..z 
-}
-
-# (1.4) Digit
-lappend terminals Digit {
-  or 0 1 2 3 4 5 6 7 8 9
-}
-
-# (2) Numeric Literal
+# (3) Numeric Literal
 lappend terminals NumericLiteral {
   or
     {line 0 {
@@ -728,89 +734,100 @@ lappend terminals NumericLiteral {
     {line 1..9 {optx DecimalNumberTail} }
 }
 
-# (2.1) Decimal Number Tail
+# (3.1) Decimal Number Tail
 lappend terminals DecimalNumberTail {
   line
     {opt SINGLE_QUOTE} DigitSeq
     {optx . DigitSeq {optx /e {or {} + -} DigitSeq }}
 }
 
-# (2.2) Digit Sequence
+# (3.2) Digit Sequence
 lappend terminals DigitSeq {
   loop DigitGroup SINGLE_QUOTE
 }
 
-# (2.3) Digit Group
+# (3.2b) Digit Group
 lappend terminals DigitGroup {
   loop Digit {}
 }
 
-# (2.4) Base-2 Digit Sequence
+# (3.3) Base-2 Digit Sequence
 lappend terminals Base2DigitSeq {
   loop Base2DigitGroup SINGLE_QUOTE
 }
 
-# (2.5) Base-2 Digit Group
+# (3.3b) Base-2 Digit Group
 lappend terminals Base2DigitGroup {
   loop Base2Digit {}
 }
 
-# (2.6) Base-2 Digit
-lappend terminals Base2Digit {
-  or 0 1
-}
-
-# (2.7) Base-16 Digit Sequence
+# (3.4) Base-16 Digit Sequence
 lappend terminals Base16DigitSeq {
   loop Base16DigitGroup SINGLE_QUOTE
 }
 
-# (2.8) Base-16 Digit Group
+# (3.4b) Base-16 Digit Group
 lappend terminals Base16DigitGroup {
   loop Base16Digit {}
 }
 
-# (2.9) Base-16 Digit
-lappend terminals Base16Digit {
-  or Digit /A /B /C /D /E /F
-}
-
-# (3) String Literal
+# (4) String Literal
 lappend terminals StringLiteral {
   or SingleQuotedString DoubleQuotedString
 }
 
-# (3.1) Single Quoted String
+# (4.1) Single Quoted String
 lappend terminals SingleQuotedString {
   line SINGLE_QUOTE
-    {loop {or nil QuotableCharacter DOUBLE_QUOTE} {}}
+    {optx {loop {or QuotableCharacter DOUBLE_QUOTE} {}}}
   SINGLE_QUOTE
 }
 
-# (3.2) Double Quoted String
+# (4.2) Double Quoted String
 lappend terminals DoubleQuotedString {
   line DOUBLE_QUOTE
-    {loop {or nil QuotableCharacter SINGLE_QUOTE} {}}
+    {optx {loop {or QuotableCharacter SINGLE_QUOTE} {}}}
   DOUBLE_QUOTE
 }
 
-# (3.3) Quotable Character
+# (4.3) Quotable Character
 lappend terminals QuotableCharacter {
   or Digit Letter Space QuotableGraphicChar EscapedCharacter
 }
 
-# (3.4) Quotable Graphic Character
+# (4.4) Digit
+lappend terminals Digit {
+  or Base2Digit 2 3 4 5 6 7 8 9
+}
+
+# (4.5) Base-2 Digit
+lappend terminals Base2Digit {
+  or 0 1
+}
+
+# (4.6) Base-16 Digit
+lappend terminals Base16Digit {
+  or Digit /A /B /C /D /E /F
+}
+
+# (4.7) Letter
+lappend terminals Letter {
+  or /A..Z /a..z 
+}
+
+# (4.8) Space
+# CONST Space = CHR(32);
+
+# (4.9) Quotable Graphic Character
 lappend terminals QuotableGraphicChar {
   or ! # $ % & ( ) * + , - . / : ; < = > ? @ [ ] ^ _ ` LBRACE | RBRACE ~
 }
 
-# (3.5) Escaped Character
+# (4.10) Escaped Character
 lappend terminals EscapedCharacter {
   line BACKSLASH {or 0 /n /t BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE}
 }
 
-# (3.6) Space
-# CONST Space = CHR(32);
 
 # ---------------------------------------------------------------------------
 # Ignore Symbols
@@ -823,7 +840,7 @@ lappend ignore_symbols Whitespace {
   or Space ASCII_TAB
 }
 
-# (1.2) ASCII_TAB
+# (1.1) ASCII_TAB
 # CONST ASCII_TAB = CHR(8);
 
 # (2) Single-Line Comment
@@ -831,14 +848,15 @@ lappend ignore_symbols SingleLineComment {
   line // {optx {loop CommentCharacter {}}} EndOfLine
 }
 
-# (2.1) Comment Character
-lappend ignore_symbols CommentCharacter {
-  or {line QuotableCharacter} ASCII_TAB DOUBLE_QUOTE SINGLE_QUOTE BACKSLASH
-}
-
 # (3) Multi-Line Comment
 lappend ignore_symbols MultiLineComment {
   line (* {optx {loop {or MultiLineComment CommentCharacter EndOfLine} {}}} *)
+}
+
+# (3.1) Comment Character
+lappend ignore_symbols CommentCharacter {
+  or Digit Letter Whitespace QuotableGraphicChar
+  BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE
 }
 
 # (4) End-Of-Line Marker
@@ -863,13 +881,34 @@ lappend ignore_symbols EndOfLine {
 #
 set pragmas {}
 
-# (1) Compile Time Message Pragma
-lappend pragmas compileTimeMessagePragma {
-  line <* MSG = {or INFO WARN ERROR FATAL} :
-    {loop compileTimeMsgComponent ,} *>
+# (1) Pragma
+lappend pragmas pragma {
+  line <* {
+    or
+      pragmaMSG
+      pragmaIF
+      pragmaENCODING
+      pragmaGENLIB
+      pragmaFFI
+      pragmaINLINE
+      pragmaALIGN
+      pragmaPADBITS
+      pragmaADDR
+      pragmaREG
+      pragmaPURITY
+      pragmaVOLATILE
+      pragmaFORWARD
+      implDefinedPragma
+    }
+  *>
+}
+# (2) Body Of Compile Time Message Pragma
+lappend pragmas pragmaMSG {
+  line MSG = {or INFO WARN ERROR FATAL} :
+    {loop compileTimeMsgComponent ,}
 }
 
-# (2) Compile Time Message Component
+# (3) Compile Time Message Component
 lappend pragmas compileTimeMsgComponent {
   line {
     or
@@ -879,152 +918,150 @@ lappend pragmas compileTimeMsgComponent {
   }
 }
 
-# (2.1) Constant Qualified Identifier
+# (3.1) Constant Qualified Identifier
 lappend pragmas constQualident {
   line qualident
 }
 
-# (2.2) Implementation Defined Pragma Name
+# (3.2) Implementation Defined Pragma Name
 lappend pragmas implDefinedPragmaName {
   line Ident
 }
 
-# (3) Conditional Compilation Pragma
-lappend pragmas conditionalPragma {
-  line <* {
-    or
-      {line {or IF ELSIF} inPragmaExpression}
-      ELSE
-      ENDIF
-  } *>
+# (4) Body Of Conditional Compilation Pragma
+lappend pragmas pragmaIF {
+  or
+    {line {or IF ELSIF} inPragmaExpression}
+    ELSE
+    ENDIF
 }
 
-# (4) Character Encoding Pragma
+# (5) Body Of Character Encoding Pragma
 lappend pragmas pragmaENCODING {
-  line <* ENCODING = {or `ASCII `UTF8} {opt : codePointSampleList} *>
+  line ENCODING = {or `ASCII `UTF8} {opt : codePointSampleList}
 }
 
-# (5) Code Point Sample List
+# (6) Code Point Sample List
 lappend pragmas codePointSampleList {
-  loop {line quotedCharacterLiteral = CharacterCodeLiteral} ,
+  loop {line quotedCharacter = CharCodeLiteral} ,
 }
 
-# (5.1) Quoted Character Literal
-lappend pragmas quotedCharacterLiteral {
+# (6.1) Quoted Character
+lappend pragmas quotedCharacter {
   line StringLiteral
 }
 
-# (5.2) Character Code Literal
-lappend pragmas characterCodeLiteral {
-  line wholeNumber
+# (6.2) Character Code Literal
+lappend pragmas charCodeLiteral {
+  line NumericLiteral
 }
 
-# (6) Library Template Expansion Pragma
+# (7) Body Of Library Template Expansion Pragma
 lappend pragmas pragmaGENLIB {
-  line <* GENLIB moduleIdent FROM template : templateParamList *>
+  line GENLIB moduleIdent FROM template : templateParamList
 }
 
-# (6.1) Template Identifier
+# (7.1) Template Identifier
 lappend pragmas template {
   line Ident
 }
 
-# (7) Template Parameter List
+# (8) Template Parameter List
 lappend pragmas templateParamList {
   loop {line placeholder = replacement} ,
 }
 
-# (7.1) Placeholder
+# (8.1) Placeholder
 lappend pragmas placeholder {
   line Ident
 }
 
-# (7.2) Replacement
+# (8.2) Replacement
 lappend pragmas replacement {
   line StringLiteral
 }
 
-# (8) Foreign Function Interface Pragma
+# (9) Body Of Foreign Function Interface Pragma
 lappend pragmas pragmaFFI {
-  line <* FFI = {or `C `Fortran } *>
+  line FFI = {or `C `Fortran }
 }
 
-# (9) Procedure Inlining Pragma
+# (10) Body Of Procedure Inlining Pragma
 lappend pragmas pragmaINLINE {
-  line <* {or INLINE NOINLINE} *>
+  or INLINE NOINLINE
 }
 
-# (10) Memory Alignment Pragma
+# (11) Body Of Memory Alignment Pragma
 lappend pragmas pragmaALIGN {
-  line <* ALIGN = inPragmaExpression *>
+  line ALIGN = inPragmaExpression
 }
 
-# (11) Bit Padding Pragma
+# (12) Body Of Bit Padding Pragma
 lappend pragmas pragmaPADBITS {
-  line <* PADBITS = inPragmaExpression *>
+  line PADBITS = inPragmaExpression
 }
 
-# (12) Memory Mapping Pragma
+# (13) Body Of Memory Mapping Pragma
 lappend pragmas pragmaADDR {
-  line <* ADDR = inPragmaExpression *>
+  line ADDR = inPragmaExpression
 }
 
-# (13) Register Mapping Pragma
+# (14) Body Of Register Mapping Pragma
 lappend pragmas pragmaREG {
-  line <* REG = inPragmaExpression *>
+  line REG = inPragmaExpression
 }
 
-# (14) Purity Attribute Pragma
+# (15) Body Of Purity Attribute Pragma
 lappend pragmas pragmaPURITY {
-  line <* PURITY = inPragmaExpression *>
+  line PURITY = inPragmaExpression
 }
 
-# (15) Volatile Attribute Pragma
+# (16) Body Of Volatile Attribute Pragma
 lappend pragmas pragmaVOLATILE {
-  line <* VOLATILE *>
+  line VOLATILE
 }
 
-# (16) Implementation Defined Pragma
-lappend pragmas implementationDefinedPragma {
-  line <* implDefinedPragmaName {optx = inPragmaExpression} *>
+# (17) Body Of Forward Declaration Pragma
+lappend pragmas pragmaFORWARD {
+  line FORWARD {or {line TYPE identList} procedureHeader}
 }
 
-# (16.1) Implementation Defined Pragma Name
+# (18) Implementation Defined Pragma
+lappend pragmas implDefinedPragma {
+  line implDefinedPragmaName {optx = inPragmaExpression}
+}
+
+# (18.1) Implementation Defined Pragma Name
 lappend pragmas implDefinedPragmaName {
   line Ident
 }
 
-# (17) In-Pragma Expression
+# (19) In-Pragma Expression
 lappend pragmas inPragmaExpression {
   line inPragmaSimpleExpr {optx inPragmaRelOp inPragmaSimpleExpr}
 }
 
-# (17.1) In-Pragma Relational Operator
+# (19.1) In-Pragma Relational Operator
 lappend pragmas inPragmaRelOp {
   or = # < <= > >=
 }
 
-# (18) In-Pragma Simple Expression
+# (20) In-Pragma Simple Expression
 lappend pragmas inPragmaSimpleExpr {
   line {or {} + -} {loop inPragmaTerm addOp}
 }
 
-# (18.1) In-Pragma Add Operator
-lappend pragmas inPragmaAddOp {
-  line {or + - OR}
-}
-
-# (19) In-Pragma Term
+# (21) In-Pragma Term
 lappend pragmas inPragmaTerm {
   loop inPragmaFactor inPragmaMulOp
 }
 
-# (19.1) In-Pragma Multiply Operator
+# (21.1) In-Pragma Multiply Operator
 lappend pragmas inPragmaMulOp {
   or * DIV MOD AND
 }
 
-# (20) In-Pragma Factor
+# (22) In-Pragma Factor
 lappend pragmas inPragmaFactor {
   or
     wholeNumber
@@ -1034,20 +1071,16 @@ lappend pragmas inPragmaFactor {
     {line NOT inPragmaFactor}
 }
 
-# (20.1) Whole Number
+# (22.1) Whole Number
 lappend pragmas wholeNumber {
-  line Number
+  line NumericLiteral
 }
 
-# (21) In-Pragma Compile Time Function Call
+# (23) In-Pragma Compile Time Function Call
 lappend pragmas inPragmaCompileTimeFunctionCall {
   line qualident ( {loop inPragmaExpression ,} ) 
 }
 
-# (22) Forward Declaration Pragma
-lappend pragmas pragmaFORWARD {
-  line <* FORWARD {or {line TYPE identList} procedureHeader} *>
-}
 
 # ---------------------------------------------------------------------------
 # Alias Diagrams
