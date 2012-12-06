@@ -1,0 +1,39 @@
+* M2 R10 Repository *
+
+Welcome to the  development repository  for the  Modula-2 R10 language report,
+reference compiler and standard library.
+
+
+* About Classic Modula-2 *
+
+Modula-2 is a modular, imperative programming language designed in 1979 at the
+Swiss Federal Institute of Technology in Zurich (ETHZ)  by Prof. Niklaus Wirth
+as a successor  to his earlier language  Pascal.  More information  about  the
+classic Modula-2 language and its history can be found at:
+
+http://en.wikipedia.org/wiki/Modula-2
+
+
+* About Modula-2 Revision 2010 *
+
+Modula-2 R10 is a modern revision of N.Wirth's Modula-2 language undertaken by
+B.Kowarsch  and R.Sutcliffe  in 2009  and 2010.  A pragma system  was added in
+in 2011 and 2012.  The language report is currently under editorial review and
+is due to be published as a book in 2013.
+
+The primary design goals of the revision were type safety,  utmost readability
+and consistency,  and  suitability  as a  core language   for domain  specific
+supersets.   Targeted  areas   of  application   are  systems  implementation,
+engineering and mathematics.  Some inspiration was taken from Ada and Oberon.
+
+A particular strength  of the design  is  a set of facilities  to make library
+defined abstract data types  practically indistinguishable from built-in types
+and thereby eliminate one of the major causes of feature growth.
+
+A reference compiler  for Modula-2 R10 has been  under development  since 2010
+but work had been suspended  until the design has been finalised.  Work on the
+compiler  is scheduled to resume  mid-December 2012.  Initially,  the compiler
+will generate C99 source code.  Eventually it will also generate LLVM IR.
+
+
+(status: Dec 5, 2012)
