@@ -616,150 +616,169 @@ identList :
 
 // *** Pragmas ***
 
-// common wrapper
+// production #1
 pragma :
     '<*'
-    ( compileTimeMessagePragma |
-      condtitionalCompilationPragma |
-      characterEncodingPragma |
-      libraryTemplateExpansionPragma |
-      foreignFunctionInterfacePragma |
-      procedureInliningPragma |
-      memoryAlignmentPragma |
-      bitPaddingPragma |
-      memoryMappingPragma |
-      registerMappingPragma |
-      purityAttributePragma |
-      volatileAttributePragma |
-      implementationDefinedPragma |
-      forwardDeclarationPragma )
+    ( pragmaMSG | pragmaIF | pragmaENCODING | pragmaGENLIB | pragmaFFI |
+      pragmaINLINE | pragmaALIGN | pragmaPADBITS | pragmaADDR | pragmaREG |
+      pragmaPURITY | pragmaVOLATILE | implDefinedPragma | pragmaFORWARD )
     '*>'
     ;
 
-compileTimeMessagePragma :
+// production #2
+pragmaMSG :
     MSG '=' ( INFO | WARN | ERROR | FATAL {}) ':'
     compileTimeMsgComponent ( ',' compileTimeMsgComponent )*
     ;
 
+// production #3
 compileTimeMsgComponent :
     StringLiteral | constQualident |
     '?' ( ALIGN | ENCODING | implDefinedPragmaName )
     ;
 
+// alias #3.1
 constQualident : qualident ; /* no type and no variable identifiers */
 
+// alias #3.2
 implDefinedPragmaName : Ident ; /* lowercase or mixed case only */
 
-condtitionalCompilationPragma :
+// production #4
+pragmaIF :
     ( IF | ELSIF {}) inPragmaExpression | ELSE | ENDIF
     ;
 
-characterEncodingPragma : 
+// production #5
+pragmaENCODING : 
     ENCODING '=' StringLiteral /* "ASCII" or "UTF8" */
     ( ':' codePointSample ( ',' codePointSample )* )?
     ;
 
+// production #6
 codePointSample :
     quotedCharacterLiteral '=' characterCodeLiteral
     ;
 
+// alias #6.1
 quotedCharacterLiteral : StringLiteral ; /* single character only */
 
+// alias #6.2
 characterCodeLiteral : NumericLiteral ; /* unicode code points only */
 
-libraryTemplateExpansionPragma :
+// production #7
+pragmaGENLIB :
     GENLIB moduleIdent FROM template ':' templateParamList
     ;
 
+// alias #7.1
 template : Ident ;
 
+// production #8
 templateParamList :
-    templateParam ( ',' templateParam )*
+    ( placeholder '=' replacement ) ( ',' placeholder '=' replacement )*
     ;
 
-templateParam :
-    placeholder '=' replacement
-    ;
-
+// alias #8.1
 placeholder : Ident ;
 
+// alias #8.2
 replacement : StringLiteral ;
 
-foreignFunctionInterfacePragma :
+// production #9
+pragmaFFI :
     FFI '=' StringLiteral /* "C" or "Fortran" */
     ;
 
-procedureInliningPragma :
+// production #10
+pragmaINLINE :
     INLINE | NOINLINE
     {} /* make ANTLRworks display separate branches */
     ;
 
-memoryAlignmentPragma :
+// production #11
+pragmaALIGN :
     ALIGN '=' inPragmaExpression
     ;
 
-bitPaddingPragma :
+// production #12
+pragmaPADBITS :
     PADBITS '=' inPragmaExpression
     ;
 
-memoryMappingPragma :
+// production #13
+pragmaADDR :
     ADDR '=' inPragmaExpression
     ;
 
-registerMappingPragma :
+// production #14
+pragmaREG :
     REG '=' inPragmaExpression
     ;
 
-purityAttributePragma :
+// production #15
+pragmaPURITY :
     PURITY '=' inPragmaExpression /* values 0 .. 3 */
     ;
 
-volatileAttributePragma :
+// production #16
+pragmaVOLATILE :
     VOLATILE
     ;
 
-implementationDefinedPragma :
+// production #17
+pragmaFORWARD :
+    FORWARD ( TYPE identList | procedureHeader )
+    ;
+
+// production #18
+implDefinedPragma :
     implDefinedPragmaName ( '=' inPragmaExpression )?
     ;
 
+// production #19
 inPragmaExpression :
     inPragmaSimpleExpression ( inPragmaRelOp inPragmaSimpleExpression )?
     ;
 
-fragment
+// fragment #19.1
 inPragmaRelOp :
     '=' | '#' | '<' | '<=' | '>' | '>='
     {} /* make ANTLRworks display separate branches */
     ;
 
+// production #20
 inPragmaSimpleExpression :
     ( '+' | '-' {})? inPragmaTerm ( addOp inPragmaTerm )*
     ;
 
+// production #21
 inPragmaTerm :
     inPragmaFactor ( inPragmaMulOp inPragmaFactor )*
     ;
 
-fragment
+// fragment #21.1
 inPragmaMulOp :
     '*' | DIV | MOD | AND
     {} /* make ANTLRworks display separate branches */
     ;
 
+// production #22
 inPragmaFactor :
     wholeNumber |
-    /* constQualident or inPragmaCompileTimeFunctionCall */
-    qualident ( '(' inPragmaExpression ( ',' inPragmaExpression )* ')' )? |
+    /* constQualident is covered by inPragmaCompileTimeFunctionCall */
+    inPragmaCompileTimeFunctionCall |
     '(' inPragmaExpression ')' |
     NOT inPragmaFactor
     ;
 
+// alias #22.1
 wholeNumber : NumericLiteral ;
 
-forwardDeclarationPragma :
-    FORWARD ( TYPE identList | procedureHeader )
+// production #23
+inPragmaCompileTimeFunctionCall :
+    qualident ( '(' inPragmaExpression ( ',' inPragmaExpression )* ')' )?
     ;
-
+    
 
 // ---------------------------------------------------------------------------
 // T E R M I N A L   S Y M B O L S
@@ -851,12 +870,7 @@ DoubleQuotedString :
 
 fragment /* #4.3 */
 QuotableCharacter :
-    Digit | Letter | Space |
-    /* QuotableGraphicChar | */
-        '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' |
-    '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' |
-    '[' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~' |
-    EscapedCharacter
+    Digit | Letter | Space | QuotableGraphicChar | EscapedCharacter
     ;
 
 fragment /* #4.4 */
@@ -887,13 +901,11 @@ fragment /* #4.8 */
 Space : ' ' ;
 
 fragment /* #4.9 */
-/* ANTLR has a bug in that it does not accept this fragment when it is
-   referenced from QuotableCharacter. Instead the body of this fragment
-   must be copied verbatim into QuotableCharacter or ANTLR will reject it */
 QuotableGraphicChar :
     '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' |
     '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' |
-    '[' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~' |
+    '[' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~'
+    {} /* make ANTLRworks display separate branches */
     ;
 
 fragment /* #4.10 */
