@@ -610,9 +610,9 @@ identList :
 
 
 // ---------------------------------------------------------------------------
-// P R A G M A   S Y M B O L S
+// P R A G M A   G R A M M A R
 // ---------------------------------------------------------------------------
-// 22 productions
+// 23 productions
 
 // *** Pragmas ***
 
@@ -783,7 +783,7 @@ inPragmaCompileTimeFunctionCall :
 // ---------------------------------------------------------------------------
 // T E R M I N A L   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 3 productions
+// 4 productions, 16 fragments, 1 alias
 
 // production #1
 ReservedWord :
