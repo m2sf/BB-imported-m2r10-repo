@@ -210,7 +210,7 @@ protoliteral :
     ;
 
 // alias #7.1
-simpleProtoliteral : Ident ;
+simpleProtoliteral : Ident ; /* CHAR, INTEGER or REAL */
 
 // production #8
 structuredProtoliteral :
@@ -225,7 +225,7 @@ requiredBinding :
     ;
 
 // alias #9.1
-constBindableIdent : TSIG | TEXP
+constBindableIdent : /* Ident */ TSIG | TEXP
     {} /* make ANTLRworks display separate branches */
     ;
 
@@ -283,11 +283,17 @@ constantDeclaration :
 // alias #14.1
 constExpression : expression ;
 
+
+// *** Type Declarations ***
+
 // production #15
 type :
     (( ALIAS | range ) OF )? typeIdent | enumerationType |
     arrayType | recordType | setType | pointerType | procedureType
     ;
+
+// alias 15.1
+typeIdent : qualident ;
 
 // production #16
 range :
@@ -300,10 +306,7 @@ enumerationType :
     ;
 
 // alias 17.1
-enumTypeIdent : qualident ;
-
-// alias 17.2
-typeIdent : qualident ;
+enumTypeIdent : typeIdent ;
 
 // production #18
 arrayType :
@@ -381,10 +384,14 @@ variadicFormalType :
     '{' attributedFormalType ( ',' attributedFormalType )* '}')
     ;
 
+// *** Variable Declarations ***
+
 // production #29
 variableDeclaration :
     identList ':' ( range OF )? typeIdent
     ;
+
+// *** Procedure Declarations ***
 
 // production #30
 procedureDeclaration :
@@ -400,7 +407,7 @@ procedureHeader :
 
 // production #32
 bindableEntity :
-    DIV | MOD | IN | FOR | DESCENDING |
+    DIV | MOD | FOR | DESCENDING |
     '::' | ':=' | '?' | '!' | '~' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
     bindableIdent
     ;
@@ -562,9 +569,9 @@ mulOp :
 
 // production #54
 factor :
-    (( NumericLiteral | StringLiteral | structuredValue |
+    ( NumericLiteral | StringLiteral | structuredValue |
     designatorOrFunctionCall | '(' expression ')' )
-    ( '::' typeIdent )? ) | NOT factor
+    ( '::' typeIdent )? | NOT factor
     ;
 
 // production #55
@@ -760,33 +767,30 @@ forwardDeclarationPragma :
 // 3 productions
 
 // production #1
+ReservedWord :
+    ALIAS AND ARRAY ASSOCIATIVE BEGIN BY CASE CONST DEFINITION DESCENDING?
+    DIV DO ELSE ELSIF END EXIT FOR FROM IF IMPLEMENTATION IMPORT IN?
+    INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR PLACEHOLDERS POINTER?
+    PROCEDURE PROTOTYPE RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR?
+    VARIADIC WHILE
+    ;
+
+// production #2
 Ident :
     IdentLeadChar IdentTailChar*
     ;
 
-fragment
+fragment /* #2.1 */
 IdentLeadChar :
     Letter | '_' | '$'
     ;
 
-fragment
+fragment /* #2.2 */
 IdentTailChar :
     Letter | '_' | '$' | Digit
     ;
 
-fragment
-Letter :
-    'A' .. 'Z' | 'a' .. 'z'
-    {} /* make ANTLRworks display separate branches */
-    ;
-
-fragment 
-Digit :
-    '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-    {} /* make ANTLRworks display separate branches */
-    ;
-
-/* production #2 */
+// production #3
 NumericLiteral :
     /* number literals starting with digit 0 ... */
     '0' (
@@ -803,92 +807,99 @@ NumericLiteral :
     | '1'..'9' DecimalNumberTail? /* are always decimal numbers */
     ;
 
-fragment
+fragment /* #3.1 */
 DecimalNumberTail :
     DigitSep? DigitSeq ( '.' DigitSeq ( 'e' ( '+' | '-' {})? DigitSeq )? )?
     ;
 
-fragment
+fragment /* #3.2 */
 DigitSeq :
-    DigitGroup ( DigitSep DigitGroup )*
+    Digit+ ( DigitSep Digit+ )*
     ;
 
-fragment
-DigitGroup :
-    Digit+
+fragment /* #3.3 */
+Base2DigitSeq :
+    Base2Digit+ ( DigitSep Base2Digit+ )*
     ;
 
-fragment
+fragment /* #3.4 */
+Base16DigitSeq :
+    Base16Digit+ ( DigitSep Base16Digit+ )*
+    ;
+
+fragment /* #3.5 */
 DigitSep : SINGLE_QUOTE {} /* make ANTLRworks display name, not literal */ ;
 
-
-fragment
-Base2DigitSeq :
-    Base2DigitGroup ( DigitSep Base2DigitGroup )*
+// production #4
+StringLiteral :
+    SingleQuotedString | DoubleQuotedString
     ;
 
-fragment
-Base2DigitGroup :
-    Base2Digit+
+fragment /* #4.1 */
+SingleQuotedString :
+    SINGLE_QUOTE
+    ( QuotableCharacter | DOUBLE_QUOTE )*
+    SINGLE_QUOTE
     ;
 
-fragment
+fragment /* #4.2 */
+DoubleQuotedString :
+    DOUBLE_QUOTE
+    ( QuotableCharacter | SINGLE_QUOTE )*
+    DOUBLE_QUOTE
+    ;
+
+fragment /* #4.3 */
+QuotableCharacter :
+    Digit | Letter | Space |
+    /* QuotableGraphicChar | */
+        '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' |
+    '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' |
+    '[' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~' |
+    EscapedCharacter
+    ;
+
+fragment /* #4.4 */
+Digit :
+    Base2Digit | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+    {} /* make ANTLRworks display separate branches */
+    ;
+
+fragment /* #4.5 */
 Base2Digit :
     '0' | '1'
     {} /* make ANTLRworks display separate branches */
     ;
 
-fragment
-Base16DigitSeq :
-    Base16DigitGroup ( DigitSep Base16DigitGroup )*
-    ;
-
-fragment
-Base16DigitGroup :
-    Base2Digit+
-    ;
-
-fragment
+fragment /* #4.6 */
 Base16Digit :
     Digit | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #3
-StringLiteral :
-    SingleQuotedString | DoubleQuotedString
+fragment /* #4.7 */
+Letter :
+    'A' .. 'Z' | 'a' .. 'z'
+    {} /* make ANTLRworks display separate branches */
     ;
 
-fragment
-SingleQuotedString :
-    SINGLE_QUOTE
-    ( Character | DOUBLE_QUOTE )*
-    SINGLE_QUOTE
-    ;
+fragment /* #4.8 */
+Space : ' ' ;
 
-fragment
-DoubleQuotedString :
-    DOUBLE_QUOTE
-    ( Character | SINGLE_QUOTE )*
-    DOUBLE_QUOTE
-    ;
-
-fragment
-Character :
-    Digit | Letter | Space |
+fragment /* #4.9 */
+/* ANTLR has a bug in that it does not accept this fragment when it is
+   referenced from QuotableCharacter. Instead the body of this fragment
+   must be copied verbatim into QuotableCharacter or ANTLR will reject it */
+QuotableGraphicChar :
     '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' |
     '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' |
     '[' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~' |
-    EscapeSequence
     ;
 
-fragment
-EscapeSequence :
+fragment /* #4.10 */
+EscapedCharacter :
     BACKSLASH ( '0' | 'n' | 't' | BACKSLASH | SINGLE_QUOTE | DOUBLE_QUOTE {})
     ;
-
-fragment
-Space : ' ' ;
 
 
 // ---------------------------------------------------------------------------
@@ -906,12 +917,6 @@ Whitespace :
 // *** Comments ***
 
 // production #2
-Comment :
-    MultiLineComment | SingleLineComment
-    { $channel = HIDDEN; } /* ignore */
-    ;
-
-// production #3
 fragment
 MultiLineComment :
     '(*'
@@ -920,7 +925,7 @@ MultiLineComment :
     '*)'
     ;	
 
-// production #5
+// production #3
 fragment
 SingleLineComment :
     '//'
@@ -928,7 +933,13 @@ SingleLineComment :
     EndOfLine
     ;
 
-// production #5
+// pseudo-procudion to make #2 and #3 hidden
+Comment :
+    MultiLineComment | SingleLineComment
+    { $channel = HIDDEN; } /* ignore */
+    ;
+
+// production #4
 fragment
 EndOfLine :
     ( ASCII_LF ASCII_CR? | ASCII_CR ASCII_LF? )
