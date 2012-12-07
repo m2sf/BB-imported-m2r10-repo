@@ -159,10 +159,26 @@ tokens {
 
 // production #1
 compilationUnit :	
-    prototype | definitionOfModule | IMPLEMENTATION? programModule
+      IMPLEMENTATION? programModule | definitionOfModule | prototype
     ;
 
 // production #2
+programModule :
+    MODULE moduleIdent ';'
+    importList* block moduleIdent '.'
+    ;
+
+// alias 2.1
+moduleIdent : Ident ;
+
+// production #3
+definitionOfModule :
+    DEFINITION MODULE moduleIdent ( '[' prototypeIdent ']' )? ';'
+    importList* definition*
+    END moduleIdent '.'
+    ;
+
+// production #4
 prototype :
     PROTOTYPE prototypeIdent '[' requiredConformance ']' ';'
     ( PLACEHOLDERS identList ';' )?
@@ -171,27 +187,12 @@ prototype :
     END prototypeIdent '.'
     ;
 
-// alias #2.1
+// alias #4.1
 prototypeIdent : Ident ;
 
-// alias #2.2
+// alias #4.2
 requiredConformance : prototypeIdent ;
 
-// production #3
-programModule :
-    MODULE moduleIdent ';'
-    importList* block moduleIdent '.'
-    ;
-
-// alias 3.1
-moduleIdent : Ident ;
-
-// production #4
-definitionOfModule :
-    DEFINITION MODULE moduleIdent ( '[' prototypeIdent ']' )? ';'
-    importList* definition*
-    END moduleIdent '.'
-    ;
 
 // production #5
 requiredTypeDefinition :
@@ -238,7 +239,7 @@ pervasiveType : Ident ;
 // production #10
 importList :
     ( FROM moduleIdent IMPORT ( identList | '*' ) |
-    IMPORT Ident '+'? ( ',' Ident '+'? )* ) ';'
+    IMPORT moduleIdent '+'? ( ',' moduleIdent '+'? )* ) ';'
     ;
 
 /* Import with experimental aliased import qualifier '=>'

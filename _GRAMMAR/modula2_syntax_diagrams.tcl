@@ -152,12 +152,31 @@ set non_terminals {}
 # (1) Compilation Unit
 lappend non_terminals compilationUnit {
   or
-    {line prototype}
-    {line definitionOfModule}
     {line {optx IMPLEMENTATION} programModule}
+    {line definitionOfModule}
+    {line prototype}
 }
 
-# (2) Prototype
+# (2) Program Module
+lappend non_terminals programModule {
+  line MODULE moduleIdent ;
+  {loop nil {nil importList nil}} block moduleIdent .
+}
+
+# (2.1) Module Identifier
+lappend non_terminals moduleIdent {
+  line Ident
+}
+
+# (3) Definition Of Module
+lappend non_terminals definitionOfModule {
+  stack
+    {line DEFINITION MODULE moduleIdent {opt [ prototypeIdent ]} ;}
+    {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
+    END moduleIdent .}
+}
+
+# (4) Prototype
 lappend non_terminals prototype {
   stack
     {line PROTOTYPE prototypeIdent {opt [ requiredConformance ]} ;}
@@ -165,34 +184,16 @@ lappend non_terminals prototype {
     {line {loop nil {nil ; requiredBinding}} END prototypeIdent .}
 }
 
-# (2.1) Prototype Identifier
+# (4.1) Prototype Identifier
 lappend non_terminals prototypeIdent {
   line Ident
 }
 
-# (2.2) Required Conformance
+# (4.2) Required Conformance
 lappend non_terminals requiredConformance {
   line prototypeIdent
 }
 
-# (3) Program Module
-lappend non_terminals programModule {
-  line MODULE moduleIdent ;
-  {loop nil {nil importList nil}} block moduleIdent .
-}
-
-# (3.1) Module Identifier
-lappend non_terminals moduleIdent {
-  line Ident
-}
-
-# (4) Definition Of Module
-lappend non_terminals definitionOfModule {
-  stack
-    {line DEFINITION MODULE moduleIdent {opt [ prototypeIdent ]} ;}
-    {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
-    END moduleIdent .}
-}
 
 # (5) Required Type Definition
 lappend non_terminals requiredTypeDefinition {
@@ -253,7 +254,7 @@ lappend non_terminals importList {
           {line *}
         }
     }
-    {line IMPORT {loop {line Ident {opt +}} ,}}
+    {line IMPORT {loop {line moduleIdent {opt +}} ,}}
   } ;
 }
 
