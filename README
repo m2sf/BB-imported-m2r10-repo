@@ -1,7 +1,9 @@
+Modula-2 Revision 2010
+
 * M2 R10 Repository *
 
-Welcome to the  development repository  for the  Modula-2 R10 language report,
-reference compiler and standard library.
+Welcome to the  development repository of Modula-2 Revision 2010, its language
+report, reference compiler and standard library.
 
 Quick links:
 
@@ -24,7 +26,7 @@ https://bitbucket.org/trijezdci/m2r10/src/tip/_STANDARD_LIBRARY
 
 * About Classic Modula-2 *
 
-Modula-2 is a modular, imperative programming language designed in 1979 at the
+Modula-2 is a modular, imperative programming language designed in 1978 at the
 Swiss Federal Institute of Technology in Zurich (ETHZ)  by Prof. Niklaus Wirth
 as a successor  to his earlier language  Pascal.  More information  about  the
 classic Modula-2 language and its history can be found at:
