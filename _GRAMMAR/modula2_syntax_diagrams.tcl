@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Dec 5, 2012
+# Syntax diagram generator for Modula-2 (R10), status Dec 15, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -194,7 +194,6 @@ lappend non_terminals requiredConformance {
   line prototypeIdent
 }
 
-
 # (5) Required Type Definition
 lappend non_terminals requiredTypeDefinition {
   line TYPE = {loop permittedTypeDefinition |} {opt := {loop protoliteral |}}
@@ -225,26 +224,17 @@ lappend non_terminals structuredProtoliteral {
   RBRACE
 }
 
-# (9) Required Binding
+# (8.1) Required Binding
 lappend non_terminals requiredBinding {
-  line {
-    or
-      {line CONST [ constBindableIdent ] : pervasiveType}
-      {line procedureHeader}
-  }
+  line procedureHeader
 }
 
-# (9.1) CONST Bindable Identifiers
+# (8.2) CONST Bindable Identifiers
 lappend non_terminals constBindableIdent {
   or /TSIG /TEXP
 }
 
-# (9.2) Pervasive Type
-lappend non_terminals pervasiveType {
-  line Ident
-}
-
-# (10) Import List
+# (9) Import List
 lappend non_terminals importList {
   line {
     or
@@ -258,13 +248,13 @@ lappend non_terminals importList {
   } ;
 }
 
-# (11) Block
+# (10) Block
 lappend non_terminals block {
   line {loop nil {nil declaration nil}}
   {opt BEGIN statementSequence} END
 }
 
-# (12) Declaration
+# (11) Declaration
 lappend non_terminals declaration {
   line {
     or
@@ -275,7 +265,7 @@ lappend non_terminals declaration {
   }
 }
 
-# (13) Definition
+# (12) Definition
 lappend non_terminals definition {
   line {
     or
@@ -286,17 +276,17 @@ lappend non_terminals definition {
   }
 }
 
-# (14) Constant Declaration
+# (13) Constant Declaration
 lappend non_terminals constantDeclaration {
   line Ident = constExpression
 }
 
-# (14.1) Constant Expression
+# (13.1) Constant Expression
 lappend non_terminals constExpression {
   line expression
 }
 
-# (15) Type
+# (14) Type
 lappend non_terminals type {
   line {
     or
@@ -310,27 +300,27 @@ lappend non_terminals type {
   }
 }
 
-# (16) Range
+# (15) Range
 lappend non_terminals range {
   line [ constExpression .. constExpression ]
 }
 
-# (17) Enumeration Type
+# (16) Enumeration Type
 lappend non_terminals enumerationType {
   line ( {loop {or {line + enumTypeIdent} Ident} ,} )
 }
 
-# (17.1) Enumeration Type Identifier
+# (16.1) Enumeration Type Identifier
 lappend non_terminals enumTypeIdent {
   line typeIdent
 }
 
-# (17.2) Type Identifier
+# (16.2) Type Identifier
 lappend non_terminals typeIdent {
   line qualident
 }
 
-# (18) Array Type
+# (17) Array Type
 lappend non_terminals arrayType {
   line {
     or
@@ -340,12 +330,12 @@ lappend non_terminals arrayType {
   OF typeIdent
 }
 
-# (18.1) Component Count
+# (17.1) Component Count
 lappend non_terminals componentCount {
   line constExpression
 }
 
-# (19) Record Type
+# (18) Record Type
 lappend non_terminals recordType {
   line RECORD
     {or
@@ -355,28 +345,28 @@ lappend non_terminals recordType {
   END
 }
 
-# (19.1) Field List
+# (18.1) Field List
 lappend non_terminals fieldList {
   line variableDeclaration
 }
 
-# (19.2) Base Type
+# (18.2) Base Type
 lappend non_terminals baseType {
   line typeIdent
 }
 
-# (20) Indeterminate Field Declaration
+# (19) Indeterminate Field Declaration
 lappend non_terminals indeterminateField {
   line INDETERMINATE Ident : ARRAY discriminantField OF typeIdent
 }
 
 
-# (20.1) Discriminant Field
+# (19.1) Discriminant Field
 lappend non_terminals discriminantField {
   line Ident
 }
 
-# (21) Set Type
+# (20) Set Type
 lappend non_terminals setType {
   line SET OF {
     or
@@ -385,44 +375,44 @@ lappend non_terminals setType {
   }
 }
 
-# (22) Pointer Type
+# (21) Pointer Type
 lappend non_terminals pointerType {
   line POINTER TO {opt CONST} typeIdent
 }
 
-# (23) Procedure Type
+# (22) Procedure Type
 lappend non_terminals procedureType {
   line PROCEDURE {optx ( formalTypeList )} {optx : returnedType}
 }
 
-# (23.1) Returned Type
+# (22.1) Returned Type
 lappend non_terminals returnedType {
   line typeIdent
 }
 
-# (24) Formal Type List
+# (23) Formal Type List
 lappend non_terminals formalTypeList {
   loop formalType ,
 }
 
-# (25) Formal Type
+# (24) Formal Type
 lappend non_terminals formalType {
   or
     {line attributedFormalType}
     {line variadicFormalType}
 }
 
-# (26) Attributed Formal Type
+# (25) Attributed Formal Type
 lappend non_terminals attributedFormalType {
   line {or {} CONST VAR} simpleFormalType
 }
 
-# (27) Simple Formal Type
+# (26) Simple Formal Type
 lappend non_terminals simpleFormalType {
   line {optx {optx /CAST} ARRAY OF} typeIdent
 }
 
-# (28) Variadic Formal Type
+# (27) Variadic Formal Type
 lappend non_terminals variadicFormalType {
   line VARIADIC OF {
     or
@@ -431,17 +421,17 @@ lappend non_terminals variadicFormalType {
   }
 }
 
-# (29) Variable Declaration
+# (28) Variable Declaration
 lappend non_terminals variableDeclaration {
   line identList : {optx range OF} typeIdent
 }
 
-# (30) Procedure Declaration
+# (29) Procedure Declaration
 lappend non_terminals procedureDeclaration {
   line procedureHeader ; block Ident
 }
 
-# (31) Procedure Header
+# (30) Procedure Header
 lappend non_terminals procedureHeader {
   stack
     {line PROCEDURE
@@ -449,35 +439,35 @@ lappend non_terminals procedureHeader {
     {line Ident {optx ( formalParamList )} {optx : returnedType}}
 }
 
-# (32) Bindable Entity
+# (31) Bindable Entity
 lappend non_terminals bindableEntity {
   or
     DIV MOD FOR DESCENDING :: := ? ! ~ + - * / = < > bindableIdent
 }
 
-# (32.1) PROCEDURE Bindable Identifiers
+# (31.1) PROCEDURE Bindable Identifiers
 lappend non_terminals bindableIdent {
   or
     /ABS /NEG /ODD /COUNT /LENGTH /NEW /DISPOSE /RETAIN /RELEASE
     /TLIMIT /TMIN /TMAX /SXF /VAL
 }
 
-# (33) Formal Parameter List
+# (32) Formal Parameter List
 lappend non_terminals formalParamList {
   loop formalParams ;
 }
 
-# (34) Formal Parameters
+# (33) Formal Parameters
 lappend non_terminals formalParams {
   line {or simpleFormalParams variadicFormalParams}
 }
 
-# (35) Simple Formal Parameters
+# (34) Simple Formal Parameters
 lappend non_terminals simpleFormalParams {
   line {or {} CONST VAR} identList : simpleFormalType
 }
 
-# (36) Variadic Formal Parameters
+# (35) Variadic Formal Parameters
 lappend non_terminals variadicFormalParams {
   stack
     {line VARIADIC
@@ -487,12 +477,12 @@ lappend non_terminals variadicFormalParams {
         {line LEFT_BRACE {loop simpleFormalParams ;} RIGHT_BRACE}}}
 }
 
-# (36.1) Variadic Terminator
+# (35.1) Variadic Terminator
 lappend non_terminals variadicTerminator {
   line constExpression
 }
 
-# (37) Statement
+# (36) Statement
 lappend non_terminals statement {
   line {
     or
@@ -508,12 +498,12 @@ lappend non_terminals statement {
   }
 }
 
-# (38) Statement Sequence
+# (37) Statement Sequence
 lappend non_terminals statementSequence {
   loop statement ;
 }
 
-# (39) Assignment Or Procedure Call
+# (38) Assignment Or Procedure Call
 lappend non_terminals assignmentOrProcedureCall {
   line designator {
     or
@@ -525,7 +515,7 @@ lappend non_terminals assignmentOrProcedureCall {
   }
 }
 
-# (40) IF Statement
+# (39) IF Statement
 lappend non_terminals ifStatement {
   stack
     {line IF expression THEN statementSequence}
@@ -533,39 +523,39 @@ lappend non_terminals ifStatement {
     {line {optx ELSE statementSequence} END}
 }
 
-# (41) CASE Statement
+# (40) CASE Statement
 lappend non_terminals caseStatement {
   stack
     {line CASE expression OF}
     {line {loop {line | case} {}} {optx ELSE statementSequence} END}
 }
 
-# (42) Case
+# (41) Case
 lappend non_terminals case {
   line {loop caseLabels ,} : statementSequence
 }
 
-# (43) Case Labels
+# (42) Case Labels
 lappend non_terminals caseLabels {
   line constExpression {optx .. constExpression}
 }
 
-# (44) WHILE Statement
+# (43) WHILE Statement
 lappend non_terminals whileStatement {
   line WHILE expression DO statementSequence END
 }
 
-# (45) REPEAT Statement
+# (44) REPEAT Statement
 lappend non_terminals repeatStatement {
   line REPEAT statementSequence UNTIL expression
 }
 
-# (46) LOOP Statement
+# (45) LOOP Statement
 lappend non_terminals loopStatement {
   line LOOP statementSequence END
 }
 
-# (47) FOR Statement
+# (46) FOR Statement
 lappend non_terminals forStatement {
   stack
     {line FOR {opt DESCENDING} controlVariable}
@@ -573,17 +563,17 @@ lappend non_terminals forStatement {
     {line DO statementSequence END}
 }
 
-# (47.1) Control Variable
+# (46.1) Control Variable
 lappend non_terminals controlVariable {
   line Ident
 }
 
-# (48) Designator
+# (47) Designator
 lappend non_terminals designator {
   line qualident {optx designatorTail}
 }
 
-# (49) Designator Tail
+# (48) Designator Tail
 lappend non_terminals designatorTail {
   line {
     loop {
@@ -597,43 +587,43 @@ lappend non_terminals designatorTail {
   }
 }
 
-# (50) Expression List
+# (49) Expression List
 lappend non_terminals expressionList {
   loop expression ,
 }
 
-# (51) Expression
+# (50) Expression
 lappend non_terminals expression {
   line simpleExpression {optx relOp simpleExpression}
 }
 
-# (51.1) Relational Operator
+# (50.1) Relational Operator
 lappend non_terminals relOp {
   or
     = # < <= > >= IN
 }
 
-# (52) Simple Expression
+# (51) Simple Expression
 lappend non_terminals simpleExpression {
   line {or {} + -} {loop term addOp}
 }
 
-# (52.1) Add Operator
+# (51.1) Add Operator
 lappend non_terminals addOp {
   line {or + - OR}
 }
 
-# (53) Term
+# (52) Term
 lappend non_terminals term {
   loop factor mulOp
 }
 
-# (53.1) Multiply Operator
+# (52.1) Multiply Operator
 lappend non_terminals mulOp {
   line {or * / DIV MOD AND}
 }
 
-# (54) Factor
+# (53) Factor
 lappend non_terminals factor {
   line {or
     {line {or
@@ -647,39 +637,39 @@ lappend non_terminals factor {
   }
 }
 
-# (55) Designator Or Function Call
+# (54) Designator Or Function Call
 lappend non_terminals designatorOrFunctionCall {
   line designator {optx actualParameters}
 }
 
-# (56) Actual Parameters
+# (55) Actual Parameters
 lappend non_terminals actualParameters {
   line ( {optx expressionList} )
 }
 
-# (57) Structured Value
+# (56) Structured Value
 lappend non_terminals structuredValue {
   line LBRACE {loop valueComponent ,} RBRACE
 }
 
-# (58) Value Component
+# (57) Value Component
 lappend non_terminals valueComponent {
   or
     {line constExpression {optx {or BY ..} constExpression}}
     {line runtimeExpression}
 }
 
-# (58.1) Runtime Expression
+# (57.1) Runtime Expression
 lappend non_terminals runtimeExpression {
   line expression
 }
 
-# (59) Qualified Identifier
+# (58) Qualified Identifier
 lappend non_terminals qualident {
   loop Ident .
 }
 
-# (60) Identifier List
+# (59) Identifier List
 lappend non_terminals identList {
   loop Ident ,
 }
