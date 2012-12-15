@@ -12,13 +12,14 @@ TYPE = OPAQUE RECORD := REAL;
 
 (* Bindings required for ProtoReal ADTs *)
 
-(* Bindings to built-in functions TEXP and TSIG *)
 
-CONST [TEXP] : [0 .. 63] OF CARDINAL;
-(* constant denoting the maximum digit count of the exponent of the ADT *)
+(* Recommended bindings to pervasive functions TSIG and TEXP:
 
-CONST [TSIG] : [1 .. 4000] OF CARDINAL;
-(* constant denoting the maximum digit count of the significand of the ADT *)
+CONST [TSIG] maxSignificandDigits = n ;
+
+CONST [TEXP] maxExponentDigits = m ;
+
+*)
 
 
 (* Bindings to pervasive functions TMIN and TMAX *)
