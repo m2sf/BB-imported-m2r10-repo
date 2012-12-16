@@ -112,7 +112,7 @@ tokens {
     SXF            = 'SXF';            /* RW within procedure header */
     VAL            = 'VAL';            /* RW within procedure header */
 
-// *** Language Defined Pragma Words, 18 tokens ***
+// *** Language Defined Pragma Words, 19 tokens ***
 
 //  Pragma Words are Reserved Words only within pragmas
 //  Ambiguity is resolvable using the Schroedinger's Token technique
@@ -133,6 +133,7 @@ tokens {
     ADDR           = 'ADDR';           /* RW within pragma only */
     REG            = 'REG';            /* RW within pragma only */
     PURITY         = 'PURITY';         /* RW within pragma only */
+    SINGLEASSIGN   = 'SINGLEASSIGN' ;  /* RW within pragma only */
     VOLATILE       = 'VOLATILE';       /* RW within pragma only */
     FORWARD        = 'FORWARD';        /* RW within pragma only */
 
@@ -193,6 +194,9 @@ prototypeIdent : Ident ;
 // alias #4.2
 requiredConformance : prototypeIdent ;
 
+// alias #4.3
+requiredBinding : procedureHeader ;
+
 
 // production #5
 requiredTypeDefinition :
@@ -217,14 +221,6 @@ simpleProtoliteral : Ident ; /* CHAR, INTEGER or REAL */
 structuredProtoliteral :
     '{' ( VARIADIC OF simpleProtoliteral ( ',' simpleProtoliteral )* |
     structuredProtoliteral ( ',' structuredProtoliteral )* ) '}'
-    ;
-
-// alias #8.1
-requiredBinding : procedureHeader ;
-
-// alias #8.2
-constBindableIdent : /* Ident */ TSIG | TEXP
-    {} /* make ANTLRworks display separate branches */
     ;
 
 
@@ -268,6 +264,11 @@ definition :
     TYPE ( Ident '=' ( type | OPAQUE recordType? ) ';' )+ |
     VAR ( variableDeclaration ';' )+ |
     procedureHeader ';'
+    ;
+
+// alias #12.2
+constBindableIdent : /* Ident */ TSIG | TEXP
+    {} /* make ANTLRworks display separate branches */
     ;
 
 // production #13
@@ -616,7 +617,7 @@ pragma :
     '<*'
     ( pragmaMSG | pragmaIF | pragmaENCODING | pragmaGENLIB | pragmaFFI |
       pragmaINLINE | pragmaALIGN | pragmaPADBITS | pragmaADDR | pragmaREG |
-      pragmaPURITY | pragmaVOLATILE | implDefinedPragma | pragmaFORWARD )
+      pragmaPURITY | variableAttrPragma | implDefinedPragma | pragmaFORWARD )
     '*>'
     ;
 
@@ -716,8 +717,9 @@ pragmaPURITY :
     ;
 
 // production #16
-pragmaVOLATILE :
-    VOLATILE
+variableAttrPragma :
+    SINGLEASSIGN | VOLATILE
+    {} /* make ANTLRworks display separate branches */
     ;
 
 // production #17

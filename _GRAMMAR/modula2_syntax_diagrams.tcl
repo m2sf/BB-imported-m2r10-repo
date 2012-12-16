@@ -194,6 +194,11 @@ lappend non_terminals requiredConformance {
   line prototypeIdent
 }
 
+# (4.3) Required Binding
+lappend non_terminals requiredBinding {
+  line procedureHeader
+}
+
 # (5) Required Type Definition
 lappend non_terminals requiredTypeDefinition {
   line TYPE = {loop permittedTypeDefinition |} {opt := {loop protoliteral |}}
@@ -222,16 +227,6 @@ lappend non_terminals structuredProtoliteral {
       {line structuredProtoliteral {loop {line , structuredProtoliteral} {}}}
   }
   RBRACE
-}
-
-# (8.1) Required Binding
-lappend non_terminals requiredBinding {
-  line procedureHeader
-}
-
-# (8.2) CONST Bindable Identifiers
-lappend non_terminals constBindableIdent {
-  or /TSIG /TEXP
 }
 
 # (9) Import List
@@ -274,6 +269,11 @@ lappend non_terminals definition {
       {line VAR {loop {line variableDeclaration ;} {}} }
       {line procedureHeader ;}
   }
+}
+
+# (12.1) CONST Bindable Identifiers
+lappend non_terminals constBindableIdent {
+  or /TSIG /TEXP
 }
 
 # (13) Constant Declaration
@@ -887,7 +887,7 @@ lappend pragmas pragma {
       pragmaADDR
       pragmaREG
       pragmaPURITY
-      pragmaVOLATILE
+      variableAttrPragma
       pragmaFORWARD
       implDefinedPragma
     }
@@ -1007,9 +1007,9 @@ lappend pragmas pragmaPURITY {
   line PURITY = inPragmaExpression
 }
 
-# (16) Body Of Volatile Attribute Pragma
-lappend pragmas pragmaVOLATILE {
-  line VOLATILE
+# (16) Body Of Variable Attribute Pragma
+lappend pragmas variableAttrPragma {
+  or SINGLEASSIGN VOLATILE
 }
 
 # (17) Body Of Forward Declaration Pragma
