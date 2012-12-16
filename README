@@ -13,11 +13,11 @@ https://bitbucket.org/trijezdci/m2r10/src
 
 o  EBNF Grammar
 
-https://bitbucket.org/trijezdci/m2r10/src/tip/_GRAMMAR/M2R10.2012-12-05.Grammar.pdf
+https://bitbucket.org/trijezdci/m2r10/src/tip/_GRAMMAR/M2R10.2012-12-15.Grammar.pdf
 
 o  Syntax Diagrams
 
-https://bitbucket.org/trijezdci/m2r10/src/tip/_GRAMMAR/M2R10.2012-12-05.Diagrams.pdf
+https://bitbucket.org/trijezdci/m2r10/src/tip/_GRAMMAR/M2R10.2012-12-15.Diagrams.pdf
 
 o  Library Definition Modules
 
@@ -56,4 +56,4 @@ compiler  is scheduled to resume  mid-December 2012.  Initially,  the compiler
 will generate C99 source code.  Eventually, it will also generate LLVM IR.
 
 
-(status: Dec 5, 2012)
+(status: Dec 15, 2012)
