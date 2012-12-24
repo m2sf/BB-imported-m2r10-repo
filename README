@@ -60,4 +60,15 @@ compiler  is scheduled to resume  mid-December 2012.  Initially,  the compiler
 will generate C99 source code.  Eventually, it will also generate LLVM IR.
 
 
+* Development Schedule *
+
+The authors endeavour to have a working syntax and type checker around the end
+of Q1,  and a bootstrap compiler  around Q2-Q3 in 2013.  However, it should be
+noted that this project is a *private* and *self-funded* effort by the authors
+who are doing this work in their own *spare* *time*.  Further, the authors be-
+lieve that  quality design  and  proper specification  are prerequisites for a
+quality implementation and cannot be rushed.  Consequently,  there is no fixed
+schedule for the completion of the project.  It will take as long as it takes.
+
+
 (status: Dec 15, 2012)
