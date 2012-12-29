@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 15, 2012 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 30, 2012 */
 
 
 // ---------------------------------------------------------------------------
@@ -44,6 +44,7 @@ tokens {
     BY             = 'BY';
     CASE           = 'CASE';
     CONST          = 'CONST';
+    CONTRACT       = 'CONTRACT';
     DEFINITION     = 'DEFINITION';
     DESCENDING     = 'DESCENDING';
     DIV            = 'DIV';            /* also a RW within pragmas */
@@ -69,7 +70,6 @@ tokens {
     PLACEHOLDERS   = 'PLACEHOLDERS';
     POINTER        = 'POINTER';
     PROCEDURE      = 'PROCEDURE';
-    PROTOTYPE      = 'PROTOTYPE';
     RECORD         = 'RECORD';
     REPEAT         = 'REPEAT';
     RETURN         = 'RETURN';
@@ -160,7 +160,7 @@ tokens {
 
 // production #1
 compilationUnit :	
-      IMPLEMENTATION? programModule | definitionOfModule | prototype
+      IMPLEMENTATION? programModule | definitionOfModule | contract
     ;
 
 // production #2
@@ -174,25 +174,25 @@ moduleIdent : Ident ;
 
 // production #3
 definitionOfModule :
-    DEFINITION MODULE moduleIdent ( '[' prototypeIdent ']' )? ';'
+    DEFINITION MODULE moduleIdent ( '[' contractIdent ']' )? ';'
     importList* definition*
     END moduleIdent '.'
     ;
 
 // production #4
-prototype :
-    PROTOTYPE prototypeIdent '[' requiredConformance ']' ';'
+contract :
+    CONTRACT contractIdent '[' requiredConformance ']' ';'
     ( PLACEHOLDERS identList ';' )?
     requiredTypeDefinition
     ( requiredBinding ';' )*
-    END prototypeIdent '.'
+    END contractIdent '.'
     ;
 
 // alias #4.1
-prototypeIdent : Ident ;
+contractIdent : Ident ;
 
 // alias #4.2
-requiredConformance : prototypeIdent ;
+requiredConformance : contractIdent ;
 
 // alias #4.3
 requiredBinding : procedureHeader ;
@@ -784,11 +784,10 @@ inPragmaCompileTimeFunctionCall :
 
 // production #1
 ReservedWord :
-    ALIAS AND ARRAY ASSOCIATIVE BEGIN BY CASE CONST DEFINITION DESCENDING?
-    DIV DO ELSE ELSIF END EXIT FOR FROM IF IMPLEMENTATION IMPORT IN?
-    INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR PLACEHOLDERS POINTER?
-    PROCEDURE PROTOTYPE RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR?
-    VARIADIC WHILE
+    ALIAS AND ARRAY ASSOCIATIVE BEGIN BY CASE CONST CONTRACT DEFINITION
+    DESCENDING DIV DO ELSE ELSIF END EXIT FOR FROM IF IMPLEMENTATION IMPORT
+    IN INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR PLACEHOLDERS POINTER
+    PROCEDURE RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR VARIADIC WHILE
     ;
 
 // production #2

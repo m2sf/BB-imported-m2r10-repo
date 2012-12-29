@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Dec 15, 2012
+# Syntax diagram generator for Modula-2 (R10), status Dec 30, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -154,7 +154,7 @@ lappend non_terminals compilationUnit {
   or
     {line {optx IMPLEMENTATION} programModule}
     {line definitionOfModule}
-    {line prototype}
+    {line contract}
 }
 
 # (2) Program Module
@@ -171,27 +171,27 @@ lappend non_terminals moduleIdent {
 # (3) Definition Of Module
 lappend non_terminals definitionOfModule {
   stack
-    {line DEFINITION MODULE moduleIdent {opt [ prototypeIdent ]} ;}
+    {line DEFINITION MODULE moduleIdent {opt [ contractIdent ]} ;}
     {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
     END moduleIdent .}
 }
 
-# (4) Prototype
-lappend non_terminals prototype {
+# (4) Contract
+lappend non_terminals contract {
   stack
-    {line PROTOTYPE prototypeIdent {opt [ requiredConformance ]} ;}
+    {line CONTRACT contractIdent {opt [ requiredConformance ]} ;}
     {line {opt PLACEHOLDERS identList ;} requiredTypeDefinition}
-    {line {loop nil {nil ; requiredBinding}} END prototypeIdent .}
+    {line {loop nil {nil ; requiredBinding}} END contractIdent .}
 }
 
-# (4.1) Prototype Identifier
-lappend non_terminals prototypeIdent {
+# (4.1) Contract Identifier
+lappend non_terminals contractIdent {
   line Ident
 }
 
 # (4.2) Required Conformance
 lappend non_terminals requiredConformance {
-  line prototypeIdent
+  line contractIdent
 }
 
 # (4.3) Required Binding
