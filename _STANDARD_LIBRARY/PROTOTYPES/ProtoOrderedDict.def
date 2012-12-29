@@ -1,8 +1,8 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Prototype Definition for Dynamically Allocatable Ordered Dictionary ADTs *)
+(* Contract Definition for Dynamically Allocatable Ordered Dictionary ADTs *)
 
-PROTOTYPE ProtoOrderedDict [ProtoDictionary];
+CONTRACT ProtoOrderedDict [ProtoDictionary];
 
 (* Ordered Dictionary ADTs must be opaque,
    variadic structured literals with key/value pairs are compatible *)

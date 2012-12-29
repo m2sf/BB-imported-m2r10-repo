@@ -1,9 +1,8 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOTYPE ProtoComplex [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
+(* Contract Definition for Complex Number ADTs *)
 
-(* Prototype Definition for Complex Number ADTs *)
-
+CONTRACT ProtoComplex [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
 
 (* Complex Number ADTs must be transparent records,
    have two fields compatible with real number literals,

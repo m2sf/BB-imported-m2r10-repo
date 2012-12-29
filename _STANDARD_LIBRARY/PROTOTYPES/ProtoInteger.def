@@ -1,8 +1,8 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Prototype Definition for Whole Number ADTs *)
+(* Specialised Contract Definition for Whole Number ADTs *)
 
-PROTOTYPE ProtoInteger [ProtoScalar]; (* conforms to ProtoScalar *)
+CONTRACT ProtoInteger [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* ProtoInteger ADTs must be opaque records to be statically allocatable,
    integer literals are used *)

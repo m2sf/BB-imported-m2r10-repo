@@ -1,8 +1,8 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Prototype Definition for Cardinal Number ADTs *)
+(* Specialised Contract Definition for Cardinal Number ADTs *)
 
-PROTOTYPE ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
+CONTRACT ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* ProtoCardinal ADTs must be opaque records to be statically allocatable,
    integer literals are used *)

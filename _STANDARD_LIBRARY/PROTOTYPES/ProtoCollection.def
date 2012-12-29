@@ -1,11 +1,11 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Prototype Definition for Collection ADTs *)
+(* General Contract Definition for Collection ADTs *)
 
-PROTOTYPE ProtoCollection; (* root of collection prototypes *)
+CONTRACT ProtoCollection; (* root of collection hierarchy *)
 
 (* Collection ADTs must be records,
-   literal compatibility may be specified by more specialised prototypes *)
+   literal compatibility may be specified by more specialised contracts *)
 
 PLACEHOLDERS AccessorType, ValueType, ProcType;
 

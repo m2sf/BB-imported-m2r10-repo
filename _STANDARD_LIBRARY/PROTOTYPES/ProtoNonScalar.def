@@ -1,8 +1,8 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Prototype Definition for Non-Scalar Numeric ADTs *)
+(* General Contract Definition for Non-Scalar Numeric ADTs *)
 
-PROTOTYPE ProtoNonScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
+CONTRACT FOR ProtoNonScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
 (* Non-Scalar numeric ADTs must be records to be statically allocatable,
    structured literals constructed from real number literals may be used *)

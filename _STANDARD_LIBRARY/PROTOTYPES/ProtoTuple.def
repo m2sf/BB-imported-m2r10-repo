@@ -1,9 +1,8 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOTYPE ProtoTuple [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
+(* Contract Definition for Numeric Tuple ADTs *)
 
-(* Prototype Definition for Numeric Tuple ADTs *)
-
+CONTRACT ProtoTuple [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
 
 (* Tuple ADTs must be transparent records,
    structurally equivalent literals are compatible by default *)

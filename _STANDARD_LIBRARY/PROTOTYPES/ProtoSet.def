@@ -1,8 +1,8 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Prototype Definition for Set ADTs *)
+(* Contract Definition for Set ADTs *)
 
-PROTOTYPE ProtoSet [ProtoCollection];
+CONTRACT ProtoSet [ProtoCollection];
 
 (* Set ADTs must be opaque,
    set literals are compatible *)

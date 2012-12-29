@@ -1,8 +1,8 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Prototype Definition for Scalar Number ADTs *)
+(* General Contract Definition for Scalar Number ADTs *)
 
-PROTOTYPE ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
+CONTRACT ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
 (* Scalar number ADTs must be opaque records to be statically allocatable,
    either integer or real number literals may be used, but not both *)

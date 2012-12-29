@@ -1,8 +1,8 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Prototype Definition for Dynamically Allocatable Dictionary ADTs *)
+(* Contract Definition for Dynamically Allocatable Dictionary ADTs *)
 
-PROTOTYPE ProtoDictionary [ProtoCollection];
+CONTRACT ProtoDictionary [ProtoCollection];
 
 (* Dictionary ADTs must be opaque,
    variadic structured literals with key/value pairs are compatible *)

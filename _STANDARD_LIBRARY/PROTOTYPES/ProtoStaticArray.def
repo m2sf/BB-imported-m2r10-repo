@@ -1,8 +1,8 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Prototype Definition for Statically Allocatable Array ADTs *)
+(* Contract Definition for Statically Allocatable Array ADTs *)
 
-PROTOTYPE ProtoStaticArray [ProtoCollection];
+CONTRACT ProtoStaticArray [ProtoCollection];
 
 (* Static Array ADTs must be opaque records to be statically allocatable,
    array literals are compatible *)

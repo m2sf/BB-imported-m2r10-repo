@@ -1,9 +1,8 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-PROTOTYPE ProtoVector [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
+(* Contract Definition for Numeric Vector ADTs *)
 
-(* Prototype Definition for Numeric Vector ADTs *)
-
+CONTRACT ProtoVector [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
 
 (* Numeric Vector ADTs must be transparent records,
    structurally equivalent literals are compatible by default *)

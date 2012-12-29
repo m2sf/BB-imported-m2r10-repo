@@ -1,4 +1,4 @@
-Numeric Prototypes                   Collection Prototypes
+Numeric Contracts                   Collection Contracts
 
  ProtoNumeric                         ProtoCollection
  |                                    |

@@ -1,8 +1,8 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Prototype Definition for Statically Allocatable Set ADTs *)
+(* Contract Definition for Statically Allocatable Set ADTs *)
 
-PROTOTYPE ProtoStaticSet [ProtoCollection];
+CONTRACT ProtoStaticSet [ProtoCollection];
 
 (* Static Set ADTs must be opaque records to be statically allocatable,
    set literals are compatible *)

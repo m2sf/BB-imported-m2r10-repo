@@ -1,8 +1,8 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Prototype Definition for Real Array ADTs *)
+(* Contract Definition for Real Array ADTs *)
 
-PROTOTYPE ProtoRealArray [ProtoNonScalar];
+CONTRACT ProtoRealArray [ProtoNonScalar];
 
 (* Real Array ADTs must be opaque records to be statically allocatable,
    structured literals with lists of real number literals are compatible *)

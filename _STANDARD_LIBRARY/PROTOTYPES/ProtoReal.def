@@ -1,8 +1,8 @@
 (* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Prototype Definition for Real Number ADTs *)
+(* Specialised Contract Definition for Real Number ADTs *)
 
-PROTOTYPE ProtoReal [ProtoScalar]; (* conforms to ProtoScalar *)
+CONTRACT ProtoReal [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* ProtoReal ADTs must be opaque records to be statically allocatable,
    real number literals are used *)

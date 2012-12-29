@@ -1,8 +1,8 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Prototype Definition for Dynamically Allocatable Array ADTs *)
+(* Contract Definition for Dynamically Allocatable Array ADTs *)
 
-PROTOTYPE ProtoArray [ProtoCollection];
+CONTRACT ProtoArray [ProtoCollection];
 
 (* Array ADTs must be opaque,
    array literals are compatible *)

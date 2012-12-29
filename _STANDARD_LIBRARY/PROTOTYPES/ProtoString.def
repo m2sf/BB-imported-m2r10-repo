@@ -1,8 +1,8 @@
 (* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Prototype Definition for Dynamically Allocatable String ADTs *)
+(* Contract Definition for Dynamically Allocatable String ADTs *)
 
-PROTOTYPE ProtoString [ProtoCollection];
+CONTRACT ProtoString [ProtoCollection];
 
 (* String ADTs must be opaque,
    Character and string literals are compatible *)
