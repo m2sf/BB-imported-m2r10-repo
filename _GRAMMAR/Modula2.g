@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 30, 2012 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 31, 2012 */
 
 
 // ---------------------------------------------------------------------------
@@ -41,10 +41,10 @@ tokens {
     ARRAY          = 'ARRAY';
     ASSOCIATIVE    = 'ASSOCIATIVE';
     BEGIN          = 'BEGIN';
+    BLUEPRINT      = 'BLUEPRINT';
     BY             = 'BY';
     CASE           = 'CASE';
     CONST          = 'CONST';
-    CONTRACT       = 'CONTRACT';
     DEFINITION     = 'DEFINITION';
     DESCENDING     = 'DESCENDING';
     DIV            = 'DIV';            /* also a RW within pragmas */
@@ -160,7 +160,7 @@ tokens {
 
 // production #1
 compilationUnit :	
-      IMPLEMENTATION? programModule | definitionOfModule | contract
+      IMPLEMENTATION? programModule | definitionOfModule | blueprint
     ;
 
 // production #2
@@ -174,25 +174,25 @@ moduleIdent : Ident ;
 
 // production #3
 definitionOfModule :
-    DEFINITION MODULE moduleIdent ( '[' contractIdent ']' )? ';'
+    DEFINITION MODULE moduleIdent ( '[' blueprintIdent ']' )? ';'
     importList* definition*
     END moduleIdent '.'
     ;
 
 // production #4
-contract :
-    CONTRACT contractIdent '[' requiredConformance ']' ';'
+blueprint :
+    BLUEPRINT blueprintIdent '[' requiredConformance ']' ';'
     ( PLACEHOLDERS identList ';' )?
     requiredTypeDefinition
     ( requiredBinding ';' )*
-    END contractIdent '.'
+    END blueprintIdent '.'
     ;
 
 // alias #4.1
-contractIdent : Ident ;
+blueprintIdent : Ident ;
 
 // alias #4.2
-requiredConformance : contractIdent ;
+requiredConformance : blueprintIdent ;
 
 // alias #4.3
 requiredBinding : procedureHeader ;
@@ -200,7 +200,8 @@ requiredBinding : procedureHeader ;
 
 // production #5
 requiredTypeDefinition :
-    TYPE '=' permittedTypeDefinition ( '|' permittedTypeDefinition )*
+    TYPE typeIdent '='
+    permittedTypeDefinition ( '|' permittedTypeDefinition )*
     ( ':=' protoliteral ( '|' protoliteral )* )?
     ;
 
@@ -784,7 +785,7 @@ inPragmaCompileTimeFunctionCall :
 
 // production #1
 ReservedWord :
-    ALIAS AND ARRAY ASSOCIATIVE BEGIN BY CASE CONST CONTRACT DEFINITION
+    ALIAS AND ARRAY ASSOCIATIVE BEGIN BLUEPRINT BY CASE CONST DEFINITION
     DESCENDING DIV DO ELSE ELSIF END EXIT FOR FROM IF IMPLEMENTATION IMPORT
     IN INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR PLACEHOLDERS POINTER
     PROCEDURE RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR VARIADIC WHILE
