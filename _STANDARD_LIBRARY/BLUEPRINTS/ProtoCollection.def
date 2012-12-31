@@ -1,0 +1,130 @@
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* General Blueprint for Collection ADTs *)
+
+BLUEPRINT FOR ProtoCollection; (* root of collection hierarchy *)
+
+PLACEHOLDERS AccessorType, ValueType, ProcType;
+
+(* Collection ADTs must be records,
+   literal compatibility may be specified by more specialised contracts *)
+
+TYPE ProtoCollection = OPAQUE |
+                       OPAQUE RECORD := { VARIADIC OF AccessorType } |
+                       { VARIADIC OF { AccessorType, ValueType } };
+
+
+(* Bindings required for Collection ADTs *)
+
+(* Capacity limit *)
+
+(* Binding to pervasive function TLIMIT *)
+
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Procedure to return the accessor/value pair limit of a Collection ADT. *)
+
+(* An expression of the form TLIMIT(CollectionADT))
+   is synthesised as CollectionADT.capacityLimit() *)
+
+
+(* Construction and Destruction *)
+
+(* The operations NEW and DISPOSE are not common to all Collection ADTs,
+   their bindings may be required by more specialised prototypes. *)
+
+
+(* Binding to assignment operator *)
+
+(* Binding to the assignment operator depends on literal compatibility and
+   may be required by more specialised prototypes. *)
+
+
+(* Storage and retrieval *)
+
+(* Binding to [ ] notation within left hand entities *)
+
+PROCEDURE [!] storeValue ( VAR c : ProtoCollection;
+                        accessor : AccessorType; value : ValueType );
+
+(* Procedure to store a value for a given accessor in a Collection ADT
+   variable. *)
+
+(* A statement of the form collection[accessor] := value
+   is synthesised as storeValue( collection, accessor, value) *)
+
+
+(* Binding to [ ] notation within expressions *)
+
+PROCEDURE [?] valueForAccessor( c : ProtoCollection;
+                         accessor : AccessorType ) : ValueType;
+
+(* Procedure to return the value stored for a given accessor in a Collection
+   ADT value. *)
+
+(* An expression of the form collection[accessor]
+   is synthesised as valueForAccessor( collection, accessor ) *)
+
+
+(* Accessor/Value count *)
+
+(* The operations COUNT and LENGTH are dependent on the kind of Collection
+   ADT and are mutually exclusive. Their bindings may be required by more
+   specialised prototypes. *)
+
+
+(* Iteration *)
+
+(* Binding to FOR IN iterator *)
+
+TYPE ProcType = PROCEDURE ( CONST AccessorType );
+
+PROCEDURE [FOR] forIterator ( VAR c : ProtoCollection;
+                       doStatements : ProcType );
+
+(* Procedure to iterate over all accessor/value pairs of a Dictionary ADT
+   value and execute the passed in doStatements for each pair. *)
+   
+(* A statement of the form
+     FOR accessor IN collection DO statementSeq END
+   is synthesised as
+     <* INLINE *> PROCEDURE forLoopBody ( CONST accessor : AccessorType );
+     BEGIN statementSeq END forLoopBody;
+     CollectionADT.forIterator( collection, forLoopBody ); *)
+
+(* Descending order loop iteration is only meaningful for ordered collections
+   and its binding may be required by more specialised prototypes. *)
+   
+
+(* Dyadic operations *)
+
+(* The operations +, -, * and / are not common to all Collection ADTs,
+   their bindings may be required by more specialised prototypes. *)
+
+
+(* Relational operations *)
+
+(* Binding to = operator *)
+
+PROCEDURE [=] isEqual ( c1, c2 : ProtoCollection ) : BOOLEAN;
+(* Procedure to test the equivalence of two Collection ADT values. *)
+
+(* An expression of the form collection1 = collection2
+   is synthesised as CollectionADT.isEqual(collection1, collection2) *)
+
+(* The operation for the # operator
+   is synthesized as NOT (collection1 = collection2) *)
+
+
+(* Binding to < operator *)
+
+(* The operations < and <= are not common to all Collection ADTs, their
+   common binding to < may be required by more specialised prototypes. *)
+
+
+(* Binding to > operator *)
+
+(* The operations > and >= are not common to all Collection ADTs, their
+   common binding to > may be required by more specialised prototypes. *)
+
+
+END ProtoCollection.

@@ -1,0 +1,68 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* General Blueprint for Non-Scalar Numeric ADTs *)
+
+BLUEPRINT FOR ProtoNonScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
+
+(* Non-Scalar numeric ADTs must be records to be statically allocatable,
+   structured literals constructed from real number literals may be used *)
+
+TYPE ProtoNonScalar = RECORD | OPAQUE RECORD := { .. } OF REAL;
+
+(* Examples of compatible literals:
+ *  complex numbers: { REAL, REAL }
+ *  tuples or vectors of real numbers: { VARIADIC OF REAL }
+ *  tuples or vectors of complex numbers: { VARIADIC OF { REAL, REAL } }
+ *)
+
+
+(* Bindings required for Non-Scalar Numeric ADTs *)
+
+(* The operations TMIN and TMAX are not meaningful for non-scalar types *)
+
+<* WARNONEXTN TMIN, TMAX; *>
+
+(* The operations SXF and VAL are not meaningful for non-scalar types *)
+
+<* WARNONEXTN SXF, VAL; *>
+
+
+(* Bindings to monadic operations *)
+
+(* The operations ABS and NEG are not common to all non-scalar types,
+   their bindings may be required by more specialised prototypes *)
+
+(* The operation ODD is not meaningful for non-scalar types *)
+
+<* WARNONEXTN ODD; *>
+
+
+(* Bindings to dyadic operations *)
+
+PROCEDURE [+] add ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
+(* procedure to bind to the + operator for operands of the non-scalar ADT *)
+
+PROCEDURE [-] subtract ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
+(* procedure to bind to the - operator for operands of the non-scalar ADT *)
+
+(* The operations * and / are not common to all non-scalar types,
+   their bindings may be required by more specialised prototypes *)
+
+(* The operations DIV and MOD are not meaningful for non-scalar types *)
+
+<* WARNONEXTN DIV, MOD; *>
+
+
+(* Bindings to relational operations *)
+
+PROCEDURE [=] isEqual ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
+(* procedure to bind to the = operator for operands of the non-scalar ADT *)
+
+(* The operation for the # operator is synthesized as NOT (op1 = op2) *)
+
+(* The operations < and > are not meaningful for non-scalar types *)
+
+<* WARNONEXTN <, >; *>
+
+
+END ProtoNonScalar.

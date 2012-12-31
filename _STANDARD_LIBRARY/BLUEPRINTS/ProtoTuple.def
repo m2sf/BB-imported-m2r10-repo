@@ -1,0 +1,41 @@
+(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Blueprint for Numeric Tuple ADTs *)
+
+BLUEPRINT FOR ProtoTuple [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
+
+(* Tuple ADTs must be transparent records,
+   structurally equivalent literals are compatible by default *)
+
+TYPE ProtoTuple = RECORD;
+
+
+(* Bindings required for ProtoTuple ADTs *)
+
+(* Via-SXF conversion between structurally equivalent non-scalar numeric types
+   is synthesised using SXF and VAL conversions on their scalar components *)
+
+
+(* Bindings to monadic operations *)
+
+PROCEDURE [ABS] abs ( t : ProtoTuple ) : ProtoTuple;
+(* procedure to bind to pervasive function ABS for arguments of the ADT *)
+
+PROCEDURE [NEG] neg ( t : ProtoTuple ) : ProtoTuple;
+(* procedure to bind to pervasive function NEG for arguments of the ADT *)
+
+
+(* Bindings to dyadic operations *)
+
+(* none *)
+
+
+(* Bindings to relational operations *)
+
+PROCEDURE [=] isEqual ( t1, t2 : ProtoTuple ) : BOOLEAN;
+(* procedure to bind to the = operator for operands of the ADT *)
+
+(* The operation for the # operator is synthesized as NOT (v1 = v2) *)
+
+
+END ProtoTuple.

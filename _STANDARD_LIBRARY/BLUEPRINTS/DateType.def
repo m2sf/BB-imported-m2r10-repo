@@ -1,0 +1,32 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BINDINGS FOR DateType;
+
+(* Semantic Properties for Date-Time Types *)
+
+
+(* ADTs must be transparent records,
+   structured literals will be used by default *)
+
+TYPE = RECORD;
+
+
+(* Bindings required for DateType ADTs *)
+
+CONST [TMIN]; (* require binding to TMIN function *)
+
+CONST [TMAX]; (* require binding to TMAX function *)
+
+PROCEDURE [::]; (* optional bindings to conversion operator *)
+
+PROCEDURE [+]; (* require binding to plus operator *)
+
+PROCEDURE [-]; (* require binding to minus operator *)
+
+PROCEDURE [=]; (* require binding to equal operator *)
+
+PROCEDURE [<]; (* require binding to less operator *)
+
+PROCEDURE [>]; (* require binding to greater operator *)
+
+END DateType.

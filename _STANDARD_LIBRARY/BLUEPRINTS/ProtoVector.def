@@ -1,0 +1,45 @@
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Blueprint for Numeric Vector ADTs *)
+
+BLUEPRINT FOR ProtoVector [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
+
+(* Numeric Vector ADTs must be transparent records,
+   structurally equivalent literals are compatible by default *)
+
+TYPE ProtoVector = RECORD;
+
+
+(* Bindings required for ProtoVector ADTs *)
+
+(* Via-SXF conversion between structurally equivalent non-scalar numeric types
+   is synthesised using SXF and VAL conversions on their scalar components *)
+
+
+(* Bindings to monadic operations *)
+
+PROCEDURE [ABS] abs ( v : ProtoVector ) : ProtoVector;
+(* procedure to bind to pervasive function ABS for arguments of the ADT *)
+
+PROCEDURE [NEG] neg ( v : ProtoVector ) : ProtoVector;
+(* procedure to bind to pervasive function NEG for arguments of the ADT *)
+
+
+(* Bindings to dyadic operations *)
+
+PROCEDURE [+] plus ( v1, v2 : ProtoVector ) : ProtoVector;
+(* procedure to bind to the + operator for operands of the ADT *)
+
+PROCEDURE [-] minus ( v1, v2 : ProtoVector ) : ProtoVector;
+(* procedure to bind to the - operator for operands of the ADT *)
+
+
+(* Bindings to relational operations *)
+
+PROCEDURE [=] isEqual ( v1, v2 : ProtoVector ) : BOOLEAN;
+(* procedure to bind to the = operator for operands of the ADT *)
+
+(* The operation for the # operator is synthesized as NOT (v1 = v2) *)
+
+
+END ProtoVector.

@@ -1,0 +1,23 @@
+Numeric Contracts                   Collection Contracts
+
+ ProtoNumeric                         ProtoCollection
+ |                                    |
+ +--ProtoNonScalar                    +--ProtoStaticSet (always ordered)
+ |  |                                 |  
+ |  +--ProtoComplexArray              +--ProtoStaticArray (always ordered)
+ |  |                                 |
+ |  +--ProtoRealArray                 +--ProtoStaticString (always ordered)
+ |  |                                 |
+ |  +--ProtoTuple                     +--ProtoSet (always dynamic)
+ |  |                                 |  |
+ |  +--ProtoVector                    |  ProtoOrderedSet (always dynamic)
+ |  |                                 |
+ |  +--ProtoComplex                   +--ProtoArray (always ordered & dynamic)
+ |                                    |
+ +--ProtoScalar                       +--ProtoString (always ordered & dynamic)
+    |                                 |
+    +--ProtoReal                      +--ProtoDictionary (always dynamic)
+    |                                    |
+    +--ProtoInteger                      +--ProtoOrderedDict (always dynamic)
+    |
+    +--ProtoCardinal

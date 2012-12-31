@@ -1,0 +1,146 @@
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Blueprint for Dynamically Allocatable Dictionary ADTs *)
+
+BLUEPRINT FOR ProtoDictionary [ProtoCollection];
+
+PLACEHOLDERS KeyType, ValueType, ProcType;
+
+(* Dictionary ADTs must be opaque,
+   variadic structured literals with key/value pairs are compatible *)
+
+TYPE ProtoDictionary = OPAQUE := { VARIADIC OF { KeyType, ValueType } };
+
+
+(* Bindings required for Dictionary ADTs *)
+
+(* Capacity limit *)
+
+(* Binding to pervasive function TLIMIT *)
+
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Procedure to return the key/value pair limit of a Dictionary ADT. *)
+
+(* An expression of the form TLIMIT(DictionaryADT))
+   is synthesised as DictionaryADT.capacityLimit() *)
+
+
+(* Construction and Destruction *)
+
+PROCEDURE [NEW] new ( VAR d : ProtoDictionary );
+(* Procedure to allocate and initialise a new Dictionary ADT variable. *)
+
+(* A statement of the form NEW(dictionary)
+   is synthesised as DictionaryADT.new(dictionary) *)
+
+PROCEDURE [DISPOSE] dispose ( VAR d : ProtoDictionary );
+(* Procedure to deallocate a Dictionary ADT variable. *)
+
+(* A statement of the form DISPOSE(dictionary)
+   is synthesised as DictionaryADT.dispose(dictionary) *)
+
+
+(* Binding to assignment operator *)
+
+PROCEDURE [:=] assign ( VAR d : ProtoDictionary;
+                 keyValueList : VARIADIC OF { k : KeyType; v : ValueType } );
+(* Procedure to assign a structured literal of key/value pairs to a Dictionary
+   ADT variable. *)
+
+(* A statement of the form dictionary := { key1, value1, ..., keyN, valueN }
+   is synthesised as assign( dictionary, key1, value1, ..., keyN, valueN ) *)
+
+
+(* Storage and retrieval *)
+
+(* Binding to [ ] notation within left hand entities *)
+
+PROCEDURE [!] storeValue ( VAR d : ProtoDictionary;
+                             key : KeyType; value : ValueType );
+(* Procedure to store a value for a given key in a Dictionary ADT variable. *)
+
+(* A statement of the form dictionary[key] := value
+   is synthesised as storeValue( dictionary, key, value) *)
+
+PROCEDURE [~] removeKeyValuePair ( VAR d : ProtoDictionary; key : KeyType );
+(* Procedure to remove the key/value pair for a given key from a Dictionary
+   ADT variable. *)
+
+(* A statement of the form dictionary[key] := NIL
+   is synthesised as removeKeyValuePair( dictionary, key ) *)
+
+
+(* Binding to [ ] notation within expressions *)
+
+PROCEDURE [?] valueForKey( d : ProtoDictionary; key : KeyType ) : ValueType;
+(* Procedure to return the value stored for a given key in a Dictionary ADT
+   value. *)
+
+(* An expression of the form dictionary[key]
+   is synthesised as valueForKey( dictionary, key ) *)
+
+
+(* Key/Value count *)
+
+(* Binding to pervasive function COUNT *)
+
+PROCEDURE [COUNT] count ( d : ProtoDictionary ) : LONGCARD;
+(* Procedure to return the key/value count of a Dictionary ADT value *)
+
+(* An expression of the form COUNT(dictionary)
+   is synthesised as DictionaryADT.count(dictionary) *)
+
+
+(* Iteration *)
+
+(* Binding to FOR IN iterator *)
+
+TYPE ProcType = PROCEDURE ( CONST KeyType );
+
+PROCEDURE [FOR] forIterator ( VAR d : ProtoDictionary;
+                       doStatements : ProcType );
+
+(* Procedure to iterate over all key/value pairs of a Dictionary ADT value
+   and execute the passed in doStatements for each pair. *)
+   
+(* A statement of the form
+     FOR key IN dictionary DO statementSeq END
+   is synthesised as
+     <* INLINE *> PROCEDURE forLoopBody ( CONST key : KeyType );
+     BEGIN statementSeq END forLoopBody;
+     DictionaryADT.forIterator( dictionary, forLoopBody ); *)
+
+(* Descending order loop iteration is only meaningful to ordered dictionaries
+   and its binding may be required by more specialised prototypes. *)
+   
+
+(* Dyadic operations *)
+
+(* The operations +, -, * and / are not meaningful for dictionaries *)
+
+
+(* Relational operations *)
+
+(* Binding to = operator *)
+
+PROCEDURE [=] isEqual ( d1, d2 : ProtoDictionary ) : BOOLEAN;
+(* Procedure to test the equivalence of two Dictionary ADT values. *)
+
+(* An expression of the form dictionary1 = dictionary2
+   is synthesised as DictionaryADT.isEqual(dictionary1, dictionary2) *)
+
+(* The operation for the # operator
+   is synthesized as NOT (dictionary1 = dictionary2) *)
+
+
+(* Binding to < operator *)
+
+(* The operations < and <= are not meaningful for dictionaries *)
+
+
+(* Binding to > operator *)
+
+(* The operations > and >= are not meaningful for dictionaries *)
+
+
+END ProtoDictionary.
