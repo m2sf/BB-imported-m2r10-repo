@@ -555,7 +555,7 @@ addOp :
 
 // production #52
 term :
-    simpleFactor ( mulOp simpleFactor )*
+    factorOrNegation ( mulOp factorOrNegation )*
     ;
 
 // fragment #52.1
@@ -565,7 +565,7 @@ mulOp :
     ;
 
 // production #53
-simpleFactor :
+factorOrNegation :
     NOT? factor
     ;
 
