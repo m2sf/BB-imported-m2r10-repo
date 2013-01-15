@@ -154,7 +154,7 @@ lappend non_terminals compilationUnit {
   or
     {line {optx IMPLEMENTATION} programModule}
     {line definitionOfModule}
-    {line contract}
+    {line blueprint}
 }
 
 # (2) Program Module
