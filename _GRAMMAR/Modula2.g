@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 31, 2012 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Jan 15, 2012 */
 
 
 // ---------------------------------------------------------------------------
@@ -154,7 +154,7 @@ tokens {
 // ---------------------------------------------------------------------------
 // N O N - T E R M I N A L   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 59 productions
+// 60 productions
 
 // *** Compilation Units ***
 
@@ -183,7 +183,7 @@ definitionOfModule :
 blueprint :
     BLUEPRINT blueprintIdent '[' requiredConformance ']' ';'
     ( PLACEHOLDERS identList ';' )?
-    requiredTypeDefinition
+    requiredTypeDefinition ';'
     ( requiredBinding ';' )*
     END blueprintIdent '.'
     ;
@@ -299,11 +299,11 @@ range :
 
 // production #16
 enumerationType :
-    '(' ( ( '+' enumTypeIdent ) | Ident ) ( ',' ( ( '+' enumTypeIdent ) | Ident ) )* ')'
+    '(' ( '+' enumBaseType ',' )? identList ')'
     ;
 
 // alias 16.1
-enumTypeIdent : typeIdent ;
+enumBaseType : typeIdent ;
 
 // production #17
 arrayType :
@@ -336,7 +336,7 @@ discriminantField : Ident ;
 
 // production #20
 setType :	
-    SET OF ( enumTypeIdent | '(' identList ')' )
+    SET OF ( enumBaseType | '(' identList ')' )
     ;
 
 // production #21
@@ -555,7 +555,7 @@ addOp :
 
 // production #52
 term :
-    factor ( mulOp factor )*
+    simpleFactor ( mulOp simpleFactor )*
     ;
 
 // fragment #52.1
@@ -565,42 +565,47 @@ mulOp :
     ;
 
 // production #53
-factor :
-    ( NumericLiteral | StringLiteral | structuredValue |
-    designatorOrFunctionCall | '(' expression ')' )
-    ( '::' typeIdent )? | NOT factor
+simpleFactor :
+    NOT? factor
     ;
 
 // production #54
+factor :
+    ( NumericLiteral | StringLiteral | structuredValue |
+    designatorOrFunctionCall | '(' expression ')' )
+    ( '::' typeIdent )?
+    ;
+
+// production #55
 designatorOrFunctionCall :
     designator actualParameters?
     ;
 
-// production #55
+// production #56
 actualParameters :
     '(' expressionList? ')'
     ;
 
 // *** Structured Values ***
 
-// production #56
+// production #57
 structuredValue :
     '{' ( valueComponent ( ',' valueComponent )* )? '}'	
     ;
 
-// production #57
+// production #58
 valueComponent :
     expression ( ( BY | '..' {}) constExpression )?
     ;
 
 // *** Identifiers ***
 
-// production #58
+// production #59
 qualident :
     Ident ( '.' Ident )*
     ;
 
-// production #59
+// production #60
 identList :
     Ident ( ',' Ident )*
     ;

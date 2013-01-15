@@ -171,7 +171,7 @@ lappend non_terminals moduleIdent {
 # (3) Definition Of Module
 lappend non_terminals definitionOfModule {
   stack
-    {line DEFINITION MODULE moduleIdent {opt [ contractIdent ]} ;}
+    {line DEFINITION MODULE moduleIdent {opt [ blueprintIdent ]} ;}
     {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
     END moduleIdent .}
 }
@@ -179,8 +179,8 @@ lappend non_terminals definitionOfModule {
 # (4) Blueprint For Library
 lappend non_terminals blueprint {
   stack
-    {line BLUEPRINT FOR blueprintIdent {opt [ requiredConformance ]} ;}
-    {line {opt PLACEHOLDERS identList ;} requiredTypeDefinition}
+    {line BLUEPRINT blueprintIdent {opt [ requiredConformance ]} ;}
+    {line {opt PLACEHOLDERS identList ;} requiredTypeDefinition ;}
     {line {loop nil {nil ; requiredBinding}} END blueprintIdent .}
 }
 
@@ -301,6 +301,11 @@ lappend non_terminals type {
   }
 }
 
+# (14.1) Type Identifier
+lappend non_terminals typeIdent {
+  line qualident
+}
+
 # (15) Range
 lappend non_terminals range {
   line [ constExpression .. constExpression ]
@@ -308,17 +313,12 @@ lappend non_terminals range {
 
 # (16) Enumeration Type
 lappend non_terminals enumerationType {
-  line ( {loop {or {line + enumTypeIdent} Ident} ,} )
+  line ( {optx + enumBaseType ,} identList )
 }
 
-# (16.1) Enumeration Type Identifier
-lappend non_terminals enumTypeIdent {
+# (16.1) Enumeration Base Type
+lappend non_terminals enumBaseType {
   line typeIdent
-}
-
-# (16.2) Type Identifier
-lappend non_terminals typeIdent {
-  line qualident
 }
 
 # (17) Array Type
@@ -371,7 +371,7 @@ lappend non_terminals discriminantField {
 lappend non_terminals setType {
   line SET OF {
     or
-      {line enumTypeIdent}
+      {line enumBaseType}
       {line ( identList )}
   }
 }
@@ -616,7 +616,7 @@ lappend non_terminals addOp {
 
 # (52) Term
 lappend non_terminals term {
-  loop factor mulOp
+  loop factorOrNegation mulOp
 }
 
 # (52.1) Multiply Operator
@@ -624,53 +624,57 @@ lappend non_terminals mulOp {
   line {or * / DIV MOD AND}
 }
 
-# (53) Factor
+# (53) factorOrNegation
+lappend non_terminals factorOrNegation {
+  line {optx NOT} factor
+}
+
+# (54) Factor
 lappend non_terminals factor {
-  line {or
-    {line {or
+  line {
+    or
       NumericLiteral
       StringLiteral
       structuredValue
       designatorOrFunctionCall
       {line ( expression )}
-    } {opt :: typeIdent} }
-    {line NOT factor}
-  }
+    }
+    {optx :: typeIdent}
 }
 
-# (54) Designator Or Function Call
+# (55) Designator Or Function Call
 lappend non_terminals designatorOrFunctionCall {
   line designator {optx actualParameters}
 }
 
-# (55) Actual Parameters
+# (56) Actual Parameters
 lappend non_terminals actualParameters {
   line ( {optx expressionList} )
 }
 
-# (56) Structured Value
+# (57) Structured Value
 lappend non_terminals structuredValue {
   line LBRACE {loop valueComponent ,} RBRACE
 }
 
-# (57) Value Component
+# (58) Value Component
 lappend non_terminals valueComponent {
   or
     {line constExpression {optx {or BY ..} constExpression}}
     {line runtimeExpression}
 }
 
-# (57.1) Runtime Expression
+# (58.1) Runtime Expression
 lappend non_terminals runtimeExpression {
   line expression
 }
 
-# (58) Qualified Identifier
+# (59) Qualified Identifier
 lappend non_terminals qualident {
   loop Ident .
 }
 
-# (59) Identifier List
+# (60) Identifier List
 lappend non_terminals identList {
   loop Ident ,
 }
@@ -684,17 +688,16 @@ set terminals {}
 # (1a) Reserved Words
 lappend terminals ReservedWords1 {
   or
-    ALIAS AND ARRAY ASSOCIATIVE BEGIN BY CASE CONST DEFINITION DESCENDING
-    DIV DO ELSE ELSIF END EXIT FOR FROM IF IMPLEMENTATION IMPORT IN
-    INDETERMINATE
+    ALIAS AND ARRAY ASSOCIATIVE BEGIN BLUEPRINT BY CASE CONST DEFINITION
+    DESCENDING DIV DO ELSE ELSIF END EXIT FOR FROM IF IMPLEMENTATION IMPORT
+    IN
 }
 
 # (1b) Reserved Words
 lappend terminals ReservedWords2 {
   or
-    LOOP MOD MODULE NOT OF OPAQUE OR PLACEHOLDERS POINTER PROCEDURE
-    PROTOTYPE RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR
-    VARIADIC WHILE
+    INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR PLACEHOLDERS POINTER
+    PROCEDURE RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR VARIADIC WHILE
 }
 
 # (2) Identifier
