@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Dec 31, 2012
+# Syntax diagram generator for Modula-2 (R10), status Jan 15, 2012
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -1048,7 +1048,7 @@ lappend pragmas inPragmaSimpleExpr {
 
 # (21) In-Pragma Term
 lappend pragmas inPragmaTerm {
-  loop inPragmaFactor inPragmaMulOp
+  loop inPragmaFactorOrNegation inPragmaMulOp
 }
 
 # (21.1) In-Pragma Multiply Operator
@@ -1056,22 +1056,26 @@ lappend pragmas inPragmaMulOp {
   or * DIV MOD AND
 }
 
-# (22) In-Pragma Factor
+# (22) In-Pragma Factor Or Negation
+lappend pragmas inPragmaFactorOrNegation {
+  line {optx NOT} inPragmaFactor
+}
+
+# (23) In-Pragma Factor
 lappend pragmas inPragmaFactor {
   or
     wholeNumber
     constQualident
     inPragmaCompileTimeFunctionCall
     {line ( inPragmaExpression )}
-    {line NOT inPragmaFactor}
 }
 
-# (22.1) Whole Number
+# (23.1) Whole Number
 lappend pragmas wholeNumber {
   line NumericLiteral
 }
 
-# (23) In-Pragma Compile Time Function Call
+# (24) In-Pragma Compile Time Function Call
 lappend pragmas inPragmaCompileTimeFunctionCall {
   line qualident ( {loop inPragmaExpression ,} ) 
 }

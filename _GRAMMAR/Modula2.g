@@ -532,6 +532,7 @@ expressionList :
 
 // production #50
 expression :
+/* represents operator precedence level 1 */
     simpleExpression ( relOp simpleExpression )?
     ;
 
@@ -543,6 +544,7 @@ relOp :
 
 // production #51
 simpleExpression :
+/* represents operator precedence level 2 */
     ( '+' | '-' {} /* make ANTLRworks display separate branches */ )?
     term ( addOp term )*
     ;
@@ -555,6 +557,7 @@ addOp :
 
 // production #52
 term :
+/* represents operator precedence level 3 */
     factorOrNegation ( mulOp factorOrNegation )*
     ;
 
@@ -566,11 +569,13 @@ mulOp :
 
 // production #53
 factorOrNegation :
+/* represents operator precedence level 4 */
     NOT? factor
     ;
 
 // production #54
 factor :
+/* represents operator precedence level 5 */
     ( NumericLiteral | StringLiteral | structuredValue |
     designatorOrFunctionCall | '(' expression ')' )
     ( '::' typeIdent )?
@@ -614,7 +619,7 @@ identList :
 // ---------------------------------------------------------------------------
 // P R A G M A   G R A M M A R
 // ---------------------------------------------------------------------------
-// 23 productions
+// 24 productions
 
 // *** Pragmas ***
 
@@ -740,6 +745,7 @@ implDefinedPragma :
 
 // production #19
 inPragmaExpression :
+/* represents operator precedence level 1 */
     inPragmaSimpleExpression ( inPragmaRelOp inPragmaSimpleExpression )?
     ;
 
@@ -751,12 +757,14 @@ inPragmaRelOp :
 
 // production #20
 inPragmaSimpleExpression :
+/* represents operator precedence level 2 */
     ( '+' | '-' {})? inPragmaTerm ( addOp inPragmaTerm )*
     ;
 
 // production #21
 inPragmaTerm :
-    inPragmaFactor ( inPragmaMulOp inPragmaFactor )*
+/* represents operator precedence level 3 */
+    inPragmaFactorOrNegation ( inPragmaMulOp inPragmaFactorOrNegation )*
     ;
 
 // fragment #21.1
@@ -766,18 +774,22 @@ inPragmaMulOp :
     ;
 
 // production #22
+inPragmaFactorOrNegation :
+/* represents operator precedence level 4 */
+    NOT? inPragmaFactor
+    ;
+
+// production #23
 inPragmaFactor :
     wholeNumber |
     /* constQualident is covered by inPragmaCompileTimeFunctionCall */
-    inPragmaCompileTimeFunctionCall |
-    '(' inPragmaExpression ')' |
-    NOT inPragmaFactor
+    '(' inPragmaExpression ')' | inPragmaCompileTimeFunctionCall
     ;
 
-// alias #22.1
+// alias #23.1
 wholeNumber : NumericLiteral ;
 
-// production #23
+// production #24
 inPragmaCompileTimeFunctionCall :
     qualident ( '(' inPragmaExpression ( ',' inPragmaExpression )* ')' )?
     ;
