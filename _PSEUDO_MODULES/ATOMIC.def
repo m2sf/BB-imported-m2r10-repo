@@ -1,8 +1,8 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE ATOMIC;
 
-(* Pseudo-module for Atomic Intrinsics *)
+(* Pseudo-module for Type-Safe Atomic Intrinsics *)
 
 TYPE INTRINSIC = ( SWAP, CAS, INC, DEC, BWAND, BWNAND, BWOR, BWXOR );
 
@@ -10,33 +10,51 @@ PROCEDURE AVAIL( intrinsic : INTRINSIC; bitwidth : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if the given intrinsic is available for the given bitwidth,
    otherwise FALSE. The value of bitwidth must be a compile time expression.*)
 
-PROCEDURE SWAP( VAR x, y : <Type> );
-(* Atomically swaps x and y. Type must be an 8, 16, 32 or 64 bit type. *)
+PROCEDURE SWAP( VAR target : <Type>; newVal : <Type>) : Type;
+(* Atomically writes newVal to target  and returns the prior value of target.
+   Both arguments  must be of the  same type.  The returned type  matches the
+   argument type. *) 
 
-PROCEDURE CAS( VAR expectedValue, y : <Type> ) : Type;
-(* Atomically compares x and expectedValue, if they are equal, swaps x and y.
-   Returns original value of x. Type must be an 8, 16, 32 or 64 bit type. *)
+PROCEDURE CAS( VAR target : <Type>; oldVal, newVal : <Type>) : Type;
+(* Atomically compares oldVal and target,  if they match,  writes  newVal  to
+   target  and  returns oldVal,  otherwise returns the prior value of target.
+   All arguments  must be  of the same type.  The returned type  matches  the
+   argument type. *) 
 
-PROCEDURE INC( VAR x : <Type>; y : <Type> );
-(* Atomically increments x by y. Type must be an 8, 16, 32 or 64 bit type. *)
+PROCEDURE INC( VAR target : <Type>; inc : <Type> ) : Type;
+(* Atomically increments target by inc and returns the prior value of target.
+   Both arguments  must be of the same type,  which must be a pervasive whole
+   number type.  The value of  inc  must be  larger than  zero.  The returned
+   type matches the argument type. *)
 
-PROCEDURE DEC( VAR x : <Type>; y : <Type> );
-(* Atomically decrements x by y. Type must be an 8, 16, 32 or 64 bit type. *)
+PROCEDURE DEC( VAR target : <Type>; dec : <Type> ) : Type;
+(* Atomically decrements target by dec and returns the prior value of target.
+   Both arguments  must be of the same type,  which must be a pervasive whole
+   number type.  The value of  dec  must be  larger than  zero.  The returned
+   type matches the argument type. *)
 
-PROCEDURE BWAND( VAR x : <Type>; y : <Type> );
-(* Atomically performs bitwise AND of x and y, and passes the result in x.
-   Type must be an 8, 16, 32 or 64 bit type. *)
+PROCEDURE BWAND( VAR target : <Type>; mask : <Type> ) : Type;
+(* Atomically performs bitwise AND of  target and mask,  writes the result to
+   target  and returns the prior value of target.  Both arguments  must be of
+   the same type,  which must be a  pervasive bitset type.  The returned type
+   matches the argument type. *)
 
-PROCEDURE BWNAND( VAR x : <Type>; y : <Type> );
-(* Atomically performs bitwise NAND of x and y, and passes the result in x.
-   Type must be an 8, 16, 32 or 64 bit type. *)
+PROCEDURE BWNAND( VAR target : <Type>; mask : <Type> ) : Type;
+(* Atomically performs bitwise NAND of target and mask,  writes the result to
+   target  and returns the prior value of target.  Both arguments  must be of
+   the same type,  which must be a  pervasive bitset type.  The returned type
+   matches the argument type. *)
 
-PROCEDURE BWOR( VAR x : <Type>; y : <Type> );
-(* Atomically performs bitwise OR of x and y, and passes the result in x.
-   Type must be an 8, 16, 32 or 64 bit type. *)
+PROCEDURE BWOR( VAR target : <Type>; mask : <Type> ) : Type;
+(* Atomically performs  bitwise OR  of target and mask,  writes the result to
+   target  and returns the prior value of target.  Both arguments  must be of
+   the same type,  which must be a  pervasive bitset type.  The returned type
+   matches the argument type. *)
 
-PROCEDURE BWXOR( VAR x : <Type>; y : <Type> );
-(* Atomically performs bitwise XOR of x and y, and passes the result in x.
-   Type must be an 8, 16, 32 or 64 bit type. *)
+PROCEDURE BWXOR( VAR target : <Type>; mask : <Type> ) : Type;
+(* Atomically performs bitwise XOR  of target and mask,  writes the result to
+   target  and returns the prior value of target.  Both arguments  must be of
+   the same type,  which must be a  pervasive bitset type.  The returned type
+   matches the argument type. *)
 
 END ATOMIC.
