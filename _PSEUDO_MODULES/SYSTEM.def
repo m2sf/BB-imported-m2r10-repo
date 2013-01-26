@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE SYSTEM;
 
@@ -9,18 +9,18 @@ DEFINITION MODULE SYSTEM;
 
 CONST
     OctetsPerByte = <implementation defined value>;
-      (* size of a virtual byte *)
+      (* size of an abstract byte *)
 
     BytesPerWord = <implementation defined value>;
-      (* size of a virtual word *)
+      (* size of an abstract word *)
 
 
 TYPE
-    BYTE = OPAQUE RECORD (* virtual byte *)
+    BYTE = OPAQUE RECORD (* abstract byte *)
         ARRAY OctetsPerByte OF OCTET;
     END; (* BYTE *)
 
-    WORD = OPAQUE RECORD (* virtual word *)
+    WORD = OPAQUE RECORD (* abstract word *)
         ARRAY BytesPerWord OF BYTE;
     END; (* WORD *)
 
@@ -78,33 +78,57 @@ CONST
 PROCEDURE ADR( var : <AnyType> ) : ADDRESS;
 (* Returns the address of variable var. *)
 
-PROCEDURE CAST( <AnyTargetType>; val : <AnyType> ) : <TargetType>;
+PROCEDURE CAST( <AnyTargetTypeIdentifier>; val : <AnyType> ) : <TargetType>;
 (* Returns the value of val, cast to the target type,
    val may be a variable, a constant or a literal. *)
 
 
 (* Machine level operations *)
 
-CONST
-    MaxWordsPerOperand = <implementation defined value>; (* >= 4 *)
-      (* size of largest supported operand in machine level operations *)
+TYPE INTRINSIC = ( ADD, SUB, ADDC, SUBC, FETCHADD, FETCHSUB,
+                   SHL, SHR, ASHR, ROTL, ROTR, ROTLC, ROTRC,
+                   BWNOT, BWOR, BWXOR, BWNAND, BWNOR,
+                   SETBIT, TESTBIT, LSBIT, MSBIT, CSBITS);
+
+PROCEDURE AVAIL( intrinsic : INTRINSIC; bitwidth : CARDINAL ) : BOOLEAN;
+(* Returns TRUE if the given intrinsic is available for the given bitwidth,
+   otherwise FALSE. The value of bitwidth must be a compile time expression.*)
 
 
 (* Machine level arithmetic *)
 
-PROCEDURE INC( VAR x : <AnyType>; n : OCTET );
-(* Increments the value of operand x by n, ignoring overflow. *)
+PROCEDURE ADD( VAR x : <AnyType>; y : <AnyType> );
+(* Adds operand y to operand x,  ignoring overflow.
+   The bit widths of the operand types must match.
+   The bit pattern of y is interpreted as an unsigned number. *)
 
-PROCEDURE DEC( VAR x : <AnyType>; n : OCTET );
-(* Decrements the value of operand x by n, ignoring overflow. *)
+PROCEDURE SUB( VAR x : <AnyType>; y : <AnyType> );
+(* Subtracts operand y from operand x, ignoring overflow.
+   The bit widths of the operand types must match.
+   The bit pattern of y is interpreted as an unsigned number. *)
 
-PROCEDURE ADDC( VAR x : <AnyType>; y : <TypeOf(x)>; VAR c : BOOLEAN );
-(* adds operand y to operand x, adds 1 if TRUE is passed in for c,
-   then passes the result back in x and the carry bit back in c. *)
+PROCEDURE ADDC( VAR x : <AnyType>; y : <AnyType>; VAR c : BOOLEAN );
+(* Adds operand y to operand x,  adds 1 if TRUE is passed in for c,
+   then passes the result back in x and the resulting carry bit back in c.
+   The bit widths of the operand types of x and y must match.
+   The bit pattern of y is interpreted as an unsigned number. *)
 
-PROCEDURE SUBC( VAR x : <AnyType>; y : <TypeOf(x)>; VAR c : BOOLEAN );
-(* subtracts operand y from operand x, adds 1 if TRUE is passed in for c,
-   then passes the result back in x and the carry bit back in c. *)
+PROCEDURE SUBC( VAR x : <AnyType>; y : <AnyType>; VAR c : BOOLEAN );
+(* Subtracts operand y from operand x,  adds 1 if TRUE is passed in for c,
+   then passes the result back in x and the resulting carry bit back in c.
+   The bit widths of the operand types of x and y must match.
+   The bit pattern of y is interpreted as an unsigned number. *)
+
+PROCEDURE FETCHADD( VAR x : <AnyType>; y : <AnyType> ) : TypeOf(x);
+(* Atomically adds operand y to operand x and returns the prior value of x,
+   ignoring overflow.  The bitwidths of the operand types must match.
+   The bit pattern of y is interpreted as an unsigned number. *)
+
+PROCEDURE FETCHSUB( VAR x : <AnyType>; y : <AnyType> ) : TypeOf(x);
+(* Atomically subtracts operand y from operand x and returns the prior value
+   of x,  ignoring overflow.  The bitwidths of the operand types must match.
+   The bit pattern of y is interpreted as an unsigned number. *)
+
 
 
 (* Shift operations *)
@@ -177,7 +201,7 @@ PROCEDURE CSBITS( x : <AnyType> ) : CARDINAL;
 
 (* Miscellaneous *)
 
-PROCEDURE BAIL( x : <AnyType> );
+PROCEDURE BAIL( (* OPT *) x : <AnyType> );
 (* Returns program control to the caller of the calling procedure and
    passes x as the return value, x must match the caller's return type. *)
 
