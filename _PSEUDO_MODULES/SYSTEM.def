@@ -199,6 +199,24 @@ PROCEDURE CSBITS( x : <AnyType> ) : CARDINAL;
 (* Counts and returns the number of set bits in x. *)
 
 
+(* Pseudo-types for unsafe interfacing to foreign variadic functions *)
+
+TYPE FFIVARARGCOUNT;
+(* A parameter  of type  FFIVARARGCOUNT  may be  declared  within  the formal
+   parameter list of an interface definition for a variadic foreign function.
+   It denotes the actual parameter count passed in  for a formal parameter of
+   type FFIVARARGLIST.  It may  only  be used in combination with pragma FFI.
+   This type is a pseudo-type, it cannot be used for any other purpose. *)
+
+
+TYPE FFIVARARGLIST;
+(* A parameter  of type  FFIVARARGLIST  may  be  declared  within  the formal
+   parameter list of an interface definition for a variadic foreign function.
+   It denotes the untyped variadic argument list of the foreign function  and
+   it may  only  be  used  in combination  with  pragma FFI.  This type  is a
+   pseudo-type, it cannot be used for any other purpose. *)
+
+
 (* Miscellaneous *)
 
 PROCEDURE BAIL( (* OPT *) x : <AnyType> );
