@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Jan 15, 2013
+# Syntax diagram generator for Modula-2 (R10), status Jan 30, 2013
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -181,7 +181,7 @@ lappend non_terminals blueprint {
   stack
     {line BLUEPRINT blueprintIdent {opt [ requiredConformance ]} ;}
     {line {opt PLACEHOLDERS identList ;} requiredTypeDefinition ;}
-    {line {loop nil {nil ; requiredBinding}} END blueprintIdent .}
+    {line {loop nil {nil requiredBinding ;}} END blueprintIdent .}
 }
 
 # (4.1) Blueprint Identifier
@@ -234,13 +234,13 @@ lappend non_terminals structuredProtoliteral {
 lappend non_terminals importList {
   line {
     or
+      {line IMPORT {loop {line moduleIdent {opt +}} ,}}
       {line FROM moduleIdent IMPORT {
         or
           {line identList}
           {line *}
         }
-    }
-    {line IMPORT {loop {line moduleIdent {opt +}} ,}}
+      }
   } ;
 }
 
@@ -250,26 +250,20 @@ lappend non_terminals block {
   {opt BEGIN statementSequence} END
 }
 
-# (11) Declaration
-lappend non_terminals declaration {
-  line {
-    or
-      {line CONST {loop {line constantDeclaration ;} {}} }
-      {line TYPE {loop {line Ident = type ;} {}} }
-      {line VAR {loop {line variableDeclaration ;} {}} }
-      {line procedureDeclaration ;}
-  }
-}
-
-# (12) Definition
+# (11) Definition
 lappend non_terminals definition {
   line {
     or
-      {line CONST {loop {line {opt [ constBindableIdent ]} constantDeclaration ;} {}}}
-      {line TYPE {loop {line Ident = {or type {line OPAQUE {optx recordType}}} ;} {}}}
+      {line CONST {loop {line publicConstDeclaration ;} {}}}
+      {line TYPE {loop {line publicTypeDeclaration ;} {}}}
       {line VAR {loop {line variableDeclaration ;} {}} }
       {line procedureHeader ;}
   }
+}
+
+# (12) Public Constant Declaration
+lappend non_terminals publicConstDeclaration {
+  line {optx [ constBindableIdent ]} Ident = constExpression
 }
 
 # (12.1) CONST Bindable Identifiers
@@ -277,17 +271,28 @@ lappend non_terminals constBindableIdent {
   or /TSIG /TEXP
 }
 
-# (13) Constant Declaration
-lappend non_terminals constantDeclaration {
-  line Ident = constExpression
-}
-
-# (13.1) Constant Expression
+# (12.2) Constant Expression
 lappend non_terminals constExpression {
   line expression
 }
 
-# (14) Type
+# (13) Public Type Declaration
+lappend non_terminals publicTypeDeclaration {
+  line Ident = {or type {line OPAQUE {optx recordType}}}
+}
+
+# (14) Declaration
+lappend non_terminals declaration {
+  line {
+    or
+      {line CONST {loop {line Ident = constExpression ;} {}} }
+      {line TYPE {loop {line Ident = type ;} {}} }
+      {line VAR {loop {line variableDeclaration ;} {}} }
+      {line procedureHeader ; block Ident ;}
+  }
+}
+
+# (15) Type
 lappend non_terminals type {
   line {
     or
@@ -301,27 +306,27 @@ lappend non_terminals type {
   }
 }
 
-# (14.1) Type Identifier
+# (15.1) Type Identifier
 lappend non_terminals typeIdent {
   line qualident
 }
 
-# (15) Range
+# (16) Range
 lappend non_terminals range {
   line [ constExpression .. constExpression ]
 }
 
-# (16) Enumeration Type
+# (17) Enumeration Type
 lappend non_terminals enumerationType {
   line ( {optx + enumBaseType ,} identList )
 }
 
-# (16.1) Enumeration Base Type
+# (17.1) Enumeration Base Type
 lappend non_terminals enumBaseType {
   line typeIdent
 }
 
-# (17) Array Type
+# (18) Array Type
 lappend non_terminals arrayType {
   line {
     or
@@ -331,12 +336,12 @@ lappend non_terminals arrayType {
   OF typeIdent
 }
 
-# (17.1) Component Count
+# (18.1) Component Count
 lappend non_terminals componentCount {
   line constExpression
 }
 
-# (18) Record Type
+# (19) Record Type
 lappend non_terminals recordType {
   line RECORD
     {or
@@ -346,28 +351,28 @@ lappend non_terminals recordType {
   END
 }
 
-# (18.1) Field List
+# (19.1) Field List
 lappend non_terminals fieldList {
   line variableDeclaration
 }
 
-# (18.2) Base Type
+# (19.2) Base Type
 lappend non_terminals baseType {
   line typeIdent
 }
 
-# (19) Indeterminate Field Declaration
+# (20) Indeterminate Field Declaration
 lappend non_terminals indeterminateField {
   line INDETERMINATE Ident : ARRAY discriminantField OF typeIdent
 }
 
 
-# (19.1) Discriminant Field
+# (20.1) Discriminant Field
 lappend non_terminals discriminantField {
   line Ident
 }
 
-# (20) Set Type
+# (21) Set Type
 lappend non_terminals setType {
   line SET OF {
     or
@@ -376,44 +381,44 @@ lappend non_terminals setType {
   }
 }
 
-# (21) Pointer Type
+# (22) Pointer Type
 lappend non_terminals pointerType {
-  line POINTER TO {opt CONST} typeIdent
+  line POINTER TO {optx CONST} typeIdent
 }
 
-# (22) Procedure Type
+# (23) Procedure Type
 lappend non_terminals procedureType {
   line PROCEDURE {optx ( formalTypeList )} {optx : returnedType}
 }
 
-# (22.1) Returned Type
+# (23.1) Returned Type
 lappend non_terminals returnedType {
   line typeIdent
 }
 
-# (23) Formal Type List
+# (24) Formal Type List
 lappend non_terminals formalTypeList {
   loop formalType ,
 }
 
-# (24) Formal Type
+# (25) Formal Type
 lappend non_terminals formalType {
   or
     {line attributedFormalType}
     {line variadicFormalType}
 }
 
-# (25) Attributed Formal Type
+# (26) Attributed Formal Type
 lappend non_terminals attributedFormalType {
   line {or {} CONST VAR} simpleFormalType
 }
 
-# (26) Simple Formal Type
+# (27) Simple Formal Type
 lappend non_terminals simpleFormalType {
   line {optx {optx /CAST} ARRAY OF} typeIdent
 }
 
-# (27) Variadic Formal Type
+# (28) Variadic Formal Type
 lappend non_terminals variadicFormalType {
   line VARIADIC OF {
     or
@@ -422,14 +427,9 @@ lappend non_terminals variadicFormalType {
   }
 }
 
-# (28) Variable Declaration
+# (29) Variable Declaration
 lappend non_terminals variableDeclaration {
   line identList : {optx range OF} typeIdent
-}
-
-# (29) Procedure Declaration
-lappend non_terminals procedureDeclaration {
-  line procedureHeader ; block Ident
 }
 
 # (30) Procedure Header

@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Jan 15, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Jan 30, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -229,8 +229,8 @@ structuredProtoliteral :
 
 // production #9
 importList :
-    ( FROM moduleIdent IMPORT ( identList | '*' ) |
-    IMPORT moduleIdent '+'? ( ',' moduleIdent '+'? )* ) ';'
+    ( IMPORT moduleIdent '+'? ( ',' moduleIdent '+'? )* |
+      FROM moduleIdent IMPORT ( identList | '*' ) ) ';'
     ;
 
 /* Import with experimental aliased import qualifier '=>'
@@ -252,129 +252,134 @@ block :
     ;
 
 // production #11
-declaration :
-    CONST ( constantDeclaration ';' )+ |
-    TYPE ( Ident '=' type ';' )+ |
-    VAR ( variableDeclaration ';' )+ |
-    procedureDeclaration ';'
-    ;
-
-// production #12
 definition :
-    CONST ( ( '[' constBindableIdent ']' )? constantDeclaration ';' )+ |
-    TYPE ( Ident '=' ( type | OPAQUE recordType? ) ';' )+ |
+    CONST (  publicConstDeclaration ';' )+ |
+    TYPE ( publicTypeDeclaration ';' )+ |
     VAR ( variableDeclaration ';' )+ |
     procedureHeader ';'
     ;
 
-// alias #12.2
+// production #12
+publicConstDeclaration :	
+    ( '[' constBindableIdent ']' )? Ident '=' constExpression
+    ;
+
+// alias #12.1
 constBindableIdent : /* Ident */ TSIG | TEXP
     {} /* make ANTLRworks display separate branches */
     ;
 
+// alias #12.2
+constExpression : expression ; /* no type identifiers */
+
 // production #13
-constantDeclaration :	
-    Ident '=' constExpression /* no type identifiers */
+publicTypeDeclaration :
+    Ident '=' ( type | OPAQUE recordType? )
     ;
 
-// alias #13.1
-constExpression : expression ;
-
-
-// *** Type Declarations ***
-
 // production #14
+declaration :
+    CONST ( Ident '=' constExpression ';' )+ |
+    TYPE ( Ident '=' type ';' )+ |
+    VAR ( variableDeclaration ';' )+ |
+    procedureHeader ';' block Ident ';'
+    ;
+
+
+// *** Types ***
+
+// production #15
 type :
     (( ALIAS | range ) OF )? typeIdent | enumerationType |
     arrayType | recordType | setType | pointerType | procedureType
     ;
 
-// alias 14.1
+// alias 15.1
 typeIdent : qualident ;
 
-// production #15
+// production #16
 range :
     '[' constExpression '..' constExpression ']'
     ;
 
-// production #16
+// production #17
 enumerationType :
     '(' ( '+' enumBaseType ',' )? identList ')'
     ;
 
-// alias 16.1
+// alias 17.1
 enumBaseType : typeIdent ;
 
-// production #17
+// production #18
 arrayType :
     ( ARRAY componentCount ( ',' componentCount )* |
       ASSOCIATIVE ARRAY ) OF typeIdent
     ;
 
-// alias #17.1
+// alias #18.1
 componentCount : constExpression ;
 
-// production #18
+// production #19
 recordType :
     RECORD ( fieldList ( ';' fieldList )* indeterminateField? |
     '(' baseType ')' fieldList ( ';' fieldList )* ) END
     ;
 
-// aliase #18.1
+// aliase #19.1
 fieldList : variableDeclaration ;
 
-// aliase #18.2
+// aliase #19.2
 baseType : typeIdent ;
 
-// production #19
+// production #20
 indeterminateField :
     INDETERMINATE Ident ':' ARRAY discriminantField OF typeIdent
     ;
 
-// alias #19.1
+// alias #20.1
 discriminantField : Ident ;
 
-// production #20
+// production #21
 setType :	
     SET OF ( enumBaseType | '(' identList ')' )
     ;
 
-// production #21
+// production #22
 pointerType :
     POINTER TO CONST? typeIdent
     ;
 
-// production #22
+// production #23
 procedureType :
     PROCEDURE
     ( '(' formalTypeList ')' )?
     ( ':' returnedType )?
     ;
 
-// alias #22.1
+// alias #23.1
 returnedType : typeIdent ;
 
-// production #23
+// production #24
 formalTypeList :
     formalType ( ',' formalType )*
     ;
 
-// production #24
+// production #25
 formalType :
     attributedFormalType | variadicFormalType
     ;
 
-// production #25
+// production #26
 attributedFormalType :
     ( CONST | VAR {})? simpleFormalType
     ;
 
-// production #26
+// production #27
 simpleFormalType :
     CAST? ARRAY OF typeIdent
     ;
 
-// production #27
+// production #28
 variadicFormalType :
     VARIADIC OF
     ( attributedFormalType |
@@ -383,17 +388,12 @@ variadicFormalType :
 
 // *** Variable Declarations ***
 
-// production #28
+// production #29
 variableDeclaration :
     identList ':' ( range OF )? typeIdent
     ;
 
-// *** Procedure Declarations ***
-
-// production #29
-procedureDeclaration :
-    procedureHeader ';' block Ident
-    ;
+// *** Procedures ***
 
 // production #30
 procedureHeader :
