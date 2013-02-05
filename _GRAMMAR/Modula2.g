@@ -183,7 +183,7 @@ definitionOfModule :
 blueprint :
     BLUEPRINT blueprintIdent '[' requiredConformance ']' ';'
     ( PLACEHOLDERS identList ';' )?
-    requiredTypeDefinition ';'
+    requiredTypeDeclaration ';'
     ( requiredBinding ';' )*
     END blueprintIdent '.'
     ;
@@ -198,36 +198,9 @@ requiredConformance : blueprintIdent ;
 requiredBinding : procedureHeader ;
 
 
+// *** Import Lists, Blocks, Definitions and Declarations ***
+
 // production #5
-requiredTypeDefinition :
-    TYPE typeIdent '='
-    permittedTypeDefinition ( '|' permittedTypeDefinition )*
-    ( ':=' protoliteral ( '|' protoliteral )* )?
-    ;
-
-// production #6
-permittedTypeDefinition :
-    RECORD | OPAQUE RECORD?
-    ;
-
-// production #7
-protoliteral :
-    simpleProtoliteral | structuredProtoliteral
-    ;
-
-// alias #7.1
-simpleProtoliteral : Ident ; /* CHAR, INTEGER or REAL */
-
-// production #8
-structuredProtoliteral :
-    '{' ( VARIADIC OF simpleProtoliteral ( ',' simpleProtoliteral )* |
-    structuredProtoliteral ( ',' structuredProtoliteral )* ) '}'
-    ;
-
-
-// *** Import Lists, Blocks, Declarations and Definitions ***
-
-// production #9
 importList :
     ( IMPORT moduleIdent '+'? ( ',' moduleIdent '+'? )* |
       FROM moduleIdent IMPORT ( identList | '*' ) ) ';'
@@ -245,13 +218,13 @@ importListWithAlias :
     ;
 */
 
-// production #10
+// production #6
 block :
     declaration*
     ( BEGIN statementSequence )? END
     ;
 
-// production #11
+// production #7
 definition :
     CONST (  publicConstDeclaration ';' )+ |
     TYPE ( publicTypeDeclaration ';' )+ |
@@ -259,30 +232,56 @@ definition :
     procedureHeader ';'
     ;
 
-// production #12
+// production #8
 publicConstDeclaration :	
     ( '[' constBindableIdent ']' )? Ident '=' constExpression
     ;
 
-// alias #12.1
+// alias #8.1
 constBindableIdent : /* Ident */ TSIG | TEXP
     {} /* make ANTLRworks display separate branches */
     ;
 
-// alias #12.2
+// alias #8.2
 constExpression : expression ; /* no type identifiers */
 
-// production #13
+// production #9
 publicTypeDeclaration :
     Ident '=' ( type | OPAQUE recordType? )
     ;
 
-// production #14
+// production #10
 declaration :
     CONST ( Ident '=' constExpression ';' )+ |
     TYPE ( Ident '=' type ';' )+ |
     VAR ( variableDeclaration ';' )+ |
     procedureHeader ';' block Ident ';'
+    ;
+
+// production #11
+requiredTypeDeclaration :
+    TYPE typeIdent '='
+    permittedTypeDeclaration ( '|' permittedTypeDeclaration )*
+    ( ':=' protoliteral ( '|' protoliteral )* )?
+    ;
+
+// production #12
+permittedTypeDeclaration :
+    RECORD | OPAQUE RECORD?
+    ;
+
+// production #13
+protoliteral :
+    simpleProtoliteral | structuredProtoliteral
+    ;
+
+// alias #13.1
+simpleProtoliteral : Ident ; /* CHAR, INTEGER or REAL */
+
+// production #14
+structuredProtoliteral :
+    '{' ( VARIADIC OF simpleProtoliteral ( ',' simpleProtoliteral )* |
+    structuredProtoliteral ( ',' structuredProtoliteral )* ) '}'
     ;
 
 
@@ -333,11 +332,11 @@ baseType : typeIdent ;
 
 // production #20
 indeterminateField :
-    INDETERMINATE Ident ':' ARRAY discriminantField OF typeIdent
+    INDETERMINATE Ident ':' ARRAY discriminantFieldIdent OF typeIdent
     ;
 
 // alias #20.1
-discriminantField : Ident ;
+discriminantFieldIdent : Ident ;
 
 // production #21
 setType :	

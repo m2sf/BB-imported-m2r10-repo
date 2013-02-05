@@ -180,7 +180,7 @@ lappend non_terminals definitionOfModule {
 lappend non_terminals blueprint {
   stack
     {line BLUEPRINT blueprintIdent {opt [ requiredConformance ]} ;}
-    {line {opt PLACEHOLDERS identList ;} requiredTypeDefinition ;}
+    {line {opt PLACEHOLDERS identList ;} requiredTypeDeclaration ;}
     {line {loop nil {nil requiredBinding ;}} END blueprintIdent .}
 }
 
@@ -199,38 +199,7 @@ lappend non_terminals requiredBinding {
   line procedureHeader
 }
 
-# (5) Required Type Definition
-lappend non_terminals requiredTypeDefinition {
-  line TYPE typeIdent =
-    {loop permittedTypeDefinition |} {opt := {loop protoliteral |}}
-}
-
-# (6) Permitted Type Definition
-lappend non_terminals permittedTypeDefinition {
-  or RECORD { line OPAQUE {optx RECORD}}
-}
-
-# (7) Proto Literal
-lappend non_terminals protoliteral {
-  or simpleProtoliteral structuredProtoliteral
-}
-
-# (7.1) Simple Proto Literal
-lappend non_terminals simpleProtoliteral {
-  or /CHAR /INTEGER /REAL
-}
-
-# (8) Structured Proto Literal
-lappend non_terminals structuredProtoliteral {
-  line LBRACE {
-    or
-      {line VARIADIC OF {loop simpleProtoliteral ,}}
-      {line structuredProtoliteral {loop {line , structuredProtoliteral} {}}}
-  }
-  RBRACE
-}
-
-# (9) Import List
+# (5) Import List
 lappend non_terminals importList {
   line {
     or
@@ -244,13 +213,13 @@ lappend non_terminals importList {
   } ;
 }
 
-# (10) Block
+# (6) Block
 lappend non_terminals block {
   line {loop nil {nil declaration nil}}
   {opt BEGIN statementSequence} END
 }
 
-# (11) Definition
+# (7) Definition
 lappend non_terminals definition {
   line {
     or
@@ -261,27 +230,27 @@ lappend non_terminals definition {
   }
 }
 
-# (12) Public Constant Declaration
+# (8) Public Constant Declaration
 lappend non_terminals publicConstDeclaration {
   line {optx [ constBindableIdent ]} Ident = constExpression
 }
 
-# (12.1) CONST Bindable Identifiers
+# (8.1) CONST Bindable Identifiers
 lappend non_terminals constBindableIdent {
   or /TSIG /TEXP
 }
 
-# (12.2) Constant Expression
+# (8.2) Constant Expression
 lappend non_terminals constExpression {
   line expression
 }
 
-# (13) Public Type Declaration
+# (9) Public Type Declaration
 lappend non_terminals publicTypeDeclaration {
   line Ident = {or type {line OPAQUE {optx recordType}}}
 }
 
-# (14) Declaration
+# (10) Declaration
 lappend non_terminals declaration {
   line {
     or
@@ -290,6 +259,37 @@ lappend non_terminals declaration {
       {line VAR {loop {line variableDeclaration ;} {}} }
       {line procedureHeader ; block Ident ;}
   }
+}
+
+# (11) Required Type Declaration
+lappend non_terminals requiredTypeDeclaration {
+  line TYPE typeIdent =
+    {loop permittedTypeDeclaration |} {opt := {loop protoliteral |}}
+}
+
+# (12) Permitted Type Declaration
+lappend non_terminals permittedTypeDeclaration {
+  or RECORD { line OPAQUE {optx RECORD}}
+}
+
+# (13) Proto Literal
+lappend non_terminals protoliteral {
+  or simpleProtoliteral structuredProtoliteral
+}
+
+# (13.1) Simple Proto Literal
+lappend non_terminals simpleProtoliteral {
+  or /CHAR /INTEGER /REAL
+}
+
+# (14) Structured Proto Literal
+lappend non_terminals structuredProtoliteral {
+  line LBRACE {
+    or
+      {line VARIADIC OF {loop simpleProtoliteral ,}}
+      {line structuredProtoliteral {loop {line , structuredProtoliteral} {}}}
+  }
+  RBRACE
 }
 
 # (15) Type
@@ -363,12 +363,12 @@ lappend non_terminals baseType {
 
 # (20) Indeterminate Field Declaration
 lappend non_terminals indeterminateField {
-  line INDETERMINATE Ident : ARRAY discriminantField OF typeIdent
+  line INDETERMINATE Ident : ARRAY discriminantFieldIdent OF typeIdent
 }
 
 
-# (20.1) Discriminant Field
-lappend non_terminals discriminantField {
+# (20.1) Discriminant Field Identifier
+lappend non_terminals discriminantFieldIdent {
   line Ident
 }
 
