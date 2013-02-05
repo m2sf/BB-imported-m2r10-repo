@@ -27,6 +27,9 @@ o  Specification
 
 https://bitbucket.org/trijezdci/m2r10/src/tip/_LANGUAGE/M2R10.Specification.Snapshot.pdf
 
+o  Compiler Roadmap
+
+https://bitbucket.org/trijezdci/m2r10/src/tip/_REFERENCE_COMPILER/M2R10CompilerRoadmap.txt
 
 * About Classic Modula-2 *
 
@@ -71,4 +74,4 @@ quality implementation and cannot be rushed.  Consequently,  there is no fixed
 schedule for the completion of the project.  It will take as long as it takes.
 
 
-(status: Dec 15, 2012)
+(status: Jan 30, 2012)
