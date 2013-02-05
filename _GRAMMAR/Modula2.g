@@ -306,6 +306,17 @@ enumerationType :
     '(' ( '+' enumBaseType ',' )? identList ')'
     ;
 
+/* Enumeration with experimental constant qualifier
+   TYPE Foo = ( CONST foo, bar, baz ) would define each of the enumerated
+   values also as constants in the module so that they could be qualified
+   simply with the module name if the module is imported qualified.
+   requires further deliberation
+   
+enumTypeWithConst :
+    '(' CONST? ( '+' enumBaseType ',' )? identList ')'
+    ;
+*/
+
 // alias 17.1
 enumBaseType : typeIdent ;
 
