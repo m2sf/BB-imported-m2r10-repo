@@ -1,11 +1,11 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE SYSTEM;
+DEFINITION MODULE UNSAFE;
 
-(* Pseudo-module for Access to System Dependent Resources *)
+(* Pseudo-module for Access to Unsafe or Non-Portable Features *)
 
 
-(* implementation defined types *)
+(* Implementation defined types *)
 
 CONST
     OctetsPerByte = <implementation defined value>;
@@ -25,7 +25,7 @@ TYPE
     END; (* WORD *)
 
 
-(* target dependent machine types *)
+(* Target dependent machine types *)
 
 CONST
     BitsPerMachineByte = <target dependent value>;
@@ -48,7 +48,7 @@ TYPE
     ADDRESS; (* target dependent machine address *)
 
 
-(* information about the target architecture *)
+(* Information about the target architecture *)
 
 CONST
     TargetName =  <target dependent string value>;
@@ -73,7 +73,7 @@ CONST
       (* TRUE if the target is bi-endian, otherwise FALSE *)
 
 
-(* General system level facilities *)
+(* General low-level facilities *)
 
 PROCEDURE ADR( var : <AnyType> ) : ADDRESS;
 (* Returns the address of variable var. *)
@@ -128,7 +128,6 @@ PROCEDURE FETCHSUB( VAR x : <AnyType>; y : <AnyType> ) : TypeOf(x);
 (* Atomically subtracts operand y from operand x and returns the prior value
    of x,  ignoring overflow.  The bitwidths of the operand types must match.
    The bit pattern of y is interpreted as an unsigned number. *)
-
 
 
 (* Shift operations *)
@@ -199,24 +198,6 @@ PROCEDURE CSBITS( x : <AnyType> ) : CARDINAL;
 (* Counts and returns the number of set bits in x. *)
 
 
-(* Pseudo-types for unsafe interfacing to foreign variadic functions *)
-
-TYPE FFIVARARGCOUNT;
-(* A parameter  of type  FFIVARARGCOUNT  may be  declared  within  the formal
-   parameter list of an interface definition for a variadic foreign function.
-   It denotes the actual parameter count passed in  for a formal parameter of
-   type FFIVARARGLIST.  It may  only  be used in combination with pragma FFI.
-   This type is a pseudo-type, it cannot be used for any other purpose. *)
-
-
-TYPE FFIVARARGLIST;
-(* A parameter  of type  FFIVARARGLIST  may  be  declared  within  the formal
-   parameter list of an interface definition for a variadic foreign function.
-   It denotes the untyped variadic argument list of the foreign function  and
-   it may  only  be  used  in combination  with  pragma FFI.  This type  is a
-   pseudo-type, it cannot be used for any other purpose. *)
-
-
 (* Miscellaneous *)
 
 PROCEDURE BAIL( (* OPT *) x : <AnyType> );
@@ -227,4 +208,40 @@ PROCEDURE HALT( status : <OrdinalType> );
 (* Immediately aborts the running program and passes a status code to the
    operating environment, status codes are target platform dependent. *)
 
-END SYSTEM.
+
+(* Optional facilities *)
+
+
+(* Pseudo-constants for enabling unsafe or non-portable pragmas *)
+
+CONST FFI; (* only available if pragma FFI is supported *)
+(* Import of constant FFI  enables pragma FFI  within the importing module.
+   Constant has no value, cannot be used for any purpose other than import. *)
+
+CONST ADDR; (* only available if pragma ADDR is supported *)
+(* Import of constant ADDR enables pragma ADDR within the importing module.
+   Constant has no value, cannot be used for any purpose other than import. *)
+
+CONST REG; (* only available if pragma REG is supported *)
+(* Import of constant REG  enables pragma REG  within the importing module.
+   Constant has no value, cannot be used for any purpose other than import. *)
+
+
+(* Pseudo-types for unsafe interfacing to foreign variadic functions *)
+
+TYPE FFIVARARGCOUNT; (* only available if pragma FFI is supported *)
+(* A parameter  of type  FFIVARARGCOUNT  may be  declared  within  the formal
+   parameter list of an interface definition for a variadic foreign function.
+   It denotes the actual parameter count passed in  for a formal parameter of
+   type FFIVARARGLIST.  It may  only  be used in combination with pragma FFI.
+   This type is a pseudo-type, it cannot be used for any other purpose. *)
+
+TYPE FFIVARARGLIST; (* only available if pragma FFI is supported *)
+(* A parameter  of type  FFIVARARGLIST  may  be  declared  within  the formal
+   parameter list of an interface definition for a variadic foreign function.
+   It denotes the untyped variadic argument list of the foreign function  and
+   it may  only  be  used  in combination  with  pragma FFI.  This type  is a
+   pseudo-type, it cannot be used for any other purpose. *)
+
+
+END UNSAFE.
