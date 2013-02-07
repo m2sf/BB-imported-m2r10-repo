@@ -87,7 +87,7 @@ PROCEDURE CAST( <AnyTargetTypeIdentifier>; val : <AnyType> ) : <TargetType>;
 
 TYPE INTRINSIC = ( ADD, SUB, ADDC, SUBC, FETCHADD, FETCHSUB,
                    SHL, SHR, ASHR, ROTL, ROTR, ROTLC, ROTRC,
-                   BWNOT, BWOR, BWXOR, BWNAND, BWNOR,
+                   BWNOT, BWAND, BWOR, BWXOR, BWNAND, BWNOR,
                    SETBIT, TESTBIT, LSBIT, MSBIT, CSBITS);
 
 PROCEDURE AVAIL( intrinsic : INTRINSIC; bitwidth : CARDINAL ) : BOOLEAN;
