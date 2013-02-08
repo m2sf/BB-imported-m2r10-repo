@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Jan 30, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Feb 8, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -837,8 +837,8 @@ IdentTailChar :
 NumericLiteral :
     /* number literals starting with digit 0 ... */
     '0' (
-        /* without prefix are decimal numbers */
-        DecimalNumberTail |
+        /* without prefix are real numbers */
+        RealNumberTail |
         /* with prefix 0b are base-2 numbers */
         'b' Base2DigitSeq |
         /* with prefix 0x are base-16 numbers */
@@ -852,25 +852,30 @@ NumericLiteral :
 
 fragment /* #3.1 */
 DecimalNumberTail :
-    DigitSep? DigitSeq ( '.' DigitSeq ( 'e' ( '+' | '-' {})? DigitSeq )? )?
+    DigitSep? DigitSeq RealNumberTail?
     ;
 
 fragment /* #3.2 */
+RealNumberTail :
+    '.' DigitSeq ( 'e' ( '+' | '-' {})? DigitSeq )?
+    ;
+
+fragment /* #3.3 */
 DigitSeq :
     Digit+ ( DigitSep Digit+ )*
     ;
 
-fragment /* #3.3 */
+fragment /* #3.4 */
 Base2DigitSeq :
     Base2Digit+ ( DigitSep Base2Digit+ )*
     ;
 
-fragment /* #3.4 */
+fragment /* #3.5 */
 Base16DigitSeq :
     Base16Digit+ ( DigitSep Base16Digit+ )*
     ;
 
-fragment /* #3.5 */
+fragment /* #3.6 */
 DigitSep : SINGLE_QUOTE {} /* make ANTLRworks display name, not literal */ ;
 
 // production #4
@@ -978,7 +983,7 @@ Comment :
 // production #4
 fragment
 EndOfLine :
-    ( ASCII_LF ASCII_CR? | ASCII_CR ASCII_LF? )
+    ASCII_LF | ASCII_CR (ASCII_LF{})?
     ;
 
 // END OF FILE

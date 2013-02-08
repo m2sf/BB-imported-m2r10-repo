@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Jan 30, 2013
+# Syntax diagram generator for Modula-2 (R10), status Feb 8, 2013
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -721,7 +721,7 @@ lappend terminals NumericLiteral {
     {line 0 {
       or
         {}
-        DecimalNumberTail
+        RealNumberTail
         {line /b Base2DigitSeq }
         {line /x Base16DigitSeq }
         {line /u Base16DigitSeq }
@@ -731,37 +731,40 @@ lappend terminals NumericLiteral {
 
 # (3.1) Decimal Number Tail
 lappend terminals DecimalNumberTail {
-  line
-    {opt SINGLE_QUOTE} DigitSeq
-    {optx . DigitSeq {optx /e {or {} + -} DigitSeq }}
+  line {optx SINGLE_QUOTE} DigitSeq {optx RealNumberTail}
 }
 
-# (3.2) Digit Sequence
+# (3.2) Real Number Tail
+lappend terminals RealNumberTail {
+  line . DigitSeq {optx /e {or {} + -} DigitSeq }
+}
+
+# (3.3) Digit Sequence
 lappend terminals DigitSeq {
   loop DigitGroup SINGLE_QUOTE
 }
 
-# (3.2b) Digit Group
+# (3.3b) Digit Group
 lappend terminals DigitGroup {
   loop Digit {}
 }
 
-# (3.3) Base-2 Digit Sequence
+# (3.4) Base-2 Digit Sequence
 lappend terminals Base2DigitSeq {
   loop Base2DigitGroup SINGLE_QUOTE
 }
 
-# (3.3b) Base-2 Digit Group
+# (3.4b) Base-2 Digit Group
 lappend terminals Base2DigitGroup {
   loop Base2Digit {}
 }
 
-# (3.4) Base-16 Digit Sequence
+# (3.5) Base-16 Digit Sequence
 lappend terminals Base16DigitSeq {
   loop Base16DigitGroup SINGLE_QUOTE
 }
 
-# (3.4b) Base-16 Digit Group
+# (3.5b) Base-16 Digit Group
 lappend terminals Base16DigitGroup {
   loop Base16Digit {}
 }
@@ -857,7 +860,7 @@ lappend ignore_symbols CommentCharacter {
 # (4) End-Of-Line Marker
 lappend ignore_symbols EndOfLine {
   or
-    {line ASCII_LF {optx ASCII_CR}}
+    {line ASCII_LF}
     {line ASCII_CR {optx ASCII_LF}}
 }
 
