@@ -5,7 +5,7 @@
  *
  *  @b Author: Benjamin Kowarsch, Roel Messiant
  *
- *  @b Copyright: (C) 2010 B.Kowarsch, R.Messiant. All rights reserved.
+ *  @b Copyright: (C) 2010-2013 B.Kowarsch, R.Messiant. All rights reserved.
  *
  *  @b License:
  *
@@ -13,7 +13,7 @@
  *  purpose of supporting the effort by the licensor  to implement a reference
  *  compiler for  Modula-2 R10.  It is not permissible under any circumstances
  *  to  use the software  for the purpose  of creating derivative languages or 
- *  dialects.  This permission is valid until 31 December 2010, 24:00h GMT.
+ *  dialects.  This permission is valid until 31 December 2013, 24:00h GMT.
  *
  *  Future licensing:
  *
@@ -204,16 +204,16 @@ m2_file_type_t m2_fileio_file_type(m2_file_t file) {
 
 
 // ---------------------------------------------------------------------------
-// function:  m2_fileio_read(file, codepoint)
+// function:  m2_fileio_read(file)
 // ---------------------------------------------------------------------------
 //
-// Reads one octet of data at the current position of <file>, passes it back
-// in <codepoint> and advances the read/write position of <file> by one.
-
+// Reads  one octet  of data  at the  current position  of <file>,  returns it
+// and advances the read/write position of <file> by one.
+//
 // Reads one character from the input stream of <file>  and  returns it.  The
 // file's coloumn counter is incremented.  Returns linefeed (ASCII LF) if any
-// of linefeed (ASCII LF)  or carriage return (ASCII CR)  or  a combination of
-// CR and LF (CRLF or LFCR) is read.  If LF is returned,  the  file's coloumn
+// of linefeed (ASCII LF)  or carriage return (ASCII CR)  or  the sequence of
+// CR and LF (CRLF) is read.  If LF is returned,  the  file's coloumn
 // counter is reset and its line counter is incremented.
 //
 // pre-conditions:
@@ -239,13 +239,21 @@ int m2_fileio_read(m2_file_t file) {
         this_file->position.col = 1;
         this_file->position.line++;
     }
-    // handle CRLF and CR style end-of-line
+    // for badly designed operating systems
+    // handle CR and CRLF style end-of-line
     else if (c == ASCII_CR) {
         this_file->position.col = 1;
         this_file->position.line++;
+        // check if CR is followed by LF
         c = getc(this_file->handle);
         if (c != NEWLINE) {
-            ungetc(c, this_file->handle);
+            // if following char was not LF
+            // push it back into read buffer
+            if (ungetc(c, this_file->handle) != c) {
+                // if push back was unsuccessful
+                // step back by one char in the file
+                fseek(this_file->handle, -1, SEEK_CUR);
+            } // end if
         } // end if
         c = NEWLINE;
     }
@@ -253,7 +261,7 @@ int m2_fileio_read(m2_file_t file) {
     else if (c == EOF) {
         // set end-of-file flag if end-of-file reached
         this_file->end_of_file = (feof(this_file->handle) == true);
-        c = 0;
+        c = 0; // then return 0 instead
     }
     else /* any other characters */ {
         // increment row counter
@@ -270,13 +278,9 @@ int m2_fileio_read(m2_file_t file) {
 
 
 // ---------------------------------------------------------------------------
-// function:  m2_fileio_lookahead(file, codepoint)
+// function:  m2_fileio_lookahead(file)
 // ---------------------------------------------------------------------------
 //
-// Passes in <codepoint> the octet  that is going to be read next  by function
-// m2_fileio_read().  This function does not update the read/write position of
-// <file>.
-
 // Returns the lookahead character in the input stream of <file>  and returns
 // it without incrementing the file pointer  and  without changing the file's
 // coloumn and line counters.
@@ -293,22 +297,80 @@ int m2_fileio_read(m2_file_t file) {
 int m2_fileio_lookahead(m2_file_t file) {
     m2_file_s *this_file = (m2_file_s *) file;
     register int c;
-    register int status;
     
     c = getc(this_file->handle);
     
-    status = ungetc(c, this_file->handle);
-    if (status != EOF) {
-        this_file->end_of_file = false;
+    if (c != EOF) {
+        // push back char into read buffer
+        if (ungetc(c, this_file->handle) != c) {
+            // if push back was unsuccessful
+            // step back by one char in the file
+            fseek(this_file->handle, -1, SEEK_CUR);
+        }
     }
     else {
-        this_file->end_of_file = true;
-        c = 0;
+        // there is no point in pushing back the read char
+        // as the next call to getc() will return EOF anyway
+        c = 0; // return 0 instead of EOF
     } // end if
     
     // pass lookahead character
     return c;
 } // end m2_fileio_lookahead
+
+
+// ---------------------------------------------------------------------------
+// function:  m2_fileio_lookahead2(file)
+// ---------------------------------------------------------------------------
+//
+// Returns the  second  lookahead character in the input stream of <file> and
+// returns it without incrementing the file pointer  and without changing the
+// file's coloumn and line counters.
+//
+// pre-conditions:
+//  o  file is an initialised lexer object
+//
+// post-conditions:
+//  o  position counters remain unchanged
+//
+// return-value:
+//  o  second lookahead character is returned
+
+int m2_fileio_lookahead2(m2_file_t file) {
+    m2_file_s *this_file = (m2_file_s *) file;
+    int c, backtrack;
+    
+    backtrack = 0;
+    
+    // read the lookahead char
+    c = getc(this_file->handle);
+    if (c != EOF) {
+        backtrack--;
+        // read the second lookahead char
+        c = getc(this_file->handle);
+        if (c != EOF) {
+            backtrack--;
+        }
+        else {
+            // return 0 instead of EOF
+            c = 0;
+        } // end if
+    }
+    else {
+        // return 0 instead of EOF
+        c = 0;
+    } // end if
+    
+    if (backtrack != 0) {
+        // POSIX only guarantees one consecutive push back
+        // therefore we use fseek to undo previous reads
+        // this is more expensive but safe and portable
+        fseek(this_file->handle, backtrack, SEEK_CUR);
+    } // end if
+            
+    // pass second lookahead char
+    return c;
+} // end m2_fileio_lookahead2
 
 
 // ---------------------------------------------------------------------------
