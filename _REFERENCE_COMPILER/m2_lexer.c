@@ -13,7 +13,7 @@
  *  purpose of supporting the effort by the licensor  to implement a reference
  *  compiler for  Modula-2 R10.  It is not permissible under any circumstances
  *  to  use the software  for the purpose  of creating derivative languages or 
- *  dialects.  This permission is valid until 31 December 2010, 24:00h GMT.
+ *  dialects.  This permission is valid until 31 December 2013, 24:00h GMT.
  *
  *  Future licensing:
  *
@@ -135,6 +135,7 @@ static fmacro uchar_t skip_pragma(m2_lexer_s *lexer); /* FORWARD */
 
 #define readchar(v) m2_fileio_read(this_lexer->source_file) // v = void
 #define nextchar(v) m2_fileio_lookahead(this_lexer->source_file) // v = void
+#define la2(v) m2_fileio_lookahead2(this_lexer->source_file) // v = void
 
 // ---------------------------------------------------------------------------
 // function:  m2_new_lexer(infile, lextab, status)
@@ -598,6 +599,7 @@ void m2_dispose_lexer(m2_lexer_t lexer,
 
 #undef readchar
 #undef nextchar
+#undef la2
 
 
 // ===========================================================================
@@ -610,6 +612,7 @@ void m2_dispose_lexer(m2_lexer_t lexer,
 
 #define readchar(v) m2_fileio_read(lexer->source_file) // v = void
 #define nextchar(v) m2_fileio_lookahead(lexer->source_file) // v = void
+#define la2(v) m2_fileio_lookahead2(lexer->source_file) // v = void
 
 
 // ---------------------------------------------------------------------------
@@ -697,7 +700,7 @@ static fmacro uchar_t get_ident(m2_lexer_s *lexer) {
 
 
 // ---------------------------------------------------------------------------
-// private function:  get_numeric_literal(lexer)
+// private function:  OLD_get_numeric_literal(lexer)
 // ---------------------------------------------------------------------------
 //
 // Reads a  numeric literal  from the input stream of <lexer>  and returns the
@@ -743,7 +746,7 @@ static fmacro uchar_t get_ident(m2_lexer_s *lexer) {
 //     - M2_LEXER_STATUS_MALFORMED_NUMBER if illegal characters are found.
 //  o  the new lookahead character is the offending character.
 
-static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer) {
+static fmacro uchar_t OLD_get_numeric_literal(m2_lexer_s *lexer) {
     uchar_t ch;
     uchar_t last_digit;
     cardinal non_decimal_digits = 0;
@@ -843,6 +846,146 @@ static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer) {
         lexer->lexkey = 0;
         lexer->token = TOKEN_ILLEGAL_CHARACTER;
     }
+    
+    return ch;
+} // end OLD_get_numeric_literal
+
+
+// ---------------------------------------------------------------------------
+// private function:  get_numeric_literal(lexer)
+// ---------------------------------------------------------------------------
+//
+// Reads a  numeric literal  from the input stream of <lexer>  and returns the
+// character following the literal.
+//
+// This function accepts input conforming to the following syntax:
+//
+//  NumericLiteral :=
+//    "0" ( DecimalNumberTail | "b" Base2DigitSeq |
+//          "x" Base16DigitSeq | "u" Base16DigitSeq )? |
+//    "1".."9" DecimalNumberTail? ;
+//  DecimalNumberTail :=
+//    DigitSep? DigitSeq ( "." DigitSeq ( "e" ( "+" | "-" )? DigitSeq )? )? ;
+//  DigitSeq :=
+//    Digit+ ( DigitSep Digit+ )* ;
+//  Base2DigitSeq :=
+//    Base2Digit+ ( DigitSep Base2Digit+ )* ;
+//  Base16DigitSeq :=
+//    Base16Digit+ ( DigitSep Base16Digit+ )* ;
+//  Digit :=
+//    Base2Digit | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+//  Base2Digit :=
+//    "0" | "1" ;
+//  Base16Digit :=
+//    Digit | "A" | "B" | "C" | "D" | "E" | "F" ;
+//  DigitSep := "'" ;
+//
+// pre-conditions:
+//  o  lexer is an initialised lexer object
+//  o  the current lookahead character is the first digit of the literal.
+//  o  the literal is well-formed, conforming to the syntax given above.
+//
+// post-conditions:
+//  o  lexer->lexeme.string contains the literal,
+//     followed by a C string terminator (ASCII NUL).
+//  o  lexer->lexeme.length contains the length of lexer->lexeme.string.
+//  o  lexer->token contains TOKEN_NUMERIC_LITERAL.
+//  o  lexer->lexkey contains the key for the lexeme table.
+//  o  lexer->status contains M2_LEXER_STATUS_SUCCESS.
+//  o  the new lookahead character is the character following the literal.
+//
+// error-conditions:
+//  o  lexer->lexeme.string contains the part of the literal before the
+//     offending character, followed by a C string terminator (ASCII NUL).
+//  o  lexer->lexeme.length contains the length of lexer->lexeme.string.
+//  o  lexer->token contains TOKEN_ILLEGAL_CHARACTER.
+//  o  lexer->lexkey contains 0.
+//  o  lexer->offending_char contains the offending character.
+//  o  lexer->offending_char_pos contains the position of the offending char.
+//  o  lexer->status contains
+//     - M2_LEXER_STATUS_LITERAL_TOO_LONG if maximum length is exceeded,
+//     - M2_LEXER_STATUS_MALFORMED_NUMBER if illegal characters are found.
+//  o  the new lookahead character is the offending character.
+
+static fmacro uchar_t get_numeric_literal(m2_lexer_s *lexer) {
+    uchar_t ch;
+    
+    lexer->status = M2_LEXER_STATUS_SUCCESS;
+        
+    // read the first digit
+    ch = readchar();
+    lexer->lexeme.string[0] = ch;
+    lexer->lexeme.length++;
+    lexer->lexkey = HASH_NEXT_CHAR(lexer->lexkey, ch);
+    
+    // literal starts with zero
+    if (ch == DIGIT_ZERO) {
+        ch = nextchar();
+        
+        if (ch == DOT) {
+            ch = la2();
+            
+            if (ch != DOT) {
+                // literal is a real number
+                ch = get_real_number_tail(lexer);
+            }
+            else /* double dot */ {
+                // literal is single-digit zero
+                lexer->lexeme.string[1] = CSTRING_TERMINATOR;
+            } // end if
+        }
+        else if (ch == LOWERCASE_B) {
+            // literal is a base-2 number
+            ch = get_base2_digit_seq(lexer);
+        }
+        else if (ch == LOWERCASE_X) {
+            // literal is a base-16 number
+            ch = get_base16_digit_seq(lexer);
+        }
+        else if (ch == LOWERCASE_U) {
+            // literal is a character code
+            ch = get_base16_digit_seq(lexer);
+        }
+        else if (IS_DIGIT(ch)) {
+            // illegal digits following zero
+            lexer->lexeme.string[1] = CSTRING_TERMINATOR;
+            /* to do : set error conditions */
+        }
+        else {
+            // literal is single-digit zero
+            lexer->lexeme.string[1] = CSTRING_TERMINATOR;
+        }
+    }
+    // literal starts with non-zero digit
+    else if ((ch >= DIGIT_ONE) && (ch <= DIGIT_NINE)) {
+        ch = nextchar();
+        
+        if (ch == DOT) {
+            ch = la2();
+            
+            if (ch != DOT) {
+                // literal is a real number
+                ch = get_real_number_tail(lexer);
+            }
+            else /* double dot */ {
+                // literal is a single-digit integer
+                lexer->lexeme.string[1] = CSTRING_TERMINATOR;
+            } // end if
+        }
+        else if ((IS_DIGIT(ch)) || (ch == SINGLE_QUOTE)) {
+            // literal is a decimal integer or real number
+            ch = get_decimal_number_tail(lexer);
+        }
+        else /* any other char */ {
+            // literal is a single-digit integer
+            lexer->lexeme.string[1] = CSTRING_TERMINATOR;
+        } // end if
+    }
+    else /* first char not a digit */ {
+        /* to do */
+    } // end if
+    
+    /* to do */
     
     return ch;
 } // end get_numeric_literal
@@ -1249,7 +1392,6 @@ static fmacro bool is_escaped_char(uchar_t ch) {
         case SINGLE_QUOTE :
         case DIGIT_ZERO :
         case LOWERCASE_N :
-        case LOWERCASE_R :
         case LOWERCASE_T :
         case BACKSLASH :
             return true;
@@ -1263,7 +1405,7 @@ static fmacro bool is_escaped_char(uchar_t ch) {
 
 
 // ---------------------------------------------------------------------------
-// private function:  skip_c_comment(lexer)
+// private function:  add_lexeme_to_lextab(lexer)
 // ---------------------------------------------------------------------------
 //
 // Adds the lexer's current lexeme to its accociated lexeme table.
