@@ -820,7 +820,7 @@ ReservedWord :
 
 // production #2
 Ident :
-    IdentLeadChar IdentTailChar*
+    IdentLeadChar IdentTail?
     ;
 
 fragment /* #2.1 */
@@ -829,8 +829,8 @@ IdentLeadChar :
     ;
 
 fragment /* #2.2 */
-IdentTailChar :
-    Letter | '_' | '$' | Digit
+IdentTail:
+    ( IdentLeadChar | Digit )+
     ;
 
 // production #3
@@ -852,7 +852,7 @@ NumericLiteral :
 
 fragment /* #3.1 */
 DecimalNumberTail :
-    DigitSep? DigitSeq RealNumberTail?
+    DigitSep? DigitSeq RealNumberTail? | RealNumberTail
     ;
 
 fragment /* #3.2 */

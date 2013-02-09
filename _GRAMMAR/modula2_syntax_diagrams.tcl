@@ -702,17 +702,17 @@ lappend terminals ReservedWords2 {
 
 # (2) Identifier
 lappend terminals Ident {
-  line IdentLeadChar {optx {loop IdentTailChar {}}}
+  line IdentLeadChar {optx IdentTail}
 }
 
-# (2.1) IdentLeadChar
+# (2.1) Identifier Lead Character
 lappend terminals IdentLeadChar {
   or Letter _ $
 }
 
-# (2.2) IdentTailChar
-lappend terminals IdentTailChar {
-  or IdentLeadChar Digit
+# (2.2) Identifier Tail
+lappend terminals IdentTail {
+  loop {or IdentLeadChar Digit} {}
 }
 
 # (3) Numeric Literal
@@ -726,12 +726,14 @@ lappend terminals NumericLiteral {
         {line /x Base16DigitSeq }
         {line /u Base16DigitSeq }
       }}
-    {line 1..9 {optx DecimalNumberTail} }
+    {line 1..9 {optx DecimalNumberTail}}
 }
 
 # (3.1) Decimal Number Tail
 lappend terminals DecimalNumberTail {
-  line {optx SINGLE_QUOTE} DigitSeq {optx RealNumberTail}
+  or
+   {line {optx SINGLE_QUOTE} DigitSeq {optx RealNumberTail}}
+   RealNumberTail
 }
 
 # (3.2) Real Number Tail
