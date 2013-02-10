@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Feb 8, 2013
+# Syntax diagram generator for Modula-2 (R10), status Feb 10, 2013
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -771,6 +771,21 @@ lappend terminals Base16DigitGroup {
   loop Base16Digit {}
 }
 
+# (3.6) Digit
+lappend terminals Digit {
+  or Base2Digit 2 3 4 5 6 7 8 9
+}
+
+# (3.7) Base-16 Digit
+lappend terminals Base16Digit {
+  or Digit /A /B /C /D /E /F
+}
+
+# (3.8) Base-2 Digit
+lappend terminals Base2Digit {
+  or 0 1
+}
+
 # (4) String Literal
 lappend terminals StringLiteral {
   or SingleQuotedString DoubleQuotedString
@@ -779,53 +794,48 @@ lappend terminals StringLiteral {
 # (4.1) Single Quoted String
 lappend terminals SingleQuotedString {
   line SINGLE_QUOTE
-    {optx {loop {or QuotableCharacter DOUBLE_QUOTE} {}}}
+    {optx {loop SingleQuotableCharacter {}}}
   SINGLE_QUOTE
 }
 
 # (4.2) Double Quoted String
 lappend terminals DoubleQuotedString {
   line DOUBLE_QUOTE
-    {optx {loop {or QuotableCharacter SINGLE_QUOTE} {}}}
+    {optx {loop DoubleQuotableCharacter {}}}
   DOUBLE_QUOTE
 }
 
-# (4.3) Quotable Character
-lappend terminals QuotableCharacter {
-  or Digit Letter Space QuotableGraphicChar EscapedCharacter
+# (4.3) Single Quotable Character
+lappend terminals SingleQuotableChar {
+  or Digit Letter Space QuotableGraphicChar SingleQuotableEscChar
 }
 
-# (4.4) Digit
-lappend terminals Digit {
-  or Base2Digit 2 3 4 5 6 7 8 9
+# (4.4) Double Quotable Character
+lappend terminals DoubleQuotableChar {
+  or Digit Letter Space QuotableGraphicChar DoubleQuotableEscChar
 }
 
-# (4.5) Base-2 Digit
-lappend terminals Base2Digit {
-  or 0 1
-}
-
-# (4.6) Base-16 Digit
-lappend terminals Base16Digit {
-  or Digit /A /B /C /D /E /F
-}
-
-# (4.7) Letter
+# (4.5) Letter
 lappend terminals Letter {
   or /A..Z /a..z 
 }
 
-# (4.8) Space
+# (4.6) Space
 # CONST Space = CHR(32);
 
-# (4.9) Quotable Graphic Character
+# (4.7) Quotable Graphic Character
 lappend terminals QuotableGraphicChar {
   or ! # $ % & ( ) * + , - . / : ; < = > ? @ [ ] ^ _ ` LBRACE | RBRACE ~
 }
 
-# (4.10) Escaped Character
-lappend terminals EscapedCharacter {
-  line BACKSLASH {or 0 /n /t BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE}
+# (4.8) Single Quotable Escaped Character
+lappend terminals SingleQuotableEscChar {
+  line BACKSLASH {or 0 /n /t BACKSLASH SINGLE_QUOTE}
+}
+
+# (4.9) Double Quotable Escaped Character
+lappend terminals DoubleQuotableEscChar {
+  line BACKSLASH {or 0 /n /t BACKSLASH DOUBLE_QUOTE}
 }
 
 

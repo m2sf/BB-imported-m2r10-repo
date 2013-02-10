@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Feb 8, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Feb 10, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -876,6 +876,24 @@ Base16DigitSeq :
     ;
 
 fragment /* #3.6 */
+Digit :
+    Base2Digit | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+    {} /* make ANTLRworks display separate branches */
+    ;
+
+fragment /* #3.7 */
+Base16Digit :
+    Digit | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
+    {} /* make ANTLRworks display separate branches */
+    ;
+
+fragment /* #3.8 */
+Base2Digit :
+    '0' | '1'
+    {} /* make ANTLRworks display separate branches */
+    ;
+
+fragment /* #3.9 */
 DigitSep : SINGLE_QUOTE {} /* make ANTLRworks display name, not literal */ ;
 
 // production #4
@@ -885,51 +903,34 @@ StringLiteral :
 
 fragment /* #4.1 */
 SingleQuotedString :
-    SINGLE_QUOTE
-    ( QuotableCharacter | DOUBLE_QUOTE )*
-    SINGLE_QUOTE
+    SINGLE_QUOTE SingleQuotableCharacter* SINGLE_QUOTE
     ;
 
 fragment /* #4.2 */
 DoubleQuotedString :
-    DOUBLE_QUOTE
-    ( QuotableCharacter | SINGLE_QUOTE )*
-    DOUBLE_QUOTE
+    DOUBLE_QUOTE DoubleQuotableCharacter* DOUBLE_QUOTE
     ;
 
 fragment /* #4.3 */
-QuotableCharacter :
-    Digit | Letter | Space | QuotableGraphicChar | EscapedCharacter
+SingleQuotableCharacter :
+    Digit | Letter | Space | QuotableGraphicChar | SingleQuotableEscChar
     ;
 
 fragment /* #4.4 */
-Digit :
-    Base2Digit | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-    {} /* make ANTLRworks display separate branches */
+DoubleQuotableCharacter :
+    Digit | Letter | Space | QuotableGraphicChar | DoubleQuotableEscChar
     ;
 
 fragment /* #4.5 */
-Base2Digit :
-    '0' | '1'
-    {} /* make ANTLRworks display separate branches */
-    ;
-
-fragment /* #4.6 */
-Base16Digit :
-    Digit | 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
-    {} /* make ANTLRworks display separate branches */
-    ;
-
-fragment /* #4.7 */
 Letter :
     'A' .. 'Z' | 'a' .. 'z'
     {} /* make ANTLRworks display separate branches */
     ;
 
-fragment /* #4.8 */
+fragment /* #4.6 */
 Space : ' ' ;
 
-fragment /* #4.9 */
+fragment /* #4.7 */
 QuotableGraphicChar :
     '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' |
     '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' |
@@ -937,9 +938,14 @@ QuotableGraphicChar :
     {} /* make ANTLRworks display separate branches */
     ;
 
-fragment /* #4.10 */
-EscapedCharacter :
-    BACKSLASH ( '0' | 'n' | 't' | BACKSLASH | SINGLE_QUOTE | DOUBLE_QUOTE {})
+fragment /* #4.8 */
+SingleQuotableEscChar :
+    BACKSLASH ( '0' | 'n' | 't' | BACKSLASH | SINGLE_QUOTE {})
+    ;
+
+fragment /* #4.8 */
+DoubleQuotableEscChar :
+    BACKSLASH ( '0' | 'n' | 't' | BACKSLASH | DOUBLE_QUOTE {})
     ;
 
 
