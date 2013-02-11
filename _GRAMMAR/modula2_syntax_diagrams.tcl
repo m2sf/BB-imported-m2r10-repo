@@ -794,48 +794,38 @@ lappend terminals StringLiteral {
 # (4.1) Single Quoted String
 lappend terminals SingleQuotedString {
   line SINGLE_QUOTE
-    {optx {loop SingleQuotableCharacter {}}}
+    {optx {loop {or QuotableCharacter DOUBLE_QUOTE} {}}}
   SINGLE_QUOTE
 }
 
 # (4.2) Double Quoted String
 lappend terminals DoubleQuotedString {
   line DOUBLE_QUOTE
-    {optx {loop DoubleQuotableCharacter {}}}
+    {optx {loop {or QuotableCharacter SINGLE_QUOTE} {}}}
   DOUBLE_QUOTE
 }
 
-# (4.3) Single Quotable Character
-lappend terminals SingleQuotableChar {
-  or Digit Letter Space QuotableGraphicChar SingleQuotableEscChar
+# (4.3) Quotable Character
+lappend terminals QuotableCharacter {
+  or Digit Letter Space QuotableGraphicChar EscapedCharacter
 }
 
-# (4.4) Double Quotable Character
-lappend terminals DoubleQuotableChar {
-  or Digit Letter Space QuotableGraphicChar DoubleQuotableEscChar
-}
-
-# (4.5) Letter
+# (4.4) Letter
 lappend terminals Letter {
   or /A..Z /a..z 
 }
 
-# (4.6) Space
+# (4.5) Space
 # CONST Space = CHR(32);
 
-# (4.7) Quotable Graphic Character
+# (4.6) Quotable Graphic Character
 lappend terminals QuotableGraphicChar {
   or ! # $ % & ( ) * + , - . / : ; < = > ? @ [ ] ^ _ ` LBRACE | RBRACE ~
 }
 
-# (4.8) Single Quotable Escaped Character
-lappend terminals SingleQuotableEscChar {
-  line BACKSLASH {or 0 /n /t BACKSLASH SINGLE_QUOTE}
-}
-
-# (4.9) Double Quotable Escaped Character
-lappend terminals DoubleQuotableEscChar {
-  line BACKSLASH {or 0 /n /t BACKSLASH DOUBLE_QUOTE}
+# (4.7) Escaped Character
+lappend terminals EscapedCharacter {
+  line BACKSLASH {or /n /t BACKSLASH}
 }
 
 

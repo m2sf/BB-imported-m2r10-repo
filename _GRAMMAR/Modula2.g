@@ -903,34 +903,29 @@ StringLiteral :
 
 fragment /* #4.1 */
 SingleQuotedString :
-    SINGLE_QUOTE SingleQuotableCharacter* SINGLE_QUOTE
+    SINGLE_QUOTE ( QuotableCharacter | DOUBLE_QUOTE )* SINGLE_QUOTE
     ;
 
 fragment /* #4.2 */
 DoubleQuotedString :
-    DOUBLE_QUOTE DoubleQuotableCharacter* DOUBLE_QUOTE
+    DOUBLE_QUOTE ( QuotableCharacter | SINGLE_QUOTE )* DOUBLE_QUOTE
     ;
 
 fragment /* #4.3 */
-SingleQuotableCharacter :
-    Digit | Letter | Space | QuotableGraphicChar | SingleQuotableEscChar
+QuotableCharacter :
+    Digit | Letter | Space | QuotableGraphicChar | EscapedCharacter
     ;
 
 fragment /* #4.4 */
-DoubleQuotableCharacter :
-    Digit | Letter | Space | QuotableGraphicChar | DoubleQuotableEscChar
-    ;
-
-fragment /* #4.5 */
 Letter :
     'A' .. 'Z' | 'a' .. 'z'
     {} /* make ANTLRworks display separate branches */
     ;
 
-fragment /* #4.6 */
+fragment /* #4.5 */
 Space : ' ' ;
 
-fragment /* #4.7 */
+fragment /* #4.6 */
 QuotableGraphicChar :
     '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' |
     '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' |
@@ -938,14 +933,9 @@ QuotableGraphicChar :
     {} /* make ANTLRworks display separate branches */
     ;
 
-fragment /* #4.8 */
-SingleQuotableEscChar :
-    BACKSLASH ( '0' | 'n' | 't' | BACKSLASH | SINGLE_QUOTE {})
-    ;
-
-fragment /* #4.8 */
-DoubleQuotableEscChar :
-    BACKSLASH ( '0' | 'n' | 't' | BACKSLASH | DOUBLE_QUOTE {})
+fragment /* #4.7 */
+EscapedCharacter :
+    BACKSLASH ( 'n' | 't' | BACKSLASH {})
     ;
 
 
