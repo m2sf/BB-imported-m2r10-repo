@@ -171,15 +171,20 @@ lappend non_terminals moduleIdent {
 # (3) Definition Of Module
 lappend non_terminals definitionOfModule {
   stack
-    {line DEFINITION MODULE moduleIdent {opt [ blueprintIdent ]} ;}
+    {line DEFINITION MODULE moduleIdent {opt [ conformedToBlueprint ]} ;}
     {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
     END moduleIdent .}
+}
+
+# (3.1) Conformed-To Blueprint
+lappend non_terminals conformedToBlueprint {
+  line blueprintIdent
 }
 
 # (4) Blueprint For Library
 lappend non_terminals blueprint {
   stack
-    {line BLUEPRINT blueprintIdent {opt [ requiredConformance ]} ;}
+    {line BLUEPRINT blueprintIdent {opt [ conformedToBlueprint ]} ;}
     {line {opt PLACEHOLDERS identList ;} requiredTypeDeclaration ;}
     {line {loop nil {nil requiredBinding ;}} END blueprintIdent .}
 }
@@ -189,12 +194,7 @@ lappend non_terminals blueprintIdent {
   line Ident
 }
 
-# (4.2) Required Conformance
-lappend non_terminals requiredConformance {
-  line blueprintIdent
-}
-
-# (4.3) Required Binding
+# (4.2) Required Binding
 lappend non_terminals requiredBinding {
   line procedureHeader
 }
@@ -232,11 +232,11 @@ lappend non_terminals definition {
 
 # (8) Public Constant Declaration
 lappend non_terminals publicConstDeclaration {
-  line {optx [ constBindableIdent ]} Ident = constExpression
+  line {optx [ boundToPrimitive ]} Ident = constExpression
 }
 
-# (8.1) CONST Bindable Identifiers
-lappend non_terminals constBindableIdent {
+# (8.1) Bound-To Primitive (Identifier)
+lappend non_terminals boundToPrimitive {
   or /TSIG /TEXP
 }
 
@@ -436,18 +436,18 @@ lappend non_terminals variableDeclaration {
 lappend non_terminals procedureHeader {
   stack
     {line PROCEDURE
-      {optx {line [ bindableEntity ]} } }
+      {optx {line [ boundToEntity ]} } }
     {line Ident {optx ( formalParamList )} {optx : returnedType}}
 }
 
-# (31) Bindable Entity
-lappend non_terminals bindableEntity {
+# (31) Bound-To Entity
+lappend non_terminals boundToEntity {
   or
-    DIV MOD FOR DESCENDING :: := ? ! ~ + - * / = < > bindableIdent
+    DIV MOD FOR DESCENDING :: := ? ! ~ + - * / = < > boundToPervasive
 }
 
-# (31.1) PROCEDURE Bindable Identifiers
-lappend non_terminals bindableIdent {
+# (31.1) Bound-To Pervasive (Identifier)
+lappend non_terminals boundToPervasive {
   or
     /ABS /NEG /ODD /COUNT /LENGTH /NEW /DISPOSE /RETAIN /RELEASE
     /TLIMIT /TMIN /TMAX /SXF /VAL
@@ -807,7 +807,7 @@ lappend terminals DoubleQuotedString {
 
 # (4.3) Quotable Character
 lappend terminals QuotableCharacter {
-  or Digit Letter Space QuotableGraphicChar EscapedCharacter
+  or Digit Letter Space NonAlphaNumQuotable EscapedCharacter
 }
 
 # (4.4) Letter
@@ -818,8 +818,8 @@ lappend terminals Letter {
 # (4.5) Space
 # CONST Space = CHR(32);
 
-# (4.6) Quotable Graphic Character
-lappend terminals QuotableGraphicChar {
+# (4.6) Non-Alphanumeric Quotable Character
+lappend terminals NonAlphaNumQuotable {
   or ! # $ % & ( ) * + , - . / : ; < = > ? @ [ ] ^ _ ` LBRACE | RBRACE ~
 }
 
@@ -855,7 +855,7 @@ lappend ignore_symbols MultiLineComment {
 
 # (3.1) Comment Character
 lappend ignore_symbols CommentCharacter {
-  or Digit Letter Whitespace QuotableGraphicChar
+  or Digit Letter Whitespace NonAlphaNumQuotable
   BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE
 }
 

@@ -174,14 +174,17 @@ moduleIdent : Ident ;
 
 // production #3
 definitionOfModule :
-    DEFINITION MODULE moduleIdent ( '[' blueprintIdent ']' )? ';'
+    DEFINITION MODULE moduleIdent ( '[' conformedToBlueprint ']' )? ';'
     importList* definition*
     END moduleIdent '.'
     ;
 
+// alias #3.1
+conformedToBlueprint : blueprintIdent ;
+
 // production #4
 blueprint :
-    BLUEPRINT blueprintIdent '[' requiredConformance ']' ';'
+    BLUEPRINT blueprintIdent '[' conformedToBlueprint ']' ';'
     ( PLACEHOLDERS identList ';' )?
     requiredTypeDeclaration ';'
     ( requiredBinding ';' )*
@@ -192,9 +195,6 @@ blueprint :
 blueprintIdent : Ident ;
 
 // alias #4.2
-requiredConformance : blueprintIdent ;
-
-// alias #4.3
 requiredBinding : procedureHeader ;
 
 
@@ -234,11 +234,11 @@ definition :
 
 // production #8
 publicConstDeclaration :	
-    ( '[' constBindableIdent ']' )? Ident '=' constExpression
+    ( '[' boundToPrimitive ']' )? Ident '=' constExpression
     ;
 
 // alias #8.1
-constBindableIdent : /* Ident */ TSIG | TEXP
+boundToPrimitive : /* Ident */ TSIG | TEXP
     {} /* make ANTLRworks display separate branches */
     ;
 
@@ -407,22 +407,22 @@ variableDeclaration :
 
 // production #30
 procedureHeader :
-    PROCEDURE ( '[' bindableEntity ']' )?
+    PROCEDURE ( '[' boundToEntity ']' )?
     Ident ( '(' formalParamList ')' )?
     ( ':' returnedType )?
     ;
 
 // production #31
-bindableEntity :
+boundToEntity :
     DIV | MOD | FOR | DESCENDING |
     '::' | ':=' | '?' | '!' | '~' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
-    bindableIdent
+    boundToPervasive
     ;
 
 // fragment #31.1
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
-bindableIdent :
+boundToPervasive :
     ABS | NEG | ODD | COUNT | LENGTH | NEW | DISPOSE | RETAIN | RELEASE |
     TLIMIT | TMIN | TMAX | SXF | VAL
     {} /* make ANTLRworks display separate branches */
@@ -913,7 +913,7 @@ DoubleQuotedString :
 
 fragment /* #4.3 */
 QuotableCharacter :
-    Digit | Letter | Space | QuotableGraphicChar | EscapedCharacter
+    Digit | Letter | Space | NonAlphaNumQuotable | EscapedCharacter
     ;
 
 fragment /* #4.4 */
@@ -926,7 +926,7 @@ fragment /* #4.5 */
 Space : ' ' ;
 
 fragment /* #4.6 */
-QuotableGraphicChar :
+NonAlphaNumQuotable :
     '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' |
     '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?' | '@' |
     '[' | ']' | '^' | '_' | '`' | '{' | '|' | '}' | '~'
