@@ -123,11 +123,12 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
    all arguments must be of the same ordinal or scalar type. *)
 
 
-(* power of two of a non-negative constant expression *)
+(* binary storage capacity of a given number of bits *)
 
-(* MACRO *) PROCEDURE EXP2 ( constant : <T> ) : <T>;
-(* Expands to the value of two raised to the power of its argument,
-   the argument must be a non-negative whole number constant. *)
+(* MACRO *) PROCEDURE BSC ( numOfBits : <T> ) : <T>;
+(* Expands to the binary storage capacity of the number of bits given by its
+   argument,  which must be a  constant  expression  within the range of the
+   largest unsigned pervasive type. *)
 
 
 (* hash value of a string literal *)
