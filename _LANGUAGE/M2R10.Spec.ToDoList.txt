@@ -1,0 +1,11 @@
+M2 R10 Editorial Review To Do List
+
+(1) specify boolean short circuit
+(2) specify tail call elimination
+(3) clarify char array termination
+(4) clarify scope of formal parameters
+(5) add import requirement for unsafe pragmas
+(6) more detail on module initialisation and termination
+(7) decide whether to rename module COMPILER to COMPILETIME
+
+*** END OF TO DO LIST ***
