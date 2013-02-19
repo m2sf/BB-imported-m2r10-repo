@@ -1,0 +1,112 @@
+*** Preliminary Roadmap for M2 R10 Bootstrap Compiler ***
+
+
+(1) Lexer
+
+(a) update reserved word recogniser
+
+prerequisite: confirm list of reserved words is final
+
+(b) add new reserved identifier recogniser
+
+prerequisite: revise and finalise list of reserved identifiers
+
+(c) add new pragma word recogniser
+
+prerequisite: confirm list of pragma words is final
+
+(d) modify lexer to support the Schroedinger's Token technique
+
+prerequisite: none
+
+(e) update numeric literal recogniser
+
+prerequisite: confirm grammar for numeric literals is final
+
+(f) update escape character recogniser
+
+prerequisite: confirm list of escaped characters is final
+
+(g) lexer code review against the specification regarding all
+terminals, adjust where necessary
+
+prerequisite: completion of 1a - 1f
+
+
+(2) Parser
+
+(a) calculate and encode new FIRST, FOLLOW and SKIPTO sets
+
+prerequisite: confirm grammar for non-terminals is final
+
+(b) rework all procedures representing production rules,
+    making use of the Schroedinger's Token technique
+
+prerequisite: step 2a has been done
+
+(c) add code to emit error messages for syntax errors
+
+prerequisite: step 2b has been done
+
+(d) add code to ignore pragmas gracefully and emit warnings
+
+prerequisite: step 2c has been done
+
+(e) parser code review against specification regarding all
+non-terminals, adjust where necessary
+
+prerequisite: completion of 2a - 2e
+
+
+(3) Driver
+
+(a) build a driver to read source files given to it via command line,
+parse the input and emit diagnostics
+
+prerequisite: completion of 1 and 2
+
+(b) extensive testing against legal and illegal M2 input
+
+prerequisite: completion of 3a, sufficient sample input is available
+
+
+(4) Extending the Parser
+
+(a) add pragma parser
+(b) build symbol table
+(c) build abstract syntax tree (AST)
+(d) enhance driver to dump symbol table and AST in human readable form
+(e) extensive testing
+
+
+(5) Semantic Checking
+
+(a) add AST transformations to accommodate semantic checks
+(b) enhance driver to emit diagnostics for implemented checks
+(c) extensive testing
+
+
+(6) Code Generation
+
+(a) add AST transformations to accommodate code generation
+(b) add tree walker for target language template expansion
+(c) enhance driver to emit diagnostics on generated code
+(d) extensive testing
+
+
+(7) Modula-2 Based Compiler
+
+(a) write a new compiler in Modula-2
+(b) bootstrap Modula-2 based compiler
+(c) extensive testing
+
+
+(8) Library Implementation
+
+(a) implement standard library
+(b) build and test library
+
+Work on parts 7 and 8 may occur in parallel.
+
+
+*** END OF FILE ***
