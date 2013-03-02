@@ -1,4 +1,4 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE COMPILER;
 
@@ -9,23 +9,38 @@ DEFINITION MODULE COMPILER;
 
 (* Identity of the compiler *)
 
-CONST
-    Name = "<short name of compiler>";
-    FullName = "<full name of compiler>";
-    EditionName = "<name of compiler edition>";
+CONST Name = <implementation defined 7-bit character string;
+(* Denotes the short name of the compiler *)
 
-    MajorVersion = <major version number>;
-    MinorVersion = <minor version number>;
-    SubMinorVersion = <sub-minor version number>;
+CONST FullName = <implementation defined 7-bit character string>;
+(* Denotes the full name of the compiler *)
 
-    ReleaseYear = <four digit year of release>;
-    ReleaseMonth = <two digit month of release>;
-    ReleaseDay = <two digit day of release>;
-    
-    IsBootstrapSubset = <implementation defined boolean value>;
+CONST EditionName = <implementation defined 7-bit character string>;
+(* Denotes the name of the compiler edition *)
+
+CONST MajorVersion = <implementation defined whole number value>;
+(* Denotes the major version number of the compiler *)
+
+CONST MinorVersion = <implementation defined whole number value>;
+(* Denotes the minor version number of the compiler *)
+
+CONST SubMinorVersion = <implementation defined whole number value>;
+(* Denotes the sub-minor version number of the compiler *)
+
+CONST ReleaseYear = <implementation defined whole number value>;
+(* Denotes the four-digit year of release of the compiler *)
+
+CONST ReleaseMonth = <implementation defined whole number value>;
+(* Denotes the month of release of the compiler, range 1 to 12 *)
+
+CONST ReleaseDay = <implementation defined whole number value>;
+(* Denotes the day of release of the compiler, range 1 to 31 *)
 
 
 (* Optional compiler capabilities *)
+
+CONST IsBootstrapSubset = <implementation defined boolean value>;
+(* Denotes whether the compiler provides a language subset for bootstrap *)
 
 CONST SupportsInlineAssembler = <implementation defined boolean value>;
 (* Denotes whether the compiler provides optional pseudo-module ASSEMBLER *)
@@ -51,11 +66,14 @@ CONST SupportsAddressMapping = <implementation defined boolean value>;
 CONST SupportsRegisterMapping = <implementation defined boolean value>;
 (* Denotes whether the compiler provides optional pragma REG *)
 
+CONST SupportsPurityAttribute = <implementation defined boolean value>;
+(* Denotes whether the compiler provides optional pragma PURITY *)
+
 CONST SupportsVolatileAttribute = <implementation defined boolean value>;
 (* Denotes whether the compiler provides optional pragma VOLATILE *)
 
-CONST SupportsCVarArgFormatCheck = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma CVARGFMTCHK *)
+CONST SupportsSingleAssignAttribute = <implementation defined boolean value>;
+(* Denotes whether the compiler provides optional pragma SINGLEASSIGN *)
 
 
 (* Information about the implementation model of REAL and LONGREAL *)
@@ -87,23 +105,23 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 (* Introspection *)
 
 (* MACRO *) PROCEDURE IsCompatibleWithType( <T>; var : <AnyType> ) : BOOLEAN;
-(* Expands to TRUE if the type of variable <var> is compatible with type <T>,
+(* Expands to TRUE if the type of variable var is compatible with type T,
    expands to FALSE otherwise. *)
 
 (* MACRO *) PROCEDURE IsConvertibleToType( <T>; var : <AnyType> ) : BOOLEAN;
-(* Expands to TRUE if the type of variable <var> is convertible to type <T>,
+(* Expands to TRUE if the type of variable var is convertible to type T,
    expands to FALSE otherwise. *)
 
 (* MACRO *) PROCEDURE IsExtensionOfType( <T>; var : <AnyType> ) : BOOLEAN;
-(* Expands to TRUE if the type of variable <var> is an extension of type <T>,
+(* Expands to TRUE if the type of variable var is an extension of type T,
    expands to FALSE otherwise. *)
 
 (* MACRO *) PROCEDURE IsRefCountedType( <T> ) : BOOLEAN;
-(* Expands to TRUE if type <T> has bindings to pervasives RETAIN and RELEASE,
+(* Expands to TRUE if type T has bindings to pervasives RETAIN and RELEASE,
    expands to FALSE otherwise. *)
 
-(* MACRO *) PROCEDURE ConformsToPrototype( <P>; <T> ) : BOOLEAN;
-(* Expands to TRUE if type <T> conforms to prototype <P>,
+(* MACRO *) PROCEDURE ConformsToBlueprint( <B>; <T> ) : BOOLEAN;
+(* Expands to TRUE if type T conforms to blueprint B,
    expands to FALSE otherwise. *)
 
 
@@ -123,12 +141,22 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
    all arguments must be of the same ordinal or scalar type. *)
 
 
-(* binary storage capacity of a given number of bits *)
+(* ordinal storage capacity of a given number of bits *)
 
-(* MACRO *) PROCEDURE BSC ( numOfBits : <T> ) : <T>;
-(* Expands to the binary storage capacity of the number of bits given by its
-   argument,  which must be a  constant  expression  within the range of the
-   largest unsigned pervasive type. *)
+(* MACRO *) PROCEDURE MaxOrd ( bits : <T> ) : <T>;
+(* Expands to the largest ordinal number that can be represented in the num-
+   ber of bits given by its argument.  T is a pervasive whole number type. *)
+
+
+(* binary storage requirement for an ordinal value *)
+
+(* MACRO *) PROCEDURE ReqBits ( ord : <T> ) : <T>;
+(* Expands to the minimum number of bits required to represent the ordinal
+   number given by its argument.   T is a pervasive whole number type. *)
+
+(* MACRO *) PROCEDURE ReqOctets ( ord : <T> ) : <T>;
+(* Expands to the minimum number of octets required to represent the ordinal
+   number given by its argument.  T is a pervasive whole number type. *)
 
 
 (* hash value of a string literal *)
@@ -136,6 +164,12 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 (* MACRO *) PROCEDURE HASH ( literal : ARRAY OF CHAR ) : LONGCARD;
 (* Expands to the hash value of a string literal, excluding the enclosing
    quotation marks, calculated by the compiler's internal hash function. *)
+
+
+(* Indicating Unimplemented Code *)
+
+(* MACRO *) PROCEDURE TODO;
+(* Empty statement to indicate unimplemented code. *)
 
 
 END COMPILER.
