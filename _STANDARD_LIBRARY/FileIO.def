@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE FileIO;
 
@@ -27,6 +27,7 @@ TYPE
                accessBeyondEOF,       (* attempt to read past end of file   *)
                fileSizeLimitExceeded, (* attempt to write past size limit   *)
                openFileLimitExceeded, (* attempt to open too many files     *)
+               operationNotSupported, (* unsupported operation attempted    *)
                deviceFull,            (* the device capacity is exceeded    *)
                deviceError );         (* the device reported a failure      *)
 
@@ -51,12 +52,6 @@ CONST
     append = { Mode.write, Mode.append };
     
     defaultBufferSize = <implementation defined value>;
-
-
-(* Predefined open file accessors *)
-
-VAR
-    stdIn, stdOut, stdErr, nullFile : File;
 
 
 (* Opening files *)
@@ -99,6 +94,12 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 (* Passes the name of the file associated with file accessor <file> back in
    <filename>. Passes an empty string if <file> is invalid or if the name
    exceeds the capacity of <filename>. *)
+
+PROCEDURE IsStream ( file : File ) : BOOLEAN;
+(* Returns TRUE if the file associated with file accessor <file> is a stream.
+   A stream does not support file positioning, lookahead nor block IO.  Any
+   attempt to use these operations results in operationNotSupported status.
+   EOF on a stream returns FALSE and CurrentPos returns TMIN(FilePos). *)
 
 
 (* File position operations *)
@@ -166,5 +167,25 @@ PROCEDURE Flush ( file : File );
 PROCEDURE Close ( VAR file : File; VAR status : Status );
 (* Performs Flush on <file> and closes the associated file. Passes NIL back
    in <file>. The status of the operation is passed back in <status>. *)
+
+
+(* Implementation defined special file accessors *)
+
+PROCEDURE DefaultInFile : File;
+(* Returns the file handle of the implementation defined standard source for
+   program input.  The associated file may be a stream. *)
+
+PROCEDURE DefaultOutFile : File;
+(* Returns the file handle of the implementation defined standard destination
+   for program output.  The associated file may be a stream. *)
+ 
+PROCEDURE DefaultErrFile : File;
+(* Returns the file handle of the implementation defined standard destination
+   for program error output.  The associated file may be a stream. *)
+
+PROCEDURE DefaultNullFile : File;
+(* Returns the file handle of a file open to the null device.  The associated
+   file may be a stream. *)
+
 
 END FileIO.
