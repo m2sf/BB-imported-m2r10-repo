@@ -1,0 +1,28 @@
+(* (C) 2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE StdIO;
+
+(* This module provides redirectable standard file accessors  *)
+ 
+FROM FileIO IMPORT File;
+ 
+VAR
+    stdIn, stdOut, stdErr : File;
+    
+(* Import of module StdIO causes variables stdIn, stdOut and stdErr to be
+   initialized to their respective implementation defined defaults.  *)
+
+ 
+(* Redirecting the standard file accessors *)
+
+PROCEDURE SetInFile ( file : File );
+(* Sets stdIn to the file associated with file accessor <file>. *)
+
+PROCEDURE SetOutFile ( file : File );
+(* Sets stdOut to the file associated with file accessor <file>. *)
+
+PROCEDURE SetErrFile ( file : File );
+(* Sets stdErr to the file associated with file accessor <file>. *)
+
+
+END StdIO.
