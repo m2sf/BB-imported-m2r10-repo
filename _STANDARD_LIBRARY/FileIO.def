@@ -95,12 +95,6 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
    <filename>. Passes an empty string if <file> is invalid or if the name
    exceeds the capacity of <filename>. *)
 
-PROCEDURE IsStream ( file : File ) : BOOLEAN;
-(* Returns TRUE if the file associated with file accessor <file> is a stream.
-   A stream does not support file positioning, lookahead nor block IO.  Any
-   attempt to use these operations results in operationNotSupported status.
-   EOF on a stream returns FALSE and CurrentPos returns TMIN(FilePos). *)
-
 
 (* File position operations *)
 
@@ -169,23 +163,38 @@ PROCEDURE Close ( VAR file : File; VAR status : Status );
    in <file>. The status of the operation is passed back in <status>. *)
 
 
-(* Implementation defined special file accessors *)
+(* Implementation defined accessors to special files *)
 
+(* Special files  are automatically opened when module FileIO is initialised.
+   Open, OpenWithBuffer, ReOpen, Flush and Close are not supported on special
+   files. These operations will set the file status to operationNotSupported.
+   The file mode of a special file may be read or write, or both,  but it may
+   not be sync.  No filename  may be associated with a special file.  NameLen
+   returns 0, GetName passes an empty string back. These operations will also
+   set the file status to operationNotSupported.  Special Files may  only  be
+   accessed sequentially. EOF, CurrentPos, SetPos, Advance and Rewind are not
+   supported  and will set the file status to operationNotSupported.  EOF al-
+   ways returns FALSE and CurrentPos always returns TMIN(FilePos).  Lookahead
+   and block IO is not supported and will cause a runtime error. *)
+
+PROCEDURE IsSpecialFile ( file : File ) : BOOLEAN;
+(* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
+   
 PROCEDURE DefaultInFile : File;
-(* Returns the file handle of the implementation defined standard source for
-   program input.  The associated file may be a stream. *)
+(* Returns the file accessor associated with an implementation defined source
+   for program input, open in read mode, usually a terminal. *)
 
 PROCEDURE DefaultOutFile : File;
-(* Returns the file handle of the implementation defined standard destination
-   for program output.  The associated file may be a stream. *)
- 
+(* Returns the file accessor associated with an implementation defined desti-
+   nation for program output, open in write mode, usually a terminal. *)
+
 PROCEDURE DefaultErrFile : File;
-(* Returns the file handle of the implementation defined standard destination
-   for program error output.  The associated file may be a stream. *)
+(* Returns the file accessor associated with an implementation defined desti-
+   nation for program error output, open in write mode, usually a terminal. *)
 
 PROCEDURE DefaultNullFile : File;
-(* Returns the file handle of a file open to the null device.  The associated
-   file may be a stream. *)
+(* Returns the file accessor associated with the  null device,  open in both
+   read and write mode.  Operations on this file have no effect. *)
 
 
 END FileIO.
