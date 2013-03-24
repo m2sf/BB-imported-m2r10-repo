@@ -2,17 +2,26 @@
 
 DEFINITION MODULE StdIO;
 
-(* This module provides redirectable standard file accessors  *)
+(* This module provides redirectable standard file accessors *)
  
 FROM FileIO IMPORT File;
  
 VAR
     stdIn, stdOut, stdErr : File;
     
-(* Import of module StdIO causes variables stdIn, stdOut and stdErr to be
-   initialized to their respective implementation defined defaults.  *)
+(* Import of module StdIO causes the variables stdIn, stdOut and stdErr
+   to be initialized to their respective implementation defined defaults. *)
 
- 
+
+(* Convenience procedures *)
+
+PROCEDURE WriteLn;
+(* Writes an empty line terminated by newline to stdOut. *)
+
+PROCEDURE SkipLine;
+(* Consumes all characters up to and including the next newline from StdIn. *)
+
+
 (* Redirecting the standard file accessors *)
 
 PROCEDURE SetInFile ( file : File );
