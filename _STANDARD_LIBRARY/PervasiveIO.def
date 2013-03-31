@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE PervasiveIO;
 
@@ -15,11 +15,11 @@ IMPORT BITSET+;
 IMPORT LONGBITSET+;
 (* Imports IO module for pervasive type LONGBITSET into the importing module.*)
 
-IMPORT CHAR+;
-(* Imports IO module for pervasive type CHAR into the importing module. *)
+IMPORT CHAR+, ARRAYOFCHAR+;
+(* Imports IO modules for pervasive type CHAR into the importing module. *)
 
-IMPORT UNICHAR+;
-(* Imports IO module for pervasive type UNICHAR into the importing module. *)
+IMPORT UNICHAR+, ARRAYOFUNICHAR+;
+(* Imports IO modules for pervasive type UNICHAR into the importing module. *)
 
 IMPORT OCTET+;
 (* Imports IO module for pervasive type OCTET into the importing module. *)
