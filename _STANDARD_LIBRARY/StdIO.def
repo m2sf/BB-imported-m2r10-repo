@@ -19,7 +19,7 @@ PROCEDURE WriteLn;
 (* Writes an empty line terminated by newline to stdOut. *)
 
 PROCEDURE SkipLine;
-(* Consumes all characters up to and including the next newline from StdIn. *)
+(* Consumes all characters up to and including the next newline from stdIn. *)
 
 
 (* Redirecting the standard file accessors *)
