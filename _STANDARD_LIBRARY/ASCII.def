@@ -182,7 +182,6 @@ CONST
     FORMFEED = FF;
     
     RET = CR;
-    RETURN = CR;
     
     XON = DC1;
     XOFF = DC3;
