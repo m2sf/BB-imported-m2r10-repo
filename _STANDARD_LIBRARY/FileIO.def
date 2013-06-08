@@ -20,7 +20,7 @@ TYPE
                invalidAccessor,       (* the passed in accessor is invalid  *)
                fileNotFound,          (* no file found with this filename   *)
                nameTooLong,           (* the passed in filename is too long *)
-               invalidName,           (* the passed in filename is invalid  *)
+               illegalCharsInName,    (* illegal chars in passed filename   *)
                invalidMode,           (* the passed in mode is invalid      *)
                alreadyOpen,           (* the passed in file is already open *)
                accessDenied,          (* the filesystem denied file access  *)
