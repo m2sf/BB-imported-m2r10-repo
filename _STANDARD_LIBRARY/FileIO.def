@@ -123,8 +123,12 @@ PROCEDURE Read ( file : File; VAR data : OCTET );
    in <data> and advances the read/write position of <file> by one. *)
 
 PROCEDURE Lookahead ( file : File; VAR data : OCTET );
-(* Passes in <data> the octet that is going to be read next by procedure Read.
-   Procedure Lookahead does not update the read/write position of <file>. *)
+(* Reads the first lookahead octet of <file>, passes it back in <data>, but
+   does NOT advance the read/write position of <file>. *)
+
+PROCEDURE LA2 ( file : File; VAR data : OCTET );
+(* Reads the second lookahead octet of <file>, passes it back in <data>, but
+   does NOT advance the read/write position of <file>. *)
 
 PROCEDURE Write ( file : File; data : OCTET );
 (* Performs a write or append operation depending on the mode of <file>.
