@@ -174,16 +174,12 @@ PROCEDURE Close ( VAR file : File; VAR status : Status );
 (* Implementation defined accessors to special files *)
 
 (* Special files  are automatically opened when module FileIO is initialised.
-   Open, OpenWithBuffer, ReOpen, Flush and Close are not supported on special
-   files. These operations will set the file status to operationNotSupported.
-   The file mode of a special file may be read or write, or both,  but it may
-   not be sync.  No filename  may be associated with a special file.  NameLen
-   returns 0, GetName passes an empty string back. These operations will also
-   set the file status to operationNotSupported.  Special Files may  only  be
-   accessed sequentially. EOF, CurrentPos, SetPos, Advance and Rewind are not
-   supported  and will set the file status to operationNotSupported.  EOF al-
-   ways returns FALSE and CurrentPos always returns TMIN(FilePos).  Lookahead
-   and block IO is not supported and will cause a runtime error. *)
+   The file mode of a special file is either read or write.  It will never be
+   append nor sync.  The operations ReOpen, EOF, CurrentPos, SetPos, Advance,
+   Rewind, Lookahead, LA2, ReadBlock, Flush and Close  are  NOT  supported on
+   special files  and will set the file status to operationNotSupported.  Any
+   attempt to open a special file will return status alreadyOpen.  EOF always
+   returns FALSE  and CurrentPos always returns TMIN(FilePos). *)
 
 PROCEDURE IsSpecialFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
