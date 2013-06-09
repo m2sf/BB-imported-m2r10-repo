@@ -124,11 +124,15 @@ PROCEDURE Read ( file : File; VAR data : OCTET );
 
 PROCEDURE Lookahead ( file : File; VAR data : OCTET );
 (* Reads the first lookahead octet of <file>, passes it back in <data>, but
-   does NOT advance the read/write position of <file>. *)
+   does NOT advance the read/write position of <file>.  If the lookahead
+   octet lies beyond the end of the file then no data is passed back and
+   the file status is set to accessBeyondEOF. *)
 
 PROCEDURE LA2 ( file : File; VAR data : OCTET );
 (* Reads the second lookahead octet of <file>, passes it back in <data>, but
-   does NOT advance the read/write position of <file>. *)
+   does NOT advance the read/write position of <file>.  If the second look-
+   ahead octet lies beyond the end of the file then no data is passed back
+   and the file status is set to accessBeyondEOF. *)
 
 PROCEDURE Write ( file : File; data : OCTET );
 (* Performs a write or append operation depending on the mode of <file>.
