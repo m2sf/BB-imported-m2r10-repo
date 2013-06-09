@@ -88,22 +88,24 @@ PROCEDURE StatusOf ( file : File ) : Status;
 
 PROCEDURE NameLen ( file : File ) : CARDINAL;
 (* Returns the length of the filename associated with file accessor <file>.
-   Returns 0 if <file> is invalid. *)
+   Returns 0 if <file> is a special file or invalid. *)
 
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 (* Passes the name of the file associated with file accessor <file> back in
-   <filename>. Passes an empty string if <file> is invalid or if the name
-   exceeds the capacity of <filename>. *)
+   <filename>. Passes an empty string if <file> is a special file or invalid
+   or if the name exceeds the capacity of <filename>. *)
 
 
 (* File position operations *)
 
 PROCEDURE EOF ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file accessor <file>
-   has been reached, otherwise FALSE. *)
+   has been reached, otherwise FALSE.  Returns FALSE if <file> is a special
+   file. *)
 
 PROCEDURE CurrentPos ( file : File ) : FilePos;
-(* Returns the current read/write position for file accessor <file>. *)
+(* Returns the current read/write position for file accessor <file>.  Re-
+   turns TMIN(FilePos) if <file> is a special file. *)
 
 PROCEDURE SetPos ( file : File; index : FilePos );
 (* Sets the read/write position for file accessor <file> to <index>. *)
