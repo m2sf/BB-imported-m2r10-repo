@@ -4,8 +4,13 @@ DEFINITION MODULE StdIO;
 
 (* This module provides redirectable standard file accessors *)
  
-FROM FileIO IMPORT File;
- 
+IMPORT FileIO;
+
+TYPE
+    File = ALIAS OF FileIO.File;
+    Status = ALIAS OF FileIO.Status;
+
+
 VAR
     stdIn, stdOut, stdErr : File;
     
@@ -20,6 +25,9 @@ PROCEDURE WriteLn;
 
 PROCEDURE SkipLine;
 (* Consumes all characters up to and including the next newline from stdIn. *)
+
+PROCEDURE StatusOf( file : File ) : Status;
+(* Calls procedure FileIO.StatusOf.  Returns the current status of <file> *)
 
 
 (* Redirecting the standard file accessors *)
