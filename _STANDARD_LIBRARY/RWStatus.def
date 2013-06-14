@@ -1,0 +1,12 @@
+MODULE RWStatus;
+(* Teaching Aid -- Parameterless status checks on stdIn and stdOut *)
+
+FROM StdIO IMPORT Status;
+
+PROCEDURE ReadStatus() : Status;
+(* Calls StdIO.StatusOf(stdIn) *)
+
+PROCEDURE WriteStatus() : Status;
+(* Calls StdIO.StatusOf(stdOut) *)
+
+END RWStatus.
