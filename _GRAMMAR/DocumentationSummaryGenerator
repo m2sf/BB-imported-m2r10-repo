@@ -1,0 +1,40 @@
+M2DSG – The Modula-2 Documentation Summary Generator
+
+Draft Document Version June 2, 2013
+
+The Modula-2 Documentation Summary Generator is an external source code processing utility to extract structured in-source documentation from a Modula-2 source file and produce a summary.
+
+In-source documentation is any text within Modula-2 documentation comments. The in-source documentation may be structured into sections. The start of a section is marked by a recognised documentation keyword at the beginning of a documentation comment. A section is terminated either by the start of another section, the start of a line that is not a documentation comment or the end of the source file.
+
+Recognised sections are copied into the summary. Documentation comments that do not contain any recognised sections are ignored. Additional information gathered by source code analysis may also be copied into the summary.
+
+Syntax:
+
+  docBlock :
+      section+ ( NonDocLine | EndOfFile ) ;
+
+  section :
+      singleLineSection | multiLineSection ;
+
+  singleLineSection :
+      keyword ":"? arbitraryText EndOfLine ;
+
+  multiLineSection :
+      keyword ":"? EndOfLine ( arbitraryText EndOfLine )+ ;
+
+  keyword :
+    "Version" | "Description" | "Author" | "Authors" | "Copyright" | "License" |
+    "Procedure" | "Function" | "Pre" | "Pre-Conditions" | "Post" | "Post-Conditions" |
+    "Error" | "Error-Conditions" ;
+
+  arbitraryText :
+    ~EndOfLine+ ;
+
+  EndOfLine :
+    LF | CR LF? ;
+
+  NonDocLine :
+    any line that does not start with "//"
+
+  EndOfFile :
+    system or implementation dependent
