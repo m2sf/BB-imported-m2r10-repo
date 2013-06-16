@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Feb 10, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Jun 16, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -184,7 +184,7 @@ conformedToBlueprint : blueprintIdent ;
 
 // production #4
 blueprint :
-    BLUEPRINT blueprintIdent '[' conformedToBlueprint ']' ';'
+    BLUEPRINT blueprintIdent ( '[' conformedToBlueprint ']' )? ';'
     ( PLACEHOLDERS identList ';' )?
     requiredTypeDeclaration ';'
     ( requiredBinding ';' )*
