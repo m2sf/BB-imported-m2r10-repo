@@ -21,6 +21,9 @@ PROCEDURE ceil ( r : REAL ) : REAL;
 PROCEDURE frac ( r : REAL ) : REAL;
 (* Returns the fractional part of r. *)
 
+PROCEDURE inv ( r : REAL ) : REAL;
+(* Returns the multiplicative inverse 1/r of r. *)
+
 PROCEDURE trunc ( r : REAL; n : CARDINAL ) : REAL;
 (* Returns the value of r truncated to n decimal places. *)
 
