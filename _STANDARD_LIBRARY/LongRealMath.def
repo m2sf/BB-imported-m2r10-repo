@@ -21,6 +21,9 @@ PROCEDURE ceil ( r : LONGREAL ) : LONGREAL;
 PROCEDURE frac ( r : LONGREAL ) : LONGREAL;
 (* Returns the fractional part of r. *)
 
+PROCEDURE inv ( r : LONGREAL ) : LONGREAL;
+(* Returns the multiplicative inverse 1/r of r. *)
+
 PROCEDURE trunc ( r : LONGREAL; n : CARDINAL ) : LONGREAL;
 (* Returns the value of r truncated to n decimal places. *)
 
