@@ -14,8 +14,15 @@ CONST
 PROCEDURE arg ( z : COMPLEX ) : REAL;
 (* Returns the argument of z. *)
 
+PROCEDURE norm ( z : COMPLEX ) : REAL;
+(* Returns the L.2 or Euclidian metric from the origin of z.
+   also called the abs or magnitude of z. *)
+
 PROCEDURE conj ( z : COMPLEX ) : COMPLEX;
 (* Returns the complex conjugate of z. *)
+
+PROCEDURE inv ( z : COMPLEX ) : COMPLEX;
+(* Returns the multiplicative inverse one/z of z. *)
 
 PROCEDURE power ( base : COMPLEX; exponent : REAL ) : COMPLEX;
 (* Returns the value of base raised to the power exponent. *)
