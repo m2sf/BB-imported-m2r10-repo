@@ -21,6 +21,9 @@ PROCEDURE ceil ( b : LONGBCD ) : LONGBCD;
 PROCEDURE frac ( b : LONGBCD ) : LONGBCD;
 (* Returns the fractional part of b. *)
 
+PROCEDURE inv ( b : LONGBCD ) : LONGBCD;
+(* Returns the multiplicative inverse 1/b of b. *)
+
 PROCEDURE trunc ( b : LONGBCD; n : CARDINAL ) : LONGBCD;
 (* Returns the value of b truncated to n decimal places. *)
 
