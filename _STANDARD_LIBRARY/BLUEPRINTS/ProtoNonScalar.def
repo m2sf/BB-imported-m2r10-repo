@@ -29,12 +29,12 @@ TYPE ProtoNonScalar = RECORD | OPAQUE RECORD := { .. } OF REAL;
 
 (* Bindings to monadic operations *)
 
-(* The operations ABS and NEG are not common to all non-scalar types,
-   their bindings may be required by more specialised prototypes *)
+(* The operation is not common to all non-scalar types,
+   but its binding may be required by more specialised prototypes *)
 
-(* The operation ODD is not meaningful for non-scalar types *)
+(* The operations ABS and ODD is not meaningful for non-scalar types *)
 
-<* WARNONEXTN ODD; *>
+<* WARNONEXTN ABS, ODD; *>
 
 
 (* Bindings to dyadic operations *)
