@@ -21,10 +21,6 @@ TYPE
 
 (* Monadic arithmetic operations *) 
 
-PROCEDURE [ABS] abs ( z : LONGCOMPLEX ) : LONGCOMPLEX;
-(* Returns the absolute value of LONGCOMPLEX value z.
-   This function is bound to pervasive function ABS for type LONGCOMPLEX. *)
-
 PROCEDURE [NEG] neg ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the sign reversed value of LONGCOMPLEX value z.
    This function is bound to the unary minus operator for type LONGCOMPLEX. *)
