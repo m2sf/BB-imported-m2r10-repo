@@ -11,11 +11,15 @@ CONST
   one =  { 1.0, 0.0 };
   zero = { 0.0, 0.0 };
 
-PROCEDURE arg ( z : LONGCOMPLEX ) : LONGREAL;
-(* Returns the argument of z. *)
+PROCEDURE norm ( z : LONGCOMPLEX ) : REAL;
+(* Returns the L.2 or Euclidian metric from the origin of z.
+   also called the abs or magnitude of z. *)
 
 PROCEDURE conj ( z : LONGCOMPLEX ) : LONGCOMPLEX;
 (* Returns the complex conjugate of z. *)
+
+PROCEDURE inv ( z : LONGCOMPLEX ) : LONGCOMPLEX;
+(* Returns the multiplicative inverse one/z of z. *)
 
 PROCEDURE power ( base : LONGCOMPLEX; exponent : LONGREAL ) : LONGCOMPLEX;
 (* Returns the value of base raised to the power exponent. *)
