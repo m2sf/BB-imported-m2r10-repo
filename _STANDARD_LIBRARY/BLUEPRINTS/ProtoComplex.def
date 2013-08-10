@@ -19,9 +19,6 @@ TYPE ProtoComplex = RECORD := { REAL, REAL };
 
 (* Bindings to monadic operations *)
 
-PROCEDURE [ABS] abs ( z : ProtoComplex ) : ProtoComplex;
-(* procedure to bind to pervasive function ABS for arguments of the ADT *)
-
 PROCEDURE [NEG] neg ( z : ProtoComplex ) : ProtoComplex;
 (* procedure to bind to pervasive function NEG for arguments of the ADT *)
 
