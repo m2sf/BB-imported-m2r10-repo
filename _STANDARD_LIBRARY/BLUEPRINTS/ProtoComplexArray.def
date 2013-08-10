@@ -114,13 +114,6 @@ PROCEDURE [DESCENDING] reverseFor ( VAR array : ProtoComplexArray;
 
 (* Bindings to monadic operations *)
 
-PROCEDURE [ABS] abs ( array : ProtoComplexArray ) : ProtoComplexArray;
-(* Procedure to return a Complex Array ADT calculated by obtaining the absolute
-   value of all values of its operand. *)
-
-(* An expression of the form ABS(array)
-   is synthesised as ArrayADT.abs(array) *)
-
 
 PROCEDURE [NEG] neg ( array : ProtoComplexArray ) : ProtoComplexArray;
 (* Procedure to return a Complex Array ADT calculated by reversing the sign of
