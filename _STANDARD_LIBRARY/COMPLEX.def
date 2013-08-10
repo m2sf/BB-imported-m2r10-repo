@@ -21,10 +21,6 @@ TYPE
 
 (* Monadic arithmetic operations *) 
 
-PROCEDURE [ABS] abs ( z : COMPLEX ) : COMPLEX;
-(* Returns the absolute value of COMPLEX value z.
-   This function is bound to pervasive function ABS for type COMPLEX. *)
-
 PROCEDURE [NEG] neg ( z : COMPLEX ) : COMPLEX;
 (* Returns the sign reversed value of COMPLEX value z.
    This function is bound to the unary minus operator for type COMPLEX. *)
