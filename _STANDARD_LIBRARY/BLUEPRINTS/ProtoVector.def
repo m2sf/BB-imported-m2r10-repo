@@ -18,8 +18,6 @@ TYPE ProtoVector = RECORD;
 
 (* Bindings to monadic operations *)
 
-PROCEDURE [ABS] abs ( v : ProtoVector ) : ProtoVector;
-(* procedure to bind to pervasive function ABS for arguments of the ADT *)
 
 PROCEDURE [NEG] neg ( v : ProtoVector ) : ProtoVector;
 (* procedure to bind to pervasive function NEG for arguments of the ADT *)
