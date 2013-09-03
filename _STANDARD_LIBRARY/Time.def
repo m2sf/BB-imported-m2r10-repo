@@ -70,7 +70,7 @@ PROCEDURE multiply ( t : Time; n : CARDINAL ) : Time;
 (* Multiplies Time value t by scalar n and returns the result. *)
 
 PROCEDURE divide ( t : Time; n : CARDINAL ) : Time;
-(* Divives Time value t by scalar n and returns the result. *)
+(* Divides Time value t by scalar n and returns the result. *)
 
 
 (* Relational operations *) 
