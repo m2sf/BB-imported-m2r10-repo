@@ -14,7 +14,8 @@ TYPE
                   UserAbort );
 
     NotificationHandler = PROCEDURE ( ADDRESS, ADDRESS );
-    (* notification handler procedures must accept two parameters:
+    (* this is a type definition for a callback function.
+    notification handler procedures must accept two parameters:
        - the address of the PC at which the offending event occured
        - the address of the SP at which the offending event occured *)
 
@@ -58,7 +59,8 @@ PROCEDURE StackTraceEnabled : BOOLEAN;
 (* Returns the current stack trace mode, TRUE if enabled, FALSE otherwise. *)
 
 PROCEDURE InitiatePostMortem;
-(* Aborts the currently running program and writes a post mortem dump *)
+(* Aborts the currently running program and writes a post mortem dump
+   The format of this is implementation dependent. *)
 
 PROCEDURE SetPostMortem( enabled : BOOLEAN );
 (* Enables post mortem dumps on abort if enabled is TRUE, disables otherwise. *)
@@ -70,7 +72,7 @@ PROCEDURE PostMortemEnabled : BOOLEAN;
 (* Runtime System Facilities for embedded and self-hosting platforms *)
 
 PROCEDURE InitiateSystemReset;
-(* Aborts the currently running system image and restarts *)
+(* Aborts the currently running system image and restarts, i.e. reboots *)
 
 PROCEDURE SetSystemReset( enabled : BOOLEAN );
 (* Enables system reset on abort if enabled is TRUE, disables otherwise. *)
