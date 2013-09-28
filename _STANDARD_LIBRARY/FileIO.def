@@ -78,15 +78,14 @@ PROCEDURE OpenWithBuffer ( VAR file         : File;
 
 (* Alternative (A) -- with rewind, probably also flush *)
 
-PROCEDURE ReOpen ( file : File; mode : Mode; VAR status : Status );
+PROCEDURE ReOpen ( file : File; mode : Mode );
 (* Flushes and rewinds the file associated with <file> and changes its access
-   mode to <mode>.  The status of the operation is passed back in <status>. *)
+   mode to <mode>. *)
 
-(* ALTERNATIVE (B) -- without rewind, without flush *)
+(* Alternative (B) -- without rewind, without flush *)
 
-PROCEDURE SetMode ( file : File; mode : Mode; VAR status : Status );
-(* Changes the access mode of the file associated with <file> to <mode>.  The
-   status of the operation is passed back in <status>. *)
+PROCEDURE SetMode ( file : File; mode : Mode );
+(* Changes the access mode of the file associated with <file> to <mode>. *)
 
 (* TO DO: Decide if (A) should also flush (probably yes), then pick (A) or (B) *)
 
