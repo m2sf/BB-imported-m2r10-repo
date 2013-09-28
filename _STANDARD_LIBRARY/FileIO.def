@@ -73,8 +73,22 @@ PROCEDURE OpenWithBuffer ( VAR file         : File;
    file buffer. If successful passes a file accessor back in <file>, otherwise
    passes NIL back in <file>. The status is passed back in <status>. *)
 
-PROCEDURE ReOpen ( VAR file : File; mode : Mode );
-(* Closes the file associated with <file> and reopens it in mode <mode>.*)
+
+(* ### Changing the file mode ### *)
+
+(* Alternative (A) -- with rewind, probably also flush *)
+
+PROCEDURE ReOpen ( file : File; mode : Mode; VAR status : Status );
+(* Flushes and rewinds the file associated with <file> and changes its access
+   mode to <mode>.  The status of the operation is passed back in <status>. *)
+
+(* ALTERNATIVE (B) -- without rewind, without flush *)
+
+PROCEDURE SetMode ( file : File; mode : Mode; VAR status : Status );
+(* Changes the access mode of the file associated with <file> to <mode>.  The
+   status of the operation is passed back in <status>. *)
+
+(* TO DO: Decide if (A) should also flush (probably yes), then pick (A) or (B) *)
 
 
 (* File mode, status and name *)
