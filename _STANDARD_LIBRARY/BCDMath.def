@@ -19,7 +19,7 @@ PROCEDURE ceil ( b : BCD ) : BCD;
 (* Returns the ceiling value of b. *)
 
 PROCEDURE frac ( b : BCD ) : BCD;
-(* Returns the fractional part of r. *)
+(* Returns the fractional part of b. *)
 
 PROCEDURE inv ( b : BCD ) : BCD;
 (* Returns the multiplicative inverse 1/b of b. *)
