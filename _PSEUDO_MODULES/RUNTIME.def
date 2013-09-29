@@ -27,13 +27,13 @@ TYPE NotificationHandler = PROCEDURE ( ADDRESS, ADDRESS );
      - the address of the SP at which the offending event occured *)
 
 
-(* Raising Runtime Faults *)
+(* Raising Runtime System Faults *)
 
 (* MACRO *) PROCEDURE RaiseRTSFault( f : RTSFault );
 (* Raises runtime system fault f. Causes program abort. Never returns. *)
 
 
-(* Runtime System Notification services *)
+(* Runtime System Notification Services *)
 
 PROCEDURE InstallNotificationHandler( f : RTSFault; p : NotificationHandler );
 (* Installs handler p as notification handler for runtime system fault f. *)
