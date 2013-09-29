@@ -101,6 +101,12 @@ PROCEDURE SetMode ( file : File; mode : Mode );
 (* TO DO: Decide if (A) should also flush (probably yes), then pick (A) or (B) *)
 
 
+(* Opening or reopening a file in a mode whose append flag is not set causes
+   the file position to be set to the beginning of the file.  Opening or re-
+   opening a file in a mode whose append flag is set causes the file position
+   to be set to the end of the file. *)
+
+
 (* File mode, status and name *)
 
 PROCEDURE ModeOf ( file : File ) : Mode;
