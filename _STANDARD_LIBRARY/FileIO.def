@@ -33,10 +33,14 @@ TYPE
 
 (* The mode of a file consists of four flags: read, write, append and sync.
    These flags may be combined arbitrarily, subject to the following rules:
+   
      1) a file mode may not be the empty set
      2) append may not be set if read is set
      3) append may only be set if write is set
-     4) sync may only be set if write is set *)
+     4) sync may only be set if write is set
+     
+   Any attempt to open or reopen a file, passing an invalid file mode shall
+   fail with status invalidMode. *)
      
     Mode = SET OF ( read,             (* reading is permitted if set        *)
                     write,            (* writing is permitted if set        *)
