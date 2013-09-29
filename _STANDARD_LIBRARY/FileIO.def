@@ -91,7 +91,7 @@ PROCEDURE OpenWithBuffer ( VAR file         : File;
 
 PROCEDURE ReOpen ( file : File; mode : Mode );
 (* Flushes and rewinds the file associated with <file> and changes its access
-   mode to <mode>. *)
+   mode to <mode>. Does not rewind if the file's mode has the append flag set. *)
 
 (* Alternative (B) -- without rewind, without flush *)
 
@@ -140,6 +140,9 @@ PROCEDURE Advance ( file : File; offset : FilePos );
 PROCEDURE Rewind ( file : File );
 (* Sets the read/write position for file accessor <file> to the beginning of
    the file and resets its end-of-file status. *)
+
+(* Any attempt to call SetPos, Advance or Rewind on a file whose file mode
+   has the append flag set shall fail with status unsupportedOperation. *)
 
 
 (* Read and write operations *)
