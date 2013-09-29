@@ -6,30 +6,37 @@ DEFINITION MODULE RUNTIME;
 
 FROM SYSTEM IMPORT ADDRESS;
 
-TYPE
-    Facility = ( StackTrace, PostMortem, SystemReset );
 
-    Exception = ( DivByZero, DerefNIL, TypeOverflow, IndexOutOfBounds,
+(* Runtime System Facilities *)
+
+TYPE Facility = ( StackTrace, PostMortem, SystemReset );
+
+
+(* Runtime System Faults *)
+
+TYPE RTSFault = ( DivByZero, DerefNIL, TypeOverflow, IndexOutOfBounds,
                   StringCapacityExceeded, StackOverflow, OutOfMemory,
                   UserAbort );
 
-    NotificationHandler = PROCEDURE ( ADDRESS, ADDRESS );
-    (* this is a type definition for a callback function.
-    notification handler procedures must accept two parameters:
-       - the address of the PC at which the offending event occured
-       - the address of the SP at which the offending event occured *)
+(* Notification Handler For Runtime System Faults *)
+
+TYPE NotificationHandler = PROCEDURE ( ADDRESS, ADDRESS );
+(* This is a type definition for a callback function.
+   Notification handler procedures must accept two parameters:
+     - the address of the PC at which the offending event occured
+     - the address of the SP at which the offending event occured *)
 
 
-(* Raising Runtime Exceptions *)
+(* Raising Runtime Faults *)
 
-(* MACRO *) PROCEDURE RaiseError( e : Exception );
-(* Raises runtime exception of type e. Never returns. *)
+(* MACRO *) PROCEDURE RaiseRTSFault( f : RTSFault );
+(* Raises runtime system fault f. Causes program abort. Never returns. *)
 
 
 (* Runtime System Notification services *)
 
-PROCEDURE InstallNotificationHandler( e : Exception; p : NotificationHandler );
-(* Installs handler p as notification handler for exceptions of type e. *)
+PROCEDURE InstallNotificationHandler( f : RTSFault; p : NotificationHandler );
+(* Installs handler p as notification handler for runtime system fault f. *)
 
 PROCEDURE InstallInitHasFinishedHandler( p : PROCEDURE );
 (* Installs p as the program's post-initialisation handler. The installed
