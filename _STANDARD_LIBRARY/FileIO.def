@@ -148,7 +148,7 @@ PROCEDURE Rewind ( file : File );
    the file and resets its end-of-file status. *)
 
 (* Any attempt to call SetPos, Advance or Rewind on a file whose file mode
-   has the append flag set shall fail with status unsupportedOperation. *)
+   has the append flag set shall fail with status operationNotSupported. *)
 
 
 (* Read and write operations *)
