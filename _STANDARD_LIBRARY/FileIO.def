@@ -71,9 +71,10 @@ PROCEDURE Open ( VAR file       : File;
                  CONST filename : ARRAY OF CHAR;
                  mode           : Mode;
                  VAR status     : Status );
-(* Opens the file <filename> in file mode <mode>. If sucessful passes a file
-   accessor back in <file>, otherwise passes NIL back in <file>. The status of
-   the operation is passed back in <status>. *)
+(* Opens the file <filename> in file mode <mode>.  If sucessful passes a file
+   accessor back in <file>,  otherwise passes NIL back in <file>.  Sets the
+   file position depending on <mode>.  The status of the operation is passed
+   back in <status>. *)
 
 PROCEDURE OpenWithBuffer ( VAR file         : File;
                            CONST filename   : ARRAY OF CHAR;
@@ -81,25 +82,13 @@ PROCEDURE OpenWithBuffer ( VAR file         : File;
                            VAR buffer       : ARRAY OF OCTET;
                            VAR status       : Status );
 (* Opens the file <filename> in file mode <mode> using <buffer> as a custom
-   file buffer. If successful passes a file accessor back in <file>, otherwise
-   passes NIL back in <file>. The status is passed back in <status>. *)
-
-
-(* ### Changing the file mode ### *)
-
-(* Alternative (A) -- with rewind, probably also flush *)
+   file buffer.  If successful passes a file accessor back in <file>,  other-
+   wise passes NIL back in <file>.  Sets the file position depending on <mode>.
+   The status is passed back in <status>. *)
 
 PROCEDURE ReOpen ( file : File; mode : Mode );
-(* Flushes and rewinds the file associated with <file> and changes its access
-   mode to <mode>. Does not rewind if the file's mode has the append flag set. *)
-
-(* Alternative (B) -- without rewind, without flush *)
-
-PROCEDURE SetMode ( file : File; mode : Mode );
-(* Changes the access mode of the file associated with <file> to <mode>. *)
-
-(* TO DO: Decide if (A) should also flush (probably yes), then pick (A) or (B) *)
-
+(* Flushes the file associated with file accessor <file> and changes its mode
+   to <mode>. Sets the file position depending on <mode>. *)
 
 (* Opening or reopening a file in a mode whose append flag is not set causes
    the file position to be set to the beginning of the file.  Opening or re-
