@@ -226,8 +226,8 @@ PROCEDURE DefaultErrFile : File;
    nation for program error output, open in write mode, usually a terminal. *)
 
 PROCEDURE DefaultNullFile : File;
-(* Returns the file accessor associated with the  null device,  open in both
-   read and write mode.  Operations on this file have no effect. *)
+(* Returns the file accessor associated with the null device, open in write
+   mode.  Write operations on this file have no effect. *)
 
 
 END FileIO.
