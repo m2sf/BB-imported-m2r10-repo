@@ -187,6 +187,11 @@ PROCEDURE WriteBlock ( file : File;
 PROCEDURE Flush ( file : File );
 (* Writes unwritten data in the buffer of <file> to its associated file. *)
 
+(* Any attempt to read or lookahead read from a file whose read flag is not
+   set shall fail with status operationNotSupported.  Likewise, any attempt
+   to write to or flush a file whose write flag is not set  shall fail with
+   status operationNotSupported. *)
+
 
 (* Closing files *)
 
