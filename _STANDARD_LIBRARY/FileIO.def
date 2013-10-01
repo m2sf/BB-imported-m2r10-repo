@@ -119,8 +119,7 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 
 PROCEDURE EOF ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file accessor <file>
-   has been reached, otherwise FALSE.  Returns FALSE if <file> is a special
-   file. *)
+   has been reached, otherwise FALSE. *)
 
 PROCEDURE CurrentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file accessor <file> where a
