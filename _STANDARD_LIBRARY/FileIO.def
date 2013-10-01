@@ -199,8 +199,10 @@ PROCEDURE Flush ( file : File );
 (* Closing files *)
 
 PROCEDURE Close ( VAR file : File; VAR status : Status );
-(* Performs Flush on <file> and closes the associated file. Passes NIL back
-   in <file>. The status of the operation is passed back in <status>. *)
+(* Performs Flush on <file>, closes the associated file and passes NIL back
+   in <file>.  The status of the operation is passed back  in <status>.  If
+   <file> is invalid, the operation fails, not passing NIL back and passing
+   invalidAccessor back in status. *)
 
 
 (* Implementation defined accessors to special files *)
