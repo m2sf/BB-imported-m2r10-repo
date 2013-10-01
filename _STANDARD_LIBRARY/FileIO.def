@@ -124,8 +124,7 @@ PROCEDURE EOF ( file : File ) : BOOLEAN;
 
 PROCEDURE CurrentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file accessor <file> where a
-   value of TMIN(FilePos) represents the beginning of a file.  If <file> is
-   a special file,  then TMIN(FilePos) is returned. *)
+   value of TMIN(FilePos) represents the beginning of a file. *)
 
 PROCEDURE SetPos ( file : File; index : FilePos );
 (* Sets the  read/write position  for file accessor <file> to <index>. *)
