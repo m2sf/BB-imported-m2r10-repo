@@ -100,19 +100,21 @@ PROCEDURE ReOpen ( file : File; mode : Mode );
 
 PROCEDURE ModeOf ( file : File ) : Mode;
 (* Returns the file mode of file accessor <file>.
-   Returns an empty set if <file> is invalid. *)
+   If <file> is invalid, an empty set is returned. *)
 
 PROCEDURE StatusOf ( file : File ) : Status;
-(* Returns the status of the most recent operation for file accessor <file>.*)
+(* Returns the status of the most recent operation for file accessor <file>.
+   If <file> is invalid, invalidAccessor is returned. *)
 
 PROCEDURE NameLen ( file : File ) : CARDINAL;
 (* Returns the length of the filename associated with file accessor <file>.
-   Returns 0 if <file> is a special file or invalid. *)
+   If <file> is invalid, zero is returned. *)
 
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
-(* Passes the name of the file associated with file accessor <file> back in
-   <filename>. Passes an empty string if <file> is a special file or invalid
-   or if the name exceeds the capacity of <filename>. *)
+(* Passes the name  of the file associated  with file accessor <file> back in
+   <filename>.  If the name exceeds the capacity of <filename>  the operation
+   fails with status nameTooLong, passing an empty string back in <filename>.
+   If <file> is invalid, an empty string is passed back in <filename>. *)
 
 
 (* File position operations *)
@@ -204,12 +206,13 @@ PROCEDURE Close ( VAR file : File; VAR status : Status );
 (* Implementation defined accessors to special files *)
 
 (* Special files  are automatically opened when module FileIO is initialised.
-   The file mode of a special file is either read or write.  It will never be
-   append nor sync.  Any attempt to open a special file will fail with status
-   alreadyOpen.   Any  attempt  to  call  ReOpen,  SetPos,  Advance,  Rewind,
+   The file mode of a special file is either read  or write.   EOF always re-
+   turns FALSE and CurrentPos always returns TMIN(FilePos) for special files.
+   Any attempt to open a special file will fail with status alreadyOpen.  Any
+   attempt  to  call  ReOpen,  NameLen,  GetName,  SetPos,  Advance,  Rewind,
    Lookahead,  LA2,  ReadBlock,  Flush  or  Close   will  fail   with  status
-   operationNotSupported.  EOF for a special file  always  returns FALSE  and
-   CurrentPos for a special files always returns TMIN(FilePos). *)
+   operationNotSupported.  NameLen will return zero  and GetName will pass an
+   empty string. *)
 
 PROCEDURE IsSpecialFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
