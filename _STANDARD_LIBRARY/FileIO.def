@@ -215,7 +215,8 @@ PROCEDURE Close ( VAR file : File; VAR status : Status );
    empty string. *)
 
 PROCEDURE IsSpecialFile ( file : File ) : BOOLEAN;
-(* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
+(* Returns TRUE if file is associated with a special file, otherwise FALSE.
+   If <file> is invalid, FALSE is returned. *)
    
 PROCEDURE DefaultInFile : File;
 (* Returns the file accessor associated with an implementation defined source
