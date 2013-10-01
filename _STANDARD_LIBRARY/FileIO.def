@@ -161,6 +161,16 @@ PROCEDURE LA2 ( file : File; VAR data : OCTET );
    ahead octet lies beyond the end of the file then no data is passed back
    and the file status is set to accessBeyondEOF. *)
 
+PROCEDURE ReadBlock ( file : File;
+                      VAR data : ARRAY OF OCTET; VAR octetsRead : FileSize );
+(* Reads a block of data at the current position of <file>. Passes the block
+   of data back in <data> and the number of octets read in <octetsRead>.
+   The read/write position of <file> is advanced accordingly. *)
+
+(* Any attempt to read or lookahead read from a file whose read flag is not
+   set shall fail with status operationNotSupported. *)
+
+
 PROCEDURE Write ( file : File; data : OCTET );
 (* Performs a write or append operation depending on the mode of <file>.
    In write mode, the procedure writes one octet in <data> to the current
@@ -169,12 +179,6 @@ PROCEDURE Write ( file : File; data : OCTET );
    one octet in <data> to the end of the file. In either mode, the current
    read/write position of <file> is advanced by one after the data has been
    written. *)
-
-PROCEDURE ReadBlock ( file : File;
-                      VAR data : ARRAY OF OCTET; VAR octetsRead : FileSize );
-(* Reads a block of data at the current position of <file>. Passes the block
-   of data back in <data> and the number of octets read in <octetsRead>.
-   The read/write position of <file> is advanced accordingly. *)
 
 PROCEDURE WriteBlock ( file : File;
                        data : ARRAY OF OCTET; VAR octetsWritten : FileSize );
@@ -190,10 +194,8 @@ PROCEDURE WriteBlock ( file : File;
 PROCEDURE Flush ( file : File );
 (* Writes unwritten data in the buffer of <file> to its associated file. *)
 
-(* Any attempt to read or lookahead read from a file whose read flag is not
-   set shall fail with status operationNotSupported.  Likewise, any attempt
-   to write to or flush a file whose write flag is not set  shall fail with
-   status operationNotSupported. *)
+(* Any attempt to write to or flush a file whose write flag is not set shall
+   fail with status operationNotSupported. *)
 
 
 (* Closing files *)
