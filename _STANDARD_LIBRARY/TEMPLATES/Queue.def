@@ -1,13 +1,13 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE @@module@@;
 
 (* Generic Queue Template *)
 
 (* ---------------------------------------------------------------------------
- * This template is expanded by the M2R10 template engine utility. Expansion
- * can be invoked from within a compiling source file using the MAKE pragma:
- * <* MAKE = "m2te Queue module:'FooQueue' component:'FooRecord'" *>
+ * This template is expanded by the M2R10 template engine utility.  Expansion
+ * can be invoked from within a compiling source file using the GENLIB pragma:
+ * <* GENLIB FooQueue FROM Queue : component="FooRecord" *>
  * IMPORT FooQueue;
  * ------------------------------------------------------------------------ *)
 
