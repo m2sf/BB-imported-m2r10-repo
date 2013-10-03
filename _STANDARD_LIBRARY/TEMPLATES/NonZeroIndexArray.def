@@ -1,6 +1,17 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE @@module@@;
+
+(* Generic Arbitrary Index Array Type Template *)
+
+(* ---------------------------------------------------------------------------
+ * This template is expanded by the M2R10 template engine utility.  Expansion
+ * can be invoked from within a compiling source file using the GENLIB pragma:
+ * <* GENLIB Array10 FROM NonZeroIndexArray :
+ *    baseType="OCTET", indexType="OCTET", minIndex="1", maxIndex="10"  *>
+ * IMPORT Array10;
+ * ------------------------------------------------------------------------ *)
+
 %% (*
 %% NonZeroIndexArray - Generic Arbitrary Index Array Type Template
 %%
