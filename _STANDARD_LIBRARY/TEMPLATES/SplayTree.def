@@ -1,13 +1,13 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE @@module@@;
 
 (* Generic Splay Tree Template *)
 
 (* ---------------------------------------------------------------------------
- * This template is expanded by the M2R10 template engine utility. Expansion
- * can be invoked from within a compiling source file using the MAKE pragma:
- * <* MAKE = "m2te SplayTree module:'FooSplay' component:'FooRecord'" *>
+ * This template is expanded by the M2R10 template engine utility.  Expansion
+ * can be invoked from within a compiling source file using the GENLIB pragma:
+ * <* GENLIB FooSplay FROM SplayTree : component="FooRecord" *>
  * IMPORT FooSplay;
  * ------------------------------------------------------------------------ *)
 
