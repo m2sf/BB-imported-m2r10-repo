@@ -7,7 +7,7 @@ DEFINITION MODULE @@module@@;
 (* ---------------------------------------------------------------------------
  * This template is expanded by the M2R10 template engine utility.  Expansion
  * can be invoked from within a compiling source file using the GENLIB pragma:
- * <* GENLIB FooHashTab FROM KeyValueStore : component:=FooRecord" *>
+ * <* GENLIB FooHashTab FROM KeyValueStore : component:="FooRecord" *>
  * IMPORT FooHashTab;
  * ------------------------------------------------------------------------ *)
 
