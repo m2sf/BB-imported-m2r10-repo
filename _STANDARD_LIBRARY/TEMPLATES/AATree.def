@@ -5,9 +5,9 @@ DEFINITION MODULE @@module@@;
 (* Generic AA Tree Template *)
 
 (* ---------------------------------------------------------------------------
- * This template is expanded by the M2R10 template engine utility. Expansion
- * can be invoked from within a compiling source file using the MAKE pragma:
- * <* MAKE = "m2te AATree module:'FooAAT' component:'FooRecord'" *>
+ * This template is expanded by the M2R10 template engine utility.  Expansion
+ * can be invoked from within a compiling source file using the GENLIB pragma:
+ * <* GENLIB FooAAT FROM AATree : component="FooRecord" *>
  * IMPORT FooAAT;
  * ------------------------------------------------------------------------ *)
 
