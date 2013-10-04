@@ -23,6 +23,7 @@ TYPE
                illegalCharsInName,    (* illegal chars in passed filename   *)
                invalidMode,           (* the passed in mode is invalid      *)
                alreadyOpen,           (* the passed in file is already open *)
+               mayNotOpenDirectory,   (* attempt to open a directory        *)
                accessDenied,          (* the filesystem denied file access  *)
                accessBeyondEOF,       (* attempt to read past end of file   *)
                fileSizeLimitExceeded, (* attempt to write past size limit   *)
@@ -93,7 +94,8 @@ PROCEDURE ReOpen ( file : File; mode : Mode );
 (* Opening or reopening a file in a mode whose append flag is not set causes
    the file position to be set to the beginning of the file.  Opening or re-
    opening a file in a mode whose append flag is set causes the file position
-   to be set to the end of the file. *)
+   to be set to the end of the file.  An attempt to open a file that is a di-
+   rectory fails with status code mayNotOpenDirectory. *)
 
 
 (* File mode, status and name *)
