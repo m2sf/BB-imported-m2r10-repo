@@ -15,9 +15,11 @@ FROM Integers IMPORT CARDINAL64; (* assuming 64-bit file systems *)
 
 TYPE
     File = OPAQUE; (* implementation defined file accessor *)
+    
+    (* Any attempt to pass an invalid file accessor to a file operation other
+       than opening a file shall raise runtime fault InvalidAccessor. *)
         
     Status = ( success,               (* operation completed successfully   *)
-               invalidAccessor,       (* the passed in accessor is invalid  *)
                fileNotFound,          (* no file found with this filename   *)
                nameTooLong,           (* the passed in filename is too long *)
                illegalCharsInName,    (* illegal chars in passed filename   *)
@@ -51,8 +53,9 @@ TYPE
 
 (* Alias types for implementation dependent file position and file size *)
 
-    FilePos = ALIAS OF CARDINAL64;
-    FileSize = ALIAS OF CARDINAL64;
+    FileSize = ALIAS OF CARDINAL64; (* must always be an unsigned type *)
+    
+    FilePos = ALIAS OF FileSize;
 
 
 (* Predefined file modes *)
@@ -101,22 +104,18 @@ PROCEDURE ReOpen ( file : File; mode : Mode );
 (* File mode, status and name *)
 
 PROCEDURE ModeOf ( file : File ) : Mode;
-(* Returns the file mode of file accessor <file>.
-   If <file> is invalid, an empty set is returned. *)
+(* Returns the file mode of file accessor <file>. *)
 
 PROCEDURE StatusOf ( file : File ) : Status;
-(* Returns the status of the most recent operation for file accessor <file>.
-   If <file> is invalid, invalidAccessor is returned. *)
+(* Returns the status of the most recent operation for <file>. *)
 
 PROCEDURE NameLen ( file : File ) : CARDINAL;
-(* Returns the length of the filename associated with file accessor <file>.
-   If <file> is invalid, zero is returned. *)
+(* Returns the length of the filename associated with <file>. *)
 
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 (* Passes the name  of the file associated  with file accessor <file> back in
    <filename>.  If the name exceeds the capacity of <filename>  the operation
-   fails with status nameTooLong, passing an empty string back in <filename>.
-   If <file> is invalid, an empty string is passed back in <filename>. *)
+   fails with status nameTooLong, passing an empty string back in <filename>. *)
 
 
 (* File position operations *)
@@ -194,7 +193,7 @@ PROCEDURE WriteBlock ( file : File;
    is passed back in <octetsWritten> after the data has been written. *)
 
 PROCEDURE Flush ( file : File );
-(* Writes unwritten data in the buffer of <file> to its associated file. *)
+(* Writes unwritten data in any buffer of <file> to its associated file. *)
 
 (* Any attempt to write to or flush a file whose write flag is not set shall
    fail with status operationNotSupported. *)
@@ -204,9 +203,7 @@ PROCEDURE Flush ( file : File );
 
 PROCEDURE Close ( VAR file : File; VAR status : Status );
 (* Performs Flush on <file>, closes the associated file and passes NIL back
-   in <file>.  The status of the operation is passed back  in <status>.  If
-   <file> is invalid, the operation fails, not passing NIL back and passing
-   invalidAccessor back in status. *)
+   in <file>.  The status of the operation is passed back  in <status>. *)
 
 
 (* Implementation defined accessors to special files *)
@@ -221,8 +218,7 @@ PROCEDURE Close ( VAR file : File; VAR status : Status );
    empty string. *)
 
 PROCEDURE IsSpecialFile ( file : File ) : BOOLEAN;
-(* Returns TRUE if file is associated with a special file, otherwise FALSE.
-   If <file> is invalid, FALSE is returned. *)
+(* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
    
 PROCEDURE DefaultInFile : File;
 (* Returns the file accessor associated with an implementation defined source
