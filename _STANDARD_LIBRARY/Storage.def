@@ -20,7 +20,7 @@ PROCEDURE ALLOCATE( VAR p : CAST ADDRESS; size : LONGCARD );
 
 PROCEDURE DEALLOCATE( VAR p : CAST ADDRESS );
 (* Deallocates a previously allocated block of memory at address p and
-   passes NIL back in p. Takes no action if isGarbageCollection is TRUE.
+   passes NIL back in p. Takes no action if isGarbageCollected is TRUE.
    If p is not an address of a block of memory previously allocated by
    procedure ALLOCATE a runtime fault InvalidAccessor is raised.
    This procedure is required by pervasive macro-procedure RELEASE. *)
