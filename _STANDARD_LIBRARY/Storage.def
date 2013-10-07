@@ -11,14 +11,14 @@ CONST isGarbageCollected = <implementation defined constant>;
 
 (* Allocator *)
 
-PROCEDURE ALLOCATE( VAR p : ADDRESS; size : LONGCARD );
+PROCEDURE ALLOCATE( VAR p : CAST ADDRESS; size : LONGCARD );
 (* Allocates a block of contiguous memory of the specified size and passes
    its address back in p. Passes back NIL if memory could not be allocated.
    This procedure is required by pervasive macro-procedure NEW. *)
 
 (* Deallocator *)
 
-PROCEDURE DEALLOCATE( VAR p : ADDRESS );
+PROCEDURE DEALLOCATE( VAR p : CAST ADDRESS );
 (* Deallocates a previously allocated block of memory at address p and
    passes NIL back in p. Takes no action if isGarbageCollection is TRUE.
    If p is not an address of a block of memory previously allocated by
