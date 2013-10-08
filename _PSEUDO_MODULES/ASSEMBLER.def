@@ -1,38 +1,55 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE ASSEMBLER;
 
-(* Optional Pseudo-module for Access to Target Dependent Inline Assembler *)
+(* Optional pseudo-module providing a simple target dependent inline
+   assembler facility. *)
 
-CONST
- (* list of constants for unqualified opcode mnemonics, for example
-    mov = OPCODE.mov; *)
 
- (* list of constants for unqualified register mnemonics, for example
-    eax = REGISTER.eax; *)
+TYPE REGISTER = 
 
-TYPE
-    OPCODE = (
-     (* list of architecture defined opcode mnemonics *)
-    );
+<* IF archIsIntelX86 *>
+  (*   8-bit *) ( AH, AL, BH, BL, CH, CL,
+  (*  16-bit *)   AX, BX, CX, DX, SI, DI, SP, BP, FLAGS,
+                  CS, DS, SS, ES, FS, GS,
+  (*  32-bit *)   EAX, EBX, ECX, EDX, ESI, EDI, ESP, EBP, EFLAGS,
+  (*  64-bit *)   RAX, RBX, RCX, RDX, RSI, RDI, RSP, RBP, RFLAGS,
+                  R8, R9, R10, R11, R12, R13, R14, R15,
+  (* 128-bit *)   XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6, XMM7,
+                  XMM8, XMM9, XMM10, XMM11, XMM12, XMM13, XMM14, XMM15,
+  (* 256-bit *)   MM0, YMM1, YMM2, YMM3, YMM4, YMM5, YMM6, YMM7,
+                  YMM8, YMM9, YMM10, YMM11, YMM12, YMM13, YMM14, YMM15 );
+<* ELIF archIsPPC *>
+  ( R0, R1, R2, R3, R4, R5, R6, R7,
+    R8, R9, R10, R11, R12, R13, R14, R15,
+    R16, R17, R18, R19, R20, R21, R22, R23,
+    R24, R25, R26, R27, R28, R29, R30, R31 );
+<* ELIF archIsARM *>
+  ( R0, R1, R2, R3, R4, R5, R6, R7,
+    R8, R9, R10, R11, R12, R13, R14, R15 );
+<* ELIF archIsSPARC *>
+  ( G1, G2, G3, G4, G5, G6, G7,
+    G8, G9, G10, G11, G12, G13, G14, G15,
+    G16, G17, G18, G19, G20, G21, G22, G23,
+    G24, G25, G26, G27, G28, G29, G30, G31 );
+<* ENDIF *>
+   
 
-    REGISTER = (
-     (* list of architecture defined register mnemonics *)
-    );
 
-(* The EBNF for assembly instructions is as follows:
-    instructionList : instruction ( ',' instruction )* ;
-    instruction : opcode operandList ;
-    opcode : <any of the identifiers defined by type OPCODE> ;
-    operandList : operand ( ',' operand ) ;
-    operand : constant | variable | register ;
-    constant : <any Modula-2 constant expression> ;
-    variable : <any Modula-2 variable identifier> ;
-    register : <any of the identifiers defined by type REGISTER> ; *)
+<*INLINE*> PROCEDURE CODE( <arglist> );
+ (* Inserts the assembly code represented by <arglist>.
+    The EBNF for <arglist> is:
+      arglist : code ( ',' code )* ;
+      code : <any constant expression of type OCTET> ;
+    A compile time error occurs if any code value is out of range. *)
 
-<*INLINE*> PROCEDURE CODE( <instructionList> );
- (* Inserts the assembly code generated from instructionList,
-    usage example: FROM ASSEMBLER IMPORT *; ... CODE( mov, eax, foobar ); *)
+<*INLINE*> PROCEDURE SETREG( r : REGISTER; value : <ValueType> );
+ (* Copies <value> to register <r> where <value> may be of any type
+    as long as TSIZE(ValueType) does not exceed the bitwidth of <r>. *)
+
+<*INLINE*> PROCEDURE GETREG( r : REGISTER; VAR value : <ValueType> );
+ (* Copies the contents of <r> to <value> where <value> may be of any
+    type as long as TSIZE(ValueType) does not exceed the bitwidth of <r>. *)
 
 
 END ASSEMBLER.
