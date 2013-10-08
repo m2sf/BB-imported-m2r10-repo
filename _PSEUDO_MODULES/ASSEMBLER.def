@@ -1,40 +1,49 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE ASSEMBLER;
+DEFINITION MODULE ASSEMBLER; (* OPTIONAL *)
 
-(* Optional pseudo-module providing a simple target dependent inline
-   assembler facility. *)
+(* Simple target dependent inline-assembler facility *)
 
 
-TYPE REGISTER = 
+TYPE REGISTER = <target architecture dependent enumeration type>;
 
-<* IF archIsIntelX86 *>
-  (*   8-bit *) ( AH, AL, BH, BL, CH, CL,
-  (*  16-bit *)   AX, BX, CX, DX, SI, DI, SP, BP, FLAGS,
-                  CS, DS, SS, ES, FS, GS,
-  (*  32-bit *)   EAX, EBX, ECX, EDX, ESI, EDI, ESP, EBP, EFLAGS,
-  (*  64-bit *)   RAX, RBX, RCX, RDX, RSI, RDI, RSP, RBP, RFLAGS,
-                  R8, R9, R10, R11, R12, R13, R14, R15,
-  (* 128-bit *)   XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6, XMM7,
-                  XMM8, XMM9, XMM10, XMM11, XMM12, XMM13, XMM14, XMM15,
-  (* 256-bit *)   MM0, YMM1, YMM2, YMM3, YMM4, YMM5, YMM6, YMM7,
-                  YMM8, YMM9, YMM10, YMM11, YMM12, YMM13, YMM14, YMM15 );
-<* ELIF archIsPPC *>
-  ( R0, R1, R2, R3, R4, R5, R6, R7,
-    R8, R9, R10, R11, R12, R13, R14, R15,
-    R16, R17, R18, R19, R20, R21, R22, R23,
-    R24, R25, R26, R27, R28, R29, R30, R31 );
-<* ELIF archIsARM *>
-  ( R0, R1, R2, R3, R4, R5, R6, R7,
-    R8, R9, R10, R11, R12, R13, R14, R15 );
-<* ELIF archIsSPARC *>
-  ( G1, G2, G3, G4, G5, G6, G7,
-    G8, G9, G10, G11, G12, G13, G14, G15,
-    G16, G17, G18, G19, G20, G21, G22, G23,
-    G24, G25, G26, G27, G28, G29, G30, G31 );
-<* ENDIF *>
+(* Type REGISTER is a target architecture dependent enumeration
+   with mnemonics for the target architecture's registers.
    
+   If the target architecture is Intel x86, it is defined as:
+   
+   REGISTER = ( AH, AL, BH, BL, CH, CL, AX, BX, CX, DX, SI, DI, SP, BP,
+    FLAGS, CS, DS, SS, ES, FS, GS, EAX, EBX, ECX, EDX, ESI, EDI, ESP,
+    EBP, EFLAGS, RAX, RBX, RCX, RDX, RSI, RDI, RSP, RBP, RFLAGS, R8, R9,
+    R10, R11, R12, R13, R14, R15, XMM0, XMM1, XMM2, XMM3, XMM4, XMM5,
+    XMM6, XMM7, XMM8, XMM9, XMM10, XMM11, XMM12, XMM13, XMM14, XMM15,
+    YMM0, YMM1, YMM2, YMM3, YMM4, YMM5, YMM6, YMM7, YMM8, YMM9, YMM10,
+    YMM11, YMM12, YMM13, YMM14, YMM15 );
+    
+   If the target architecture is PowerPC, it is defined as:
+   
+   REGISTER = ( R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12,
+    R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R25, R26,
+    R27, R28, R29, R30, R31 );
+   
+   If the target architecture is ARM, it is defined as:
+   
+   REGISTER = ( R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12,
+    R13, R14, R15 );
+   
+   If the target architecture is SPARC, it is defined as:
+   
+   REGISTER = ( G1, G2, G3, G4, G5, G6, G7, G8, G9, G10, G11, G12, G13,
+    G14, G15, G16, G17, G18, G19, G20, G21, G22, G23, G24, G25, G26, G27,
+    G28, G29, G30, G31 );
+   
+   Implementors of other target architectures are required to consult
+   with the authors of the Modula-2 R10 language report to coordinate
+   the definition of the enumeration of mnemonics of their respective
+   architecture. The outcome will be published online from time to time. *)
 
+
+(* Machine code generating macros *)
 
 <*INLINE*> PROCEDURE CODE( <arglist> );
  (* Inserts the assembly code represented by <arglist>.
