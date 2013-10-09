@@ -2,7 +2,12 @@
 
 DEFINITION MODULE ASSEMBLER; (* OPTIONAL *)
 
-(* Simple target dependent inline-assembler facility *)
+(* Optional target dependent inline-assembler facility *)
+
+(* This module provides  access to CPU registers,  a raw machine code inline
+   facility and  a symbolic assembly inline facility with implementation de-
+   fined assembly syntax.  If the module is provided  it may omit either the
+   raw machine code inliner or the symbolic assembler but not both. *)
 
 
 TYPE REGISTER = <target architecture dependent enumeration type>;
@@ -43,14 +48,7 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
    architecture. The outcome will be published online from time to time. *)
 
 
-(* Machine code generating macros *)
-
-<*INLINE*> PROCEDURE CODE( <arglist> );
- (* Inserts the assembly code represented by <arglist>.
-    The EBNF for <arglist> is:
-      arglist : code ( ',' code )* ;
-      code : <any constant expression of type OCTET> ;
-    A compile time error occurs if any code value is out of range. *)
+(* Access to CPU registers *)
 
 <*INLINE*> PROCEDURE SETREG( r : REGISTER; value : <ValueType> );
  (* Copies <value> to register <r> where <value> may be of any type
@@ -61,4 +59,26 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
     type as long as TSIZE(ValueType) does not exceed the bitwidth of <r>. *)
 
 
+(* Raw machine code inline facilty *)
+
+<*INLINE*> PROCEDURE CODE( <arglist> );
+ (* Inserts the assembly code represented by <arglist>.
+    The EBNF for <arglist> is:
+      arglist : code ( ',' code )* ;
+      code : <any constant expression of type OCTET> ;
+    A compile time error occurs if any code value is out of range. *)
+
+
+(* Symbolic assembly code inline facility *)
+
+CONST ASM; (* only available if symbolic assembly is supported *)
+(* Import of constant ASM enables the optional symbolic assembler language
+   extension within the importing module.  The constant has  no value  and
+   cannot be used for any purpose other than import. *)
+
+(* The EBNF for the symbolic assembly language extension is:
+     assemblyBlock : ASM assemblySourceCode END ;
+     assemblySourceCode : <implementation defined syntax> ; *)
+
+ 
 END ASSEMBLER.
