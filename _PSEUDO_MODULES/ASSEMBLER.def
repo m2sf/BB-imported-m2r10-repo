@@ -78,7 +78,8 @@ CONST ASM; (* only available if symbolic assembly is supported *)
 
 (* The EBNF for the symbolic assembly language extension is:
      assemblyBlock : ASM assemblySourceCode END ;
-     assemblySourceCode : <implementation defined syntax> ; *)
+     assemblySourceCode : <implementation defined syntax> ;
+   An assembly block is treated within Modula-2 source as a statement. *)
 
  
 END ASSEMBLER.
