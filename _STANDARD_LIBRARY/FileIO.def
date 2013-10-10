@@ -69,6 +69,18 @@ CONST
     defaultBufferSize = <implementation defined value>;
 
 
+(* Parameter consistency checks *)
+
+PROCEDURE IsValidAccessor ( file : File ) : BOOLEAN;
+(* Returns TRUE if <file> is a valid file accessor, otherwise FALSE. *)
+
+PROCEDURE IsValidMode ( mode : Mode ) : BOOLEAN;
+(* Returns TRUE if <mode> is a valid file mode, otherwise FALSE. *)
+
+PROCEDURE IsValidPos ( file : File; pos : FilePos ) : BOOLEAN;
+(* Returns TRUE if <pos> is a valid file position for <file>, otherwise FALSE. *)
+
+
 (* Opening files *)
 
 PROCEDURE Open ( VAR file       : File;
@@ -204,6 +216,9 @@ PROCEDURE Flush ( file : File );
 PROCEDURE Close ( VAR file : File; VAR status : Status );
 (* Performs Flush on <file>, closes the associated file and passes NIL back
    in <file>.  The status of the operation is passed back  in <status>. *)
+
+PROCEDURE CloseAll;
+(* Closes all open files. *)
 
 
 (* Implementation defined accessors to special files *)
