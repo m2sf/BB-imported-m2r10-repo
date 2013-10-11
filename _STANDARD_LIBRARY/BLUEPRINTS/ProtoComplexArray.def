@@ -1,8 +1,8 @@
-(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Complex Array ADTs *)
 
-BLUEPRINT FOR ProtoComplexArray [ProtoNonScalar];
+BLUEPRINT ProtoComplexArray [ProtoNonScalar];
 
 PLACEHOLDERS IndexType, ComplexType, ProcType;
 
@@ -40,8 +40,8 @@ PROCEDURE [:=] assign ( VAR array : ProtoComplexArray;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] storeValue ( VAR array : ProtoComplexArray;
-                               index : IndexType; value : ComplexType );
+PROCEDURE [STORE] storeValue ( VAR array : ProtoComplexArray;
+                                   index : IndexType; value : ComplexType );
 
 (* Procedure to store a value at a given index in a Static Array ADT
    variable. *)
@@ -52,8 +52,8 @@ PROCEDURE [!] storeValue ( VAR array : ProtoComplexArray;
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] valueAtIndex ( array : ProtoComplexArray;
-                             index : IndexType ) : ComplexType;
+PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoComplexArray;
+                                    index : IndexType ) : ComplexType;
 (* Procedure to return the value stored at a given index in a Static Array
    ADT value. *)
 
