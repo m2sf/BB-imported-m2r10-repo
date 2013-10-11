@@ -1,8 +1,8 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Statically Allocatable Array ADTs *)
 
-BLUEPRINT FOR ProtoStaticArray [ProtoCollection];
+BLUEPRINT ProtoStaticArray [ProtoCollection];
 
 PLACEHOLDERS IndexType, ValueType, ProcType;
 
@@ -40,8 +40,8 @@ PROCEDURE [:=] assign ( VAR array : ProtoStaticArray;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] storeValue ( VAR array : ProtoStaticArray;
-                               index : IndexType; value : ValueType );
+PROCEDURE [STORE] storeValue ( VAR array : ProtoStaticArray;
+                                   index : IndexType; value : ValueType );
 
 (* Procedure to store a value at a given index in a Static Array ADT
    variable. *)
@@ -52,8 +52,8 @@ PROCEDURE [!] storeValue ( VAR array : ProtoStaticArray;
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] valueAtIndex ( array : ProtoStaticArray;
-                             index : IndexType ) : ValueType;
+PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoStaticArray;
+                                    index : IndexType ) : ValueType;
 (* Procedure to return the value stored at a given index in a Static Array
    ADT value. *)
 
