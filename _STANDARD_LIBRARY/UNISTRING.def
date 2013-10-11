@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE UNISTRING [StringType];
 
@@ -13,7 +13,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 TYPE UNISTRING = OPAQUE;
 
 
-(* S-Type bindings to operators and pervasives: *)
+(* Bindings to operators and pervasives: *)
 
 
 (* allocator *)
@@ -22,18 +22,32 @@ PROCEDURE [NEW] new ( VAR s : UNISTRING );
 (* Allocates a new object of type UNISTRING and returns a pointer to it in s.
    This procedure is bound to pervasive procedure NEW for type UNISTRING. *)
 
+(* release reference *)
+
+PROCEDURE [RETAIN] retain ( VAR s : UNISTRING );
+(* Retains the reference to UNISTRING s.
+   This procedure is bound to pervasive procedure RETAIN for type UNISTRING. *)
+
+(* release reference *)
+
+PROCEDURE [RELEASE] release ( VAR s : STRING );
+(* Releases the reference to STRING s.  Passes NIL in s if deallocated.
+   This procedure is bound to pervasive procedure RELEASE for type UNISTRING. *)
+
 
 (* accessor *)
 
-PROCEDURE [?] characterAtIndex ( s : UNISTRING; index : LONGCARD ) : UNICHAR;
+PROCEDURE [RETRIEVE] characterAtIndex ( s : UNISTRING;
+                                    index : LONGCARD ) : UNICHAR;
 (* Returns the character at the specified index in UNISTRING s. This
    function is bound to the rvalue array operator [ ] for type UNISTRING. *)
 
 
 (* mutators *)
 
-PROCEDURE [!] replaceCharAtIndex ( s : UNISTRING; index : LONGCARD;
-                                   ch : UNICHAR );
+PROCEDURE [STORE] replaceCharAtIndex ( s : UNISTRING;
+                                   index : LONGCARD;
+                                      ch : UNICHAR );
 (* Replaces the character at the specified index in UNISTRING s with ch. This
    procedure is bound to the lvalue array operator [ ] for type UNISTRING. *)
 
@@ -79,13 +93,6 @@ PROCEDURE [<] isLess ( s1, s2 : UNISTRING ) : BOOLEAN;
 PROCEDURE [>] isGreater ( s1, s2 : UNISTRING ) : BOOLEAN;
 (* Returns TRUE if s1 comes lexically after s2, otherwise FALSE.
    This function is bound to operators > and <= for type UNISTRING. *)
-
-
-(* destructor *)
-
-PROCEDURE [DISPOSE] dispose ( VAR s : UNISTRING );
-(* Deallocates UNISTRING s and assigns NIL to s.
-   This procedure is bound to pervasive procedure DISPOSE for type UNISTRING.*)
 
 
 (* IO procedures *)
