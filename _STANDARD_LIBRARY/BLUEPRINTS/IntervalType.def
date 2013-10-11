@@ -1,14 +1,14 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR IntervalType;
+BLUEPRINT IntervalType;
 
-(* Semantic Properties for Interval Number Types *)
+(* Blueprint for Date-Time Interval Types *)
 
 
 (* ADTs must be opaque records,
-   integer number literals may be used *)
+   structured literals are assignable *)
 
-TYPE = OPAQUE RECORD := INTEGER;
+TYPE = OPAQUE RECORD := { VARIADIC OF INTEGER };
 
 
 (* Bindings required for Interval ADTs *)
@@ -17,28 +17,30 @@ CONST [TMIN]; (* require binding to TMIN function *)
 
 CONST [TMAX]; (* require binding to TMAX function *)
 
-PROCEDURE [:=]; (* require binding to assignment operator *)
 
-PROCEDURE [::]; (* optional bindings to conversion operator *)
+(* require binding to assignment symbol *)
 
-PROCEDURE [ABS]; (* require binding to ABS function *)
+PROCEDURE [:=] assign ( literal : INTEGER;
+                 CONST interval : VARIADIC OF INTEGER );
 
-PROCEDURE [NEG]; (* optional binding to NEG function *)
+(* require binding to plus operator *)
 
-PROCEDURE [ODD]; (* require binding to ODD function *)
+PROCEDURE [+] add ( iv1, iv2 : IntervalType ) : IntervalType;
 
-PROCEDURE [+]; (* require binding to plus operator *)
+(* require binding to minus operator *)
 
-PROCEDURE [-]; (* require binding to minus operator *)
+PROCEDURE [-] subtract ( iv1, iv2 : IntervalType ) : IntervalType;
 
-PROCEDURE [=]; (* require binding to equal operator *)
+(* require binding to equal operator *)
 
-PROCEDURE [<]; (* require binding to less operator *)
+PROCEDURE [=] isEqual ( iv1, iv2 : IntervalType ) : BOOLEAN;
 
-PROCEDURE [>]; (* require binding to greater operator *)
+(* require binding to less operator *)
 
-PROCEDURE [SXF]; (* require binding to scalar conversion primitive SXF *)
+PROCEDURE [<] isLess ( iv1, iv2 : IntervalType ) : BOOLEAN;
 
-PROCEDURE [VAL]; (* require binding to scalar conversion primitive VAL *)
+(* require binding to greater operator *)
+
+PROCEDURE [>] isGreater ( iv1, iv2 : IntervalType ) : BOOLEAN;
 
 END IntervalType.
