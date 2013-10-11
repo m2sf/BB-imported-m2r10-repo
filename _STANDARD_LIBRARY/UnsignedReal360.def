@@ -1,6 +1,6 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE UnsignedReal360 [RTYPE];
+DEFINITION MODULE UnsignedReal360 [ProtoReal];
 
 (* Unsigned Real Number Type With Values from 0.0 to 359.9999999 *) 
 
