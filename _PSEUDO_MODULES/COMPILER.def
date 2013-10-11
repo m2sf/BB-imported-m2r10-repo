@@ -40,40 +40,45 @@ CONST ReleaseDay = <implementation defined whole number value>;
 (* Optional compiler capabilities *)
 
 CONST IsBootstrapSubset = <implementation defined boolean value>;
-(* Denotes whether the compiler provides a language subset for bootstrap *)
+(* Denotes whether the compiler provides a language subset for bootstrap. *)
 
-CONST SupportsInlineAssembler = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pseudo-module ASSEMBLER *)
+CONST SupportsInlineCode = <implementation defined boolean value>;
+(* Denotes whether the compiler provides the optional CODE facility in
+   pseudo-module ASSEMBLER. *)
+
+CONST SupportsInlineAssembly = <implementation defined boolean value>;
+(* Denotes whether the compiler provides the optional ASM facility in
+   pseudo-module ASSEMBLER. *)
 
 CONST SupportsUTF8EncodedSource = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma ENCODING *)
+(* Denotes whether the compiler provides optional pragma ENCODING. *)
 
 CONST SupportsCFFI = <implementation defined boolean value>;
-(* Denotes whether the compiler provides an FFI to C *)
+(* Denotes whether the compiler provides an FFI to C. *)
 
 CONST SupportsFortranFFI = <implementation defined boolean value>;
-(* Denotes whether the compiler provides an FFI to Fortran *)
+(* Denotes whether the compiler provides an FFI to Fortran. *)
 
 CONST SupportsAlignmentControl = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma ALIGN *)
+(* Denotes whether the compiler provides optional pragma ALIGN. *)
 
 CONST SupportsBitPadding = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma PADBITS *)
+(* Denotes whether the compiler provides optional pragma PADBITS. *)
 
 CONST SupportsAddressMapping = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma ADDR *)
+(* Denotes whether the compiler provides optional pragma ADDR. *)
 
 CONST SupportsRegisterMapping = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma REG *)
+(* Denotes whether the compiler provides optional pragma REG. *)
 
 CONST SupportsPurityAttribute = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma PURITY *)
+(* Denotes whether the compiler provides optional pragma PURITY. *)
 
 CONST SupportsVolatileAttribute = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma VOLATILE *)
+(* Denotes whether the compiler provides optional pragma VOLATILE. *)
 
 CONST SupportsSingleAssignAttribute = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma SINGLEASSIGN *)
+(* Denotes whether the compiler provides optional pragma SINGLEASSIGN. *)
 
 
 (* Information about the implementation model of REAL and LONGREAL *)
@@ -81,10 +86,10 @@ CONST SupportsSingleAssignAttribute = <implementation defined boolean value>;
 TYPE IEEE754Support = ( None, Binary16, Binary32, Binary64, Binary128 );
 
 CONST ImplModelOfTypeReal = <implementation defined value>;
-(* Denotes the compiler's implementation model of type REAL *)
+(* Denotes the compiler's implementation model of type REAL. *)
 
 CONST ImplModelOfTypeLongReal = <implementation defined value>;
-(* Denotes the compiler's implementation model of type LONGREAL *)
+(* Denotes the compiler's implementation model of type LONGREAL. *)
 
 
 (* Compile Time Macros *)
@@ -98,7 +103,7 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 (* MACRO *) PROCEDURE PROCNAME : ARRAY OF CHAR;
 (* Expands to a string literal with the name of the enclosing procedure. *)
 
-(* MACRO *) PROCEDURE LINENO : CARDINAL;
+(* MACRO *) PROCEDURE LINENUM : CARDINAL;
 (* Expands to a numeric value with the value of the current line number. *)
 
 
