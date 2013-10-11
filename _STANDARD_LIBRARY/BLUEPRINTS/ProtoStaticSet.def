@@ -1,8 +1,8 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Statically Allocatable Set ADTs *)
 
-BLUEPRINT FOR ProtoStaticSet [ProtoCollection];
+BLUEPRINT ProtoStaticSet [ProtoCollection];
 
 PLACEHOLDERS ElementType, ProcType;
 
@@ -39,8 +39,8 @@ PROCEDURE [:=] assign ( VAR set : ProtoStaticSet;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] storeElement ( VAR set : ProtoStaticSet;
-                             element : ElementType; value : BOOLEAN );
+PROCEDURE [STORE] storeElement ( VAR set : ProtoStaticSet;
+                                 element : ElementType; value : BOOLEAN );
 (* Procedure to include and exclude an element in a Set ADT variable,
    where values of TRUE include and values of FALSE exclude the element. *)
 
@@ -50,7 +50,9 @@ PROCEDURE [!] storeElement ( VAR set : ProtoStaticSet;
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] isElement( set : ProtoStaticSet; element : ElementType ) : BOOLEAN;
+PROCEDURE [RETRIEVE] isElement( set : ProtoStaticSet;
+                            element : ElementType ) : BOOLEAN;
+
 (* Procedure to test whether an element is included in a Set ADT value *)
 
 (* An expression of the form set[element]
