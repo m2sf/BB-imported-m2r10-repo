@@ -24,12 +24,12 @@ DEFINITION MODULE @@module@@;
 %%
 %% or automatically during compilation using the MAKE pragma in the source:
 %%
-%%   <* MAKE = "m2te NonZeroIndexArray module:A10
-%%              baseType:OCTET indexType:OCTET minIndex:1 maxIndex:10" *>
+%%   <* GENLIB Array10 FROM NonZeroIndexArray :
+%%       baseType="OCTET", indexType="OCTET", minIndex="1", maxIndex="10" *>
 %%
 %% the expanded template can then be imported like any other library module:
 %%
-%%   IMPORT A10;
+%%   IMPORT Array10;
 %% *)
 
 (* Arbitrary Index Array Type @@module@@ *)
@@ -73,24 +73,24 @@ TYPE
     
 (* Array Type *)
 
-    @@module@@ = OPAQUE RECORD ("A-Type")
+    @@module@@ = OPAQUE RECORD
         array : ARRAY capacity OF BaseType;
     END; (* @@module@@ *)
 
 
 (* accessor *)
 
-PROCEDURE [.] valueAtIndex ( array : @@module@@;
-                             index : IndexType ) : BaseType;
+PROCEDURE [RETRIEVE] valueAtIndex ( array : @@module@@;
+                                    index : IndexType ) : BaseType;
 (* Returns the value stored in <array> at <index>. This function is bound to
    the array [ ] operator for rvalues of type @@module@@. *)
 
 
 (* mutator *)
 
-PROCEDURE [!] storeValue ( VAR   array : @@module@@;
-                                 index : IndexType;
-                           CONST value : BaseType );
+PROCEDURE [STORE] storeValue ( VAR   array : @@module@@;
+                                     index : IndexType;
+                               CONST value : BaseType );
 (* Stores <value> in <array> at <index>. Overwrites any previous value stored
    at the same index. This procedure is bound to the array operator [ ] for
    lvalues of type @@module@@. *)
