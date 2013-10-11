@@ -1,4 +1,4 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE BS32 [ProtoStaticSet]; (* Thirty-two three-two *)
 
@@ -34,7 +34,8 @@ PROCEDURE [:=] assign ( VAR assignTo : BS32;
 
 (* accessor *)
 
-PROCEDURE [?] isElement ( CONST set : BS32; element : CARDINAL ) : BOOLEAN;
+PROCEDURE [RETRIEVE] isElement ( CONST set : BS32;
+                                   element : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if element is an element of BS32 set, otherwise FALSE.
    This function is bound to the array operator [ ] and the IN operator
    for rvalues of type BS32. *)
@@ -42,9 +43,9 @@ PROCEDURE [?] isElement ( CONST set : BS32; element : CARDINAL ) : BOOLEAN;
 
 (* mutator *)
 
-PROCEDURE [!] storeValue ( CONST set : BS32;
-                           element   : CARDINAL;
-                           value     : BOOLEAN );
+PROCEDURE [STORE] storeValue ( CONST set : BS32;
+                               element   : CARDINAL;
+                               value     : BOOLEAN );
 (* Includes character element in BS32 set if value is TRUE, otherwise
    removes it from set. This procedure is bound to the array operator [ ]
    for lvalues of type BS32. *)
