@@ -1,6 +1,6 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE UnsignedReal60 [RTYPE];
+DEFINITION MODULE UnsignedReal60 [ProtoReal];
 
 (* Unsigned Real Number Type With Values from 0.0 to 59.999 *) 
 
@@ -18,7 +18,7 @@ TYPE
     (* no sign, 16-bit significand, fixed decimal point *)
 
 
-(* R-Type bindings to operators, pervasives and primitives: *)
+(* Bindings to operators, pervasives and primitives: *)
 
 
 (* Range *) 
