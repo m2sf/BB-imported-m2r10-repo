@@ -25,7 +25,7 @@ PROCEDURE [:=] assign ( VAR assignTo : CHARSET;
 
 (* accessor *)
 
-PROCEDURE [?] isElement ( CONST set : CHARSET; ch : CHAR ) : BOOLEAN;
+PROCEDURE [RETRIEVE] isElement ( CONST set : CHARSET; ch : CHAR ) : BOOLEAN;
 (* Returns TRUE if character ch is an element of CHARSET set, otherwise FALSE.
    This function is bound to the array operator [ ] and the IN operator
    for rvalues of type CHARSET. *)
@@ -33,9 +33,9 @@ PROCEDURE [?] isElement ( CONST set : CHARSET; ch : CHAR ) : BOOLEAN;
 
 (* mutator *)
 
-PROCEDURE [!] storeValue ( CONST set : CHARSET;
-                           element   : CHAR;
-                           value     : BOOLEAN );
+PROCEDURE [STORE] storeValue ( CONST set : CHARSET;
+                               element   : CHAR;
+                               value     : BOOLEAN );
 (* Includes character element in CHARSET set if value is TRUE, otherwise
    removes it from set. This procedure is bound to the array operator [ ]
    for lvalues of type CHARSET. *)
