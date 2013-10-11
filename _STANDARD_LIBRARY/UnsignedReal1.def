@@ -1,6 +1,6 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE UnsignedReal1 [RTYPE];
+DEFINITION MODULE UnsignedReal1 [ProtoReal];
 
 (* Unsigned Real Number Type With Values from 0.0 to 1.0 *) 
 
@@ -18,7 +18,7 @@ TYPE
     (* no sign, 30-bit significand, fixed decimal point *)
 
 
-(* R-Type bindings to operators, pervasives and primitives: *)
+(* Bindings to operators, pervasives and primitives: *)
 
 
 (* Range *) 
@@ -27,7 +27,7 @@ CONST [TMIN] minValue = 0.0;
 (* Smallest value of type UnsignedReal1.
    This value is bound to TMIN for type UnsignedReal1. *) 
 
-CONST [TMAX] maxValue = +1.0;
+CONST [TMAX] maxValue = 1.0;
 (* Largest value of type UnsignedReal1.
    This value is bound to TMAX for type UnsignedReal1. *)
 
