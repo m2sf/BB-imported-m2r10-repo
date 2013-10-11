@@ -89,7 +89,7 @@ PROCEDURE [>] isSuperset ( set1, set2 : CARD16 ) : BOOLEAN;
     simpleFormat : "{" ( codePoint  ( "," codePoint )* )? "}" ; 
     mnemonicFormat : "{" ( quotedChar ( "," quotedChar )* )? "}" ;
     mixedFormat : "{" ( codeOrChar ( "," codeOrChar )* )? "}" ;
-    codePoint : "0" base16Digit base16Digit "C" ;
+    codePoint : "0u" base16Digit base16Digit ;
     quotedChar : mnemonic | '"' character '"' ;
     codeOrChar : codePoint | '"' character '"' ;
     mnemonic : "NUL" | "SOH" | "STX" | "ETX" | "EOT" | "ENQ" | "ACK" |
