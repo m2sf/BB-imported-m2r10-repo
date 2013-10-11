@@ -1,8 +1,8 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* General Blueprint for Collection ADTs *)
 
-BLUEPRINT FOR ProtoCollection; (* root of collection hierarchy *)
+BLUEPRINT ProtoCollection; (* root of collection hierarchy *)
 
 PLACEHOLDERS AccessorType, ValueType, ProcType;
 
@@ -29,7 +29,7 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 
 (* Construction and Destruction *)
 
-(* The operations NEW and DISPOSE are not common to all Collection ADTs,
+(* The operations NEW and RELEASE are not common to all Collection ADTs,
    their bindings may be required by more specialised prototypes. *)
 
 
@@ -43,8 +43,8 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] storeValue ( VAR c : ProtoCollection;
-                        accessor : AccessorType; value : ValueType );
+PROCEDURE [STORE] storeValue ( VAR c : ProtoCollection;
+                            accessor : AccessorType; value : ValueType );
 
 (* Procedure to store a value for a given accessor in a Collection ADT
    variable. *)
@@ -55,8 +55,8 @@ PROCEDURE [!] storeValue ( VAR c : ProtoCollection;
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] valueForAccessor( c : ProtoCollection;
-                         accessor : AccessorType ) : ValueType;
+PROCEDURE [RETRIEVE] valueForAccessor( c : ProtoCollection;
+                                accessor : AccessorType ) : ValueType;
 
 (* Procedure to return the value stored for a given accessor in a Collection
    ADT value. *)
