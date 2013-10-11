@@ -1,8 +1,8 @@
-(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* General Blueprint for Scalar and Non-Scalar Numeric ADTs *)
 
-BLUEPRINT FOR ProtoNumeric; (* root of numeric meta types *)
+BLUEPRINT ProtoNumeric; (* root of numeric meta types *)
 
 (* Numeric ADTs must be records to be statically allocatable,
    the following literals may be used:
