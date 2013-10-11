@@ -6,14 +6,13 @@ DEFINITION MODULE ASSEMBLER; (* OPTIONAL *)
 
 (* This module provides  access to CPU registers,  a raw machine code inline
    facility and  a symbolic assembly inline facility with implementation de-
-   fined assembly syntax.  All facilities are optional, subject to the rules
-   below:
+   fined assembly syntax.  Use of this module is  unsafe  and  non-portable.
+   All facilities are optional, subject to the following constraints:
    
-   o  the module may not be provided void of any facilities
-   o  REGISTER is required for SETREG, GETREG and pragma REG
-   o  SETREG and GETREG are required for macro CODE
-   o  SETREG and GETREG may only be provided as a pair
-   o  ASM may or may not reuse REGISTER's mnemonics *)
+   o  module ASSEMBLER may not be provided void of any facilities
+   o  type REGISTER is required for SETREG, GETREG and pragma REG
+   o  SETREG and GETREG are required if macro CODE is provided
+   o  SETREG and GETREG may only be provided as a pair *)
 
 
 TYPE REGISTER = <target architecture dependent enumeration type>;
