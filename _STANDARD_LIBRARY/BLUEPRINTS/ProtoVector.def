@@ -1,8 +1,8 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Numeric Vector ADTs *)
 
-BLUEPRINT FOR ProtoVector [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
+BLUEPRINT ProtoVector [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
 
 (* Numeric Vector ADTs must be transparent records,
    structurally equivalent literals are compatible by default *)
