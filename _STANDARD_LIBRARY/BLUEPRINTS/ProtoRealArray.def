@@ -1,8 +1,8 @@
-(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Real Array ADTs *)
 
-BLUEPRINT FOR ProtoRealArray [ProtoNonScalar];
+BLUEPRINT ProtoRealArray [ProtoNonScalar];
 
 PLACEHOLDERS IndexType, RealType, ProcType;
 
@@ -40,8 +40,8 @@ PROCEDURE [:=] assign ( VAR array : ProtoRealArray;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] storeValue ( VAR array : ProtoRealArray;
-                               index : IndexType; value : REAL );
+PROCEDURE [STORE] storeValue ( VAR array : ProtoRealArray;
+                                   index : IndexType; value : REAL );
 
 (* Procedure to store a value at a given index in a Static Array ADT
    variable. *)
@@ -52,8 +52,8 @@ PROCEDURE [!] storeValue ( VAR array : ProtoRealArray;
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] valueAtIndex ( array : ProtoRealArray;
-                             index : IndexType ) : REAL;
+PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoRealArray;
+                                    index : IndexType ) : REAL;
 (* Procedure to return the value stored at a given index in a Static Array
    ADT value. *)
 
