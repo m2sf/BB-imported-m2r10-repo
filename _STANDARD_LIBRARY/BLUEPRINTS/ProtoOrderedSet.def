@@ -1,4 +1,4 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Dynamically Allocatable Ordered Set ADTs *)
 
@@ -33,11 +33,11 @@ PROCEDURE [NEW] new ( VAR set : ProtoOrderedSet );
 (* A statement of the form NEW(set)
    is synthesised as SetADT.new(set) *)
 
-PROCEDURE [DISPOSE] dispose ( VAR set : ProtoOrderedSet );
-(* Procedure to deallocate an Ordered Set ADT variable. *)
+PROCEDURE [RELEASE] release ( VAR set : ProtoOrderedSet );
+(* Procedure to release an Ordered Set ADT variable. *)
 
-(* A statement of the form DISPOSE(set)
-   is synthesised as SetADT.dispose(set) *)
+(* A statement of the form RELEASE(set)
+   is synthesised as SetADT.release(set) *)
 
 
 (* Binding to assignment operator *)
@@ -55,8 +55,8 @@ PROCEDURE [:=] assign ( VAR set : ProtoOrderedSet;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] storeElement ( VAR set : ProtoOrderedSet;
-                             element : ElementType; value : BOOLEAN );
+PROCEDURE [STORE] storeElement ( VAR set : ProtoOrderedSet;
+                                 element : ElementType; value : BOOLEAN );
 
 (* Procedure to include and exclude an element in an Ordered Set ADT variable,
    where values of TRUE include and values of FALSE exclude the element. *)
@@ -67,8 +67,8 @@ PROCEDURE [!] storeElement ( VAR set : ProtoOrderedSet;
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] isElement( set : ProtoOrderedSet;
-                     element : ElementType ) : BOOLEAN;
+PROCEDURE [RETRIEVE] isElement( set : ProtoOrderedSet;
+                            element : ElementType ) : BOOLEAN;
 
 (* Procedure to test whether an element is included in an Ordered Set ADT
    value. *)
@@ -184,7 +184,7 @@ PROCEDURE [=] isEqual ( c1, c2 : ProtoOrderedSet ) : BOOLEAN;
 PROCEDURE [<] isSubset ( set1, set2 : ProtoOrderedSet ) : BOOLEAN;
 (* Procedure to test whether one Set ADT value is a subset of another *)
 
-(* An expression of the form set1 > set2
+(* An expression of the form set1 < set2
    is synthesised as SetADT.isSubset(set1, set2) *)
 
 (* The operation for the <= operator
@@ -195,6 +195,9 @@ PROCEDURE [<] isSubset ( set1, set2 : ProtoOrderedSet ) : BOOLEAN;
 
 PROCEDURE [>] isSuperset ( set1, set2 : ProtoOrderedSet ) : BOOLEAN;
 (* Procedure to test whether one Set ADT value is a superset of another *)
+
+(* An expression of the form set1 > set2
+   is synthesised as SetADT.isSuperset(set1, set2) *)
 
 (* The operation for the >= operator
    is synthesized as (set1 > set2) OR (set1 = set2) *)
