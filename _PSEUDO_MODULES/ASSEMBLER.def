@@ -6,8 +6,14 @@ DEFINITION MODULE ASSEMBLER; (* OPTIONAL *)
 
 (* This module provides  access to CPU registers,  a raw machine code inline
    facility and  a symbolic assembly inline facility with implementation de-
-   fined assembly syntax.  If the module is provided  it may omit either the
-   raw machine code inliner or the symbolic assembler but not both. *)
+   fined assembly syntax.  All facilities are optional, subject to the rules
+   below:
+   
+   o  the module may not be provided void of any facilities
+   o  REGISTER is required for SETREG, GETREG and pragma REG
+   o  SETREG and GETREG are required for macro CODE
+   o  SETREG and GETREG may only be provided as a pair
+   o  ASM may or may not reuse REGISTER's mnemonics *)
 
 
 TYPE REGISTER = <target architecture dependent enumeration type>;
@@ -49,6 +55,10 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
 
 
 (* Access to CPU registers *)
+
+CONST REG; (* only available if pragma REG is supported *)
+(* Import of constant REG  enables pragma REG  within the importing module.
+   Constant has no value, cannot be used for any purpose other than import. *)
 
 <*INLINE*> PROCEDURE SETREG( r : REGISTER; value : <ValueType> );
  (* Copies <value> to register <r> where <value> may be of any type
