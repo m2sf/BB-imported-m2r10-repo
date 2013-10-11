@@ -1,8 +1,8 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Dynamically Allocatable Dictionary ADTs *)
 
-BLUEPRINT FOR ProtoDictionary [ProtoCollection];
+BLUEPRINT ProtoDictionary [ProtoCollection];
 
 PLACEHOLDERS KeyType, ValueType, ProcType;
 
@@ -33,14 +33,14 @@ PROCEDURE [NEW] new ( VAR d : ProtoDictionary );
 (* A statement of the form NEW(dictionary)
    is synthesised as DictionaryADT.new(dictionary) *)
 
-PROCEDURE [DISPOSE] dispose ( VAR d : ProtoDictionary );
-(* Procedure to deallocate a Dictionary ADT variable. *)
+PROCEDURE [RELEASE] release ( VAR d : ProtoDictionary );
+(* Procedure to release a Dictionary ADT variable. *)
 
-(* A statement of the form DISPOSE(dictionary)
-   is synthesised as DictionaryADT.dispose(dictionary) *)
+(* A statement of the form RELEASE(dictionary)
+   is synthesised as DictionaryADT.release(dictionary) *)
 
 
-(* Binding to assignment operator *)
+(* Binding to assignment symbol *)
 
 PROCEDURE [:=] assign ( VAR d : ProtoDictionary;
                  keyValueList : VARIADIC OF { k : KeyType; v : ValueType } );
@@ -55,14 +55,14 @@ PROCEDURE [:=] assign ( VAR d : ProtoDictionary;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] storeValue ( VAR d : ProtoDictionary;
+PROCEDURE [STORE] storeValue ( VAR d : ProtoDictionary;
                              key : KeyType; value : ValueType );
 (* Procedure to store a value for a given key in a Dictionary ADT variable. *)
 
 (* A statement of the form dictionary[key] := value
    is synthesised as storeValue( dictionary, key, value) *)
 
-PROCEDURE [~] removeKeyValuePair ( VAR d : ProtoDictionary; key : KeyType );
+PROCEDURE [REMOVE] removeKeyValuePair ( VAR d : ProtoDictionary; key : KeyType );
 (* Procedure to remove the key/value pair for a given key from a Dictionary
    ADT variable. *)
 
@@ -72,7 +72,7 @@ PROCEDURE [~] removeKeyValuePair ( VAR d : ProtoDictionary; key : KeyType );
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] valueForKey( d : ProtoDictionary; key : KeyType ) : ValueType;
+PROCEDURE [RETRIEVE] valueForKey( d : ProtoDictionary; key : KeyType ) : ValueType;
 (* Procedure to return the value stored for a given key in a Dictionary ADT
    value. *)
 
