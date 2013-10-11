@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS DateType;
+BLUEPRINT DateType;
 
 (* Blueprint for Date-Time ADTs *)
 
