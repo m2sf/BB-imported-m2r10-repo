@@ -72,11 +72,11 @@ CONST REG; (* only available if pragma REG is supported *)
 (* Raw machine code inline facilty *)
 
 <*INLINE*> PROCEDURE CODE( <arglist> );
- (* Inserts the assembly code represented by <arglist>.
+ (* Inserts the raw machine code represented by <arglist>.
     The EBNF for <arglist> is:
       arglist : code ( ',' code )* ;
-      code : <any constant expression of type OCTET> ;
-    A compile time error occurs if any code value is out of range. *)
+      code : <any constant expression of type [0..255] OF CARDINAL> ;
+    A compile time error occurs if any argument value is out of range. *)
 
 
 (* Symbolic assembly code inline facility *)
