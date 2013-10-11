@@ -7,6 +7,7 @@ DEFINITION MODULE ASSEMBLER; (* OPTIONAL *)
 (* This module provides  access to CPU registers,  a raw machine code inline
    facility and  a symbolic assembly inline facility with implementation de-
    fined assembly syntax.  Use of this module is  unsafe  and  non-portable.
+   
    All facilities are optional, subject to the following constraints:
    
    o  module ASSEMBLER may not be provided void of any facilities
