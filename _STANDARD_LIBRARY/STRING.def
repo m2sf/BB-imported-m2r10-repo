@@ -1,4 +1,4 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE STRING [StringType];
 
@@ -29,12 +29,6 @@ PROCEDURE [NEW] new ( VAR s : STRING );
 (* Allocates a new object of type STRING and returns a pointer to it in s.
    This procedure is bound to pervasive procedure NEW for type STRING. *)
 
-(* destructor *)
-
-PROCEDURE [DISPOSE] dispose ( VAR s : STRING );
-(* Deallocates STRING s and assigns NIL to s.
-   This procedure is bound to pervasive procedure DISPOSE for type STRING. *)
-
 (* retain reference *)
 
 PROCEDURE [RETAIN] retain ( VAR s : STRING );
@@ -44,20 +38,20 @@ PROCEDURE [RETAIN] retain ( VAR s : STRING );
 (* release reference *)
 
 PROCEDURE [RELEASE] release ( VAR s : STRING );
-(* Releases the reference to STRING s.
+(* Releases the reference to STRING s.  Passes NIL in s if deallocated.
    This procedure is bound to pervasive procedure RELEASE for type STRING. *)
 
 
 (* accessor *)
 
-PROCEDURE [?] characterAtIndex ( s : STRING; index : LONGCARD ) : CHAR;
+PROCEDURE [RETRIEVE] characterAtIndex ( s : STRING; index : LONGCARD ) : CHAR;
 (* Returns the character at the specified index in STRING s. This function
    is bound to the array operator [ ] for rvalues of type STRING. *)
 
 
 (* mutators *)
 
-PROCEDURE [!] replaceCharAtIndex ( s : STRING; index : LONGCARD; ch : CHAR );
+PROCEDURE [STORE] replaceCharAtIndex ( s : STRING; index : LONGCARD; ch : CHAR );
 (* Replaces the character at the specified index in STRING s with ch. This
    procedure is bound to the array operator [ ] for lvalues of type STRING. *)
 
