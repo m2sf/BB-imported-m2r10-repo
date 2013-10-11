@@ -1,8 +1,8 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Complex Number ADTs *)
 
-BLUEPRINT FOR ProtoComplex [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
+BLUEPRINT ProtoComplex [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
 
 (* Complex Number ADTs must be transparent records,
    have two fields compatible with real number literals,
