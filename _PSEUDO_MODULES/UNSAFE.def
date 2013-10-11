@@ -212,7 +212,7 @@ PROCEDURE HALT( status : <OrdinalType> );
 (* Optional facilities *)
 
 
-(* Pseudo-constants for enabling unsafe or non-portable pragmas *)
+(* Pseudo-constants for enabling unsafe pragmas *)
 
 CONST FFI; (* only available if pragma FFI is supported *)
 (* Import of constant FFI  enables pragma FFI  within the importing module.
@@ -220,10 +220,6 @@ CONST FFI; (* only available if pragma FFI is supported *)
 
 CONST ADDR; (* only available if pragma ADDR is supported *)
 (* Import of constant ADDR enables pragma ADDR within the importing module.
-   Constant has no value, cannot be used for any purpose other than import. *)
-
-CONST REG; (* only available if pragma REG is supported *)
-(* Import of constant REG  enables pragma REG  within the importing module.
    Constant has no value, cannot be used for any purpose other than import. *)
 
 
