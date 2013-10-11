@@ -23,30 +23,30 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
    
    If the target architecture is Intel x86, it is defined as:
    
-   REGISTER = ( AH, AL, BH, BL, CH, CL, AX, BX, CX, DX, SI, DI, SP, BP,
-    FLAGS, CS, DS, SS, ES, FS, GS, EAX, EBX, ECX, EDX, ESI, EDI, ESP,
-    EBP, EFLAGS, RAX, RBX, RCX, RDX, RSI, RDI, RSP, RBP, RFLAGS, R8, R9,
-    R10, R11, R12, R13, R14, R15, XMM0, XMM1, XMM2, XMM3, XMM4, XMM5,
-    XMM6, XMM7, XMM8, XMM9, XMM10, XMM11, XMM12, XMM13, XMM14, XMM15,
-    YMM0, YMM1, YMM2, YMM3, YMM4, YMM5, YMM6, YMM7, YMM8, YMM9, YMM10,
-    YMM11, YMM12, YMM13, YMM14, YMM15 );
+   REGISTER = ( ah, al, bh, bl, ch, cl, ax, bx, cx, dx, si, di, sp, bp,
+    flags, cs, ds, ss, es, fs, gs, eax, ebx, ecx, edx, esi, edi, esp,
+    ebp, eflags, rax, rbx, rcx, rdx, rsi, rdi, rsp, rbp, rflags, r8, r9,
+    r10, r11, r12, r13, r14, r15, xmm0, xmm1, xmm2, xmm3, xmm4, xmm5,
+    xmm6, xmm7, xmm8, xmm9, xmm10, xmm11, xmm12, xmm13, xmm14, xmm15,
+    ymm0, ymm1, ymm2, ymm3, ymm4, ymm5, ymm6, ymm7, ymm8, ymm9, ymm10,
+    ymm11, ymm12, ymm13, ymm14, ymm15 );
     
    If the target architecture is PowerPC, it is defined as:
    
-   REGISTER = ( R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12,
-    R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R25, R26,
-    R27, R28, R29, R30, R31 );
+   REGISTER = ( r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12,
+    r13, r14, r15, r16, r17, r18, r19, r20, r21, r22, r23, r24, r25, r26,
+    r27, r28, r29, r30, r31 );
    
    If the target architecture is ARM, it is defined as:
    
-   REGISTER = ( R0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12,
-    R13, R14, R15 );
+   REGISTER = ( r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12,
+    r13, r14, r15 );
    
    If the target architecture is SPARC, it is defined as:
    
-   REGISTER = ( G1, G2, G3, G4, G5, G6, G7, G8, G9, G10, G11, G12, G13,
-    G14, G15, G16, G17, G18, G19, G20, G21, G22, G23, G24, G25, G26, G27,
-    G28, G29, G30, G31 );
+   REGISTER = ( g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13,
+    g14, g15, g16, g17, g18, g19, g20, g21, g22, g23, g24, g25, g26, g27,
+    g28, g29, g30, g31 );
    
    Implementors of other target architectures are required to consult
    with the authors of the Modula-2 R10 language report to coordinate
