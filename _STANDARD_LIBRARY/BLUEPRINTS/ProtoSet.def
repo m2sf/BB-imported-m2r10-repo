@@ -1,8 +1,8 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Set ADTs *)
 
-BLUEPRINT FOR ProtoSet [ProtoCollection];
+BLUEPRINT ProtoSet [ProtoCollection];
 
 PLACEHOLDERS ElementType, ProcType;
 
@@ -33,11 +33,11 @@ PROCEDURE [NEW] new ( VAR set : ProtoSet );
 (* A statement of the form NEW(set)
    is synthesised as SetADT.new(set) *)
 
-PROCEDURE [DISPOSE] dispose ( VAR set : ProtoSet );
-(* Procedure to deallocate a Set ADT variable. *)
+PROCEDURE [RELEASE] release ( VAR set : ProtoSet );
+(* Procedure to release a Set ADT variable. *)
 
-(* A statement of the form DISPOSE(set)
-   is synthesised as SetADT.dispose(set) *)
+(* A statement of the form RELEASE(set)
+   is synthesised as SetADT.release(set) *)
 
 
 (* Binding to assignment operator *)
@@ -54,8 +54,8 @@ PROCEDURE [:=] assign ( VAR set : ProtoSet;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] storeElement ( VAR set : ProtoSet;
-                             element : ElementType; value : BOOLEAN );
+PROCEDURE [STORE] storeElement ( VAR set : ProtoSet;
+                                 element : ElementType; value : BOOLEAN );
 (* Procedure to include and exclude an element in a Set ADT variable,
    where values of TRUE include and values of FALSE exclude the element. *)
 
@@ -65,7 +65,7 @@ PROCEDURE [!] storeElement ( VAR set : ProtoSet;
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] isElement( set : ProtoSet; element : ElementType ) : BOOLEAN;
+PROCEDURE [RETRIEVE] isElement( set : ProtoSet; element : ElementType ) : BOOLEAN;
 (* Procedure to test whether an element is included in a Set ADT value *)
 
 (* An expression of the form set[element]
