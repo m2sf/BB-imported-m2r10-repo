@@ -1,8 +1,8 @@
-(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* General Blueprint for Scalar Number ADTs *)
 
-BLUEPRINT FOR ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
+BLUEPRINT ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
 (* Scalar number ADTs must be opaque records to be statically allocatable,
    either integer or real number literals may be used, but not both *)
