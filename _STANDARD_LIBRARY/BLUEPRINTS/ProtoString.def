@@ -1,8 +1,8 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Dynamically Allocatable String ADTs *)
 
-BLUEPRINT FOR ProtoString [ProtoCollection];
+BLUEPRINT ProtoString [ProtoCollection];
 
 PLACEHOLDERS IndexType, ProcType;
 
@@ -33,14 +33,12 @@ PROCEDURE [NEW] new ( VAR string : ProtoString );
 (* A statement of the form NEW(string)
    is synthesised as StringADT.new(string) *)
 
-(* EXPERIMENTAL *)
 PROCEDURE [RETAIN] retain ( VAR string : ProtoString );
 (* Procedure to retain a String ADT variable, incrementing its ref count. *)
 
 (* A statement of the form RETAIN(string)
    is synthesised as StringADT.retain(string) *)
 
-(* EXPERIMENTAL *)
 PROCEDURE [RELEASE] release ( VAR string : ProtoString );
 (* Procedure to release a String ADT variable, decrementing its ref count
    and deallocating it if the ref count value has reached zero. *)
@@ -64,8 +62,8 @@ PROCEDURE [:=] assign ( VAR string : ProtoString;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] replaceChar ( VAR string : ProtoString;
-                                 index : IndexType; char : CHAR );
+PROCEDURE [STORE] replaceChar ( VAR string : ProtoString;
+                                     index : IndexType; char : CHAR );
 
 (* Procedure to replace the character at a given index in a String ADT
    variable. *)
@@ -76,8 +74,8 @@ PROCEDURE [!] replaceChar ( VAR string : ProtoString;
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] charAtIndex ( string : ProtoString;
-                             index : IndexType ) : CHAR;
+PROCEDURE [RETRIEVE] charAtIndex ( string : ProtoString;
+                                    index : IndexType ) : CHAR;
 (* Procedure to return the character at a given index in a String ADT
    value. *)
 
