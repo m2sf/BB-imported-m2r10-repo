@@ -1,8 +1,8 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Dynamically Allocatable Ordered Dictionary ADTs *)
 
-BLUEPRINT FOR ProtoOrderedDict [ProtoDictionary];
+BLUEPRINT ProtoOrderedDict [ProtoDictionary];
 
 PLACEHOLDERS KeyType, ValueType, ProcType;
 
@@ -35,11 +35,11 @@ PROCEDURE [NEW] new ( VAR d : ProtoOrderedDict );
 (* A statement of the form NEW(dictionary)
    is synthesised as DictionaryADT.new(dictionary) *)
 
-PROCEDURE [DISPOSE] dispose ( VAR d : ProtoOrderedDict );
-(* Procedure to deallocate an Ordered Dictionary ADT variable. *)
+PROCEDURE [RELEASE] release ( VAR d : ProtoOrderedDict );
+(* Procedure to release an Ordered Dictionary ADT variable. *)
 
-(* A statement of the form DISPOSE(dictionary)
-   is synthesised as DictionaryADT.dispose(dictionary) *)
+(* A statement of the form RELEASE(dictionary)
+   is synthesised as DictionaryADT.release(dictionary) *)
 
 
 (* Binding to assignment operator *)
@@ -57,15 +57,15 @@ PROCEDURE [:=] assign ( VAR d : ProtoOrderedDict;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] storeValue ( VAR d : ProtoOrderedDict;
-                             key : KeyType; value : ValueType );
+PROCEDURE [STORE] storeValue ( VAR d : ProtoOrderedDict;
+                                 key : KeyType; value : ValueType );
 (* Procedure to store a value for a given key in an Ordered Dictionary ADT
    variable. *)
 
 (* A statement of the form dictionary[key] := value
    is synthesised as storeValue( dictionary, key, value) *)
 
-PROCEDURE [~] removeKeyValuePair ( VAR d : ProtoOrderedDict; key : KeyType );
+PROCEDURE [REMOVE] removeKeyValuePair ( VAR d : ProtoOrderedDict; key : KeyType );
 (* Procedure to remove the key/value pair for a given key from an Ordered
    Dictionary ADT variable. *)
 
@@ -75,7 +75,7 @@ PROCEDURE [~] removeKeyValuePair ( VAR d : ProtoOrderedDict; key : KeyType );
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] valueForKey( d : ProtoOrderedDict; key : KeyType ) : ValueType;
+PROCEDURE [RETRIEVE] valueForKey( d : ProtoOrderedDict; key : KeyType ) : ValueType;
 (* Procedure to return the value stored for a given key in an Ordered
    Dictionary ADT value. *)
 
