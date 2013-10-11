@@ -28,8 +28,9 @@ PROCEDURE [NEW] new ( VAR dispatchTable : Exceptions );
 
 (* Accessor *)
 
-PROCEDURE [?] handlerForException ( dispatchTable : Exceptions;
-                e : Exception; VAR found : BOOLEAN ) : Handler;
+PROCEDURE [RETRIEVE] handlerForException ( dispatchTable : Exceptions;
+                                                       e : Exception;
+                                               VAR found : BOOLEAN ) : Handler;
 (* Searches for exception <e> in <dispatchTable>. If it is found then TRUE is
    passed back in <found> and the topmost handler of <e> is returned, otherwise
    FALSE is passed back in <found> and NIL is returned. This function is bound
@@ -38,8 +39,9 @@ PROCEDURE [?] handlerForException ( dispatchTable : Exceptions;
 
 (* Mutators *)
 
-PROCEDURE [!] AddHandler ( dispatchTable : Exceptions;
-                e : Exception; handler : Handler );
+PROCEDURE [STORE] AddHandler ( dispatchTable : Exceptions;
+                                           e : Exception;
+                                     handler : Handler );
 (* Adds a new exception handler on top of the handler stack for exception <e>
    in <dispatchTable>. If NIL is passed in for <handler> then the topmost
    handler for <e> is removed from <dispatchTable>. This procedure is
@@ -90,8 +92,8 @@ PROCEDURE [FOR] nextException ( dispatchTable : Exceptions;
 
 (* Destructor *)
 
-PROCEDURE [DISPOSE] dispose ( VAR dispatchTable : Exceptions );
-(* Deallocates <dispatchTable> and passes NIL back. This procedure is bound
-   to pervasive procedure DISPOSE for arguments of type Exceptions. *)
+PROCEDURE [RELEASE] release ( VAR dispatchTable : Exceptions );
+(* Releases <dispatchTable> and passes NIL back. This procedure is bound
+   to pervasive procedure RELEASE for arguments of type Exceptions. *)
 
 END Exceptions.
