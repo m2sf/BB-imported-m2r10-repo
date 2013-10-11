@@ -1,8 +1,8 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Dynamically Allocatable Array ADTs *)
 
-BLUEPRINT FOR ProtoArray [ProtoCollection];
+BLUEPRINT ProtoArray [ProtoCollection];
 
 PLACEHOLDERS IndexType, ValueType, ProcType;
 
@@ -33,14 +33,14 @@ PROCEDURE [NEW] new ( VAR array : ProtoArray );
 (* A statement of the form NEW(array)
    is synthesised as ArrayADT.new(array) *)
 
-PROCEDURE [DISPOSE] dispose ( VAR array : ProtoArray );
-(* Procedure to deallocate an Array ADT variable. *)
+PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
+(* Procedure to release an Array ADT variable. *)
 
-(* A statement of the form DISPOSE(array)
-   is synthesised as ArrayADT.dispose(array) *)
+(* A statement of the form RELEASE(array)
+   is synthesised as ArrayADT.release(array) *)
 
 
-(* Binding to assignment operator *)
+(* Binding to assignment symbol *)
 
 PROCEDURE [:=] assign ( VAR array : ProtoArray;
                         valueList : VARIADIC OF ValueType );
@@ -54,8 +54,8 @@ PROCEDURE [:=] assign ( VAR array : ProtoArray;
 
 (* Binding to [ ] notation within left hand entities *)
 
-PROCEDURE [!] storeValue ( VAR array : ProtoArray;
-                               index : IndexType; value : ValueType );
+PROCEDURE [STORE] storeValue ( VAR array : ProtoArray;
+                                   index : IndexType; value : ValueType );
 (* Procedure to store a value at a given index in an Array ADT variable. *)
 
 (* A statement of the form array[index] := value
@@ -64,8 +64,8 @@ PROCEDURE [!] storeValue ( VAR array : ProtoArray;
 
 (* Binding to [ ] notation within expressions *)
 
-PROCEDURE [?] valueAtIndex ( array : ProtoArray;
-                             index : IndexType ) : ValueType;
+PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoArray;
+                                    index : IndexType ) : ValueType;
 (* Procedure to return the value stored at a given index in an Array ADT
    value. *)
 
