@@ -2,7 +2,7 @@
 
 (* Specialised Blueprint for Cardinal Number ADTs *)
 
-BLUEPRINT FOR ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
+BLUEPRINT ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* ProtoCardinal ADTs must be opaque records to be statically allocatable,
    integer literals are used *)
