@@ -1,8 +1,8 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BINDINGS FOR DateType;
+BINDINGS DateType;
 
-(* Semantic Properties for Date-Time Types *)
+(* Blueprint for Date-Time ADTs *)
 
 
 (* ADTs must be transparent records,
@@ -17,16 +17,25 @@ CONST [TMIN]; (* require binding to TMIN function *)
 
 CONST [TMAX]; (* require binding to TMAX function *)
 
-PROCEDURE [::]; (* optional bindings to conversion operator *)
 
-PROCEDURE [+]; (* require binding to plus operator *)
+(* require binding to plus operator *)
 
-PROCEDURE [-]; (* require binding to minus operator *)
+PROCEDURE [+] add ( d1, d2 : DateType ) : DateType;
 
-PROCEDURE [=]; (* require binding to equal operator *)
+(* require binding to minus operator *)
 
-PROCEDURE [<]; (* require binding to less operator *)
+PROCEDURE [-] subtract ( d1, d2 : DateType ) : DateType;
 
-PROCEDURE [>]; (* require binding to greater operator *)
+(* require binding to equal operator *)
+
+PROCEDURE [=] isEqual ( d1, d2 : DateType ) : DateType;
+
+(* require binding to less operator *)
+
+PROCEDURE [<] isLess ( d1, d2 : DateType ) : BOOLEAN;
+
+(* require binding to greater operator *)
+
+PROCEDURE [>] isGreater ( d1, d2 : DateType ) : BOOLEAN; 
 
 END DateType.
