@@ -25,4 +25,11 @@ PROCEDURE DEALLOCATE( VAR p : CAST ADDRESS );
    procedure ALLOCATE a runtime fault InvalidAccessor is raised.
    This procedure is required by pervasive macro-procedure RELEASE. *)
 
+(* Introspection *)
+
+PROCEDURE SIZE( CONST p : CAST ADDRESS ) : LONGCARD;
+(* Returns the allocated size of a previously allocated block of memory
+   at address p.  Returns 0 if p is not an address of a block of memory
+   currently allocated by procedure ALLOCATE. *)
+
 END Storage.
