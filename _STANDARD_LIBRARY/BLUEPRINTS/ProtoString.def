@@ -133,14 +133,12 @@ PROCEDURE [DESCENDING] reverseFor ( VAR string : StringType;
      <* INLINE *> PROCEDURE forLoopBody ( VAR string : StringADT;
                                          CONST index : IndexType );
      BEGIN statementSeq END forLoopBody; *)
-   
 
-(* Dyadic operations *)
 
 (* Concatenation *)
 
-(* EXPERIMENTAL *)
-PROCEDURE [+] strFromConcatExpr (
+(* EXPERIMENTAL, this should probably be adopted *)
+PROCEDURE [CONCAT] concat (
    strList : VARIADIC OF { CONST literal : ARRAY OF CHAR;
                            CONST str     : ProtoString } ) : ProtoString;
 
@@ -150,30 +148,30 @@ PROCEDURE [+] strFromConcatExpr (
 (* An expression of the form
      s := s1 + s2 + s3;
    is synthesised as
-     s := strFromConcatExpr( "", s1, "", s2, "", s3 );
+     s := concat( "", s1, "", s2, "", s3 );
 
    An expression of the form
      s := "foo" + s1 + s2;
    is synthesised as
-     s := strFromConcatExpr( "foo", s1, "", s2 );
+     s := concat( "foo", s1, "", s2 );
 
    An expression of the form
      s := s1 + "foo" + s2;
    is synthesised as
-     s := strFromConcatExpr( "", s1, "foo", s2 );
+     s := concat( "", s1, "foo", s2 );
 
    An expression of the form
      s := s1 + s2 + "foo";
    is synthesised as
-     s := strFromConcatExpr( "", s1, "", s2, "foo", NIL );
+     s := concat( "", s1, "", s2, "foo", NIL );
    
    An statement of the form
      foobar(s1 + s2);
    is synthesised as
-     tempStr := strFromConcatExpr( "", s1, "", s2);
+     tempStr := concat( "", s1, "", s2);
      foobar(tempStr); RELEASE(tempStr); *)
 
-(* EXPERIMENTAL *)
+(* EXPERIMENTAL, this should probably be avoided *)
 PROCEDURE [+] concatenateInSitu ( VAR str : ProtoString;
     strList : VARIADIC OF { CONST literal : ARRAY OF CHAR;
                             CONST str     : ProtoString } );
@@ -204,7 +202,7 @@ PROCEDURE [+] concatenateInSitu ( VAR str : ProtoString;
 
 (* Sub-String removal *)
 
-(* EXPERIMENTAL *)
+(* EXPERIMENTAL, this would require another pervasive to bind to *)
 PROCEDURE [-] reductionOf ( str : ProtoString
                      removeList : VARIADIC OF ProtoString ) : ProtoString;
 
@@ -223,7 +221,7 @@ PROCEDURE [-] reductionOf ( str : ProtoString
      tempStr := reductionOf(s1, s2);
      foobar(tempStr); RELEASE(tempStr); *)
 
-(* EXPERIMENTAL *)
+(* EXPERIMENTAL, this should probably be avoided *)
 PROCEDURE [-] reduceInSitu ( VAR str : ProtoString;
                           removeList : VARIADIC OF ProtoString );
 
