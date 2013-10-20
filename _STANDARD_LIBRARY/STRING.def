@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE STRING [StringType];
+DEFINITION MODULE STRING [ProtoString];
 
 (* Dynamic ASCII Strings *)
 
@@ -79,9 +79,10 @@ PROCEDURE [:=] assign ( VAR s : STRING; literal : ARRAY OF CHAR );
 
 (* concatenation *)
 
-PROCEDURE [+] concatenate ( s1, s2 : STRING ) : STRING;
-(* Concatenates s1 and s2 and returns the result in a newly allocated string.
-   This function is bound to the concatenate operator + for type STRING. *)
+PROCEDURE [CONCAT] concat
+  ( args : VARIADIC OF { literal : ARRAY OF CHAR; str : STRING } ) : STRING;
+(* Concatenates all strings in the argument list returns the result in a
+   newly allocated string. The function is bound to CONCAT for type STRING. *)
 
 
 (* relational operations *)
