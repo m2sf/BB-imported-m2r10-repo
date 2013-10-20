@@ -13,6 +13,18 @@ PROCEDURE FLOAT ( x : INTEGER ) : REAL;
 PROCEDURE TRUNC ( x : REAL ) : INTEGER;
 (* Returns REALMath.trunc(x) :: INTEGER *)
 
+PROCEDURE INTDIV ( i, j : INTEGER ) : INTEGER;
+(* Returns i DIV j using PIM semantics *)
+
+PROCEDURE INTMOD ( i, j : INTEGER ) : INTEGER;
+(* Returns i MOD j using PIM semantics *)
+
+PROCEDURE LONGDIV ( i, j : LONGINT ) : LONGINT;
+(* Returns i DIV j using PIM semantics *)
+
+PROCEDURE LONGMOD ( i, j : LONGINT ) : LONGINT;
+(* Returns i MOD j using PIM semantics *)
+
 PROCEDURE Read ( VAR ch : CHAR );
 (* Invokes READ(stdIn, ch) to call CHAR.Read(stdIn, ch) *)
 
