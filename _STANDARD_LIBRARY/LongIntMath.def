@@ -1,18 +1,38 @@
-(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE LongIntMath;
 
 (* Mathematical Functions for Type LONGINT *)
 
+(* Signum function *)
 
 PROCEDURE sgn ( i : LONGINT ) : LONGINT;
 (* Returns the signum value of i. *)
+
+
+(* Floored integer division *)
+
+PROCEDURE fdiv ( a, n : LONGINT ) : LONGINT;
+(* Divides dividend a by divisor n using floored integer division and
+   returns quotient q, where q = floor(a/n) and a = n * q + fmod(a, n).
+   A zero divisor n will raise runtime fault DivByZero. *)
+
+PROCEDURE fmod ( a, n : LONGINT ) : LONGINT;
+(* Divides dividend a by divisor n using floored integer division and
+   returns remainder r, where r = a - n * fdiv(a, n).
+   A zero divisor n will raise runtime fault DivByZero. *)
+
+
+(* Exponentiation *)
 
 PROCEDURE exp2 ( i : LONGINT ) : LONGINT;
 (* Returns the value of i raised to the power of two. *)
 
 PROCEDURE power ( i, exponent : LONGINT ) : LONGINT;
 (* Returns the value of i raised to the power of exponent. *)
+
+
+(* Nearest powers of two *)
 
 PROCEDURE nearestSmallerPowerOf2 ( i : LONGINT ) : LONGINT;
 (* Returns the nearest power of 2 smaller than i. *)
