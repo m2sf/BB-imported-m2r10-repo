@@ -30,6 +30,24 @@ PROCEDURE IM ( z : COMPLEX ) : REAL;
 PROCEDURE RE ( z : COMPLEX ) : REAL;
 (* Returns z.re *)
 
+PROCEDURE INTDIV ( i, j : INTEGER ) : INTEGER;
+(* Returns i DIV j using ISO semantics *)
+
+PROCEDURE INTMOD ( i, j : INTEGER ) : INTEGER;
+(* Returns i MOD j using ISO semantics *)
+
+PROCEDURE INTREM ( i, j : INTEGER ) : INTEGER;
+(* Returns i REM j using ISO semantics *)
+
+PROCEDURE LONGDIV ( i, j : LONGINT ) : LONGINT;
+(* Returns i DIV j using ISO semantics *)
+
+PROCEDURE LONGMOD ( i, j : LONGINT ) : LONGINT;
+(* Returns i MOD j using ISO semantics *)
+
+PROCEDURE LONGREM ( i, j : LONGINT ) : LONGINT;
+(* Returns i REM j using ISO semantics *)
+
 PROCEDURE ReadChar ( VAR ch : CHAR );
 (* Invokes READ(stdIn, ch) to call CHAR.Read(stdIn, ch) *)
 
