@@ -63,16 +63,17 @@ PROCEDURE NEW ( VAR p : <AnyPointerType>; (*OPTIONAL*) n : <UnsignedType> );
 (* NEW(p) => ALLOCATE(p, TSIZE(p^))
    NEW(p, n) => ALLOCATE(p, TSIZE(p) + n * TSIZE(p.variableComponent)) *)
 
-PROCEDURE DISPOSE ( VAR p : <AnyPointerType> );
-(* DISPOSE(p) => DEALLOCATE(p, TSIZE(p^)) *)
-
-(* EXPERIMENTAL *)
 PROCEDURE RETAIN ( VAR p : <RefCountedADT> );
 (* RETAIN(p) => typeOf(p).retain(p) *)
 
-(* EXPERIMENTAL *)
 PROCEDURE RELEASE ( VAR p : <RefCountedADT> );
-(* RETAIN(p) => typeOf(p).release(p) *)
+(* RELEASE(p) => typeOf(p).release(p) *)
+
+PROCEDURE STORE ( VAR c : <Collection>; s : <SelectorType>; v : <ValueType> );
+(* STORE(c, s, v) => typeOf(c).addValueForKey(c, s, v) *)
+
+PROCEDURE REMOVE ( VAR c : <Collection>; s : <SelectorType> );
+(* REMOVE(c, s) => typeOf(c).removeValueForKey(c, s) *)
 
 PROCEDURE READ ( f : File; VAR v : <AnyType> );
 (* READ(f, v) => typeOf(v).Read(f, v) *)
@@ -111,15 +112,21 @@ PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType>;
 PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD;
 (* Returns number of items stored in c *)
 
-PROCEDURE SIZE ( variable : <AnyType> ) : LONGCARD;
-(* Returns allocated size of variable *)
-
 PROCEDURE LENGTH ( CONST s : <CharacterArrayOrStringADT> ) : LONGCARD;
 (* Returns length of character string in s *)
 
 PROCEDURE NEXTV ( ident : <VariadicList> ) : <PointerToVariadicBaseType>;
 (* Returns pointer to next item in value-terminated variadic list,
    returns NIL if the end of the variadic list has been reached. *)
+
+PROCEDURE PTR ( variable : <AnyType>; T : <TypeIdentifier> ) : <T> ;
+(* Returns a pointer of type T, pointing to variable *)
+
+PROCEDURE RETRIEVE ( c : <CollectionType>; s : <ComponentType> ) : <ReturnType>;
+(* RETRIEVE(c, s) => typeOf(c, s) *)
+
+PROCEDURE CONCAT ( arglist : VARIADIC OF <StringType> ) : <StringType>;
+(* Returns a concatenation of strings passed in for arglist *)
 
 PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T>;
 (* Returns smallest legal value of type T *)
