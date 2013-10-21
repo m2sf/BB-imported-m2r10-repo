@@ -1,10 +1,23 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE ARRAYOFCHAR;
 
-(* I/O Module for ARRAY OF CHAR Types *)
+(* I/O and Concatenation for ARRAY OF CHAR Types *)
 
 FROM FileIO IMPORT File;
+
+PROCEDURE Concat ( VAR result : ARRAY OF CHAR;
+                       items  : VARIADIC OF ARRAY OF CHAR );
+(* Concatenates two or more ARRAY OF CHAR values  passed in for items  in the *)
+   order they appear in the argument list and passes back the resulting ARRAY
+   OF CHAR in result.  If only a single argument is passed in for items,  the
+   argument is passed back verbatim in result.  String terminators in between
+   concatenation items are removed.  A final string terminator is appended to
+   the end of the result.  The capacity of the variable  passed in for result
+   must be sufficient to hold the result  including string terminator.  If it
+   is  not sufficient,  runtime fault StringCapacityExceeded shall be raised.
+   This procedure is substituted for invocations of CONCAT when its first ar-
+   gument is a variable of an ARRAY OF CHAR type. *)
 
 PROCEDURE Read ( infile : File; VAR s : ARRAY OF CHAR );
 (* Reads a string value from stream infile
