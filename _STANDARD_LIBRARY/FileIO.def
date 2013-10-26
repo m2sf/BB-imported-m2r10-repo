@@ -137,7 +137,8 @@ PROCEDURE EOF ( file : File ) : BOOLEAN;
    has been reached, otherwise FALSE. *)
 
 PROCEDURE EndPos ( file : File ) : FilePos;
-(* Returns the first position after which there have been no writes. *) 
+(* Returns the position of the last octet in the file associated with file
+   accessor <file>. Returns TMIN(FilePos) if <file> is an empty file. *) 
 
 PROCEDURE CurrentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file accessor <file> where a
