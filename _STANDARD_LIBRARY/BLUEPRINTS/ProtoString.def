@@ -171,6 +171,16 @@ PROCEDURE [CONCAT] concat (
      tempStr := concat( "", s1, "", s2);
      foobar(tempStr); RELEASE(tempStr); *)
 
+PROCEDURE [..] copySlice
+  ( VAR target : ProtoString; targetStartIndex, targetEndIndex : INTEGER;
+        source : ProtoString; sourceStartIndex, sourceEndIndex : INTEGER );
+
+(* Procedure to copy characters from a slice of a source string into a slice
+   of a  target string.  Positive indices  count forward  starting with zero
+   indicating the  left most  character.  Negative  indices  count  backward
+   starting with -1 indicating the right most character. *)
+
+
 (* EXPERIMENTAL, this should probably be avoided *)
 PROCEDURE [+] concatenateInSitu ( VAR str : ProtoString;
     strList : VARIADIC OF { CONST literal : ARRAY OF CHAR;
