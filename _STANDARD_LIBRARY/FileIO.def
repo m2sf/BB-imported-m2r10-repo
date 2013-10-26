@@ -145,7 +145,9 @@ PROCEDURE CurrentPos ( file : File ) : FilePos;
    value of TMIN(FilePos) represents the beginning of a file. *)
 
 PROCEDURE SetPos ( file : File; index : FilePos );
-(* Sets the  read/write position  for file accessor <file> to <index>. *)
+(* Sets the  read/write position  for file accessor <file> to <index>.  For
+   files in read mode, <index> may not be larger than EndPos.  For files in
+   write mode, <index> may not be larger than EndPos + 1. *)
 
 PROCEDURE Advance ( file : File; offset : FilePos );
 (* Advances the read/write position for file accessor <file> by <offset>. *)
@@ -156,8 +158,9 @@ PROCEDURE Rewind ( file : File );
 
 (* Any attempt to call SetPos, Advance or Rewind  on a file whose file mode
    has the  append flag set  shall fail  with status operationNotSupported.
-   Any attempt to set a file's read/write position past the end of the file
-   shall fail with status accessBeyondEOF. *)
+   Any attempt to set a file's read position past the end of the file shall
+   fail with status accessBeyondEOF.  Any attempt to set a file's write po-
+   sition past EndPos + 1 shall fail with status accessBeyondEOF. *)
 
 
 (* Read and write operations *)
