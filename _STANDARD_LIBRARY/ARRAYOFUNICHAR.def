@@ -20,8 +20,8 @@ PROCEDURE Concat ( VAR result : ARRAY OF UNICHAR;
    CONCAT's first argument is a variable of an ARRAY OF UNICHAR type. *)
 
 PROCEDURE CopySlice
-  ( VAR   target : ARRAY OF CHAR; tgtStartIndex, tgtEndIndex : INTEGER;
-    CONST source : ARRAY OF CHAR; srcStartIndex, srcEndIndex : INTEGER );
+  ( VAR   target : ARRAY OF UNICHAR; tgtStartIndex, tgtEndIndex : INTEGER;
+    CONST source : ARRAY OF UNICHAR; srcStartIndex, srcEndIndex : INTEGER );
 (* Copies characters  from source,  starting at srcStartIndex  and  ending at
    srcEndIndex  into target  at tgtStartIndex  but not exceeding tgtEndIndex.
    Positive indices count forward starting with zero indicating the left most
