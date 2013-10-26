@@ -13,7 +13,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 TYPE UNISTRING = OPAQUE;
 
 
-(* Bindings to operators and pervasives: *)
+(* Bindings to special syntax, operators and pervasives. *)
 
 
 (* allocator *)
@@ -78,6 +78,28 @@ PROCEDURE [:=] assign ( VAR s : UNISTRING; literal : ARRAY OF CHAR );
 PROCEDURE [+] concatenate ( s1, s2 : UNISTRING ) : UNISTRING;
 (* Concatenates s1 and s2 and returns the result in a newly allocated string.
    This function is bound to the concatenate operator + for type UNISTRING. *)
+
+
+(* slicing *)
+
+PROCEDURE [..] copySlice
+  ( target : UNISTRING; tgtStartIndex, tgtEndIndex : INTEGER;
+    source : UNISTRING; srcStartIndex, srcEndIndex : INTEGER );
+(* Copies characters  from source,  starting at srcStartIndex  and  ending at
+   srcEndIndex  into target  at tgtStartIndex  but not exceeding tgtEndIndex.
+   Positive indices count forward starting with zero indicating the left most
+   character.  Negative indices  count backward  starting with -1  indicating
+   the right most character.  If the target indices denote the entire target,
+   the contents of the target  are replaced  by the source's indicated slice.
+   If the target's start index is further right than its end index, the copy-
+   ing order into the target slice  is reversed.  If the source's start index
+   is further right  than its  end index,  the copying order  from the source
+   slice is reversed.  If the source slice  is longer than  the target slice,
+   only those characters that will fit into the target slice  are copied.  If
+   the source slice  is shorter than  the target slice,  only  the  available
+   characters of the source slice are copied. If  any index  is out of bounds
+   of the associated string,  runtime fault indexOutOfBounds shall be raised.
+   This procedure is bound to slice syntax str[n..m] in lvalues and rvalues. *)
 
 
 (* relational operations *)
