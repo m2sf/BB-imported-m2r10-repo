@@ -22,7 +22,7 @@ PROCEDURE Concat ( VAR result : ARRAY OF CHAR;
 PROCEDURE CopySlice
   ( VAR   target : ARRAY OF CHAR; tgtStartIndex, tgtEndIndex : INTEGER;
     CONST source : ARRAY OF CHAR; srcStartIndex, srcEndIndex : INTEGER );
-(* Copies a substring  from source,  starting at srcStartIndex  and ending at
+(* Copies a characters from source,  starting at srcStartIndex  and ending at
    srcEndIndex  into target  at tgtStartIndex  but not exceeding tgtEndIndex.
    Positive indices count forward starting with zero indicating the left most
    character.  Negative indices  count backward  starting with -1  indicating
