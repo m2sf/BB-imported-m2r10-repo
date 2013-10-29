@@ -61,7 +61,7 @@ PROCEDURE multiply ( d : DateTime; n : CARDINAL ) : DateTime;
 (* Multiplies DateTime value d by scalar n and returns the result. *)
 
 PROCEDURE divide ( d : DateTime; n : CARDINAL ) : DateTime;
-(* Divives DateTime value d by scalar n and returns the result. *)
+(* Divides DateTime value d by scalar n and returns the result. *)
 
 
 PROCEDURE diffInMilliSeconds ( d1, d2 : DateTime ) : REAL;
