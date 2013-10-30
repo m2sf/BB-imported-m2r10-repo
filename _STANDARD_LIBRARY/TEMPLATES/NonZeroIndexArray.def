@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE <<module>>;
+DEFINITION MODULE ##module##;
 
 (* Generic Arbitrary Index Array Type Template *)
 
@@ -32,67 +32,67 @@ DEFINITION MODULE <<module>>;
  * IMPORT Array10;
  */
 
-(* Arbitrary Index Array Type <<module>> *)
+(* Arbitrary Index Array Type ##module## *)
 
 
-IMPORT <<baseType>>, <<indexType>>;
+IMPORT ##baseType##, ##indexType##;
 
 
 (* Index range *) 
 
-<* IF <<minIndex>> < TMIN(<<indexType>>) OR
-      <<minIndex>> > TMAX(<<indexType>>) *>
+<* IF ##minIndex## < TMIN(##indexType##) OR
+      ##minIndex## > TMAX(##indexType##) *>
 <* FATAL "minIndex is not within range of indexType." *>
 <* ENDIF *>
 
-<* IF <<maxIndex>> < TMIN(<<indexType>>) OR
-      <<maxIndex>> > TMAX(<<indexType>>) *>
+<* IF ##maxIndex## < TMIN(##indexType##) OR
+      ##maxIndex## > TMAX(##indexType##) *>
 <* FATAL "maxIndex is not within range of indexType." *>
 <* ENDIF *>
 
-<* IF <<minIndex>> => <<maxIndex>> *>
+<* IF ##minIndex## >= ##maxIndex## *>
 <* FATAL "minIndex must be less than maxIndex." *>
 <* ENDIF *>
 
-CONST minIndex = <<minIndex>>; (* smallest array index *)
+CONST minIndex = ##minIndex##; (* smallest array index *)
 
-CONST maxIndex = <<maxIndex>>; (* largest array index *)
+CONST maxIndex = ##maxIndex##; (* largest array index *)
 
-CONST capacity = <<maxIndex>> - <<maxIndex>>;
+CONST capacity = ##maxIndex## - ##maxIndex##;
 
 
 TYPE
 
 (* Base Type *)
 
-    BaseType = ALIAS OF <<baseType>>;
+    BaseType = ALIAS OF ##baseType##;
 
 (* Index Type *)
 
-    IndexType = ALIAS OF <<indexType>>;
+    IndexType = ALIAS OF ##indexType##;
     
 (* Array Type *)
 
-    <<module>> = OPAQUE RECORD
+    ##module## = OPAQUE RECORD
         array : ARRAY capacity OF BaseType;
-    END; (* <<module>> *)
+    END; (* ##module## *)
 
 
 (* accessor *)
 
-PROCEDURE [RETRIEVE] valueAtIndex ( array : <<module>>;
+PROCEDURE [RETRIEVE] valueAtIndex ( array : ##module##;
                                     index : IndexType ) : BaseType;
 (* Returns the value stored in <array> at <index>. This function is bound to
-   the array [ ] operator for rvalues of type <<module>>. *)
+   the array [ ] operator for rvalues of type ##module##. *)
 
 
 (* mutator *)
 
-PROCEDURE [STORE] storeValue ( VAR   array : <<module>>;
+PROCEDURE [STORE] storeValue ( VAR   array : ##module##;
                                      index : IndexType;
                                CONST value : BaseType );
 (* Stores <value> in <array> at <index>. Overwrites any previous value stored
    at the same index. This procedure is bound to the array operator [ ] for
-   lvalues of type <<module>>. *)
+   lvalues of type ##module##. *)
 
-END <<module>>.
+END ##module##.
