@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE @@module@@;
+DEFINITION MODULE <<module>>;
 
 (* Generic Dynamic Array Template *)
 
@@ -42,24 +42,24 @@ CONST
 TYPE
 
 (* ---------------------------------------------------------------------------
- * Opaque handle type:  @@module@@
+ * Opaque handle type:  <<module>>
  * ------------------------------------------------------------------------ *)
 
     @@module@@ = OPAQUE;
     
-    ValueType = @@component@@;
+    ValueType = <<component>>;
     
     IndexType = ALIAS OF CARDINAL32;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.new( initialSize, status )
+ * function:  <<module>>.new( initialSize, status )
  * ---------------------------------------------------------------------------
  *
- * Creates and returns a new @@module@@ object  with an initial capacity of
+ * Creates and returns a new <<module>> object  with an initial capacity of
  * <initialSize>.  If  zero  is passed in  for <initialSize>,  then  the array
- * will be created with an initial capacity of @@module@@.defaultStackSize.
- * The function fails if a value greater than @@module@@.maximumStackSize
+ * will be created with an initial capacity of <<module>>.defaultStackSize.
+ * The function fails if a value greater than <<module>>.maximumStackSize
  * is  passed in for <initialSize> or if memory could not be allocated.
  *
  * The initial capacity of an array is the number of entries that can be
@@ -67,11 +67,11 @@ TYPE
  *
  * The status of the operation  is passed back in <status>. *)
 
-PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : @@module@@;
+PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : <<module>>;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.storeEntry( array, index, value, status )
+ * function:  <<module>>.storeEntry( array, index, value, status )
  * ---------------------------------------------------------------------------
  *
  * Stores <value>  in <array>  at <index>.  If <index> is  out of range of the
@@ -79,14 +79,14 @@ PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : @@module@@;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE storeEntry ( array  : @@module@@;
+PROCEDURE storeEntry ( array  : <<module>>;
                        index  : IndexType;
                        value  : ValueType;
                    VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.valueAtIndex( array, index, status )
+ * function:  <<module>>.valueAtIndex( array, index, status )
  * ---------------------------------------------------------------------------
  *
  * Returns the value stored in <array> at <index>.  If <index> is out of range
@@ -94,48 +94,48 @@ PROCEDURE storeEntry ( array  : @@module@@;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE valueForKey ( tree   : @@module@@;
+PROCEDURE valueForKey ( tree   : <<module>>;
                         index  : IndexType;
                     VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.capacity( array )
+ * function:  <<module>>.capacity( array )
  * ---------------------------------------------------------------------------
  *
  * Returns the current capacity of <stack>.  The current capacity is the total
  * number of allocated entries.  Returns zero if NIL is passed in for <stack>.
  *)
-PROCEDURE capacity ( VAR array : @@module@@ ) : Capacity;
+PROCEDURE capacity ( VAR array : <<module>> ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.entryCount( stack )
+ * function:  <<module>>.entryCount( stack )
  * ---------------------------------------------------------------------------
  *
  * Returns  the  number of entries  stored in array <array>,  returns  zero if
  * NIL is passed in for <array>. *)
 
-PROCEDURE entryCount ( VAR array : @@module@@ ) : Capacity;
+PROCEDURE entryCount ( VAR array : <<module>> ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.isResizable( array )
+ * function:  <<module>>.isResizable( array )
  * ---------------------------------------------------------------------------
  *
  * Returns TRUE  if the  capacity of <array> can change after <array> has been
  * instatiated,  returns FALSE otherwise. *)
 
-PROCEDURE isResizable ( array : @@module@@ ) : BOOLEAN;
+PROCEDURE isResizable ( array : <<module>> ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.dispose( array )
+ * function:  <<module>>.dispose( array )
  * ---------------------------------------------------------------------------
  *
  * Disposes of array object <array> and returns NIL. *)
 
-PROCEDURE dispose ( VAR array : @@module@@ ) : @@module@@;
+PROCEDURE dispose ( VAR array : <<module>> ) : <<module>>;
 
 
-END @@module@@.
+END <<module>>.
