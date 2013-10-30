@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE <<module>>;
+DEFINITION MODULE ##module##;
 
 (* Generic Patricia Trie Template *)
 
@@ -35,12 +35,12 @@ CONST
 TYPE
 
 (* ---------------------------------------------------------------------------
- * Opaque handle type:  <<module>>
+ * Opaque handle type:  ##module##
  * ------------------------------------------------------------------------ *)
 
-    <<module>> = OPAQUE;
+    ##module## = OPAQUE;
 
-    ValueType = <<component>>;
+    ValueType = ALIAS OF ##component##;
 
 
 (* ---------------------------------------------------------------------------
@@ -60,7 +60,7 @@ TYPE
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.new ( status )
+ * function:  ##module##.new ( status )
  * ---------------------------------------------------------------------------
  *
  * Creates  and  returns  a  new trie object.  Returns NIL  if the trie object
@@ -68,11 +68,11 @@ TYPE
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE new ( VAR status : Status ) : <<module>>;
+PROCEDURE new ( VAR status : Status ) : ##module##;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.storeEntry( trie, key, value, status )
+ * function:  ##module##.storeEntry( trie, key, value, status )
  * ---------------------------------------------------------------------------
  *
  * Stores <value> for <key>  in <trie>.  The new entry is added  by reference,
@@ -81,14 +81,14 @@ PROCEDURE new ( VAR status : Status ) : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE storeEntry ( trie   : <<module>>;
+PROCEDURE storeEntry ( trie   : ##module##;
                        key    : ARRAY OF CHAR;
                        value  : ValueType;
                    VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.replaceEntry( trie, key, value, status )
+ * function:  ##module##.replaceEntry( trie, key, value, status )
  * ---------------------------------------------------------------------------
  *
  * Searches for  an entry in <trie>  whose key  exactly  matches <key> and re-
@@ -98,14 +98,14 @@ PROCEDURE storeEntry ( trie   : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE replaceEntry ( trie   : <<module>>;
+PROCEDURE replaceEntry ( trie   : ##module##;
                          key    : ARRAY OF CHAR;
                          value  : ValueType;
                      VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.valueForKey( trie, key, status )
+ * function:  ##module##.valueForKey( trie, key, status )
  * ---------------------------------------------------------------------------
  *
  * Returns the value stored for <key< in <trie>.  If no value for <key> exists
@@ -113,13 +113,13 @@ PROCEDURE replaceEntry ( trie   : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE valueForKey ( trie   : <<module>>;
+PROCEDURE valueForKey ( trie   : ##module##;
                         key    : ARRAY OF CHAR;
                     VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.forEachEntryDo( trie, prefix, action, status )
+ * function:  ##module##.forEachEntryDo( trie, prefix, action, status )
  * ---------------------------------------------------------------------------
  *
  * Traverses <trie>  visiting all entries whose keys have a common prefix with
@@ -136,14 +136,14 @@ PROCEDURE valueForKey ( trie   : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE forEachEntryDo ( trie   : <<module>>;
+PROCEDURE forEachEntryDo ( trie   : ##module##;
                            prefix : ARRAY OF CHAR;
                            action : ActionHandler;
                        VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.numberOfEntriesWithPrefix( trie, prefix )
+ * function:  ##module##.numberOfEntriesWithPrefix( trie, prefix )
  * ---------------------------------------------------------------------------
  *
  * Returns  the  number of entries  stored in <trie>  whose keys have a common
@@ -151,12 +151,12 @@ PROCEDURE forEachEntryDo ( trie   : <<module>>;
  * the  total number  of entries  stored in <trie>  is returned.  The function
  * fails and returns zero if NULL is passed in for <trie> or <key>. *)
 
-PROCEDURE numberOfEntriesWithPrefix ( trie   : <<module>>;
+PROCEDURE numberOfEntriesWithPrefix ( trie   : ##module##;
                                       prefix : ARRAY OF CHAR ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.removeEntry( trie, key, status )
+ * function:  ##module##.removeEntry( trie, key, status )
  * ---------------------------------------------------------------------------
  *
  * Removes the entry stored for <key> from <trie>.  The function fails  if NIL
@@ -164,48 +164,48 @@ PROCEDURE numberOfEntriesWithPrefix ( trie   : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE removeEntry ( trie   : <<module>>;
+PROCEDURE removeEntry ( trie   : ##module##;
                         key    : ARRAY OF CHAR;
                     VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.capacity( trie )
+ * function:  ##module##.capacity( trie )
  * ---------------------------------------------------------------------------
  *
  * Returns the total capacity of trie <trie>,  returns  zero  if NIL is passed
  * in for <trie>. *)
 
-PROCEDURE capacity ( trie : <<module>> ) : Capacity;
+PROCEDURE capacity ( trie : ##module## ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.entryCount( trie )
+ * function:  ##module##.entryCount( trie )
  * ---------------------------------------------------------------------------
  *
  * Returns the number of entries stored in trie <trie>,  returns  zero  if NIL
  * is passed in for <trie>. *)
 
-PROCEDURE entryCount ( trie : <<module>> ) : Capacity;
+PROCEDURE entryCount ( trie : ##module## ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.isResizable( trie )
+ * function:  ##module##.isResizable( trie )
  * ---------------------------------------------------------------------------
  *
  * Returns TRUE  if the  capacity of <trie>  can change  after <trie> has been
  * instatiated,  returns FALSE otherwise. *)
 
-PROCEDURE isResizable ( trie : <<module>> ) : BOOLEAN;
+PROCEDURE isResizable ( trie : ##module## ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.dispose( trie )
+ * function:  ##module##.dispose( trie )
  * ---------------------------------------------------------------------------
  *
  * Disposes of tree object <trie> and returns NIL. *)
 
-PROCEDURE dispose ( trie : <<module>> ) : <<module>>;
+PROCEDURE dispose ( trie : ##module## ) : ##module##;
 
 
-END <<module>>.
+END ##module##.
