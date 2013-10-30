@@ -30,7 +30,7 @@ TYPE
  * Opaque handle type:  ##module##
  * ------------------------------------------------------------------------ *)
 
-    <<module>> = OPAQUE;
+    ##module## = OPAQUE;
     
     ValueType = ##component##;
 
