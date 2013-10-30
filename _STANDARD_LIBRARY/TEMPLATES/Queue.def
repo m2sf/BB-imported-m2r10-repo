@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE <<module>>;
+DEFINITION MODULE ##module##;
 
 (* Generic Queue Template *)
 
@@ -43,30 +43,30 @@ CONST
 TYPE
 
 (* ---------------------------------------------------------------------------
- * Opaque handle type:  <<module>>
+ * Opaque handle type:  ##module##
  * ------------------------------------------------------------------------ *)
 
-    <<module>> = OPAQUE;
+    ##module## = OPAQUE;
     
-    ValueType = <<component>>;
+    ValueType = ALIAS OF ##component##;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.new ( size, status )
+ * function:  ##module##.new ( size, status )
  * ---------------------------------------------------------------------------
  *
  * Creates and returns  a new queue object  with a storage capacity of <size>.
  * If zero is passed in for <size>,  then the new queue object will be created
- * with a capacity of  @@module@@.defaultQueueSize.
+ * with a capacity of  ##module##.defaultQueueSize.
  * Returns NIL if the queue object could not be created.
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : <<module>>;
+PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : ##module##;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.enqueue( queue, value, status )
+ * function:  ##module##.enqueue( queue, value, status )
  * ---------------------------------------------------------------------------
  *
  * Adds a new entry <value> to the head of queue <queue>  and returns <queue>.
@@ -76,11 +76,11 @@ PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE enqueue ( queue : <<module>>; value : ValueType; VAR status : Status );
+PROCEDURE enqueue ( queue : ##module##; value : ValueType; VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.dequeue( queue, status )
+ * function:  ##module##.dequeue( queue, status )
  * ---------------------------------------------------------------------------
  *
  * Removes the oldest value from the tail of queue <queue> and returns it.  If
@@ -88,46 +88,46 @@ PROCEDURE enqueue ( queue : <<module>>; value : ValueType; VAR status : Status )
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE dequeue ( queue : <<module>>; VAR status : Status ) : ValueType;
+PROCEDURE dequeue ( queue : ##module##; VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.capacity( queue )
+ * function:  ##module##.capacity( queue )
  * ---------------------------------------------------------------------------
  *
  * Returns the total capacity of queue <queue>,  returns zero if NIL is passed
  * in for <queue>. *)
 
-PROCEDURE capacity ( queue : <<module>> ) : Capacity;
+PROCEDURE capacity ( queue : ##module## ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.entryCount( stack )
+ * function:  ##module##.entryCount( stack )
  * ---------------------------------------------------------------------------
  *
  * Returns  the  number of entries  stored in stack <stack>,  returns  zero if
  * NIL is passed in for <stack>. *)
 
-PROCEDURE entryCount ( VAR stack : <<module>> ) : Capacity;
+PROCEDURE entryCount ( VAR stack : ##module## ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.isResizable( queue )
+ * function:  ##module##.isResizable( queue )
  * ---------------------------------------------------------------------------
  *
  * Returns TRUE  if the  capacity of <queue> can change after <queue> has been
  * instatiated,  returns FALSE otherwise. *)
 
-PROCEDURE isResizable ( queue : <<module>> ) : BOOLEAN;
+PROCEDURE isResizable ( queue : ##module## ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.dispose ( queue )
+ * function:  ##module##.dispose ( queue )
  * ---------------------------------------------------------------------------
  *
  * Disposes of queue object <queue> and returns NIL. *)
 
-PROCEDURE dispose ( VAR queue : <<module>> ) : <<module>>;
+PROCEDURE dispose ( VAR queue : ##module## ) : ##module##;
 
 
-END <<module>>.
+END ##module##.
