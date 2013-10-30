@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE @@module@@;
+DEFINITION MODULE <<module>>;
 
 (* Generic Double Ended Queue Template *)
 
@@ -43,23 +43,23 @@ CONST
 TYPE
 
 (* ---------------------------------------------------------------------------
- * Opaque handle type:  @@module@@
+ * Opaque handle type:  <<module>>
  * ------------------------------------------------------------------------ *)
 
-    @@module@@ = OPAQUE;
+    <<module>> = OPAQUE;
     
-    ValueType = @@component@@;
+    ValueType = <<component>>;
 
 
 (* ---------------------------------------------------------------------------
- * Opaque handle type:  @@module@@.Iterator
+ * Opaque handle type:  <<module>>.Iterator
  * ------------------------------------------------------------------------ *)
  
     Iterator = OPAQUE;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.new ( status )
+ * function:  <<module>>.new ( status )
  * ---------------------------------------------------------------------------
  *
  * Creates  and returns a new queue object.  Returns  NIL  if the queue object
@@ -67,11 +67,11 @@ TYPE
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE new ( VAR status : Status ) : @@module@@;
+PROCEDURE new ( VAR status : Status ) : <<module>>;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.prepend( queue, value, status )
+ * function:  <<module>>.prepend( queue, value, status )
  * ---------------------------------------------------------------------------
  *
  * Prepends  a new  entry <value>  at  the  head of <queue>.  The new entry is
@@ -80,11 +80,11 @@ PROCEDURE new ( VAR status : Status ) : @@module@@;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE prepend ( queue : @@module@@; value : ValueType; VAR status : Status );
+PROCEDURE prepend ( queue : <<module>>; value : ValueType; VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.append( queue, value, status )
+ * function:  <<module>>.append( queue, value, status )
  * ---------------------------------------------------------------------------
  *
  * Appends  a  new  entry <value>  at  the  tail of <queue>.  The new entry is
@@ -93,11 +93,11 @@ PROCEDURE prepend ( queue : @@module@@; value : ValueType; VAR status : Status )
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE append ( queue : @@module@@; value : ValueType; VAR status : Status );
+PROCEDURE append ( queue : <<module>>; value : ValueType; VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.firstEntry( queue, status )
+ * function:  <<module>>.firstEntry( queue, status )
  * ---------------------------------------------------------------------------
  *
  * Removes  the first entry  from the head of <queue>  and returns it.  If the
@@ -105,11 +105,11 @@ PROCEDURE append ( queue : @@module@@; value : ValueType; VAR status : Status );
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE firstEntry ( queue : @@module@@; VAR status : Status ) : ValueType;
+PROCEDURE firstEntry ( queue : <<module>>; VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.lastEntry( queue, status )
+ * function:  <<module>>.lastEntry( queue, status )
  * ---------------------------------------------------------------------------
  *
  * Removes  the last entry  from the tail of <queue>  and  returns it.  If the
@@ -117,41 +117,41 @@ PROCEDURE firstEntry ( queue : @@module@@; VAR status : Status ) : ValueType;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE lastEntry ( queue : @@module@@; VAR status : Status ) : ValueType;
+PROCEDURE lastEntry ( queue : <<module>>; VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.capacity( queue )
+ * function:  <<module>>.capacity( queue )
  * ---------------------------------------------------------------------------
  *
  * Returns the total capacity of queue <queue>,  returns zero if NIL is passed
  * in for <queue>. *)
 
-PROCEDURE capacity ( queue : @@module@@ ) : Capacity;
+PROCEDURE capacity ( queue : <<module>> ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.entryCount( queue )
+ * function:  <<module>>.entryCount( queue )
  * ---------------------------------------------------------------------------
  *
  * Returns the number of entries stored in queue <queue>,  returns zero if NIL
  * is passed in for <queue>. *)
 
-PROCEDURE entryCount ( queue : @@module@@ ) : Capacity;
+PROCEDURE entryCount ( queue : <<module>> ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.isResizable( queue )
+ * function:  <<module>>.isResizable( queue )
  * ---------------------------------------------------------------------------
  *
  * Returns TRUE  if the  capacity of <queue> can change after <queue> has been
  * instatiated,  returns FALSE otherwise. *)
 
-PROCEDURE isResizable ( queue : @@module@@ ) : BOOLEAN;
+PROCEDURE isResizable ( queue : <<module>> ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.newIterator ( queue, status )
+ * function:  <<module>>.newIterator ( queue, status )
  * ---------------------------------------------------------------------------
  *
  * Creates and returns  a new iterator object  for iterating entries  in queue
@@ -159,11 +159,11 @@ PROCEDURE isResizable ( queue : @@module@@ ) : BOOLEAN;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE newIterator ( queue : @@module@@; VAR status : Status ) : Iterator;
+PROCEDURE newIterator ( queue : <<module>>; VAR status : Status ) : Iterator;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.iterateNext( queue )
+ * function:  <<module>>.iterateNext( queue )
  * ---------------------------------------------------------------------------
  *
  * The  first  call  to this function  returns the  first  entry  of the queue
@@ -177,7 +177,7 @@ PROCEDURE iterateNext ( iterator : Iterator; VAR statusStatus ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.disposeIterator ( iterator )
+ * function:  <<module>>.disposeIterator ( iterator )
  * ---------------------------------------------------------------------------
  *
  * Disposes of iterator object <iterator> and returns NIL. *)
@@ -186,12 +186,12 @@ PROCEDURE disposeIterator ( VAR iterator : Iterator ) : Iterator;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.dispose ( queue )
+ * function:  <<module>>.dispose ( queue )
  * ---------------------------------------------------------------------------
  *
  * Disposes of queue object <queue> and returns NIL. *)
 
-PROCEDURE dispose ( VAR queue : @@module@@ ) : @@module@@;
+PROCEDURE dispose ( VAR queue : <<module>> ) : <<module>>;
 
 
-END @@module@@.
+END <<module>>.
