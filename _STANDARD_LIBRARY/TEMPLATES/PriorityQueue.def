@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE <<module>>;
+DEFINITION MODULE ##module##;
 
 (* Generic Priority Queue Template *)
 
@@ -46,9 +46,9 @@ TYPE
  * Opaque handle type:  <<module>>
  * ------------------------------------------------------------------------ *)
 
-    <<module>> = OPAQUE;
+    ##module## = OPAQUE;
     
-    ValueType = <<component>>;
+    ValueType = ALIAS OF ##component##;
 
 
 (* ---------------------------------------------------------------------------
@@ -69,7 +69,7 @@ TYPE
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.new ( size, handler, status )
+ * function:  ##module##.new ( size, handler, status )
  * ---------------------------------------------------------------------------
  *
  * Creates and returns a new priority queue object.  The capacity of the queue
@@ -94,11 +94,11 @@ TYPE
 
 PROCEDURE new ( size       : Capacity;
                 handler    : ComparisonHandler;
-                VAR status : Status ) : <<module>>;
+                VAR status : Status ) : ##module##;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.enqueue( queue, value, status )
+ * function:  ##module##.enqueue( queue, value, status )
  * ---------------------------------------------------------------------------
  *
  * Adds a new entry <value> to priority queue <queue>.  The new entry is added
@@ -108,11 +108,11 @@ PROCEDURE new ( size       : Capacity;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE enqueue ( queue : <<module>>; value : ValueType; VAR status : Status );
+PROCEDURE enqueue ( queue : ##module##; value : ValueType; VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.inspectNext( queue, status )
+ * function:  ##module##.inspectNext( queue, status )
  * ---------------------------------------------------------------------------
  *
  * Retrieves the entry with the highest priority from <queue>  and  returns it
@@ -121,11 +121,11 @@ PROCEDURE enqueue ( queue : <<module>>; value : ValueType; VAR status : Status )
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE inspectNext ( queue : <<module>>; VAR status : Status ) : ValueType;
+PROCEDURE inspectNext ( queue : ##module##; VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.dequeue( queue, status )
+ * function:  ##module##.dequeue( queue, status )
  * ---------------------------------------------------------------------------
  *
  * Removes  the entry with the highest priority  from <queue>  and returns it.
@@ -133,46 +133,46 @@ PROCEDURE inspectNext ( queue : <<module>>; VAR status : Status ) : ValueType;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE dequeue ( queue : <<module>>; VAR status : Status ) : ValueType;
+PROCEDURE dequeue ( queue : ##module##; VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.capacity( queue )
+ * function:  ##module##.capacity( queue )
  * ---------------------------------------------------------------------------
  *
  * Returns the total capacity of queue <queue>,  returns zero if NIL is passed
  * in for <queue>. *)
 
-PROCEDURE capacity ( queue : <<module>> ) : Capacity;
+PROCEDURE capacity ( queue : ##module## ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.entryCount( queue )
+ * function:  ##module##.entryCount( queue )
  * ---------------------------------------------------------------------------
  *
  * Returns the number of entries stored in queue <queue>,  returns zero if NIL
  * is passed in for <queue>. *)
 
-PROCEDURE entryCount ( queue : <<module>> ) : Capacity;
+PROCEDURE entryCount ( queue : ##module## ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.isResizable( queue )
+ * function:  ##module##.isResizable( queue )
  * ---------------------------------------------------------------------------
  *
  * Returns TRUE  if the  capacity of <queue> can change after <queue> has been
  * instatiated,  returns FALSE otherwise. *)
 
-PROCEDURE isResizable ( queue : <<module>> ) : BOOLEAN;
+PROCEDURE isResizable ( queue : ##module## ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.dispose( queue )
+ * function:  ##module##.dispose( queue )
  * ---------------------------------------------------------------------------
  *
  * Disposes of priority queue object <queue> and returns NIL. *)
 
-PROCEDURE dispose ( VAR queue : <<module>> ) : <<module>>;
+PROCEDURE dispose ( VAR queue : ##module## ) : ##module##;
 
 
-END <<module>>.
+END ##module##.
