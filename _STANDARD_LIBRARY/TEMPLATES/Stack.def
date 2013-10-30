@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE @@module@@;
+DEFINITION MODULE <<module>>;
 
 (* Generic Stack Template *)
 
@@ -43,22 +43,22 @@ CONST
 TYPE
 
 (* ---------------------------------------------------------------------------
- * Opaque handle type:  @@module@@
+ * Opaque handle type:  <<module>>
  * ------------------------------------------------------------------------ *)
 
-    @@module@@ = OPAQUE;
+    <<module>> = OPAQUE;
     
-    ValueType = @@component@@;
+    ValueType = <<component>>;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.new( initialSize, status )
+ * function:  <<module>>.new( initialSize, status )
  * ---------------------------------------------------------------------------
  *
- * Creates and returns a new @@module@@ object  with an initial capacity of
+ * Creates and returns a new <<module>> object  with an initial capacity of
  * <initialSize>.  If  zero  is passed in  for <initialSize>,  then  the stack
- * will be created with an initial capacity of @@module@@.defaultStackSize.
- * The function fails if a value greater than @@module@@.maximumStackSize
+ * will be created with an initial capacity of <<module>>.defaultStackSize.
+ * The function fails if a value greater than <<module>>.maximumStackSize
  * is  passed in for <initialSize> or if memory could not be allocated.
  *
  * The initial capacity of a stack is the number of entries that can be stored
@@ -66,11 +66,11 @@ TYPE
  *
  * The status of the operation  is passed back in <status>. *)
 
-PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : @@module@@;
+PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : <<module>>;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.push( stack, value, status )
+ * function:  <<module>>.push( stack, value, status )
  * ---------------------------------------------------------------------------
  *
  * Adds a  new entry <value>  to the top of stack <stack>.  The  new entry  is
@@ -84,11 +84,11 @@ PROCEDURE new ( initialSize : Capacity; VAR status : Status ) : @@module@@;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE push ( VAR stack : @@module@@; value : ValueType; VAR status : Status );
+PROCEDURE push ( VAR stack : <<module>>; value : ValueType; VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.pop( stack, status )
+ * function:  <<module>>.pop( stack, status )
  * ---------------------------------------------------------------------------
  *
  * Removes the top most value from stack <stack> and returns it.  If the stack
@@ -100,46 +100,46 @@ PROCEDURE push ( VAR stack : @@module@@; value : ValueType; VAR status : Status 
  *
  * The status of the operation  is passed back in <status>. *)
 
-PROCEDURE pop ( VAR stack : @@module@@; VAR status : Status ) : ValueType;
+PROCEDURE pop ( VAR stack : <<module>>; VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.capacity( stack )
+ * function:  <<module>>.capacity( stack )
  * ---------------------------------------------------------------------------
  *
  * Returns the current capacity of <stack>.  The current capacity is the total
  * number of allocated entries.  Returns zero if NIL is passed in for <stack>.
  *)
-PROCEDURE capacity ( VAR stack : @@module@@ ) : Capacity;
+PROCEDURE capacity ( VAR stack : <<module>> ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.entryCount( stack )
+ * function:  <<module>>.entryCount( stack )
  * ---------------------------------------------------------------------------
  *
  * Returns  the  number of entries  stored in stack <stack>,  returns  zero if
  * NIL is passed in for <stack>. *)
 
-PROCEDURE entryCount ( VAR stack : @@module@@ ) : Capacity;
+PROCEDURE entryCount ( VAR stack : <<module>> ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.isResizable( stack )
+ * function:  <<module>>.isResizable( stack )
  * ---------------------------------------------------------------------------
  *
  * Returns TRUE  if the  capacity of <stack> can change after <stack> has been
  * instatiated,  returns FALSE otherwise. *)
 
-PROCEDURE isResizable ( stack : @@module@@ ) : BOOLEAN;
+PROCEDURE isResizable ( stack : <<module>> ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.dispose( stack )
+ * function:  <<module>>.dispose( stack )
  * ---------------------------------------------------------------------------
  *
  * Disposes of stack object <stack> and returns NIL. *)
 
-PROCEDURE dispose ( VAR stack : @@module@@ ) : @@module@@;
+PROCEDURE dispose ( VAR stack : <<module>> ) : <<module>>;
 
 
-END @@module@@.
+END <<module>>.
