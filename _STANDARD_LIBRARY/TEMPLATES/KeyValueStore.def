@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE <<module>>;
+DEFINITION MODULE ##module##;
 
 (* Generic Key Valye Storage Template *)
 
@@ -49,14 +49,14 @@ CONST
 TYPE
 
 (* ---------------------------------------------------------------------------
- * Opaque handle type:  <<module>>.Table
+ * Opaque handle type:  ##module##.Table
  * ------------------------------------------------------------------------ *)
 
-    <<module>> = OPAQUE;
+    ##module## = OPAQUE;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.new ( size, status )
+ * function:  ##module##.new ( size, status )
  * ---------------------------------------------------------------------------
  *
  * Creates  and returns a new table object  with a capacity of <size> buckets.
@@ -68,11 +68,11 @@ TYPE
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE new ( size : Capacity; VAR status : Status ) : <<module>>;
+PROCEDURE new ( size : Capacity; VAR status : Status ) : ##module##;
 
 
 (* ---------------------------------------------------------------------------
- * function:  @@module@@.storeValue( table, key, val, size, zT, status )
+ * function:  ##module##.storeValue( table, key, val, size, zT, status )
  * ---------------------------------------------------------------------------
  *
  * Adds a new entry  for key <key>  to table <table>.  The new entry is stored
@@ -87,7 +87,7 @@ PROCEDURE new ( size : Capacity; VAR status : Status ) : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE storeValue ( table          : <<module>>;
+PROCEDURE storeValue ( table          : ##module##;
                        key            : Key;
                        value          : ValueType;
                        size           : CARDINAL;
@@ -96,7 +96,7 @@ PROCEDURE storeValue ( table          : <<module>>;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.storeReference( table, key, val, size, zT, status )
+ * function:  ##module##.storeReference( table, key, val, size, zT, status )
  * ---------------------------------------------------------------------------
  *
  * Adds a new entry  for key <key>  to table <table>.  The new entry is stored
@@ -111,7 +111,7 @@ PROCEDURE storeValue ( table          : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE storeReference ( table          : <<module>>;
+PROCEDURE storeReference ( table          : ##module##;
                            key            : Key;
                            value          : ValueType;
                            size           : CARDINAL;
@@ -120,7 +120,7 @@ PROCEDURE storeReference ( table          : <<module>>;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.entryExists( table, key, status )
+ * function:  ##module##.entryExists( table, key, status )
  * ---------------------------------------------------------------------------
  *
  * Returns  TRUE  if a  valid entry  for <key>  is stored in <table>,  returns
@@ -131,13 +131,13 @@ PROCEDURE storeReference ( table          : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE entryExists ( table   : <<module>>;
-                        key    : Key;
-                    VAR status : Status ) : ValueType;
+PROCEDURE entryExists ( table   : ##module##;
+                         key    : Key;
+                     VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.getEntry( table, copy, key, size, zT, status )
+ * function:  ##module##.getEntry( table, copy, key, size, zT, status )
  * ---------------------------------------------------------------------------
  *
  * Retrieves the table entry stored in <table> for <key>  either by copy or by
@@ -169,7 +169,7 @@ PROCEDURE entryExists ( table   : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE getEntry ( table          : <<module>>;
+PROCEDURE getEntry ( table          : ##module##;
                      copy           : BOOLEAN;
                      key            : Key;
                  VAR size           : Capacity;
@@ -178,7 +178,7 @@ PROCEDURE getEntry ( table          : <<module>>;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.valueForKey( table, key, status )
+ * function:  ##module##.valueForKey( table, key, status )
  * ---------------------------------------------------------------------------
  *
  * Retrieves the entry stored in table <table> for <key> and returns a pointer
@@ -191,13 +191,13 @@ PROCEDURE getEntry ( table          : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE valueForKey ( table  : <<module>>;
+PROCEDURE valueForKey ( table  : ##module##;
                         key    : Key;
                     VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.referenceForKey( table, key, status )
+ * function:  ##module##.referenceForKey( table, key, status )
  * ---------------------------------------------------------------------------
  *
  * Retrieves the entry stored in table <table> for <key> and returns a pointer
@@ -207,13 +207,13 @@ PROCEDURE valueForKey ( table  : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE referenceForKey ( table  : <<module>>;
+PROCEDURE referenceForKey ( table  : ##module##;
                             key    : Key;
                         VAR status : Status ) : ValueType;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.sizeForKey( table, key, status )
+ * function:  ##module##.sizeForKey( table, key, status )
  * ---------------------------------------------------------------------------
  *
  * Returns  the size of the data of the entry stored in <table> for <key>.  If
@@ -221,13 +221,13 @@ PROCEDURE referenceForKey ( table  : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE sizeForKey ( table  : <<module>>;
+PROCEDURE sizeForKey ( table  : ##module##;
                        key    : Key;
                    VAR status : Status ) : CARDINAL;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.dataForKeyIsZeroTerminated( table, key, status )
+ * function:  ##module##.dataForKeyIsZeroTerminated( table, key, status )
  * ---------------------------------------------------------------------------
  *
  * Returns the zero-terminated flag of the entry stored in <table>  for <key>.
@@ -235,13 +235,13 @@ PROCEDURE sizeForKey ( table  : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE dataForKeyIsZeroTerminated ( table  : @@module@@;
+PROCEDURE dataForKeyIsZeroTerminated ( table  : ##module##;
                                        key    : Key;
                                    VAR status : Status ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.referenceCountForKey( table, key, status )
+ * function:  ##module##.referenceCountForKey( table, key, status )
  * ---------------------------------------------------------------------------
  *
  * Returns the  reference count  of the entry stored in <table> for <key>.  If
@@ -250,13 +250,13 @@ PROCEDURE dataForKeyIsZeroTerminated ( table  : @@module@@;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE referenceCountForKey ( table  : <<module>>;
+PROCEDURE referenceCountForKey ( table  : ##module##;
                                  key    : Key;
                              VAR status : Status ) : CARDINAL;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.releaseEntry( table, key, status )
+ * function:  ##module##.releaseEntry( table, key, status )
  * ---------------------------------------------------------------------------
  *
  * Decrements  the reference count  of the entry stored in <table>  for <key>.
@@ -265,14 +265,14 @@ PROCEDURE referenceCountForKey ( table  : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE releaseEntry ( table  : <<module>>;
+PROCEDURE releaseEntry ( table  : ##module##;
                          key    : Key;
                      VAR status : Status );
 
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.removeEntry( table, key, status )
+ * function:  ##module##.removeEntry( table, key, status )
  * ---------------------------------------------------------------------------
  *
  * Marks the entry stored in <table> for <key> as removed.  An entry which has
@@ -281,48 +281,48 @@ PROCEDURE releaseEntry ( table  : <<module>>;
  *
  * The status of the operation is passed back in <status>. *)
 
-PROCEDURE removeEntry ( table  : <<module>>;
+PROCEDURE removeEntry ( table  : ##module##;
                         key    : Key;
                     VAR status : Status );
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.capacity( table )
+ * function:  ##module##.capacity( table )
  * ---------------------------------------------------------------------------
  *
  * Returns the number of buckets of <table>,  returns zero if NIL is passed in
  * for <table>. *)
 
-PROCEDURE capacity ( table : <<module>> ) : Capacity;
+PROCEDURE capacity ( table : ##module## ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.entryCount( table )
+ * function:  ##module##.entryCount( table )
  * ---------------------------------------------------------------------------
  *
  * Returns the number of entries stored in table <table>,  returns zero if NIL
  * is passed in for <table>. *)
 
-PROCEDURE entryCount ( table : <<module>> ) : Capacity;
+PROCEDURE entryCount ( table : ##module## ) : Capacity;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.isResizable( table )
+ * function:  ##module##.isResizable( table )
  * ---------------------------------------------------------------------------
  *
  * Returns TRUE  if the number of buckets of <table> can change  after <table>
  * has been instatiated,  returns FALSE otherwise. *)
 
-PROCEDURE isResizable ( table : <<module>> ) : BOOLEAN;
+PROCEDURE isResizable ( table : ##module## ) : BOOLEAN;
 
 
 (* ---------------------------------------------------------------------------
- * function:  <<module>>.dispose( table )
+ * function:  ##module##.dispose( table )
  * ---------------------------------------------------------------------------
  *
  * Disposes of table object <table> and returns NIL. *)
 
-PROCEDURE dispose ( table : <<module>> ) : <<module>>;
+PROCEDURE dispose ( table : ##module## ) : ##module##;
 
 
-END <<module>>.
+END ##module##.
