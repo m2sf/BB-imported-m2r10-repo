@@ -136,9 +136,11 @@ PROCEDURE EOF ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file accessor <file>
    has been reached, otherwise FALSE. *)
 
-PROCEDURE EndPos ( file : File ) : FilePos;
-(* Returns the position of the last octet in the file associated with file
-   accessor <file>. Returns TMIN(FilePos) if <file> is an empty file. *) 
+PROCEDURE LastValidWritePos ( file : File ) : FilePos;
+(* Returns the position of the last position at which data may be written
+   in the file associated with file accessor <file>. Returns TMIN(FilePos)
+   if <file> is an empty file.  Passing a file accessor whose access mode
+   is read or append  will fail with status OperationNotSupported. *) 
 
 PROCEDURE CurrentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file accessor <file> where a
@@ -234,10 +236,10 @@ PROCEDURE CloseAll;
    The file mode of a special file is either read  or write.   EOF always re-
    turns FALSE and CurrentPos always returns TMIN(FilePos) for special files.
    Any attempt to open a special file will fail with status alreadyOpen.  Any
-   attempt  to  call  ReOpen,  NameLen,  GetName,  SetPos,  Advance,  Rewind,
-   Lookahead,  LA2,  ReadBlock,  Flush  or  Close   will  fail   with  status
-   operationNotSupported.  NameLen will return zero  and GetName will pass an
-   empty string. *)
+   attempt  to call  ReOpen,  NameLen,  GetName,  LastValidWritePos,  SetPos,
+   Advance,  Rewind,  Lookahead,  LA2,  ReadBlock,  Flush or Close  will fail
+   with  status operationNotSupported.  NameLen will return zero  and GetName
+   will pass an empty string. *)
 
 PROCEDURE IsSpecialFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
