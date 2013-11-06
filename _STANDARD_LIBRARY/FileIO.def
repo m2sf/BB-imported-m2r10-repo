@@ -137,9 +137,9 @@ PROCEDURE EOF ( file : File ) : BOOLEAN;
    has been reached, otherwise FALSE. *)
 
 PROCEDURE LastValidWritePos ( file : File ) : FilePos;
-(* Returns the position of the last position at which data may be written
-   in the file associated with file accessor <file>. Returns TMIN(FilePos)
-   if <file> is an empty file. *) 
+(* Returns the last position at which data may be written in the file asso-
+   ciated with file accessor <file>.  Returns TMIN(FilePos) if <file> is an
+   empty file. *) 
 
 PROCEDURE CurrentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file accessor <file> where a
