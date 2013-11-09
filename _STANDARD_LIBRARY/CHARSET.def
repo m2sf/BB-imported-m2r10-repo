@@ -11,6 +11,8 @@ FROM FileIO IMPORT File; (* required for IO *)
 
 FROM COMPILER IMPORT ReqBits, ReqOctets;
 
+IMPORT BITSET128; (* for conversion *)
+
 
 (* Constants *)
 
@@ -36,6 +38,12 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 PROCEDURE [TSIZE] storageSize : LONGCARD;
 (* Returns the value of constant RequiredOctets. This function is bound
    to pervasive function TSIZE for type operand CHARSET. *)
+
+
+(* Conversion *)
+
+PROCEDURE [::] toBITSET128 ( charSet : CHARSET ) : BITSET128;
+(* Converts the value of charSet to type BITSET128 and returns it. *)
 
 
 (* Storage, Removal, Retrieval and Inspection of Contents *)
