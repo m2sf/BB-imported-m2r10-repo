@@ -24,7 +24,7 @@ CONST [DESCENDING] supportsDescendingIteration = TRUE;
 (* CHARSET Type *)
 
 TYPE CHARSET = OPAQUE RECORD
-    elements: ARRAY ReqOctets OF OCTET;
+    elements : ARRAY ReqOctets OF OCTET;
 END; (* CHARSET *)
 
 
