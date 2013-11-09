@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoStaticSet [ProtoCollection];
 
-PLACEHOLDERS ElementType, ProcType;
+PLACEHOLDERS ElementType, ProcType, File;
 
 (* Static Set ADTs must be opaque records to be statically allocatable,
    set literals are compatible *)
@@ -21,8 +21,8 @@ TYPE ProtoStaticSet = OPAQUE RECORD := { VARIADIC OF ElementType };
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Procedure to return the element limit of a Set ADT. *)
 
-(* An expression of the form TLIMIT(SetADT))
-   is synthesised as SetADT.capacityLimit() *)
+(* An expression of the form TLIMIT(ADT)) is transformed at compile
+   time to ADT.capacityLimit() when the operand is the set ADT type. *)
 
 
 (* Storage, Removal, Retrieval and Inspection of Contents *)
