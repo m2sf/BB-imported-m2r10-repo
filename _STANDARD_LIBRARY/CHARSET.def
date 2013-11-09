@@ -18,7 +18,7 @@ CONST MaxCapacity = ReqBits(CHAR);
 
 CONST RequiredOctets = ReqOctets(CHAR);
 
-CONST [DESCENDING] supportsDescendingIteration = TRUE;
+CONST [DESCENDING] supportsDescendingFor = TRUE;
 
 
 (* CHARSET Type *)
