@@ -9,16 +9,14 @@ DEFINITION MODULE BS128 [ProtoStaticSet];
 
 FROM FileIO IMPORT File; (* required for IO *)
 
-FROM COMPILER IMPORT ReqBits, ReqOctets;
-
 IMPORT CHARSET; (* for conversion *)
 
 
 (* Constants *)
 
-CONST MaxCapacity = ReqBits(CHAR);
+CONST MaxCapacity = 128;
 
-CONST RequiredOctets = ReqOctets(CHAR);
+CONST RequiredOctets = 16;
 
 CONST [DESCENDING] supportsDescendingFor = TRUE;
 
