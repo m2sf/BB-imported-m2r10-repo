@@ -136,14 +136,21 @@ PROCEDURE EOF ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file accessor <file>
    has been reached, otherwise FALSE. *)
 
-PROCEDURE LastValidWritePos ( file : File ) : FilePos;
-(* Returns the last position at which data may be written in the file asso-
-   ciated with file accessor <file>.  Returns TMIN(FilePos) if <file> is an
-   empty file. *) 
-
 PROCEDURE CurrentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file accessor <file> where a
    value of TMIN(FilePos) represents the beginning of a file. *)
+
+PROCEDURE LastValidSetPos ( file : File ) : FilePos;
+(* Returns the most advanced position that may be passed to SetPos for file
+   accessor <file>.  The return value depends on length and mode of <file>
+   
+   (1) if <file> is in append mode, the function returns zero and sets the
+       file's status to OperationNotSupported.
+   (2) if <file> is empty, then TMIN(FilePos) is returned.
+   (3) if <file> is not empty and has its write flag set, then the position
+       of the last octet in <file> plus one is returned.
+   (4) if <file> is not empty and has its read but not its write flag set,
+       then the position of the last octet in <file> is returned. *) 
 
 PROCEDURE SetPos ( file : File; pos : FilePos );
 (* Sets the  read/write position  for  file accessor <file>  to <pos>.  For
@@ -237,10 +244,10 @@ PROCEDURE CloseAll;
    The file mode of a special file is either read  or write.   EOF always re-
    turns FALSE and CurrentPos always returns TMIN(FilePos) for special files.
    Any attempt to open a special file will fail with status alreadyOpen.  Any
-   attempt  to call  ReOpen,  NameLen,  GetName,  LastValidWritePos,  SetPos,
-   Advance,  Rewind,  Lookahead,  LA2,  ReadBlock,  Flush or Close  will fail
-   with  status operationNotSupported.  NameLen will return zero  and GetName
-   will pass an empty string. *)
+   attempt to call ReOpen, NameLen, GetName, LastValidSetPos, SetPos, Rewind,
+   Advance, Lookahead, LA2, ReadBlock, Flush or Close  will fail with  status
+   operationNotSupported.  NameLen  and LastValidSetPos will return zero  and
+   GetName will pass an empty string. *)
 
 PROCEDURE IsSpecialFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
