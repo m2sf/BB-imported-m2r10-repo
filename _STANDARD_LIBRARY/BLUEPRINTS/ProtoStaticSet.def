@@ -16,8 +16,6 @@ TYPE ProtoStaticSet = OPAQUE RECORD := { VARIADIC OF ElementType };
 
 (* Capacity limit *)
 
-(* Binding to Pervasive Function TLIMIT *)
-
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Procedure to return the element limit of a Set ADT. *)
 
@@ -61,7 +59,7 @@ PROCEDURE [IN] isElement
    ADT.isElement(set, elem) for first operands of the ADT type. *)
 
 
-PROCEDURE [COUNT] count ( set : ProtoStaticSet ) : LONGCARD;
+PROCEDURE [COUNT] count ( CONST set : ProtoStaticSet ) : LONGCARD;
 (* Procedure to return the element count of a Set ADT value. *)
 
 (* An expression of the form COUNT(set) is transformed at compile time to
@@ -124,8 +122,6 @@ PROCEDURE [/] symmetricDiff
 
 (* Relational operations *)
 
-(* Binding to = operator *)
-
 PROCEDURE [=] isEqual ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
 (* Procedure to test the equality of two set ADT values. *)
 
@@ -136,7 +132,7 @@ PROCEDURE [=] isEqual ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
    NOT ADT.isEqual(set1, set2) for operands of the set ADT type. *)
 
 
-PROCEDURE [SUBSET] isSubset ( set1, set2 : ProtoStaticSet ) : BOOLEAN;
+PROCEDURE [SUBSET] isSubset ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
 (* Procedure to test whether one set ADT value is a subset of another *)
 
 (* An expression of the form set1 > set2 is transformed at compile time to
@@ -172,7 +168,7 @@ PROCEDURE Write ( outfile : File; CONST set : ProtoStaticSet );
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF ProtoStaticSet );
+                   items        : VARIADIC OF CONST ProtoStaticSet );
 (* Procedure to write one or more set ADT values formatted into a file. *)
 
 (* A statement of the form WRITEF(file, fmt, set1, set2, set3, ...) is trans-
