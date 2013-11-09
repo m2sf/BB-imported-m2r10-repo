@@ -161,4 +161,23 @@ PROCEDURE WriteF ( outfile      : File;
    procedure is substituted for invocations of WRITEF with one or more
    CHARSET arguments. *)
 
+
+(* Introspection *)
+
+PROCEDURE capacity ( CONST charSet : CHARSET ) : LONGCARD;
+(* Always returns the value of TLIMIT(CHARSET). *)
+
+
+PROCEDURE entryLimit ( CONST charSet : CHARSET ) : LONGCARD;
+(* Always returns the value of TLIMIT(CHARSET). *)
+
+
+PROCEDURE isOrdered ( CONST charSet : CHARSET ) : BOOLEAN;
+(* Always returns TRUE because type CHARSET is ordered. *)
+
+
+PROCEDURE isResizable ( CONST charSet : CHARSET ) : BOOLEAN;
+(* Always returns FALSE because type CHARSET is static *)
+
+
 END CHARSET.
