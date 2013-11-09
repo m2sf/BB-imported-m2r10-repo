@@ -40,7 +40,7 @@ PROCEDURE [TSIZE] storageSize : LONGCARD;
 
 (* Conversion *)
 
-PROCEDURE [::] toCHARSET ( bitset : BS128 ) : CHARSET;
+PROCEDURE [::] toCHARSET ( CONST bitset : BS128 ) : CHARSET;
 (* Converts the value of bitset to type CHARSET and returns it. *)
 
 
@@ -151,7 +151,7 @@ PROCEDURE Write ( outfile : File; CONST bitset : BS128 );
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF BS128 );
+                   items        : VARIADIC OF CONST BS128 );
 (* Writes a formatted textual representation of one or more BS128 values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
