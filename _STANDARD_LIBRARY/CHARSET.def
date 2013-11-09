@@ -18,6 +18,8 @@ CONST MaxCapacity = ReqBits(CHAR);
 
 CONST RequiredOctets = ReqOctets(CHAR);
 
+CONST [DESCENDING] supportsDescendingIteration = TRUE;
+
 
 (* CHARSET Type *)
 
@@ -74,10 +76,12 @@ PROCEDURE [COUNT] elementCount ( CONST charSet : CHARSET ) : LONGCARD;
 TYPE ForLoopBodyProc = PROCEDURE ( (* value : *) CHAR );
 
 PROCEDURE [FOR] forIterator
-  ( CONST charSet : CHARSET; forLoopBody : ForLoopBodyProc );
-(* Iterates over all elements in charSet, executing procedure forLoopBody for
-   each element stored in charSet. The iteration order is ascending. This
-   procedure is bound to built-in syntax FOR IN for type CHARSET. *)
+  ( CONST charSet : CHARSET;
+    forLoopBody : ForLoopBodyProc; ascending : BOOLEAN );
+(* Iterates over all elements in charSet, executing procedure forLoopBody
+   for each element stored in charSet. If TRUE is passed in for ascending,
+   the iteration order is ascending, otherwise descending. This procedure
+   is bound to built-in syntax FOR IN for type CHARSET. *)
 
 
 (* Set Operations *) 
