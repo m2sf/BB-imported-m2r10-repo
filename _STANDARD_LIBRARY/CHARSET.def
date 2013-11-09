@@ -11,7 +11,7 @@ FROM FileIO IMPORT File; (* required for IO *)
 
 FROM COMPILER IMPORT ReqBits, ReqOctets;
 
-IMPORT BITSET128; (* for conversion *)
+IMPORT BS128; (* for conversion *)
 
 
 (* Constants *)
@@ -42,8 +42,8 @@ PROCEDURE [TSIZE] storageSize : LONGCARD;
 
 (* Conversion *)
 
-PROCEDURE [::] toBITSET128 ( charSet : CHARSET ) : BITSET128;
-(* Converts the value of charSet to type BITSET128 and returns it. *)
+PROCEDURE [::] toBS128 ( charSet : CHARSET ) : BS128;
+(* Converts the value of charSet to type BS128 and returns it. *)
 
 
 (* Storage, Removal, Retrieval and Inspection of Contents *)
