@@ -90,11 +90,17 @@ PROCEDURE [FOR] forIterator
      FOR elem IN set DO statementSeq END
    is transformed at compile time in two steps.
    The loop header is transformed to
-     SetADT.forIterator( set, forLoopBody, TRUE );
+     ADT.forIterator( set, forLoopBody, TRUE );
    The loop body is transformed to a procedure definition
      <* INLINE *> PROCEDURE forLoopBody ( element : ElementType );
      BEGIN statementSeq END forLoopBody;
-   inserted before the current scope's BEGIN-END block. *)   
+   inserted before the current scope's BEGIN-END block.
+   
+   A loop header of the form
+     FOR DESCENDING elem IN set
+   is transformed at compile time to
+     ADT.forIterator(set, forLoopBody, FALSE)
+   To allow this, an ADT must bind a constant of value TRUE to DESCENDING. *)   
 
 
 (* Set Operations *) 
