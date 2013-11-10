@@ -1,95 +1,123 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BS16 [ProtoStaticSet]; (* Sixteen one-six *)
+DEFINITION MODULE BS16 [ProtoStaticSet]; (* sixteen one-six *)
 
-(* 16-bit Bitset *)
+(* 16-bit statically allocatable bitsets *)
+
+
+(* Imports *)
 
 FROM FileIO IMPORT File; (* required for IO *)
 
 
-(* BS16 type *)
+(* Constants *)
 
-TYPE
-    BS16 = OPAQUE RECORD
-        bits : ARRAY 2 OF OCTET; (* 16 bits *)
-    END; (* BS16 *)
+CONST MaxCapacity = 16;
 
+CONST RequiredOctets = 2;
 
-(* capacity limit *)
-
-(* TLIMIT(BS16) = 16 *)
-
-PROCEDURE [TLIMIT] capacityLimit ( CONST set : BS16 ) : CARDINAL;
-(* Returns the maximum number of elements that can be stored in a BS16 set.
-   This function is bound to pervasive function TLIMIT for type BS16. *)
+CONST [DESCENDING] supportsDescendingFor = TRUE;
 
 
-(* Literal assignment *)
+(* BS16 Type *)
 
-PROCEDURE [:=] assign ( VAR assignTo : BS16;
-                        elements     : VARIADIC OF CARDINAL );
-(* Assigns a variadic list of values of type CARDINAL to BS16 assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
-
-
-(* accessor *)
-
-PROCEDURE [RETRIEVE] isElement ( CONST set : BS16;
-                                   element : CARDINAL ) : BOOLEAN;
-(* Returns TRUE if element is an element of BS16 set, otherwise FALSE.
-   This function is bound to the array operator [ ] and the IN operator
-   for rvalues of type BS16. *)
+TYPE BS16 = OPAQUE RECORD
+    elements : ARRAY ReqOctets OF OCTET;
+END; (* BS16 *)
 
 
-(* mutator *)
-
-PROCEDURE [STORE] storeValue ( CONST set : BS16;
-                               element   : CARDINAL;
-                               value     : BOOLEAN );
-(* Includes character element in BS16 set if value is TRUE, otherwise
-   removes it from set. This procedure is bound to the array operator [ ]
-   for lvalues of type BS16. *)
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Returns the value of constant MaxCapacity. This function is bound to
+   pervasive function TLIMIT for type operand BS16. *)
 
 
-(* counter *)
+PROCEDURE [TSIZE] storageSize : LONGCARD;
+(* Returns the value of constant RequiredOctets. This function is bound
+   to pervasive function TSIZE for type operand BS16. *)
 
-PROCEDURE [COUNT] elementCount ( CONST set : BS16 ) : CARDINAL;
+
+(* Conversion *)
+
+(* none *)
+
+
+(* Storage, Removal, Retrieval and Inspection of Contents *)
+
+PROCEDURE [STORE] storeElements
+  ( VAR bitset : BS16; valueList : VARIADIC OF CARDINAL );
+(* Stores the elements given by valueList in BS16 variable bitset.
+   This procedure is bound to pervasive procedure STORE for first
+   operands of type BS16. *)
+
+
+PROCEDURE [REMOVE] removeElements
+  ( VAR bitset : BS16; valueList : VARIADIC OF CARDINAL );
+(* Removes the elements given by valueList from BS16 variable bitset. Re-
+   moves all elements if no values are passed in valueList. This procedure
+   is bound to pervasive procedure REMOVE for first operands of type BS16. *)
+
+
+PROCEDURE [RETRIEVE] membershipForElement
+  ( CONST bitset : BS16; value : CARDINAL ) : BOOLEAN;
+(* Calls function isElement and returns its result. This function is bound
+   to pervasive function RETRIEVE for first operands of type BS16. *)
+
+
+PROCEDURE [IN] isElement ( CONST bitset : BS16; value : CARDINAL ) : BOOLEAN;
+(* Returns TRUE if value is an element of bitset, returns FALSE otherwise.
+   This function is bound to operator IN for left operands of type CARDINAL
+   and right operands of type BS16. *)
+
+
+PROCEDURE [COUNT] elementCount ( CONST bitset : BS16 ) : LONGCARD;
 (* Returns the number of elements in BS16 set. This function is bound
    to pervasive function COUNT for type BS16. *)
 
 
-(* Dyadic set operations *) 
+(* Iteration *)
 
-PROCEDURE [+] union ( CONST set1, set2 : BS16 ) : BS16;
-(* Returns the union of BS16 values set1 and set2.
-   This function is bound to the + operator for type BS16. *)
+TYPE ForLoopBodyProc = PROCEDURE ( (* value : *) CARDINAL );
 
-PROCEDURE [-] diff ( CONST set1, set2 : BS16 ) : BS16;
-(* Returns the set difference of BS16 values set1 and set2.
-   This function is bound to the - operator for type BS16. *)
+PROCEDURE [FOR] forIterator
+  ( CONST bitset : BS16;
+    forLoopBody : ForLoopBodyProc; ascending : BOOLEAN );
+(* Iterates over all elements in bitset, executing procedure forLoopBody
+   for each element stored in bitset. If TRUE is passed in for ascending,
+   the iteration order is ascending, otherwise descending. This procedure
+   is bound to built-in syntax FOR IN for type BS16. *)
 
-PROCEDURE [*] intersection ( set1, set2 : BS16 ) : BS16;
-(* Returns the intersection of BS16 values set1 and set2.
-   This function it bound to the * operator for type BS16. *)
 
-PROCEDURE [/] symdiff ( set1, set2 : BS16 ) : BS16;
-(* Returns the symmetric set difference of BS16 values set1 and set2.
-   This function is bound to the / operator for type BS16. *)
+(* Set Operations *) 
+
+PROCEDURE [+] union ( CONST bitset1, bitset2 : BS16 ) : BS16;
+(* Returns the union of BS16 values bitset1 and bitset2. This function
+   is bound to the + operator for operands of type BS16. *)
+
+PROCEDURE [-] diff ( CONST bitset1, bitset2 : BS16 ) : BS16;
+(* Returns the set difference of BS16 values bitset1 and bitset2. This
+   function is bound to the - operator for operands of type BS16. *)
+
+PROCEDURE [*] intersection ( CONST bitset1, bitset2 : BS16 ) : BS16;
+(* Returns the intersection of BS16 values bitset1 and bitset2.  This
+   function it bound to the * operator for operands of type BS16. *)
+
+PROCEDURE [/] symdiff ( CONST bitset1, bitset2 : BS16 ) : BS16;
+(* Returns the symmetric set difference of BS16 values bitset1 and bitset2.
+   This function is bound to the / operator for operands of type BS16. *)
 
 
 (* Relational operations *)
 
-PROCEDURE [=] isEqual ( set1, set2 : BS16 ) : BOOLEAN;
-(* Returns TRUE if BS16 values set1 and set2 are equal, otherwise FALSE.
-   This function is bound to operators = and # for type BS16. *)
+PROCEDURE [=] isEqual ( CONST bitset1, bitset2 : BS16 ) : BOOLEAN;
+(* Returns TRUE if BS16 values bitset1 and bitset2 are equal, otherwise
+   FALSE. This function is used to synthesise bindings to the operators
+   = and # for operands of type BS16. *)
 
-PROCEDURE [<] isSubset ( set1, set2 : BS16 ) : BOOLEAN;
-(* Returns TRUE if BS16 set1 is a true subset of set2, otherwise FALSE.
-   This function is bound to operators < and >= for type BS16. *)
 
-PROCEDURE [>] isSuperset ( set1, set2 : BS16 ) : BOOLEAN;
-(* Returns TRUE if BS16 set1 is a true superset of set2, otherwise FALSE.
-   This function is bound to operators > and <= for type BS16. *)
+PROCEDURE [SUBSET] isSubset ( CONST bitset1, bitset2 : BS16 ) : BOOLEAN;
+(* Returns TRUE if BS16 bitset1 is a subset of bitset2, otherwise FALSE.
+   This function is used to synthesise bindings to the operators >, >=,
+   < and <= for operands of type BS16. *)
 
 
 (* IO operations *)
@@ -104,7 +132,7 @@ PROCEDURE [>] isSuperset ( set1, set2 : BS16 ) : BOOLEAN;
     base16Digit : "0" .. "9" | "A" .. "F" ;
    The number of bits shown is equal to the bitwidth of the BS16 type. *)
 
-PROCEDURE Read ( infile : File; VAR set : BS16 );
+PROCEDURE Read ( infile : File; VAR bitset : BS16 );
 (* Reads the textual representation of a BS16 value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -114,16 +142,35 @@ PROCEDURE Read ( infile : File; VAR set : BS16 );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a BS16 argument. *)
 
-PROCEDURE Write ( outfile : File; CONST set : BS16 );
-(* Writes the value of CHARSET set in simple format to stream outfile. This
+PROCEDURE Write ( outfile : File; CONST bitset : BS16 );
+(* Writes the value of BS16 bitset in simple format to stream outfile. This
    procedure is substituted for invocations of WRITE with a BS16 argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF BS16 );
+                   items        : VARIADIC OF CONST BS16 );
 (* Writes a formatted textual representation of one or more BS16 values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    BS16 arguments. *)
+
+
+(* Introspection *)
+
+PROCEDURE capacity ( CONST bitset : BS16 ) : LONGCARD;
+(* Always returns the value of TLIMIT(BS16). *)
+
+
+PROCEDURE entryLimit ( CONST bitset : BS16 ) : LONGCARD;
+(* Always returns the value of TLIMIT(BS16). *)
+
+
+PROCEDURE isOrdered ( CONST bitset : BS16 ) : BOOLEAN;
+(* Always returns TRUE because type BS16 is ordered. *)
+
+
+PROCEDURE isResizable ( CONST bitset : BS16 ) : BOOLEAN;
+(* Always returns FALSE because type BS16 is static *)
+
 
 END BS16.
