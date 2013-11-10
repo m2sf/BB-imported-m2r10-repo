@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BS64 [ProtoStaticSet]; (* sixty-four six four *)
+DEFINITION MODULE BS64 [ProtoStaticSet]; (* sixty-four six-four *)
 
 (* 64-bit statically allocatable bitsets *)
 
