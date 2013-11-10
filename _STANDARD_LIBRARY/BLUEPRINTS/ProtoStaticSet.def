@@ -7,7 +7,7 @@ BLUEPRINT ProtoStaticSet [ProtoCollection];
 PLACEHOLDERS ElementType, ProcType, File;
 
 (* Static Set ADTs must be opaque records to be statically allocatable,
-   set literals are compatible *)
+   structured literals with a list of elements are compatible *)
 
 TYPE ProtoStaticSet = OPAQUE RECORD := { VARIADIC OF ElementType };
 
@@ -28,17 +28,17 @@ TYPE ProtoStaticSet = OPAQUE RECORD := { VARIADIC OF ElementType };
 (* Capacity limit *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the element limit of a Set ADT. *)
+(* Procedure to return the element limit of the ADT type. *)
 
 (* An expression of the form TLIMIT(ADT)) is transformed at compile
-   time to ADT.capacityLimit() when the operand is the set ADT type. *)
+   time to ADT.capacityLimit() when the operand is the ADT type. *)
 
 
 (* Storage, Removal, Retrieval and Inspection of Contents *)
 
 PROCEDURE [STORE] storeElements
   ( VAR set : ProtoStaticSet; valueList : VARIADIC OF ElementType );
-(* Procedure to store zero or more elements in a set ADT variable. *)
+(* Procedure to store zero or more elements in a set. *)
 
 (* An invocation of STORE(set, elem1, elem2, elem3 ...) is transformed
    at compile time to ADT.storeElements(set, elem1, elem2, elem3 ...)
@@ -47,7 +47,7 @@ PROCEDURE [STORE] storeElements
 
 PROCEDURE [REMOVE] removeElements
   ( VAR set : ProtoStaticSet; valueList : VARIADIC OF ElementType );
-(* Procedure to remoeve one or more elements from a set ADT variable *)
+(* Procedure to remoeve one or more elements from a set. *)
 
 (* An invocation of REMOVE(set, elem1, elem2, elem3 ...) is transformed
    at compile time to ADT.removeElements(set, elem1, elem2, elem3 ...)
@@ -56,7 +56,7 @@ PROCEDURE [REMOVE] removeElements
 
 PROCEDURE [RETRIEVE] membershipForElement
   ( CONST set : ProtoStaticSet; value : ElementType ) : BOOLEAN;
-(* Function to retrieve and return a value from a set ADT variable *)
+(* Function to retrieve a value from a set. *)
 
 (* An incocation of RETRIEVE(set, elem) is transformed at compile time to
    ADT.membershipForElement(set, elem) for first operands of the ADT type. *)
@@ -64,17 +64,17 @@ PROCEDURE [RETRIEVE] membershipForElement
 
 PROCEDURE [IN] isElement
   ( CONST set : ProtoStaticSet; value : CHAR ) : BOOLEAN;
-(* Function to test whether a value is stored in a set ADT variable. *)
+(* Function to test whether a value is stored in a set. *)
 
 (* An expression of the form elem IN set is transformed at compile time to
    ADT.isElement(set, elem) for first operands of the ADT type. *)
 
 
 PROCEDURE [COUNT] count ( CONST set : ProtoStaticSet ) : LONGCARD;
-(* Procedure to return the element count of a Set ADT value. *)
+(* Procedure to return the element count of a set. *)
 
 (* An expression of the form COUNT(set) is transformed at compile time to
-   SetADT.count(set) for operands of the ADT type. *)
+   ADT.count(set) for operands of the ADT type. *)
 
 
 (* Iteration *)
@@ -83,8 +83,8 @@ TYPE ProcType = PROCEDURE ( ElementType );
 
 PROCEDURE [FOR] forIterator
   ( VAR set : ProtoStaticSet; forLoopBody : ProcType; ascending : BOOLEAN );
-(* Procedure to iterate over all elements of a Set ADT value and execute
-   doStatements for each element with the given iteration order. *)
+(* Procedure to iterate over all elements of a set and invoke procedure
+   forLoopBody for each element with the given iteration order. *)
    
 (* A statement of the form
      FOR elem IN set DO statementSeq END
@@ -107,7 +107,7 @@ PROCEDURE [FOR] forIterator
 
 PROCEDURE [+] union
   ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Procedure to return the union of two set ADT values *)
+(* Procedure to return the union of two sets. *)
 
 (* An expression of the form set1 + set2 is transformed at compile time to
    ADT.union(set1, set2) for operands of the ADT type. *)
@@ -115,7 +115,7 @@ PROCEDURE [+] union
 
 PROCEDURE [-] difference
   ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Procedure to return the set difference of two set ADT values *)
+(* Procedure to return the set difference of two sets. *)
 
 (* An expression of the form set1 - set2 is transformed at compile time to
    ADT.difference(set1, set2) for operands of the ADT type. *)
@@ -123,7 +123,7 @@ PROCEDURE [-] difference
 
 PROCEDURE [*] intersection
   ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Procedure to return the intersection of two set ADT values *)
+(* Procedure to return the intersection of two sets. *)
 
 (* An expression of the form set1 * set2 is transformed at compile time to
    ADT.intersection(set1, set2) for operands of the set ADT type. *)
@@ -131,7 +131,7 @@ PROCEDURE [*] intersection
 
 PROCEDURE [/] symmetricDiff
   ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Procedure to return the symmetric difference of two set ADT values *)
+(* Procedure to return the symmetric difference of two sets. *)
 
 (* An expression of the form set1 / set2 is transformed at compile time to
    ADT.symmetricDiff(set1, set2) for operands of the set ADT type. *)
@@ -140,7 +140,7 @@ PROCEDURE [/] symmetricDiff
 (* Relational operations *)
 
 PROCEDURE [=] isEqual ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
-(* Procedure to test the equality of two set ADT values. *)
+(* Procedure to test the equality of two sets. *)
 
 (* An expression of the form set1 = set2 is transformed at compile time to
    ADT.isEqual(set1, set2) for operands of the set ADT type.
@@ -150,7 +150,7 @@ PROCEDURE [=] isEqual ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
 
 
 PROCEDURE [SUBSET] isSubset ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
-(* Procedure to test whether one set ADT value is a subset of another *)
+(* Procedure to test whether one set is a subset of another. *)
 
 (* An expression of the form set1 > set2 is transformed at compile time to
    ADT.isSubset(set2, set1) for operands of the set ADT type.
@@ -170,27 +170,27 @@ PROCEDURE [SUBSET] isSubset ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
 (* IO operations *)
 
 PROCEDURE Read ( infile : File; VAR set : ProtoStaticSet );
-(* Procedure to read a value from a file into a set ADT variable. *)
+(* Procedure to read a value from a file into a set. *)
 
 (* A statement of the form READ(file, set) is transformed at compile time
-   to ADT.Read(file, set) for second operands of the set ADT type. *)
+   to ADT.Read(file, set) for second operands of the ADT type. *)
 
 
 PROCEDURE Write ( outfile : File; CONST set : ProtoStaticSet );
 (* Procedure to write a set ADT value to a file. *)
 
 (* A statement of the form WRITE(file, set) is transformed at compile time
-   to ADT.Write(file, set) for second operands of the set ADT type. *)
+   to ADT.Write(file, set) for second operands of the ADT type. *)
 
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
                    items        : VARIADIC OF CONST ProtoStaticSet );
-(* Procedure to write one or more set ADT values formatted into a file. *)
+(* Procedure to write one or more sets formatted into a file. *)
 
 (* A statement of the form WRITEF(file, fmt, set1, set2, set3, ...) is trans-
    formed at compile time to ADT.WriteF(file, fmt, set1, set2, set3, ...) for
-   third operands and any following operands of the set ADT type. *)
+   third operands and any following operands of the ADT type. *)
 
 
 (* Introspection *)
@@ -209,5 +209,6 @@ PROCEDURE isOrdered ( CONST charSet : CHARSET ) : BOOLEAN;
 
 PROCEDURE isResizable ( CONST charSet : CHARSET ) : BOOLEAN;
 (* Function to always return FALSE. *)
+
 
 END ProtoStaticSet.
