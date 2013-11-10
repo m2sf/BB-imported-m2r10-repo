@@ -33,6 +33,7 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* An expression of the form TLIMIT(ADT)) is transformed at compile
    time to ADT.capacityLimit() when the operand is the ADT type. *)
 
+
 (* Memory Management *)
 
 PROCEDURE [NEW] new ( VAR set : ProtoSet; capacity : LONGCARD );
