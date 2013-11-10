@@ -196,18 +196,18 @@ PROCEDURE WriteF ( outfile      : File;
 (* Introspection *)
 
 PROCEDURE capacity ( CONST set : ProtoStaticSet ) : LONGCARD;
-(* Function to return the value of TLIMIT(CHARSET). *)
+(* Function to return the value of TLIMIT(ADT). *)
 
 
 PROCEDURE entryLimit ( CONST set : ProtoStaticSet ) : LONGCARD;
-(* Function to return the value of TLIMIT(CHARSET). *)
+(* Function to return the value of TLIMIT(ADT). *)
 
 
-PROCEDURE isOrdered ( CONST charSet : CHARSET ) : BOOLEAN;
+PROCEDURE isOrdered ( CONST set : ProtoStaticSet ) : BOOLEAN;
 (* Function to always return TRUE. *)
 
 
-PROCEDURE isResizable ( CONST charSet : CHARSET ) : BOOLEAN;
+PROCEDURE isResizable ( CONST set : ProtoStaticSet ) : BOOLEAN;
 (* Function to always return FALSE. *)
 
 
