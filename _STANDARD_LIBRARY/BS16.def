@@ -17,6 +17,7 @@ CONST MaxCapacity = 16;
 CONST RequiredOctets = 2;
 
 CONST [DESCENDING] supportsDescendingFor = TRUE;
+(* Enables the use of FOR DESCENDING syntax. *)
 
 
 (* BS16 Type *)
