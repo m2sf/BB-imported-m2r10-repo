@@ -90,7 +90,7 @@ PROCEDURE [REMOVE] removeEntries
 
 PROCEDURE [RETRIEVE] valueForKey
   ( dict : ProtoDictionary; key : KeyType ) : ValueType;
-(* Function to retrieve and return a value from a set ADT variable *)
+(* Function to retrieve and return a value from a dictionary. *)
 
 (* An invocation of RETRIEVE(dict, key) is transformed at compile time to
    ADT.valueForKey(dict, key) for first operands of the ADT type. *)
@@ -117,18 +117,25 @@ TYPE ProcType = PROCEDURE ( KeyType );
 
 PROCEDURE [FOR] forIterator
   ( dict : ProtoDictionary; forLoopBody : ProcType; ascending : BOOLEAN );
-(* Procedure to iterate over all keys of a dictionary and execute
+(* Procedure to iterate over all keys of a dictionary and invoke procedure
    forLoopBody for each key with the given iteration order. *)
    
 (* A statement of the form
      FOR key IN dict DO statementSeq END
    is transformed at compile time in two steps.
    The loop header is transformed to
-     ADT.forIterator( dict, forLoopBody, TRUE );
+     ADT.forIterator(dict, forLoopBody, TRUE);
    The loop body is transformed to a procedure definition
      <* INLINE *> PROCEDURE forLoopBody ( key : KeyType );
      BEGIN statementSeq END forLoopBody;
-   inserted before the current scope's BEGIN-END block. *)   
+   inserted before the current scope's BEGIN-END block.
+   
+   A loop header of the form
+     FOR DESCENDING key IN dict
+   is transformed at compile time to
+     ADT.forIterator(dict, forLoopBody, FALSE)
+   unless a constant with value FALSE has been bound to DESCENDING, in
+   which case use of FOR DESCENDING will cause a compile time error. *)   
 
 
 (* Relational operations *)
