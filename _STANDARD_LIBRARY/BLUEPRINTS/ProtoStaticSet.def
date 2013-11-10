@@ -12,6 +12,17 @@ PLACEHOLDERS ElementType, ProcType, File;
 TYPE ProtoStaticSet = OPAQUE RECORD := { VARIADIC OF ElementType };
 
 
+(* Bindings recommended for static set ADTs *)
+
+(* CONST [DESCENDING] supportsDescendingFor = TRUE; *)
+
+(* The use of FOR DESCENDING syntax is *only* permitted for collections
+   of an ADT type that binds a constant with value TRUE to DESCENDING.
+   If the bound constant's value is FALSE or if the binding is omitted,
+   any use of FOR DESCENDING syntax will cause a compile time error.
+   Static set ADTs should always bind a constant with value TRUE. *)
+
+
 (* Bindings required for static set ADTs *)
 
 (* Capacity limit *)
