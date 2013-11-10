@@ -13,12 +13,22 @@ PLACEHOLDERS KeyType, ValueType, ProcType, File;
 TYPE ProtoDictionary = OPAQUE := { VARIADIC OF { KeyType, ValueType } };
 
 
+(* Bindings recommended for dictionary ADTs *)
+
+(* CONST [DESCENDING] supportsDescendingFor = <booleanValue>; *)
+
+(* If a constant with the value FALSE is bound to DESCENDING, any use of
+   the FOR DESCENDING syntax to iterate over dictionaries of the ADT type
+   in reverse order will cause a compile time error. This is recommended
+   behaviour for all *unordered* collection ADTs. *)
+
+
 (* Bindings required for dictionary ADTs *)
 
 (* Capacity limit *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the allocation capacity limit of a dictionary ADT. *)
+(* Procedure to return the allocation capacity limit of the ADT type. *)
 
 (* An invocation of TLIMIT(ADT)) is transformed at compile time to
    ADT.capacityLimit() when the operand is the ADT type. *)
@@ -91,7 +101,7 @@ PROCEDURE [IN] entryExists
 (* Function to test whether a key is stored in a dictionary. *)
 
 (* An expression of the form key IN dict is transformed at compile time to
-   ADT.entryExists(dict, key) for first operands of the ADT type. *)
+   ADT.entryExists(dict, key) for right operands of the ADT type. *)
 
 
 PROCEDURE [COUNT] count ( dict : ProtoDictionary ) : LONGCARD;
