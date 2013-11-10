@@ -17,10 +17,11 @@ TYPE ProtoDictionary = OPAQUE := { VARIADIC OF { KeyType, ValueType } };
 
 (* CONST [DESCENDING] supportsDescendingFor = <booleanValue>; *)
 
-(* If a constant with the value FALSE is bound to DESCENDING, any use of
-   the FOR DESCENDING syntax to iterate over dictionaries of the ADT type
-   in reverse order will cause a compile time error. This is recommended
-   behaviour for all *unordered* collection ADTs. *)
+(* The use of FOR DESCENDING syntax is *only* permitted for collections
+   of an ADT type that binds a constant with value TRUE to DESCENDING.
+   If the bound constant's value is FALSE or if the binding is omitted,
+   any use of FOR DESCENDING syntax will cause a compile time error.
+   All ordered collection ADTs should bind a constant with value TRUE. *)
 
 
 (* Bindings required for dictionary ADTs *)
@@ -130,12 +131,12 @@ PROCEDURE [FOR] forIterator
      BEGIN statementSeq END forLoopBody;
    inserted before the current scope's BEGIN-END block.
    
-   A loop header of the form
+   If a constant with value TRUE has been bound to DESCENDING, a loop
+   header of the form
      FOR DESCENDING key IN dict
    is transformed at compile time to
      ADT.forIterator(dict, forLoopBody, FALSE)
-   unless a constant with value FALSE has been bound to DESCENDING, in
-   which case use of FOR DESCENDING will cause a compile time error. *)   
+   otherwise the use of FOR DESCENDING will cause a compile time error. *)   
 
 
 (* Relational operations *)
