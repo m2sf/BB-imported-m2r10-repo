@@ -340,7 +340,7 @@ enumBaseType : typeIdent ;
 
 // production #19
 arrayType :
-    ( ARRAY componentCount ( ',' componentCount )* OF typeIdent
+    ARRAY componentCount ( ',' componentCount )* OF typeIdent
     ;
 
 // alias #19.1
@@ -549,7 +549,7 @@ designatorTail :
 
 // production #49
 exprListOrSlice :
-    expression ( ( ',' expression )+ | ".." expression )?
+    expression ( ( ',' expression )+ | '..' expression )?
     ;
 
 // production #50
@@ -598,11 +598,11 @@ factorOrNegation :
 // production #54
 factor :
 /* represents operator precedence level 5 */
-    simpleFactor ( "::" typeIdent )?
+    simpleFactor ( '::' typeIdent )?
     ;
 
 // production #55
-SimpleFactor :
+simpleFactor :
     NumericLiteral | StringLiteral | structuredValue |
     designatorOrFunctionCall | '(' expression ')'
     ;
@@ -740,7 +740,7 @@ pragmaPURITY :
     ;
 
 // production #14
-variableAttrPragma :
+pragmaLAZY :
     LAZY
     ;
 
@@ -781,7 +781,7 @@ inPragmaSimpleExpression :
 // production #20
 inPragmaTerm :
 /* represents operator precedence level 3 */
-    inPragmaFactorOrNegation ( inPragmaMulOp inPragmaFactorOrNegation )*
+    inPragmaFactor ( inPragmaMulOp inPragmaFactor )*
     ;
 
 // fragment #20.1
