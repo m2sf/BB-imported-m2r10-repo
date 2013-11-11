@@ -102,10 +102,10 @@ tokens {
     ODD            = 'ODD';            /* RW within procedure header */
     COUNT          = 'COUNT';          /* RW within procedure header */
     LENGTH         = 'LENGTH';         /* RW within procedure header */
-    STORE          = 'STORE'           /* RW within procedure header */
-    REMOVE         = 'REMOVE'          /* RW within procedure header */
-    COPY           = 'COPY'            /* RW within procedure header */
-    CONCAT         = 'CONCAT'          /* RW within procedure header */
+    STORE          = 'STORE';          /* RW within procedure header */
+    REMOVE         = 'REMOVE';         /* RW within procedure header */
+    COPY           = 'COPY';           /* RW within procedure header */
+    CONCAT         = 'CONCAT';         /* RW within procedure header */
     NEW            = 'NEW';            /* RW within procedure header */
     RETAIN         = 'RETAIN';         /* RW within procedure header */
     RELEASE        = 'RELEASE';        /* RW within procedure header */
