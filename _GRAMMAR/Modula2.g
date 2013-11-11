@@ -836,7 +836,7 @@ IdentLeadChar :
     ;
 
 fragment /* #2.2 */
-IdentTail:
+IdentTail :
     ( IdentLeadChar | Digit )+
     ;
 
