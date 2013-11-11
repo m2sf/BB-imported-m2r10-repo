@@ -427,7 +427,7 @@ procedureHeader :
 // production #31
 boundToEntity :
     DIV | MOD | FOR | DESCENDING | IN |
-    '::' | ':=' | '?' | '!' | '~' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
+    '::' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
     boundToPervasive
     ;
 
