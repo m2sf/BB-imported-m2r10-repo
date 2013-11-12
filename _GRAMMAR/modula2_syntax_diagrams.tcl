@@ -348,7 +348,7 @@ lappend non_terminals enumBaseType {
 
 # (19) Array Type
 lappend non_terminals arrayType {
-  line ARRAY {loop componentCount ,}} OF typeIdent
+  line ARRAY {loop componentCount ,} OF typeIdent
 }
 
 # (19.1) Component Count
