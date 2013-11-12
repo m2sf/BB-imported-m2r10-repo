@@ -206,16 +206,19 @@ requiredBinding : procedureHeader ;
 
 // production #5
 importList :
-    ( GENLIB moduleIdent FROM template FOR templateParamList END |
+    ( GENLIB libIdent FROM template FOR templateParams END |
       IMPORT moduleIdent '+'? ( ',' moduleIdent '+'? )* |
       FROM moduleIdent IMPORT ( identList | '*' ) ) ';'
     ;
 
 // alias #5.1
+libIdent : Ident ;
+
+// alias #5.2
 template : Ident ;
 
 // production #6
-templateParamList :
+templateParams :
     placeholder '=' replacement ( ',' placeholder '=' replacement )* ;
 
 // alias #6.1
@@ -426,8 +429,8 @@ procedureHeader :
 
 // production #31
 boundToEntity :
-    DIV | MOD | FOR | DESCENDING | IN |
-    '::' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
+    DIV | MOD | FOR | IN |
+    '..' | '::' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
     boundToPervasive
     ;
 
