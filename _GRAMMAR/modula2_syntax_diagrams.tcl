@@ -456,7 +456,7 @@ lappend non_terminals boundToEntity {
 lappend non_terminals boundToPervasive {
   or
     /ABS /NEG /ODD /COUNT /LENGTH /NEW /RETAIN /RELEASE /STORE
-    /REMOVE /COPY/ CONCAT /SUBSET/ /TLIMIT /TMIN /TMAX /SXF /VAL
+    /REMOVE /COPY /CONCAT /SUBSET /TLIMIT /TMIN /TMAX /SXF /VAL
 }
 
 # (32) Formal Parameter List
