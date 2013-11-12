@@ -53,7 +53,7 @@ tokens {
     END            = 'END';
     EXIT           = 'EXIT';
     FOR            = 'FOR';
-    FROM           = 'FROM';           /* also a RW within pragma */
+    FROM           = 'FROM';
     GENLIB         = 'GENLIB';
     IF             = 'IF';             /* also a RW within pragma */
     IMPLEMENTATION = 'IMPLEMENTATION';
