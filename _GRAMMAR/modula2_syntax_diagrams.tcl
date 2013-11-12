@@ -449,7 +449,7 @@ lappend non_terminals procedureHeader {
 # (31) Bound-To Entity
 lappend non_terminals boundToEntity {
   or
-    DIV MOD FOR DESCENDING IN :: + - * / = < > boundToPervasive
+    DIV MOD FOR DESCENDING IN .. :: + - * / = < > boundToPervasive
 }
 
 # (31.1) Bound-To Pervasive (Identifier)
