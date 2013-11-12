@@ -599,7 +599,7 @@ lappend non_terminals exprListOrSlice {
   line expression {
     optx {
       or
-        {loop , expression}
+        {loop {line , expression} nil}
         {line .. expression}
     }
   }
