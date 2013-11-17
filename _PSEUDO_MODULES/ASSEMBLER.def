@@ -53,7 +53,12 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
     r27, r28, r29, r30, r31, zero, at, v0, v1, a0, a1, a2, a3, t0, t1,
     t2, t3, t4, t5, t6, t7, s0, s1, s2, s3, s4, s5, s6, s7, t8, t9, k0,
     k1, gp, sp, fp, ra, s8 );
-    
+   
+   For target architecture M68k and ColdFire, it is defined as:
+   
+   REGISTER = ( d0, d1, d2, d3, d4, d5, d6, d7, a0, a1, a2, a3, a4, a5,
+    a6, a7, a7tick, sp, usp, ssp, pc, ccr );
+ 
    For target architecture TI MSP430, it is defined as:
    
    REGISTER = ( r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12,
@@ -73,10 +78,11 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
    
    For target architecture Z80/eZ80, it is defined as:
    
-   REGISTER = ( A, F, B, C, D, E, H, L, Atick, Ftick, Btick, Ctick, Dtick,
-    Etick, Htick, Ltick, BC, DE, HL, BCtick, DEtick, HLtick, PC, SPS, SPL,
-    I, MBASE, ADL, MADL, IEF1, IEF2, R, IXH, IXL, IXL, IYL, IX, IY, );
-   
+   REGISTER = ( A, F, B, C, D, E, H, L, Atick, Ftick, Btick, Ctick,
+    Dtick, Etick, Htick, Ltick, BC, DE, HL, BCtick, DEtick, HLtick,
+    PC, SPS, SPL, I, MBASE, ADL, MADL, IEF1, IEF2, R, IXH, IXL, IXL,
+    IYL, IX, IY, );
+     
    Implementors of other target architectures are required to consult
    with the authors of the Modula-2 R10 language report to coordinate
    the definition of the enumeration of mnemonics of their respective
