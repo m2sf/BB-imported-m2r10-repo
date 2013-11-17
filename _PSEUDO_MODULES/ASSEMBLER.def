@@ -21,6 +21,10 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
 (* Type REGISTER is a target architecture dependent enumeration
    with mnemonics for the target architecture's registers.
    
+   If the target architecture is Intel MCS-51 (aka 8051), it is defined as:
+   
+   REGISTER = ( a, b, r0, r1, r2, r3, r4, r6, r7, dp, sp, psw );
+   
    If the target architecture is Intel x86, it is defined as:
    
    REGISTER = ( ah, al, bh, bl, ch, cl, ax, bx, cx, dx, si, di, sp, bp,
