@@ -81,7 +81,7 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
    REGISTER = ( A, F, B, C, D, E, H, L, Atick, Ftick, Btick, Ctick,
     Dtick, Etick, Htick, Ltick, BC, DE, HL, BCtick, DEtick, HLtick,
     PC, SPS, SPL, I, MBASE, ADL, MADL, IEF1, IEF2, R, IXH, IXL, IXL,
-    IYL, IX, IY, );
+    IYL, IX, IY );
    
    Last and also very least, for target architecture Intel Itanium,
    the anti-thesis of Wirthian design, and in clear and undeniable
