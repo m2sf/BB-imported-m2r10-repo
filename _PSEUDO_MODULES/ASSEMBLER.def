@@ -52,6 +52,12 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
     g13, g14, g15, g16, g17, g18, g19, g20, g21, g22, g23, g24, g25, g26,
     g27, g28, g29, g30, g31 );
    
+   If the target architecture is Z80, it is defined as:
+   
+   REGISTER = ( A, F, B, C, D, E, H, L, Atick, Ftick, Btick, Ctick, Dtick,
+    Etick, Htick, Ltick, BC, DE, HL, BCtick, DEtick, HLtick, PC, SPS, SPL,
+    I, MBASE, ADL, MADL, IEF1, IEF2, R, IXH, IXL, IXL, IYL, IX, IY, );
+   
    Implementors of other target architectures are required to consult
    with the authors of the Modula-2 R10 language report to coordinate
    the definition of the enumeration of mnemonics of their respective
