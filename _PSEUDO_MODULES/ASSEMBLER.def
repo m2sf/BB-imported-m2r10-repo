@@ -16,6 +16,15 @@ DEFINITION MODULE ASSEMBLER; (* OPTIONAL *)
    o  SETREG and GETREG may only be provided as a pair *)
 
 
+(* Testing the availability of facilities *)
+
+TYPE FACILITY = ( REGISTER, GETREG, SETREG, REG, CODE, ASM );
+
+PROCEDURE AVAIL( facility : FACILITY ) : BOOLEAN;
+(* Compile-time macro.  Expands to TRUE if module ASSEMBLER
+   provides the passed in facility, otherwise expands to FALSE. *)
+
+
 TYPE REGISTER = <target architecture dependent enumeration type>;
 
 (* Type REGISTER is a target architecture dependent enumeration
