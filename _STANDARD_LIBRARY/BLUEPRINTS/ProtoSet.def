@@ -200,23 +200,24 @@ PROCEDURE [SUBSET] isSubset ( set1, set2 : ProtoSet ) : BOOLEAN;
 
 (* IO operations *)
 
-PROCEDURE Read ( infile : File; VAR set : ProtoSet );
+PROCEDURE [READ] Read ( infile : File; VAR set : ProtoSet );
 (* Procedure to read a value from a file into a set. *)
 
 (* A statement of the form READ(file, set) is transformed at compile time
    to ADT.Read(file, set) for second operands of the ADT type. *)
 
 
-PROCEDURE Write ( outfile : File; set : ProtoSet );
+PROCEDURE [READ] Write ( outfile : File; set : ProtoSet );
 (* Procedure to write a set ADT value to a file. *)
 
 (* A statement of the form WRITE(file, set) is transformed at compile time
    to ADT.Write(file, set) for second operands of the ADT type. *)
 
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF ProtoSet );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF ProtoSet );
 (* Procedure to write one or more sets formatted into a file. *)
 
 (* A statement of the form WRITEF(file, fmt, set1, set2, set3, ...) is trans-
