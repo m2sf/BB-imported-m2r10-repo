@@ -33,14 +33,14 @@ CONST [TSIG] maxSignificandDigits = 10;
 
 (* Range *) 
 
-(* TMIN(UnsignedReal1) = 0.0 *)
+(* TMIN(UnsignedReal1) = 0.000'000'000 *)
 
 PROCEDURE [TMIN] minValue : UnsignedReal1;
 (* returns the smallest possible value of type UnsignedReal1.
    This function is bound to pervasive function TMAX for type
    UnsignedReal1. *)
 
-(* TMAX(UnsignedReal1) = 1.0 *)
+(* TMAX(UnsignedReal1) = +1.000'000'000 *)
 
 PROCEDURE [TMAX] maxValue : UnsignedReal1;
 (* returns the largest possible value of type UnsignedReal1.
