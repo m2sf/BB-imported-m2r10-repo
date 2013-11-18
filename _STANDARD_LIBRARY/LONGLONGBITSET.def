@@ -1,19 +1,11 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE LONGLONGBITSET;
 
 (* Alias type for 128-bit bitset type *) 
 
-<* IF TSIZE(LONGBITSET)*8 = 128 *>
-
-TYPE LONGLONGBITSET = ALIAS OF LONGBITSET;
-
-<* ELSE *>
-
 IMPORT BS128;
 
 TYPE LONGLONGBITSET = ALIAS OF BS128;
-
-<* ENDIF *>
 
 END LONGLONGBITSET.
