@@ -1,11 +1,18 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE Bitsets;
 
 (* Alias types for Bitsets *) 
 
 
-IMPORT BS16, BS32, BS64, BS128;
+(* BITSET - Alias for bitset type of same bit width as CARDINAL *)
+
+IMPORT BITSET+; (* import into client module *)
+
+
+(* LONGBITSET - Alias for bitset type of same bit width as LONGCARD *)
+
+IMPORT LONGBITSET+; (* import into client module *)
 
 
 (* SHORTBITSET - Alias for smallest bitset type *)
@@ -18,47 +25,27 @@ IMPORT SHORTBITSET+; (* import into client module *)
 IMPORT LONGLONGBITSET+; (* import into client module *)
 
 
-TYPE
+IMPORT BS16, BS32, BS64, BS128;
+
 
 (* BITSET16 - Alias type for 16-bit bitset type *)
 
-<* IF TSIZE(BITSET)*8 = 16 *>
-    BITSET16 = ALIAS OF BITSET;
-<* ELSE *>
-    BITSET16 = ALIAS OF BS16;
-<* ENDIF *>
+TYPE BITSET16 = ALIAS OF BS16;
 
 
 (* BITSET32 - Alias type for 32-bit bitset type *)
 
-<* IF TSIZE(BITSET)*8 = 32 *>
-    BITSET32 = ALIAS OF BITSET;
-<* ELSIF TSIZE(LONGBITSET)*8 = 32 *>
-    BITSET32 = ALIAS OF LONGBITSET;
-<* ELSE *>
-    BITSET32 = ALIAS OF BS32;
-<* ENDIF *>
+TYPE BITSET32 = ALIAS OF BS32;
 
 
 (* BITSET64 - Alias type for 64-bit bitset type *)
 
-<* IF TSIZE(BITSET)*8 = 64 *>
-    BITSET64 = ALIAS OF BITSET;
-<* ELSIF TSIZE(LONGBITSET)*8 = 64 *>
-    BITSET64 = ALIAS OF LONGBITSET;
-<* ELSE *>
-    BITSET64 = ALIAS OF BS64;
-<* ENDIF *>
+TYPE BITSET64 = ALIAS OF BS64;
 
 
 (* BITSET128 - Alias type for 128-bit bitset type *)
 
-<* IF TSIZE(BITSET)*8 = 128 *>
-    BITSET128 = ALIAS OF BITSET;
-<* ELSIF TSIZE(LONGBITSET)*8 = 128 *>
-    BITSET128 = ALIAS OF LONGBITSET;
-<* ELSE *>
-    BITSET128 = ALIAS OF BS128;
-<* ENDIF *>
+TYPE BITSET128 = ALIAS OF BS128;
+
 
 END Bitsets.
