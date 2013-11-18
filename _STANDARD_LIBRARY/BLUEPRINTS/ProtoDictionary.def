@@ -204,10 +204,6 @@ PROCEDURE entryLimit ( dict : ProtoDictionary ) : LONGCARD;
 (* Function to return the key/value pair limit of a dictionary. *)
 
 
-PROCEDURE isOrdered ( dict : ProtoDictionary ) : BOOLEAN;
-(* Function to return the ordered property of a dictionary. *)
-
-
 PROCEDURE isResizable ( dict : ProtoDictionary ) : BOOLEAN;
 (* Function to return the resizable property of a dictionary. *)
 
