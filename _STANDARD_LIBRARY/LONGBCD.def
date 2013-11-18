@@ -1,4 +1,4 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE LONGBCD [ProtoReal];
 
@@ -18,7 +18,7 @@ TYPE
     (* 1-bit sign, 116-bit significand, signed 11-bit exponent *)
 
 
-(* R-Type bindings to operators, pervasives and primitives: *)
+(* Bindings required by blueprint ProtoReal *)
 
 (* Precision *)
 
