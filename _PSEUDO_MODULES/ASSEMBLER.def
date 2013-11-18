@@ -83,7 +83,7 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
    REGISTER = ( d0, d1, d2, d3, d4, d5, d6, d7, a0, a1, a2, a3, a4, a5,
     a6, a7, a7tick, sp, usp, ssp, pc, ccr );
  
-   For target architecture TI MSP430, it is defined as:
+   For target architecture MSP430, it is defined as:
    
    REGISTER = ( r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12,
     r13, r14, r15 );
@@ -145,14 +145,13 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
    Implementors of other target architectures are required to consult
    with the authors of the Modula-2 R10 language report to coordinate
    the definition of the enumeration of mnemonics of their respective
-   architecture. The outcome will be published online from time to time. *)
+   architecture. The outcome will be published online from time to time.
+   
+   Legal Notice: Any trademarks mentioned above are the property of
+   their respective owners and mentioned here only for reference. *)
 
 
 (* Access to CPU registers *)
-
-CONST REG; (* only available if pragma REG is supported *)
-(* Import of constant REG  enables pragma REG  within the importing module.
-   Constant has no value, cannot be used for any purpose other than import. *)
 
 <*INLINE*> PROCEDURE SETREG( r : REGISTER; value : <ValueType> );
  (* Copies <value> to register <r> where <value> may be of any type
@@ -160,7 +159,11 @@ CONST REG; (* only available if pragma REG is supported *)
 
 <*INLINE*> PROCEDURE GETREG( r : REGISTER; VAR value : <ValueType> );
  (* Copies the contents of <r> to <value> where <value> may be of any
-    type as long as TSIZE(ValueType) does not exceed the bitwidth of <r>. *)
+    type as long as the bitwidth of <r> does not exceed TSIZE(ValueType). *)
+
+CONST REG;
+(* Import of constant REG  enables pragma REG  within the importing module.
+   Constant has no value, cannot be used for any purpose other than import. *)
 
 
 (* Raw machine code inline facility *)
@@ -175,7 +178,7 @@ CONST REG; (* only available if pragma REG is supported *)
 
 (* Symbolic assembly code inline facility *)
 
-CONST ASM; (* only available if symbolic assembly is supported *)
+CONST ASM;
 (* Import of constant ASM enables the optional symbolic assembler language
    extension within the importing module.  The constant has  no value  and
    cannot be used for any purpose other than import. *)
