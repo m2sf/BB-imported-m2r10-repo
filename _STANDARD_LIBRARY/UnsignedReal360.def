@@ -22,7 +22,7 @@ TYPE
 
 (* Precision *)
 
-CONST [TEXP] maxExponentDigits = 2;
+CONST [TEXP] maxExponentDigits = 1;
 (* maximum number of decimal digits of the exponent of an
    UnsignedReal360 value *)
 
@@ -51,17 +51,17 @@ PROCEDURE [TMAX] maxValue : UnsignedReal360;
 (* Direct conversions to common types *)
 
 PROCEDURE [::] toCARD  ( a : UnsignedReal360 ) : CARDINAL;
-(* Converts UnsignedReal360 value a to a CARDINAL value and returns it.
+(* Converts an UnsignedReal360 value to a CARDINAL value and returns it.
    This function is bound to the :: operator for UnsignedReal360 to
    CARDINAL conversion. *)
 
 PROCEDURE [::] toINT ( a : UnsignedReal360 ) : INTEGER; 
-(* Converts UnsignedReal360 value a to an INTEGER value and returns it.
+(* Converts an UnsignedReal360 value to an INTEGER value and returns it.
    This function is bound to the :: operator for UnsignedReal360 to
    INTEGER conversion. *)
 
 PROCEDURE [::] toREAL ( a : UnsignedReal360 ) : REAL;
-(* Converts UnsignedReal360 value a to a REAL value and returns it.
+(* Converts an UnsignedReal360 value to a REAL value and returns it.
    This function is bound to the :: operator for UnsignedReal360 to
    REAL conversion. *)
 
