@@ -1,1 +1,37 @@
-(* Obsolete, BITSET has been changed from pervasive to ALIAS type. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE BITSET;
+
+(* Alias type for 16-bit bitset type *) 
+
+<* IF TSIZE(CARDINAL) = 16 *>
+
+IMPORT BS16;
+
+TYPE BITSET = ALIAS OF BS16;
+
+<* ELSIF TSIZE(CARDINAL) = 32 *>
+
+IMPORT BS32;
+
+TYPE BITSET = ALIAS OF BS32;
+
+<* ELSIF TSIZE(CARDINAL) = 64 *>
+
+IMPORT BS64;
+
+TYPE BITSET = ALIAS OF BS64;
+
+<* ELSIF TSIZE(CARDINAL) = 128 *>
+
+IMPORT BS128;
+
+TYPE BITSET = ALIAS OF BS128;
+
+<* ELSE *>
+
+<* MSG=FATAL : "BITSET type cannot be defined."
+
+<* ENDIF *>
+
+END BITSET.
