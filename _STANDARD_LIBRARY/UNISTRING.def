@@ -119,7 +119,7 @@ PROCEDURE [>] isGreater ( s1, s2 : UNISTRING ) : BOOLEAN;
 
 (* IO procedures *)
 
-PROCEDURE Read ( infile : File; s : UNISTRING );
+PROCEDURE [READ] Read ( infile : File; s : UNISTRING );
 (* Reads the textual representation of a UNISTRING value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the string being read are
@@ -131,14 +131,15 @@ PROCEDURE Read ( infile : File; s : UNISTRING );
      procedure is substituted for invocations of READ with a UNISTRING
      argument. *)
 
-PROCEDURE Write ( outfile : File; s : UNISTRING );
+PROCEDURE [WRITE] Write ( outfile : File; s : UNISTRING );
 (* Writes the textual representation of UNISTRING s to stream outfile. This
    procedure is substituted for invocations of WRITE with a UNISTRING
    argument.*)
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF UNISTRING );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF UNISTRING );
 (* Writes a formatted textual representation of one or more UNISTRING values
    to output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
