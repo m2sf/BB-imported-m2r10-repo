@@ -35,7 +35,7 @@ CONST [TSIG] maxSignificandDigits = 10;
 
 (* TMIN(UnsignedReal360) = 0.000'000'0 *)
 
-PROCEDURE [TMIN] minValue : UnsignedReal1;
+PROCEDURE [TMIN] minValue : UnsignedReal360;
 (* returns the smallest possible value of type UnsignedReal360.
    This function is bound to pervasive function TMAX for type
    UnsignedReal360. *)
