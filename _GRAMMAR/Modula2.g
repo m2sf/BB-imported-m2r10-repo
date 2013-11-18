@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Nov 10, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Nov 18, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -30,7 +30,7 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 45 reserved words, 20 identifiers, 19 pragma words
+// 45 reserved words, 21 identifiers, 19 pragma words
 
 tokens {
 	
@@ -53,7 +53,7 @@ tokens {
     END            = 'END';
     EXIT           = 'EXIT';
     FOR            = 'FOR';
-    FROM           = 'FROM';
+    FROM           = 'FROM';           /* also a RW within pragma */
     GENLIB         = 'GENLIB';
     IF             = 'IF';             /* also a RW within pragma */
     IMPLEMENTATION = 'IMPLEMENTATION';
@@ -89,11 +89,12 @@ tokens {
 
     CAST           = 'CAST';           /* RW within procedure header */
 
-// *** Bindable Identifiers, 20 tokens ***
+// *** Bindable Identifiers, 21 tokens ***
 
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
+    ORD            = 'ORD';            /* RW within constant definition */
     TSIG           = 'TSIG';           /* RW within constant definition */
     TEXP           = 'TEXP';           /* RW within constant definition */
 
@@ -255,11 +256,11 @@ definition :
 
 // production #9
 publicConstDeclaration :	
-    ( '[' boundToPrimitive ']' )? Ident '=' constExpression
+    ( '[' constBindableEntity ']' )? Ident '=' constExpression
     ;
 
 // alias #9.1
-boundToPrimitive : /* Ident */ TSIG | TEXP
+constBindableEntity : ':=' | /* Ident */ ORD | TSIG | TEXP
     {} /* make ANTLRworks display separate branches */
     ;
 
@@ -422,22 +423,22 @@ variableDeclaration :
 
 // production #30
 procedureHeader :
-    PROCEDURE ( '[' boundToEntity ']' )?
+    PROCEDURE ( '[' procBindableEntity ']' )?
     Ident ( '(' formalParamList ')' )?
     ( ':' returnedType )?
     ;
 
 // production #31
-boundToEntity :
+procBindableEntity :
     DIV | MOD | FOR | IN |
     '..' | '::' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
-    boundToPervasive
+    procBindableIdent
     ;
 
 // fragment #31.1
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
-boundToPervasive :
+procBindableIdent :
     ABS | NEG | ODD | COUNT | LENGTH | NEW | RETAIN | RELEASE | STORE |
     REMOVE | COPY | CONCAT | SUBSET | TLIMIT | TMIN | TMAX | SXF | VAL
     {} /* make ANTLRworks display separate branches */
