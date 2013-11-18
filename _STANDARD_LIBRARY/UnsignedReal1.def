@@ -22,11 +22,13 @@ TYPE
 
 (* Precision *)
 
-CONST [TEXP] maxExponentDigits = 2;
-(* maximum number of decimal digits of the exponent of an UnsignedReal1 value *)
+CONST [TEXP] maxExponentDigits = 1;
+(* maximum number of decimal digits of the exponent of an
+   UnsignedReal1 value *)
 
-CONST [TSIG] maxSignificandDigits = 5;
-(* maximum number of decimal digits of the significand of an UnsignedReal1 value *)
+CONST [TSIG] maxSignificandDigits = 10;
+(* maximum number of decimal digits of the significand of an
+   UnsignedReal1 value *)
 
 
 (* Range *) 
@@ -35,29 +37,31 @@ CONST [TSIG] maxSignificandDigits = 5;
 
 PROCEDURE [TMIN] minValue : UnsignedReal1;
 (* returns the smallest possible value of type UnsignedReal1.
-   This function is bound to pervasive function TMAX for type UnsignedReal1. *)
+   This function is bound to pervasive function TMAX for type
+   UnsignedReal1. *)
 
 (* TMAX(UnsignedReal1) = 1.0 *)
 
 PROCEDURE [TMAX] maxValue : UnsignedReal1;
 (* returns the largest possible value of type UnsignedReal1.
-   This function is bound to pervasive function TMAX for type UnsignedReal1. *)
+   This function is bound to pervasive function TMAX for type
+   UnsignedReal1. *)
 
 
 (* Direct conversions to common types *)
 
 PROCEDURE [::] toCARD  ( a : UnsignedReal1 ) : CARDINAL;
-(* Converts UnsignedReal1 value a to a CARDINAL value and returns it.
+(* Converts an UnsignedReal1 value to a CARDINAL value and returns it.
    This function is bound to the :: operator for UnsignedReal1 to
    CARDINAL conversion. *)
 
 PROCEDURE [::] toINT ( a : UnsignedReal1 ) : INTEGER; 
-(* Converts UnsignedReal1 value a to an INTEGER value and returns it.
+(* Converts an UnsignedReal1 value to an INTEGER value and returns it.
    This function is bound to the :: operator for UnsignedReal1 to
    INTEGER conversion. *)
 
 PROCEDURE [::] toREAL ( a : UnsignedReal1 ) : REAL;
-(* Converts UnsignedReal1 value a to a REAL value and returns it.
+(* Converts an UnsignedReal1 value to a REAL value and returns it.
    This function is bound to the :: operator for UnsignedReal1 to
    REAL conversion. *)
 
@@ -65,12 +69,12 @@ PROCEDURE [::] toREAL ( a : UnsignedReal1 ) : REAL;
 (* Indirect conversions via scalar exchange format *)
 
 PROCEDURE [SXF] toSXF ( a : UnsignedReal1; VAR s : ARRAY OF OCTET );
-(* Converts UnsignedReal1 value a to a string in scalar exchange
+(* Converts an UnsignedReal1 value to a string in scalar exchange
    format.  This procedure is bound to built-in primitive SXF for
    type UnsignedReal1. *)
 
 PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR a : UnsignedReal1 );
-(* Converts a string in scalar exchange format to a UnsignedReal1
+(* Converts a string in scalar exchange format to an UnsignedReal1
    value.  This procedure is bound to built-in primitive VAL for
    type UnsignedReal1. *)
 
