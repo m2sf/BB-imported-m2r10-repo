@@ -1,1 +1,37 @@
-(* Obsolete, LONGBITSET has been changed from pervasive to ALIAS type. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LONGBITSET;
+
+(* Alias type for bitset type of same bit width as type LONGCARD *) 
+
+<* IF TSIZE(LONGCARD) = 16 *>
+
+IMPORT BS16;
+
+TYPE LONGBITSET = ALIAS OF BS16;
+
+<* ELSIF TSIZE(LONGCARD) = 32 *>
+
+IMPORT BS32;
+
+TYPE LONGBITSET = ALIAS OF BS32;
+
+<* ELSIF TSIZE(LONGCARD) = 64 *>
+
+IMPORT BS64;
+
+TYPE LONGBITSET = ALIAS OF BS64;
+
+<* ELSIF TSIZE(LONGCARD) = 128 *>
+
+IMPORT BS128;
+
+TYPE LONGBITSET = ALIAS OF BS128;
+
+<* ELSE *>
+
+<* MSG=FATAL : "LONGBITSET type cannot be defined."
+
+<* ENDIF *>
+
+END LONGBITSET.
