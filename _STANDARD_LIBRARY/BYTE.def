@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE BYTE;
 
@@ -31,7 +31,7 @@ PROCEDURE [WRITE] Write ( outfile : File; b : BYTE );
 (* Writes the value of BYTE b in simple format to stream outfile. This
    procedure is substituted for invocations of WRITE with a BYTE argument.*)
 
-PROCEDURE [WRITE] WriteF
+PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
     items        : VARIADIC OF BYTE );
