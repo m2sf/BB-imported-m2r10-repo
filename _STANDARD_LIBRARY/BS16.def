@@ -16,7 +16,7 @@ CONST MaxCapacity = 16;
 
 CONST RequiredOctets = 2;
 
-CONST [DESCENDING] supportsDescendingFor = TRUE;
+CONST [ORD] isOrdered = TRUE;
 (* Enables the use of FOR DESCENDING syntax. *)
 
 
@@ -133,7 +133,7 @@ PROCEDURE [SUBSET] isSubset ( CONST bitset1, bitset2 : BS16 ) : BOOLEAN;
     base16Digit : "0" .. "9" | "A" .. "F" ;
    The number of bits shown is equal to the bitwidth of the BS16 type. *)
 
-PROCEDURE Read ( infile : File; VAR bitset : BS16 );
+PROCEDURE [READ] Read ( infile : File; VAR bitset : BS16 );
 (* Reads the textual representation of a BS16 value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -143,13 +143,14 @@ PROCEDURE Read ( infile : File; VAR bitset : BS16 );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a BS16 argument. *)
 
-PROCEDURE Write ( outfile : File; CONST bitset : BS16 );
+PROCEDURE [WRITE] Write ( outfile : File; CONST bitset : BS16 );
 (* Writes the value of BS16 bitset in simple format to stream outfile. This
    procedure is substituted for invocations of WRITE with a BS16 argument.*)
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST BS16 );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF CONST BS16 );
 (* Writes a formatted textual representation of one or more BS16 values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
@@ -164,10 +165,6 @@ PROCEDURE capacity ( CONST bitset : BS16 ) : LONGCARD;
 
 PROCEDURE entryLimit ( CONST bitset : BS16 ) : LONGCARD;
 (* Always returns the value of TLIMIT(BS16). *)
-
-
-PROCEDURE isOrdered ( CONST bitset : BS16 ) : BOOLEAN;
-(* Always returns TRUE because type BS16 is ordered. *)
 
 
 PROCEDURE isResizable ( CONST bitset : BS16 ) : BOOLEAN;
