@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE LONGREAL;
 
@@ -44,7 +44,7 @@ FROM FileIO IMPORT File;
     decimalPoint and separator must never both use the same symbol
     the value represented by engExponent must always be divisible by three. *)
 
-PROCEDURE Read ( infile : File; VAR r : LONGREAL );
+PROCEDURE [READ] Read ( infile : File; VAR r : LONGREAL );
 (* Reads the textual representation of a LONGREAL value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -54,13 +54,14 @@ PROCEDURE Read ( infile : File; VAR r : LONGREAL );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a LONGREAL argument.*)
 
-PROCEDURE Write ( outfile : File; r : LONGREAL );
+PROCEDURE [WRITE] Write ( outfile : File; r : LONGREAL );
 (* Writes the value of LONGREAL r in simple format to stream outfile. This pro-
    cedure is substituted for invocations of WRITE with a LONGREAL argument. *)
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF LONGREAL );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF LONGREAL );
 (* Writes a formatted textual representation of one or more LONGREAL values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
