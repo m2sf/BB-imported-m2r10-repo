@@ -20,7 +20,7 @@ CONST MaxCapacity = ReqBits(CHAR);
 
 CONST RequiredOctets = ReqOctets(CHAR);
 
-CONST [DESCENDING] supportsDescendingFor = TRUE;
+CONST [ORD] isOrdered = TRUE;
 (* Enables the use of FOR DESCENDING syntax. *)
 
 
