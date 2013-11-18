@@ -234,10 +234,6 @@ PROCEDURE entryLimit ( set : ProtoSet ) : LONGCARD;
 (* Function to return the value limit of a set. *)
 
 
-PROCEDURE isOrdered ( set : ProtoSet ) : BOOLEAN;
-(* Function to return the ordered property of a set. *)
-
-
 PROCEDURE isResizable ( set : ProtoSet ) : BOOLEAN;
 (* Function to return the resizable property of a set. *)
 
