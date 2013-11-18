@@ -18,11 +18,8 @@ DEFINITION MODULE ASSEMBLER; (* OPTIONAL *)
 
 (* Testing the availability of facilities *)
 
-TYPE FACILITY = ( REGISTER, GETREG, SETREG, REG, CODE, ASM );
-
-PROCEDURE AVAIL( facility : FACILITY ) : BOOLEAN;
-(* Compile-time macro.  Expands to TRUE if module ASSEMBLER
-   provides the passed in facility, otherwise expands to FALSE. *)
+(* The availability of facilities provided by this pseudo-module may be
+   tested using availability macros provided by pseudo-module COMPILER. *)
 
 
 TYPE REGISTER = <target architecture dependent enumeration type>;
