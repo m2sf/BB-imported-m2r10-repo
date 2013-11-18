@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE CHAR;
 
@@ -6,7 +6,7 @@ DEFINITION MODULE CHAR;
 
 FROM FileIO IMPORT File;
 
-PROCEDURE Read ( infile : File; VAR ch : CHAR );
+PROCEDURE [READ] Read ( infile : File; VAR ch : CHAR );
 (* Reads a CHAR value from stream infile
    - any leading whitespace is skipped
    - the character being read is removed from infile
@@ -15,13 +15,14 @@ PROCEDURE Read ( infile : File; VAR ch : CHAR );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a CHAR argument. *)
 
-PROCEDURE Write ( outfile : File; ch : CHAR );
+PROCEDURE [WRITE] Write ( outfile : File; ch : CHAR );
 (* Writes the textual representation of CHAR ch to stream outfile. This
    procedure is substituted for invocations of WRITE with a CHAR argument.*)
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CHAR );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF CHAR );
 (* Writes a formatted textual representation of one or more CHAR values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
