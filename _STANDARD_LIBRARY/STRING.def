@@ -124,7 +124,7 @@ PROCEDURE [>] isGreater ( s1, s2 : STRING ) : BOOLEAN;
 
 (* IO procedures *)
 
-PROCEDURE Read ( infile : File; s : STRING );
+PROCEDURE [READ] Read ( infile : File; s : STRING );
 (* Reads the textual representation of a STRING value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the string being read are
@@ -135,13 +135,14 @@ PROCEDURE Read ( infile : File; s : STRING );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a STRING argument. *)
 
-PROCEDURE Write ( outfile : File; s : STRING );
+PROCEDURE [WRITE] Write ( outfile : File; s : STRING );
 (* Writes the textual representation of STRING s to stream outfile. This
    procedure is substituted for invocations of WRITE with a STRING argument.*)
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF STRING );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF STRING );
 (* Writes a formatted textual representation of one or more STRING values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
