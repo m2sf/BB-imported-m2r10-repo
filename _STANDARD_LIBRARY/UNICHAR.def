@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE UNICHAR;
 
@@ -6,7 +6,7 @@ DEFINITION MODULE UNICHAR;
 
 FROM FileIO IMPORT File;
 
-PROCEDURE Read ( infile : File; VAR ch : UNICHAR );
+PROCEDURE [READ] Read ( infile : File; VAR ch : UNICHAR );
 (* Reads a UNICHAR value from stream infile
    - any leading whitespace is skipped
    - the character being read is removed from infile
@@ -15,13 +15,14 @@ PROCEDURE Read ( infile : File; VAR ch : UNICHAR );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a UNICHAR argument.*)
 
-PROCEDURE Write ( outfile : File; ch : UNICHAR );
+PROCEDURE [WRITE] Write ( outfile : File; ch : UNICHAR );
 (* Writes the textual representation of UNICHAR ch to stream outfile. This
    procedure is substituted for invocations of WRITE with a UNICHAR argument.*)
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF UNICHAR );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF UNICHAR );
 (* Writes a formatted textual representation of one or more UNICHAR values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
