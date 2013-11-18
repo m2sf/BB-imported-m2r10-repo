@@ -170,23 +170,24 @@ PROCEDURE [SUBSET] isSubset ( dict1, dict2 : ProtoDictionary ) : BOOLEAN;
 
 (* IO operations *)
 
-PROCEDURE Read ( infile : File; VAR dict : ProtoDictionary );
+PROCEDURE [READ] Read ( infile : File; VAR dict : ProtoDictionary );
 (* Procedure to read a value from a file into a dictionary. *)
 
 (* An invocation of READ(file, dict) is transformed at compile time
    to ADT.Read(file, dict) for second operands of the ADT type. *)
 
 
-PROCEDURE Write ( outfile : File; dict : ProtoDictionary );
+PROCEDURE [WRITE] Write ( outfile : File; dict : ProtoDictionary );
 (* Procedure to write a dictionary to a file. *)
 
 (* An invocation of WRITE(file, dict) is transformed at compile time
    to ADT.Write(file, dict) for second operands of the ADT type. *)
 
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF ProtoDictionary );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF ProtoDictionary );
 (* Procedure to write one or more dictionaries formatted into a file. *)
 
 (* An invocation of WRITEF(file, fmt, dict1, dict2, dict3, ...) is transformed
