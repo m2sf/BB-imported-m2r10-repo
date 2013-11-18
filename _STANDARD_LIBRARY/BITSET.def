@@ -2,7 +2,7 @@
 
 DEFINITION MODULE BITSET;
 
-(* Alias type for 16-bit bitset type *) 
+(* Alias type for bitset type of same bit width as type CARDINAL *) 
 
 <* IF TSIZE(CARDINAL) = 16 *>
 
