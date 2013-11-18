@@ -18,59 +18,61 @@ TYPE
     (* no sign, 30-bit significand, fixed decimal point *)
 
 
-(* Bindings to operators, pervasives and primitives: *)
+(* Bindings required by blueprint ProtoReal *)
+
+(* Precision *)
+
+CONST [TEXP] maxExponentDigits = 2;
+(* maximum number of decimal digits of the exponent of an UnsignedReal1 value *)
+
+CONST [TSIG] maxSignificandDigits = 5;
+(* maximum number of decimal digits of the significand of an UnsignedReal1 value *)
 
 
 (* Range *) 
 
-CONST [TMIN] minValue = 0.0;
-(* Smallest value of type UnsignedReal1.
-   This value is bound to TMIN for type UnsignedReal1. *) 
+(* TMIN(UnsignedReal1) = 0.0 *)
 
-CONST [TMAX] maxValue = 1.0;
-(* Largest value of type UnsignedReal1.
-   This value is bound to TMAX for type UnsignedReal1. *)
+PROCEDURE [TMIN] minValue : UnsignedReal1;
+(* returns the smallest possible value of type UnsignedReal1.
+   This function is bound to pervasive function TMAX for type UnsignedReal1. *)
 
+(* TMAX(UnsignedReal1) = 1.0 *)
 
-(* Literal assignment *)
-
-PROCEDURE [:=] assign ( VAR assignTo : UnsignedReal1; literal : ARRAY OF CHAR );
-(* Converts string literal to a UnsignedReal1 value and assigns it to assignTo.
-   This procedure is bound to the := operator for literal assignment. *)
+PROCEDURE [TMAX] maxValue : UnsignedReal1;
+(* returns the largest possible value of type UnsignedReal1.
+   This function is bound to pervasive function TMAX for type UnsignedReal1. *)
 
 
-(* Type conversions *)
+(* Direct conversions to common types *)
 
-PROCEDURE [::] toCARD  ( r : UnsignedReal1 ) : CARDINAL;
-(* Converts UnsignedReal1 value r to a CARDINAL value and returns it.
-   This function is bound to the :: operator for UnsignedReal1 to CARDINAL
-   conversion. *)
+PROCEDURE [::] toCARD  ( a : UnsignedReal1 ) : CARDINAL;
+(* Converts UnsignedReal1 value a to a CARDINAL value and returns it.
+   This function is bound to the :: operator for UnsignedReal1 to
+   CARDINAL conversion. *)
 
-PROCEDURE [::] toINT ( r : UnsignedReal1 ) : INTEGER; 
-(* Converts UnsignedReal1 value r to an INTEGER value and returns it.
-   This function is bound to the :: operator for UnsignedReal1 to INTEGER
-   conversion. *)
+PROCEDURE [::] toINT ( a : UnsignedReal1 ) : INTEGER; 
+(* Converts UnsignedReal1 value a to an INTEGER value and returns it.
+   This function is bound to the :: operator for UnsignedReal1 to
+   INTEGER conversion. *)
 
-PROCEDURE [::] toREAL ( r : UnsignedReal1 ) : REAL;
-(* Converts UnsignedReal1 value r to a REAL value and returns it.
-   This function is bound to the :: operator for UnsignedReal1 to REAL
-   conversion. *)
+PROCEDURE [::] toREAL ( a : UnsignedReal1 ) : REAL;
+(* Converts UnsignedReal1 value a to a REAL value and returns it.
+   This function is bound to the :: operator for UnsignedReal1 to
+   REAL conversion. *)
 
 
-(* Scalar conversion primitives *)
+(* Indirect conversions via scalar exchange format *)
 
-CONST maxSXFDigits = 8;
-    (* maximum digits when converted to scalar exchange format *)
+PROCEDURE [SXF] toSXF ( a : UnsignedReal1; VAR s : ARRAY OF OCTET );
+(* Converts UnsignedReal1 value a to a string in scalar exchange
+   format.  This procedure is bound to built-in primitive SXF for
+   type UnsignedReal1. *)
 
-PROCEDURE [SXF] toSXF ( r : UnsignedReal1; VAR s : ARRAY OF CHAR );
-(* Converts UnsignedReal1 value r to a string in scalar exchange format.
-   This procedure is bound to pervasive primitive SXF for type
-   UnsignedReal1. *)
-
-PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF CHAR; VAR r : UnsignedReal1 );
-(* Converts a string in scalar exchange format to an UnsignedReal1 value.
-   This procedure is bound to pervasive primitive VAL for type
-   UnsignedReal1. *)
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR a : UnsignedReal1 );
+(* Converts a string in scalar exchange format to a UnsignedReal1
+   value.  This procedure is bound to built-in primitive VAL for
+   type UnsignedReal1. *)
 
 
 (* Monadic arithmetic operations *) 
@@ -125,7 +127,7 @@ PROCEDURE [>] isGreater ( r1, r2 : UnsignedReal1 ) : BOOLEAN;
 
 (* IO operations *)
 
-PROCEDURE Read( infile : File; VAR r : UnsignedReal1 );
+PROCEDURE [READ] Read( infile : File; VAR r : UnsignedReal1 );
 (* Reads the textual representation of a UnsignedReal1 value from input
    stream infile
    - any leading whitespace is skipped
@@ -138,14 +140,15 @@ PROCEDURE Read( infile : File; VAR r : UnsignedReal1 );
      This procedure is substituted for invocations of READ with an
      UnsignedReal1 argument.*)
 
-PROCEDURE Write( outfile : File; r : UnsignedReal1 );
+PROCEDURE [WRITE] Write( outfile : File; r : UnsignedReal1 );
 (* Writes the textual representation of value r to output stream outfile.
    This procedure is substituted for invocations of WRITE with an
    UnsignedReal1 argument.*)
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF UnsignedReal1 );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF UnsignedReal1 );
 (* Writes a formatted textual representation of one or more UnsignedReal1
    values to output stream outfile. The output format is determined by fmtStr.
    This procedure is substituted for invocations of WRITEF with one or more
