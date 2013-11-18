@@ -1,4 +1,4 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE CARD32 [ProtoCardinal];
 
@@ -16,7 +16,7 @@ TYPE
     END; (* CARD32 *)
 
 
-(* UZ-Type bindings to operators, pervasives and primitives: *)
+(* Bindings required by blueprint ProtoCardinal *)
 
 (* Precision *)
 
@@ -35,7 +35,7 @@ PROCEDURE [TMIN] minValue : CARD32;
 (* returns the smallest possible value of type CARD32.
    This function is bound to pervasive function TMAX for type CARD32. *)
 
-(* TMAX(CARD32) = 4,294,967,295 *)
+(* TMAX(CARD32) = 4'294'967'295 *)
 
 PROCEDURE [TMAX] maxValue : CARD32;
 (* returns the largest possible value of type CARD32.
@@ -119,7 +119,7 @@ PROCEDURE [>] isGreater ( n1, n2 : CARD32 ) : BOOLEAN;
 
 (* IO operations *)
 
-PROCEDURE Read( infile : File; VAR n : CARD32 );
+PROCEDURE [READ] Read( infile : File; VAR n : CARD32 );
 (* Reads the textual representation of a CARD32 value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the numeral being read are
@@ -130,13 +130,14 @@ PROCEDURE Read( infile : File; VAR n : CARD32 );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a CARD32 argument. *)
 
-PROCEDURE Write( outfile : File; n : CARD32 );
+PROCEDURE [WRITE] Write( outfile : File; n : CARD32 );
 (* Writes the textual representation of value n to stream outfile. This
    procedure is substituted for invocations of WRITE with a CARD32 argument.*)
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CARD32 );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF CARD32 );
 (* Writes a formatted textual representation of one or more CARD32 values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
