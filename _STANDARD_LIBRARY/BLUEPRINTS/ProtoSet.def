@@ -14,13 +14,12 @@ TYPE ProtoSet = OPAQUE := { VARIADIC OF ElementType };
 
 (* Bindings recommended for dynamic set ADTs *)
 
-(* CONST [DESCENDING] supportsDescendingFor = <booleanValue>; *)
+(* CONST [ORD] isOrdered = <booleanValue>; *)
 
-(* The use of FOR DESCENDING syntax is *only* permitted for collections
-   of an ADT type that binds a constant with value TRUE to DESCENDING.
-   If the bound constant's value is FALSE or if the binding is omitted,
-   any use of FOR DESCENDING syntax will cause a compile time error.
-   Ordered set ADTs should bind a constant with value TRUE. *)
+(* A collection ADT may declare itself ordered by binding a constant of value
+   TRUE to ORD.  Ordered collections  may  use  FOR DESCENDING  syntax  while
+   unordered collections may not.  Any use of FOR DESCENDING syntax by an un-
+   ordered collection will cause a compile time error. *)
 
 
 (* Bindings required for dynamic set ADTs *)
