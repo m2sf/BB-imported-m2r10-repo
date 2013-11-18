@@ -9,12 +9,6 @@ DEFINITION MODULE PervasiveIO;
 IMPORT BOOLEAN+;
 (* Imports IO module for pervasive type BOOLEAN into the importing module. *)
 
-IMPORT BITSET+;
-(* Imports IO module for pervasive type BITSET into the importing module. *)
-
-IMPORT LONGBITSET+;
-(* Imports IO module for pervasive type LONGBITSET into the importing module.*)
-
 IMPORT CHAR+, ARRAYOFCHAR+;
 (* Imports IO modules for pervasive type CHAR into the importing module. *)
 
