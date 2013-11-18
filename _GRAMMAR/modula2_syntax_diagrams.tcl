@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 10, 2013
+# Syntax diagram generator for Modula-2 (R10), status Nov 18, 2013
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -253,12 +253,12 @@ lappend non_terminals definition {
 
 # (9) Public Constant Declaration
 lappend non_terminals publicConstDeclaration {
-  line {optx [ boundToPrimitive ]} Ident = constExpression
+  line {optx [ constBindableEntity ]} Ident = constExpression
 }
 
-# (9.1) Bound-To Primitive (Identifier)
-lappend non_terminals boundToPrimitive {
-  or /TSIG /TEXP
+# (9.1) Constant-Bindable Entity (Identifier)
+lappend non_terminals constBindableEntity {
+  or := /ORD /TSIG /TEXP
 }
 
 # (9.2) Constant Expression
@@ -442,18 +442,18 @@ lappend non_terminals variableDeclaration {
 lappend non_terminals procedureHeader {
   stack
     {line PROCEDURE
-      {optx {line [ boundToEntity ]} } }
+      {optx {line [ procBindableEntity ]} } }
     {line Ident {optx ( formalParamList )} {optx : returnedType}}
 }
 
-# (31) Bound-To Entity
-lappend non_terminals boundToEntity {
+# (31) Procedure-Bindable Entity
+lappend non_terminals procBindableEntity {
   or
-    DIV MOD FOR IN .. :: + - * / = < > boundToPervasive
+    DIV MOD FOR IN .. :: + - * / = < > procBindableIdent
 }
 
-# (31.1) Bound-To Pervasive (Identifier)
-lappend non_terminals boundToPervasive {
+# (31.1) Procedure-Bindable Identifier
+lappend non_terminals procBindableIdent {
   or
     /ABS /NEG /ODD /COUNT /LENGTH /NEW /RETAIN /RELEASE /STORE
     /REMOVE /COPY /CONCAT /SUBSET /TLIMIT /TMIN /TMAX /SXF /VAL
