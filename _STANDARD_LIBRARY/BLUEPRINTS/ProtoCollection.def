@@ -7,124 +7,147 @@ BLUEPRINT ProtoCollection; (* root of collection hierarchy *)
 PLACEHOLDERS AccessorType, ValueType, ProcType;
 
 (* Collection ADTs must be records,
-   literal compatibility may be specified by more specialised contracts *)
+   literal compatibility may be specified by more specialised blueprints *)
 
 TYPE ProtoCollection = OPAQUE |
                        OPAQUE RECORD := { VARIADIC OF AccessorType } |
                        { VARIADIC OF { AccessorType, ValueType } };
 
 
-(* Bindings required for Collection ADTs *)
+(* Bindings recommended for collection ADTs *)
+
+(* CONST [ORD] isOrdered = <booleanValue>; *)
+
+(* A collection ADT may declare itself ordered by binding a constant of value
+   TRUE to ORD.  Ordered collections  may  use  FOR DESCENDING  syntax  while
+   unordered collections may not.  Any use of FOR DESCENDING syntax by an un-
+   ordered collection will cause a compile time error. *)
+
+
+(* Bindings required for collection ADTs *)
 
 (* Capacity limit *)
 
-(* Binding to pervasive function TLIMIT *)
-
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the accessor/value pair limit of a Collection ADT. *)
+(* Procedure to return the allocation capacity limit of the ADT type. *)
 
-(* An expression of the form TLIMIT(CollectionADT))
-   is synthesised as CollectionADT.capacityLimit() *)
-
-
-(* Construction and Destruction *)
-
-(* The operations NEW and RELEASE are not common to all Collection ADTs,
-   their bindings may be required by more specialised prototypes. *)
+(* An invocation of TLIMIT(ADT)) is transformed at compile time to
+   ADT.capacityLimit() when the operand is the ADT type. *)
 
 
-(* Binding to assignment operator *)
+(* Memory Management *)
 
-(* Binding to the assignment operator depends on literal compatibility and
-   may be required by more specialised prototypes. *)
-
-
-(* Storage and retrieval *)
-
-(* Binding to [ ] notation within left hand entities *)
-
-PROCEDURE [STORE] storeValue ( VAR c : ProtoCollection;
-                            accessor : AccessorType; value : ValueType );
-
-(* Procedure to store a value for a given accessor in a Collection ADT
-   variable. *)
-
-(* A statement of the form collection[accessor] := value
-   is synthesised as storeValue( collection, accessor, value) *)
+(* The operations NEW, RETAIN and RELEASE are not common to all collection
+   ADTs, their bindings may be required by more specialised blueprints. *)
 
 
-(* Binding to [ ] notation within expressions *)
+(* Copying *)
 
-PROCEDURE [RETRIEVE] valueForAccessor( c : ProtoCollection;
-                                accessor : AccessorType ) : ValueType;
+PROCEDURE [COPY] copy ( source, target : ProtoCollection );
+(* Procedure to copy the contents of one collection to another. *)
 
-(* Procedure to return the value stored for a given accessor in a Collection
-   ADT value. *)
-
-(* An expression of the form collection[accessor]
-   is synthesised as valueForAccessor( collection, accessor ) *)
+(* An invocation of COPY(c1, c2) is transformed at compile time to
+   ADT.copy(c1, c2) for operands of the ADT type. *)
 
 
-(* Accessor/Value count *)
+(* Storage, Retrieval and Inspection of Contents *)
 
-(* The operations COUNT and LENGTH are dependent on the kind of Collection
+(* The operations STORE and REMOVE are dependent on the kind of collection
+   ADT and their signatures may differ. Their bindings may be required by
+   more specialised blueprints. *)
+
+
+PROCEDURE [RETRIEVE] valueForAccessor
+  ( c : ProtoDictionary; accessor : AccessorType ) : ValueType;
+(* Function to retrieve and return a value from a collection. *)
+
+(* An invocation of RETRIEVE(c, accessor) is transformed at compile time
+   to ADT.valueForAccessor(c, accessor) for first operands of the ADT
+   type. *)
+
+
+(* The membership test operation is not common to all collection ADTs.
+   Its binding may be required by more specialised blueprints. *)
+
+(* The operations COUNT and LENGTH are dependent on the kind of collection
    ADT and are mutually exclusive. Their bindings may be required by more
-   specialised prototypes. *)
+   specialised blueprints. *)
 
 
 (* Iteration *)
 
-(* Binding to FOR IN iterator *)
+TYPE ProcType = PROCEDURE ( AccessorType );
 
-TYPE ProcType = PROCEDURE ( CONST AccessorType );
-
-PROCEDURE [FOR] forIterator ( VAR c : ProtoCollection;
-                       doStatements : ProcType );
-
-(* Procedure to iterate over all accessor/value pairs of a Dictionary ADT
-   value and execute the passed in doStatements for each pair. *)
+PROCEDURE [FOR] forIterator
+  ( c : ProtoCollection; forLoopBody : ProcType; ascending : BOOLEAN );
+(* Procedure to iterate over all entries of a collection and invoke
+   procedure forLoopBody for each entry with the given iteration order. *)
    
 (* A statement of the form
-     FOR accessor IN collection DO statementSeq END
-   is synthesised as
-     <* INLINE *> PROCEDURE forLoopBody ( CONST accessor : AccessorType );
+     FOR accessor IN c DO statementSeq END
+   is transformed at compile time in two steps.
+   The loop header is transformed to
+     ADT.forIterator(c, forLoopBody, TRUE);
+   The loop body is transformed to a procedure definition
+     <* INLINE *> PROCEDURE forLoopBody ( accessor : AccessorType );
      BEGIN statementSeq END forLoopBody;
-     CollectionADT.forIterator( collection, forLoopBody ); *)
-
-(* Descending order loop iteration is only meaningful for ordered collections
-   and its binding may be required by more specialised prototypes. *)
+   inserted before the current scope's BEGIN-END block.
    
-
-(* Dyadic operations *)
-
-(* The operations +, -, * and / are not common to all Collection ADTs,
-   their bindings may be required by more specialised prototypes. *)
+   If a constant with value TRUE has been bound to ORD, a loop
+   header of the form
+     FOR DESCENDING accessor IN c
+   is transformed at compile time to
+     ADT.forIterator(c, forLoopBody, FALSE)
+   otherwise the use of FOR DESCENDING will cause a compile time error. *)   
 
 
 (* Relational operations *)
 
-(* Binding to = operator *)
-
 PROCEDURE [=] isEqual ( c1, c2 : ProtoCollection ) : BOOLEAN;
-(* Procedure to test the equivalence of two Collection ADT values. *)
+(* Procedure to test the equality of two collections. *)
 
-(* An expression of the form collection1 = collection2
-   is synthesised as CollectionADT.isEqual(collection1, collection2) *)
-
-(* The operation for the # operator
-   is synthesized as NOT (collection1 = collection2) *)
-
-
-(* Binding to < operator *)
-
-(* The operations < and <= are not common to all Collection ADTs, their
-   common binding to < may be required by more specialised prototypes. *)
+(* An expression of the form c1 = c2 is transformed at compile time to
+   ADT.isEqual(c1, c2) for operands of the ADT type.
+   
+   An expression of the form c1 # c2 is transformed at compile time to
+   NOT ADT.isEqual(c1, c2) for operands of the ADT type. *)
 
 
-(* Binding to > operator *)
+(* Subset and superset operations are not common to all collection ADTs.
+   Their bindings may be required by more specialised blueprints. *)
+   
 
-(* The operations > and >= are not common to all Collection ADTs, their
-   common binding to > may be required by more specialised prototypes. *)
+(* IO operations *)
+
+PROCEDURE [READ] Read ( infile : File; VAR c : ProtoCollection );
+(* Procedure to read a value from a file into a collection. *)
+
+(* An invocation of READ(file, c) is transformed at compile time
+   to ADT.Read(file, c) for second operands of the ADT type. *)
+
+
+PROCEDURE [WRITE] Write ( outfile : File; c : ProtoCollection );
+(* Procedure to write a collection to a file. *)
+
+(* An invocation of WRITE(file, c) is transformed at compile time
+   to ADT.Write(file, c) for second operands of the ADT type. *)
+
+
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF ProtoCollection );
+(* Procedure to write one or more collections formatted into a file. *)
+
+(* An invocation of WRITEF(file, fmt, c1, c2, c3, ...) is transformed
+   at compile time to ADT.WriteF(file, fmt, c1, c2, c3, ...) for
+   third operands and any following operands of the ADT type. *)
+
+
+(* Introspection *)
+
+(* Introspection operations are not common to all collection ADTs. Their
+   bindings may be required by more specialised blueprints. *)
 
 
 END ProtoCollection.
