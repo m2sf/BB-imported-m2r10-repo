@@ -223,21 +223,14 @@ CONST ADDR; (* only available if pragma ADDR is supported *)
    Constant has no value, cannot be used for any purpose other than import. *)
 
 
-(* Pseudo-types for unsafe interfacing to foreign variadic functions *)
+(* Pseudo-type for unsafe interfacing to foreign variadic functions *)
 
-TYPE FFIVARARGCOUNT; (* only available if pragma FFI is supported *)
-(* A parameter  of type  FFIVARARGCOUNT  may be  declared  within  the formal
-   parameter list of an interface definition for a variadic foreign function.
-   It denotes the actual parameter count passed in  for a formal parameter of
-   type FFIVARARGLIST.  It may  only  be used in combination with pragma FFI.
-   This type is a pseudo-type, it cannot be used for any other purpose. *)
-
-TYPE FFIVARARGLIST; (* only available if pragma FFI is supported *)
-(* A parameter  of type  FFIVARARGLIST  may  be  declared  within  the formal
-   parameter list of an interface definition for a variadic foreign function.
-   It denotes the untyped variadic argument list of the foreign function  and
-   it may  only  be  used  in combination  with  pragma FFI.  This type  is a
-   pseudo-type, it cannot be used for any other purpose. *)
+TYPE VARGLIST; (* only available if pragma FFI is supported *)
+(* A parameter of type  VARGLIST  may be declared within the formal parameter
+   list of an interface definition for a variadic  foreign  function.  It de-
+   notes the untyped variadic argument list  of the foreign function  and  it
+   may  only  be used in combination with pragma FFI.  This type is a pseudo-
+   type, it cannot be used for any other purpose. *)
 
 
 END UNSAFE.
