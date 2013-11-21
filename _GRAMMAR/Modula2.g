@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Nov 18, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Nov 20, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -117,7 +117,7 @@ tokens {
     SXF            = 'SXF';            /* RW within procedure header */
     VAL            = 'VAL';            /* RW within procedure header */
 
-// *** Language Defined Pragma Words, 19 tokens ***
+// *** Language Defined Pragma Words, 20 tokens ***
 
 //  Pragma Words are Reserved Words only within pragmas
 //  Ambiguity is resolvable using the Schroedinger's Token technique
@@ -130,6 +130,7 @@ tokens {
     ENDIF          = 'ENDIF';          /* RW within pragma only */
     ENCODING       = 'ENCODING';       /* RW within pragma only */
     FFI            = 'FFI';            /* RW within pragma only */
+    VARGC          = 'VARGC';          /* RW within pragma only */
     INLINE         = 'INLINE';         /* RW within pragma only */
     NOINLINE       = 'NOINLINE';       /* RW within pragma only */
     ALIGN          = 'ALIGN';          /* RW within pragma only */
@@ -661,9 +662,10 @@ identList :
 // production #1
 pragma :
     '<*'
-    ( pragmaMSG | pragmaIF | pragmaENCODING | pragmaFFI | pragmaINLINE |
-      pragmaALIGN | pragmaPADBITS | pragmaADDR | pragmaREG | pragmaPURITY |
-      pragmaLAZY | variableAttrPragma | pragmaFORWARD | implDefinedPragma )
+    ( pragmaMSG | pragmaIF | pragmaENCODING | pragmaFFI | pragmaVARGC |
+      inlinePragma | pragmaALIGN | pragmaPADBITS | pragmaADDR | pragmaREG |
+      pragmaPURITY | pragmaLAZY | variableAttrPragma | pragmaFORWARD |
+      implDefinedPragma )
     '*>'
     ;
 
@@ -713,104 +715,109 @@ pragmaFFI :
     ;
 
 // production #8
-pragmaINLINE :
+pragmaVARGC :
+    VARGC
+    ;
+
+// production #9
+inlinePragma :
     INLINE | NOINLINE
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #9
+// production #10
 pragmaALIGN :
     ALIGN '=' inPragmaExpression
     ;
 
-// production #10
+// production #11
 pragmaPADBITS :
     PADBITS '=' inPragmaExpression
     ;
 
-// production #11
+// production #12
 pragmaADDR :
     ADDR '=' inPragmaExpression
     ;
 
-// production #12
+// production #13
 pragmaREG :
     REG '=' inPragmaExpression
     ;
 
-// production #13
+// production #14
 pragmaPURITY :
     PURITY '=' inPragmaExpression /* values 0 .. 3 */
     ;
 
-// production #14
+// production #15
 pragmaLAZY :
     LAZY
     ;
 
-// production #15
+// production #16
 variableAttrPragma :
     SINGLEASSIGN | VOLATILE
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #16
+// production #17
 pragmaFORWARD :
     FORWARD ( TYPE identList | procedureHeader )
     ;
 
-// production #17
+// production #18
 implDefinedPragma :
     implDefinedPragmaName ( '=' inPragmaExpression )?
     ;
 
-// production #18
+// production #19
 inPragmaExpression :
 /* represents operator precedence level 1 */
     inPragmaSimpleExpression ( inPragmaRelOp inPragmaSimpleExpression )?
     ;
 
-// fragment #18.1
+// fragment #19.1
 inPragmaRelOp :
     '=' | '#' | '<' | '<=' | '>' | '>='
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #19
+// production #20
 inPragmaSimpleExpression :
 /* represents operator precedence level 2 */
     ( '+' | '-' {})? inPragmaTerm ( addOp inPragmaTerm )*
     ;
 
-// production #20
+// production #21
 inPragmaTerm :
 /* represents operator precedence level 3 */
     inPragmaFactor ( inPragmaMulOp inPragmaFactor )*
     ;
 
-// fragment #20.1
+// fragment #21.1
 inPragmaMulOp :
     '*' | DIV | MOD | AND
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #21
+// production #22
 inPragmaFactor :
 /* represents operator precedence level 4 */
     NOT? inPragmaSimpleFactor
     ;
 
-// production #22
+// production #23
 inPragmaSimpleFactor :
     wholeNumber |
     /* constQualident is covered by inPragmaCompileTimeFunctionCall */
     '(' inPragmaExpression ')' | inPragmaCompileTimeFunctionCall
     ;
 
-// alias #22.1
+// alias #23.1
 wholeNumber : NumericLiteral ;
 
-// production #23
+// production #24
 inPragmaCompileTimeFunctionCall :
     qualident ( '(' inPragmaExpression ( ',' inPragmaExpression )* ')' )?
     ;
