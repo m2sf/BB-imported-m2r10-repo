@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 18, 2013
+# Syntax diagram generator for Modula-2 (R10), status Nov 20, 2013
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -909,7 +909,8 @@ lappend pragmas pragma {
       pragmaIF
       pragmaENCODING
       pragmaFFI
-      pragmaINLINE
+      pragmaVARGC
+      inlinePragma
       pragmaALIGN
       pragmaPADBITS
       pragmaADDR
@@ -981,92 +982,97 @@ lappend pragmas pragmaFFI {
   line FFI = {or `C `Fortran }
 }
 
-# (8) Body Of Procedure Inlining Pragma
-lappend pragmas pragmaINLINE {
+# (8) Body Unsafe Variadic List Counter Pragma
+lappend pragmas pragmaVARGC {
+  line VARGC
+}
+
+# (9) Body Of Procedure Inlining Pragma
+lappend pragmas inlinePragma {
   or INLINE NOINLINE
 }
 
-# (9) Body Of Memory Alignment Pragma
+# (10) Body Of Memory Alignment Pragma
 lappend pragmas pragmaALIGN {
   line ALIGN = inPragmaExpression
 }
 
-# (10) Body Of Bit Padding Pragma
+# (11) Body Of Bit Padding Pragma
 lappend pragmas pragmaPADBITS {
   line PADBITS = inPragmaExpression
 }
 
-# (11) Body Of Memory Mapping Pragma
+# (12) Body Of Memory Mapping Pragma
 lappend pragmas pragmaADDR {
   line ADDR = inPragmaExpression
 }
 
-# (12) Body Of Register Mapping Pragma
+# (13) Body Of Register Mapping Pragma
 lappend pragmas pragmaREG {
   line REG = inPragmaExpression
 }
 
-# (13) Body Of Purity Attribute Pragma
+# (14) Body Of Purity Attribute Pragma
 lappend pragmas pragmaPURITY {
   line PURITY = inPragmaExpression
 }
 
-# (14) Body Of Lazy Attribute Pragma
+# (15) Body Of Lazy Attribute Pragma
 lappend pragmas pragmaLAZY {
   line LAZY
 }
 
-# (15) Body Of Variable Attribute Pragma
+# (16) Body Of Variable Attribute Pragma
 lappend pragmas variableAttrPragma {
   or SINGLEASSIGN VOLATILE
 }
 
-# (16) Body Of Forward Declaration Pragma
+# (17) Body Of Forward Declaration Pragma
 lappend pragmas pragmaFORWARD {
   line FORWARD {or {line TYPE identList} procedureHeader}
 }
 
-# (17) Implementation Defined Pragma
+# (18) Implementation Defined Pragma
 lappend pragmas implDefinedPragma {
   line implDefinedPragmaName {optx = inPragmaExpression}
 }
 
-# (17.1) Implementation Defined Pragma Name
+# (18.1) Implementation Defined Pragma Name
 lappend pragmas implDefinedPragmaName {
   line Ident
 }
 
-# (18) In-Pragma Expression
+# (19) In-Pragma Expression
 lappend pragmas inPragmaExpression {
   line inPragmaSimpleExpr {optx inPragmaRelOp inPragmaSimpleExpr}
 }
 
-# (18.1) In-Pragma Relational Operator
+# (19.1) In-Pragma Relational Operator
 lappend pragmas inPragmaRelOp {
   or = # < <= > >=
 }
 
-# (19) In-Pragma Simple Expression
+# (20) In-Pragma Simple Expression
 lappend pragmas inPragmaSimpleExpr {
   line {or {} + -} {loop inPragmaTerm addOp}
 }
 
-# (20) In-Pragma Term
+# (21) In-Pragma Term
 lappend pragmas inPragmaTerm {
   loop inPragmaFactor inPragmaMulOp
 }
 
-# (20.1) In-Pragma Multiply Operator
+# (21.1) In-Pragma Multiply Operator
 lappend pragmas inPragmaMulOp {
   or * DIV MOD AND
 }
 
-# (21) In-Pragma Factor
+# (22) In-Pragma Factor
 lappend pragmas inPragmaFactor {
   line {optx NOT} inPragmaSimpleFactor
 }
 
-# (22) In-Pragma Simple Factor
+# (23) In-Pragma Simple Factor
 lappend pragmas inPragmaSimpleFactor {
   or
     wholeNumber
@@ -1075,12 +1081,12 @@ lappend pragmas inPragmaSimpleFactor {
     {line ( inPragmaExpression )}
 }
 
-# (22.1) Whole Number
+# (23.1) Whole Number
 lappend pragmas wholeNumber {
   line NumericLiteral
 }
 
-# (23) In-Pragma Compile Time Function Call
+# (24) In-Pragma Compile Time Function Call
 lappend pragmas inPragmaCompileTimeFunctionCall {
   line qualident ( {loop inPragmaExpression ,} ) 
 }
