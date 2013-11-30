@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 20, 2013
+# Syntax diagram generator for Modula-2 (R10), status Nov 28, 2013
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -221,7 +221,7 @@ lappend non_terminals template {
 
 # (6) Template Parameter List
 lappend non_terminals templateParamList {
-  loop {line placeholder = replacement} ,
+  loop {line placeholder = replacement} ;
 }
 
 # (6.1) Placeholder
@@ -907,18 +907,18 @@ lappend pragmas pragma {
     or
       pragmaMSG
       pragmaIF
-      pragmaENCODING
-      pragmaFFI
-      pragmaVARGC
       inlinePragma
+      pragmaLAZY
+      pragmaFORWARD
+      pragmaENCODING
       pragmaALIGN
       pragmaPADBITS
-      pragmaADDR
-      pragmaREG
       pragmaPURITY
-      pragmaLAZY
       variableAttrPragma
-      pragmaFORWARD
+      pragmaADDR
+      pragmaFFI
+      pragmaVARGC
+      pragmaREG
       implDefinedPragma
     }
   *>
@@ -935,7 +935,7 @@ lappend pragmas compileTimeMsgComponent {
     or
       StringLiteral
       constQualident
-      {line ? {or ALIGN ENCODING implDefinedPragmaName}}
+      {line ? {or ALIGN ENCODING implDefinedPragmaSymbol}}
   }
 }
 
@@ -944,8 +944,8 @@ lappend pragmas constQualident {
   line qualident
 }
 
-# (3.2) Implementation Defined Pragma Name
-lappend pragmas implDefinedPragmaName {
+# (3.2) Implementation Defined Pragma Symbol
+lappend pragmas implDefinedPragmaSymbol {
   line Ident
 }
 
@@ -957,39 +957,39 @@ lappend pragmas pragmaIF {
     ENDIF
 }
 
-# (5) Body Of Character Encoding Pragma
+# (5) Body Of Procedure Inlining Pragma
+lappend pragmas inlinePragma {
+  or INLINE NOINLINE
+}
+
+# (6) Body Of Lazy Attribute Pragma
+lappend pragmas pragmaLAZY {
+  line LAZY
+}
+
+# (7) Body Of Forward Declaration Pragma
+lappend pragmas pragmaFORWARD {
+  line FORWARD {or {line TYPE identList} procedureHeader}
+}
+
+# (8) Body Of Character Encoding Pragma
 lappend pragmas pragmaENCODING {
   line ENCODING = {or `ASCII `UTF8} {opt : codePointSampleList}
 }
 
-# (6) Code Point Sample List
+# (9) Code Point Sample List
 lappend pragmas codePointSampleList {
   loop {line quotedCharacter = CharCodeLiteral} ,
 }
 
-# (6.1) Quoted Character
+# (9.1) Quoted Character
 lappend pragmas quotedCharacter {
   line StringLiteral
 }
 
-# (6.2) Character Code Literal
+# (9.2) Character Code Literal
 lappend pragmas charCodeLiteral {
   line NumericLiteral
-}
-
-# (7) Body Of Foreign Function Interface Pragma
-lappend pragmas pragmaFFI {
-  line FFI = {or `C `Fortran }
-}
-
-# (8) Body Unsafe Variadic List Counter Pragma
-lappend pragmas pragmaVARGC {
-  line VARGC
-}
-
-# (9) Body Of Procedure Inlining Pragma
-lappend pragmas inlinePragma {
-  or INLINE NOINLINE
 }
 
 # (10) Body Of Memory Alignment Pragma
@@ -1002,43 +1002,43 @@ lappend pragmas pragmaPADBITS {
   line PADBITS = inPragmaExpression
 }
 
-# (12) Body Of Memory Mapping Pragma
-lappend pragmas pragmaADDR {
-  line ADDR = inPragmaExpression
-}
-
-# (13) Body Of Register Mapping Pragma
-lappend pragmas pragmaREG {
-  line REG = inPragmaExpression
-}
-
-# (14) Body Of Purity Attribute Pragma
+# (12) Body Of Purity Attribute Pragma
 lappend pragmas pragmaPURITY {
   line PURITY = inPragmaExpression
 }
 
-# (15) Body Of Lazy Attribute Pragma
-lappend pragmas pragmaLAZY {
-  line LAZY
-}
-
-# (16) Body Of Variable Attribute Pragma
+# (13) Body Of Variable Attribute Pragma
 lappend pragmas variableAttrPragma {
   or SINGLEASSIGN VOLATILE
 }
 
-# (17) Body Of Forward Declaration Pragma
-lappend pragmas pragmaFORWARD {
-  line FORWARD {or {line TYPE identList} procedureHeader}
+# (14) Body Of Memory Mapping Pragma
+lappend pragmas pragmaADDR {
+  line ADDR = inPragmaExpression
 }
 
-# (18) Implementation Defined Pragma
+# (15) Body Of Foreign Function Interface Pragma
+lappend pragmas pragmaFFI {
+  line FFI = {or `C `Fortran }
+}
+
+# (16) Body Unsafe Variadic List Counter Pragma
+lappend pragmas pragmaVARGC {
+  line VARGC
+}
+
+# (17) Body Of Register Mapping Pragma
+lappend pragmas pragmaREG {
+  line REG = inPragmaExpression
+}
+
+# (18) Body of Implementation Defined Pragma
 lappend pragmas implDefinedPragma {
-  line implDefinedPragmaName {optx = inPragmaExpression}
+  line {or I W E F} , implDefinedPragmaSymbol {optx = inPragmaExpression}
 }
 
-# (18.1) Implementation Defined Pragma Name
-lappend pragmas implDefinedPragmaName {
+# (18.1) Implementation Defined Pragma Symbol
+lappend pragmas implDefinedPragmaSymbol {
   line Ident
 }
 
