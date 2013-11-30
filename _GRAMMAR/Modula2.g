@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Nov 20, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Nov 28, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -117,9 +117,9 @@ tokens {
     SXF            = 'SXF';            /* RW within procedure header */
     VAL            = 'VAL';            /* RW within procedure header */
 
-// *** Language Defined Pragma Words, 20 tokens ***
+// *** Reserved Words of the Pragma Language, 20 tokens ***
 
-//  Pragma Words are Reserved Words only within pragmas
+//  Symbols that are reserved words only within pragmas
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
     MSG            = 'MSG';            /* RW within pragma only */
@@ -128,20 +128,20 @@ tokens {
     ERROR          = 'ERROR';          /* RW within pragma only */
     FATAL          = 'FATAL';          /* RW within pragma only */
     ENDIF          = 'ENDIF';          /* RW within pragma only */
-    ENCODING       = 'ENCODING';       /* RW within pragma only */
-    FFI            = 'FFI';            /* RW within pragma only */
-    VARGC          = 'VARGC';          /* RW within pragma only */
     INLINE         = 'INLINE';         /* RW within pragma only */
     NOINLINE       = 'NOINLINE';       /* RW within pragma only */
+    LAZY           = 'LAZY';           /* RW within pragma only */
+    FORWARD        = 'FORWARD';        /* RW within pragma only */    
+    ENCODING       = 'ENCODING';       /* RW within pragma only */
     ALIGN          = 'ALIGN';          /* RW within pragma only */
     PADBITS        = 'PADBITS';        /* RW within pragma only */
-    ADDR           = 'ADDR';           /* RW within pragma only */
-    REG            = 'REG';            /* RW within pragma only */
     PURITY         = 'PURITY';         /* RW within pragma only */
-    LAZY           = 'LAZY';           /* RW within pragma only */
     SINGLEASSIGN   = 'SINGLEASSIGN' ;  /* RW within pragma only */
     VOLATILE       = 'VOLATILE';       /* RW within pragma only */
-    FORWARD        = 'FORWARD';        /* RW within pragma only */
+    ADDR           = 'ADDR';           /* RW within pragma only */
+    FFI            = 'FFI';            /* RW within pragma only */
+    VARGC          = 'VARGC';          /* RW within pragma only */
+    REG            = 'REG';            /* RW within pragma only */
 
 // *** Special Characters, 3 tokens ***
 
@@ -221,7 +221,7 @@ template : Ident ;
 
 // production #6
 templateParams :
-    placeholder '=' replacement ( ',' placeholder '=' replacement )* ;
+    placeholder '=' replacement ( ';' placeholder '=' replacement )* ;
 
 // alias #6.1
 placeholder : Ident ;
@@ -662,10 +662,10 @@ identList :
 // production #1
 pragma :
     '<*'
-    ( pragmaMSG | pragmaIF | pragmaENCODING | pragmaFFI | pragmaVARGC |
-      inlinePragma | pragmaALIGN | pragmaPADBITS | pragmaADDR | pragmaREG |
-      pragmaPURITY | pragmaLAZY | variableAttrPragma | pragmaFORWARD |
-      implDefinedPragma )
+    ( pragmaMSG | pragmaIF | inlinePragma | pragmaLAZY | pragmaFORWARD |
+      pragmaENCODING | pragmaALIGN | pragmaPADBITS | pragmaPURITY |
+      variableAttrPragma | pragmaADDR | pragmaFFI | pragmaVARGC |
+      pragmaREG | implDefinedPragma )
     '*>'
     ;
 
@@ -678,14 +678,14 @@ pragmaMSG :
 // production #3
 compileTimeMsgComponent :
     StringLiteral | constQualident |
-    '?' ( ALIGN | ENCODING | implDefinedPragmaName )
+    '?' ( ALIGN | ENCODING | implDefinedPragmaSymbol )
     ;
 
 // alias #3.1
 constQualident : qualident ; /* no type and no variable identifiers */
 
 // alias #3.2
-implDefinedPragmaName : Ident ; /* lowercase or mixed case only */
+implDefinedPragmaSymbol : Ident ; /* lowercase or mixed case only */
 
 // production #4
 pragmaIF :
@@ -693,37 +693,39 @@ pragmaIF :
     ;
 
 // production #5
+inlinePragma :
+    INLINE | NOINLINE
+    {} /* make ANTLRworks display separate branches */
+    ;
+
+// production #6
+pragmaLAZY :
+    LAZY
+    ;
+
+// production #7
+pragmaFORWARD :
+    FORWARD ( TYPE identList | procedureHeader )
+    ;
+
+/* multi-pass compilers ignore and skip any token after FORWARD */
+
+// production #8
 pragmaENCODING : 
     ENCODING '=' StringLiteral /* "ASCII" or "UTF8" */
     ( ':' codePointSample ( ',' codePointSample )* )?
     ;
 
-// production #6
+// production #9
 codePointSample :
     quotedCharacterLiteral '=' characterCodeLiteral
     ;
 
-// alias #6.1
+// alias #9.1
 quotedCharacterLiteral : StringLiteral ; /* single character only */
 
-// alias #6.2
+// alias #9.2
 characterCodeLiteral : NumericLiteral ; /* unicode code points only */
-
-// production #7
-pragmaFFI :
-    FFI '=' StringLiteral /* "C" or "Fortran" */
-    ;
-
-// production #8
-pragmaVARGC :
-    VARGC
-    ;
-
-// production #9
-inlinePragma :
-    INLINE | NOINLINE
-    {} /* make ANTLRworks display separate branches */
-    ;
 
 // production #10
 pragmaALIGN :
@@ -736,39 +738,40 @@ pragmaPADBITS :
     ;
 
 // production #12
-pragmaADDR :
-    ADDR '=' inPragmaExpression
-    ;
-
-// production #13
-pragmaREG :
-    REG '=' inPragmaExpression
-    ;
-
-// production #14
 pragmaPURITY :
     PURITY '=' inPragmaExpression /* values 0 .. 3 */
     ;
 
-// production #15
-pragmaLAZY :
-    LAZY
-    ;
-
-// production #16
+// production #13
 variableAttrPragma :
     SINGLEASSIGN | VOLATILE
     {} /* make ANTLRworks display separate branches */
     ;
 
+// production #14
+pragmaADDR :
+    ADDR '=' inPragmaExpression
+    ;
+
+// production #15
+pragmaFFI :
+    FFI '=' StringLiteral /* "C" or "Fortran" */
+    ;
+
+// production #16
+pragmaVARGC :
+    VARGC
+    ;
+
 // production #17
-pragmaFORWARD :
-    FORWARD ( TYPE identList | procedureHeader )
+pragmaREG :
+    REG '=' inPragmaExpression
     ;
 
 // production #18
 implDefinedPragma :
-    implDefinedPragmaName ( '=' inPragmaExpression )?
+    ( 'I' | 'W' | 'E' | 'F' {}) ','
+    implDefinedPragmaSymbol ( '=' inPragmaExpression )?
     ;
 
 // production #19
