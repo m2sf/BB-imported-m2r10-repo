@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Nov 28, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Nov 30, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -976,16 +976,16 @@ Whitespace :
 
 // production #2
 fragment
-MultiLineComment :
+BlockComment :
     '(*'
     ( options { greedy=false; }: . )* /* anything other than '(*' or '*)' */
-    MultiLineComment*
+    BlockComment*
     '*)'
     ;	
 
 // production #3
 fragment
-SingleLineComment :
+LineComment :
     '//'
     ( options { greedy=false; }: . )* /* anything other than EOL */
     EndOfLine
