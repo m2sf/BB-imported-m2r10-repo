@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 28, 2013
+# Syntax diagram generator for Modula-2 (R10), status Nov 30, 2013
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -863,14 +863,14 @@ lappend ignore_symbols Whitespace {
 # (1.1) ASCII_TAB
 # CONST ASCII_TAB = CHR(8);
 
-# (2) Single-Line Comment
-lappend ignore_symbols SingleLineComment {
+# (2) Line Comment
+lappend ignore_symbols LineComment {
   line // {optx {loop CommentCharacter {}}} EndOfLine
 }
 
-# (3) Multi-Line Comment
-lappend ignore_symbols MultiLineComment {
-  line (* {optx {loop {or MultiLineComment CommentCharacter EndOfLine} {}}} *)
+# (3) Block Comment
+lappend ignore_symbols BlockComment {
+  line (* {optx {loop {or CommentCharacter BlockComment EndOfLine} {}}} *)
 }
 
 # (3.1) Comment Character
