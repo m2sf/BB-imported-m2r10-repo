@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Nov 30, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 5, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -67,13 +67,13 @@ tokens {
     OF             = 'OF';
     OPAQUE         = 'OPAQUE';
     OR             = 'OR';             /* also a RW within pragmas */
-    PLACEHOLDERS   = 'PLACEHOLDERS';
     POINTER        = 'POINTER';
     PROCEDURE      = 'PROCEDURE';
     RECORD         = 'RECORD';
     REPEAT         = 'REPEAT';
     RETURN         = 'RETURN';
     SET            = 'SET';
+    SURROGATE      = 'SURROGATE';
     THEN           = 'THEN';
     TO             = 'TO';
     TYPE           = 'TYPE';
@@ -191,7 +191,7 @@ conformedToBlueprint : blueprintIdent ;
 // production #4
 blueprint :
     BLUEPRINT blueprintIdent ( '[' conformedToBlueprint ']' )? ';'
-    ( PLACEHOLDERS identList ';' )?
+    ( SURROGATE identList ';' )?
     requiredTypeDeclaration ';'
     ( requiredBinding ';' )*
     END blueprintIdent '.'
@@ -834,9 +834,9 @@ inPragmaCompileTimeFunctionCall :
 // production #1
 ReservedWord :
     ALIAS AND ARRAY BEGIN BLUEPRINT BY CASE CONST DEFINITION DESCENDING
-    DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF IMPLEMENTATION IMPORT
-    IN INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR PLACEHOLDERS POINTER
-    PROCEDURE RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR VARIADIC WHILE
+    DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF IMPLEMENTATION IMPORT IN
+    INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR POINTER PROCEDURE RECORD
+    REPEAT RETURN SET SURROGATE THEN TO TYPE UNTIL VAR VARIADIC WHILE
     ;
 
 // production #2
