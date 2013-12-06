@@ -67,13 +67,13 @@ tokens {
     OF             = 'OF';
     OPAQUE         = 'OPAQUE';
     OR             = 'OR';             /* also a RW within pragmas */
+    PIVOTAL        = 'PIVOTAL';
     POINTER        = 'POINTER';
     PROCEDURE      = 'PROCEDURE';
     RECORD         = 'RECORD';
     REPEAT         = 'REPEAT';
     RETURN         = 'RETURN';
     SET            = 'SET';
-    SURROGATE      = 'SURROGATE';
     THEN           = 'THEN';
     TO             = 'TO';
     TYPE           = 'TYPE';
@@ -89,7 +89,7 @@ tokens {
 
     CAST           = 'CAST';           /* RW within procedure header */
 
-// *** Bindable Identifiers, 21 tokens ***
+// *** Bindable Identifiers, 22 tokens ***
 
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
@@ -103,10 +103,11 @@ tokens {
     ODD            = 'ODD';            /* RW within procedure header */
     COUNT          = 'COUNT';          /* RW within procedure header */
     LENGTH         = 'LENGTH';         /* RW within procedure header */
-    STORE          = 'STORE';          /* RW within procedure header */
-    REMOVE         = 'REMOVE';         /* RW within procedure header */
     COPY           = 'COPY';           /* RW within procedure header */
     CONCAT         = 'CONCAT';         /* RW within procedure header */
+    STORE          = 'STORE';          /* RW within procedure header */
+    REMOVE         = 'REMOVE';         /* RW within procedure header */
+    RETRIEVE       = 'RETRIEVE';       /* RW within procedure header */
     NEW            = 'NEW';            /* RW within procedure header */
     RETAIN         = 'RETAIN';         /* RW within procedure header */
     RELEASE        = 'RELEASE';        /* RW within procedure header */
@@ -175,9 +176,6 @@ programModule :
     importList* block moduleIdent '.'
     ;
 
-// alias 2.1
-moduleIdent : Ident ;
-
 // production #3
 definitionOfModule :
     DEFINITION MODULE moduleIdent ( '[' conformedToBlueprint ']' )? ';'
@@ -185,13 +183,16 @@ definitionOfModule :
     END moduleIdent '.'
     ;
 
-// alias #3.1
+// alias 3.1
+moduleIdent : Ident ;
+
+// alias #3.2
 conformedToBlueprint : blueprintIdent ;
 
 // production #4
 blueprint :
     BLUEPRINT blueprintIdent ( '[' conformedToBlueprint ']' )? ';'
-    ( SURROGATE identList ';' )?
+    ( PIVOTAL identList ';' )?
     requiredTypeDeclaration ';'
     ( requiredBinding ';' )*
     END blueprintIdent '.'
@@ -208,26 +209,35 @@ requiredBinding : procedureHeader ;
 
 // production #5
 importList :
-    ( GENLIB libIdent FROM template FOR templateParams END |
-      IMPORT moduleIdent '+'? ( ',' moduleIdent '+'? )* |
-      FROM moduleIdent IMPORT ( identList | '*' ) ) ';'
+    ( libGenDirective | importDirective ) ';'
     ;
 
-// alias #5.1
+// production #6
+libGenDirective :
+    GENLIB libIdent FROM template FOR templateParams END
+    ;
+
+// alias #6.1
 libIdent : Ident ;
 
-// alias #5.2
+// alias #6.2
 template : Ident ;
 
-// production #6
+// production #7
 templateParams :
     placeholder '=' replacement ( ';' placeholder '=' replacement )* ;
 
-// alias #6.1
+// alias #7.1
 placeholder : Ident ;
 
-// alias #6.2
+// alias #7.2
 replacement : StringLiteral ;
+
+// production #8
+importDirective :
+    IMPORT moduleIdent '+'? ( ',' moduleIdent '+'? )* |
+    FROM moduleIdent IMPORT ( identList | '*' )
+    ;
 
 /* Import with experimental aliased import qualifier '=>'
    IMPORT Foo => Bar would import module Foo to be referenced as Bar
@@ -235,19 +245,20 @@ replacement : StringLiteral ;
    IMPORT G711Codecs_x86 => G711Codecs, G711Codecs_ppc => G711Codecs, etc
    requires further study
    
-importListWithAlias :
+importWithAlias :
     ( FROM moduleIdent IMPORT ( identList | '*' ) |
-    IMPORT moduleIdent ( '+' | '=>' Ident )? ( ',' moduleIdent ( '+' | '=>' Ident )? )* ) ';'
+    IMPORT moduleIdent ( '+' | '=>' Ident )?
+    ( ',' moduleIdent ( '+' | '=>' Ident )? )* )
     ;
 */
 
-// production #7
+// production #9
 block :
     declaration*
     ( BEGIN statementSequence )? END
     ;
 
-// production #8
+// production #10
 definition :
     CONST (  publicConstDeclaration ';' )+ |
     TYPE ( publicTypeDeclaration ';' )+ |
@@ -255,25 +266,25 @@ definition :
     procedureHeader ';'
     ;
 
-// production #9
+// production #11
 publicConstDeclaration :	
     ( '[' constBindableEntity ']' )? Ident '=' constExpression
     ;
 
-// alias #9.1
+// alias #11.1
 constBindableEntity : ':=' | /* Ident */ ORD | TSIG | TEXP
     {} /* make ANTLRworks display separate branches */
     ;
 
-// alias #9.2
+// alias #11.2
 constExpression : expression ; /* but no type identifiers */
 
-// production #10
+// production #12
 publicTypeDeclaration :
     Ident '=' ( type | OPAQUE recordType? )
     ;
 
-// production #11
+// production #13
 declaration :
     CONST ( Ident '=' constExpression ';' )+ |
     TYPE ( Ident '=' type ';' )+ |
@@ -281,27 +292,27 @@ declaration :
     procedureHeader ';' block Ident ';'
     ;
 
-// production #12
+// production #14
 requiredTypeDeclaration :
     TYPE '='
     permittedTypeDeclaration ( '|' permittedTypeDeclaration )*
     ( ':=' protoliteral ( '|' protoliteral )* )?
     ;
 
-// production #13
+// production #15
 permittedTypeDeclaration :
     RECORD | OPAQUE RECORD?
     ;
 
-// production #14
+// production #16
 protoliteral :
     simpleProtoliteral | structuredProtoliteral
     ;
 
-// alias #14.1
+// alias #16.1
 simpleProtoliteral : Ident ; /* CHAR, INTEGER or REAL */
 
-// production #15
+// production #17
 structuredProtoliteral :
     '{' ( VARIADIC OF simpleProtoliteral ( ',' simpleProtoliteral )* |
     structuredProtoliteral ( ',' structuredProtoliteral )* ) '}'
@@ -310,21 +321,21 @@ structuredProtoliteral :
 
 // *** Types ***
 
-// production #16
+// production #18
 type :
     (( ALIAS | SET | range ) OF )? typeIdent |
     enumType | arrayType | recordType | pointerType | procedureType
     ;
 
-// alias 16.1
+// alias 18.1
 typeIdent : qualident ;
 
-// production #17
+// production #19
 range :
     '[' constExpression '..' constExpression ']'
     ;
 
-// production #18
+// production #20
 enumType :
     '(' ( '+' enumBaseType ',' )? identList ')'
     ;
@@ -340,73 +351,73 @@ enumTypeWithConst :
     ;
 */
 
-// alias 18.1
+// alias 20.1
 enumBaseType : typeIdent ;
 
-// production #19
+// production #21
 arrayType :
     ARRAY componentCount ( ',' componentCount )* OF typeIdent
     ;
 
-// alias #19.1
+// alias #21.1
 componentCount : constExpression ;
 
-// production #20
+// production #22
 recordType :
     RECORD ( fieldList ( ';' fieldList )* indeterminateField? |
     '(' baseType ')' fieldList ( ';' fieldList )* ) END
     ;
 
-// aliase #20.1
+// aliase #22.1
 fieldList : variableDeclaration ;
 
-// aliase #20.2
+// aliase #22.2
 baseType : typeIdent ;
 
-// production #21
+// production #23
 indeterminateField :
     INDETERMINATE Ident ':' ARRAY discriminantFieldIdent OF typeIdent
     ;
 
-// alias #21.1
+// alias #23.1
 discriminantFieldIdent : Ident ;
 
-// production #22
+// production #24
 pointerType :
     POINTER TO CONST? typeIdent
     ;
 
-// production #23
+// production #25
 procedureType :
     PROCEDURE
     ( '(' formalTypeList ')' )?
     ( ':' returnedType )?
     ;
 
-// alias #23.1
+// alias #25.1
 returnedType : typeIdent ;
 
-// production #24
+// production #26
 formalTypeList :
     formalType ( ',' formalType )*
     ;
 
-// production #25
+// production #26.1
 formalType :
     attributedFormalType | variadicFormalType
     ;
 
-// production #26
+// production #27
 attributedFormalType :
     ( CONST | VAR {})? simpleFormalType
     ;
 
-// production #27
+// production #28
 simpleFormalType :
     CAST? ( ARRAY OF )? typeIdent
     ;
 
-// production #28
+// production #29
 variadicFormalType :
     VARIADIC OF
     ( attributedFormalType |
@@ -415,44 +426,44 @@ variadicFormalType :
 
 // *** Variable Declarations ***
 
-// production #29
+// production #30
 variableDeclaration :
     identList ':' ( range OF )? typeIdent
     ;
 
 // *** Procedures ***
 
-// production #30
+// production #31
 procedureHeader :
     PROCEDURE ( '[' procBindableEntity ']' )?
     Ident ( '(' formalParamList ')' )?
     ( ':' returnedType )?
     ;
 
-// production #31
+// production #32
 procBindableEntity :
     DIV | MOD | FOR | IN |
     '..' | '::' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
     procBindableIdent
     ;
 
-// fragment #31.1
+// fragment #32.1
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 procBindableIdent :
-    ABS | NEG | ODD | COUNT | LENGTH | NEW | RETAIN | RELEASE | STORE |
-    REMOVE | COPY | CONCAT | SUBSET | TLIMIT | TMIN | TMAX | SXF | VAL
-    {} /* make ANTLRworks display separate branches */
+    ABS | NEG | ODD | COUNT | LENGTH | NEW | RETAIN | RELEASE | COPY |
+    CONCAT | STORE | REMOVE  | RETRIEVE | SUBSET | TLIMIT | TMIN | TMAX |
+    SXF | VAL {} /* make ANTLRworks display separate branches */
     ;
 
 // *** Formal Parameters ***
 
-// production #32
+// production #33
 formalParamList :
     formalParams ( ';' formalParams )*
     ;
 
-// production #33
+// production #33.1
 formalParams :
     simpleFormalParams | variadicFormalParams
     ;
@@ -833,10 +844,11 @@ inPragmaCompileTimeFunctionCall :
 
 // production #1
 ReservedWord :
-    ALIAS AND ARRAY BEGIN BLUEPRINT BY CASE CONST DEFINITION DESCENDING
-    DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF IMPLEMENTATION IMPORT IN
-    INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR POINTER PROCEDURE RECORD
-    REPEAT RETURN SET SURROGATE THEN TO TYPE UNTIL VAR VARIADIC WHILE
+    ALIAS | AND | ARRAY | BEGIN | BLUEPRINT | BY | CASE | CONST | DEFINITION |
+    DESCENDING | DIV | DO | ELSE | ELSIF | END | EXIT | FOR | FROM | GENLIB |
+    IF | IMPLEMENTATION | IMPORT | IN | INDETERMINATE | LOOP | MOD | MODULE |
+    NOT | OF | OPAQUE | OR | PIVOTAL | POINTER | PROCEDURE | RECORD | REPEAT |
+    RETURN | SET | THEN | TO | TYPE | UNTIL | VAR | VARIADIC | WHILE
     ;
 
 // production #2
@@ -974,6 +986,12 @@ Whitespace :
 
 // *** Comments ***
 
+// pseudo-procudion to make #2 and #3 hidden
+Comment :
+    BlockComment | LineComment
+    { $channel = HIDDEN; } /* ignore */
+    ;
+
 // production #2
 fragment
 BlockComment :
@@ -989,12 +1007,6 @@ LineComment :
     '//'
     ( options { greedy=false; }: . )* /* anything other than EOL */
     EndOfLine
-    ;
-
-// pseudo-procudion to make #2 and #3 hidden
-Comment :
-    MultiLineComment | SingleLineComment
-    { $channel = HIDDEN; } /* ignore */
     ;
 
 // production #4
