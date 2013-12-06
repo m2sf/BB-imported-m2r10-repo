@@ -163,11 +163,6 @@ lappend non_terminals programModule {
   {loop nil {nil importList nil}} block moduleIdent .
 }
 
-# (2.1) Module Identifier
-lappend non_terminals moduleIdent {
-  line Ident
-}
-
 # (3) Definition Of Module
 lappend non_terminals definitionOfModule {
   stack
@@ -176,7 +171,11 @@ lappend non_terminals definitionOfModule {
     END moduleIdent .}
 }
 
-# (3.1) Conformed-To Blueprint
+# (3.1) Module Identifier
+lappend non_terminals moduleIdent {
+  line Ident
+}
+# (3.2) Conformed-To Blueprint
 lappend non_terminals conformedToBlueprint {
   line blueprintIdent
 }
@@ -185,7 +184,7 @@ lappend non_terminals conformedToBlueprint {
 lappend non_terminals blueprint {
   stack
     {line BLUEPRINT blueprintIdent {opt [ conformedToBlueprint ]} ;}
-    {line {opt SURROGATE identList ;} requiredTypeDeclaration ;}
+    {line {opt PIVOTAL identList ;} requiredTypeDeclaration ;}
     {line {loop nil {nil requiredBinding ;}} END blueprintIdent .}
 }
 
@@ -201,46 +200,58 @@ lappend non_terminals requiredBinding {
 
 # (5) Import List
 lappend non_terminals importList {
-  line {
-    or
-      {line GENLIB  libIdent FROM template FOR templateParams END}
-      {line IMPORT {loop {line moduleIdent {opt +}} ,}}
-      {line FROM moduleIdent IMPORT {
-        or
-          {line identList}
-          {line *}
-        }
-      }
-  } ;
+  line {or libGenDirective importDirective} ;
 }
 
-# (5.1) Template
+# (6) Library Generation Directive
+lappend non_terminals libGenDirective {
+  line GENLIB libIdent FROM template FOR templateParams END
+}
+
+# (6.1) Library Identifier
+lappend non_terminals libIdent {
+  line Ident
+}
+
+# (6.2) Template
 lappend non_terminals template {
   line Ident
 }
 
-# (6) Template Parameter List
+# (7) Template Parameter List
 lappend non_terminals templateParamList {
   loop {line placeholder = replacement} ;
 }
 
-# (6.1) Placeholder
+# (7.1) Placeholder
 lappend non_terminals placeholder {
   line Ident
 }
 
-# (6.2) Replacement
+# (7.2) Replacement
 lappend non_terminals replacement {
   line StringLiteral
 }
 
-# (7) Block
+# (8) Import Directive
+lappend non_terminals importDirective {
+  or
+    {line IMPORT {loop {line moduleIdent {opt +}} ,}}
+    {line FROM moduleIdent IMPORT {
+      or
+        {line identList}
+        {line *}
+    }
+  }
+}
+
+# (9) Block
 lappend non_terminals block {
   line {loop nil {nil declaration nil}}
   {opt BEGIN statementSequence} END
 }
 
-# (8) Definition
+# (10) Definition
 lappend non_terminals definition {
   line {
     or
@@ -251,27 +262,27 @@ lappend non_terminals definition {
   }
 }
 
-# (9) Public Constant Declaration
+# (11) Public Constant Declaration
 lappend non_terminals publicConstDeclaration {
   line {optx [ constBindableEntity ]} Ident = constExpression
 }
 
-# (9.1) Constant-Bindable Entity (Identifier)
+# (11.1) Constant-Bindable Entity (Identifier)
 lappend non_terminals constBindableEntity {
   or := /ORD /TSIG /TEXP
 }
 
-# (9.2) Constant Expression
+# (11.2) Constant Expression
 lappend non_terminals constExpression {
   line expression
 }
 
-# (10) Public Type Declaration
+# (12) Public Type Declaration
 lappend non_terminals publicTypeDeclaration {
   line Ident = {or type {line OPAQUE {optx recordType}}}
 }
 
-# (11) Declaration
+# (13) Declaration
 lappend non_terminals declaration {
   line {
     or
@@ -282,28 +293,28 @@ lappend non_terminals declaration {
   }
 }
 
-# (12) Required Type Declaration
+# (14) Required Type Declaration
 lappend non_terminals requiredTypeDeclaration {
   line TYPE typeIdent =
     {loop permittedTypeDeclaration |} {opt := {loop protoliteral |}}
 }
 
-# (13) Permitted Type Declaration
+# (15) Permitted Type Declaration
 lappend non_terminals permittedTypeDeclaration {
   or RECORD { line OPAQUE {optx RECORD}}
 }
 
-# (14) Proto Literal
+# (16) Proto Literal
 lappend non_terminals protoliteral {
   or simpleProtoliteral structuredProtoliteral
 }
 
-# (14.1) Simple Proto Literal
+# (16.1) Simple Proto Literal
 lappend non_terminals simpleProtoliteral {
   or /CHAR /INTEGER /REAL
 }
 
-# (15) Structured Proto Literal
+# (17) Structured Proto Literal
 lappend non_terminals structuredProtoliteral {
   line LBRACE {
     or
@@ -313,7 +324,7 @@ lappend non_terminals structuredProtoliteral {
   RBRACE
 }
 
-# (16) Type
+# (18) Type
 lappend non_terminals type {
   line {
     or
@@ -326,37 +337,37 @@ lappend non_terminals type {
   }
 }
 
-# (16.1) Type Identifier
+# (18.1) Type Identifier
 lappend non_terminals typeIdent {
   line qualident
 }
 
-# (17) Range
+# (19) Range
 lappend non_terminals range {
   line [ constExpression .. constExpression ]
 }
 
-# (18) Enumeration Type
+# (20) Enumeration Type
 lappend non_terminals enumType {
   line ( {optx + enumBaseType ,} identList )
 }
 
-# (18.1) Enumeration Base Type
+# (20.1) Enumeration Base Type
 lappend non_terminals enumBaseType {
   line typeIdent
 }
 
-# (19) Array Type
+# (21) Array Type
 lappend non_terminals arrayType {
   line ARRAY {loop componentCount ,} OF typeIdent
 }
 
-# (19.1) Component Count
+# (21.1) Component Count
 lappend non_terminals componentCount {
   line constExpression
 }
 
-# (20) Record Type
+# (22) Record Type
 lappend non_terminals recordType {
   line RECORD
     {or
@@ -366,65 +377,58 @@ lappend non_terminals recordType {
   END
 }
 
-# (20.1) Field List
+# (22.1) Field List
 lappend non_terminals fieldList {
   line variableDeclaration
 }
 
-# (20.2) Base Type
+# (22.2) Base Type
 lappend non_terminals baseType {
   line typeIdent
 }
 
-# (21) Indeterminate Field Declaration
+# (23) Indeterminate Field Declaration
 lappend non_terminals indeterminateField {
   line INDETERMINATE Ident : ARRAY discriminantFieldIdent OF typeIdent
 }
 
 
-# (21.1) Discriminant Field Identifier
+# (23.1) Discriminant Field Identifier
 lappend non_terminals discriminantFieldIdent {
   line Ident
 }
 
-# (22) Pointer Type
+# (24) Pointer Type
 lappend non_terminals pointerType {
   line POINTER TO {optx CONST} typeIdent
 }
 
-# (23) Procedure Type
+# (25) Procedure Type
 lappend non_terminals procedureType {
   line PROCEDURE {optx ( formalTypeList )} {optx : returnedType}
 }
 
-# (23.1) Returned Type
+# (25.1) Returned Type
 lappend non_terminals returnedType {
   line typeIdent
 }
 
-# (24) Formal Type List
+# (26) Formal Type List
 lappend non_terminals formalTypeList {
-  loop formalType ,
+  loop {or attributedFormalType variadicFormalType} ,
 }
 
-# (25) Formal Type
-lappend non_terminals formalType {
-  or
-    {line attributedFormalType}
-    {line variadicFormalType}
-}
-
-# (26) Attributed Formal Type
+# (27) Attributed Formal Type
 lappend non_terminals attributedFormalType {
   line {or {} CONST VAR} simpleFormalType
 }
 
-# (27) Simple Formal Type
+# (28) Simple Formal Type
 lappend non_terminals simpleFormalType {
   line {optx /CAST} {optx ARRAY OF} typeIdent
 }
 
-# (28) Variadic Formal Type
+# (29) Variadic Formal Type
 lappend non_terminals variadicFormalType {
   line VARIADIC OF {
     or
@@ -433,12 +437,12 @@ lappend non_terminals variadicFormalType {
   }
 }
 
-# (29) Variable Declaration
+# (30) Variable Declaration
 lappend non_terminals variableDeclaration {
   line identList : {optx range OF} typeIdent
 }
 
-# (30) Procedure Header
+# (31) Procedure Header
 lappend non_terminals procedureHeader {
   stack
     {line PROCEDURE
@@ -446,27 +450,22 @@ lappend non_terminals procedureHeader {
     {line Ident {optx ( formalParamList )} {optx : returnedType}}
 }
 
-# (31) Procedure-Bindable Entity
+# (32) Procedure-Bindable Entity
 lappend non_terminals procBindableEntity {
   or
     DIV MOD FOR IN .. :: + - * / = < > procBindableIdent
 }
 
-# (31.1) Procedure-Bindable Identifier
+# (32.1) Procedure-Bindable Identifier
 lappend non_terminals procBindableIdent {
   or
-    /ABS /NEG /ODD /COUNT /LENGTH /NEW /RETAIN /RELEASE /STORE
-    /REMOVE /COPY /CONCAT /SUBSET /TLIMIT /TMIN /TMAX /SXF /VAL
+    /ABS /NEG /ODD /COUNT /LENGTH /NEW /RETAIN /RELEASE /COPY /CONCAT
+    /STORE /REMOVE /RETRIEVE /SUBSET /TLIMIT /TMIN /TMAX /SXF /VAL
 }
 
-# (32) Formal Parameter List
+# (33) Formal Parameter List
 lappend non_terminals formalParamList {
-  loop formalParams ;
-}
-
-# (33) Formal Parameters
-lappend non_terminals formalParams {
-  line {or simpleFormalParams variadicFormalParams}
+  loop {or simpleFormalParams variadicFormalParams} ;
 }
 
 # (34) Simple Formal Parameters
@@ -716,8 +715,8 @@ lappend terminals ReservedWords1 {
 # (1b) Reserved Words
 lappend terminals ReservedWords2 {
   or
-    INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR POINTER PROCEDURE RECORD
-    REPEAT RETURN SET SURROGATE THEN TO TYPE UNTIL VAR VARIADIC WHILE
+    INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR PIVOTAL POINTER PROCEDURE
+    RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR VARIADIC WHILE
 }
 
 # (2) Identifier
