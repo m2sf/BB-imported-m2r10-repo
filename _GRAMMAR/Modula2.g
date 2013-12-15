@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 5, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 15, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -30,7 +30,7 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 45 reserved words, 21 identifiers, 19 pragma words
+// 45 reserved words, 23 identifiers, 20 pragma symbols
 
 tokens {
 	
@@ -131,18 +131,18 @@ tokens {
     ENDIF          = 'ENDIF';          /* RW within pragma only */
     INLINE         = 'INLINE';         /* RW within pragma only */
     NOINLINE       = 'NOINLINE';       /* RW within pragma only */
-    LAZY           = 'LAZY';           /* RW within pragma only */
+    NORETURN       = 'NORETURN';       /* RW within pragma only */
+    PTW            = 'PTW';            /* RW within pragma only */
     FORWARD        = 'FORWARD';        /* RW within pragma only */    
     ENCODING       = 'ENCODING';       /* RW within pragma only */
     ALIGN          = 'ALIGN';          /* RW within pragma only */
     PADBITS        = 'PADBITS';        /* RW within pragma only */
     PURITY         = 'PURITY';         /* RW within pragma only */
     SINGLEASSIGN   = 'SINGLEASSIGN' ;  /* RW within pragma only */
+    LOWLATENCY     = 'LOWLATENCY';     /* RW within pragma only */
     VOLATILE       = 'VOLATILE';       /* RW within pragma only */
     ADDR           = 'ADDR';           /* RW within pragma only */
     FFI            = 'FFI';            /* RW within pragma only */
-    VARGC          = 'VARGC';          /* RW within pragma only */
-    REG            = 'REG';            /* RW within pragma only */
 
 // *** Special Characters, 3 tokens ***
 
@@ -672,12 +672,14 @@ identList :
 
 // production #1
 pragma :
-    '<*'
-    ( pragmaMSG | pragmaIF | inlinePragma | pragmaLAZY | pragmaFORWARD |
-      pragmaENCODING | pragmaALIGN | pragmaPADBITS | pragmaPURITY |
-      variableAttrPragma | pragmaADDR | pragmaFFI | pragmaVARGC |
-      pragmaREG | implDefinedPragma )
-    '*>'
+    '<*' pragmaBody '*>'
+    ;
+
+// fragment #1.1
+pragmaBody :
+	pragmaMSG | pragmaIF | procAttrPragma | pragmaPTW | pragmaFORWARD |
+    pragmaENCODING | pragmaALIGN | pragmaPADBITS | pragmaPURITY |
+    variableAttrPragma | pragmaADDR | pragmaFFI | implDefinedPragma
     ;
 
 // production #2
@@ -704,14 +706,14 @@ pragmaIF :
     ;
 
 // production #5
-inlinePragma :
-    INLINE | NOINLINE
+procAttrPragma :
+    INLINE | NOINLINE | NORETURN
     {} /* make ANTLRworks display separate branches */
     ;
 
 // production #6
-pragmaLAZY :
-    LAZY
+pragmaPTW :
+    PTW
     ;
 
 // production #7
@@ -755,7 +757,7 @@ pragmaPURITY :
 
 // production #13
 variableAttrPragma :
-    SINGLEASSIGN | VOLATILE
+    SINGLEASSIGN | LOWLATENCY | VOLATILE
     {} /* make ANTLRworks display separate branches */
     ;
 
@@ -770,68 +772,58 @@ pragmaFFI :
     ;
 
 // production #16
-pragmaVARGC :
-    VARGC
-    ;
-
-// production #17
-pragmaREG :
-    REG '=' inPragmaExpression
-    ;
-
-// production #18
 implDefinedPragma :
     ( 'I' | 'W' | 'E' | 'F' {}) ','
     implDefinedPragmaSymbol ( '=' inPragmaExpression )?
     ;
 
-// production #19
+// production #17
 inPragmaExpression :
 /* represents operator precedence level 1 */
     inPragmaSimpleExpression ( inPragmaRelOp inPragmaSimpleExpression )?
     ;
 
-// fragment #19.1
+// fragment #17.1
 inPragmaRelOp :
     '=' | '#' | '<' | '<=' | '>' | '>='
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #20
+// production #18
 inPragmaSimpleExpression :
 /* represents operator precedence level 2 */
     ( '+' | '-' {})? inPragmaTerm ( addOp inPragmaTerm )*
     ;
 
-// production #21
+// production #19
 inPragmaTerm :
 /* represents operator precedence level 3 */
     inPragmaFactor ( inPragmaMulOp inPragmaFactor )*
     ;
 
-// fragment #21.1
+// fragment #19.1
 inPragmaMulOp :
     '*' | DIV | MOD | AND
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #22
+// production #20
 inPragmaFactor :
 /* represents operator precedence level 4 */
     NOT? inPragmaSimpleFactor
     ;
 
-// production #23
+// production #21
 inPragmaSimpleFactor :
     wholeNumber |
     /* constQualident is covered by inPragmaCompileTimeFunctionCall */
     '(' inPragmaExpression ')' | inPragmaCompileTimeFunctionCall
     ;
 
-// alias #23.1
+// alias #21.1
 wholeNumber : NumericLiteral ;
 
-// production #24
+// production #22
 inPragmaCompileTimeFunctionCall :
     qualident ( '(' inPragmaExpression ( ',' inPragmaExpression )* ')' )?
     ;
