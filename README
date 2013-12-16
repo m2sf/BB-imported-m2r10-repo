@@ -11,21 +11,17 @@ o  Source Tree
 
 https://bitbucket.org/trijezdci/m2r10/src
 
-o  EBNF Grammar
+o  Specification
 
-https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.Grammar.Snapshot.pdf
-
-o  Syntax Diagrams
-
-https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.Diagrams.Snapshot.pdf
+https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.Specification.Snapshot.pdf
 
 o  Library Definition Modules
 
 https://bitbucket.org/trijezdci/m2r10/src/tip/_STANDARD_LIBRARY
 
-o  Specification
+o  Change Log
 
-https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.Specification.Snapshot.pdf
+https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.Changes.Info.txt
 
 o  Compiler Roadmap
 
@@ -46,8 +42,9 @@ http://en.wikipedia.org/wiki/Modula-2
 
 Modula-2 R10 is a modern revision of N.Wirth's Modula-2 language undertaken by
 B.Kowarsch  and R.Sutcliffe  in 2009  and 2010.  A pragma system  was added in
-in 2011 and 2012.  The language report is currently under editorial review and
-is due to be published as a book in 2013.
+in 2011 and 2012.  The Design was  refined and polished in 2013.  The language
+report is  currently under editorial review  and will be publshed in book form
+in 2014.
 
 The primary design goals of the revision were type safety,  utmost readability
 and consistency,  and  suitability  as a  core language   for domain  specific
@@ -59,20 +56,20 @@ defined abstract data types  practically indistinguishable from built-in types
 and thereby eliminate one of the major causes of feature growth.
 
 A reference compiler  for Modula-2 R10 has been  under development  since 2010
-but work had been suspended  until the design has been finalised.  Work on the
-compiler  is scheduled to resume  mid-December 2012.  Initially,  the compiler
-will generate C99 source code.  Eventually, it will also generate LLVM IR.
+but work had been suspended until the design has been finalised.  Some updates
+were done in 2013.  Development will fully resume in 2014. Initially, the com-
+piler will generate C99 source code,  and eventually LLVM IR.
 
 
 * Development Schedule *
 
-The authors endeavour to have a working syntax and type checker around the end
-of Q1,  and a bootstrap compiler  around Q2-Q3 in 2013.  However, it should be
-noted that this project is a *private* and *self-funded* effort by the authors
-who are doing this work in their own *spare* *time*.  Further, the authors be-
-lieve that  quality design  and  proper specification  are prerequisites for a
-quality implementation and cannot be rushed.  Consequently,  there is no fixed
-schedule for the completion of the project.  It will take as long as it takes.
+This project is a  *private*  and  *self-funded*  effort by the authors who are
+doing this work in their own *spare* *time*.  Further, the authors believe that
+quality design  and proper specification are prerequisites for a quality imple-
+mentation and cannot be rushed.  The finalisation  of the  manuscripts  for the
+book will currently estimated for January 2014, will allow shifting of focus to
+the implementation,  but there is  no fixed schedule  for the completion of the
+project.  It will take as long as it takes.
 
 
-(status: Jan 30, 2013)
+(status: Dec 15, 2013)
