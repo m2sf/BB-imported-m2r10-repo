@@ -232,5 +232,14 @@ TYPE VARGLIST; (* only available if pragma FFI is supported *)
    may  only  be used in combination with pragma FFI.  This type is a pseudo-
    type, it cannot be used for any other purpose. *)
 
+(* Macro VARGC for use within calls to unsafe foreign variadic functions *)
+
+(* MACRO *) PROCEDURE VARGC : <Z-Type> ;
+(* An invocation  of macro VARGC  within the actual parameter list  of a call
+   to an  unsafe foreign variadic function  is replaced by the argument count
+   of the variadic arguments passed to the variadic parameter within the same
+   function call.  Its replacement value  is compatible  with  any predefined
+   whole number type.  Any use of the macro outside the actual parameter list
+   of a call to a foreign variadic function will cause a compile time error. *)
 
 END UNSAFE.
