@@ -935,7 +935,7 @@ lappend pragmas compileTimeMsgComponent {
     or
       StringLiteral
       constQualident
-      {line ? {or ALIGN ENCODING implDefinedPragmaSymbol}}
+      {line @ {or ALIGN ENCODING implDefinedPragmaSymbol}}
   }
 }
 
