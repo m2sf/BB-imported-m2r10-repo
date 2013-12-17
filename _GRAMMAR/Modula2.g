@@ -691,7 +691,7 @@ pragmaMSG :
 // production #3
 compileTimeMsgComponent :
     StringLiteral | constQualident |
-    '?' ( ALIGN | ENCODING | implDefinedPragmaSymbol )
+    '@' ( ALIGN | ENCODING | implDefinedPragmaSymbol )
     ;
 
 // alias #3.1
