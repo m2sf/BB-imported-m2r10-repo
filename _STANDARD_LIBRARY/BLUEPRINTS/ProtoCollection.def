@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoCollection; (* root of collection hierarchy *)
 
-PLACEHOLDERS AccessorType, ValueType, ProcType;
+CAMEO AccessorType, ValueType, ProcType;
 
 (* Collection ADTs must be records,
    literal compatibility may be specified by more specialised blueprints *)
