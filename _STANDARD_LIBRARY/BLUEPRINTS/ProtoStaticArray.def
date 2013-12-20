@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoStaticArray [ProtoCollection];
 
-PLACEHOLDERS IndexType, ValueType, ProcType;
+CAMEO IndexType, ValueType, ProcType;
 
 (* Static Array ADTs must be opaque records to be statically allocatable,
    array literals are compatible *)
