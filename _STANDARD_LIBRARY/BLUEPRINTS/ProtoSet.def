@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoSet [ProtoCollection];
 
-PLACEHOLDERS ElementType, ProcType, File;
+CAMEO ElementType, ProcType, File;
 
 (* Dynamic Set ADTs must be opaque,
    structured literals with a list of elements are compatible *)
