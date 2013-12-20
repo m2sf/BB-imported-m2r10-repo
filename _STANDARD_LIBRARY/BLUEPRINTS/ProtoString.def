@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoString [ProtoCollection];
 
-PLACEHOLDERS IndexType, ProcType;
+CAMEO IndexType, ProcType;
 
 (* String ADTs must be opaque,
    Character and string literals are compatible *)
