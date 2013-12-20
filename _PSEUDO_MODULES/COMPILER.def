@@ -37,7 +37,7 @@ CONST ReleaseDay = <implementation defined whole number value>;
 (* Denotes the day of release of the compiler, range 1 to 31 *)
 
 
-(* Optional compiler capabilities *)
+(* Availability of optional compiler capabilities *)
 
 CONST IsBootstrapSubset = <implementation defined boolean value>;
 (* Denotes whether the compiler provides a language subset for bootstrap. *)
@@ -132,28 +132,28 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 
 (* Compile Time Arithmetic *)
 
-(* minimum of a list of constant expressions *)
+(* Minimum of a list of constant expressions *)
 
 (* MACRO *) PROCEDURE MIN ( constant : VARIADIC OF <T> ) : <T>;
 (* Replaced by the smallest value of its variadic argument list,
    all arguments must be of the same ordinal or scalar type. *)
 
 
-(* maximum of a list of constant expressions *)
+(* Maximum of a list of constant expressions *)
 
 (* MACRO *) PROCEDURE MAX ( constant : VARIADIC OF <T> ) : <T>;
 (* Replaced by the largest value of its variadic argument list,
    all arguments must be of the same ordinal or scalar type. *)
 
 
-(* ordinal storage capacity of a given number of bits *)
+(* Ordinal storage capacity of a given number of bits *)
 
 (* MACRO *) PROCEDURE MaxOrd ( bits : <T> ) : <T>;
 (* Expands to the largest ordinal number that can be represented in the num-
    ber of bits given by its argument.  T is a pervasive whole number type. *)
 
 
-(* binary storage requirement for an ordinal value *)
+(* Binary storage requirement for an ordinal value *)
 
 (* MACRO *) PROCEDURE ReqBits ( ord : <T> ) : <T>;
 (* Expands to the minimum number of bits required to represent the ordinal
@@ -164,7 +164,15 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
    number given by its argument.  T is a pervasive whole number type. *)
 
 
-(* hash value of a string literal *)
+(* Unique ID of a type *)
+
+TYPE UniqueTypeID = <implementation defined>;
+
+(* MACRO *) PROCEDURE TypeID ( <T> ) : UniqueTypeID;
+(* Expands to the implementation defined unique ID value of type T. *)
+
+
+(* Hash value of a string literal *)
 
 (* MACRO *) PROCEDURE HASH ( literal : ARRAY OF CHAR ) : LONGCARD;
 (* Expands to the hash value of a string literal, excluding the enclosing
