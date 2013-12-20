@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoOrderedSet [ProtoSet];
 
-PLACEHOLDERS ElementType, ProcType;
+CAMEO ElementType, ProcType;
 
 (* Set ADTs must be opaque,
    set literals are compatible *)
