@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoRealArray [ProtoNonScalar];
 
-PLACEHOLDERS IndexType, RealType, ProcType;
+CAMEO IndexType, RealType, ProcType;
 
 (* Real Array ADTs must be opaque records to be statically allocatable,
    structured literals with lists of real number literals are compatible *)
