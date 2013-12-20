@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 15, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 20, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -42,6 +42,7 @@ tokens {
     BEGIN          = 'BEGIN';
     BLUEPRINT      = 'BLUEPRINT';
     BY             = 'BY';
+    CAMEO          = 'CAMEO';
     CASE           = 'CASE';
     CONST          = 'CONST';
     DEFINITION     = 'DEFINITION';
@@ -67,7 +68,6 @@ tokens {
     OF             = 'OF';
     OPAQUE         = 'OPAQUE';
     OR             = 'OR';             /* also a RW within pragmas */
-    PIVOTAL        = 'PIVOTAL';
     POINTER        = 'POINTER';
     PROCEDURE      = 'PROCEDURE';
     RECORD         = 'RECORD';
@@ -192,7 +192,7 @@ conformedToBlueprint : blueprintIdent ;
 // production #4
 blueprint :
     BLUEPRINT blueprintIdent ( '[' conformedToBlueprint ']' )? ';'
-    ( PIVOTAL identList ';' )?
+    ( CAMEO identList ';' )?
     requiredTypeDeclaration ';'
     ( requiredBinding ';' )*
     END blueprintIdent '.'
@@ -836,11 +836,12 @@ inPragmaCompileTimeFunctionCall :
 
 // production #1
 ReservedWord :
-    ALIAS | AND | ARRAY | BEGIN | BLUEPRINT | BY | CASE | CONST | DEFINITION |
-    DESCENDING | DIV | DO | ELSE | ELSIF | END | EXIT | FOR | FROM | GENLIB |
-    IF | IMPLEMENTATION | IMPORT | IN | INDETERMINATE | LOOP | MOD | MODULE |
-    NOT | OF | OPAQUE | OR | PIVOTAL | POINTER | PROCEDURE | RECORD | REPEAT |
-    RETURN | SET | THEN | TO | TYPE | UNTIL | VAR | VARIADIC | WHILE
+    ALIAS | AND | ARRAY | BEGIN | BLUEPRINT | BY | CAMEO | CASE | CONST |
+    DEFINITION | DESCENDING | DIV | DO | ELSE | ELSIF | END | EXIT | FOR |
+    FROM | GENLIB | IF | IMPLEMENTATION | IMPORT | IN | INDETERMINATE |
+    LOOP | MOD | MODULE | NOT | OF | OPAQUE | OR | POINTER | PROCEDURE |
+    RECORD | REPEAT | RETURN | SET | THEN | TO | TYPE | UNTIL | VAR |
+    VARIADIC | WHILE
     ;
 
 // production #2
