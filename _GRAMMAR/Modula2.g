@@ -118,10 +118,9 @@ tokens {
     SXF            = 'SXF';            /* RW within procedure header */
     VAL            = 'VAL';            /* RW within procedure header */
 
-// *** Reserved Words of the Pragma Language, 20 tokens ***
+// *** Reserved Words of the Pragma Language, 21 tokens ***
 
 //  Symbols that are reserved words only within pragmas
-//  Ambiguity is resolvable using the Schroedinger's Token technique
 
     MSG            = 'MSG';            /* RW within pragma only */
     INFO           = 'INFO';           /* RW within pragma only */
@@ -141,6 +140,7 @@ tokens {
     SINGLEASSIGN   = 'SINGLEASSIGN' ;  /* RW within pragma only */
     LOWLATENCY     = 'LOWLATENCY';     /* RW within pragma only */
     VOLATILE       = 'VOLATILE';       /* RW within pragma only */
+    DEPRECATED     = 'DEPRECATED';     /* RW within pragma only */
     ADDR           = 'ADDR';           /* RW within pragma only */
     FFI            = 'FFI';            /* RW within pragma only */
 
@@ -679,7 +679,8 @@ pragma :
 pragmaBody :
 	pragmaMSG | pragmaIF | procAttrPragma | pragmaPTW | pragmaFORWARD |
     pragmaENCODING | pragmaALIGN | pragmaPADBITS | pragmaPURITY |
-    variableAttrPragma | pragmaADDR | pragmaFFI | implDefinedPragma
+    variableAttrPragma | pragmaDEPRECATED | pragmaADDR | pragmaFFI |
+    implDefinedPragma
     ;
 
 // production #2
@@ -762,68 +763,73 @@ variableAttrPragma :
     ;
 
 // production #14
+pragmaDEPRECATED :
+    DEPRECATED
+    ;
+
+// production #15
 pragmaADDR :
     ADDR '=' inPragmaExpression
     ;
 
-// production #15
+// production #16
 pragmaFFI :
     FFI '=' StringLiteral /* "C" or "Fortran" */
     ;
 
-// production #16
+// production #17
 implDefinedPragma :
     ( 'I' | 'W' | 'E' | 'F' {}) ','
     implDefinedPragmaSymbol ( '=' inPragmaExpression )?
     ;
 
-// production #17
+// production #18
 inPragmaExpression :
 /* represents operator precedence level 1 */
     inPragmaSimpleExpression ( inPragmaRelOp inPragmaSimpleExpression )?
     ;
 
-// fragment #17.1
+// fragment #18.1
 inPragmaRelOp :
     '=' | '#' | '<' | '<=' | '>' | '>='
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #18
+// production #19
 inPragmaSimpleExpression :
 /* represents operator precedence level 2 */
     ( '+' | '-' {})? inPragmaTerm ( addOp inPragmaTerm )*
     ;
 
-// production #19
+// production #20
 inPragmaTerm :
 /* represents operator precedence level 3 */
     inPragmaFactor ( inPragmaMulOp inPragmaFactor )*
     ;
 
-// fragment #19.1
+// fragment #20.1
 inPragmaMulOp :
     '*' | DIV | MOD | AND
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #20
+// production #21
 inPragmaFactor :
 /* represents operator precedence level 4 */
     NOT? inPragmaSimpleFactor
     ;
 
-// production #21
+// production #22
 inPragmaSimpleFactor :
     wholeNumber |
     /* constQualident is covered by inPragmaCompileTimeFunctionCall */
     '(' inPragmaExpression ')' | inPragmaCompileTimeFunctionCall
     ;
 
-// alias #21.1
+// alias #22.1
 wholeNumber : NumericLiteral ;
 
-// production #22
+// production #23
 inPragmaCompileTimeFunctionCall :
     qualident ( '(' inPragmaExpression ( ',' inPragmaExpression )* ')' )?
     ;
