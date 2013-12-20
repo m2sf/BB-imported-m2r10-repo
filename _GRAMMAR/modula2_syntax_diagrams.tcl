@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Dec 15, 2013
+# Syntax diagram generator for Modula-2 (R10), status Dec 20, 2013
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -184,7 +184,7 @@ lappend non_terminals conformedToBlueprint {
 lappend non_terminals blueprint {
   stack
     {line BLUEPRINT blueprintIdent {opt [ conformedToBlueprint ]} ;}
-    {line {opt PIVOTAL identList ;} requiredTypeDeclaration ;}
+    {line {opt CAMEO identList ;} requiredTypeDeclaration ;}
     {line {loop nil {nil requiredBinding ;}} END blueprintIdent .}
 }
 
@@ -708,14 +708,14 @@ set terminals {}
 # (1a) Reserved Words
 lappend terminals ReservedWords1 {
   or
-    ALIAS AND ARRAY BEGIN BLUEPRINT BY CASE CONST DEFINITION DESCENDING
-    DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF IMPLEMENTATION IMPORT IN
+    ALIAS AND ARRAY BEGIN BLUEPRINT BY CAMEO CASE CONST DEFINITION DESCENDING
+    DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF IMPLEMENTATION IMPORT
 }
 
 # (1b) Reserved Words
 lappend terminals ReservedWords2 {
   or
-    INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR PIVOTAL POINTER PROCEDURE
+    IN INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR POINTER PROCEDURE
     RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR VARIADIC WHILE
 }
 
