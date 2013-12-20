@@ -1,7 +1,9 @@
 MODULE RWStatus;
 (* Teaching Aid -- Parameterless status checks on stdIn and stdOut *)
 
-FROM StdIO IMPORT Status;
+IMPORT StdIO;
+
+TYPE Status = ALIAS OF StdIO.Status;
 
 PROCEDURE ReadStatus() : Status;
 (* Calls StdIO.StatusOf(stdIn) *)
