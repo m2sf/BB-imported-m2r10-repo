@@ -918,6 +918,7 @@ lappend pragmas pragmaBody {
     pragmaPADBITS
     pragmaPURITY
     variableAttrPragma
+    pragmaDEPRECATED
     pragmaADDR
     pragmaFFI
     implDefinedPragma
@@ -1012,52 +1013,57 @@ lappend pragmas variableAttrPragma {
   or SINGLEASSIGN LOWLATENCY VOLATILE
 }
 
-# (14) Body Of Memory Mapping Pragma
+# (14) Body Of Deprecation Pragma
+lappend pragmas pragmaDEPRECATED {
+  line DEPRECATED
+}
+
+# (15) Body Of Memory Mapping Pragma
 lappend pragmas pragmaADDR {
   line ADDR = inPragmaExpression
 }
 
-# (15) Body Of Foreign Function Interface Pragma
+# (16) Body Of Foreign Function Interface Pragma
 lappend pragmas pragmaFFI {
   line FFI = {or `C `Fortran }
 }
 
-# (16) Body of Implementation Defined Pragma
+# (17) Body of Implementation Defined Pragma
 lappend pragmas implDefinedPragma {
   line {or I W E F} , implDefinedPragmaSymbol {optx = inPragmaExpression}
 }
 
-# (17) In-Pragma Expression
+# (18) In-Pragma Expression
 lappend pragmas inPragmaExpression {
   line inPragmaSimpleExpr {optx inPragmaRelOp inPragmaSimpleExpr}
 }
 
-# (17.1) In-Pragma Relational Operator
+# (18.1) In-Pragma Relational Operator
 lappend pragmas inPragmaRelOp {
   or = # < <= > >=
 }
 
-# (18) In-Pragma Simple Expression
+# (19) In-Pragma Simple Expression
 lappend pragmas inPragmaSimpleExpr {
   line {or {} + -} {loop inPragmaTerm addOp}
 }
 
-# (19) In-Pragma Term
+# (20) In-Pragma Term
 lappend pragmas inPragmaTerm {
   loop inPragmaFactor inPragmaMulOp
 }
 
-# (19.1) In-Pragma Multiply Operator
+# (20.1) In-Pragma Multiply Operator
 lappend pragmas inPragmaMulOp {
   or * DIV MOD AND
 }
 
-# (20) In-Pragma Factor
+# (21) In-Pragma Factor
 lappend pragmas inPragmaFactor {
   line {optx NOT} inPragmaSimpleFactor
 }
 
-# (21) In-Pragma Simple Factor
+# (22) In-Pragma Simple Factor
 lappend pragmas inPragmaSimpleFactor {
   or
     wholeNumber
@@ -1066,12 +1072,12 @@ lappend pragmas inPragmaSimpleFactor {
     {line ( inPragmaExpression )}
 }
 
-# (21.1) Whole Number
+# (22.1) Whole Number
 lappend pragmas wholeNumber {
   line NumericLiteral
 }
 
-# (22) In-Pragma Compile Time Function Call
+# (23) In-Pragma Compile Time Function Call
 lappend pragmas inPragmaCompileTimeFunctionCall {
   line qualident ( {loop inPragmaExpression ,} ) 
 }
