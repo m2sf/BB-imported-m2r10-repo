@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoSet [ProtoCollection];
 
-CAMEO ElementType, ProcType, File;
+IMPORT OR DEFINE ElementType, ProcType, File;
 
 (* Dynamic Set ADTs must be opaque,
    structured literals with a list of elements are compatible *)
