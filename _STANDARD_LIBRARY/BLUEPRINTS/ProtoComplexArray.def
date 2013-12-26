@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoComplexArray [ProtoNonScalar];
 
-CAMEO IndexType, ComplexType, ProcType;
+IMPORT OR DEFINE IndexType, ComplexType, ProcType;
 
 (* Complex Array ADTs must be opaque records to be statically allocatable,
    structured literals with lists of complex number literals are compatible *)
