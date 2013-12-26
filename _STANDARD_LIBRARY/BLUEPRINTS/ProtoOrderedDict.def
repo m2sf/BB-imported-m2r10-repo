@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoOrderedDict [ProtoDictionary];
 
-CAMEO KeyType, ValueType, ProcType;
+IMPORT OR DEFINE KeyType, ValueType, ProcType;
 
 (* Ordered Dictionary ADTs must be opaque,
    variadic structured literals with key/value pairs are compatible *)
