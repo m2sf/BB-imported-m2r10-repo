@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoArray [ProtoCollection];
 
-CAMEO IndexType, ValueType, ProcType;
+IMPORT OR DEFINE IndexType, ValueType, ProcType;
 
 (* Array ADTs must be opaque,
    array literals are compatible *)
