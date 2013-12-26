@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoOrderedSet [ProtoSet];
 
-CAMEO ElementType, ProcType;
+IMPORT OR DEFINE ElementType, ProcType;
 
 (* Set ADTs must be opaque,
    set literals are compatible *)
