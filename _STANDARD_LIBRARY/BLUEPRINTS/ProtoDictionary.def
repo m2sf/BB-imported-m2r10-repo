@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoDictionary [ProtoCollection];
 
-CAMEO KeyType, ValueType, ProcType, File;
+IMPORT OR DEFINE KeyType, ValueType, ProcType, File;
 
 
 (* Dictionary ADTs must be opaque,
