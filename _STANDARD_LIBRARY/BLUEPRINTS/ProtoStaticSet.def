@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoStaticSet [ProtoCollection];
 
-CAMEO ElementType, ProcType, File;
+IMPORT OR DEFINE ElementType, ProcType, File;
 
 (* Static Set ADTs must be opaque records to be statically allocatable,
    structured literals with a list of elements are compatible *)
