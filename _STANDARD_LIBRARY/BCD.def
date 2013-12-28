@@ -20,13 +20,15 @@ TYPE
 
 (* Bindings required by blueprint ProtoReal *)
 
-(* Precision *)
+(* Number representation parameters *)
 
-CONST [TEXP] maxExponentDigits = 2;
-(* maximum number of decimal digits of the exponent of a BCD value *)
+CONST [#^] base = 10;
 
-CONST [TSIG] maxSignificandDigits = 14;
-(* maximum number of decimal digits of the significand of a BCD value *)
+CONST [.#] precision = 14; (* base-10 digits *)
+
+CONST [-^] eMin = -64;
+
+CONST [+^] eMax = +63;
 
 
 (* Range *) 
