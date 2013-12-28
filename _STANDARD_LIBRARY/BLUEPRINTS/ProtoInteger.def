@@ -13,11 +13,15 @@ TYPE ProtoInteger = OPAQUE RECORD := INTEGER;
 (* Bindings required for ProtoInteger ADTs *)
 
 
-(* Recommended bindings to pervasive functions TSIG and TEXP:
+(* Number representation parameters:
 
-CONST [TSIG] maxSignificandDigits = n ;
+CONST [#^] base = <implementation defined>;
 
-CONST [TEXP] maxExponentDigits = 0 ;
+CONST [.#] precision = <implementation defined>;
+
+CONST [-^] eMin = 0; (* always zero for integers *)
+
+CONST [+^] eMax = 0; (* always zero for integers *)
 
 *)
 
