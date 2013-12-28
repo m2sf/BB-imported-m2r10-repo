@@ -22,7 +22,7 @@ TYPE
 
 CONST [#^] base = 2;
 
-CONST [.#] precision = 39;
+CONST [.#] precision = 128; (* base-2 digits *)
 
 CONST [-^] eMin = 0;
 
