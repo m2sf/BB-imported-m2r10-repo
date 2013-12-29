@@ -13,17 +13,17 @@ TYPE ProtoReal = OPAQUE RECORD := REAL;
 (* Bindings required for ProtoReal ADTs *)
 
 
-(* Number representation parameters:
+(* Number representation parameters *)
 
-CONST [#^] base = <implementation defined>;
+CONST [-#] isSigned = BOOLEAN;
 
-CONST [.#] precision = <implementation defined>;
+CONST [#^] base = CARDINAL;
 
-CONST [-^] eMin = <implementation defined>;
+CONST [.#] precision = CARDINAL;
 
-CONST [+^] eMax = <implementation defined>;
+CONST [-^] eMin = INTEGER;
 
-*)
+CONST [+^] eMax = CARDINAL;
 
 
 (* Bindings to pervasive functions TMIN and TMAX *)
