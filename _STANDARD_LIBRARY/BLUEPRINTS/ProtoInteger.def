@@ -13,17 +13,17 @@ TYPE ProtoInteger = OPAQUE RECORD := INTEGER;
 (* Bindings required for ProtoInteger ADTs *)
 
 
-(* Number representation parameters:
+(* Number representation parameters *)
 
-CONST [#^] base = <implementation defined>;
+CONST [-#] isSigned = TRUE;
 
-CONST [.#] precision = <implementation defined>;
+CONST [#^] base = CARDINAL;
+
+CONST [.#] precision = CARDINAL;
 
 CONST [-^] eMin = 0; (* always zero for integers *)
 
 CONST [+^] eMax = 0; (* always zero for integers *)
-
-*)
 
 
 (* Bindings to pervasive functions TMIN and TMAX *)
