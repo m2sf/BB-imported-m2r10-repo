@@ -22,13 +22,15 @@ TYPE
 
 (* Number representation parameters *)
 
-CONST [#^] base = 10;
+CONST [-#] isSigned = TRUE;
+
+CONST [#^] base = 10; (* decimal *)
 
 CONST [.#] precision = 14; (* base-10 digits *)
 
-CONST [-^] eMin = -64;
+CONST [-^] eMin = -64; (* IEEE754 E min *)
 
-CONST [+^] eMax = +63;
+CONST [+^] eMax = +63; (* IEEE754 E max *)
 
 
 (* Range *) 
