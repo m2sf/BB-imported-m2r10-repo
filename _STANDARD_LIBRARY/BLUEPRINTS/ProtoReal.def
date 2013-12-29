@@ -37,7 +37,7 @@ PROCEDURE [TMAX] maxValue : ProtoReal;
 
 (* Bindings to scalar conversion primitives *)
 
-PROCEDURE [SXF] toSXF ( lexeme : ARRAY OF CHAR; VAR sxf : ARRAY OF OCTET );
+PROCEDURE [SXF] toSXF ( value : ProtoReal; VAR sxf : ARRAY OF OCTET );
 (* procedure to convert a literal to a value in scalar exchange format *)
 
 PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoReal );
