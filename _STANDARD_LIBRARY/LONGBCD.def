@@ -20,13 +20,17 @@ TYPE
 
 (* Bindings required by blueprint ProtoReal *)
 
-(* Precision *)
+(* Number representation parameters *)
 
-CONST [TEXP] maxExponentDigits = 4;
-(* maximum number of decimal digits of the exponent of a LONGBCD value *)
+CONST [-#] isSigned = TRUE;
 
-CONST [TSIG] maxSignificandDigits = 29;
-(* maximum number of decimal digits of the significand of a LONGBCD value *)
+CONST [#^] base = 10; (* decimal *)
+
+CONST [.#] precision = 29; (* base-10 digits *)
+
+CONST [-^] eMin = -1024; (* IEEE754 E min *)
+
+CONST [+^] eMax = +1023; (* IEEE754 E max *)
 
 
 (* Range *) 
