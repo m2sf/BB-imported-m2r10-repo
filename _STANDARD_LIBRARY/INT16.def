@@ -18,16 +18,17 @@ TYPE
 
 (* Bindings required by blueprint ProtoInteger *)
 
-(* Precision *)
+(* Constants *)
 
-CONST [TEXP] maxExponentDigits = 0;
-(* maximum number of decimal digits of the exponent of a INT16 value *)
+CONST
+    isSigned = TRUE;
+    base = 2; (* binary *)
+    precision = 15; (* base-2 digits *)
+    eMin = 0; (* smallest exponent *)
+    eMax = 0; (* largest exponent *)
 
-CONST [TSIG] maxSignificandDigits = 5;
-(* maximum number of decimal digits of the significand of a INT16 value *)
 
-
-(* Range *) 
+(* Range *)
 
 (* TMIN(INT16) = -32768 *)
 
