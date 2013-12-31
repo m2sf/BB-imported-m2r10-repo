@@ -4,22 +4,30 @@
 
 BLUEPRINT ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
 
-(* ProtoCardinal ADTs must be opaque records to be statically allocatable,
-   integer literals are used *)
+(* ProtoCardinal ADTs must be opaque records to be statically allocatable *)
 
-TYPE ProtoCardinal = OPAQUE RECORD := INTEGER;
+TYPE ProtoCardinal = OPAQUE RECORD (* uses integer literals *) := INTEGER;
 
 
 (* Bindings required for ProtoCardinal ADTs *)
 
 
-(* Recommended bindings to pervasive functions TSIG and TEXP:
+(* Required Constants *)
 
-CONST [TSIG] maxSignificandDigits = n ;
+CONST [-#] isSigned = FALSE;
+(* cardinals are always unsigned *)
 
-CONST [TEXP] maxExponentDigits = 0 ;
+CONST [#^] base : CARDINAL;
+(* radix in which the cardinal is encoded, 2 or 10 *)
 
-*)
+CONST [.#] precision : [1..4000] OF CARDINAL;
+(* maximum number of digits the cardinal ADT can encode *)
+
+CONST [-^] eMin = 0;
+(* cardinals always have an exponent of zero *)
+
+CONST [+^] eMax = 0;
+(* cardinals always have an exponent of zero *)
 
 
 (* Bindings to pervasive functions TMIN and TMAX *)
@@ -54,8 +62,6 @@ PROCEDURE [ODD] odd ( n : ProtoCardinal ) : BOOLEAN;
 (* procedure to bind to the ODD operator for operands of the ProtoCardinal ADT *)
 
 (* The operation NEG is not meaningful for cardinal number types *)
-
-<* WARNONEXTN NEG; *>
 
 
 (* Bindings to dyadic operations *)
