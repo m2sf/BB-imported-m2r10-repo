@@ -4,26 +4,30 @@
 
 BLUEPRINT ProtoReal [ProtoScalar]; (* conforms to ProtoScalar *)
 
-(* ProtoReal ADTs must be opaque records to be statically allocatable,
-   real number literals are used *)
+(* ProtoReal ADTs must be opaque records to be statically allocatable *)
 
-TYPE ProtoReal = OPAQUE RECORD := REAL;
+TYPE ProtoReal = OPAQUE RECORD (* uses real number literals *) := REAL;
 
 
 (* Bindings required for ProtoReal ADTs *)
 
 
-(* Number representation parameters *)
+(* Required Constants *)
 
-CONST [-#] isSigned = BOOLEAN;
+CONST [-#] isSigned : BOOLEAN;
+(* whether the ADT is signed or not *)
 
-CONST [#^] base = CARDINAL;
+CONST [#^] base : CARDINAL;
+(* radix of the ADT's internal representation, 2 or 10 *)
 
-CONST [.#] precision = CARDINAL;
+CONST [.#] precision : [1..4000] OF CARDINAL;
+(* how many digits the ADT can encode in its significand *)
 
-CONST [-^] eMin = INTEGER;
+CONST [-^] eMin : INTEGER;
+(* value of the smallest exponent the ADT can encode *)
 
-CONST [+^] eMax = CARDINAL;
+CONST [+^] eMax : CARDINAL;
+(* value of the largest exponent the ADT can encode *)
 
 
 (* Bindings to pervasive functions TMIN and TMAX *)
@@ -51,7 +55,9 @@ PROCEDURE [ABS] abs ( r : ProtoReal ) : ProtoReal;
 (* procedure to bind to the ABS operator for operands of the ProtoReal ADT *)
 
 PROCEDURE [NEG] neg ( r : ProtoReal ) : ProtoReal;
-(* procedure to bind to the NEG operator for operands of the ProtoReal ADT *)
+(* procedure to bind to the NEG operator for operands of the ProtoReal ADT. *)
+
+(* binding NEG is only permitted if constant isSigned is defined to be TRUE. *)
 
 
 (* Bindings to dyadic operations *)
