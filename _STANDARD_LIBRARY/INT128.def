@@ -18,6 +18,8 @@ TYPE
 
 (* Bindings required by blueprint ProtoInteger *)
 
+(* Constants *)
+
 CONST
     isSigned = TRUE;
     base = 2; (* binary *)
