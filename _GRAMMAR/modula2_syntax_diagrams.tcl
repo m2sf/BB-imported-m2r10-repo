@@ -735,16 +735,15 @@ set terminals {}
 # (1a) Reserved Words
 lappend terminals ReservedWords1 {
   or
-    ALIAS AND ARRAY BEGIN BLUEPRINT BY CASE CONST DEFINE DEFINITION
-    DESCENDING DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF
-    IMPLEMENTATION IMPORT
+    ALIAS AND ARRAY BEGIN BLUEPRINT BY CASE CONST DEFINITION DESCENDING DIV
+    DO ELSE ELSIF END EXIT FOR FROM GENLIB IF IMPLEMENTATION IMPORT IN
 }
 
 # (1b) Reserved Words
 lappend terminals ReservedWords2 {
   or
-    IN INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR POINTER PROCEDURE
-    RECORD REPEAT RETURN SET THEN TO TYPE UNTIL VAR VARIADIC WHILE
+    INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR POINTER PROCEDURE RECORD
+    REFERENTIAL REPEAT RETURN SET THEN TO TYPE UNTIL VAR VARIADIC WHILE
 }
 
 # (2) Identifier
@@ -947,6 +946,7 @@ lappend pragmas pragmaBody {
     pragmaPURITY
     variableAttrPragma
     pragmaDEPRECATED
+    pragmaGENERATED
     pragmaADDR
     pragmaFFI
     implDefinedPragma
@@ -1046,52 +1046,77 @@ lappend pragmas pragmaDEPRECATED {
   line DEPRECATED
 }
 
-# (15) Body Of Memory Mapping Pragma
+# (15) Body Of Generation Timestamp Pragma
+lappend pragmas pragmaGENERATED {
+  line GENERATED template , datestamp , timestamp
+}
+
+# (15.1) Date Stamp
+lappend pragmas datestamp {
+  line year - month - day
+}
+
+# (15.2) Time Stamp
+lappend pragmas timestamp {
+  line hours : minutes : seconds + timezone
+}
+
+# (15.3) year, month, day
+lappend pragmas year_month_day {
+  line wholeNumber
+}
+
+# (15.4) hours, minutes, seconds, timezone
+lappend pragmas hours_mins_secs_tz {
+  line wholeNumber
+}
+
+# (16) Body Of Memory Mapping Pragma
 lappend pragmas pragmaADDR {
   line ADDR = inPragmaExpression
 }
 
-# (16) Body Of Foreign Function Interface Pragma
+# (17) Body Of Foreign Function Interface Pragma
 lappend pragmas pragmaFFI {
   line FFI = {or `C `Fortran }
 }
 
-# (17) Body of Implementation Defined Pragma
+# (18) Body of Implementation Defined Pragma
 lappend pragmas implDefinedPragma {
   line {or I W E F} , implDefinedPragmaSymbol {optx = inPragmaExpression}
 }
 
-# (18) In-Pragma Expression
+# (19) In-Pragma Expression
 lappend pragmas inPragmaExpression {
   line inPragmaSimpleExpr {optx inPragmaRelOp inPragmaSimpleExpr}
 }
 
-# (18.1) In-Pragma Relational Operator
+# (19.1) In-Pragma Relational Operator
 lappend pragmas inPragmaRelOp {
   or = # < <= > >=
 }
 
-# (19) In-Pragma Simple Expression
+# (20) In-Pragma Simple Expression
 lappend pragmas inPragmaSimpleExpr {
   line {or {} + -} {loop inPragmaTerm addOp}
 }
 
-# (20) In-Pragma Term
+# (21) In-Pragma Term
 lappend pragmas inPragmaTerm {
   loop inPragmaFactor inPragmaMulOp
 }
 
-# (20.1) In-Pragma Multiply Operator
+# (21.1) In-Pragma Multiply Operator
 lappend pragmas inPragmaMulOp {
   or * DIV MOD AND
 }
 
-# (21) In-Pragma Factor
+# (22) In-Pragma Factor
 lappend pragmas inPragmaFactor {
   line {optx NOT} inPragmaSimpleFactor
 }
 
-# (22) In-Pragma Simple Factor
+# (23) In-Pragma Simple Factor
 lappend pragmas inPragmaSimpleFactor {
   or
     wholeNumber
@@ -1100,12 +1125,12 @@ lappend pragmas inPragmaSimpleFactor {
     {line ( inPragmaExpression )}
 }
 
-# (22.1) Whole Number
+# (23.1) Whole Number
 lappend pragmas wholeNumber {
   line NumericLiteral
 }
 
-# (23) In-Pragma Compile Time Function Call
+# (24) In-Pragma Compile Time Function Call
 lappend pragmas inPragmaCompileTimeFunctionCall {
   line qualident ( {loop inPragmaExpression ,} ) 
 }
