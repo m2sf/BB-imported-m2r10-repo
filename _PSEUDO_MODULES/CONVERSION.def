@@ -1,8 +1,8 @@
-(* (C) 2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE CONVERSION;
 
-(* Primitives for Converting to and from Scalar eXchange Format *)
+(* Interchange Conversion Primitives for Scalar Numeric Types *)
 
 (* EBNF of Scalar Exchange Format Version 1.00
  *
@@ -90,21 +90,32 @@ CONST MaxExpDigits = 63;
 CONST MaxSigDigits = 4000;
 
 
-(* Maximum number of digits stored in exponent of a type *)
+(* Inspecting the number representation of numeric scalar types *)
 
-(* MACRO *) PROCEDURE TEXP ( <NumericScalarType> ) : CARDINAL;
-(* Expands to a numeric value with the maximum number of decimal digits that
-   can be stored in the exponent of the passed in type.  Expands to 0 if the
-   type does not store an exponent.  A compile time error occurs if the type
-   is not a numeric scalar type. *)
+(* MACRO *) PROCEDURE TSIGNED ( <NumericScalarType> ) : BOOLEAN;
+(* An invocation of the macro is replaced by TRUE if the type passed
+   as its argument is signed, otherwise FALSE. *)
 
+(* MACRO *) PROCEDURE TBASE ( <NumericScalarType> ) : CARDINAL;
+(* An invocation of the macro is replaced by the radix of the type
+   passed as its argument. *)
 
-(* Maximum number of digits stored in significand of a type *)
+(* MACRO *) PROCEDURE TPRECISION ( <NumericScalarType> ) : CARDINAL;
+(* An invocation of the macro is replaced by the precision of the type
+   passed as its argument.  The precision is the number of digits of the
+   longest significand that can be encoded by the type.  The replacement
+   value always indicates the digits in the radix of the type. *)
 
-(* MACRO *) PROCEDURE TSIG ( <NumericScalarType> ) : CARDINAL;
-(* Expands to a numeric value with the maximum number of decimal digits that
-   can be stored in the significand of the passed in type.  A compile time
-   error occurs if the type is not a numeric scalar type. *)
+(* MACRO *) PROCEDURE TMINEXPONENT ( <NumericScalarType> ) : INTEGER;
+(* An invocation of the macro is replaced by the smallest exponent that
+   can be encoded by the type.  The value is zero for ordinal types. *)
+
+(* MACRO *) PROCEDURE TMAXEXPONENT ( <NumericScalarType> ) : CARDINAL;
+(* An invocation of the macro is replaced by the largest exponent that
+   can be encoded by the type.  The value is zero for ordinal types. *)
+
+(* Any invocation of the above macros with an argument that is not an
+   identifier of a numeric scalar type will cause a compile time error. *)
 
 
 (* Required size to hold value in SXF format *)
@@ -121,7 +132,6 @@ PROCEDURE SXF ( CONST value : <T>; VAR sxfValue : ARRAY OF OCTET );
 (* Converts a value of type T to a value in scalar exchange format.
    A compile time error occurs if T is not a numeric scalar type.
    A runtime error occurs if the size of the array is insufficient. *)
-
 
 (* Conversion from SXF format *)
 
