@@ -18,15 +18,14 @@ TYPE
 
 (* Bindings required by blueprint ProtoCardinal *)
 
-(* Number representation parameters *)
+(* Constants *)
 
-CONST [#^] base = 2;
-
-CONST [.#] precision = 128; (* base-2 digits *)
-
-CONST [-^] eMin = 0;
-
-CONST [+^] eMax = 0;
+CONST
+    isSigned = TRUE;
+    base = 2; (* binary *)
+    precision = 128; (* base-2 digits *)
+    eMin = 0; (* smallest exponent *)
+    eMax = 0; (* largest exponent *)
 
 
 (* Range *) 
