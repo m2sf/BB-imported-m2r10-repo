@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Dec 20, 2013
+# Syntax diagram generator for Modula-2 (R10), status Dec 31, 2013
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -163,6 +163,11 @@ lappend non_terminals programModule {
   {loop nil {nil importList nil}} block moduleIdent .
 }
 
+# (2.1) Module Identifier
+lappend non_terminals moduleIdent {
+  line Ident
+}
+
 # (3) Definition Of Module
 lappend non_terminals definitionOfModule {
   stack
@@ -171,69 +176,92 @@ lappend non_terminals definitionOfModule {
     END moduleIdent .}
 }
 
-# (3.1) Module Identifier
-lappend non_terminals moduleIdent {
-  line Ident
-}
-# (3.2) Conformed-To Blueprint
+# (3.1) Conformed-To Blueprint
 lappend non_terminals conformedToBlueprint {
   line blueprintIdent
 }
 
-# (4) Blueprint For Library
-lappend non_terminals blueprint {
-  stack
-    {line BLUEPRINT blueprintIdent {opt [ conformedToBlueprint ]} ;}
-    {line {opt CAMEO identList ;} requiredTypeDeclaration ;}
-    {line {loop nil {nil requiredBinding ;}} END blueprintIdent .}
-}
-
-# (4.1) Blueprint Identifier
+# (3.2) Blueprint Identifier
 lappend non_terminals blueprintIdent {
   line Ident
 }
 
-# (4.2) Required Binding
-lappend non_terminals requiredBinding {
+# (4) Blueprint
+lappend non_terminals blueprint {
+  stack
+    {line BLUEPRINT blueprintIdent {opt [ conformedToBlueprint ]} ;}
+    {line {opt REFERENTIAL identList ;} requiredADT ;}
+    {line {loop nil {nil requiredConst ;}}
+      {loop nil {nil requiredProcedure ;}}
+      END blueprintIdent .}
+}
+
+# (4.1) Required Procedure
+lappend non_terminals requiredProcedure {
   line procedureHeader
 }
 
-# (5) Import List
+# (5) Required Constant
+lappend non_terminals requiredConst {
+  stack
+    {line CONST {optx [ constBindableProperty ]} Ident}
+    {or
+      {line : {optx range OF} predefinedType}
+      {line = constExpression}
+    }
+}
+
+# (5.1) Constant-Bindable Property
+lappend non_terminals constBindableProperty {
+  or := ,> TSIGNED TBASE TPRECISION TMINEXPONENT TMAXEXPONENT
+}
+
+# (5.2) Predefined Type
+lappend non_terminals predefinedType {
+  line Ident
+}
+
+# (5.3) Constant Expression
+lappend non_terminals constExpression {
+  line expression
+}
+
+# (6) Import List
 lappend non_terminals importList {
   line {or libGenDirective importDirective} ;
 }
 
-# (6) Library Generation Directive
+# (7) Library Generation Directive
 lappend non_terminals libGenDirective {
   line GENLIB libIdent FROM template FOR templateParams END
 }
 
-# (6.1) Library Identifier
+# (7.1) Library Identifier
 lappend non_terminals libIdent {
   line Ident
 }
 
-# (6.2) Template
+# (7.2) Template
 lappend non_terminals template {
   line Ident
 }
 
-# (7) Template Parameter List
+# (8) Template Parameter List
 lappend non_terminals templateParamList {
   loop {line placeholder = replacement} ;
 }
 
-# (7.1) Placeholder
+# (8.1) Placeholder
 lappend non_terminals placeholder {
   line Ident
 }
 
-# (7.2) Replacement
+# (8.2) Replacement
 lappend non_terminals replacement {
   line StringLiteral
 }
 
-# (8) Import Directive
+# (9) Import Directive
 lappend non_terminals importDirective {
   or
     {line IMPORT {loop {line moduleIdent {opt +}} ,}}
@@ -245,36 +273,21 @@ lappend non_terminals importDirective {
   }
 }
 
-# (9) Block
+# (10) Block
 lappend non_terminals block {
   line {loop nil {nil declaration nil}}
   {opt BEGIN statementSequence} END
 }
 
-# (10) Definition
+# (11) Definition
 lappend non_terminals definition {
   line {
     or
-      {line CONST {loop {line publicConstDeclaration ;} {}}}
+      {line CONST {loop {line Ident = constExpression ;} {}} }
       {line TYPE {loop {line publicTypeDeclaration ;} {}}}
       {line VAR {loop {line variableDeclaration ;} {}} }
       {line procedureHeader ;}
   }
-}
-
-# (11) Public Constant Declaration
-lappend non_terminals publicConstDeclaration {
-  line {optx [ constBindableEntity ]} Ident = constExpression
-}
-
-# (11.1) Constant-Bindable Entity (Identifier)
-lappend non_terminals constBindableEntity {
-  or := /ORD /TSIG /TEXP
-}
-
-# (11.2) Constant Expression
-lappend non_terminals constExpression {
-  line expression
 }
 
 # (12) Public Type Declaration
@@ -293,8 +306,8 @@ lappend non_terminals declaration {
   }
 }
 
-# (14) Required Type Declaration
-lappend non_terminals requiredTypeDeclaration {
+# (14) Required ADT
+lappend non_terminals requiredADT {
   line TYPE typeIdent =
     {loop permittedTypeDeclaration |} {opt := {loop protoliteral |}}
 }
@@ -513,12 +526,18 @@ lappend non_terminals statementSequence {
 lappend non_terminals assignmentOrProcedureCall {
   line designator {
     or
-      {}
       {line := expression}
-      {line ++}
-      {line --}
+      {line incOrDecSuffix}
       {line actualParameters}
+      {}
   }
+}
+
+# (38.1) Increment Or Decrement Suffix
+lappend non_terminals incOrDecSuffix {
+  or
+    {line ++}
+    {line --}
 }
 
 # (39) IF Statement
@@ -567,6 +586,14 @@ lappend non_terminals forStatement {
     {line FOR {opt DESCENDING} controlVariable}
     {line IN {or designator {line range OF typeIdent}}}
     {line DO statementSequence END}
+}
+
+# (46) FOR Statement (alternative layout)
+lappend non_terminals altForStatement {
+  stack
+    {line FOR {opt DESCENDING} controlVariable}
+    {line IN {or designator {line range OF typeIdent}}
+      {line DO statementSequence END}}
 }
 
 # (46.1) Control Variable
@@ -708,8 +735,9 @@ set terminals {}
 # (1a) Reserved Words
 lappend terminals ReservedWords1 {
   or
-    ALIAS AND ARRAY BEGIN BLUEPRINT BY CAMEO CASE CONST DEFINITION DESCENDING
-    DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF IMPLEMENTATION IMPORT
+    ALIAS AND ARRAY BEGIN BLUEPRINT BY CASE CONST DEFINE DEFINITION
+    DESCENDING DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF
+    IMPLEMENTATION IMPORT
 }
 
 # (1b) Reserved Words
