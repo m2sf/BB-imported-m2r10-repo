@@ -48,10 +48,6 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoInteger );
 (* procedure to convert value in scalar exchange format to the ADT *)
 
 
-(* Binding to assignment operator for non-literal values *)
-
-PROCEDURE [:=] assign ( VAR left : ProtoInteger; right : ProtoInteger );
-
 (* The assignment of literal values is synthesised from SXF and VAL *)
 
 
