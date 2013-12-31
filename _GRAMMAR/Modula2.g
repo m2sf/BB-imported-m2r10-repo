@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 20, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 31, 2013 */
 
 
 // ---------------------------------------------------------------------------
@@ -30,7 +30,7 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 45 reserved words, 23 identifiers, 20 pragma symbols
+// 45 reserved words, 25 identifiers, 22 pragma symbols
 
 tokens {
 	
@@ -42,7 +42,6 @@ tokens {
     BEGIN          = 'BEGIN';
     BLUEPRINT      = 'BLUEPRINT';
     BY             = 'BY';
-    CAMEO          = 'CAMEO';
     CASE           = 'CASE';
     CONST          = 'CONST';
     DEFINITION     = 'DEFINITION';
@@ -71,6 +70,7 @@ tokens {
     POINTER        = 'POINTER';
     PROCEDURE      = 'PROCEDURE';
     RECORD         = 'RECORD';
+    REFERENTIAL    = 'REFERENTIAL';
     REPEAT         = 'REPEAT';
     RETURN         = 'RETURN';
     SET            = 'SET';
@@ -89,14 +89,16 @@ tokens {
 
     CAST           = 'CAST';           /* RW within procedure header */
 
-// *** Bindable Identifiers, 22 tokens ***
+// *** Bindable Identifiers, 24 tokens ***
 
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
-    ORD            = 'ORD';            /* RW within constant definition */
-    TSIG           = 'TSIG';           /* RW within constant definition */
-    TEXP           = 'TEXP';           /* RW within constant definition */
+    TSIGNED        = 'TSIGNED';        /* RW within constant definition */
+    TBASE          = 'TBASE';          /* RW within constant definition */
+    TPRECISION     = 'TPRECISION';     /* RW within constant definition */
+    TMINEXPONENT   = 'TMINEXPONENT';   /* RW within constant definition */
+    TMAXEXPONENT   = 'TMAXEXPONENT';   /* RW within constant definition */
 
     ABS            = 'ABS';            /* RW within procedure header */
     NEG            = 'NEG';            /* RW within procedure header */
@@ -118,7 +120,7 @@ tokens {
     SXF            = 'SXF';            /* RW within procedure header */
     VAL            = 'VAL';            /* RW within procedure header */
 
-// *** Reserved Words of the Pragma Language, 21 tokens ***
+// *** Reserved Words of the Pragma Language, 22 tokens ***
 
 //  Symbols that are reserved words only within pragmas
 
@@ -141,6 +143,7 @@ tokens {
     LOWLATENCY     = 'LOWLATENCY';     /* RW within pragma only */
     VOLATILE       = 'VOLATILE';       /* RW within pragma only */
     DEPRECATED     = 'DEPRECATED';     /* RW within pragma only */
+    GENERATED      = 'GENERATED';      /* RW within pragma only */
     ADDR           = 'ADDR';           /* RW within pragma only */
     FFI            = 'FFI';            /* RW within pragma only */
 
@@ -176,6 +179,9 @@ programModule :
     importList* block moduleIdent '.'
     ;
 
+// alias 2.1
+moduleIdent : Ident ;
+
 // production #3
 definitionOfModule :
     DEFINITION MODULE moduleIdent ( '[' conformedToBlueprint ']' )? ';'
@@ -183,57 +189,71 @@ definitionOfModule :
     END moduleIdent '.'
     ;
 
-// alias 3.1
-moduleIdent : Ident ;
+// alias #3.1
+conformedToBlueprint : blueprintIdent ;
 
 // alias #3.2
-conformedToBlueprint : blueprintIdent ;
+blueprintIdent : Ident ;
 
 // production #4
 blueprint :
     BLUEPRINT blueprintIdent ( '[' conformedToBlueprint ']' )? ';'
-    ( CAMEO identList ';' )?
-    requiredTypeDeclaration ';'
-    ( requiredBinding ';' )*
+    ( REFERENTIAL identList ';' )? requiredADT ';'
+    ( requiredConst ';' )* ( requiredProcedure ';' )*
     END blueprintIdent '.'
     ;
 
 // alias #4.1
-blueprintIdent : Ident ;
+requiredProcedure : procedureHeader ;
 
-// alias #4.2
-requiredBinding : procedureHeader ;
+// production #5
+requiredConst :	
+    CONST ( '[' constBindableProperty ']' )? Ident
+    ( ':' ( range OF)? predefinedType | '=' constExpression )
+    ;
+
+// alias #5.1
+constBindableProperty : ':=' | ',>' |
+    /* Ident */ TSIGNED | TBASE | TPRECISION | TMINEXPONENT | TMAXEXPONENT
+    {} /* make ANTLRworks display separate branches */
+    ;
+
+// alias #5.2
+predefinedType : Ident ;
+
+// alias #5.3
+constExpression : expression ; /* but no type identifiers */
 
 
 // *** Import Lists, Blocks, Definitions and Declarations ***
 
-// production #5
+// production #6
 importList :
     ( libGenDirective | importDirective ) ';'
     ;
 
-// production #6
+// production #7
 libGenDirective :
     GENLIB libIdent FROM template FOR templateParams END
     ;
 
-// alias #6.1
+// alias #7.1
 libIdent : Ident ;
 
-// alias #6.2
+// alias #7.2
 template : Ident ;
 
-// production #7
+// production #8
 templateParams :
     placeholder '=' replacement ( ';' placeholder '=' replacement )* ;
 
-// alias #7.1
+// alias #8.1
 placeholder : Ident ;
 
-// alias #7.2
+// alias #8.2
 replacement : StringLiteral ;
 
-// production #8
+// production #9
 importDirective :
     IMPORT moduleIdent '+'? ( ',' moduleIdent '+'? )* |
     FROM moduleIdent IMPORT ( identList | '*' )
@@ -252,32 +272,19 @@ importWithAlias :
     ;
 */
 
-// production #9
+// production #10
 block :
     declaration*
     ( BEGIN statementSequence )? END
     ;
 
-// production #10
+// production #11
 definition :
-    CONST (  publicConstDeclaration ';' )+ |
+    CONST (  Ident '=' constExpression ';' )+ |
     TYPE ( publicTypeDeclaration ';' )+ |
     VAR ( variableDeclaration ';' )+ |
     procedureHeader ';'
     ;
-
-// production #11
-publicConstDeclaration :	
-    ( '[' constBindableEntity ']' )? Ident '=' constExpression
-    ;
-
-// alias #11.1
-constBindableEntity : ':=' | /* Ident */ ORD | TSIG | TEXP
-    {} /* make ANTLRworks display separate branches */
-    ;
-
-// alias #11.2
-constExpression : expression ; /* but no type identifiers */
 
 // production #12
 publicTypeDeclaration :
@@ -293,7 +300,7 @@ declaration :
     ;
 
 // production #14
-requiredTypeDeclaration :
+requiredADT :
     TYPE '='
     permittedTypeDeclaration ( '|' permittedTypeDeclaration )*
     ( ':=' protoliteral ( '|' protoliteral )* )?
@@ -498,7 +505,13 @@ statementSequence :
 
 // production #38
 assignmentOrProcedureCall :
-    designator ( ':=' expression | '++' | '--' | actualParameters )?
+    designator ( ':=' expression | incOrDevSuffix | actualParameters )?
+    ;
+
+// alias #38.1
+incOrDevSuffix :
+    '++' | '--'
+    {} /* make ANTLRworks display separate branches */
     ;
 
 // production #39
@@ -679,8 +692,8 @@ pragma :
 pragmaBody :
 	pragmaMSG | pragmaIF | procAttrPragma | pragmaPTW | pragmaFORWARD |
     pragmaENCODING | pragmaALIGN | pragmaPADBITS | pragmaPURITY |
-    variableAttrPragma | pragmaDEPRECATED | pragmaADDR | pragmaFFI |
-    implDefinedPragma
+    variableAttrPragma | pragmaDEPRECATED | pragmaDEPRECATED |
+    pragmaADDR | pragmaFFI | implDefinedPragma
     ;
 
 // production #2
@@ -768,6 +781,42 @@ pragmaDEPRECATED :
     ;
 
 // production #15
+pragmaGENERATED :
+    GENERATED template ',' datestamp ',' timestamp
+    ;
+
+// fragment #15.1
+datestamp :
+    year '-' month '-' day
+    ;
+
+// fragment #15.2
+timestamp :
+    hours ':' minutes ':' seconds '+' timezone
+    ;
+
+// alias #15.3a
+year : wholeNumber ;
+
+// alias #15.3b
+month : wholeNumber ;
+
+// alias #15.3c
+day : wholeNumber ;
+
+// alias #15.4a
+hours : wholeNumber ;
+
+// alias #15.4b
+minutes : wholeNumber ;
+
+// alias #15.4c
+seconds : wholeNumber ;
+
+// alias #15.4d
+timezone : wholeNumber ;
+
+// production #15
 pragmaADDR :
     ADDR '=' inPragmaExpression
     ;
@@ -842,12 +891,11 @@ inPragmaCompileTimeFunctionCall :
 
 // production #1
 ReservedWord :
-    ALIAS | AND | ARRAY | BEGIN | BLUEPRINT | BY | CAMEO | CASE | CONST |
-    DEFINITION | DESCENDING | DIV | DO | ELSE | ELSIF | END | EXIT | FOR |
-    FROM | GENLIB | IF | IMPLEMENTATION | IMPORT | IN | INDETERMINATE |
-    LOOP | MOD | MODULE | NOT | OF | OPAQUE | OR | POINTER | PROCEDURE |
-    RECORD | REPEAT | RETURN | SET | THEN | TO | TYPE | UNTIL | VAR |
-    VARIADIC | WHILE
+    ALIAS | AND | ARRAY | BEGIN | BLUEPRINT | BY | CASE | CONST | DEFINITION |
+    DESCENDING | DIV | DO | ELSE | ELSIF | END | EXIT | FOR | FROM | GENLIB |
+    IF | IMPLEMENTATION | IMPORT | IN | INDETERMINATE | LOOP | MOD | MODULE |
+    NOT | OF | OPAQUE | OR | POINTER | PROCEDURE | RECORD | REFERENTIAL |
+    REPEAT | RETURN | SET | THEN | TO | TYPE | UNTIL | VAR | VARIADIC | WHILE
     ;
 
 // production #2
