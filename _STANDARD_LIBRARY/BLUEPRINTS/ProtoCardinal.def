@@ -14,19 +14,19 @@ TYPE ProtoCardinal = OPAQUE RECORD (* uses integer literals *) := INTEGER;
 
 (* Required Constants *)
 
-CONST [-#] isSigned = FALSE;
+CONST [TSIGNED] isSigned = FALSE;
 (* cardinals are always unsigned *)
 
-CONST [#^] base : CARDINAL;
+CONST [TBASE] base : CARDINAL;
 (* radix in which the cardinal is encoded, 2 or 10 *)
 
-CONST [.#] precision : [1..4000] OF CARDINAL;
+CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
 (* maximum number of digits the cardinal ADT can encode *)
 
-CONST [-^] eMin = 0;
+CONST [TMINEXPONENT] eMin = 0;
 (* cardinals always have an exponent of zero *)
 
-CONST [+^] eMax = 0;
+CONST [TMAXEXPONENT] eMax = 0;
 (* cardinals always have an exponent of zero *)
 
 
