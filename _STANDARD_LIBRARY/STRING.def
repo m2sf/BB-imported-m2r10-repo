@@ -48,8 +48,8 @@ PROCEDURE [RELEASE] release ( VAR s : STRING );
 
 (* Assignment and Copying *)
 
-(* Literal assignment of the form s := "string literal" is synthesised as
-   REMOVE(s); STORE(s, 0, "string literal") for l-values of type STRING. *)
+(* Literal assignment of the form s := "literal" is synthesised as
+   STORE(s, 0, CHR(0)); STORE(s, 0, "literal") for L-values of type STRING. *)
 
 PROCEDURE [COPY] copy ( source, target : STRING );
 (* Copies the contents of string source into target. This procedure
