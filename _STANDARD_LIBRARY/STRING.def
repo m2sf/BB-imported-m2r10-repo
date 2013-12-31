@@ -13,79 +13,79 @@ FROM FileIO IMPORT File; (* required for IO *)
 TYPE STRING = OPAQUE;
 
 
-(* bindings to operators and pervasives *)
+(* Properties *)
+
+CONST isMutable = TRUE;
+(* Type STRING supports destructive updates *)
+    
+CONST isOrdered = TRUE;
+(* Type STRING supports both ascending and descending iteration *)
 
 
-(* capacity limit *)
+(* Bindings to Built-in Syntax *)
+
+(* Capacity limit *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Returns the character capacity limit of type STRING.
    This procedure is bound to pervasive procedure TLIMIT for type STRING. *)
 
 
-(* allocator *)
+(* Memory Management *)
 
 PROCEDURE [NEW] new ( VAR s : STRING );
 (* Allocates a new object of type STRING and returns a pointer to it in s.
    This procedure is bound to pervasive procedure NEW for type STRING. *)
 
-(* retain reference *)
-
 PROCEDURE [RETAIN] retain ( VAR s : STRING );
 (* Retains the reference to STRING s.
    This procedure is bound to pervasive procedure RETAIN for type STRING. *)
-
-(* release reference *)
 
 PROCEDURE [RELEASE] release ( VAR s : STRING );
 (* Releases the reference to STRING s.  Passes NIL in s if deallocated.
    This procedure is bound to pervasive procedure RELEASE for type STRING. *)
 
 
-(* accessor *)
+(* Assignment and Copying *)
+
+(* Literal assignment of the form s := "string literal" is synthesised as
+   REMOVE(s); STORE(s, 0, "string literal") for l-values of type STRING. *)
+
+PROCEDURE [COPY] copy ( source, target : STRING );
+(* Copies the contents of string source into target. This procedure
+   is bound to predefined function COPY for operands of type STRING. *)
+
+
+(* Storage, Removal, Retrieval and Inspection of Contents *)
+
+PROCEDURE [STORE] replaceCharsAtIndex
+  ( s : STRING; index : LONGCARD; CONST chars : ARRAY OF CHAR );
+(* Replaces one or more characters at index in STRING s with chars. This pro-
+   cedure is bound to predefined procedure STORE for operands of type STRING. *)
+
+PROCEDURE [REMOVE] removeCharsAtIndex ( s : STRING; index, n : LONGCARD);
+(* Removes n characters from STRING s at the specified index. This procedure
+   is bound to predefined procedure REMOVE for operands of type STRING. *)
+
+PROCEDURE insertCharsAtIndex
+  ( s : STRING; index : LONGCARD; CONST chars : ARRAY OF CHAR );
+(* Inserts a character sequence into STRING s at the specified index. *)
 
 PROCEDURE [RETRIEVE] characterAtIndex ( s : STRING; index : LONGCARD ) : CHAR;
 (* Returns the character at the specified index in STRING s. This function
-   is bound to the array operator [ ] for rvalues of type STRING. *)
-
-
-(* mutators *)
-
-PROCEDURE [STORE] replaceCharAtIndex ( s : STRING; index : LONGCARD; ch : CHAR );
-(* Replaces the character at the specified index in STRING s with ch. This
-   procedure is bound to the array operator [ ] for lvalues of type STRING. *)
-
-PROCEDURE insertCharsAtIndex ( s : STRING; index : LONGCARD;
-                               characters : ARRAY OF CHAR );
-(* Inserts a character sequence into STRING s at the specified index. *)
-
-PROCEDURE removeCharsAtIndex ( s : STRING; index, n : LONGCARD);
-(* Removes n characters from STRING s at the specified index. *)
-
-
-(* length *)
+   is bound to predefined function RETRIEVE for operands of type STRING. *)
 
 PROCEDURE [LENGTH] length ( s : STRING ) : LONGCARD;
-(* Returns the length of string s.
-   This function is bound to pervasive function LENGTH for type STRING. *)
+(* Returns the length of string s. This function is bound to predefined
+   function LENGTH for operands of type STRING. *)
 
 
-(* literal assignment *)
-
-PROCEDURE [:=] assign ( VAR s : STRING; literal : ARRAY OF CHAR );
-(* Converts string literal to a STRING value and assigns it to s.
-   This procedure is bound to the := operator for literal assignment. *)
-
-
-(* concatenation *)
+(* Concatenation and Slicing *)
 
 PROCEDURE [CONCAT] concat
   ( args : VARIADIC OF { literal : ARRAY OF CHAR; str : STRING } ) : STRING;
 (* Concatenates all strings in the argument list returns the result in a
    newly allocated string. The function is bound to CONCAT for type STRING. *)
-
-
-(* slicing *)
 
 PROCEDURE [..] copySlice
   ( target : STRING; tgtStartIndex, tgtEndIndex : INTEGER;
@@ -107,7 +107,20 @@ PROCEDURE [..] copySlice
    This procedure is bound to slice syntax str[n..m] in lvalues and rvalues. *)
 
 
-(* relational operations *)
+(* Iteration *)
+
+TYPE ForLoopBodyProc = PROCEDURE ( (* index : *) CONST LONGCARD );
+
+PROCEDURE [FOR] forIterator
+  ( s : STRING; forLoopBody : ForLoopBodyProc; ascending : BOOLEAN );
+(* Iterates by index over all characters in string s, executing a procedure
+   passed in for forLoopBody for each index. Parameter ascending determines
+   the order of iteration, TRUE for ascending, FALSE for descending order.
+   This procedure is bound to built-in syntax FOR IN for designators of
+   type STRING. ForLoopBodyProc is synthesised from the loop body. *)
+
+
+(* Relational Operations *)
 
 PROCEDURE [=] isEqual ( s1, s2 : STRING ) : BOOLEAN;
 (* Returns TRUE if the contents of s1 and s2 are equal, otherwise FALSE.
@@ -122,7 +135,7 @@ PROCEDURE [>] isGreater ( s1, s2 : STRING ) : BOOLEAN;
    This function is bound to operators > and <= for type STRING. *)
 
 
-(* IO procedures *)
+(* IO Operations *)
 
 PROCEDURE [READ] Read ( infile : File; s : STRING );
 (* Reads the textual representation of a STRING value from stream infile
@@ -147,5 +160,6 @@ PROCEDURE [WRITEF] WriteF
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    STRING arguments. *)
+
 
 END STRING.
