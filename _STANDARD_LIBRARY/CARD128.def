@@ -21,7 +21,7 @@ TYPE
 (* Constants *)
 
 CONST
-    isSigned = TRUE;
+    isSigned = FALSE;
     base = 2; (* binary *)
     precision = 128; (* base-2 digits *)
     eMin = 0; (* smallest exponent *)
