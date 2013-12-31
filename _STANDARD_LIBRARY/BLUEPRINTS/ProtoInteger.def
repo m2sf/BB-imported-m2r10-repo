@@ -13,17 +13,22 @@ TYPE ProtoInteger = OPAQUE RECORD := INTEGER;
 (* Bindings required for ProtoInteger ADTs *)
 
 
-(* Number representation parameters *)
+(* Required Constants *)
 
 CONST [-#] isSigned = TRUE;
+(* integers are always signed *)
 
-CONST [#^] base = CARDINAL;
+CONST [#^] base : CARDINAL;
+(* radix in which the integer is encoded, 2 or 10 *)
 
-CONST [.#] precision = CARDINAL;
+CONST [.#] precision : [1..4000] OF CARDINAL;
+(* maximum number of digits the integer ADT can encode *)
 
-CONST [-^] eMin = 0; (* always zero for integers *)
+CONST [-^] eMin = 0;
+(* integers always have an exponent of zero *)
 
-CONST [+^] eMax = 0; (* always zero for integers *)
+CONST [+^] eMax = 0;
+(* integers always have an exponent of zero *)
 
 
 (* Bindings to pervasive functions TMIN and TMAX *)
