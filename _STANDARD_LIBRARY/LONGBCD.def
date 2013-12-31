@@ -20,17 +20,14 @@ TYPE
 
 (* Bindings required by blueprint ProtoReal *)
 
-(* Number representation parameters *)
+(* Constants *)
 
-CONST [-#] isSigned = TRUE;
-
-CONST [#^] base = 10; (* decimal *)
-
-CONST [.#] precision = 29; (* base-10 digits *)
-
-CONST [-^] eMin = -1024; (* IEEE754 E min *)
-
-CONST [+^] eMax = +1023; (* IEEE754 E max *)
+CONST
+    isSigned = TRUE;
+    base = 10; (* decimal *)
+    precision = 29; (* base-10 digits *)
+    eMin = -1024; (* smallest exponent *)
+    eMax = +1023; (* largest exponent *)
 
 
 (* Range *) 
