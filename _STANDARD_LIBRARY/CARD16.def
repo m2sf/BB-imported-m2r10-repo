@@ -18,13 +18,12 @@ TYPE
 
 (* Bindings required by blueprint ProtoCardinal *)
 
-(* Precision *)
-
-CONST [TEXP] maxExponentDigits = 0;
-(* maximum number of decimal digits of the exponent of a CARD16 value *)
-
-CONST [TSIG] maxSignificandDigits = 5;
-(* maximum number of decimal digits of the significand of a CARD16 value *)
+CONST
+    isSigned = FALSE;
+    base = 2; (* binary *)
+    precision = 16; (* base-2 digits *)
+    eMin = 0; (* smallest exponent *)
+    eMax = 0; (* largest exponent *)
 
 
 (* Range *)
