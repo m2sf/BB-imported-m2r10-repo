@@ -4,15 +4,24 @@
 
 BLUEPRINT ProtoString [ProtoCollection];
 
-IMPORT OR DEFINE IndexType, ProcType;
+IMPORT OR DEFINE IndexType, ForLoopBodyProc;
 
-(* String ADTs must be opaque,
-   Character and string literals are compatible *)
+(* String ADTs must be opaque *)
 
-TYPE ProtoString = OPAQUE := CHAR;
+TYPE ProtoString = OPAQUE (* uses char and string literals *) := CHAR;
 
 
 (* Bindings required for String ADTs *)
+
+
+(* Required Constants *)
+
+CONST [:=] isMutable : BOOLEAN;
+(* whether the ADT supports destructive updates *)
+
+CONST [,>] isOrdered = TRUE;
+(* String ADTs always support both ascending and descending iteration *)
+
 
 (* Capacity limit *)
 
@@ -25,21 +34,21 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
    is synthesised as StringADT.capacityLimit() *)
 
 
-(* Construction and Destruction *)
+(* Memory Management *)
 
-PROCEDURE [NEW] new ( VAR string : ProtoString );
+PROCEDURE [NEW] new ( VAR s : ProtoString );
 (* Procedure to allocate and initialise a new String ADT variable. *)
 
 (* A statement of the form NEW(string)
    is synthesised as StringADT.new(string) *)
 
-PROCEDURE [RETAIN] retain ( VAR string : ProtoString );
+PROCEDURE [RETAIN] retain ( VAR s : ProtoString );
 (* Procedure to retain a String ADT variable, incrementing its ref count. *)
 
 (* A statement of the form RETAIN(string)
    is synthesised as StringADT.retain(string) *)
 
-PROCEDURE [RELEASE] release ( VAR string : ProtoString );
+PROCEDURE [RELEASE] release ( VAR s : ProtoString );
 (* Procedure to release a String ADT variable, decrementing its ref count
    and deallocating it if the ref count value has reached zero. *)
 
@@ -47,210 +56,178 @@ PROCEDURE [RELEASE] release ( VAR string : ProtoString );
    is synthesised as StringADT.release(string) *)
 
 
-(* Binding to assignment operator *)
+(* Assignment and Copying *)
 
-PROCEDURE [:=] assign ( VAR string : ProtoString;
-                        strLiteral : ARRAY OF CHAR );
+(* Literal assignment is synthesised by invoking procedure STORE. *)
 
-(* Procedure to assign a string literal to a String ADT variable. *)
+(* A statement of the form s := "string literal"
+   is synthesised as STORE(s, 0, CHR(0)); STORE(s, 0, "string literal") *)
 
-(* A statement of the form string := "the quick brown fox ..."
-   is synthesised as assign( string, "the quick brown fox ..." ) *)
+PROCEDURE [COPY] copy ( source, target : ProtoString );
+(* Procedure to copy the contents of one String ADT variable, source, to
+   another, target, thereby replacing the contents of target. *)
 
-
-(* Character access *)
-
-(* Binding to [ ] notation within left hand entities *)
-
-PROCEDURE [STORE] replaceChar ( VAR string : ProtoString;
-                                     index : IndexType; char : CHAR );
-
-(* Procedure to replace the character at a given index in a String ADT
-   variable. *)
-
-(* A statement of the form string[index] := char
-   is synthesised as replaceChar( string, index, char ) *)
+(* A statement of the form COPY(string1, string2)
+   is synthesised as StringADT.copy(string1, string2) *)
 
 
-(* Binding to [ ] notation within expressions *)
+(* Storage, Removal, Retrieval and Inspection of Contents *)
 
-PROCEDURE [RETRIEVE] charAtIndex ( string : ProtoString;
-                                    index : IndexType ) : CHAR;
-(* Procedure to return the character at a given index in a String ADT
-   value. *)
+PROCEDURE [STORE] replaceCharsAtIndex
+  ( s : ProtoString; index : IndexType; CONST chars : ARRAY OF CHAR );
+(* Procedure to replace one or more characters within a string ADT
+   variable s, at index n, with ASCII character sequence chars. *)
 
-(* An expression of the form string[index]
-   is synthesised as charAtIndex( string, index ) *)
+(* An assignment of the form string[42] := value
+   is transformed into STORE(string, 42, value)
+   which is synthesised as StringADT.replaceCharsAtIndex(string, 42, value) *)
+
+PROCEDURE insertCharsAtIndex
+  ( s : ProtoString; index : IndexType; CONST chars : ARRAY OF CHAR );
+(* Procedure to insert character sequence chars into a String ADT
+   variable s starting at index. *)
+
+PROCEDURE [REMOVE] removeCharsAtIndex
+  ( s : ProtoString; index : IndexType; n : LONGCARD);
+(* Procedure to remove n characters starting at index from a String ADT
+   variable s. *)
+
+(* An assignment of the form string[42] := NIL
+   is transformed into REMOVE(string, 42, 1)
+   which is synthesised as StringADT.removeCharsAtIndex(s, 42, 1) *)
+
+PROCEDURE [RETRIEVE] characterAtIndex
+  ( s : ProtoString; index : IndexType ) : CHAR;
+(* Function to return the character at index in a String ADT variable s. *)
+
+(* An expression of the form s[42] is transformed into RETRIEVE(s, 42)
+   which is synthesised as StringADT.characterAtIndex(s, 42) *)
+
+PROCEDURE [LENGTH] length ( s : ProtoString ) : LONGCARD;
+(* Function to return the length of a String ADT variable s. *)
+
+(* An expression of the form LENGTH(s)
+   is synthesised as StringADT.length(s) *)
 
 
-(* Length *)
+(* Concatenation and Slicing *)
 
-(* Binding to pervasive function LENGTH *)
+PROCEDURE [CONCAT] concat
+  ( args : VARIADIC OF { lit : ARRAY OF CHAR; s : ProtoString } ) : ProtoString;
+(* Procedure to concatenate an alternating list of character string literals
+   and String ADT variables, and return the result in a newly allocated
+   String ADT variable. Empty literals and NIL values are ignored. *)
 
-PROCEDURE [LENGTH] length ( string : ProtoString ) : LONGCARD;
-(* Procedure to return the length of a String ADT value. *)
+(* Concatenation of consecutive string literals takes place at compile time.
+   Thus, string literals do not occur consecutively in run time expressions.
+   
+   A run time concatenation expression of the form str1 + str2 + ... + strN
+   is transformed into a function invocation CONCAT(str1, str2, ..., strN)
+   
+   Invocations of CONCAT are mapped to function StringADT.concat as follows:
+   
+   A statement of the form str1 := CONCAT(str2, str3)
+   is synthesised as str1 := StringADT.concat("", str2, "", str3)
 
-(* An expression of the form LENGTH(string)
-   is synthesised as StringADT.length(string) *)
+   A statement of the form str1 := CONCAT(str2, "lit", str3)
+   is transfored to str1 := StringADT.concat("", str2, "lit", str3)
+      
+   A statement of the form str1 := CONCAT("lit", str2, str3)
+   is transformed to str1 := StringADT.concat("lit", str2, "", lit3)
+   
+   A statement of the form str1 := CONCAT("lit1", str2, "lit2")
+   is transformed to str1 := StringADT.concat("lit1", str2, "lit2", NIL)
+   
+   When a concatenation expression is passed as an argument to a procedure
+   it is first assigned to a temporary variable, which is then released
+   following the procedure call.
+   
+   A procedure invocation of the form FooProc(str1 + str2)
+   is transformed to the following statement sequence
+   
+   temp := CONCAT(str1, str2);
+   FooProc(temp); RELEASE(temp)
+   
+   A function invocation of the form foo := BarFunc(str1 + str2)
+   is transformed to the following statement sequence
+   
+   temp := CONCAT(str1, str2);
+   foo := BarFunc(temp); RELEASE(temp)
+      
+   Binding to CONCAT is therefore dependent on memory management. Without
+   bindings to RETAIN and RELEASE no binding to CONCAT is permitted. *)
+
+PROCEDURE [..] copySlice
+  ( target : ProtoString; tgtStartIndex, tgtEndIndex : INTEGER;
+    source : ProtoString; srcStartIndex, srcEndIndex : INTEGER );
+(* Procedure to copy a slice from a String ADT variable source, indicated by
+   start index srcStartIndex  and end index srcEndIndex,  to  a slice within
+   String ADT variable target,  indicated by  start index tgtStartIndex  and
+   end index tgtEndIndex. Consult the documentation for specific details. *)
+
+(* An assignment of the form target := source[2..5]
+   is synthesised as StringADT.copySlice(target, 0, -1, source, 2, 5)
+   
+   An assignment of the form target[2..5] := source
+   is synthesised as StringADT.copySlice(target, 2, 5, source, 0, -1)
+   
+   An assignment of the form target[1..4] := source[2..5]
+   is synthesised as StringADT.copySlice(target, 1, 4, source, 2, 5)
+   
+   When a slice expression is passed as an argument to a procedure, it is
+   first assigned to a newly allocated temporary variable, which is then
+   released following the procedure call.
+
+   A procedure invocation of the form FooProc(string[2..5])
+   is transformed to the following statement sequence
+   
+   NEW(temp); StringADT.copySlice(temp, 0, -1, string, 2, 5);
+   FooProc(temp); RELEASE(temp)
+   
+   A function invocation of the form foo := BarFunc(string[2..5])
+   is transformed to the following statement sequence
+   
+   NEW(temp); StringADT.copySlice(temp, 0, -1, string, 2, 5);
+   foo := BarFunc(temp); RELEASE(temp)
+      
+   Binding to .. is therefore dependent on memory management. Without
+   bindings to RETAIN and RELEASE no binding to .. is permitted. *)
 
 
 (* Iteration *)
 
-(* Binding to FOR IN iterator *)
+(* TYPE ForLoopBodyProc = PROCEDURE ( (* index : *) CONST IndexType ); *)
 
-TYPE ProcType = PROCEDURE ( VAR ProtoString; CONST IndexType );
+PROCEDURE [FOR] forIterator
+  ( s : STRING; doStatementSeq : ForLoopBodyProc; ascending : BOOLEAN );
+(* Procedure to iterate over all characters in String ADT variable s,
+   executing procedure doStatementSeq for each index value, using the
+   iteration order indicated by ascending. *)
 
-PROCEDURE [FOR] forIterator ( VAR string : ProtoString;
-                            doStatements : ProcType );
-
-(* Procedure to iterate over all characters of a String ADT value in
-   ascending order and execute the passed in doStatements for each
-   character. *)
    
-(* A statement of the form
-     FOR index IN string DO statementSeq END
+(* A statement of the form FOR index IN string DO statementSeq END
    is synthesised in two steps.
-   The loop header is synthesised as
-     StringADT.forIterator( string, forLoopBody );
-   The loop body is synthesised as
-     <* INLINE *> PROCEDURE forLoopBody ( VAR string : StringADT;
-                                         CONST index : IndexType );
-     BEGIN statementSeq END forLoopBody; *)
-
-PROCEDURE [DESCENDING] reverseFor ( VAR string : StringType;
-                                  doStatements : ProcType );
-
-(* Procedure to iterate over all characters of a String ADT value in
-   descending order and execute the passed in doStatements for each
-   character. *)
    
-(* A statement of the form
-     FOR DESCENDING index IN string DO statementSeq END
-   is synthesised in two steps.
-   The loop header is synthesised as
-     StringADT.reverseFor( string, forLoopBody );
-   The loop body is synthesised as
-     <* INLINE *> PROCEDURE forLoopBody ( VAR string : StringADT;
-                                         CONST index : IndexType );
-     BEGIN statementSeq END forLoopBody; *)
-
-
-(* Concatenation *)
-
-(* EXPERIMENTAL, this should probably be adopted *)
-PROCEDURE [CONCAT] concat (
-   strList : VARIADIC OF { CONST literal : ARRAY OF CHAR;
-                           CONST str     : ProtoString } ) : ProtoString;
-
-(* Procedure to concatenate a variadic list of string literals and String ADT
-   values and return the result in a newly allocated String ADT variable. *)
-
-(* An expression of the form
-     s := s1 + s2 + s3;
-   is synthesised as
-     s := concat( "", s1, "", s2, "", s3 );
-
-   An expression of the form
-     s := "foo" + s1 + s2;
-   is synthesised as
-     s := concat( "foo", s1, "", s2 );
-
-   An expression of the form
-     s := s1 + "foo" + s2;
-   is synthesised as
-     s := concat( "", s1, "foo", s2 );
-
-   An expression of the form
-     s := s1 + s2 + "foo";
-   is synthesised as
-     s := concat( "", s1, "", s2, "foo", NIL );
+   The FOR loop header is synthesised as
    
-   An statement of the form
-     foobar(s1 + s2);
-   is synthesised as
-     tempStr := concat( "", s1, "", s2);
-     foobar(tempStr); RELEASE(tempStr); *)
+   StringADT.forIterator(string, forLoopBody, TRUE);
+   
+   The FOR loop body is synthesised as
+   
+   PROCEDURE forLoopBody
+     ( VAR string : StringADT; CONST index : IndexType );
+   BEGIN statementSeq END forLoopBody;
+   
+   A FOR DESCENDING loop header is synthesised as
+   
+   StringADT.forIterator(string, forLoopBody, TRUE);
 
-PROCEDURE [..] copySlice
-  ( VAR target : ProtoString; targetStartIndex, targetEndIndex : INTEGER;
-        source : ProtoString; sourceStartIndex, sourceEndIndex : INTEGER );
-
-(* Procedure to copy characters from a slice of a source string into a slice
-   of a  target string.  Positive indices  count forward  starting with zero
-   indicating the  left most  character.  Negative  indices  count  backward
-   starting with -1 indicating the right most character. *)
-
-
-(* EXPERIMENTAL, this should probably be avoided *)
-PROCEDURE [+] concatenateInSitu ( VAR str : ProtoString;
-    strList : VARIADIC OF { CONST literal : ARRAY OF CHAR;
-                            CONST str     : ProtoString } );
-
-(* Procedure to concatenate a variadic list of string literals and String ADT
-   values to a String ADT variable and return the result in this variable. *)
-
-(* An expression of the form
-     s := s + s1 + s2 + s3;
-   is synthesised as
-     concatenateInSitu( s, "", s1, "", s2, "", s3 );
-
-   An expression of the form
-     s := s + "foo" + s1 + s2;
-   is synthesised as
-     concatenateInSitu( s, "foo", s1, "", s2 );
-
-   An expression of the form
-     s := s + s1 + "foo" + s2;
-   is synthesised as
-     concatenateInSitu( s, "", s1, "foo", s2 );
-
-   An expression of the form
-     s := s + s1 + s2 + "foo";
-   is synthesised as
-     concatenateInSitu( s, "", s1, "", s2, "foo", NIL ); *)
+   The use of FOR DESCENDING syntax is dependent on property isOrdered.
+   If the ADT defines isOrdered as FALSE, the use of FOR DESCENDING is
+   not permitted and will cause a compile time error. *)
 
 
-(* Sub-String removal *)
-
-(* EXPERIMENTAL, this would require another pervasive to bind to *)
-PROCEDURE [-] reductionOf ( str : ProtoString
-                     removeList : VARIADIC OF ProtoString ) : ProtoString;
-
-(* Procedure to remove all sub-strings in a variadic list of String ADT values
-   from a first String ADT value and return the result in a newly allocated
-   String ADT variable. *)
-
-(* An expression of the form
-     s := s1 - s2 - ... - sN;
-   is synthesised as
-     s := StringADT.reductionOf( s1, s2, ..., sN );
-
-   A statement of the form
-     foobar(s1 - s2);
-   is synthesised as
-     tempStr := reductionOf(s1, s2);
-     foobar(tempStr); RELEASE(tempStr); *)
-
-(* EXPERIMENTAL, this should probably be avoided *)
-PROCEDURE [-] reduceInSitu ( VAR str : ProtoString;
-                          removeList : VARIADIC OF ProtoString );
-
-(* Procedure to remove all sub-strings in a variadic list of String ADT values
-   from a first String ADT value and return the result in the first String ADT
-   variable passed. *)
-
-(* An expression of the form
-     s := s - s1 - s2 - ... - sN;
-   is synthesised as
-     StringADT.reduceInSitu( s, s1, s2, ..., sN ); *)
-
-
-(* The operations * and / are not meaningful for strings. *)
-
-
-(* Relational operations *)
-
-(* Binding to = operator *)
+(* Relational Operations *)
 
 PROCEDURE [=] isEqual ( s1, s2 : ProtoString ) : BOOLEAN;
 (* Procedure to test the equivalence of two String ADT values. *)
@@ -261,20 +238,51 @@ PROCEDURE [=] isEqual ( s1, s2 : ProtoString ) : BOOLEAN;
 (* The operation for the # operator
    is synthesized as NOT (string1 = string2) *)
 
-
-(* Binding to < operator *)
-
 PROCEDURE [<] isLess ( s1, s2 : ProtoString ) : BOOLEAN;
-(* Procedure to test if String ADT value s1 comes lexically before String ADT
-   value s2. *)
+(* Procedure to test if String ADT value s1 comes lexically before
+   String ADT value s2. *)
 
 (* The operation for the <= operator is synthesized as NOT (s1 > s2) *)
 
 PROCEDURE [>] isGreater ( s1, s2 : ProtoString ) : BOOLEAN;
-(* Procedure to test if String ADT value s1 comes lexically after String ADT
-   value s2. *)
+(* Procedure to test if String ADT value s1 comes lexically after
+   String ADT value s2. *)
 
 (* The operation for the >= operator is synthesized as NOT (s1 < s2) *)
+
+
+(* IO Operations *)
+
+PROCEDURE [READ] Read ( infile : File; s : ProtoString );
+(* Procedure to read a value from a file into a String ADT variable. *)
+
+(* A statement of the form READ(string)
+   is synthesised as StringADT.Read(stdIn, string)
+   
+   A statement of the form READ(file, string)
+   is synthesised as StringADT.Read(file, string) *)
+
+PROCEDURE [WRITE] Write ( outfile : File; s : STRING );
+(* Procedure to write the value of String ADT variable to a file. *)
+
+(* A statement of the form WRITE(string)
+   is synthesised as StringADT.Write(stdOut, string)
+   
+   A statement of the form WRITE(file, string)
+   is synthesised as StringADT.Write(file, string) *)
+
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF STRING );
+(* Procedure to write a variadic list of String ADT variables formatted
+   to a file. *)
+
+(* A statement of the form WRITEF("\n", string)
+   is synthesised as StringADT.WriteF(stdIn, "\n", string)
+   
+   A statement of the form WRITEF(file, "\n", string)
+   is synthesised as StringADT.WriteF(file, "\n", string) *)
 
 
 END ProtoString.
