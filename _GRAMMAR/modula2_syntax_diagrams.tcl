@@ -1048,7 +1048,7 @@ lappend pragmas pragmaDEPRECATED {
 
 # (15) Body Of Generation Timestamp Pragma
 lappend pragmas pragmaGENERATED {
-  line GENERATED template , datestamp , timestamp
+  line GENERATED FROM template , datestamp , timestamp
 }
 
 # (15.1) Date Stamp
@@ -1061,13 +1061,8 @@ lappend pragmas timestamp {
   line hours : minutes : seconds + timezone
 }
 
-# (15.3) year, month, day
-lappend pragmas year_month_day {
-  line wholeNumber
-}
-
-# (15.4) hours, minutes, seconds, timezone
-lappend pragmas hours_mins_secs_tz {
+# (15.3) year, month, day, hours, minutes, seconds, timezone
+lappend pragmas year_month_day_etc {
   line wholeNumber
 }
 
