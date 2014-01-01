@@ -25,7 +25,6 @@ CONST [DESCENDING] isOrdered : BOOLEAN;
 (* whether the dictionary ADT is ordered *)
 
 
-
 (* Capacity limit *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
