@@ -804,16 +804,16 @@ month : wholeNumber ;
 // alias #15.3c
 day : wholeNumber ;
 
-// alias #15.4a
+// alias #15.3d
 hours : wholeNumber ;
 
-// alias #15.4b
+// alias #15.3e
 minutes : wholeNumber ;
 
-// alias #15.4c
+// alias #15.3f
 seconds : wholeNumber ;
 
-// alias #15.4d
+// alias #15.4g
 timezone : wholeNumber ;
 
 // production #15
