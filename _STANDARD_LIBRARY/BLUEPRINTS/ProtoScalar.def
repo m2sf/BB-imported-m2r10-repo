@@ -13,16 +13,25 @@ TYPE ProtoScalar = OPAQUE RECORD := INTEGER | REAL;
 (* Bindings required for scalar ADTs *)
 
 
-(* Recommended bindings to pervasive functions TSIG and TEXP:
+(* Required Constants *)
 
-CONST [TSIG] maxSignificandDigits = n ;
+CONST [TSIGNED] isSigned : BOOLEAN;
+(* whether the scalar ADT is signed or unsigned *)
 
-CONST [TEXP] maxExponentDigits = 0 ;
+CONST [TBASE] base : CARDINAL;
+(* radix in which the scalar value is encoded, 2 or 10 *)
 
-*)
+CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
+(* maximum number of digits the scalar ADT can encode *)
+
+CONST [TMINEXPONENT] eMin : INTEGER;
+(* smallest exponent the scalar ADT can encode *)
+
+CONST [TMAXEXPONENT] eMax : CARDINAL;
+(* largest exponent the scalar ADT can encode *)
 
 
-(* Bindings to pervasive functions TMIN and TMAX *)
+(* Bindings to predefined functions TMIN and TMAX *)
 
 PROCEDURE [TMIN] minValue : ProtoScalar;
 (* procedure to return minimal value of a scalar ADT *)
@@ -39,10 +48,6 @@ PROCEDURE [SXF] toSXF ( lexeme : ARRAY OF CHAR; VAR sxf : ARRAY OF OCTET );
 PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoScalar );
 (* procedure to convert value in scalar exchange format to the scalar ADT *)
 
-
-(* Binding to assignment operator for non-literal values *)
-
-PROCEDURE [:=] assign ( VAR left : ProtoScalar; right : ProtoScalar );
 
 (* The assignment of literal values is synthesised from SXF and VAL *)
 
