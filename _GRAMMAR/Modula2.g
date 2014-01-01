@@ -828,8 +828,8 @@ pragmaFFI :
 
 // production #17
 implDefinedPragma :
-    ( 'I' | 'W' | 'E' | 'F' {}) ','
     implDefinedPragmaSymbol ( '=' inPragmaExpression )?
+    '|' ( INFO | WARN | ERROR | FATAL {} )
     ;
 
 // production #18
