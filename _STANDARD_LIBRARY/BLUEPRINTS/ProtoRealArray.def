@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoRealArray [ProtoNonScalar];
 
-IMPORT OR DEFINE IndexType, RealType, ProcType;
+REFERENTIAL IndexType, RealType, ProcType;
 
 (* Real Array ADTs must be opaque records to be statically allocatable,
    structured literals with lists of real number literals are compatible *)
@@ -23,17 +23,6 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 
 (* An expression of the form TLIMIT(ArrayADT))
    is synthesised as ArrayADT.capacityLimit() *)
-
-
-(* Binding to assignment operator *)
-
-PROCEDURE [:=] assign ( VAR array : ProtoRealArray;
-                        valueList : VARIADIC OF RealType );
-
-(* Procedure to assign a structured literal to a Real Array ADT variable. *)
-
-(* A statement of the form array := { value1, value2, ..., valueN }
-   is synthesised as assign( array, value1, value2, ..., valueN ) *)
 
 
 (* Storage and retrieval *)
@@ -94,23 +83,7 @@ PROCEDURE [FOR] forIterator ( VAR array : ProtoRealArray;
      <* INLINE *> PROCEDURE forLoopBody ( VAR array : ArrayADT;
                                         CONST index : IndexType );
      BEGIN statementSeq END forLoopBody; *)
-
-PROCEDURE [DESCENDING] reverseFor ( VAR array : ProtoRealArray;
-                                 doStatements : ProcType );
-
-(* Procedure to iterate over all index/value pairs of a Real Array ADT
-   value in descending order and execute doStatements for each pair. *)
-   
-(* A statement of the form
-     FOR DESCENDING index IN array DO statementSeq END
-   is synthesised in two steps.
-   The loop header is synthesised as
-     ArrayADT.reverseFor( array, forLoopBody );
-   The loop body is synthesised as
-     <* INLINE *> PROCEDURE forLoopBody ( VAR array : ArrayADT;
-                                        CONST index : IndexType );
-     BEGIN statementSeq END forLoopBody; *)
-   
+  
 
 (* Bindings to monadic operations *)
 
