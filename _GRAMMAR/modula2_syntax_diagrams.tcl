@@ -213,7 +213,7 @@ lappend non_terminals requiredConst {
 
 # (5.1) Constant-Bindable Property
 lappend non_terminals constBindableProperty {
-  or := ,> TSIGNED TBASE TPRECISION TMINEXPONENT TMAXEXPONENT
+  or := DESCENDING TSIGNED TBASE TPRECISION TMINEXPONENT TMAXEXPONENT
 }
 
 # (5.2) Predefined Type
