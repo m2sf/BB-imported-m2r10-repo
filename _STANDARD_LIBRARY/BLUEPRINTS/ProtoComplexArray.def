@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoComplexArray [ProtoNonScalar];
 
-IMPORT OR DEFINE IndexType, ComplexType, ProcType;
+REFERENTIAL IndexType, ComplexType, ProcType;
 
 (* Complex Array ADTs must be opaque records to be statically allocatable,
    structured literals with lists of complex number literals are compatible *)
@@ -23,17 +23,6 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 
 (* An expression of the form TLIMIT(ArrayADT))
    is synthesised as ArrayADT.capacityLimit() *)
-
-
-(* Binding to assignment operator *)
-
-PROCEDURE [:=] assign ( VAR array : ProtoComplexArray;
-                        valueList : VARIADIC OF ComplexType );
-
-(* Procedure to assign a structured literal to a Complex Array ADT variable. *)
-
-(* A statement of the form array := { value1, value2, ..., valueN }
-   is synthesised as assign( array, value1, value2, ..., valueN ) *)
 
 
 (* Storage and retrieval *)
@@ -90,22 +79,6 @@ PROCEDURE [FOR] forIterator ( VAR array : ProtoComplexArray;
    is synthesised in two steps.
    The loop header is synthesised as
      ArrayADT.forIterator( array, forLoopBody );
-   The loop body is synthesised as
-     <* INLINE *> PROCEDURE forLoopBody ( VAR array : ArrayADT;
-                                        CONST index : IndexType );
-     BEGIN statementSeq END forLoopBody; *)
-
-PROCEDURE [DESCENDING] reverseFor ( VAR array : ProtoComplexArray;
-                                 doStatements : ProcType );
-
-(* Procedure to iterate over all index/value pairs of a Complex Array ADT
-   value in descending order and execute doStatements for each pair. *)
-   
-(* A statement of the form
-     FOR DESCENDING index IN array DO statementSeq END
-   is synthesised in two steps.
-   The loop header is synthesised as
-     ArrayADT.reverseFor( array, forLoopBody );
    The loop body is synthesised as
      <* INLINE *> PROCEDURE forLoopBody ( VAR array : ArrayADT;
                                         CONST index : IndexType );
