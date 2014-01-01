@@ -18,10 +18,10 @@ TYPE ProtoSet = OPAQUE := { VARIADIC OF ElementType };
 (* Required Constants *)
 
 CONST [:=] isMutable : BOOLEAN;
-(* whether the Array ADT is mutable *)
+(* whether the set ADT is mutable *)
 
 CONST [DESCENDING] isOrdered : BOOLEAN;
-(* whether the collection ADT is ordered *)
+(* whether the set ADT is ordered *)
 
 
 (* Capacity limit *)
