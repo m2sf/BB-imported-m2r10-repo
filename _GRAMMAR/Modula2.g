@@ -213,7 +213,7 @@ requiredConst :
     ;
 
 // alias #5.1
-constBindableProperty : ':=' | ',>' |
+constBindableProperty : ':=' | DESCENDING |
     /* Ident */ TSIGNED | TBASE | TPRECISION | TMINEXPONENT | TMAXEXPONENT
     {} /* make ANTLRworks display separate branches */
     ;
