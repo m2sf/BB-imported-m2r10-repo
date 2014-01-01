@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoArray [ProtoCollection];
 
-IMPORT OR DEFINE IndexType, ValueType, ProcType;
+REFERENTIAL IndexType, ValueType, ProcType;
 
 (* Array ADTs must be opaque,
    array literals are compatible *)
@@ -13,6 +13,15 @@ TYPE ProtoArray = OPAQUE := { VARIADIC OF ValueType };
 
 
 (* Bindings required for Array ADTs *)
+
+(* Required Constants *)
+
+CONST [:=] isMutable : BOOLEAN;
+(* whether the Array ADT is mutable or immutable *)
+
+CONST [DESCENDING] isOrdered = TRUE;
+(* arrays are ordered and support ascending and descending iteration *)
+
 
 (* Capacity limit *)
 
@@ -38,16 +47,6 @@ PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
 
 (* A statement of the form RELEASE(array)
    is synthesised as ArrayADT.release(array) *)
-
-
-(* Binding to assignment symbol *)
-
-PROCEDURE [:=] assign ( VAR array : ProtoArray;
-                        valueList : VARIADIC OF ValueType );
-(* Procedure to assign a structured literal to an Array ADT variable. *)
-
-(* A statement of the form array := { value1, value2, ..., valueN }
-   is synthesised as assign( array, value1, value2, ..., valueN ) *)
 
 
 (* Storage and retrieval *)
@@ -90,8 +89,8 @@ PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
 
 TYPE ProcType = PROCEDURE ( VAR ProtoArray; CONST IndexType );
 
-PROCEDURE [FOR] forIterator ( VAR array : ProtoArray;
-                           doStatements : ProcType );
+PROCEDURE [FOR] forIterator
+  ( VAR array : ProtoArray; doStatements : ProcType; ascending : BOOLEAN );
 
 (* Procedure to iterate over all index/value pairs of an Array ADT value in
    ascending order and execute the passed in doStatements for each pair. *)
@@ -100,29 +99,12 @@ PROCEDURE [FOR] forIterator ( VAR array : ProtoArray;
      FOR index IN array DO statementSeq END
    is synthesised in two steps.
    The loop header is synthesised as
-     ArrayADT.forIterator( array, forLoopBody );
+     ArrayADT.forIterator( array, forLoopBody, TRUE );
    The loop body is synthesised as
-     <* INLINE *> PROCEDURE forLoopBody ( VAR array : ArrayADT;
-                                        CONST index : IndexType );
+     PROCEDURE forLoopBody
+       ( VAR array : ArrayADT; CONST index : IndexType ) <*INLINE*>;
      BEGIN statementSeq END forLoopBody; *)
 
-PROCEDURE [DESCENDING] reverseFor ( VAR array : ArrayType;
-                                 doStatements : ProcType );
-
-(* Procedure to iterate over all index/value pairs of an ArrayType ADT value
-   in descending order and execute the passed in doStatements for each
-   pair. *)
-   
-(* A statement of the form
-     FOR DESCENDING index IN array DO statementSeq END
-   is synthesised in two steps.
-   The loop header is synthesised as
-     ArrayADT.reverseFor( array, forLoopBody );
-   The loop body is synthesised as
-     <* INLINE *> PROCEDURE forLoopBody ( VAR array : ArrayADT;
-                                        CONST index : IndexType );
-     BEGIN statementSeq END forLoopBody; *)
-   
 
 (* Dyadic operations *)
 
