@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoSet [ProtoCollection];
 
-IMPORT OR DEFINE ElementType, ProcType, File;
+REFERENTIAL ElementType, ProcType, File;
 
 (* Dynamic Set ADTs must be opaque,
    structured literals with a list of elements are compatible *)
@@ -12,17 +12,17 @@ IMPORT OR DEFINE ElementType, ProcType, File;
 TYPE ProtoSet = OPAQUE := { VARIADIC OF ElementType };
 
 
-(* Bindings recommended for dynamic set ADTs *)
-
-(* CONST [ORD] isOrdered = <booleanValue>; *)
-
-(* A collection ADT may declare itself ordered by binding a constant of value
-   TRUE to ORD.  Ordered collections  may  use  FOR DESCENDING  syntax  while
-   unordered collections may not.  Any use of FOR DESCENDING syntax by an un-
-   ordered collection will cause a compile time error. *)
-
-
 (* Bindings required for dynamic set ADTs *)
+
+
+(* Required Constants *)
+
+CONST [:=] isMutable : BOOLEAN;
+(* whether the Array ADT is mutable *)
+
+CONST [DESCENDING] isOrdered : BOOLEAN;
+(* whether the collection ADT is ordered *)
+
 
 (* Capacity limit *)
 
