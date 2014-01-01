@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoCollection; (* root of collection hierarchy *)
 
-IMPORT OR DEFINE AccessorType, ValueType, ProcType;
+REFERENTIAL AccessorType, ValueType, ProcType;
 
 (* Collection ADTs must be records,
    literal compatibility may be specified by more specialised blueprints *)
@@ -14,17 +14,17 @@ TYPE ProtoCollection = OPAQUE |
                        { VARIADIC OF { AccessorType, ValueType } };
 
 
-(* Bindings recommended for collection ADTs *)
-
-(* CONST [ORD] isOrdered = <booleanValue>; *)
-
-(* A collection ADT may declare itself ordered by binding a constant of value
-   TRUE to ORD.  Ordered collections  may  use  FOR DESCENDING  syntax  while
-   unordered collections may not.  Any use of FOR DESCENDING syntax by an un-
-   ordered collection will cause a compile time error. *)
-
-
 (* Bindings required for collection ADTs *)
+
+
+(* Required Constants *)
+
+CONST [:=] isMutable : BOOLEAN;
+(* whether the Array ADT is mutable *)
+
+CONST [DESCENDING] isOrdered : BOOLEAN;
+(* whether the collection ADT is ordered *)
+
 
 (* Capacity limit *)
 
