@@ -1078,7 +1078,8 @@ lappend pragmas pragmaFFI {
 
 # (18) Body of Implementation Defined Pragma
 lappend pragmas implDefinedPragma {
-  line {or I W E F} , implDefinedPragmaSymbol {optx = inPragmaExpression}
+  line implDefinedPragmaSymbol {optx = inPragmaExpression}
+    | {or INFO WARN ERROR FATAL}
 }
 
 # (19) In-Pragma Expression
