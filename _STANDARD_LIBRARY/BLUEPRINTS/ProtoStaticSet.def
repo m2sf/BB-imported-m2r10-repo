@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoStaticSet [ProtoCollection];
 
-IMPORT OR DEFINE ElementType, ProcType, File;
+REFERENTIAL ElementType, ProcType, File;
 
 (* Static Set ADTs must be opaque records to be statically allocatable,
    structured literals with a list of elements are compatible *)
@@ -12,18 +12,17 @@ IMPORT OR DEFINE ElementType, ProcType, File;
 TYPE ProtoStaticSet = OPAQUE RECORD := { VARIADIC OF ElementType };
 
 
-(* Bindings recommended for static set ADTs *)
-
-(* CONST [DESCENDING] supportsDescendingFor = TRUE; *)
-
-(* The use of FOR DESCENDING syntax is *only* permitted for collections
-   of an ADT type that binds a constant with value TRUE to DESCENDING.
-   If the bound constant's value is FALSE or if the binding is omitted,
-   any use of FOR DESCENDING syntax will cause a compile time error.
-   Static set ADTs should always bind a constant with value TRUE. *)
-
-
 (* Bindings required for static set ADTs *)
+
+
+(* Required Constants *)
+
+CONST [:=] isMutable : BOOLEAN;
+(* whether the set ADT is mutable *)
+
+CONST [DESCENDING] isOrdered : BOOLEAN;
+(* whether the set ADT is ordered *)
+
 
 (* Capacity limit *)
 
