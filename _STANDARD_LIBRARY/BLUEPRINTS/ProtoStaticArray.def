@@ -35,17 +35,6 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
    is synthesised as ArrayADT.capacityLimit() *)
 
 
-(* Binding to assignment operator *)
-
-PROCEDURE [:=] assign ( VAR array : ProtoStaticArray;
-                        valueList : VARIADIC OF ValueType );
-
-(* Procedure to assign a structured literal to a Static Array ADT variable. *)
-
-(* A statement of the form array := { value1, value2, ..., valueN }
-   is synthesised as assign( array, value1, value2, ..., valueN ) *)
-
-
 (* Storage and retrieval *)
 
 (* Binding to [ ] notation within left hand entities *)
@@ -105,24 +94,8 @@ PROCEDURE [FOR] forIterator ( VAR array : ProtoStaticArray;
                                         CONST index : IndexType );
      BEGIN statementSeq END forLoopBody; *)
 
-PROCEDURE [DESCENDING] reverseFor ( VAR array : ArrayType;
-                                 doStatements : ProcType );
 
-(* Procedure to iterate over all index/value pairs of a Static Array ADT value
-   in descending order and execute doStatements for each pair. *)
-   
-(* A statement of the form
-     FOR DESCENDING index IN array DO statementSeq END
-   is synthesised in two steps.
-   The loop header is synthesised as
-     ArrayADT.reverseFor( array, forLoopBody );
-   The loop body is synthesised as
-     <* INLINE *> PROCEDURE forLoopBody ( VAR array : ArrayADT;
-                                        CONST index : IndexType );
-     BEGIN statementSeq END forLoopBody; *)
-   
-
-(* Dyadic operations *)
+* Dyadic operations *)
 
 (* The operations +, -, * and / are not common to all Static Array ADTs,
    their bindings may be required by more specialised prototypes. *)
