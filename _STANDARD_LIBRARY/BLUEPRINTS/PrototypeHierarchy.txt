@@ -4,20 +4,18 @@ Numeric Blueprints                   Collection Blueprints
  |                                    |
  +--ProtoNonScalar                    +--ProtoStaticSet (always ordered)
  |  |                                 |  
- |  +--ProtoComplexArray              +--ProtoStaticArray (always ordered)
+ |  +--ProtoTuple                     +--ProtoStaticArray (always ordered)
  |  |                                 |
- |  +--ProtoRealArray                 +--ProtoStaticString (always ordered)
+ |  +--ProtoVector                    +--ProtoStaticString (always ordered)
  |  |                                 |
- |  +--ProtoTuple                     +--ProtoSet (always dynamic)
- |  |                                 |  |
- |  +--ProtoVector                    |  ProtoOrderedSet (always dynamic)
- |  |                                 |
- |  +--ProtoComplex                   +--ProtoArray (always ordered & dynamic)
+ |  +--ProtoComplex                   +--ProtoSet (always dynamic)
  |                                    |
- +--ProtoScalar                       +--ProtoString (always ordered & dynamic)
+ +--ProtoScalar                       +--ProtoArray (always ordered & dynamic)
     |                                 |
-    +--ProtoReal                      +--ProtoDictionary (always dynamic)
-    |                                    |
-    +--ProtoInteger                      +--ProtoOrderedDict (always dynamic)
-    |
-    +--ProtoCardinal
+    +--ProtoReal                      +--ProtoString (always ordered & dynamic)
+    |                                 |
+    +--ProtoInteger                   +--ProtoDictionary (always dynamic)
+    |                                 |
+    +--ProtoCardinal                  +--ProtoList (always ordered & dynamic)
+ 
+ [Status: Dec 31, 2013]
