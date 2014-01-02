@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoStaticArray [ProtoCollection];
 
-IMPORT OR DEFINE IndexType, ValueType, ProcType;
+REFERENTIAL IndexType, ValueType, ProcType;
 
 (* Static Array ADTs must be opaque records to be statically allocatable,
    array literals are compatible *)
@@ -13,6 +13,16 @@ TYPE ProtoStaticArray = OPAQUE := { VARIADIC OF ValueType };
 
 
 (* Bindings required for Static Array ADTs *)
+
+
+(* Required Constants *)
+
+CONST [:=] isMutable : BOOLEAN;
+(* whether the array ADT is mutable *)
+
+CONST [DESCENDING] isOrdered = TRUE;
+(* array ADTs are always ordered *)
+
 
 (* Capacity limit *)
 
