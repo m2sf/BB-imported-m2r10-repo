@@ -1,4 +1,4 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE COMPILER;
 
@@ -107,6 +107,14 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 (* Expands to a numeric value with the value of the current line number. *)
 
 
+(* User Definable Compile Time Defaults *)
+
+(* MACRO *) PROCEDURE DEFAULT ( key : ARRAY OF CHAR;
+    fallback : <PredefinedOrdinalType>) : <PredefinedOrdinalType>;
+(* If a value is stored for key in the compiler's user preferences, the
+   macro expands to the stored value, otherwise to the fallback value. *)
+
+
 (* Introspection *)
 
 (* MACRO *) PROCEDURE IsCompatibleWithType( <T>; var : <AnyType> ) : BOOLEAN;
@@ -121,13 +129,35 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 (* Expands to TRUE if the type of variable var is an extension of type T,
    expands to FALSE otherwise. *)
 
+(* MACRO *) PROCEDURE IsMutableType( <T> ) : BOOLEAN;
+(* Expands to TRUE if type T is a mutable type, otherwise FALSE.  By default
+   all types are mutable.  An ADT that binds a constant of value FALSE to the
+   assignment symbol is immutable. *)
+
+(* MACRO *) PROCEDURE IsOrderedType( <T> ) : BOOLEAN;
+(* Expands to TRUE if type T is an ordered type, otherwise FALSE.  By default
+   all ordinal types and all scalar types are ordered, other types are not.
+   An ADT that binds a constant of value TRUE to DESCENDING is ordered. *)
+
+(* MACRO *) PROCEDURE IsScalarType( <T> ) : BOOLEAN;
+(* Expands to TRUE if type T is a scalar type, otherwise FALSE.  By default
+   all predefined numeric types are scalar, other types are not.  An ADT that
+   binds to any of TSIGNED, TBASE, TPRECISION, TMINEXPONENT and TMAXEXPONENT
+   is scalar. *)
+
+(* MACRO *) PROCEDURE IsOrdinalType( <T> ) : BOOLEAN;
+(* Expands to TRUE if type T is an ordinal type, otherwise FALSE.  By default
+   predefined types BOOLEAN, CHAR, OCTET, CARDINAL, LONGCARD, INTEGER, LONGINT
+   and all enumeration types are ordinal, other types are not.  A scalar ADT
+   whose TMINEXPONENT and TMAXEXPONENT values are both zero is ordinal. *)
+
 (* MACRO *) PROCEDURE IsRefCountedType( <T> ) : BOOLEAN;
-(* Expands to TRUE if type T has bindings to pervasives RETAIN and RELEASE,
-   expands to FALSE otherwise. *)
+(* Expands to TRUE if type T is reference counted, otherwise FALSE.  No type
+   is reference counted by default.  Only ADTs that bind to both predefined
+   procedures RETAIN and RELEASE are reference counted. *)
 
 (* MACRO *) PROCEDURE ConformsToBlueprint( <B>; <T> ) : BOOLEAN;
-(* Expands to TRUE if type T conforms to blueprint B,
-   expands to FALSE otherwise. *)
+(* Expands to TRUE if type T conforms to blueprint B, otherwise FALSE. *)
 
 
 (* Compile Time Arithmetic *)
@@ -150,18 +180,18 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 
 (* MACRO *) PROCEDURE MaxOrd ( bits : <T> ) : <T>;
 (* Expands to the largest ordinal number that can be represented in the num-
-   ber of bits given by its argument.  T is a pervasive whole number type. *)
+   ber of bits given by its argument.  T is a predefined whole number type. *)
 
 
 (* Binary storage requirement for an ordinal value *)
 
 (* MACRO *) PROCEDURE ReqBits ( ord : <T> ) : <T>;
 (* Expands to the minimum number of bits required to represent the ordinal
-   number given by its argument.   T is a pervasive whole number type. *)
+   number given by its argument.   T is a predefined whole number type. *)
 
 (* MACRO *) PROCEDURE ReqOctets ( ord : <T> ) : <T>;
 (* Expands to the minimum number of octets required to represent the ordinal
-   number given by its argument.  T is a pervasive whole number type. *)
+   number given by its argument.  T is a predefined whole number type. *)
 
 
 (* Unique ID of a type *)
@@ -169,7 +199,8 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 TYPE UniqueTypeID = <implementation defined>;
 
 (* MACRO *) PROCEDURE TypeID ( <T> ) : UniqueTypeID;
-(* Expands to the implementation defined unique ID value of type T. *)
+(* Expands to the implementation defined unique ID value of type T.
+   NB: The unique ID of an alias type is that of its base type. *)
 
 
 (* Hash value of a string literal *)
