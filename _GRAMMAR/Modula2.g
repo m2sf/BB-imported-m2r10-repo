@@ -1,8 +1,8 @@
-/* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. */
+/* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. */
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 31, 2013 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Jan 5, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -89,11 +89,12 @@ tokens {
 
     CAST           = 'CAST';           /* RW within procedure header */
 
-// *** Bindable Identifiers, 24 tokens ***
+// *** Bindable Identifiers, 25 tokens ***
 
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
+    TLIMIT         = 'TLIMIT';         /* RW within constant definition */
     TSIGNED        = 'TSIGNED';        /* RW within constant definition */
     TBASE          = 'TBASE';          /* RW within constant definition */
     TPRECISION     = 'TPRECISION';     /* RW within constant definition */
@@ -103,6 +104,7 @@ tokens {
     ABS            = 'ABS';            /* RW within procedure header */
     NEG            = 'NEG';            /* RW within procedure header */
     ODD            = 'ODD';            /* RW within procedure header */
+    DUP            = 'DUP';            /* RW within procedure header */
     COUNT          = 'COUNT';          /* RW within procedure header */
     LENGTH         = 'LENGTH';         /* RW within procedure header */
     COPY           = 'COPY';           /* RW within procedure header */
@@ -114,7 +116,6 @@ tokens {
     RETAIN         = 'RETAIN';         /* RW within procedure header */
     RELEASE        = 'RELEASE';        /* RW within procedure header */
     SUBSET         = 'SUBSET';         /* RW within procedure header */
-    TLIMIT         = 'TLIMIT';         /* RW within procedure header */
     TMAX           = 'TMAX';           /* RW within procedure header */
     TMIN           = 'TMIN';           /* RW within procedure header */
     SXF            = 'SXF';            /* RW within procedure header */
@@ -213,15 +214,18 @@ requiredConst :
     ;
 
 // alias #5.1
-constBindableProperty : ':=' | DESCENDING |
-    /* Ident */ TSIGNED | TBASE | TPRECISION | TMINEXPONENT | TMAXEXPONENT
-    {} /* make ANTLRworks display separate branches */
-    ;
+constBindableProperty : ':=' | DESCENDING | constBindableIdent ;
 
 // alias #5.2
-predefinedType : Ident ;
+constBindableIdent :  /* Ident */
+    TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXPONENT | TMAXEXPONENT
+    {} /* make ANTLRworks display separate branches */
+	;
 
 // alias #5.3
+predefinedType : Ident ;
+
+// alias #5.4
 constExpression : expression ; /* but no type identifiers */
 
 
@@ -339,7 +343,7 @@ typeIdent : qualident ;
 
 // production #19
 range :
-    '[' constExpression '..' constExpression ']'
+    '[' '>'? constExpression '..' '<'? constExpression ']'
     ;
 
 // production #20
@@ -457,9 +461,9 @@ procBindableEntity :
 // fragment #32.1
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
-procBindableIdent :
-    ABS | NEG | ODD | COUNT | LENGTH | NEW | RETAIN | RELEASE | COPY |
-    CONCAT | STORE | REMOVE  | RETRIEVE | SUBSET | TLIMIT | TMIN | TMAX |
+procBindableIdent : /* Ident */
+    ABS | NEG | ODD | DUP | COUNT | LENGTH | NEW | RETAIN | RELEASE | COPY |
+    CONCAT | STORE | REMOVE  | RETRIEVE | SUBSET | TMIN | TMAX |
     SXF | VAL {} /* make ANTLRworks display separate branches */
     ;
 
