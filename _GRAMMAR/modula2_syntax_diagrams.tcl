@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Dec 31, 2013
+# Syntax diagram generator for Modula-2 (R10), status Jan 5, 2014
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -213,15 +213,20 @@ lappend non_terminals requiredConst {
 
 # (5.1) Constant-Bindable Property
 lappend non_terminals constBindableProperty {
-  or := DESCENDING TSIGNED TBASE TPRECISION TMINEXPONENT TMAXEXPONENT
+  or := DESCENDING constBindableIdent
 }
 
-# (5.2) Predefined Type
+# (5.2) Constant-Bindable Identifier
+lappend non_terminals constBindableIdent {
+  or /TLIMIT /TSIGNED /TBASE /TPRECISION /TMINEXPONENT /TMAXEXPONENT
+}
+
+# (5.3) Predefined Type
 lappend non_terminals predefinedType {
   line Ident
 }
 
-# (5.3) Constant Expression
+# (5.4) Constant Expression
 lappend non_terminals constExpression {
   line expression
 }
@@ -360,6 +365,11 @@ lappend non_terminals range {
   line [ constExpression .. constExpression ]
 }
 
+# (19) Range (alternative)
+lappend non_terminals altRange {
+  line [ {opt >} constExpression .. {opt <} constExpression ]
+}
+
 # (20) Enumeration Type
 lappend non_terminals enumType {
   line ( {optx + enumBaseType ,} identList )
@@ -472,8 +482,8 @@ lappend non_terminals procBindableEntity {
 # (32.1) Procedure-Bindable Identifier
 lappend non_terminals procBindableIdent {
   or
-    /ABS /NEG /ODD /COUNT /LENGTH /NEW /RETAIN /RELEASE /COPY /CONCAT
-    /STORE /REMOVE /RETRIEVE /SUBSET /TLIMIT /TMIN /TMAX /SXF /VAL
+    /ABS /NEG /ODD /DUP /COUNT /LENGTH /NEW /RETAIN /RELEASE /COPY /CONCAT
+    /STORE /REMOVE /RETRIEVE /SUBSET /TMIN /TMAX /SXF /VAL
 }
 
 # (33) Formal Parameter List
