@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Jan 5, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Jan 8, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -30,7 +30,7 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 45 reserved words, 25 identifiers, 22 pragma symbols
+// 45 reserved words, 25 identifiers, 23 pragma symbols
 
 tokens {
 	
@@ -89,7 +89,7 @@ tokens {
 
     CAST           = 'CAST';           /* RW within procedure header */
 
-// *** Bindable Identifiers, 25 tokens ***
+// *** Bindable Identifiers, 24 tokens ***
 
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
@@ -98,12 +98,11 @@ tokens {
     TSIGNED        = 'TSIGNED';        /* RW within constant definition */
     TBASE          = 'TBASE';          /* RW within constant definition */
     TPRECISION     = 'TPRECISION';     /* RW within constant definition */
-    TMINEXPONENT   = 'TMINEXPONENT';   /* RW within constant definition */
-    TMAXEXPONENT   = 'TMAXEXPONENT';   /* RW within constant definition */
+    TMINEXP        = 'TMINEXP';        /* RW within constant definition */
+    TMAXEXP        = 'TMAXEXP';        /* RW within constant definition */
 
     ABS            = 'ABS';            /* RW within procedure header */
     NEG            = 'NEG';            /* RW within procedure header */
-    ODD            = 'ODD';            /* RW within procedure header */
     DUP            = 'DUP';            /* RW within procedure header */
     COUNT          = 'COUNT';          /* RW within procedure header */
     LENGTH         = 'LENGTH';         /* RW within procedure header */
@@ -121,7 +120,7 @@ tokens {
     SXF            = 'SXF';            /* RW within procedure header */
     VAL            = 'VAL';            /* RW within procedure header */
 
-// *** Reserved Words of the Pragma Language, 22 tokens ***
+// *** Reserved Words of the Pragma Language, 23 tokens ***
 
 //  Symbols that are reserved words only within pragmas
 
@@ -147,6 +146,7 @@ tokens {
     GENERATED      = 'GENERATED';      /* RW within pragma only */
     ADDR           = 'ADDR';           /* RW within pragma only */
     FFI            = 'FFI';            /* RW within pragma only */
+    FFIDENT        = 'FFIDENT';        /* RW within pragma only */
 
 // *** Special Characters, 3 tokens ***
 
@@ -218,7 +218,7 @@ constBindableProperty : ':=' | DESCENDING | constBindableIdent ;
 
 // alias #5.2
 constBindableIdent :  /* Ident */
-    TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXPONENT | TMAXEXPONENT
+    TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
     {} /* make ANTLRworks display separate branches */
 	;
 
@@ -462,7 +462,7 @@ procBindableEntity :
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 procBindableIdent : /* Ident */
-    ABS | NEG | ODD | DUP | COUNT | LENGTH | NEW | RETAIN | RELEASE | COPY |
+    ABS | NEG | DUP | COUNT | LENGTH | NEW | RETAIN | RELEASE | COPY |
     CONCAT | STORE | REMOVE  | RETRIEVE | SUBSET | TMIN | TMAX |
     SXF | VAL {} /* make ANTLRworks display separate branches */
     ;
@@ -696,8 +696,8 @@ pragma :
 pragmaBody :
 	pragmaMSG | pragmaIF | procAttrPragma | pragmaPTW | pragmaFORWARD |
     pragmaENCODING | pragmaALIGN | pragmaPADBITS | pragmaPURITY |
-    variableAttrPragma | pragmaDEPRECATED | pragmaDEPRECATED |
-    pragmaADDR | pragmaFFI | implDefinedPragma
+    variableAttrPragma | pragmaDEPRECATED | pragmaGENERATED |
+    pragmaADDR | pragmaFFI | pragmaFFI | implDefinedPragma
     ;
 
 // production #2
@@ -820,69 +820,74 @@ seconds : wholeNumber ;
 // alias #15.4g
 timezone : wholeNumber ;
 
-// production #15
+// production #16
 pragmaADDR :
     ADDR '=' inPragmaExpression
     ;
 
-// production #16
+// production #17
 pragmaFFI :
-    FFI '=' StringLiteral /* "C" or "Fortran" */
+    FFI '=' StringLiteral /* "C", "Fortran", "CLR" or "JVM" */
     ;
 
-// production #17
+// production #18
+pragmaFFIDENT :
+    FFIDENT '=' StringLiteral /* foreign library identifier */
+    ;
+
+// production #19
 implDefinedPragma :
     implDefinedPragmaSymbol ( '=' inPragmaExpression )?
     '|' ( INFO | WARN | ERROR | FATAL {} )
     ;
 
-// production #18
+// production #20
 inPragmaExpression :
 /* represents operator precedence level 1 */
     inPragmaSimpleExpression ( inPragmaRelOp inPragmaSimpleExpression )?
     ;
 
-// fragment #18.1
+// fragment #20.1
 inPragmaRelOp :
     '=' | '#' | '<' | '<=' | '>' | '>='
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #19
+// production #21
 inPragmaSimpleExpression :
 /* represents operator precedence level 2 */
     ( '+' | '-' {})? inPragmaTerm ( addOp inPragmaTerm )*
     ;
 
-// production #20
+// production #22
 inPragmaTerm :
 /* represents operator precedence level 3 */
     inPragmaFactor ( inPragmaMulOp inPragmaFactor )*
     ;
 
-// fragment #20.1
+// fragment #22.1
 inPragmaMulOp :
     '*' | DIV | MOD | AND
     {} /* make ANTLRworks display separate branches */
     ;
 
-// production #21
+// production #23
 inPragmaFactor :
 /* represents operator precedence level 4 */
     NOT? inPragmaSimpleFactor
     ;
 
-// production #22
+// production #24
 inPragmaSimpleFactor :
     wholeNumber |
     /* constQualident is covered by inPragmaCompileTimeFunctionCall */
     '(' inPragmaExpression ')' | inPragmaCompileTimeFunctionCall
     ;
 
-// alias #22.1
+// alias #24.1
 wholeNumber : NumericLiteral ;
 
-// production #23
+// production #25
 inPragmaCompileTimeFunctionCall :
     qualident ( '(' inPragmaExpression ( ',' inPragmaExpression )* ')' )?
     ;
