@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Jan 5, 2014
+# Syntax diagram generator for Modula-2 (R10), status Jan 8, 2014
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -218,7 +218,7 @@ lappend non_terminals constBindableProperty {
 
 # (5.2) Constant-Bindable Identifier
 lappend non_terminals constBindableIdent {
-  or /TLIMIT /TSIGNED /TBASE /TPRECISION /TMINEXPONENT /TMAXEXPONENT
+  or /TLIMIT /TSIGNED /TBASE /TPRECISION /TMINEXP /TMAXEXP
 }
 
 # (5.3) Predefined Type
@@ -482,7 +482,7 @@ lappend non_terminals procBindableEntity {
 # (32.1) Procedure-Bindable Identifier
 lappend non_terminals procBindableIdent {
   or
-    /ABS /NEG /ODD /DUP /COUNT /LENGTH /NEW /RETAIN /RELEASE /COPY /CONCAT
+    /ABS /NEG /DUP /COUNT /LENGTH /NEW /RETAIN /RELEASE /COPY /CONCAT
     /STORE /REMOVE /RETRIEVE /SUBSET /TMIN /TMAX /SXF /VAL
 }
 
@@ -959,6 +959,7 @@ lappend pragmas pragmaBody {
     pragmaGENERATED
     pragmaADDR
     pragmaFFI
+    pragmaFFIDENT
     implDefinedPragma
 }
 
@@ -1083,46 +1084,51 @@ lappend pragmas pragmaADDR {
 
 # (17) Body Of Foreign Function Interface Pragma
 lappend pragmas pragmaFFI {
-  line FFI = {or `C `Fortran }
+  line FFI = {or `C `Fortran `CLR `JVM }
 }
 
-# (18) Body of Implementation Defined Pragma
+# (18) Body Of Foreign Function Identifier Mapping Pragma
+lappend pragmas pragmaFFIDENT {
+  line FFIDENT = StringLiteral
+}
+
+# (19) Body of Implementation Defined Pragma
 lappend pragmas implDefinedPragma {
   line implDefinedPragmaSymbol {optx = inPragmaExpression}
     | {or INFO WARN ERROR FATAL}
 }
 
-# (19) In-Pragma Expression
+# (20) In-Pragma Expression
 lappend pragmas inPragmaExpression {
   line inPragmaSimpleExpr {optx inPragmaRelOp inPragmaSimpleExpr}
 }
 
-# (19.1) In-Pragma Relational Operator
+# (20.1) In-Pragma Relational Operator
 lappend pragmas inPragmaRelOp {
   or = # < <= > >=
 }
 
-# (20) In-Pragma Simple Expression
+# (21) In-Pragma Simple Expression
 lappend pragmas inPragmaSimpleExpr {
   line {or {} + -} {loop inPragmaTerm addOp}
 }
 
-# (21) In-Pragma Term
+# (22) In-Pragma Term
 lappend pragmas inPragmaTerm {
   loop inPragmaFactor inPragmaMulOp
 }
 
-# (21.1) In-Pragma Multiply Operator
+# (22.1) In-Pragma Multiply Operator
 lappend pragmas inPragmaMulOp {
   or * DIV MOD AND
 }
 
-# (22) In-Pragma Factor
+# (23) In-Pragma Factor
 lappend pragmas inPragmaFactor {
   line {optx NOT} inPragmaSimpleFactor
 }
 
-# (23) In-Pragma Simple Factor
+# (24) In-Pragma Simple Factor
 lappend pragmas inPragmaSimpleFactor {
   or
     wholeNumber
@@ -1131,12 +1137,12 @@ lappend pragmas inPragmaSimpleFactor {
     {line ( inPragmaExpression )}
 }
 
-# (23.1) Whole Number
+# (24.1) Whole Number
 lappend pragmas wholeNumber {
   line NumericLiteral
 }
 
-# (24) In-Pragma Compile Time Function Call
+# (25) In-Pragma Compile Time Function Call
 lappend pragmas inPragmaCompileTimeFunctionCall {
   line qualident ( {loop inPragmaExpression ,} ) 
 }
@@ -1389,6 +1395,12 @@ proc draw_bubble {txt} {
     set isQuotedString 1
   } elseif {$txt=="`Fortran"} {
     set label "\"Fortran\""
+    set isQuotedString 1
+  } elseif {$txt=="`CLR"} {
+    set label "\"CLR\""
+    set isQuotedString 1
+  } elseif {$txt=="`JVM"} {
+    set label "\"JVM\""
     set isQuotedString 1
   } else {
     set label $txt
