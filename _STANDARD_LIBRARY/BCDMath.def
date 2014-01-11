@@ -1,6 +1,8 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BCDMath;
+DEFINITION MODULE BCDMath [ProtoRealMath] FOR BCD;
+
+IMPORT BCD;
 
 (* Mathematical Constants and Functions for Type BCD *)
 
@@ -8,6 +10,7 @@ CONST
     e = 2.7182818284590452353602874713526;
     pi = 3.1415926535897932384626433832795;
     phi = 1.6180339887498948482045868343656;
+    tau = 6.2831853071795864769252867665590;
 
 PROCEDURE sgn ( b : BCD ) : BCD;
 (* Returns the signum value of b. *)
