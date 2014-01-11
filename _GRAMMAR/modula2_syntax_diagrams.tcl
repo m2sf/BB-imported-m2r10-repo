@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Jan 8, 2014
+# Syntax diagram generator for Modula-2 (R10), status Jan 10, 2014
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -171,13 +171,14 @@ lappend non_terminals moduleIdent {
 # (3) Definition Of Module
 lappend non_terminals definitionOfModule {
   stack
-    {line DEFINITION MODULE moduleIdent {opt [ conformedToBlueprint ]} ;}
+    {line DEFINITION MODULE moduleIdent}
+    {line {optx [ blueprintToObey ]} {optx FOR typeToExtend} ;}
     {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
-    END moduleIdent .}
+      END moduleIdent .}
 }
 
-# (3.1) Conformed-To Blueprint
-lappend non_terminals conformedToBlueprint {
+# (3.1) Blueprint to Obey
+lappend non_terminals blueprintToObey {
   line blueprintIdent
 }
 
@@ -186,17 +187,33 @@ lappend non_terminals blueprintIdent {
   line Ident
 }
 
+# (3.3) Type to Extend
+lappend non_terminals typeToExtend {
+  line Ident
+}
+
 # (4) Blueprint
 lappend non_terminals blueprint {
   stack
-    {line BLUEPRINT blueprintIdent {opt [ conformedToBlueprint ]} ;}
-    {line {opt REFERENTIAL identList ;} requiredADT ;}
+    {line BLUEPRINT blueprintIdent}
+    {line {optx [ blueprintToRefine ]} {optx FOR blueprintForTypeToExtend} ;}
+    {line {optx REFERENTIAL identList ;} moduleTypeRequirementOrImpediment ;}
     {line {loop nil {nil requiredConst ;}}
       {loop nil {nil requiredProcedure ;}}
       END blueprintIdent .}
 }
 
-# (4.1) Required Procedure
+# (4.1) Blueprint to Refine
+lappend non_terminals blueprintToRefine {
+  line blueprintIdent
+}
+
+# (4.2) Blueprint for Type to Extend
+lappend non_terminals blueprintForTypeToExtend {
+  line blueprintIdent
+}
+
+# (4.3) Required Procedure
 lappend non_terminals requiredProcedure {
   line procedureHeader
 }
@@ -269,13 +286,18 @@ lappend non_terminals replacement {
 # (9) Import Directive
 lappend non_terminals importDirective {
   or
-    {line IMPORT {loop {line moduleIdent {opt +}} ,}}
+    {line IMPORT {loop {line moduleIdent {optx importMode}} ,}}
     {line FROM moduleIdent IMPORT {
       or
         {line identList}
         {line *}
     }
   }
+}
+
+# (9.1) importMode
+lappend non_terminals importMode {
+  or + -
 }
 
 # (10) Block
@@ -311,10 +333,13 @@ lappend non_terminals declaration {
   }
 }
 
-# (14) Required ADT
-lappend non_terminals requiredADT {
-  line TYPE typeIdent =
-    {loop permittedTypeDeclaration |} {opt := {loop protoliteral |}}
+# (14) Module Type Requirement or Impediment
+lappend non_terminals moduleTypeRequirementOrImpediment {
+  line TYPE typeIdent = {
+    or
+      {line {loop permittedTypeDeclaration |} {optx := {loop protoliteral |}}}
+      NIL
+    }
 }
 
 # (15) Permitted Type Declaration
@@ -476,7 +501,7 @@ lappend non_terminals procedureHeader {
 # (32) Procedure-Bindable Entity
 lappend non_terminals procBindableEntity {
   or
-    DIV MOD FOR IN .. :: + - * / = < > procBindableIdent
+    + - * / = < > :: .. DIV MOD FOR IN procBindableIdent
 }
 
 # (32.1) Procedure-Bindable Identifier
