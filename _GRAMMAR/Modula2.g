@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Jan 8, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Jan 10, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -30,7 +30,7 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 45 reserved words, 25 identifiers, 23 pragma symbols
+// 45 reserved words, 26 identifiers, 23 pragma symbols
 
 tokens {
 	
@@ -82,12 +82,13 @@ tokens {
     VARIADIC       = 'VARIADIC';
     WHILE          = 'WHILE';
 
-// *** CAST, 1 token ***
+// *** Dual-Use RW-Identifiers, 2 tokens ***
 
-//  CAST is both an Identifier and a Reserved Word
+//  CAST and NIL are both identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
     CAST           = 'CAST';           /* RW within procedure header */
+    NIL            = 'NIL';            /* RW within blueprint required type */
 
 // *** Bindable Identifiers, 24 tokens ***
 
@@ -185,26 +186,37 @@ moduleIdent : Ident ;
 
 // production #3
 definitionOfModule :
-    DEFINITION MODULE moduleIdent ( '[' conformedToBlueprint ']' )? ';'
+    DEFINITION MODULE moduleIdent
+    ( '[' blueprintToObey ']' )? ( FOR typeToExtend )? ';'
     importList* definition*
     END moduleIdent '.'
     ;
 
 // alias #3.1
-conformedToBlueprint : blueprintIdent ;
+blueprintToObey : blueprintIdent ;
 
 // alias #3.2
 blueprintIdent : Ident ;
 
+// alias #3.3
+typeToExtend : Ident ;
+
 // production #4
 blueprint :
-    BLUEPRINT blueprintIdent ( '[' conformedToBlueprint ']' )? ';'
-    ( REFERENTIAL identList ';' )? requiredADT ';'
+    BLUEPRINT blueprintIdent
+    ( '[' blueprintToRefine ']' )? ( FOR blueprintForTypeToExtend )? ';'
+    ( REFERENTIAL identList ';' )? mouleTypeRequirementOrImpediment ';'
     ( requiredConst ';' )* ( requiredProcedure ';' )*
     END blueprintIdent '.'
     ;
 
 // alias #4.1
+blueprintToRefine : blueprintIdent ;
+
+// alias #4.2
+blueprintForTypeToExtend : blueprintIdent ;
+
+// alias #4.3
 requiredProcedure : procedureHeader ;
 
 // production #5
@@ -259,8 +271,14 @@ replacement : StringLiteral ;
 
 // production #9
 importDirective :
-    IMPORT moduleIdent '+'? ( ',' moduleIdent '+'? )* |
+    IMPORT moduleIdent importMode? ( ',' moduleIdent importMode? )* |
     FROM moduleIdent IMPORT ( identList | '*' )
+    ;
+
+// fragment #9.1
+importMode :
+    '+' | '-'
+    {} /* make ANTLRworks display separate branches */
     ;
 
 /* Import with experimental aliased import qualifier '=>'
@@ -304,10 +322,10 @@ declaration :
     ;
 
 // production #14
-requiredADT :
+mouleTypeRequirementOrImpediment :
     TYPE '='
-    permittedTypeDeclaration ( '|' permittedTypeDeclaration )*
-    ( ':=' protoliteral ( '|' protoliteral )* )?
+    ( permittedTypeDeclaration ( '|' permittedTypeDeclaration )*
+      ( ':=' protoliteral ( '|' protoliteral )* )? ) | NIL
     ;
 
 // production #15
@@ -453,8 +471,8 @@ procedureHeader :
 
 // production #32
 procBindableEntity :
+    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | '..' |
     DIV | MOD | FOR | IN |
-    '..' | '::' | '+' | '-' | '*' | '/' | '=' | '<' | '>' |
     procBindableIdent
     ;
 
@@ -512,7 +530,7 @@ assignmentOrProcedureCall :
     designator ( ':=' expression | incOrDevSuffix | actualParameters )?
     ;
 
-// alias #38.1
+// fragment #38.1
 incOrDevSuffix :
     '++' | '--'
     {} /* make ANTLRworks display separate branches */
