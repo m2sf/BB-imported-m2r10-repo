@@ -1,6 +1,6 @@
-(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LongIntMath;
+DEFINITION MODULE LongIntMath [ProtoWholeMath] FOR LONGINT;
 
 (* Mathematical Functions for Type LONGINT *)
 
