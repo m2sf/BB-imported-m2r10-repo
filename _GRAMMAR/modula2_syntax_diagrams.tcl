@@ -164,7 +164,7 @@ lappend non_terminals programModule {
 }
 
 # (2.1) Module Identifier
-lappend non_terminals impModuleIdent {
+lappend non_terminals moduleIdent {
   line Ident
 }
 
