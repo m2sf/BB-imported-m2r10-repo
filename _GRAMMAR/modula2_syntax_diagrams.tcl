@@ -153,23 +153,23 @@ set non_terminals {}
 lappend non_terminals compilationUnit {
   or
     {line {optx IMPLEMENTATION} programModule}
-    {line definitionOfModule}
+    {line definitionModule}
     {line blueprint}
 }
 
-# (2) Program Module
+# (2) Program or Implementation Module
 lappend non_terminals programModule {
   line MODULE moduleIdent ;
   {loop nil {nil importList nil}} block moduleIdent .
 }
 
 # (2.1) Module Identifier
-lappend non_terminals moduleIdent {
+lappend non_terminals impModuleIdent {
   line Ident
 }
 
-# (3) Definition Of Module
-lappend non_terminals definitionOfModule {
+# (3) Definition Module
+lappend non_terminals definitionModule {
   stack
     {line DEFINITION MODULE moduleIdent}
     {line {optx [ blueprintToObey ]} {optx FOR typeToExtend} ;}
@@ -760,6 +760,71 @@ lappend non_terminals qualident {
 lappend non_terminals identList {
   loop Ident ,
 }
+
+# ---------------------------------------------------------------------------
+# Terminal Symbols for Optional Language Extensions
+# ---------------------------------------------------------------------------
+#
+
+# Architecture Specific Implementation Module Selection
+
+# Replacement for #2
+lappend non_terminals langExtn_programModule {
+  line MODULE moduleIdent {optx ( arch ) } ;
+  {loop nil {nil importList nil}} block moduleIdent .
+}
+
+# Architecture
+lappend non_terminals langExtn_arch {
+  Ident
+}
+
+# Register Mapping Facility
+
+# Replacement for #28
+lappend non_terminals langExtn_simpleFormalType {
+  line {optx /CAST} {optx ARRAY OF} typeIdent {optx regAttribute}
+}
+
+# Register Mapping Attribute
+lappend non_terminals langExtn_regAttribute {
+  line IN REG {or registerNumber registerMnemonic}
+}
+
+# Register Number
+lappend non_terminals langExtn_registerNumber {
+  constExpression
+}
+
+# Register Mnemonic
+lappend non_terminals langExtn_registerMnemonic {
+  qualident
+}
+
+# Symbolic Assembly Inline Facility
+
+# Replacement for #36
+lappend non_terminals langExtn_statement {
+  line {
+    or
+      assignmentOrProcedureCall
+      ifStatement
+      caseStatement
+      whileStatement
+      repeatStatement
+      loopStatement
+      forStatement
+      assemlyBlock
+      {line RETURN {optx expression}}
+      EXIT
+  }
+}
+
+# Assembly Block
+lappend non_terminals langExtn_assemblyBlock {
+  line ASM assemblySourceCode END
+}
+
 
 # ---------------------------------------------------------------------------
 # Terminal Symbols
