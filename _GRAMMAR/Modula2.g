@@ -149,6 +149,11 @@ tokens {
     FFI            = 'FFI';            /* RW within pragma only */
     FFIDENT        = 'FFIDENT';        /* RW within pragma only */
 
+// *** RWs for Optional Language Facilities, 2 tokens ***
+/*
+    ASM            = 'ASM';
+    REG            = 'REG';
+*/
 // *** Special Characters, 3 tokens ***
 
     BACKSLASH      = '\\';             /* for readability */
@@ -172,7 +177,7 @@ tokens {
 
 // production #1
 compilationUnit :	
-      IMPLEMENTATION? programModule | definitionOfModule | blueprint
+      IMPLEMENTATION? programModule | definitionModule | blueprint
     ;
 
 // production #2
@@ -185,7 +190,7 @@ programModule :
 moduleIdent : Ident ;
 
 // production #3
-definitionOfModule :
+definitionModule :
     DEFINITION MODULE moduleIdent
     ( '[' blueprintToObey ']' )? ( FOR typeToExtend )? ';'
     importList* definition*
@@ -281,19 +286,6 @@ importMode :
     {} /* make ANTLRworks display separate branches */
     ;
 
-/* Import with experimental aliased import qualifier '=>'
-   IMPORT Foo => Bar would import module Foo to be referenced as Bar
-   Strongest use case: import of target architecture specific modules, eg.
-   IMPORT G711Codecs_x86 => G711Codecs, G711Codecs_ppc => G711Codecs, etc
-   requires further study
-   
-importWithAlias :
-    ( FROM moduleIdent IMPORT ( identList | '*' ) |
-    IMPORT moduleIdent ( '+' | '=>' Ident )?
-    ( ',' moduleIdent ( '+' | '=>' Ident )? )* )
-    ;
-*/
-
 // production #10
 block :
     declaration*
@@ -368,17 +360,6 @@ range :
 enumType :
     '(' ( '+' enumBaseType ',' )? identList ')'
     ;
-
-/* Enumeration with experimental constant qualifier
-   TYPE Foo = ( CONST foo, bar, baz ) would define each of the enumerated
-   values also as constants in the module so that they could be qualified
-   simply with the module name if the module is imported qualified.
-   requires further study
-   
-enumTypeWithConst :
-    '(' CONST? ( '+' enumBaseType ',' )? identList ')'
-    ;
-*/
 
 // alias 20.1
 enumBaseType : typeIdent ;
@@ -699,6 +680,59 @@ identList :
 
 
 // ---------------------------------------------------------------------------
+// O P T I O N A L   L A N G U A G E   F A C I L I T I E S
+// ---------------------------------------------------------------------------
+/*
+// *** Architecture Specific Implementation Module Selection ***
+
+// replacement for production #2
+langExtn_programModule :
+    MODULE moduleIdent ( '(' archSelector ')' )? ';'
+    importList* block moduleIdent '.'
+    ;
+
+// alias: Architecture Selector
+langExtn_archSelector : Ident ;
+
+// *** Register Mapping ***
+
+// replacement for production #28
+langExtn_simpleFormalType :
+    CAST? ( ARRAY OF )? typeIdent regAttribute?
+    ;
+
+// Register Mapping Attribute
+regAttribute :
+    IN REG ( registerNumber | registerMnemonic )
+    ;
+
+// alias: Register Number
+registerNumber : constExpression ;
+
+// alias: Register Mnemonic
+registerMnemonic : qualident ;
+
+// *** Symbolic Assembly Inlining ***
+
+// replacement for production #36
+langExtn_statement :
+    ( assignmentOrProcedureCall | ifStatement | caseStatement |
+      whileStatement | repeatStatement | loopStatement |
+      forStatement | assemblyBlock | RETURN expression? | EXIT )?
+    ;
+
+// Assembly Block
+assemblyBlock :
+    ASM assemblySourceCode END
+    ;
+
+// Assembly Source Code
+assemblySourceCode :
+    <implementation defined syntax>
+    ;
+*/
+
+// ---------------------------------------------------------------------------
 // P R A G M A   G R A M M A R
 // ---------------------------------------------------------------------------
 // 23 productions
@@ -715,7 +749,7 @@ pragmaBody :
 	pragmaMSG | pragmaIF | procAttrPragma | pragmaPTW | pragmaFORWARD |
     pragmaENCODING | pragmaALIGN | pragmaPADBITS | pragmaPURITY |
     variableAttrPragma | pragmaDEPRECATED | pragmaGENERATED |
-    pragmaADDR | pragmaFFI | pragmaFFI | implDefinedPragma
+    pragmaADDR | pragmaFFI | pragmaFFIDENT | implDefinedPragma
     ;
 
 // production #2
