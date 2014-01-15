@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Jan 10, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Jan 15, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -225,209 +225,224 @@ blueprintForTypeToExtend : blueprintIdent ;
 requiredProcedure : procedureHeader ;
 
 // production #5
-requiredConst :	
-    CONST ( '[' constBindableProperty ']' )? Ident
-    ( ':' ( range OF)? predefinedType | '=' constExpression )
-    ;
-
-// alias #5.1
-constBindableProperty : ':=' | DESCENDING | constBindableIdent ;
-
-// alias #5.2
-constBindableIdent :  /* Ident */
-    TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
-    {} /* make ANTLRworks display separate branches */
-	;
-
-// alias #5.3
-predefinedType : Ident ;
-
-// alias #5.4
-constExpression : expression ; /* but no type identifiers */
-
-
-// *** Import Lists, Blocks, Definitions and Declarations ***
-
-// production #6
-importList :
-    ( libGenDirective | importDirective ) ';'
-    ;
-
-// production #7
-libGenDirective :
-    GENLIB libIdent FROM template FOR templateParams END
-    ;
-
-// alias #7.1
-libIdent : Ident ;
-
-// alias #7.2
-template : Ident ;
-
-// production #8
-templateParams :
-    placeholder '=' replacement ( ';' placeholder '=' replacement )* ;
-
-// alias #8.1
-placeholder : Ident ;
-
-// alias #8.2
-replacement : StringLiteral ;
-
-// production #9
-importDirective :
-    IMPORT moduleIdent importMode? ( ',' moduleIdent importMode? )* |
-    FROM moduleIdent IMPORT ( identList | '*' )
-    ;
-
-// fragment #9.1
-importMode :
-    '+' | '-'
-    {} /* make ANTLRworks display separate branches */
-    ;
-
-// production #10
-block :
-    declaration*
-    ( BEGIN statementSequence )? END
-    ;
-
-// production #11
-definition :
-    CONST (  Ident '=' constExpression ';' )+ |
-    TYPE ( publicTypeDeclaration ';' )+ |
-    VAR ( variableDeclaration ';' )+ |
-    procedureHeader ';'
-    ;
-
-// production #12
-publicTypeDeclaration :
-    Ident '=' ( type | OPAQUE recordType? )
-    ;
-
-// production #13
-declaration :
-    CONST ( Ident '=' constExpression ';' )+ |
-    TYPE ( Ident '=' type ';' )+ |
-    VAR ( variableDeclaration ';' )+ |
-    procedureHeader ';' block Ident ';'
-    ;
-
-// production #14
 mouleTypeRequirementOrImpediment :
     TYPE '='
     ( permittedTypeDeclaration ( '|' permittedTypeDeclaration )*
       ( ':=' protoliteral ( '|' protoliteral )* )? ) | NIL
     ;
 
-// production #15
+// production #6
 permittedTypeDeclaration :
     RECORD | OPAQUE RECORD?
     ;
 
-// production #16
+// production #7
 protoliteral :
     simpleProtoliteral | structuredProtoliteral
     ;
 
-// alias #16.1
+// alias #7.1
 simpleProtoliteral : Ident ; /* CHAR, INTEGER or REAL */
 
-// production #17
+// production #8
 structuredProtoliteral :
     '{' ( VARIADIC OF simpleProtoliteral ( ',' simpleProtoliteral )* |
     structuredProtoliteral ( ',' structuredProtoliteral )* ) '}'
     ;
 
+// production #9
+requiredConst :	
+    CONST ( '[' constBindableProperty ']' )? Ident
+    ( ':' ( range OF)? predefinedType | '=' constExpression )
+    ;
+
+// alias #9.1
+constBindableProperty : ':=' | DESCENDING | constBindableIdent ;
+
+// alias #9.2
+constBindableIdent :  /* Ident */
+    TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
+    {} /* make ANTLRworks display separate branches */
+	;
+
+// alias #9.3
+predefinedType : Ident ;
+
+// alias #9.4
+constExpression : expression ; /* but no type identifiers */
+
+
+// *** Import Lists, Blocks, Definitions and Declarations ***
+
+// production #10
+importList :
+    ( libGenDirective | importDirective ) ';'
+    ;
+
+// production #11
+libGenDirective :
+    GENLIB libIdent FROM template FOR templateParamList END
+    ;
+
+// alias #11.1
+libIdent : Ident ;
+
+// alias #11.2
+template : Ident ;
+
+// production #12
+templateParamList :
+    placeholder '=' replacement ( ';' placeholder '=' replacement )* ;
+
+// alias #12.1
+placeholder : Ident ;
+
+// alias #12.2
+replacement : StringLiteral ;
+
+// production #13
+importDirective :
+    IMPORT moduleIdent importMode? ( ',' moduleIdent importMode? )* |
+    FROM moduleIdent IMPORT ( identList | '*' )
+    ;
+
+// fragment #13.1
+importMode :
+    '+' | '-'
+    {} /* make ANTLRworks display separate branches */
+    ;
+
+// production #14
+block :
+    declaration*
+    ( BEGIN statementSequence )? END
+    ;
+
+// production #15
+definition :
+    CONST (  constDeclaration ';' )+ |
+    TYPE ( publicTypeDeclaration ';' )+ |
+    VAR ( variableDeclaration ';' )+ |
+    privateAccess? procedureHeader ';'
+    ;
+
+// alias #15.1
+privateAccess : '-' ;
+
+// production #16
+constDeclaration :
+    Ident '=' constExpression |
+    FOR '*' IN enumTypeIdent
+    ;
+
+// production #17
+publicTypeDeclaration :
+    Ident '=' ( OPAQUE recordType? | type )
+    ;
+
+// production #18
+declaration :
+    CONST ( constDeclaration ';' )+ |
+    TYPE ( Ident '=' type ';' )+ |
+    VAR ( variableDeclaration ';' )+ |
+    procedureHeader ';' block Ident ';'
+    ;
+
 
 // *** Types ***
 
-// production #18
+// production #19
 type :
     (( ALIAS | SET | range ) OF )? typeIdent |
     enumType | arrayType | recordType | pointerType | procedureType
     ;
 
-// alias 18.1
+// alias 19.1
 typeIdent : qualident ;
 
-// production #19
+// production #20
 range :
     '[' '>'? constExpression '..' '<'? constExpression ']'
     ;
 
-// production #20
+// production #21
 enumType :
     '(' ( '+' enumBaseType ',' )? identList ')'
     ;
 
-// alias 20.1
-enumBaseType : typeIdent ;
+// alias 21.1
+enumBaseType : enumTypeIdent ;
 
-// production #21
+// alias 21.2
+enumTypeIdent : typeIdent ;
+
+// production #22
 arrayType :
     ARRAY componentCount ( ',' componentCount )* OF typeIdent
     ;
 
-// alias #21.1
+// alias #22.1
 componentCount : constExpression ;
 
-// production #22
+// production #23
 recordType :
     RECORD ( fieldList ( ';' fieldList )* indeterminateField? |
-    '(' baseType ')' fieldList ( ';' fieldList )* ) END
+    '(' recBaseType ')' fieldList ( ';' fieldList )* ) END
     ;
 
-// aliase #22.1
+// aliase #23.1
 fieldList : variableDeclaration ;
 
-// aliase #22.2
-baseType : typeIdent ;
+// alias 23.2
+recBaseType : recTypeIdent ;
 
-// production #23
+// alias 23.3
+recTypeIdent : typeIdent ;
+
+// production #24
 indeterminateField :
     INDETERMINATE Ident ':' ARRAY discriminantFieldIdent OF typeIdent
     ;
 
-// alias #23.1
+// alias #24.1
 discriminantFieldIdent : Ident ;
 
-// production #24
+// production #25
 pointerType :
     POINTER TO CONST? typeIdent
     ;
 
-// production #25
+// production #26
 procedureType :
     PROCEDURE
     ( '(' formalTypeList ')' )?
     ( ':' returnedType )?
     ;
 
-// alias #25.1
+// alias #26.1
 returnedType : typeIdent ;
 
-// production #26
+// production #27
 formalTypeList :
     formalType ( ',' formalType )*
     ;
 
-// production #26.1
+// production #27.1
 formalType :
     attributedFormalType | variadicFormalType
     ;
 
-// production #27
+// production #28
 attributedFormalType :
     ( CONST | VAR {})? simpleFormalType
     ;
 
-// production #28
+// production #29
 simpleFormalType :
     CAST? ( ARRAY OF )? typeIdent
     ;
 
-// production #29
+// production #30
 variadicFormalType :
     VARIADIC OF
     ( attributedFormalType |
@@ -436,28 +451,28 @@ variadicFormalType :
 
 // *** Variable Declarations ***
 
-// production #30
+// production #31
 variableDeclaration :
     identList ':' ( range OF )? typeIdent
     ;
 
 // *** Procedures ***
 
-// production #31
+// production #32
 procedureHeader :
     PROCEDURE ( '[' procBindableEntity ']' )?
     Ident ( '(' formalParamList ')' )?
     ( ':' returnedType )?
     ;
 
-// production #32
+// fragment #32.1
 procBindableEntity :
     '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | '..' |
     DIV | MOD | FOR | IN |
     procBindableIdent
     ;
 
-// fragment #32.1
+// fragment #32.2
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 procBindableIdent : /* Ident */
@@ -696,7 +711,7 @@ langExtn_archSelector : Ident ;
 
 // *** Register Mapping ***
 
-// replacement for production #28
+// replacement for production #29
 langExtn_simpleFormalType :
     CAST? ( ARRAY OF )? typeIdent regAttribute?
     ;
@@ -754,8 +769,13 @@ pragmaBody :
 
 // production #2
 pragmaMSG :
-    MSG '=' ( INFO | WARN | ERROR | FATAL {}) ':'
+    MSG '=' messageMode ':'
     compileTimeMsgComponent ( ',' compileTimeMsgComponent )*
+    ;
+
+// fragment #2.1
+messageMode :
+    ( INFO | WARN | ERROR | FATAL {})
     ;
 
 // production #3
@@ -889,8 +909,7 @@ pragmaFFIDENT :
 
 // production #19
 implDefinedPragma :
-    implDefinedPragmaSymbol ( '=' inPragmaExpression )?
-    '|' ( INFO | WARN | ERROR | FATAL {} )
+    implDefinedPragmaSymbol ( '=' inPragmaExpression )? '|' messageMode
     ;
 
 // production #20
