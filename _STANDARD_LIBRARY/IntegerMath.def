@@ -1,6 +1,6 @@
 (* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE IntegerMath [ProtoWholeMath] FOR INTEGER;
+DEFINITION MODULE IntegerMath [ProtoIntMath] FOR INTEGER;
 
 (* Mathematical Functions for Type INTEGER *)
 
