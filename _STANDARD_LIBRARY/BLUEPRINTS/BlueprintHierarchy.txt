@@ -6,18 +6,18 @@ Numeric Blueprints    Collection Blueprints               Extension Blueprints
   |                     |                                   |
   +--ProtoScalar        +--ProtoStaticSet (ordered)         +--ProtoArrayIO
   |  |                  |                                   |
-  |  +--ProtoReal       +--ProtoStaticArray (ordered)       +--ProtoWholeMath
+  |  +--ProtoReal       +--ProtoStaticArray (ordered)       +--ProtoCardMath
   |  |                  |                                   |
-  |  +--ProtoInteger    +--ProtoStaticString (ordered)      +--ProtoRealMath
+  |  +--ProtoInteger    +--ProtoStaticString (ordered)      +--ProtoIntMath
   |  |                  |                                   |
-  |  +--ProtoCardinal   +--ProtoSet (dynamic)               +--ProtoTupleMath
+  |  +--ProtoCardinal   +--ProtoSet (dynamic)               +--ProtoRealMath
   |                     |                                   |
-  +--ProtoNonScalar     +--ProtoArray (ordered, dynamic)    +--ProtoVectorMath
+  +--ProtoNonScalar     +--ProtoArray (ordered, dynamic)    +--ProtoTupleMath
      |                  |                                   |
-     +--ProtoTuple      +--ProtoString (ordered, dynamic)   +--ProtoComplexMath
+     +--ProtoTuple      +--ProtoString (ordered, dynamic)   +--ProtoVectorMath
      |                  |                                   |
-     +--ProtoVector     +--ProtoDictionary (dynamic)        +--ProtoSetMath
-     |                  |
-     +--ProtoComplex    +--ProtoList (ordered, dynamic)
+     +--ProtoVector     +--ProtoDictionary (dynamic)        +--ProtoComplexMath
+     |                  |                                   |
+     +--ProtoComplex    +--ProtoList (ordered, dynamic)     +--ProtoSetMath
 
  [Status: Jan 25, 2014]
