@@ -1,0 +1,478 @@
+(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ##ModuleIdent## [ProtoStaticArray];
+
+/* ===========================================================================
+ * Modula-2 R10 Static Array Type Template
+ * ===========================================================================
+ *
+ * This template is expanded by the M2 R10 template engine utility.  Expansion
+ * may be invoked within a compiling source file using the GENLIB directive.
+ *
+ *  GENLIB FooArray FROM StaticArrays FOR
+ *    IndexType = "Barbaz";
+ *    ValueType = "Bamboo"
+ *  END;
+ *
+ * The generated library may then be imported by an import directive.
+ *
+ *  IMPORT FooArray;
+ *
+ * During template expansion,  any occurences  of ##ModuleIdent## are replaced
+ * by the identifier following GENLIB, and any occurences of ##ValueType## are
+ * replaced by the  quoted value  given for ValueType in the GENLIB directive.
+ * Template comments (like this one) are *removed* during templare expansion.
+ * ======================================================================== */
+
+/* ---------------------------------------------------------------------------
+ * Template Parameters
+ * ---------------------------------------------------------------------------
+ *
+ * All parameters are marked (A) automatic, (M) mandatory or (D) default.
+ *
+ * This template will expand the following parameters:
+ *
+ * TemplateVersion (A)
+ *
+ *  The date and time stamp of this template,
+ *  automatically defined by the template engine utility.
+ *
+ * ModuleIdent (A)
+ *
+ *  The library's identifier,
+ *  automatically supplied by the GENLIB directive.
+ *
+ * IndexType (M)
+ *
+ *  The index type of the array, THERE IS NO DEFAULT.
+ *  Template expansion will fail if the parameter is omitted.
+ *  The index type must be an ordinal type.  Compilation of
+ *  the generated library will fail if it is not an ordinal type.
+ *
+ * ValueType (M)
+ *
+ *  The value type of the array, THERE IS NO DEFAULT.
+ *  Template expansion will fail if the parameter is omitted.
+ *
+ * LowerBound (D)
+ *
+ *  The lower bound of the array.
+ *  If omitted, the value of TMIN(IndexType) will be used.
+ *
+ * UpperBound (D)
+ *
+ *  The upper bound of the array.
+ *  If omitted, the value of TMAX(IndexType) will be used.
+ * ------------------------------------------------------------------------ */
+
+/* ---------------------------------------------------------------------------
+ * Placeholder Verification and Defaults
+ * ------------------------------------------------------------------------ */
+
+/* Define placeholder ADT as an alias of ModuleIdent */
+<#DEFINE ADT = @@ModuleIdent@@#>
+
+/* Verify IndexType holds a mixed or uppercase identifier, else fail */
+<#VERIFY IndexType [Aa|AA] FAIL#>
+
+/* Verify ValueType holds a mixed or uppercase identifier, else fail */
+<#VERIFY ValueType [Aa|AA] FAIL#>
+
+/* If LowerBound is omitted, use TMIN(IndexType) */
+<#DEFIF UNDEFINED(LowerBound) : LowerBound = "TMIN(##IndexType##)" #>
+
+/* If UpperBound is omitted, use TMAX(IndexType) */
+<#DEFIF UNDEFINED(UpperBound) : LowerBound = "TMAX)(##IndexType##)" #>
+
+
+(* Abstract *)
+
+(* ---------------------------------------------------------------------------
+ * This library provides a static indexed array ADT.  It conforms to blueprint
+ * ProtoStaticArray.  It provides bindings to predefined macros TLIMIT, COUNT,
+ * COPY, STORE and RETRIEVE, to the assignment and equality operators,  and to
+ * built-in syntax syntax for iteration (FOR IN).
+ * ------------------------------------------------------------------------ *)
+
+
+(* Note of Origin *)
+
+(* ---------------------------------------------------------------------------
+ * Library created by M2TE from template AssocArrays with parameters:
+ * ---------------------------------------------------------------------------
+ *
+ * TemplateVersion : ##TemplateVersion##
+ * ModuleIdent     : ##ModuleIdent##
+ * IndexType       : ##IndexType##
+ * ValueType       : ##ValueType##
+ * LowerBound      : ##LowerBound##
+ * UpperBound      : ##UpperBound##
+ *
+ * Copyright (c) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved.
+ * ------------------------------------------------------------------------ *)
+
+
+(* Imports *)
+
+(* ---------------------------------------------------------------------------
+ * Import Index Type
+ * ------------------------------------------------------------------------ *)
+
+IMPORT ##IndexType##
+
+
+(* ---------------------------------------------------------------------------
+ * Import Value Type
+ * ------------------------------------------------------------------------ *)
+
+IMPORT ##ValueType##
+
+
+(* Compile Time Parameters *)
+
+(* ---------------------------------------------------------------------------
+ * Ordered property
+ * ---------------------------------------------------------------------------
+ *
+ * This property determines  whether the ADT is ordered or unordered.  The use
+ * of FOR DESCENDING syntax is permitted with ordered ADTs,  but not permitted 
+ * with unordered ADTs.  The language defined default value is FALSE.
+ * ------------------------------------------------------------------------ *)
+
+CONST isOrdered = TRUE;
+
+
+(* ---------------------------------------------------------------------------
+ * Entry limit property
+ * ---------------------------------------------------------------------------
+ *
+ * This property  determines  the maximum number  of entries  an array of type
+ * ##ADT## can hold.
+ *
+ * This constant is bound to predefined TLIMIT.  An expression of the form
+ *
+ *  TLIMT(##ADT##)
+ *
+ * is replaced at compile time by an expression of the form
+ *
+ *  ##ADT##.componentCount
+ * ------------------------------------------------------------------------ *)
+
+CONST componentCount = ##UpperBound## - ##LowerBound## + 1;
+
+
+(* Type Definitions *)
+
+(* ---------------------------------------------------------------------------
+ * Opaque type  ##ADT##
+ * ---------------------------------------------------------------------------
+ *
+ * The abstract data type that is implemented by this library.
+ * ------------------------------------------------------------------------ *)
+
+TYPE ##ADT## = OPAQUE RECORD
+  entry : ARRAY componentCount OF ValueType
+END; (* ##ADT## *)
+
+
+(* ---------------------------------------------------------------------------
+ * Value type:  ##ValueType##
+ * ------------------------------------------------------------------------ *)
+
+TYPE ValueType = ALIAS OF ##ValueType##;
+
+
+(* Assignment and Copying *)
+
+(* ---------------------------------------------------------------------------
+ * Assignment of Structured Values
+ * ---------------------------------------------------------------------------
+ *
+ * Structured values  representing  a value list  of  array components  may be
+ * assigned to an array variable  as long as the structured value is parameter
+ * passing compatible to the argument list of procedure assignStructuredValue.
+ *
+ * An assignment of the form
+ *
+ *  array := { val1, val2, val3, ... valN };
+ *
+ * is replaced at compile time with a procedure call of the form
+ *
+ *  ##ADT##.assignStructuredValue(array, val1, val2, ... valN);
+ *
+ * The number of values must match constant componentCount.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [:=] assignStructuredValue
+  ( array : ##ADT##; value : ARGLIST componentCount OF ValueType );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.copy( sourceArray, targetArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Copies the contents of a source array  to a target array.  If the component
+ * type of the array is reference counted,  each component in the target array
+ * is released before it is overwritten.  The source array is not modified.
+ *
+ * This procedure is bound to predefined procedure COPY.  A direct assignment
+ * of the form
+ *
+ *  array1 := array2;
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.copy(array2, array1);
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [COPY] copy
+  ( CONST source : ##ADT##; VAR target : ##ADT## );
+
+
+(* Storage and Retrieval of Contents *)
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.storeValueAtIndex( array, index, value )
+ * ---------------------------------------------------------------------------
+ *
+ * Stores a given value  at a given index  in array.  The value is stored as a
+ * reference if ValueType is a pointer type, otherwise as a copy. If ValueType
+ * is reference counted,  then RETAIN is invoked  for the value so stored  and
+ * RELEASE is invoked  for the value  so replaced.  If ValueType  is a pointer
+ * type  and NIL is passed in for value,  then runtime fault  ValueMayNotBeNIL
+ * is raised.  If the index is out of bounds of the array,  then runtime fault
+ * IndexOutOfBounds is raised.
+ *
+ * This procedure is bound to predefined STORE.  A statement of the form
+ *
+ *  STORE(array, index, value);
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.storeValueAtIndex(array, index, value)
+ *
+ * It should also be noted that a statement of the form
+ *
+ *  array[index] := value
+ *
+ * is a special syntax form of the equivalent predefined invocation
+ *
+ *  STORE(array, index, value)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [STORE] storeValueAtIndex
+  ( array : ##ADT##;
+    index : ##IndexType##; value : ##ValueType## );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.valueAtIndex( array, index )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the value stored at the given index in array.  If index is out of
+ * bounds of the array, then runtime fault IndexOutOfBounds is raised.
+ *
+ * This function is bound to predefined RETRIEVE.  An expression of the form
+ *
+ *  assocArray[key]
+ *
+ * is a special syntax form of the equivalent pervasive invocation
+ *
+ *  RETRIEVE(assocArray, key)
+ *
+ * which is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.valueForKey(assocArray, key)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [RETRIEVE] valueAtIndex
+  ( array : ##ADT##; index : ##IndexType## );
+
+
+(* Introspection *)
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.count( array )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the number of components of array which is always componentCount.
+ *
+ * This function is bound to predefined COUNT.  An expression of the form
+ *
+ *  COUNT(array)
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.count(array)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [COUNT] count ( array : ##ADT## ) : LONGCARD;
+
+
+(* Iteration *)
+
+(* ---------------------------------------------------------------------------
+ * For loop body procedure type:  ForLoopBodyProc
+ * ---------------------------------------------------------------------------
+ *
+ * Formal type for the definition of for loop iterator procedures (below).
+ * ------------------------------------------------------------------------ *)
+
+TYPE ForLoopBodyProc = PROCEDURE ( (* index : *) CONST ##IndexType## );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.forIterator( array, forLoopBody, ascending )
+ * ---------------------------------------------------------------------------
+ *
+ * Iterates by key over all key/value pairs stored in assocArray,  executing a
+ * procedure passed in for forLoopBody for each component. The iteration order
+ * is ascending if TRUE is passed in for ascending,  otherwise descending.
+ *
+ * This procedure is bound to built-in syntax FOR IN.  A statement of the form
+ *
+ *  FOR index IN assocArray DO statementSequence END
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.forIterator(assocArray, forLoopBody, TRUE)
+ *
+ * and a procedure definition of the form below  is inserted into the declara-
+ * tion section before the BEGIN-END block where the FOR statement is located.
+ *
+ *  PROCEDURE forLoopBody ( CONST index : ##IndexType## ) <*INLINE*>;
+ *  BEGIN
+ *    statementSequence
+ *  END forLoopBody;
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [FOR] forIterator
+  ( assocArray : ##ADT##;
+    forLoopBody : ForLoopBodyProc; ascending : BOOLEAN );
+
+
+(* Relational Operations *)
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.isEqual( array1, array2 )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE if array1 and array2  are equal,  otherwise FALSE.  Two arrays
+ * are equal if all values of corresponding indices in both arrays are equal.
+ *
+ * This function is bound to the equality operator.  An expression of the form
+ *
+ *  array1 = array2
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.isEqual(array1, array2)
+ *
+ * Further, an expression of the form
+ *
+ *  array1 # array2
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  NOT ##ADT##.isEqual(array1, array2)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [=] isEqual
+  ( array1, array2 : ##ADT## ) : BOOLEAN;
+
+/* General IO library */
+<#EXPAND "StaticArrays" :
+  ModuleIdent = @@ADT@@"IO";
+  ValueType = @@ValueType@@
+  GenIO = "TRUE"#>
+
+END ##ModuleIdent##.
+
+<#IF GenIO#>
+/* Generate the ADT's IO Library */
+DEFINITION MODULE ##IOLibrary## [ProtoIO] FOR ##ADT##;
+
+(* IO Operations for ##ADT## *)
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.Read( file, array )
+ * ---------------------------------------------------------------------------
+ *
+ * Reads the contents of an array from file into array.
+ *
+ * This procedure is bound to predefined READ.  An invocation of the form
+ *
+ *  READ(array)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Read(stdIn, array)
+ *
+ * and an invocation of the form
+ *
+ *  READ(file, array)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Read(file, array)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [READ] Read ( file : File; VAR array : ##ADT## );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.Write( file, array )
+ * ---------------------------------------------------------------------------
+ *
+ * Writes the contents of array to file.
+ *
+ * This procedure is bound to predefined WRITE.  An invocation of the form
+ *
+ *  WRITE(array)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Write(stdOut, array)
+ *
+ * and an invocation of the form
+ *
+ *  WRITE(file, array)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Write(file, array)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [WRITE] Write ( file : File; array : ##ADT## );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.WriteF( file, fmtStr, arrayList )
+ * ---------------------------------------------------------------------------
+ *
+ * Writes the contents of one or more arrays formatted to file.
+ *
+ * This procedure is bound to predefined WRITEF. An invocation of the form
+ *
+ *  WRITEF("", array1, array2, array3, ...)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Write(stdOut, "", array1, array2, array3, ...)
+ *
+ * and an invocation of the form
+ *
+ *  WRITEF(file, "", array1, array2, array3, ...)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.WriteF(file, "", array1, array2, array3, ...)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [WRITEF] WriteF
+  ( file : File; fmtStr : ARRAY OF CHAR;
+    items : VARIADIC OF ##ADT## );
+
+
+END ##IOLibrary##.
+<#ENDIF#>
