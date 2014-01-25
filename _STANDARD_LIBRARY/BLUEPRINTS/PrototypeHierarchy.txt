@@ -1,21 +1,23 @@
-Numeric Blueprints                   Collection Blueprints
+Numeric Blueprints    Collection Blueprints               Extension Blueprints
 
- ProtoNumeric                         ProtoCollection
- |                                    |
- +--ProtoScalar                       +--ProtoStaticSet (always ordered)
- |  |                                 |  
- |  +--ProtoReal                      +--ProtoStaticArray (always ordered)
- |  |                                 |
- |  +--ProtoInteger                   +--ProtoStaticString (always ordered)
- |  |                                 |
- |  +--ProtoCardinal                  +--ProtoSet (always dynamic)
- |                                    |
- +--ProtoNonScalar                    +--ProtoArray (always ordered & dynamic)
-    |                                 |
-    +--ProtoTuple                     +--ProtoString (always ordered & dynamic)
-    |                                 |
-    +--ProtoVector                    +--ProtoDictionary (always dynamic)
-    |                                 |
-    +--ProtoComplex                   +--ProtoList (always ordered & dynamic)
- 
- [Status: Dec 31, 2013]
+  ProtoRoot             ProtoRoot                           ProtoExtension
+  |                     |                                   |
+  ProtoNumeric          ProtoCollection                     +--ProtoIO
+  |                     |                                   |
+  +--ProtoScalar        +--ProtoStaticSet (ordered)         +--ProtoArrayIO
+  |  |                  |                                   |
+  |  +--ProtoReal       +--ProtoStaticArray (ordered)       +--ProtoWholeMath
+  |  |                  |                                   |
+  |  +--ProtoInteger    +--ProtoStaticString (ordered)      +--ProtoRealMath
+  |  |                  |                                   |
+  |  +--ProtoCardinal   +--ProtoSet (dynamic)               +--ProtoTupleMath
+  |                     |                                   |
+  +--ProtoNonScalar     +--ProtoArray (ordered, dynamic)    +--ProtoVectorMath
+     |                  |                                   |
+     +--ProtoTuple      +--ProtoString (ordered, dynamic)   +--ProtoComplexMath
+     |                  |                                   |
+     +--ProtoVector     +--ProtoDictionary (dynamic)        +--ProtoSetMath
+     |                  |
+     +--ProtoComplex    +--ProtoList (ordered, dynamic)
+
+ [Status: Jan 25, 2014]
