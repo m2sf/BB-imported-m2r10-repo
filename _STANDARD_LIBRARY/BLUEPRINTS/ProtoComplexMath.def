@@ -1,0 +1,70 @@
+(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BLUEPRINT ProtoComplexMath [ProtoExtension] FOR ProtoComplex;
+
+(* Blueprint for math extension libraries of complex number types *)
+
+TYPE = NIL;
+
+(* Required constants *)
+
+CONST
+  i =    { 0.0, 1.0 };
+  one =  { 1.0, 0.0 };
+  zero = { 0.0, 0.0 };
+
+PROCEDURE arg ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the argument of z. *)
+
+PROCEDURE norm ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the L.2 or Euclidian metric
+   from the origin of z, also called the abs or magnitude of z. *)
+
+PROCEDURE conj ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the complex conjugate of z. *)
+
+PROCEDURE inv ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the multiplicative inverse one/z of z. *)
+
+PROCEDURE power ( base : ProtoComplex; exponent : REAL ) : ProtoComplex;
+(* Required function to return the value of
+   the given base raised to the power given by exponent. *)
+
+PROCEDURE exp ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the complex exponential of z. *)
+
+PROCEDURE sqrt ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the principal square root of z. *)
+
+PROCEDURE ln ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the natural logarithm of z. *)
+
+PROCEDURE log ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the decimal logarithm of z. *)
+
+PROCEDURE sin ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the sine of z. *)
+
+PROCEDURE cos ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the cosine of z. *)
+
+PROCEDURE tan ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the tangent of z. *)
+
+PROCEDURE arcsin ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the arcsine of z. *)
+
+PROCEDURE arccos ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the arccosine of z. *)
+
+PROCEDURE arctan ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the arctangent of z. *)
+
+PROCEDURE polarToComplex ( abs, arg : REAL ) : ProtoComplex;
+(* Required function to return the complex value
+   with the given polar coordinates. *)
+
+PROCEDURE scalarMult ( scalar : REAL; z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the scalar product of scalar and z. *)
+
+END ProtoComplexMath.
