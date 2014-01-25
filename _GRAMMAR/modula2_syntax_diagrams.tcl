@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Jan 15, 2014
+# Syntax diagram generator for Modula-2 (R10), status Jan 25, 2014
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -223,7 +223,7 @@ lappend non_terminals moduleTypeRequirementOrImpediment {
   line TYPE Ident = {
     or
       {line {loop permittedTypeDeclaration |} {optx := {loop protoliteral |}}}
-      /NIL
+      /NIL *
     }
 }
 
@@ -239,17 +239,22 @@ lappend non_terminals protoliteral {
 
 # (7.1) Simple Proto Literal
 lappend non_terminals simpleProtoliteral {
-  or /CHAR /INTEGER /REAL
+  or Ident {line ARRAY OF CHAR}
 }
 
 # (8) Structured Proto Literal
-lappend non_terminals structuredProtoliteral {
+lappend non_terminals structProtoLiteral {
   line LBRACE {
     or
-      {line VARIADIC OF {loop simpleProtoliteral ,}}
-      {line structuredProtoliteral {loop {line , structuredProtoliteral} {}}}
-  }
+      {line Ident {or {line , identList} {line BY repeatFactor}} }
+      {line LBRACE identList RBRACE BY repeatFactor }
+    }
   RBRACE
+}
+
+# (8.1) Repeat Factor
+lappend non_terminals repeatFactor {
+  or Ident *
 }
 
 # (9) Required Constant
@@ -494,11 +499,12 @@ lappend non_terminals simpleFormalType {
 
 # (30) Variadic Formal Type
 lappend non_terminals variadicFormalType {
-  line VARIADIC OF {
-    or
-      {line attributedFormalType}
-      {line LEFT_BRACE {loop attributedFormalType ,} RIGHT_BRACE}
-  }
+  stack
+    {line ARGLIST {optx numberOfArgumentsToPass} OF}
+    {line
+      {or attributedFormalType
+        {line LEFT_BRACE {loop attributedFormalType ,} RIGHT_BRACE}}
+         {optx {line | variadicTerminator}}}
 }
 
 # (31) Variable Declaration
@@ -517,7 +523,7 @@ lappend non_terminals procedureHeader {
 # (32.1) Procedure-Bindable Entity
 lappend non_terminals procBindableEntity {
   or
-    + - * / = < > :: .. DIV MOD FOR IN procBindableIdent
+    + - * / = < > :: := .. DIV MOD FOR IN procBindableIdent
 }
 
 # (32.2) Procedure-Bindable Identifier
@@ -537,17 +543,23 @@ lappend non_terminals simpleFormalParams {
   line {or {} CONST VAR} identList : simpleFormalType
 }
 
+
 # (35) Variadic Formal Parameters
 lappend non_terminals variadicFormalParams {
   stack
-    {line VARIADIC
-      {or {} {line [ variadicTerminator ]} }}
-    {line OF
+    {line ARGLIST {optx numberOfArgumentsToPass} OF}
+    {line
       {or simpleFormalType
-        {line LEFT_BRACE {loop simpleFormalParams ;} RIGHT_BRACE}}}
+        {line LEFT_BRACE {loop simpleFormalParams ;} RIGHT_BRACE}}
+         {optx {line | variadicTerminator}}}
 }
 
-# (35.1) Variadic Terminator
+# (35.1) Number Of Arguments To Pass
+lappend non_terminals numberOfArgumentsToPass {
+  line constExpression
+}
+
+# (35.2) Variadic Terminator
 lappend non_terminals variadicTerminator {
   line constExpression
 }
@@ -851,15 +863,16 @@ set terminals {}
 # (1a) Reserved Words
 lappend terminals ReservedWords1 {
   or
-    ALIAS AND ARRAY BEGIN BLUEPRINT BY CASE CONST DEFINITION DESCENDING DIV
-    DO ELSE ELSIF END EXIT FOR FROM GENLIB IF IMPLEMENTATION IMPORT IN
+    ALIAS AND ARRAY ARGLIST BEGIN BLUEPRINT BY CASE CONST DEFINITION
+    DESCENDING DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF
+    IMPLEMENTATION IMPORT
 }
 
 # (1b) Reserved Words
 lappend terminals ReservedWords2 {
   or
-    INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR POINTER PROCEDURE RECORD
-    REFERENTIAL REPEAT RETURN SET THEN TO TYPE UNTIL VAR VARIADIC WHILE
+    IN INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR POINTER PROCEDURE
+    RECORD REFERENTIAL REPEAT RETURN SET THEN TO TYPE UNTIL VAR WHILE
 }
 
 # (2) Identifier
