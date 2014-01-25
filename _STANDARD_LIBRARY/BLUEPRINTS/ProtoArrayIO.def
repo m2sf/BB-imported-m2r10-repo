@@ -1,6 +1,6 @@
 (* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BLUEPRINT ProtoArrayIO FOR ProtoRoot; (* Status Jan 25, 2014 *)
+BLUEPRINT ProtoArrayIO [ProtoExtension] FOR ProtoRoot;
 
 (* Blueprint for Array-IO extension libraries *)
 
