@@ -1,0 +1,9 @@
+(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BLUEPRINT ProtoExtension; (* Top-level blueprint for extension libraries *)
+
+(* conforming libraries MUST NOT provide their own ADT *)
+
+TYPE = NIL;
+
+END ProtoExtension.
