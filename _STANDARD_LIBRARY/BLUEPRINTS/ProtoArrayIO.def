@@ -1,0 +1,23 @@
+(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BLUEPRINT ProtoArrayIO FOR ProtoRoot; (* Status Jan 25, 2014 *)
+
+(* Blueprint for Array-IO extension libraries *)
+
+REFERENTIAL File;
+
+TYPE = NIL;
+
+(* Required IO bindings *)
+
+PROCEDURE [READ] Read ( f : File; VAR value : ARRAY OF ProtoRoot );
+(* Required binding to macro READ for arrays of the target type *)
+
+PROCEDURE [WRITE] Write ( f : File; value : ARRAY OF ProtoRoot );
+(* Required binding to macro WRITE for arrays of the target type *)
+
+PROCEDURE [WRITEF] WriteF
+  ( f : File; fmt : ARRAY OF CHAR; values : ARGLIST OF ARRAY OF ProtoRoot );
+(* Required binding to macro WRITEF for arrays of the target type *)
+
+END ProtoArrayIO.
