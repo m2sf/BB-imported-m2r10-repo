@@ -1,0 +1,23 @@
+(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BLUEPRINT ProtoIO FOR ProtoRoot; (* Status Jan 25, 2014 *)
+
+(* Blueprint for IO extension libraries *)
+
+REFERENTIAL File;
+
+TYPE = NIL;
+
+(* Required IO bindings *)
+
+PROCEDURE [READ] Read ( f : File; VAR value : ProtoRoot );
+(* Required binding to macro READ for values of the target type *)
+
+PROCEDURE [WRITE] Write ( f : File; value : ProtoRoot );
+(* Required binding to macro WRITE for values of the target type *)
+
+PROCEDURE [WRITEF] WriteF
+  ( f : File; fmt : ARRAY OF CHAR; values : ARGLIST OF ProtoRoot );
+(* Required binding to macro WRITEF for values of the target type *)
+
+END ProtoIO.
