@@ -1,0 +1,9 @@
+(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BLUEPRINT ProtoRoot; (* Top-level blueprint for ADT libraries *)
+
+(* conforming libraries are required to provide an ADT *)
+
+TYPE = *;
+
+END ProtoRoot.
