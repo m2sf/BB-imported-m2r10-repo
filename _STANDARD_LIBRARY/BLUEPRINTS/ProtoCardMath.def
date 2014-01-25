@@ -1,0 +1,27 @@
+(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BLUEPRINT ProtoCardMath [ProtoExtension] FOR ProtoCardinal;
+
+(* Blueprint for math extension libraries of cardinal types *)
+
+TYPE = NIL;
+
+(* Required Mathematical Functions *)
+
+PROCEDURE sgn ( n : ProtoCardinal ) : ProtoCardinal;
+(* Required function to return the signum value of n. *)
+
+PROCEDURE exp2 ( n : ProtoCardinal ) : ProtoCardinal;
+(* Required function to return the value of n raised to the power of two. *)
+
+PROCEDURE power ( n, exponent : ProtoCardinal ) : ProtoCardinal;
+(* Required function to return the value of n raised to the power of
+   a given exponent. *)
+
+PROCEDURE nearestSmallerPowerOf2 ( n : ProtoCardinal ) : ProtoCardinal;
+(* Required function to return the nearest power of 2 smaller than n. *)
+
+PROCEDURE nearestLargerPowerOf2 ( n : ProtoCardinal ) : ProtoCardinal;
+(* Required function to return the nearest power of 2 larger than n. *)
+
+END ProtoCardMath.
