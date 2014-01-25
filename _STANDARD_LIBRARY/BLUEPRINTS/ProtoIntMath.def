@@ -1,0 +1,35 @@
+(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BLUEPRINT ProtoIntMath [ProtoExtension] FOR ProtoInteger;
+
+(* Blueprint for math extension libraries of integer types *)
+
+TYPE = NIL;
+
+(* Required Mathematical Functions *)
+
+PROCEDURE sgn ( i : ProtoInteger ) : ProtoInteger;
+(* Required function to return the signum value of i. *)
+
+PROCEDURE fdiv ( a, n : ProtoInteger ) : ProtoInteger;
+(* Required function to return the quotient of floored integer division,
+   where quotient q = floor(a/n). *)
+
+PROCEDURE fmod ( a, n : ProtoInteger ) : ProtoInteger;
+(* Required function to return the remainder of floored integer division,
+   where remainder r = a - n * fdiv(a, n). *)
+
+PROCEDURE exp2 ( i : ProtoInteger ) : ProtoInteger;
+(* Required function to return the value of i raised to the power of two. *)
+
+PROCEDURE power ( i, exponent : ProtoInteger ) : ProtoInteger;
+(* Required function to return the value of i raised to the power of
+   a given exponent. *)
+
+PROCEDURE nearestSmallerPowerOf2 ( i : ProtoInteger ) : ProtoInteger;
+(* Required function to return the nearest power of 2 smaller than i. *)
+
+PROCEDURE nearestLargerPowerOf2 ( i : ProtoInteger ) : ProtoInteger;
+(* Required function to return the nearest power of 2 larger than i. *)
+
+END ProtoIntMath.
