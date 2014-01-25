@@ -1,8 +1,0 @@
-(* ProtoOrderedSet is now obsolete.
- *
- * To build an ordered set ADT:
- *
- * (1) use blueprint ProtoSet
- * (2) define CONST isOrdered = TRUE;
- *
- *)
