@@ -1,6 +1,6 @@
 (* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BLUEPRINT ProtoIO FOR ProtoRoot; (* Status Jan 25, 2014 *)
+BLUEPRINT ProtoIO [ProtoExtension] FOR ProtoRoot;
 
 (* Blueprint for IO extension libraries *)
 
