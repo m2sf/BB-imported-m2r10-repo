@@ -1,8 +1,0 @@
-(* ProtoOrderedDictionary now obsolete.
- *
- * To build an ordered dictionary ADT:
- *
- * (1) use blueprint ProtoDictionary
- * (2) define CONST isOrdered = TRUE;
- *
- *)
