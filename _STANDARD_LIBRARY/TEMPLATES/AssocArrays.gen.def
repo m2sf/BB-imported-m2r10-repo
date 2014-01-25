@@ -1,0 +1,986 @@
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ##ModuleIdent## [ProtoDictionary];
+
+/* ===========================================================================
+ * Modula-2 R10 Associative Array Type Template
+ * ===========================================================================
+ *
+ * This template is expanded by the M2 R10 template engine utility.  Expansion
+ * may be invoked within a compiling source file using the GENLIB directive.
+ *
+ *  GENLIB FooArray FROM AssocArrays FOR ValueType = "FooRecord" END;
+ *
+ * The generated libraries may then be imported by an import directive.
+ *
+ *  IMPORT FooArray, ImmutableFooArray;
+ *
+ * During template expansion,  any occurences  of ##ModuleIdent## are replaced
+ * by the identifier following GENLIB, and any occurences of ##ValueType## are
+ * replaced by the  quoted value  given for ValueType in the GENLIB directive.
+ * Template comments (like this one) are *removed* during templare expansion.
+ * ======================================================================== */
+
+/* ---------------------------------------------------------------------------
+ * Template Parameters
+ * ---------------------------------------------------------------------------
+ *
+ * All parameters are marked (A) automatic, (M) mandatory or (D) default.
+ *
+ * This template will expand the following parameters:
+ *
+ * TemplateVersion (A)
+ *
+ *  The date and time stamp of this template,
+ *  automatically defined by the template engine utility.
+ *
+ * ModuleIdent (A)
+ *
+ *  The library's identifier, automatically supplied by the GENLIB directive.
+ *  An identifier of a mutable ADT must not contain substring "mutable",
+ *  an identifier of an immutable ADT must be prefixed with "Immutable".
+ *  Template expansion will fail if the naming convention is not followed.
+ *
+ * ValueType (M)
+ *
+ *  The value type of the associative array, THERE IS NO DEFAULT.
+ *  This parameter must be passed and hold a mixed case identifier
+ *  Template expansion WILL FAIL if is omitted or if it is not mixed case.
+ *
+ * Mutable (D)
+ *
+ *  Whether the associative array should be mutable or immutable.
+ *  If omitted, both a mutable and an immutable ADT library will be
+ *  generated, following the naming convention for ModuleIdent.
+ *
+ * UnicharKeys (D)
+ *
+ *  Whether keys should be ARRAY OF UNICHAR instead of ARRAY OF CHAR,
+ *  the library default is "FALSE".
+ *
+ * CapacityLimit (D)
+ *
+ *  Whether the allocation capacity (number of buckets) should be limited.
+ *  If omitted, the value will be obtained from the compiler's defaults
+ *  database.  If no entry exists in the defaults database, a fallback
+ *  value of 16'777'213 will be used.
+ *
+ * LoadFactorLimit (D)
+ *
+ *  Whether the load factor of an associative array should be limited.
+ *  If omitted, the value will be obtained from the compiler's defaults
+ *  database.  If no entry exists in the defaults database, a fallback
+ *  value of 0 will be used.
+ *
+ * KeyLengthLimit (D)
+ *
+ *  Whether the key length should be limited.
+ *  If omitted, the value will be obtained from the compiler's defaults
+ *  database.  If no entry exists in the defaults database, a fallback
+ *  value of 250 will be used.
+ * ------------------------------------------------------------------------ */
+
+/* ---------------------------------------------------------------------------
+ * Placeholder Verification and Defaults
+ * ------------------------------------------------------------------------ */
+
+/* Define placeholder ADT as an alias of ModuleIdent */
+<#DEFINE ADT = @@ModuleIdent@@#>
+
+/* Verify ValueType holds a mixed or uppercase identifier, else fail */
+<#VERIFY ValueType [Aa|AA] FAIL#>
+
+/* Counterpart shall be generated if parameter Mutable has been omitted */
+<#DEFIF UNDEFINED(Mutable) : ShallGenerateCounterpart = "TRUE" | "FALSE"#>
+
+/* Verify Mutable holds a boolean value, if not use default */
+<#VERIFY Mutable : [BOOL] "TRUE"#>
+
+<#IF Mutable#>
+/* Mutable ADT identifiers must not contain substring "mutable", else fail */
+<#VERIFY ADT : [NOSUBSTR("mutable",*)] FAIL#>
+
+/* Define identifier for counterpart ADT */
+<#DEFINE CounterpartADT = "Immutable"@@ADT@@#>
+
+/* Define prefix for procedure immutableCopy */
+<#DEFINE mutableOrImmutable = "immutable"#>
+<#ELSE /* immutable */ #>
+
+/* Immutable ADT identifiers must be prefixed with "Immutable", else fail */
+<#VERIFY ADT : [PREFIX("Immutable",=)] FAIL#>
+
+/* Define identifier for counterpart ADT */
+<#DEFINE CounterpartADT = RMPREFIX(ADT,"Immutable",=)#>
+
+/* Define prefix for procedure mutableCopy */
+<#DEFINE mutableOrImmutable = "mutable"#>
+<#ENDIF#>
+
+/* Verify UnicharKeys holds a boolean value, if not use default */
+<#VERIFY UnicharKeys [BOOL] "FALSE"#>
+
+/* Define KeyType depending on the value of UnicharKeys */
+<#DEFIF KeyType [UnicharKeys] "ARRAY OF UNICHAR" /*ELSE*/ "ARRAY OF CHAR"#>
+
+/* Define KeySetType depending on the value of UnicharKeys */
+<#DEFIF UnicharKeys : KeySetType = "UniKeySet" | "KeySet"#>
+
+/* Verify CapacityLimit holds a cardinal literal, if not use default */
+<#VERIFY CapacityLimit : [0 +] "DEFAULT('AssocArrayMaxCapacity', 16'777'213)"#>
+
+/* Verify LoadFactorLimit holds a cardinal literal, if not use default */
+<#VERIFY LoadFactorLimit [0 +] "DEFAULT('AssocArrayLoadFactorLimit', 0)"#>
+
+/* Verify KeyLengthLimit holds a cardinal literal, if not use default */
+<#VERIFY KeyLengthLimit [0 32000] "DEFAULT('AssocArrayMaxKeyLength', 250)"#>
+
+
+(* Abstract *)
+
+<#IF Mutable#>
+(* ---------------------------------------------------------------------------
+ * This library provides  a reference counted,  unordered,  mutable collection
+ * ADT.  It is implemented as a hash table with a fixed bucket count, set upon
+ * allocation.  It uses external chaining to deal with bucket collisions.  The
+ * ADT conforms to blueprint ProtoDictionary.  It provides  bindings  to  pre-
+ * defined macros TLIMIT, NEW, RETAIN, RELEASE, DUP, COUNT, STORE, REMOVE, RE-
+ * TRIEVE and SUBSET,  to the equality operator,  and  to  built-in syntax for
+ * membership test (IN) and ascending-only iteration (FOR IN).
+ * ------------------------------------------------------------------------ *)
+<#ELSE /* immutable */ #>
+(* ---------------------------------------------------------------------------
+ * This library provides  a reference counted, unordered, immutable collection
+ * ADT.  It is implemented as a hash table with a fixed bucket count, set upon
+ * allocation.  It uses external chaining to deal with bucket collisions.  The
+ * ADT conforms to blueprint ProtoDictionary.  It provides  bindings  to  pre-
+ * defined macros TLIMIT, NEW, RETAIN, RELEASE, DUP, COUNT, RETRIEVE  and SUB-
+ * SET,  to the equality operator,  and to built-in syntax for membership test
+ * (IN) and ascending-only iteration (FOR IN).
+ * ------------------------------------------------------------------------ *)
+<#ENDIF#>
+
+
+(* Note of Origin *)
+
+(* ---------------------------------------------------------------------------
+ * Library created by M2TE from template AssocArrays with parameters:
+ * ---------------------------------------------------------------------------
+ *
+ * TemplateVersion : ##TemplateVersion##
+ * ModuleIdent     : ##ModuleIdent##
+ * ValueType       : ##ValueType##
+ * Mutable         : ##Mutable##
+ * UnicharKeys     : ##UnicharKeys##
+ * CapacityLimit   : ##CapacityLimit##
+ * LoadFactorLimit : ##LoadFactorLimit##
+ * KeyLengthLimit  : ##KeyLengthLimit##
+ *
+ * Copyright (c) 2013-14 by B.Kowarsch & R.Sutcliffe. All rights reserved.
+ * ------------------------------------------------------------------------ *)
+
+
+(* Imports *)
+
+(* ---------------------------------------------------------------------------
+ * Import User-Defaults Lookup Macro
+ * ------------------------------------------------------------------------ *)
+
+FROM COMPILER IMPORT DEFAULT;
+
+
+(* ---------------------------------------------------------------------------
+ * Import Key Set Library
+ * ------------------------------------------------------------------------ *)
+
+IMPORT ##KeySetType##;
+
+
+(* ---------------------------------------------------------------------------
+ * Import Value Type
+ * ------------------------------------------------------------------------ *)
+
+IMPORT ##ValueType##
+
+
+(* ---------------------------------------------------------------------------
+ * Import Counterpart Library
+ * ------------------------------------------------------------------------ *)
+
+IMPORT ##CounterpartADT##;
+
+
+(* Compile Time Parameters *)
+
+(* ---------------------------------------------------------------------------
+ * Mutable property
+ * ---------------------------------------------------------------------------
+ *
+ * This property determines  whether the ADT is mutable or immutable.  Mutable
+ * ADTs must provide bindings to  STORE  and  REMOVE,  immutable ADTs may not.
+ * ------------------------------------------------------------------------ *)
+
+CONST isMutable = ##Mutable##;
+
+
+(* ---------------------------------------------------------------------------
+ * Ordered property
+ * ---------------------------------------------------------------------------
+ *
+ * This property determines  whether the ADT is ordered or unordered.  The use
+ * of FOR DESCENDING syntax is permitted with ordered ADTs,  but not permitted 
+ * with unordered ADTs.  The language defined default value is FALSE.
+ * ------------------------------------------------------------------------ *)
+
+CONST isOrdered = FALSE;
+
+
+(* ---------------------------------------------------------------------------
+ * Default table size in buckets
+ * ---------------------------------------------------------------------------
+ *
+ * This constant determines the bucket count of an associative array allocated
+ * by invocation of NEW without any initialisation parameters.
+ * ------------------------------------------------------------------------ *)
+
+CONST DefaultCapacity = DEFAULT("AssocArrayDefaultCapacity", 61);
+
+
+(* ---------------------------------------------------------------------------
+ * Maximum table size in buckets
+ * ---------------------------------------------------------------------------
+ *
+ * This constant  determines the  maximum capacity  with which  an associative
+ * array may be allocated.  A value of zero indicates no limit.
+ * ------------------------------------------------------------------------ *)
+
+CONST MaxCapacity = ##CapacityLimit##;
+
+
+(* ---------------------------------------------------------------------------
+ * Load factor limit
+ * ---------------------------------------------------------------------------
+ *
+ * This constant determines the maximum load factor of an associative array at
+ * runtime.  The  load factor  of an associative array  is calculated  by  the
+ * formula: actual load factor = allocated capacity / number of stored entries
+ * A value of zero indicates no limit.
+ * ------------------------------------------------------------------------ *)
+
+CONST LoadFactorLimit = ##LoadFactorLimit##; (* 10 x actual value *)
+
+
+(* ---------------------------------------------------------------------------
+ * Maximum length of a key in characters
+ * ---------------------------------------------------------------------------
+ *
+ * This constant determines the  maximum length  of a key  of  an  associative
+ * array.  A value of zero indicates no limit.
+ *
+ * Passing a key  with a length exceeding  MaxKeyLength  to any procedure that
+ * requires a key shall raise runtime fault StringCapacityExceeded.
+ * ------------------------------------------------------------------------ *)
+
+CONST MaxKeyLength = ##KeyLengthLimit##;
+
+
+(* ---------------------------------------------------------------------------
+ * Entry limit property
+ * ---------------------------------------------------------------------------
+ *
+ * This property determines the maximum number of key/value pair entries  per-
+ * mitted by ##ADT##.  A value of zero indicates no limit.
+ *
+ * This constant is bound to predefined TLIMIT.  An expression of the form
+ *
+ *  TLIMT(##ADT##)
+ *
+ * is replaced at compile time by an expression of the form
+ *
+ *  ##ADT##.maxEntryLimit
+ * ------------------------------------------------------------------------ *)
+
+CONST maxEntryLimit = (MaxCapacity * LoadFactorLimit) DIV 10;
+
+
+(* Type Definitions *)
+
+(* ---------------------------------------------------------------------------
+ * Opaque handle type  ##ADT##
+ * ---------------------------------------------------------------------------
+ *
+ * The abstract data type that is implemented by this library.
+ *
+ * Passing an invalid or unallocated associated array handle  to any procedure
+ * that requires such a handle shall raise runtime fault InvalidAccessor.
+ * ------------------------------------------------------------------------ *)
+
+TYPE ##ADT## = OPAQUE; (* details hidden in implementation *)
+
+
+(* ---------------------------------------------------------------------------
+ * Value type:  ##ValueType##
+ * ------------------------------------------------------------------------ *)
+
+TYPE ValueType = ALIAS OF ##ValueType##;
+
+
+(* Type Conversion *)
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.to##KeySetType##( assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns a newly allocated  and retained variable of the associative array's
+ * key set type containing all keys that are present in assocArray.
+ *
+ * This function is bound to the :: operator.  An expression of the form
+ *
+ *  assocArray :: ##KeySetType##
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.to##KeySetType##(assocArray)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [::] to##KeySetType##
+  ( assocArray : ##ADT## ) : ##KeySetType##;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.##mutableOrImmutable##Copy( assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns a newly allocated and retained ##mutableOrImmutable## copy.
+ *
+ * This function is bound to the :: operator.  An expression of the form
+ *
+ *  assocArray :: ##CounterpartADT##
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.##mutableOrImmutable##Copy(assocArray)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [::] ##mutableOrImmutable##Copy
+  ( assocArray : ##ADT## ) : ##CounterpartADT##;
+
+
+(* Memory Management *)
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.new( assocArray, key/value-pairs )
+ * ---------------------------------------------------------------------------
+ *
+ * Allocates a  new associative array  and initialises it  with the  key/value
+ * list passed in for parameter initWith,  retains it,  then passes it back in
+ * parameter assocArray.  If the passed in key/value list is empty,  the newly
+ * allocated array will be empty.
+ *
+ * This procedure is bound to predefined NEW.  An invocation of the form
+ *
+ *  NEW(assocArray, "foo", 1, "bar", 2, "baz", 3)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.new(assocArray, "foo", 1, "bar", 2, "baz", 3)
+ *
+ * NEW may also be invoked  with a  single parameter.  In this case,  an empty
+ * list will automatically be passed as the second argument to procedure new.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [NEW] new
+  ( VAR assocArray : ##ADT##;
+    initWith : ARGLIST OF { key : KeyType; value : ValueType } );
+
+
+<#IF Mutable#>
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.newWithCapacity( assocArray, capacity )
+ * ---------------------------------------------------------------------------
+ *
+ * Allocates a new associative array with the given capacity,  initialises and
+ * retains it, then passes it back in parameter assocArray.  If zero is passed
+ * in for capacity,  the value of constant  DefaultCapacity  will be used.  If
+ * a value larger than constant MaxCapacity is passed in for capacity, runtime
+ * fault AllocationLimitExceeded is raised.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE newWithCapacity
+  ( VAR assocArray : ##ADT##; capacity : LONGCARD );
+<#ENDIF#>
+
+
+<#IFN Mutable#>
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.newWithCopyOfMutable( assocArray, copyFrom )
+ * ---------------------------------------------------------------------------
+ *
+ * Allocates,  initialises and retains a new associative array.  The new array
+ * is initialised  with the contents of an array of the ADT's mutable counter-
+ * part ADT passed in for copyFrom.  This procedure is unbound.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE newWithCopyOfMutable
+  ( VAR assocArray : ##ADT##; copyFrom : ##CounterpartADT## );
+<#ENDIF#>
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.retain( assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Retains assocArray,  thereby causing a pending retain.  Multiple calls will
+ * cause  multiple  pending retains.  A pending retain may be cleared by a co-
+ * responding call to procedure release.  Deallocation of assocArray  is  pre-
+ * vented until all pending retains are cleared.
+ *
+ * This procedure is bound to predefined RETAIN.  A statement of the form
+ *
+ *  RETAIN(assocArray)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.retain(assocArray)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [RETAIN] retain ( assocArray : ##ADT## );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.release( assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Releases assocArray, thereby clearing a pending retain.  If no more retains
+ * are pending, assocArray is deallocated and NIL is passed in assocArray.  If
+ * ValueType is  reference counted,  RELEASE is invoked  for all values stored
+ * in assocArray prior to the deallocation of assocArray.
+ *
+ * This procedure is bound to predefined RELEASE.  A statement of the form
+ *
+ *  RELEASE(assocArray)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.release(assocArray)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [RELEASE] release ( VAR assocArray : ##ADT## );
+
+
+<#IF Mutable#>
+(* Assignment and Copying *)
+
+(* ---------------------------------------------------------------------------
+ * Assignment of Structured Values
+ * ---------------------------------------------------------------------------
+ *
+ * Structured  values  representing a key/value list  may be assigned  to  any
+ * mutable  variable  of an associative array type  as long as  the structured
+ * value  is parameter passing compatible to the variadic key/value list para-
+ * meter of procedure assignStructuredValue.
+ *
+ * An assignment of the form
+ *
+ *  assocArray := { key1, value1, key2, value2, ... };
+ *
+ * is replaced at compile time with a procedure call of the form
+ *
+ *  ##ADT##.assignStructuredValue(assocArray, key1, value1, key2, value2, ...)
+ *
+ * It should also be noted that an assignment of the form
+ *
+ *  assocArray := { }
+ *
+ * is replaced at compile time with a procedure call of the form
+ *
+ *  ##ADT##.removeEntries(assocArray)
+ *
+ * which will remove all entries from assocArray at runtime.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [:=] assignStructuredValue
+  ( assocArray : ##ADT##;
+    v : ARGLIST OF { key : KeyType; value : ValueType } );
+
+<#ELSE /* immutable */ #>
+(* Copying *)
+<#ENDIF#>
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.duplicateOf( sourceArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Allocates a new associative array,  initialises it  with the entries of the
+ * source array  passed in for parameter sourceArray,  retains the newly allo-
+ * cated array and returns it.  Any value copied from the source array that is
+ * of a reference counted type  will be retained  upon copying it  by invoking
+ * predefined procedure RETAIN.  The source array is not modified.
+ *
+ * This procedure is bound to predefined function DUP.  A direct assignment of
+ * the form
+ *
+ *  array1 := DUP(array2)
+ *
+ * is replaced at compile time by an assignment of the form
+ *
+ *  array1 := ##ADT##.duplicateOf(array2)
+ *
+ * In any other context  the returned array  is first assigned  to a temporary
+ * variable which is then substituted for the function call and eventually re-
+ * leased in order to prevent any memory leaks.  An invocation of the form
+ *
+ *  foo(bar, DUP(array)); ...
+ *
+ * is replaced at compile time by a statement sequence of the form
+ *
+ *  temp := ##ADT##.duplicateOf(array);
+ *  foo(bar, temp); RELEASE(temp); ...
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [DUP] duplicateOf
+  ( sourceArray : ##ADT## ) : ##ADT##;
+
+
+<#IF Mutable#>
+(* Storage, Removal, Retrieval and Inspection of Contents *)
+<#ELSE /* immutable */ #>
+(* Retrieval and Inspection of Contents *)
+<#ENDIF#>
+
+<#IF Mutable#>
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.storeEntries( assocArray, keyValueList )
+ * ---------------------------------------------------------------------------
+ *
+ * Stores  zero or more  key/value pairs  in assocArray.  Values are stored as
+ * references if ValueType is a pointer type, otherwise as copies.  If a value
+ * is passed in  for a key  for which  another value  had already been stored, 
+ * that value replaces the previous value.  If ValueType is reference counted,
+ * RETAIN is invoked for every value so stored  and RELEASE is invoked for any
+ * value so replaced.  If ValueType is a pointer type  and NIL is passed in as
+ * a value,  runtime fault ValueMayNotBeNIL is raised.  If the addition of any
+ * new key/value pair  causes  any entry limit  of assocArray  to be exceeded,
+ * runtime fault  CollectionCapacityExceeded  is raised.
+ *
+ * This procedure is bound to pervasive STORE.  A statement of the form
+ *
+ *  STORE(assocArray, key1, value1, key2, value2, ... )
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.storeEntries(assocArray, key1, value1, key2, value2, ...)
+ *
+ * It should also be noted that a statement of the form
+ *
+ *  assocArray[key] := value
+ *
+ * is a special syntax form of the equivalent pervasive invocation
+ *
+ *  STORE(assocArray, key, value)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [STORE] storeEntries
+  ( assocArray : ##ADT##;
+    keyValueList : ARGLIST OF { key : KeyType; value : ValueType } );
+<#ENDIF#>
+
+
+<#IF Mutable#>
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.removeEntries( assocArray, keyList )
+ * ---------------------------------------------------------------------------
+ *
+ * Removes one or more key/value pairs from assocArray.  If no keys are passed
+ * in,  all of the key/value pairs stored in assocArray are removed.   RELEASE
+ * is invoked  for every value removed  if ValueType is reference counted.  If
+ * any key is passed in  for which no value is stored  in assocArray,  runtime
+ * fault InvalidKey is raised.
+ *
+ * This procedure is bound to pervasive REMOVE.  A statement of the form
+ *
+ *  REMOVE(assocArray, key1, key2, ...)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.removeEntries(assocArray, key1, key2, ...)
+ *
+ * It should also be noted that a statement of the form
+ *
+ *  assocArray[key] := NIL
+ *
+ * is a special syntax form of the equivalent pervasive invocation
+ *
+ *  REMOVE(assocArray, key)
+ *
+ * and a statement of the form
+ *
+ *  assocArray := { }
+ *
+ * is a special syntax form of the equivalent pervasive invocation
+ *
+ *  REMOVE(assocArray)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [REMOVE] removeEntries
+  ( assocArray : ##ADT##; keyList : ARGLIST OF KeyType );
+<#ENDIF#>
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.valueForKey( assocArray, key )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns  the value  for the given key in assocArray.  RETAIN is not invoked
+ * on any retrieved value  even if ValueType  is reference counted.  It is the
+ * sole  responsibility  of the  library user  to invoke RETAIN  for retrieved
+ * values  where necessary.  If no value is stored for the key  in assocArray,
+ * the outcome depends on ValueType: If it is a pointer type, NIL is returned.
+ * If it is not a pointer type, runtime fault InvalidKey is raised.
+ *
+ * This function is bound to pervasive RETRIEVE.  An expression of the form
+ *
+ *  assocArray[key]
+ *
+ * is a special syntax form of the equivalent pervasive invocation
+ *
+ *  RETRIEVE(assocArray, key)
+ *
+ * which is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.valueForKey(assocArray, key)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [RETRIEVE] valueForKey
+  ( assocArray : ##ADT##; key : KeyType );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.entryExists( assocArray, key )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE if a value for the given key is stored in assocArray,  returns
+ * FALSE otherwise.
+ *
+ * This function is bound to built-in syntax IN.  An expression of the form
+ *
+ *  key IN assocArray
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.entryExists(assocArray, key)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [IN] entryExists
+  ( assocArray : ##ADT##; key : KeyType ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.count( assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the number of key/value pairs stored in assocArray.
+ *
+ * This function is bound to pervasive COUNT.  An expression of the form
+ *
+ *  COUNT(assocArray)
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.count(assocArray)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [COUNT] count ( assocArray : ##ADT## ) : LONGCARD;
+
+
+(* Iteration *)
+
+(* ---------------------------------------------------------------------------
+ * For loop body procedure type:  ForLoopBodyProc
+ * ---------------------------------------------------------------------------
+ *
+ * Formal type for the definition of for loop iterator procedures (below).
+ * ------------------------------------------------------------------------ *)
+
+TYPE ForLoopBodyProc = PROCEDURE ( (* key : *) CONST KeyType );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.forIterator( assocArray, forLoopBody, ascending )
+ * ---------------------------------------------------------------------------
+ *
+ * Iterates by key over all key/value pairs stored in assocArray,  executing a
+ * procedure passed in for forLoopBody for each key/value pair.  The iteration
+ * order is *undefined*.  The value passed in for ascending is *ignored*.
+ *
+ * This procedure is bound to built-in syntax FOR IN.  A statement of the form
+ *
+ *  FOR key IN assocArray DO statementSequence END
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.forIterator(assocArray, forLoopBody, TRUE)
+ *
+ * and a procedure definition of the form below  is inserted into the declara-
+ * tion section before the BEGIN-END block where the FOR statement is located.
+ *
+ *  PROCEDURE forLoopBody ( CONST key : ##KeyType## ) <*INLINE*>;
+ *  BEGIN
+ *    statementSequence
+ *  END forLoopBody;
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [FOR] forIterator
+  ( assocArray : ##ADT##;
+    forLoopBody : ForLoopBodyProc; ascending : BOOLEAN );
+
+
+(* Relational Operations *)
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.isEqual( assocArray1, assocArray2 )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if assocArray1  and assocArray2  are equal,  otherwise FALSE.
+ * Two associative arrays are equal only if all the conditions below are met:
+ *
+ *  (1) both arrays have the same number of key/value pairs stored
+ *  (2) every key present in one array is also present in the other
+ *  (3) the values of corresponding keys in both arrays are equal
+ *
+ * This function is bound to the equality operator.  An expression of the form
+ *
+ *  assocArray1 = assocArray2
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.isEqual(assocArray1, assocArray2)
+ *
+ * Further, an expression of the form
+ *
+ *  assocArray1 # assocArray2
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  NOT ##ADT##.isEqual(assocArray1, assocArray2)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [=] isEqual
+  ( assocArray1, assocArray2 : ##ADT## ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.isSubset( assocArray1, assocArray2 )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if assocArray1  is a subset of assocArray2,  otherwise FALSE.
+ * An associative array a1 is a subset of another associative array a2 if both
+ * conditions below are met:
+ *
+ *  (1) every key present in a1 is also present in a2
+ *  (2) the values of corresponding common keys in both arrays are equal
+ *
+ * This function is bound to pervasive SUBSET.  An expression of the form
+ *
+ *  SUBSET(assocArray1, assocArray2)
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.isSubset(assocArray1, assocArray2)
+ *
+ * It should also be noted that an expression of the form
+ *
+ *  assocArray1 > assocArray2
+ *
+ * is a special syntax form for the equivalent expression
+ *
+ *  (COUNT(assocArray1) > COUNT(assocArray2))
+ *  AND SUBSET(assocArray2, assocArray1)
+ *
+ * An expression of the form
+ *
+ *  assocArray1 >= assocArray2
+ *
+ * is a special syntax form for the equivalent expression
+ *
+ *  SUBSET(assocArray2, assocArray1)
+ *
+ * An expression of the form
+ *
+ *  assocArray1 < assocArray2
+ *
+ * is a special syntax form for the equivalent expression
+ *
+ *  (COUNT(assocArray1) < COUNT(assocArray2))
+ *  AND SUBSET(assocArray1, assocArray2)
+ *
+ * An expression of the form
+ *
+ *  assocArray1 <= assocArray2
+ *
+ * is a special syntax form for the equivalent expression
+ *
+ *  SUBSET(assocArray1, assocArray2)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [SUBSET] isSubset
+  ( assocArray1, assocArray2 : ##ADT## ) : BOOLEAN;
+
+
+(* Introspection *)
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.capacity( assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the allocated capacity (number of buckets) of assocArray.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE capacity ( assocArray : ##ADT## ) : LONGCARD;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.entryLimit( assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the maximum number of key/value pair entries  that may be stored in
+ * assocArray,  calculated as:  LoadFactorLimit * capacity(assocArray) DIV 10.  
+ * A value of zero represents no limit for the number of key/value pairs.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE entryLimit ( assocArray : ##ADT## ) : LONGCARD;
+
+
+(* ---------------------------------------------------------------------------
+ * function: ##ADT##.isResizable( assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if assocArray is self-resizing  by increasing  and decreasing
+ * its bucket count depending on its load factor,  returns FALSE otherwise.
+ *
+ * Always returns FALSE because this implementation does not support resizing.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isResizable ( assocArray : ##ADT## ) : BOOLEAN;
+
+/* General IO library */
+<#EXPAND "AssocArrays" :
+  ModuleIdent = @@ADT@@"IO";
+  ValueType = @@ValueType@@
+  GenIO = "TRUE"#>
+
+<#IF ShallGenerateCounterpart#>
+/* Generate Immutable Counterpart ADT */
+<#EXPAND "AssocArrays" :
+  ModuleIdent = @@CounterpartADT@@; /* different identifier */
+  ValueType = @@ValueType@@; /* same value type */
+  Mutable = "FALSE"; /* different mutability */
+  UnicharKeys = @@UnicharKeys@@; /* same key type */
+  KeyLengthLimit = @@KeyLengthLimit@@#> /* same key length */
+<#ENDIF#>
+
+END ##ModuleIdent##.
+
+<#IF GenIO#>
+/* Generate the ADT's IO Library */
+DEFINITION MODULE ##IOLibrary## [ProtoIO] FOR ##ADT##;
+
+(* IO Operations for ##ADT## *)
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.Read( file, assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Reads the contents of an associative array from file into assocArray.
+ *
+ * This procedure is bound to predefined READ.  An invocation of the form
+ *
+ *  READ(assocArray)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Read(stdIn, assocArray)
+ *
+ * and an invocation of the form
+ *
+ *  READ(file, assocArray)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Read(file, assocArray)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [READ] Read ( file : File; VAR assocArray : ##ADT## );
+
+
+<#IF Mutable#>
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.addEntriesFromFile( file, assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Reads key/value pairs from file and adds them to assocArray.
+ *
+ * This procedure is unbound.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE addEntriesFromFile
+  ( file : File; assocArray : ##ADT## );
+<#ENDIF#>
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.Write( file, assocArray )
+ * ---------------------------------------------------------------------------
+ *
+ * Writes the contents of assocArray to file.
+ *
+ * This procedure is bound to predefined WRITE.  An invocation of the form
+ *
+ *  WRITE(assocArray)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Write(stdOut, assocArray)
+ *
+ * and an invocation of the form
+ *
+ *  WRITE(file, assocArray)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Write(file, assocArray)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [WRITE] Write ( file : File; assocArray : ##ADT## );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.WriteF( file, fmtStr, assocArrayList )
+ * ---------------------------------------------------------------------------
+ *
+ * Writes the contents of one or more associative arrays formatted to file.
+ *
+ * This procedure is bound to predefined WRITEF. An invocation of the form
+ *
+ *  WRITEF("", assocArray1, assocArray2, assocArray3, ...)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Write(stdOut, "", assocArray1, assocArray2, assocArray3, ...)
+ *
+ * and an invocation of the form
+ *
+ *  WRITE(file, "", assocArray1, assocArray2, assocArray3, ...)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.WriteF(file, "", assocArray1, assocArray2, assocArray3, ...)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [WRITEF] WriteF
+  ( file : File; fmtStr : ARRAY OF CHAR;
+    items : ARGLIST OF ##ADT## );
+
+
+END ##IOLibrary##.
+<#ENDIF#>
