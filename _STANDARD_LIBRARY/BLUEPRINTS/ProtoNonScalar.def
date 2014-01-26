@@ -5,9 +5,9 @@
 BLUEPRINT ProtoNonScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
 (* Non-Scalar numeric ADTs must be records to be statically allocatable,
-   structured literals constructed from real number literals may be used. *)
+   structured literals constructed from scalar number literals may be used. *)
 
-TYPE ProtoNonScalar = RECORD | OPAQUE RECORD := { REAL BY * };
+TYPE ProtoNonScalar = RECORD | OPAQUE RECORD := { ProtoScalar BY * };
 
 
 (* Bindings required for Non-Scalar Numeric ADTs *)
@@ -20,7 +20,7 @@ TYPE ProtoNonScalar = RECORD | OPAQUE RECORD := { REAL BY * };
 (* The operation is not common to all non-scalar types,
    its binding may be required by more specialised blueprints. *)
 
-(* The operations ABS and ODD is not meaningful for non-scalar types *)
+(* The operations ABS and ODD are not meaningful for non-scalar types *)
 
 
 (* Bindings to dyadic operations *)
