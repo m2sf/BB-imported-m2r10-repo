@@ -1,39 +1,37 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE PervasiveIO;
+DEFINITION MODULE IOSupport;
 
-(* Aggregator Module for Pervasive I/O Operations *)
+(* Aggregator Module for I/O Operations of Predefined Types *)
 
-(* Import all pervasive IO modules into the importing module. *)
+IMPORT BooleanIO+, BooleanArrayIO+;
+(* Imports IO modules for predefined type BOOLEAN into the importing module. *)
 
-IMPORT BOOLEAN+;
-(* Imports IO module for pervasive type BOOLEAN into the importing module. *)
+IMPORT CharIO+, CharArrayIO+;
+(* Imports IO modules for predefined type CHAR into the importing module. *)
 
-IMPORT CHAR+, ARRAYOFCHAR+;
-(* Imports IO modules for pervasive type CHAR into the importing module. *)
+IMPORT UnicharIO+, UnicharArrayIO+;
+(* Imports IO modules for predefined type UNICHAR into the importing module. *)
 
-IMPORT UNICHAR+, ARRAYOFUNICHAR+;
-(* Imports IO modules for pervasive type UNICHAR into the importing module. *)
+IMPORT OctetIO+, OctetArrayIO+;
+(* Imports IO modules for predefined type OCTET into the importing module. *)
 
-IMPORT OCTET+;
-(* Imports IO module for pervasive type OCTET into the importing module. *)
+IMPORT CardinalIO+, CardinalArrayIO+;
+(* Imports IO modules for predefined type CARDINAL into the importing module. *)
 
-IMPORT CARDINAL+;
-(* Imports IO module for pervasive type CARDINAL into the importing module. *)
+IMPORT LongCardIO+, LongCardArrayIO+;
+(* Imports IO modules for predefined type LONGCARD into the importing module. *)
 
-IMPORT LONGCARD+;
-(* Imports IO module for pervasive type LONGCARD into the importing module. *)
+IMPORT IntegerIO+, IntegerArrayIO+;
+(* Imports IO modules for predefined type INTEGER into the importing module. *)
 
-IMPORT INTEGER+;
-(* Imports IO module for pervasive type INTEGER into the importing module. *)
+IMPORT LongIntIO+, LongIntArrayIO+;
+(* Imports IO modules for predefined type LONGINT into the importing module. *)
 
-IMPORT LONGINT+;
-(* Imports IO module for pervasive type LONGINT into the importing module. *)
+IMPORT RealIO+, RealArrayIO+;
+(* Imports IO modules for predefined type REAL into the importing module. *)
 
-IMPORT REAL+;
-(* Imports IO module for pervasive type REAL into the importing module. *)
+IMPORT LongRealIO+, LongRealArrayIO+;
+(* Imports IO modules for pervasive type LONGREAL into the importing module. *)
 
-IMPORT LONGREAL+;
-(* Imports IO module for pervasive type LONGREAL into the importing module. *)
-
-END PervasiveIO.
+END IOSupport.
