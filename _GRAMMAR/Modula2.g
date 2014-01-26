@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Jan 15, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Jan 25, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -38,6 +38,7 @@ tokens {
 
     ALIAS          = 'ALIAS';
     AND            = 'AND';            /* also a RW within pragmas */
+    ARGLIST        = 'ARGLIST';
     ARRAY          = 'ARRAY';
     BEGIN          = 'BEGIN';
     BLUEPRINT      = 'BLUEPRINT';
@@ -79,7 +80,6 @@ tokens {
     TYPE           = 'TYPE';
     UNTIL          = 'UNTIL';
     VAR            = 'VAR';
-    VARIADIC       = 'VARIADIC';
     WHILE          = 'WHILE';
 
 // *** Dual-Use RW-Identifiers, 2 tokens ***
@@ -228,7 +228,7 @@ requiredProcedure : procedureHeader ;
 mouleTypeRequirementOrImpediment :
     TYPE '='
     ( permittedTypeDeclaration ( '|' permittedTypeDeclaration )*
-      ( ':=' protoliteral ( '|' protoliteral )* )? ) | NIL
+      ( ':=' protoliteral ( '|' protoliteral )* )? ) | NIL | '*'
     ;
 
 // production #6
@@ -241,14 +241,17 @@ protoliteral :
     simpleProtoliteral | structuredProtoliteral
     ;
 
-// alias #7.1
-simpleProtoliteral : Ident ; /* CHAR, INTEGER or REAL */
+// fragment #7.1
+simpleProtoliteral : Ident | ARRAY OF Ident /* CHAR only */ ;
 
 // production #8
 structuredProtoliteral :
-    '{' ( VARIADIC OF simpleProtoliteral ( ',' simpleProtoliteral )* |
-    structuredProtoliteral ( ',' structuredProtoliteral )* ) '}'
+    '{' ( Ident ( ',' identList | BY repeatFactor ) |
+         '{' identList '}' BY repeatFactor ) '}'
     ;
+
+// fragment #8.1
+repeatFactor : Ident | * ;
 
 // production #9
 requiredConst :	
@@ -256,10 +259,10 @@ requiredConst :
     ( ':' ( range OF)? predefinedType | '=' constExpression )
     ;
 
-// alias #9.1
+// fragment #9.1
 constBindableProperty : ':=' | DESCENDING | constBindableIdent ;
 
-// alias #9.2
+// fragment #9.2
 constBindableIdent :  /* Ident */
     TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
     {} /* make ANTLRworks display separate branches */
@@ -444,9 +447,10 @@ simpleFormalType :
 
 // production #30
 variadicFormalType :
-    VARIADIC OF
+    ARGLIST numberOfArgumentsToPass? OF
     ( attributedFormalType |
-    '{' attributedFormalType ( ',' attributedFormalType )* '}')
+      '{' attributedFormalType ( ',' attributedFormalType )* '}' )
+    ( '|' variadicTerminator )?
     ;
 
 // *** Variable Declarations ***
@@ -467,9 +471,8 @@ procedureHeader :
 
 // fragment #32.1
 procBindableEntity :
-    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | '..' |
-    DIV | MOD | FOR | IN |
-    procBindableIdent
+    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' | '..' |
+    DIV | MOD | FOR | IN | procBindableIdent
     ;
 
 // fragment #32.2
@@ -500,11 +503,15 @@ simpleFormalParams :
 
 // production #35
 variadicFormalParams :
-    VARIADIC ( '[' variadicTerminator ']' )? OF
-    ( simpleFormalType | '{' simpleFormalParams ( ';' simpleFormalParams )* '}' )
-    ;
+    ARGLIST numberOfArgumentsToPass? OF
+    ( simpleFormalType |
+      '{' simpleFormalParams ( ';' simpleFormalParams )* '}' )
+    ( '|' variadicTerminator )? ;    ;
 
 // alias #35.1
+numberOfArgumentsToPass : constExpression ;
+
+// alias #35.2
 variadicTerminator : constExpression ;
 
 // *** Statements ***
@@ -971,11 +978,12 @@ inPragmaCompileTimeFunctionCall :
 
 // production #1
 ReservedWord :
-    ALIAS | AND | ARRAY | BEGIN | BLUEPRINT | BY | CASE | CONST | DEFINITION |
-    DESCENDING | DIV | DO | ELSE | ELSIF | END | EXIT | FOR | FROM | GENLIB |
-    IF | IMPLEMENTATION | IMPORT | IN | INDETERMINATE | LOOP | MOD | MODULE |
-    NOT | OF | OPAQUE | OR | POINTER | PROCEDURE | RECORD | REFERENTIAL |
-    REPEAT | RETURN | SET | THEN | TO | TYPE | UNTIL | VAR | VARIADIC | WHILE
+    ALIAS | AND | ARGLIST | ARRAY | BEGIN | BLUEPRINT | BY | CASE | CONST |
+    DEFINITION | DESCENDING | DIV | DO | ELSE | ELSIF | END | EXIT | FOR |
+    FROM | GENLIB | IF | IMPLEMENTATION | IMPORT | IN | INDETERMINATE | LOOP |
+    MOD | MODULE | NOT | OF | OPAQUE | OR | POINTER | PROCEDURE | RECORD |
+    REFERENTIAL | REPEAT | RETURN | SET | THEN | TO | TYPE | UNTIL | VAR |
+    WHILE
     ;
 
 // production #2
