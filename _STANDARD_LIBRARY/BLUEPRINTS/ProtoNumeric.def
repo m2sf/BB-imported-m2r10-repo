@@ -2,7 +2,7 @@
 
 (* General Blueprint for Scalar and Non-Scalar Numeric ADTs *)
 
-BLUEPRINT ProtoNumeric; (* root of numeric meta types *)
+BLUEPRINT ProtoNumeric [ProtoRoot];
 
 (* Numeric ADTs must be records to be statically allocatable,
    the following literals may be used:
@@ -10,31 +10,31 @@ BLUEPRINT ProtoNumeric; (* root of numeric meta types *)
    o  structured literals constructed from real number literals *)
 
 TYPE ProtoNumeric = RECORD | OPAQUE RECORD :=
-                      INTEGER | REAL | { .. } OF REAL;
+                      INTEGER | REAL | { REAL BY * };
 
 
 (* Bindings required for numeric ADTs *)
 
 (* The operations TMIN and TMAX are meaningful only for scalar types,
-   their bindings may be required by more specialised prototypes *)
+   their bindings may be required by more specialised blueprints. *)
 
 (* The operations SXF and VAL are meaningful only for scalar types
-   their bindings may be required by more specialised prototypes *)
+   their bindings may be required by more specialised blueprints. *)
 
 (* The operations ABS, NEG and ODD are not common to all numeric types,
-   their bindings may be required by more specialised prototypes *)
+   their bindings may be required by more specialised blueprints. *)
 
 
 (* Bindings to dyadic operations *)
 
 PROCEDURE [+] add ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
-(* procedure to bind to the + operator for operands of the numeric ADT *)
+(* procedure to bind to the + operator for operands of the ADT *)
 
 PROCEDURE [-] subtract ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
-(* procedure to bind to the - operator for operands of the numeric ADT *)
+(* procedure to bind to the - operator for operands of the ADT *)
 
 (* The operations *, /, DIV and MOD are not common to all numeric types,
-   their bindings may be required by more specialised prototypes *)
+   their bindings may be required by more specialised blueprints. *)
 
 
 (* Bindings to relational operations *)
@@ -45,7 +45,7 @@ PROCEDURE [=] isEqual ( op1, op2 : ProtoNumeric ) : BOOLEAN;
 (* The operation for the # operator is synthesized as NOT (op1 = op2) *)
 
 (* The operations < and > are meaningful only for scalar types,
-   their bindings may be required by more specialised prototypes *)
+   their bindings may be required by more specialised blueprints. *)
 
 
 END ProtoNumeric.
