@@ -1,0 +1,866 @@
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ##ModuleIdent## [ProtoSet];
+
+/* ===========================================================================
+ * Modula-2 R10 Dynamic Set Type Template
+ * ===========================================================================
+ *
+ * This template is expanded by the M2 R10 template engine utility.  Expansion
+ * may be invoked within a compiling source file using the GENLIB directive.
+ *
+ *  GENLIB FooSet FROM GenDynamicSets FOR ValueType = "FooRecord" END;
+ *
+ * The generated library may then be imported by an import directive.
+ *
+ *  IMPORT FooSet;
+ *
+ * During template expansion,  any occurences  of ##ModuleIdent## are replaced
+ * by the identifier following GENLIB, and any occurences of ##ValueType## are
+ * replaced by the  quoted value  given for ValueType in the GENLIB directive.
+ * Template comments (like this one) are *removed* during templare expansion.
+ * ======================================================================== */
+
+/* ---------------------------------------------------------------------------
+ * Template Parameters
+ * ---------------------------------------------------------------------------
+ *
+ * All parameters are marked (A) automatic, (M) mandatory or (D) default.
+ *
+ * This template will expand the following parameters:
+ *
+ * ModuleIdent (A)
+ *
+ *  the library's identifier, automatically set by the GENLIB directive
+ *
+ * ValueType (M)
+ *
+ *  the value type of the dynamic set, THERE IS NO DEFAULT
+ *  this parameter must be passed and hold a mixed case identifier
+ *  template expansion WILL FAIL if it does not or if it is undefined
+ *
+ * CapacityLimit (D)
+ *
+ *  whether the allocation capacity (number of buckets) should be limited,
+ *  default is AssocArrayMaxCapacity, imported from module COMPILER
+ *  zero indicates no limit, the language default is 16'777'213
+ *
+ * LoadFactorLimit (D)
+ *
+ *  whether the load factor of a dynamic set should be limited,
+ *  default is AssocArrayLoadFactorLimit, imported from module COMPILER
+ *  zero indicates no limit, the language default is 0
+ *
+ * ValueLengthLimit (D)
+ *
+ *  whether the length of open array values should be limited,
+ *  default is AssocArrayMaxKeyLength, imported from module COMPILER
+ *  zero indicates no limit, the language default is 250
+ * ------------------------------------------------------------------------ */
+
+/* ---------------------------------------------------------------------------
+ * Placeholder Verification and Defaults
+ * ------------------------------------------------------------------------ */
+
+/* TO DO : update, following latest template engine status
+
+/* Define placeholder ADT as an alias of ModuleIdent */
+$ DEFALIAS ADT ModuleIdent
+
+/* Verify ValueType holds a mixed or uppercase identifier or open array,
+   if not then fail */
+$ DEFIDENT ValueType [AaAA OA] FAIL
+
+/* Define import statement if ValueType is an UNSAFE type */
+$ DEFIFIN ValueTypeImport [ValueType UTL] "FROM UNSAFE IMPORT ##ValueType##;"
+
+/* Define import statement if ValueType is a pervasive type */
+$ DEFIFIN ValueTypeImport [ValueType PTL] "(* none *)"
+
+/* Define import statement if ValueType is anything else */
+$ DEFIFNDEF ValueTypeImport "IMPORT ##ValueType##;"
+
+/* Verify CapacityLimit holds a cardinal literal, if not use default */
+$ DEFNUM CapacityLimit [0 +] "AssocArrayMaxCapacity"
+
+/* Verify LoadFactorLimit holds a cardinal literal, if not use default */
+$ DEFNUM LoadFactorLimit [0 +] "AssocArrayLoadFactorLimit"
+
+/* Define boolean OpenArrayValue if ValueType is an open array */
+$ DEFIFOA OpenArrayValue [ValueType] "TRUE" 
+
+/* Verify ValueLengthLimit holds a cardinal literal, if not use default */
+$ IFEQ OpenArrayValue
+$ DEFNUM ValueLengthLimit [0 32000] "AssocArrayMaxKeyLength"
+$ ENDIF
+
+
+(* Abstract *)
+
+(* ---------------------------------------------------------------------------
+ * This  library  provides  a  reference  counted  unordered  set  ADT.  It is
+ * implemented as a hash table  using a fixed bucket count  that is set when a
+ * hash table instance is allocated and it uses external chaining to deal with
+ * bucket collisions.  The ADT conforms  to  blueprint ProtoSet.  It  provides
+ * bindings  to built-in (pervasive) macros NEW, RETAIN, RELEASE, COPY, STORE,
+ * REMOVE, RETRIEVE, COUNT, SUBSET, TLIMIT, to operators *, /, +, -, =, and to
+ * built-in syntax for membership test (IN) and iteration (FOR IN).
+ * ------------------------------------------------------------------------ *)
+
+
+(* Note of Origin *)
+
+(* ---------------------------------------------------------------------------
+ * Library created by M2TE from template GenDynamicSets with parameters:
+ * ---------------------------------------------------------------------------
+ *
+ * TemplateVersion  : ##TemplateVersion##
+ * ModuleIdent      : ##ModuleIdent##
+ * ValueType        : ##ValueType##
+ * CapacityLimit    : ##CapacityLimit##
+ * LoadFactorLimit  : ##LoadFactorLimit##
+ * ValueLengthLimit : ##ValueLengthLimit##
+ *
+ * Copyright (c) 2013 by B.Kowarsch & R.Sutcliffe. All rights reserved.
+ * ------------------------------------------------------------------------ *)
+
+
+(* Imports *)
+
+(* ---------------------------------------------------------------------------
+ * Import of compile time parameters that may be set by compiler switch
+ * ------------------------------------------------------------------------ *)
+
+/* TO DO : use DEFAULT of module COMPILER */
+
+FROM COMPILER IMPORT
+  AssocArrayDefaultCapacity, AssocArrayMaxCapacity,
+  AssocArrayLoadFactorLimit, AssocArrayMaxKeyLength;
+
+
+(* ---------------------------------------------------------------------------
+ * Import Value Type
+ * ------------------------------------------------------------------------ *)
+
+##ValueTypeImport##
+
+
+(* Compile Time Parameters *)
+
+(* ---------------------------------------------------------------------------
+ * Descending FOR loop support
+ * ------------------------------------------------------------------------ *)
+
+CONST [DESCENDING] supportsDescendingFor = FALSE;
+
+
+(* ---------------------------------------------------------------------------
+ * Default table size in buckets
+ * ---------------------------------------------------------------------------
+ *
+ * This constant is set by the compiler and the language defined default value
+ * is 61.  A compiler switch may be provided to change this value.
+ * ------------------------------------------------------------------------ *)
+
+CONST DefaultCapacity = AssocArrayDefaultCapacity;
+
+
+(* ---------------------------------------------------------------------------
+ * Maximum table size in buckets
+ * ---------------------------------------------------------------------------
+ *
+ * This constant determines the maximum capacity  with which a dynamic set may
+ * be allocated.  A value of zero indicates no limit.
+ * ------------------------------------------------------------------------ *)
+
+CONST MaxCapacity = ##CapacityLimit##;
+
+
+(* ---------------------------------------------------------------------------
+ * Load factor limit
+ * ---------------------------------------------------------------------------
+ *
+ * This constant determines the  maximum load factor  of a dynamic set at run-
+ * time.  The  load factor  of a  dynamic set  is calculated  by  the formula:
+ * actual load factor = allocated capacity / number of stored entries
+ * A load factor limit value of zero indicates no limit.
+ * ------------------------------------------------------------------------ *)
+
+CONST LoadFactorLimit = ##LoadFactorLimit##; (* 10 x actual value *)
+
+
+$ IFEQ OpenArrayValue
+(* ---------------------------------------------------------------------------
+ * Maximum length of an open array value
+ * ---------------------------------------------------------------------------
+ *
+ * This constant determines the  maximum length  of a value  of a dynamic set.
+ * A value of zero indicates no limit.
+ *
+ * Passing a value  with a length  exceeding  MaxValueLength  to any procedure
+ * that requires a value shall raise runtime fault CapacityExceeded.
+ * ------------------------------------------------------------------------ *)
+
+CONST MaxValueLength = ##ValueLengthLimit##;
+$ ENDIF
+
+
+
+(* ADT Definition *)
+
+(* ---------------------------------------------------------------------------
+ * Opaque handle type  ##ModuleIdent##
+ * ---------------------------------------------------------------------------
+ *
+ * The abstract data type that is implemented by this library.
+ *
+ * Passing an invalid or unallocated dynamic set handle  to any procedure that
+ * requires such a handle shall raise runtime fault InvalidAccessor.
+ * ------------------------------------------------------------------------ *)
+
+TYPE ##ADT## = OPAQUE; (* details hidden in implementation *)
+
+
+(* Conversion *)
+
+(* none *)
+
+
+(* Type Capacity *)
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.capacityLimit()
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the value of constant MaxCapacity.
+ *
+ * This procedure is bound to pervasive TLIMIT.  An expression of the form
+ *
+ *  TLIMIT(##ADT##)
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.capacityLimit()
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+
+
+(* Memory Management *)
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.new( dynamicSet, capacity )
+ * ---------------------------------------------------------------------------
+ *
+ * Allocates  a new set  with the given capacity,  initialises and retains it,
+ * then  passes it back  in parameter dynamicSet.  If  zero  is passed in  for
+ * capacity,  the value of constant DefaultCapacity  will be used.  If a value
+ * larger than constant MaxCapacity is passed in  for capacity,  runtime fault
+ * AllocationLimitExceeded is raised.
+ *
+ * This procedure is bound to pervasive NEW.  A statement of the form
+ *
+ *  NEW(dynamicSet, capacity)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.new(dynamicSet, capacity)
+ *
+ * NEW may also be invoked  with a single parameter.  In this case, a value of
+ * zero will automatically be passed as the second argument to procedure new.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [NEW] new
+  ( VAR dynamicSet : ##ADt##; capacity : LONGCARD );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.retain( dynamicSet )
+ * ---------------------------------------------------------------------------
+ *
+ * Retains dynamicSet,  thereby causing a pending retain.  Multiple calls will
+ * cause  multiple  pending retains.  A pending retain may be cleared by a co-
+ * responding call to procedure release.  Deallocation of dynamicSet  is  pre-
+ * vented until all pending retains are cleared.
+ *
+ * This procedure is bound to pervasive RETAIN.  A statement of the form
+ *
+ *  RETAIN(dynamicSet)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.retain(dynamicSet)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [RETAIN] retain ( dynamicSet : ##moduleIdent## );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.release( dynamicSet )
+ * ---------------------------------------------------------------------------
+ *
+ * Releases dynamicSet, thereby clearing a pending retain.  If no more retains
+ * are pending,  dynamicSet is deallocated and NIL is passed in dynamicSet.
+ *
+ * This procedure is bound to pervasive RELEASE.  A statement of the form
+ *
+ *  RELEASE(dynamicSet)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.release(dynamicSet)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [RELEASE] release ( dynamicSet : ##ADT## );
+
+
+(* Assignment and Copying *)
+
+(* ---------------------------------------------------------------------------
+ * Assignment of Structured Values
+ * ---------------------------------------------------------------------------
+ *
+ * Structured values representing a value list may be assigned to  any mutable
+ * variable of a dynamic set type as long as the structured value is parameter
+ * passing  compatible  to the  variadic  value list  parameter  of  procedure
+ * storeEntries,  used to synthesise assignment statements.
+ *
+ * An assignment of the form
+ *
+ *  dynamicSet := { value1, value2, value3, ... };
+ *
+ * is a special syntax form for the equivalent pervasive invocation sequence
+ *
+ *  REMOVE(dynamicSet);
+ *  STORE(dynamicSet, value1, value2, value3, ...)
+ *
+ * It should also be noted that an assignment of the form
+ *
+ *  dynamicSet := { }
+ *
+ * is a special syntax form for the equivalent pervasive invocation
+ *
+ *  REMOVE(dynamicSet)
+ *
+ * which is replaced at compile time with a procedure call of the form
+ *
+ *  ##ADT##.removeEntries(dynamicSet)
+ *
+ * which will remove all entries from dynamicSet at runtime.
+ * ------------------------------------------------------------------------ *)
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.copy( sourceSet, targetSet )
+ * ---------------------------------------------------------------------------
+ *
+ * Replaces the contents of targetSet  with the contents of sourceSet.  Values
+ * present in sourceSet  are stored in targetSet.  Values present in targetSet
+ * but  not  in sourceSet are removed from targetSet.  If sourceSet is  empty, 
+ * all of the values  in targetSet  are removed from it.  If ValueType  is re-
+ * ference counted,  any value so stored is retained  and any value so removed
+ * is released.  Set sourceSet is not modified.
+ * 
+ * This procedure is bound to pervasive COPY.  A statement of the form
+ *
+ *  COPY(dynamicSet1, dynamicSet2)
+ *
+ * is replaced by a procedure call of the form
+ *
+ *  ##ADT##.copy(dynamicSet1, dynamicSet2)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [COPY] copy ( source, target : ##ADT## );
+
+
+(* Storage, Removal, Retrieval and Inspection of Contents *)
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.storeEntries( staticSet, valueList )
+ * ---------------------------------------------------------------------------
+ *
+ * Stores zero or more values in dynamicSet.  Values are stored  as references
+ * if ValueType is a pointer type,  otherwise as copies.  Values so stored are
+ * retained if ValueType is reference counted.  If ValueType is a pointer type
+ * and NIL is passed in as a value,  runtime fault ValueMayNotBeNIL is raised.
+ * If the addition of any new value causes any entry limit of dynamicSet to be
+ * exceeded,  runtime fault  CollectionCapacityExceeded  is raised.
+ *
+ * This procedure is bound to pervasive STORE.  A statement of the form
+ *
+ *  STORE(dynamicSet, value1, value2, value3, ... )
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##moduleIdent##.storeEntries(dynamicSet, value1, value2, value3, ...)
+ *
+ * It should also be noted that a statement of the form
+ *
+ *  dynamicSet[value] := TRUE
+ *
+ * is a special syntax form of the equivalent pervasive invocation
+ *
+ *  STORE(dynamicSet, value)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [STORE] storeEntries
+  ( VAR dynamicSet : ##ADT##;
+    valueList : VARIADIC OF ##ValueType## );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.removeEntries( dynamicSet, valueList )
+ * ---------------------------------------------------------------------------
+ *
+ * Removes  one or more  values from dynamicSet.  If no values  are passed in,
+ * all of the values stored in dynamicSet  are removed.  Any values so removed
+ * are released  if ValueType is reference counted.  Any attempt  to remove  a
+ * value that is not stored in dynamicSet has no effect and will not cause any
+ * runtime fault to be raised.
+ *
+ * This procedure is bound to pervasive REMOVE.  A statement of the form
+ *
+ *  REMOVE(dynamicSet, value1, value2, value3, ...)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.removeEntries(dynamicSet, value1, value2, value3, ...)
+ *
+ * It should also be noted that a statement of the form
+ *
+ *  dynamicSet[value] := FALSE
+ *
+ * is a special syntax form of the equivalent pervasive invocation
+ *
+ *  REMOVE(dynamicSet, value)
+ *
+ * and a statement of the form
+ *
+ *  dynamicSet := { }
+ *
+ * is a special syntax form of the equivalent pervasive invocation
+ *
+ *  REMOVE(dynamicSet)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [REMOVE] removeEntries
+  ( VAR dynamicSet : ##ADT##;
+    valueList : VARIADIC OF ##ValueType## );
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##moduleIdent##.membershipForValue( dynamicSet, value )
+ * ---------------------------------------------------------------------------
+ *
+ * Invokes ##moduleIdent##.entryExists() and returns its result.
+ *
+ * This function is bound to pervasive RETRIEVE.  An expression of the form
+ *
+ *  dynamicSet[value]
+ *
+ * is a special syntax form of the equivalent pervasive invocation
+ *
+ *  RETRIEVE(dynamicSet, value)
+ *
+ * which is replaced at compile time by a function call of the form
+ *
+ *  ##moduleIdent##.membershipForValue(dynamicSet, value)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [RETRIEVE] membershipForValue
+  ( dynamicSet : ##ADT##;
+    value : ##ValueType## ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.entryExists( dynamicSet, value )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE if the given value is stored in dynamicSet,  otherwise FALSE.
+ *
+ * This function is bound to built-in syntax IN.  An expression of the form
+ *
+ *  value IN dynamicSet
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.entryExists(dynamicSet, key)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [IN] entryExists
+  ( dynamicSet : ##ADT##;
+    value : ##ValueType## ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.count( dynamicSet )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the number of values stored in dynamicSet.
+ *
+ * This function is bound to pervasive COUNT.  An expression of the form
+ *
+ *  COUNT(dynamicSet)
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.count(dynamicSet)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [COUNT] count ( dynamicSet : ##ADT## ) : LONGCARD;
+
+
+(* Iteration *)
+
+(* ---------------------------------------------------------------------------
+ * For loop body procedure type:  ForLoopBodyProc
+ * ---------------------------------------------------------------------------
+ *
+ * Formal type for the definition of for loop iterator procedures (below).
+ * ------------------------------------------------------------------------ *)
+
+TYPE ForLoopBodyProc = PROCEDURE ( (* value : *) ##ValueType## );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.forIterator( dynamicSet, forLoopBody, ascending )
+ * ---------------------------------------------------------------------------
+ *
+ * Iterates over all values stored in dynamicSet,  invoking for each value the
+ * procedure  passed in  for forLoopBody.  The iteration order is *undefined*.
+ * The value passed in for ascending is *ignored*.
+ *
+ * This procedure is bound to built-in syntax FOR IN.  A statement of the form
+ *
+ *  FOR value IN dynamicSet DO statementSequence END
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.forIterator(dynamicSet, forLoopBody)
+ *
+ * and a procedure definition of the form below  is inserted into the declara-
+ * tion section  before the BEGIN-END block where the for iterator is located.
+ *
+ *  <* INLINE *> PROCEDURE forLoopBody ( value : ValueType );
+ *  BEGIN
+ *    statementSequence
+ *  END forLoopBody;
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [FOR] forIterator
+  ( dynamicSet : ##ADT##; forLoopBody : ForLoopBodyProc );
+
+
+(* Set Operations *)
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.intersection( dynamicSet1, dynamicSet2 )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns a set  containing the intersection  of dynamicSet1 and dynamicSet2.
+ * The intersection of two sets  are the values that are present in both sets,
+ * excluding any values that are present in one but not in the other.
+ *
+ * This procedure is bound to the * operator.  A statement of the form
+ *
+ *  dynamicSet1 * dynamicSet2
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.intersection(dynamicSet1, dynamicSet2)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [*] intersection
+  ( dynamicSet1, dynamicSet2 : ##ADT## ) : ##ADT##;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.symmetricDiff( dynamicSet, dynamicSet )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns  a set  containing  the  symmetric difference  of  dynamicSet1  and
+ * dynamicSet2.  The symmetric difference of two sets  are the values that are
+ * present  in one set  but not in the other,  excluding  any values  that are
+ * present in both.
+ *
+ * This procedure is bound to the / operator.  A statement of the form
+ *
+ *  dynamicSet1 / dynamicSet2
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.symmetricDiff(dynamicSet1, dynamicSet2)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [/] symmetricDiff
+  ( dynamicSet1, dynamicSet2 : ##ADT## ) : ##ADT##;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.union( dynamicSet1, dynamicSet2 )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns a set  containing  the union  of sets dynamicSet1  and dynamicSet2.
+ * The union of two sets  are the values  that are present  in one set  or the
+ * other,  including values that are present in both.
+ *
+ * This procedure is bound to the + operator.  A statement of the form
+ *
+ *  dynamicSet1 + dynamicSet2
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.union(dynamicSet1, dynamicSet2)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [+] union
+  ( dynamicSet1, dynamicSet2 : ##ADT## ) : ##ADT##;
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.difference( dynamicSet1, dynamicSet2 )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns  a set  containing  the  set difference  of sets  dynamicSet1   and
+ * dynamicSet2.  The difference  of two sets  are the values  that are present 
+ * only in the second set,  but not in the first.
+ *
+ * This procedure is bound to the - operator.  A statement of the form
+ *
+ *  dynamicSet1 - dynamicSet2
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.difference(dynamicSet1, dynamicSet2)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [-] difference
+  ( dynamicSet1, dynamicSet2 : ##ADT## ) : ##ADT##;
+
+
+(* Relational Operations *)
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.isEqual( dynamicSet1, dynamicSet2 )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if dynamicSet1  and dynamicSet2  are equal,  otherwise FALSE.
+ * Two sets are equal only if both conditions below are met:
+ *
+ *  (1) both sets have the same number of values stored
+ *  (2) every value present in one set is also present in the other
+ *
+ * This function is bound to the equality operator.  An expression of the form
+ *
+ *  dynamicSet1 = dynamicSet2
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.isEqual(dynamicSet1, dynamicSet2)
+ *
+ * Further, an expression of the form
+ *
+ *  dynamicSet1 # dynamicSet2
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  NOT ##ADT##.isEqual(dynamicSet1, dynamicSet2)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [=] isEqual
+  ( dynamicSet1, dynamicSet2 : ##ADT## ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.isSubset( dynamicSet1, dynamicSet2 )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if dynamicSet1  is a subset of dynamicSet2,  otherwise FALSE.
+ * A set s1  is a subset of another set s2  if  every value  present in s1  is
+ * also present in s2.
+ *
+ * This function is bound to pervasive SUBSET.  An expression of the form
+ *
+ *  SUBSET(dynamicSet1, dynamicSet2)
+ *
+ * is replaced at compile time by a function call of the form
+ *
+ *  ##ADT##.isSubset(dynamicSet1, dynamicSet2)
+ *
+ * It should also be noted that an expression of the form
+ *
+ *  dynamicSet1 > dynamicSet2
+ *
+ * is a special syntax form for the equivalent expression
+ *
+ *  (COUNT(dynamicSet1) > COUNT(dynamicSet2))
+ *  AND SUBSET(dynamicSet2, dynamicSet1)
+ *
+ * An expression of the form
+ *
+ *  dynamicSet1 >= dynamicSet2
+ *
+ * is a special syntax form for the equivalent expression
+ *
+ *  SUBSET(dynamicSet2, dynamicSet1)
+ *
+ * An expression of the form
+ *
+ *  dynamicSet1 < dynamicSet2
+ *
+ * is a special syntax form for the equivalent expression
+ *
+ *  (COUNT(dynamicSet1) < COUNT(dynamicSet2))
+ *  AND SUBSET(dynamicSet1, dynamicSet2)
+ *
+ * An expression of the form
+ *
+ *  dynamicSet1 <= dynamicSet2
+ *
+ * is a special syntax form for the equivalent expression
+ *
+ *  SUBSET(dynamicSet1, dynamicSet2)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [SUBSET] isSubset
+  ( dynamicSet1, dynamicSet2 : ##ADT## ) : BOOLEAN;
+
+
+(* Introspection *)
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.capacity( dynamicSet )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns the allocated capacity (number of buckets) of dynamicSet.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE capacity ( dynamicSet : ##ADT## ) : LONGCARD;
+
+
+(* ---------------------------------------------------------------------------
+ * function:  ##ADT##.entryLimit( dynamicSet )
+ * ---------------------------------------------------------------------------
+ * Returns  the  maximum number  of values  that may be stored  in dynamicSet,
+ * calculated  as:  LoadFactorLimit * capacity(dynamicSet) DIV 10.  A value of
+ * zero represents no limit for the number of values.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE entryLimit ( assocArray : ##ADT## ) : LONGCARD;
+
+
+(* ---------------------------------------------------------------------------
+ * function: ##ADT##.isOrdered( dynamicSet )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE if dynamicSet is ordered,  otherwise FALSE.
+ *
+ * Always returns FALSE because this implementation implements unordered sets.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isOrdered ( dynamicSet : ##ADT## ) : BOOLEAN;
+
+
+(* ---------------------------------------------------------------------------
+ * function: ##moduleIdent##.isResizable( dynamicSet )
+ * ---------------------------------------------------------------------------
+ *
+ * Returns TRUE  if dynamicSet is self-resizing  by increasing  and decreasing
+ * its bucket count depending on its load factor,  returns FALSE otherwise.
+ *
+ * Always returns FALSE because this implementation does not support resizing.
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE isResizable ( dynamicSet : ##ADT## ) : BOOLEAN;
+
+
+END ##moduleIdent##.
+
+<#IF GenIO#>
+/* Generate the ADT's IO Library */
+DEFINITION MODULE ##IOLibrary## [ProtoIO] FOR ##ADT##;
+
+(* IO Operations for ##ADT## *)
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.Read( file, dynamicSet )
+ * ---------------------------------------------------------------------------
+ *
+ * Reads the contents of a dynamic set from file into dynamicSet.
+ *
+ * This procedure is auto-bound to pervasive READ.  An invocation of the form
+ *
+ *  READ(dynamicSet)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Read(stdIn, dynamicSet)
+ *
+ * and an invocation of the form
+ *
+ *  READ(file, dynamicSet)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Read(file, dynamicSet)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [READ] Read ( file : File; VAR dynamicSet : ##ADT## );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.Write( file, dynamicSet )
+ * ---------------------------------------------------------------------------
+ *
+ * Writes the contents of dynamicSet to file.
+ *
+ * This procedure is auto-bound to pervasive WRITE.  An invocation of the form
+ *
+ *  WRITE(dynamicSet)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Write(stdOut, dynamicSet)
+ *
+ * and an invocation of the form
+ *
+ *  WRITE(file, dynamicSet)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Write(file, dynamicSet)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [WRITE] Write ( file : File; dynamicSet : ##ADT## );
+
+
+(* ---------------------------------------------------------------------------
+ * procedure:  ##ADT##.WriteF( file, fmtStr, dynamicSetList )
+ * ---------------------------------------------------------------------------
+ *
+ * Writes the contents of one or more dynamic sets formatted to file.
+ *
+ * This procedure is auto-bound to pervasive WRITEF. An invocation of the form
+ *
+ *  WRITEF("", dynamicSet1, dynamicSet2, dynamicSet3, ...)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.Write(stdOut, "", dynamicSet1, dynamicSet2, dynamicSet3, ...)
+ *
+ * and an invocation of the form
+ *
+ *  WRITE(file, "", dynamicSet1, dynamicSet2, dynamicSet3, ...)
+ *
+ * is replaced at compile time by a procedure call of the form
+ *
+ *  ##ADT##.WriteF(file, "", dynamicSet1, dynamicSet2, dynamicSet3, ...)
+ * ------------------------------------------------------------------------ *)
+
+PROCEDURE [WRITEF] WriteF
+  ( file : File; fmtStr : ARRAY OF CHAR;
+    items : VARIADIC OF ##ADT## );
+
+
+END ##IOLibrary##.
+<#ENDIF#>
