@@ -9,7 +9,7 @@ DEFINITION MODULE ##ModuleIdent## [ProtoStaticArray];
  * This template is expanded by the M2 R10 template engine utility.  Expansion
  * may be invoked within a compiling source file using the GENLIB directive.
  *
- *  GENLIB FooArray FROM StaticArrays FOR
+ *  GENLIB FooArray FROM GenStaticArrays FOR
  *    IndexType = "Barbaz";
  *    ValueType = "Bamboo"
  *  END;
@@ -98,7 +98,7 @@ DEFINITION MODULE ##ModuleIdent## [ProtoStaticArray];
 (* Note of Origin *)
 
 (* ---------------------------------------------------------------------------
- * Library created by M2TE from template AssocArrays with parameters:
+ * Library created by M2TE from template GenStaticArrays with parameters:
  * ---------------------------------------------------------------------------
  *
  * TemplateVersion : ##TemplateVersion##
