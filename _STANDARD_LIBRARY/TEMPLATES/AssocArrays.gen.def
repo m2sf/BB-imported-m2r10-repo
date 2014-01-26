@@ -9,7 +9,7 @@ DEFINITION MODULE ##ModuleIdent## [ProtoDictionary];
  * This template is expanded by the M2 R10 template engine utility.  Expansion
  * may be invoked within a compiling source file using the GENLIB directive.
  *
- *  GENLIB FooArray FROM AssocArrays FOR ValueType = "FooRecord" END;
+ *  GENLIB FooArray FROM GenAssocArrays FOR ValueType = "FooRecord" END;
  *
  * The generated libraries may then be imported by an import directive.
  *
@@ -164,7 +164,7 @@ DEFINITION MODULE ##ModuleIdent## [ProtoDictionary];
 (* Note of Origin *)
 
 (* ---------------------------------------------------------------------------
- * Library created by M2TE from template AssocArrays with parameters:
+ * Library created by M2TE from template GenAssocArrays with parameters:
  * ---------------------------------------------------------------------------
  *
  * TemplateVersion : ##TemplateVersion##
