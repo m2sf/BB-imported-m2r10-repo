@@ -1,4 +1,4 @@
-(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Specialised Blueprint for Whole Number ADTs *)
 
@@ -23,12 +23,14 @@ CONST [TBASE] base : CARDINAL;
 CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
 (* maximum number of digits the integer ADT can encode *)
 
-CONST [TMINEXPONENT] eMin = 0;
+CONST [TMINEXP] eMin = 0;
 (* integers always have an exponent of zero *)
 
-CONST [TMAXEXPONENT] eMax = 0;
+CONST [TMAXEXP] eMax = 0;
 (* integers always have an exponent of zero *)
 
+
+(* Required Procedures *)
 
 (* Bindings to pervasive functions TMIN and TMAX *)
 
@@ -79,7 +81,7 @@ PROCEDURE [*] multiply ( i, j : ProtoInteger ) : ProtoInteger;
 PROCEDURE [DIV] divide ( i, j : ProtoInteger ) : ProtoInteger;
 (* procedure to bind to the DIV operator for operands of the ProtoInteger ADT *)
 
-PROCEDURE [MOD] modulo ( i, j : ProtoInteger ) : ProtoInteger;
+PROCEDURE [MOD] modulus ( i, j : ProtoInteger ) : ProtoInteger;
 (* procedure to bind to the MOD operator for operands of the ProtoInteger ADT *)
 
 
