@@ -1,6 +1,6 @@
-(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Blueprint for Scalar Number ADTs *)
+(* General Blueprint for Scalar Numeric ADTs *)
 
 BLUEPRINT ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
@@ -31,6 +31,8 @@ CONST [TMAXEXPONENT] eMax : CARDINAL;
 (* largest exponent the scalar ADT can encode *)
 
 
+(* Required Procedures *)
+
 (* Bindings to predefined functions TMIN and TMAX *)
 
 PROCEDURE [TMIN] minValue : ProtoScalar;
@@ -49,11 +51,11 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoScalar );
 (* procedure to convert value in scalar exchange format to the scalar ADT *)
 
 
-(* The assignment of literal values is synthesised from SXF and VAL *)
+(* The assignment of literal values is synthesised from SXF and VAL. *)
 
 
 (* The operations ABS, NEG and ODD are not common to all scalar types,
-   their bindings may be required by more specialised prototypes *)
+   their bindings may be required by more specialised blueprints. *)
 
 
 (* Bindings to dyadic operations *)
@@ -72,7 +74,7 @@ PROCEDURE [*] multiply ( op1, op2 : ProtoScalar ) : ProtoScalar;
 (* procedure to bind to the * operator for operands of the scalar ADT *)
 
 (* The operations /, DIV and MOD are not common to all scalar types,
-   their bindings may be required by more specialised prototypes *)
+   their bindings may be required by more specialised blueprints. *)
 
 
 (* Bindings to relational operations *)
