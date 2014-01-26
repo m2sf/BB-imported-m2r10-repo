@@ -1,4 +1,4 @@
-(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Specialised Blueprint for Real Number ADTs *)
 
@@ -23,12 +23,14 @@ CONST [TBASE] base : CARDINAL;
 CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
 (* how many digits the ADT can encode in its significand *)
 
-CONST [TMINEXPONENT] eMin : INTEGER;
+CONST [TMINEXP] eMin : INTEGER;
 (* value of the smallest exponent the ADT can encode *)
 
-CONST [TMAXEXPONENT] eMax : CARDINAL;
+CONST [TMAXEXP] eMax : CARDINAL;
 (* value of the largest exponent the ADT can encode *)
 
+
+(* Required Procedures *)
 
 (* Bindings to pervasive functions TMIN and TMAX *)
 
