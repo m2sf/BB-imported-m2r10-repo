@@ -24,10 +24,10 @@ CONST [TBASE] base : CARDINAL;
 CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
 (* maximum number of digits the scalar ADT can encode *)
 
-CONST [TMINEXPONENT] eMin : INTEGER;
+CONST [TMINEXP] eMin : INTEGER;
 (* smallest exponent the scalar ADT can encode *)
 
-CONST [TMAXEXPONENT] eMax : CARDINAL;
+CONST [TMAXEXP] eMax : CARDINAL;
 (* largest exponent the scalar ADT can encode *)
 
 
