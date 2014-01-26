@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BBEditDocumentType</key>
+	<string>CodelessLanguageModule</string>
+	<key>BBLMColorsSyntax</key>
+	<true/>
+	<key>BBLMIsCaseSensitive</key>
+	<true/>
+	<key>BBLMKeywordList</key>
+	<array>
+		<string>ALIAS</string>
+		<string>AND</string>
+		<string>ARGLIST</string>
+		<string>ARRAY</string>
+		<string>BEGIN</string>
+		<string>BLUEPRINT</string>
+		<string>BY</string>
+		<string>CASE</string>
+		<string>CAST</string>
+		<string>CONST</string>
+		<string>DEFINITION</string>
+		<string>DESCENDING</string>
+		<string>DIV</string>
+		<string>DO</string>
+		<string>ELSE</string>
+		<string>ELSIF</string>
+		<string>END</string>
+		<string>EXIT</string>
+		<string>FOR</string>
+		<string>FROM</string>
+		<string>GENLIB</string>
+		<string>IF</string>
+		<string>IMPLEMENTATION</string>
+		<string>IMPORT</string>
+		<string>IN</string>
+		<string>INDETERMINATE</string>
+		<string>LOOP</string>
+		<string>MOD</string>
+		<string>MODULE</string>
+		<string>NOT</string>
+		<string>OF</string>
+		<string>OPAQUE</string>
+		<string>OR</string>
+		<string>POINTER</string>
+		<string>PROCEDURE</string>
+		<string>RECORD</string>
+		<string>REFERENTIAL</string>
+		<string>REPEAT</string>
+		<string>RETURN</string>
+		<string>SET</string>
+		<string>THEN</string>
+		<string>TO</string>
+		<string>TYPE</string>
+		<string>UNTIL</string>
+		<string>VAR</string>
+		<string>WHILE</string>
+	</array>
+	<key>BBLMPredefinedNameList</key>
+	<array>
+		<string>NIL</string>
+		<string>TRUE</string>
+		<string>FALSE</string>
+		<string>BOOLEAN</string>
+		<string>OCTET</string>
+		<string>CHAR</string>
+		<string>UNICHAR</string>
+		<string>CARDINAL</string>
+		<string>LONGCARD</string>
+		<string>INTEGER</string>
+		<string>LONGINT</string>
+		<string>REAL</string>
+		<string>LONGREAL</string>
+		<string>NEW</string>
+		<string>RETAIN</string>
+		<string>RELEASE</string>
+		<string>COPY</string>
+		<string>STORE</string>
+		<string>REMOVE</string>
+		<string>CONCAT</string>
+		<string>READ</string>
+		<string>WRITE</string>
+		<string>WRITEF</string>
+		<string>ABS</string>
+		<string>NEG</string>
+		<string>ODD</string>
+		<string>PRED</string>
+		<string>SUCC</string>
+		<string>ORD</string>
+		<string>CHR</string>
+		<string>DUP</string>
+		<string>COUNT</string>
+		<string>LENGTH</string>
+		<string>PTR</string>
+		<string>RETRIEVE</string>
+		<string>SUBSET</string>
+		<string>TMIN</string>
+		<string>TMAX</string>
+		<string>TSIZE</string>
+		<string>TLIMIT</string>
+	</array>
+	<key>BBLMLanguageCode</key>
+	<string>M2</string>
+	<key>BBLMLanguageDisplayName</key>
+	<string>Modula-2</string>
+	<key>BBLMScansFunctions</key>
+	<true/>
+	<key>BBLMSuffixMap</key>
+	<array>
+		<dict>
+			<key>BBLMLanguageSuffix</key>
+			<string>.def</string>
+		</dict>
+		<dict>
+			<key>BBLMLanguageSuffix</key>
+			<string>.DEF</string>
+		</dict>
+		<dict>
+			<key>BBLMLanguageSuffix</key>
+			<string>.mod</string>
+		</dict>
+		<dict>
+			<key>BBLMLanguageSuffix</key>
+			<string>.MOD</string>
+		</dict>
+	</array>
+	<key>Language Features</key>
+	<dict>
+		<key>Comment Pattern</key>
+		<string>(//.*$)|(\(\*(?s).*?(?-s)\*\))|(/\*(?s).*?(?-s)\*/)</string>
+		<key>String Pattern</key>
+		<string>&quot;(\\.|[^&quot;])*+&quot;</string>
+		<key>Function Pattern</key>
+		<string></string>
+		<key>Identifier and Keyword Character Class</key>
+		<string>\w</string>
+		<key>Close Block Comments 1</key>
+		<string>*)</string>
+		<key>Close Block Comments 2</key>
+		<string>*/</string>
+		<key>Close Parameter Lists</key>
+		<string>)</string>
+		<key>Close Statement Blocks</key>
+		<string>END</string>
+		<key>Close Strings 1</key>
+		<string>&quot;</string>
+		<key>Close Strings 2</key>
+		<string>&apos;</string>
+		<key>End-of-line Ends Strings 1</key>
+		<true/>
+		<key>End-of-line Ends Strings 2</key>
+		<true/>
+		<key>Escape Char in Strings 1</key>
+		<string>\</string>
+		<key>Escape Char in Strings 2</key>
+		<string>\</string>
+		<key>Identifier and Keyword Characters</key>
+		<string>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$_</string>
+		<key>Open Block Comments 1</key>
+		<string>(*</string>
+		<key>Open Block Comments 2</key>
+		<string>/*</string>
+		<key>Open Line Comments</key>
+		<string>//</string>
+		<key>Open Parameter Lists</key>
+		<string>(</string>
+		<key>Open Statement Blocks</key>
+		<string>BEGIN</string>
+		<key>Open Strings 1</key>
+		<string>&quot;</string>
+		<key>Open Strings 2</key>
+		<string>&apos;</string>
+		<key>Prefix for Functions</key>
+		<string>PROCEDURE</string>
+		<key>Prefix for Procedures</key>
+		<string>PROCEDURE</string>
+		<key>Terminator for Prototypes 1</key>
+		<string></string>
+		<key>Terminator for Prototypes 2</key>
+		<string></string>
+	</dict>
+</dict>
+</plist>
