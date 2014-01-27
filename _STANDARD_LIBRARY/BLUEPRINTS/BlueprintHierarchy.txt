@@ -1,23 +1,25 @@
-Numeric Blueprints    Collection Blueprints               Extension Blueprints
+Numeric Blueprints      Collection Blueprints            Extension Blueprints
 
-  ProtoRoot             ProtoRoot                           ProtoExtension
-  |                     |                                   |
-  ProtoNumeric          ProtoCollection                     +--ProtoIO
-  |                     |                                   |
-  +--ProtoScalar        +--ProtoStaticSet (ordered)         +--ProtoArrayIO
-  |  |                  |                                   |
-  |  +--ProtoReal       +--ProtoStaticArray (ordered)       +--ProtoCardMath
-  |  |                  |                                   |
-  |  +--ProtoInteger    +--ProtoStaticString (ordered)      +--ProtoIntMath
-  |  |                  |                                   |
-  |  +--ProtoCardinal   +--ProtoSet (dynamic)               +--ProtoRealMath
-  |                     |                                   |
-  +--ProtoNonScalar     +--ProtoArray (ordered, dynamic)    +--ProtoTupleMath
-     |                  |                                   |
-     +--ProtoTuple      +--ProtoString (ordered, dynamic)   +--ProtoVectorMath
-     |                  |                                   |
-     +--ProtoVector     +--ProtoDictionary (dynamic)        +--ProtoComplexMath
-     |                  |                                   |
-     +--ProtoComplex    +--ProtoList (ordered, dynamic)     +--ProtoSetMath
+  ProtoRoot               ProtoRoot                        ProtoExtension
+  |                       |                                |
+  ProtoNumeric            ProtoCollection                  +--ProtoIO
+  |                       |                                |
+  +--ProtoScalar          +--ProtoStaticSet                +--ProtoArrayIO
+  |  |                    |                                |
+  |  +--ProtoReal         +--ProtoStaticArray              +--ProtoCardMath
+  |  |                    |                                |
+  |  +--ProtoInteger      +--ProtoStaticString             +--ProtoIntMath
+  |  |                    |                                |
+  |  +--ProtoCardinal     +--ProtoSet (dynamic)            +--ProtoRealMath
+  |  |                    |                                |
+  |  +--ProtoModular      +--ProtoCountedSet (dynamic)     +--ProtoTupleMath
+  |                       |                                |
+  +--ProtoNonScalar       +--ProtoArray (dynamic)          +--ProtoVectorMath
+     |                    |                                |
+     +--ProtoTuple        +--ProtoString (dynamic)         +--ProtoComplexMath
+     |                    |                                |
+     +--ProtoVector       +--ProtoDictionary (dynamic)     +--ProtoSetMath
+     |                    |
+     +--ProtoComplex      +--ProtoList (dynamic)
 
- [Status: Jan 25, 2014]
+[Status: Jan 25, 2014]
