@@ -219,7 +219,7 @@ PROCEDURE [=] isEqual ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
    
    An expression of the form
      set1 # set2
-   is transformed at compile time into a function call of the form
+   is transformed at compile time into an expression of the form
      NOT SetADT.isEqual(set1, set2)
    for operands of the set ADT type. *)
 
