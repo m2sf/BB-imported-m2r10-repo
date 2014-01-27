@@ -1,4 +1,4 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Statically Allocatable Set ADTs *)
 
@@ -9,7 +9,7 @@ REFERENTIAL ElementType, ProcType, File;
 (* Static Set ADTs must be opaque records to be statically allocatable,
    structured literals with a list of elements are compatible *)
 
-TYPE ProtoStaticSet = OPAQUE RECORD := { VARIADIC OF ElementType };
+TYPE ProtoStaticSet = OPAQUE RECORD := { ElementType BY * };
 
 
 (* Bindings required for static set ADTs *)
@@ -17,63 +17,121 @@ TYPE ProtoStaticSet = OPAQUE RECORD := { VARIADIC OF ElementType };
 
 (* Required Constants *)
 
-CONST [:=] isMutable : BOOLEAN;
-(* whether the set ADT is mutable *)
+CONST [:=] isMutable = TRUE;
+(* Static set ADTs are always mutable *)
 
-CONST [DESCENDING] isOrdered : BOOLEAN;
-(* whether the set ADT is ordered *)
+CONST [DESCENDING] isOrdered = TRUE;
+(* Static set ADTs are always ordered *)
 
+
+(* Required Procedures *)
 
 (* Capacity limit *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the element limit of the ADT type. *)
+(* Procedure to return the allocation capacity limit of the set ADT. *)
 
-(* An expression of the form TLIMIT(ADT)) is transformed at compile
-   time to ADT.capacityLimit() when the operand is the ADT type. *)
+(* An invocation of TLIMIT(ADT)) is transformed at compile time to
+   SetADT.capacityLimit() when the operand is the set ADT type. *)
 
 
-(* Storage, Removal, Retrieval and Inspection of Contents *)
+(* Assignment and Copying *)
+
+PROCEDURE [:=] assignStructuredValue
+  ( set : ProtoStaticSet; value : ARGLIST OF ElementType );
+(* Required procedure to assign a structured value to a set. *)
+
+(* A statement of the form
+     set := { elem1, elem2, elem3, ... };
+   is transformed at compile time into a procedure call of the form
+     SetADT.assignStructuredValue(set, elem1, elem2, elem3, ...);
+   for L-values of the set ADT type. *)
+
+
+PROCEDURE [COPY] copy
+  ( source : ProtoStaticSet; VAR target : ProtoStaticSet );
+(* Required procedure to copy the contents of a source set into a
+   target set. *)
+
+(* A statement of the form
+     set1 := set2;
+   is transformed at compile time into a procedure call of the form
+     SetADT.copy(set2, set1);
+   for L- and R-values of the set ADT type. *)
+
+
+(* Storage, Retrieval and Inspection of Contents *)
 
 PROCEDURE [STORE] storeElements
-  ( VAR set : ProtoStaticSet; valueList : VARIADIC OF ElementType );
-(* Procedure to store zero or more elements in a set. *)
+  ( VAR set : ProtoStaticSet; elemList : ARGLIST OF ElementType );
+(* Required procedure to store zero or more elements in a set. *)
 
-(* An invocation of STORE(set, elem1, elem2, elem3 ...) is transformed
-   at compile time to ADT.storeElements(set, elem1, elem2, elem3 ...)
-   for first operands of the ADT type. *)
+(* A statement of the form
+     STORE(set, elem1, elem2, elem3 ...)
+   is transformed at compile time into a procedure call of the form
+     SetADT.storeElements(set, elem1, elem2, elem3 ...)
+   for first operands of the set ADT type.
+   
+   A statement of the form
+     set[element] := TRUE;
+   is transformed at compile time into a procedure call of the form
+     SetADT.storeElements(set, element);
+   for designators of the set ADT type. *)
 
 
 PROCEDURE [REMOVE] removeElements
-  ( VAR set : ProtoStaticSet; valueList : VARIADIC OF ElementType );
-(* Procedure to remoeve one or more elements from a set. *)
+  ( VAR set : ProtoStaticSet; valueList : ARGLIST OF ElementType );
+(* Required procedure to remove one or more elements from a set. *)
 
-(* An invocation of REMOVE(set, elem1, elem2, elem3 ...) is transformed
-   at compile time to ADT.removeElements(set, elem1, elem2, elem3 ...)
-   for first operands of the ADT type. *)
+(* A statement of the form
+     REMOVE(set, elem1, elem2, elem3 ...)
+   is transformed at compile time into a procedure call of the form
+     SetADT.removeElements(set, elem1, elem2, elem3 ...)
+   for first operands of the set ADT type.
+   
+   A statement of the form
+     set[element] := FALSE;
+   is transformed at compile time into a procedure call of the form
+     SetADT.removeElements(set, element);
+   for designators of the set ADT type. *)
 
 
-PROCEDURE [RETRIEVE] membershipForElement
-  ( CONST set : ProtoStaticSet; value : ElementType ) : BOOLEAN;
-(* Function to retrieve a value from a set. *)
+PROCEDURE [RETRIEVE] membershipOfElement
+  ( CONST set : ProtoStaticSet; element : ElementType ) : BOOLEAN;
+(* Required function to retrieve an element from a set. *)
 
-(* An incocation of RETRIEVE(set, elem) is transformed at compile time to
-   ADT.membershipForElement(set, elem) for first operands of the ADT type. *)
+(* An expression of the form
+     RETRIEVE(set, element)
+   is transformed at compile time into a function call of the form
+     SetADT.membershipOfElement(set, element)
+   for first operands of the set ADT type.
+   
+   An expression of the form
+     set[element]
+   is transformed at compile time into a function call of the form
+     SetADT.membershipOfElement(set, element)
+   for designators of the set ADT type. *)
 
 
 PROCEDURE [IN] isElement
-  ( CONST set : ProtoStaticSet; value : CHAR ) : BOOLEAN;
+  ( CONST set : ProtoStaticSet; value : ElementType ) : BOOLEAN;
 (* Function to test whether a value is stored in a set. *)
 
-(* An expression of the form elem IN set is transformed at compile time to
-   ADT.isElement(set, elem) for first operands of the ADT type. *)
+(* An expression of the form
+     elem IN set
+   is transformed at compile time into a function call of the form
+     SetADT.isElement(set, elem)
+   for right operands of the set ADT type. *)
 
 
 PROCEDURE [COUNT] count ( CONST set : ProtoStaticSet ) : LONGCARD;
-(* Procedure to return the element count of a set. *)
+(* Procedure to return the number of elements stored in a set. *)
 
-(* An expression of the form COUNT(set) is transformed at compile time to
-   ADT.count(set) for operands of the ADT type. *)
+(* An expression of the form
+     COUNT(set)
+   is transformed at compile time into a function call of the form
+     SetADT.count(set)
+   for operands of the set ADT type. *)
 
 
 (* Iteration *)
@@ -89,16 +147,16 @@ PROCEDURE [FOR] forIterator
      FOR elem IN set DO statementSeq END
    is transformed at compile time in two steps.
    The loop header is transformed to
-     ADT.forIterator( set, forLoopBody, TRUE );
+     SetADT.forIterator( set, forLoopBody, TRUE );
    The loop body is transformed to a procedure definition
-     <* INLINE *> PROCEDURE forLoopBody ( element : ElementType );
+     PROCEDURE forLoopBody ( element : ElementType ) <*INLINE*>;
      BEGIN statementSeq END forLoopBody;
    inserted before the current scope's BEGIN-END block.
    
    A loop header of the form
      FOR DESCENDING elem IN set
    is transformed at compile time to
-     ADT.forIterator(set, forLoopBody, FALSE)
+     SetADT.forIterator(set, forLoopBody, FALSE)
    To allow this, an ADT must bind a constant of value TRUE to DESCENDING. *)   
 
 
@@ -106,108 +164,92 @@ PROCEDURE [FOR] forIterator
 
 PROCEDURE [+] union
   ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Procedure to return the union of two sets. *)
+(* Required procedure to return the union of two sets. *)
 
-(* An expression of the form set1 + set2 is transformed at compile time to
-   ADT.union(set1, set2) for operands of the ADT type. *)
+(* An expression of the form
+     set1 + set2
+   is transformed at compile time into a function call of the form
+     SetADT.union(set1, set2)
+   for operands of the set ADT type. *)
 
 
 PROCEDURE [-] difference
   ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Procedure to return the set difference of two sets. *)
+(* Required procedure to return the set difference of two sets. *)
 
-(* An expression of the form set1 - set2 is transformed at compile time to
-   ADT.difference(set1, set2) for operands of the ADT type. *)
+(* An expression of the form
+     set1 - set2
+   is transformed at compile time into a function call of the form
+     SetADT.difference(set1, set2)
+   for operands of the set ADT type. *)
 
 
 PROCEDURE [*] intersection
   ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Procedure to return the intersection of two sets. *)
+(* Required procedure to return the intersection of two sets. *)
 
-(* An expression of the form set1 * set2 is transformed at compile time to
-   ADT.intersection(set1, set2) for operands of the set ADT type. *)
+(* An expression of the form
+     set1 * set2
+   is transformed at compile time into a function call of the form
+     SetADT.intersection(set1, set2)
+   for operands of the set ADT type. *)
 
 
 PROCEDURE [/] symmetricDiff
   ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Procedure to return the symmetric difference of two sets. *)
+(* Required procedure to return the symmetric difference of two sets. *)
 
-(* An expression of the form set1 / set2 is transformed at compile time to
-   ADT.symmetricDiff(set1, set2) for operands of the set ADT type. *)
+(* An expression of the form
+     set1 / set2
+   is transformed at compile time into a function call of the form
+     SetADT.symmetricDiff(set1, set2)
+   for operands of the set ADT type. *)
 
 
 (* Relational operations *)
 
 PROCEDURE [=] isEqual ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
-(* Procedure to test the equality of two sets. *)
+(* Required procedure to test the equality of two sets. *)
 
-(* An expression of the form set1 = set2 is transformed at compile time to
-   ADT.isEqual(set1, set2) for operands of the set ADT type.
+(* An expression of the form
+     set1 = set2
+   is transformed at compile time into a function call of the form
+     SetADT.isEqual(set1, set2)
+   for operands of the set ADT type.
    
-   An expression of the form set1 # set2 is transformed at compile time to
-   NOT ADT.isEqual(set1, set2) for operands of the set ADT type. *)
+   An expression of the form
+     set1 # set2
+   is transformed at compile time into a function call of the form
+     NOT SetADT.isEqual(set1, set2)
+   for operands of the set ADT type. *)
 
 
 PROCEDURE [SUBSET] isSubset ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
-(* Procedure to test whether one set is a subset of another. *)
+(* Required procedure to test whether one set is a subset of another. *)
 
-(* An expression of the form set1 > set2 is transformed at compile time to
-   ADT.isSubset(set2, set1) for operands of the set ADT type.
+(* An expression of the form
+     set1 > set2
+   is transformed at compile time into a function call of the form
+     SetADT.isSubset(set2, set1)
+   for operands of the set ADT type.
    
-   An expression of the form set1 >= set2 is transformed at compile time
-   to (COUNT(set1) > COUNT(set2)) AND ADT.isSubset(set2, set1) for
-   operands of the set ADT type.
+   An expression of the form
+     set1 >= set2
+   is transformed at compile time into an expression of the form
+     (COUNT(set1) > COUNT(set2)) AND SetADT.isSubset(set2, set1)
+   for operands of the set ADT type.
    
-   An expression of the form set1 < set2 is transformed at compile time to
-   ADT.isSubset(set1, set2) for operands of the set ADT type.
+   An expression of the form
+     set1 < set2
+   is transformed at compile time into a function call of the form
+     SetADT.isSubset(set1, set2)
+   for operands of the set ADT type.
    
-   An expression of the form set1 <= set2 is transformed at compile time
-   to (COUNT(set1) < COUNT(set2)) AND ADT.isSubset(set1, set2) for
-   operands of the set ADT type. *)
-   
-
-(* IO operations *)
-
-PROCEDURE Read ( infile : File; VAR set : ProtoStaticSet );
-(* Procedure to read a value from a file into a set. *)
-
-(* A statement of the form READ(file, set) is transformed at compile time
-   to ADT.Read(file, set) for second operands of the ADT type. *)
-
-
-PROCEDURE Write ( outfile : File; CONST set : ProtoStaticSet );
-(* Procedure to write a set ADT value to a file. *)
-
-(* A statement of the form WRITE(file, set) is transformed at compile time
-   to ADT.Write(file, set) for second operands of the ADT type. *)
-
-
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CONST ProtoStaticSet );
-(* Procedure to write one or more sets formatted into a file. *)
-
-(* A statement of the form WRITEF(file, fmt, set1, set2, set3, ...) is trans-
-   formed at compile time to ADT.WriteF(file, fmt, set1, set2, set3, ...) for
-   third operands and any following operands of the ADT type. *)
-
-
-(* Introspection *)
-
-PROCEDURE capacity ( CONST set : ProtoStaticSet ) : LONGCARD;
-(* Function to return the value of TLIMIT(ADT). *)
-
-
-PROCEDURE entryLimit ( CONST set : ProtoStaticSet ) : LONGCARD;
-(* Function to return the value of TLIMIT(ADT). *)
-
-
-PROCEDURE isOrdered ( CONST set : ProtoStaticSet ) : BOOLEAN;
-(* Function to always return TRUE. *)
-
-
-PROCEDURE isResizable ( CONST set : ProtoStaticSet ) : BOOLEAN;
-(* Function to always return FALSE. *)
+   An expression of the form
+     set1 <= set2
+   is transformed at compile time into an expression of the form
+     (COUNT(set1) < COUNT(set2)) AND SetADT.isSubset(set1, set2)
+   for operands of the set ADT type. *)
 
 
 END ProtoStaticSet.
