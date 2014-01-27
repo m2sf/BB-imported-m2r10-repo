@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoStaticSet [ProtoCollection];
 
-REFERENTIAL ElementType, ProcType, File;
+REFERENTIAL ElementType, ProcType;
 
 (* Static Set ADTs must be opaque records to be statically allocatable,
    structured literals with a list of elements are compatible *)
