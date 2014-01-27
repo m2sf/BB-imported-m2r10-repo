@@ -38,7 +38,7 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Assignment and Copying *)
 
 PROCEDURE [:=] assignStructuredValue
-  ( set : ProtoStaticSet; value : ARGLIST OF ElementType );
+  ( VAR set : ProtoStaticSet; elementList : ARGLIST OF ElementType );
 (* Required procedure to assign a structured value to a set. *)
 
 (* A statement of the form
@@ -63,7 +63,7 @@ PROCEDURE [COPY] copy
 (* Storage, Retrieval and Inspection of Contents *)
 
 PROCEDURE [STORE] storeElements
-  ( VAR set : ProtoStaticSet; elemList : ARGLIST OF ElementType );
+  ( VAR set : ProtoStaticSet; elementList : ARGLIST OF ElementType );
 (* Required procedure to store zero or more elements in a set. *)
 
 (* A statement of the form
@@ -80,7 +80,7 @@ PROCEDURE [STORE] storeElements
 
 
 PROCEDURE [REMOVE] removeElements
-  ( VAR set : ProtoStaticSet; valueList : ARGLIST OF ElementType );
+  ( VAR set : ProtoStaticSet; elementList : ARGLIST OF ElementType );
 (* Required procedure to remove one or more elements from a set. *)
 
 (* A statement of the form
@@ -114,7 +114,7 @@ PROCEDURE [RETRIEVE] membershipOfElement
 
 
 PROCEDURE [IN] isElement
-  ( CONST set : ProtoStaticSet; value : ElementType ) : BOOLEAN;
+  ( CONST set : ProtoStaticSet; element : ElementType ) : BOOLEAN;
 (* Function to test whether a value is stored in a set. *)
 
 (* An expression of the form
