@@ -1,17 +1,16 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* General Blueprint for Collection ADTs *)
 
-BLUEPRINT ProtoCollection; (* root of collection hierarchy *)
+BLUEPRINT ProtoCollection [ProtoRoot];
 
 REFERENTIAL AccessorType, ValueType, ProcType;
 
-(* Collection ADTs must be records,
+(* Collection ADTs must be opaque,
    literal compatibility may be specified by more specialised blueprints *)
 
-TYPE ProtoCollection = OPAQUE |
-                       OPAQUE RECORD := { VARIADIC OF AccessorType } |
-                       { VARIADIC OF { AccessorType, ValueType } };
+TYPE ProtoCollection = OPAQUE | OPAQUE RECORD (* uses structured literals *)
+  := { AccessorType BY * } | { { AccessorType, ValueType } BY * };
 
 
 (* Bindings required for collection ADTs *)
@@ -25,6 +24,8 @@ CONST [:=] isMutable : BOOLEAN;
 CONST [DESCENDING] isOrdered : BOOLEAN;
 (* whether the collection ADT is ordered *)
 
+
+(* Required Procedures *)
 
 (* Capacity limit *)
 
@@ -41,13 +42,10 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
    ADTs, their bindings may be required by more specialised blueprints. *)
 
 
-(* Copying *)
+(* Assignment and Copying *)
 
-PROCEDURE [COPY] copy ( source, target : ProtoCollection );
-(* Procedure to copy the contents of one collection to another. *)
-
-(* An invocation of COPY(c1, c2) is transformed at compile time to
-   ADT.copy(c1, c2) for operands of the ADT type. *)
+(* The assignment, COPY and DUP operations are not common to all collection
+   ADTs, their bindings may be required by more specialised blueprints. *)
 
 
 (* Storage, Retrieval and Inspection of Contents *)
@@ -58,7 +56,7 @@ PROCEDURE [COPY] copy ( source, target : ProtoCollection );
 
 
 PROCEDURE [RETRIEVE] valueForAccessor
-  ( c : ProtoDictionary; accessor : AccessorType ) : ValueType;
+  ( c : ProtoCollection; accessor : AccessorType ) : ValueType;
 (* Function to retrieve and return a value from a collection. *)
 
 (* An invocation of RETRIEVE(c, accessor) is transformed at compile time
@@ -93,8 +91,7 @@ PROCEDURE [FOR] forIterator
      BEGIN statementSeq END forLoopBody;
    inserted before the current scope's BEGIN-END block.
    
-   If a constant with value TRUE has been bound to ORD, a loop
-   header of the form
+   If the ADT is declared ordered, a loop header of the form
      FOR DESCENDING accessor IN c
    is transformed at compile time to
      ADT.forIterator(c, forLoopBody, FALSE)
@@ -115,33 +112,6 @@ PROCEDURE [=] isEqual ( c1, c2 : ProtoCollection ) : BOOLEAN;
 
 (* Subset and superset operations are not common to all collection ADTs.
    Their bindings may be required by more specialised blueprints. *)
-   
-
-(* IO operations *)
-
-PROCEDURE [READ] Read ( infile : File; VAR c : ProtoCollection );
-(* Procedure to read a value from a file into a collection. *)
-
-(* An invocation of READ(file, c) is transformed at compile time
-   to ADT.Read(file, c) for second operands of the ADT type. *)
-
-
-PROCEDURE [WRITE] Write ( outfile : File; c : ProtoCollection );
-(* Procedure to write a collection to a file. *)
-
-(* An invocation of WRITE(file, c) is transformed at compile time
-   to ADT.Write(file, c) for second operands of the ADT type. *)
-
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF ProtoCollection );
-(* Procedure to write one or more collections formatted into a file. *)
-
-(* An invocation of WRITEF(file, fmt, c1, c2, c3, ...) is transformed
-   at compile time to ADT.WriteF(file, fmt, c1, c2, c3, ...) for
-   third operands and any following operands of the ADT type. *)
 
 
 (* Introspection *)
