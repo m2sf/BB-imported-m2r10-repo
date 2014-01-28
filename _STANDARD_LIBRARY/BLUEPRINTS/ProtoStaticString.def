@@ -172,13 +172,13 @@ PROCEDURE [CONCAT] concat
      FooProc(str1 + str2);
    is transformed at compile time into a statement sequence of the form
      CONCAT(temp, str1, str2);
-	 FooProc(temp);
+     FooProc(temp);
    
    A function invocation of the form
      foo := BarFunc(str1 + str2);
    is transformed at compile time into a statement sequence of the form   
      CONCAT(temp, str1, str2);
-	 foo := BarFunc(temp); *)
+     foo := BarFunc(temp); *)
 
 
 PROCEDURE [..] copySlice
