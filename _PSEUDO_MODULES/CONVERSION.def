@@ -1,4 +1,4 @@
-(* (C) 2012-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE CONVERSION;
 
@@ -106,11 +106,11 @@ CONST MaxSigDigits = 4000;
    longest significand that can be encoded by the type.  The replacement
    value always indicates the digits in the radix of the type. *)
 
-(* MACRO *) PROCEDURE TMINEXPONENT ( <NumericScalarType> ) : INTEGER;
+(* MACRO *) PROCEDURE TMINEXP ( <NumericScalarType> ) : INTEGER;
 (* An invocation of the macro is replaced by the smallest exponent that
    can be encoded by the type.  The value is zero for ordinal types. *)
 
-(* MACRO *) PROCEDURE TMAXEXPONENT ( <NumericScalarType> ) : CARDINAL;
+(* MACRO *) PROCEDURE TMAXEXP ( <NumericScalarType> ) : CARDINAL;
 (* An invocation of the macro is replaced by the largest exponent that
    can be encoded by the type.  The value is zero for ordinal types. *)
 
