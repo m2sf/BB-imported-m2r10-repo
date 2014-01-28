@@ -1,0 +1,292 @@
+(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Blueprint for Statically Allocatable String ADTs *)
+
+BLUEPRINT ProtoStaticString [ProtoCollection];
+
+REFERENTIAL CharType, ProcType;
+
+(* Static string ADTs must be opaque records to be statically allocatable,
+   quoted char or unichar literals are compatible *)
+
+TYPE ProtoStaticString = OPAQUE RECORD := QUOTED; (* CHAR or UNICHAR *)
+
+
+(* Bindings required for Static String ADTs *)
+
+
+(* Required Constants *)
+
+CONST [:=] isMutable = TRUE;
+(* Static string ADTs are always mutable *)
+
+CONST [DESCENDING] isOrdered = TRUE;
+(* Static array ADTs are always ordered *)
+
+
+(* Required Procedures *)
+
+(* Capacity limit *)
+
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Procedure to return the allocation capacity limit of the string ADT. *)
+
+(* An invocation of TLIMIT(ADT)) is transformed at compile time to
+   StringADT.capacityLimit() when the operand is of the string ADT type. *)
+
+
+(* Assignment and Copying *)
+
+PROCEDURE [:=] assignQuotedLiteral
+  ( string : ProtoStaticString; value : ARRAY OF CharType );
+(* Required procedure to assign a quoted literal to a string. *)
+
+(* A statement of the form
+     string := "foo bar baz";
+   is transformed at compile time into a procedure call of the form
+     StringADT.assignQuotedLiteral(string, "foo bar baz");
+   for L-values of the string ADT type. *)
+
+
+PROCEDURE [COPY] copy
+  ( source : ProtoStaticString; VAR target : ProtoStaticString );
+(* Required procedure to copy the contents of a source string into a
+   target string. *)
+
+(* A statement of the form
+     string1 := string2;
+   is transformed at compile time into a procedure call of the form
+     StringADT.copy(string2, string1);
+   for L-values of the string ADT type. *)
+
+
+(* Storage, Retrieval and Inspection of Contents *)
+
+PROCEDURE [STORE] replaceCharAtIndex
+  ( VAR string : ProtoStaticString;
+    index : CARDINAL; char : CharType );
+(* Required procedure to replace a char at a given index in a string *)
+
+(* A statement of the form
+     STORE(string, index, char);
+   is transformed at compile time into a procedure call of the form
+     StringADT.replaceCharAtIndex(string, index, char);
+   for first operands of the string ADT type.
+   
+   An assignment of the form
+     string[index] := char;
+   is transformed at compile time into a procedure call of the form
+     StringADT.replaceCharAtIndex(string, index, char);
+   for designators of the string ADT type. *)
+
+
+PROCEDURE [REMOVE] removeCharsAtIndex
+  ( string : ProtoStaticString; index : CARDINAL; n : CARDINAL);
+(* Required rocedure to remove n characters from a string, starting at a
+   given index. *)
+
+(* A statement of the form
+     REMOVE(string, index, 5);
+   is transformed at compile time into a procedure call of the form
+     StringADT.removeCharsAtIndex(string, index, 5);
+   for first operands of the string ADT type.
+   
+   An assignment of the form
+     string[index] := NIL;
+   is transformed at compile time into a procedure call of the form
+     StringADT.removeCharsAtIndex(string, index, 1);
+   for designators of the string ADT type. *)
+
+
+PROCEDURE [RETRIEVE] charAtIndex
+  ( string : ProtoStaticString; index : CARDINAL ) : CharType;
+(* Required procedure to return the char at a given index in a string. *)
+
+(* An expression of the form
+     RETRIEVE(string, index)
+   is transformed at compile time into a function call of the form
+     StringADT.charAtIndex(string, index)
+   for first operands of the string ADT type.
+   
+   An expression of the form
+     string[index]
+   is transformed at compile time into a function call of the form
+     StringADT.charAtIndex(string, index)
+   for designators of the string ADT type. *)
+
+
+(* Introspection *)
+
+PROCEDURE [LENGTH] length ( string : ProtoStaticString ) : CARDINAL;
+(* Required procedure to return the length of a string. *)
+
+(* An expression of the form
+     LENGTH(string)
+   is transformed at compile time to a function call of the form
+     StringADT.count(string)
+   for operands of the string ADT type. *)
+
+
+(* Concatenation and Slicing *)
+
+PROCEDURE [CONCAT] concat
+  ( VAR result : ProtoStaticString;
+    arglist : ARGLIST OF { lit : ARRAY OF CharType; s : ProtoStaticString } );
+(* Required procedure to concatenate an alternating list of character string
+   literals and string ADT variables, and return the result in a string ADT
+   variable. Empty literals and NIL values in the argument list are ignored. *)
+
+(* Concatenation of consecutive string literals takes place at compile time.
+   Thus, string literals do not occur consecutively in run time expressions.
+      
+   Invocations of CONCAT are mapped to function StringADT.concat as follows:
+   
+   A statement of the form
+     CONCAT(str1, str2, str3);
+   is transformed at compile time into a procedure call of the form
+     StringADT.concat(str1, "", str2, "", str3);
+
+   A statement of the form
+     str1 := CONCAT(str1, str2, "literal", str3);
+   is transfored at compile time into a procedure call of the form
+     StringADT.concat(str1, "", str2, "lit", str3);
+      
+   A statement of the form
+     CONCAT(str1, "lit", str2, str3);
+   is transformed at compile time into a procedure call of the form
+     StringADT.concat(str1, "lit", str2, "", lit3);
+   
+   A statement of the form
+     CONCAT(str1, "lit1", str2, "lit2")
+   is transformed at compile time into a procedure call of the form
+     StringADT.concat(str1, "lit1", str2, "lit2", NIL);
+   
+   When a concatenation expression is passed as an argument to a procedure
+   it is first assigned to a temporary variable,  which is then passed to
+   as a parameter in the subsequent procedure call.
+   
+   A procedure invocation of the form
+     FooProc(str1 + str2);
+   is transformed at compile time into a statement sequence of the form
+     CONCAT(temp, str1, str2);
+	 FooProc(temp);
+   
+   A function invocation of the form
+     foo := BarFunc(str1 + str2);
+   is transformed at compile time into a statement sequence of the form   
+     CONCAT(temp, str1, str2);
+	 foo := BarFunc(temp); *)
+
+
+PROCEDURE [..] copySlice
+  ( target : ProtoStaticString; tgtStartIndex, tgtEndIndex : INTEGER;
+    source : ProtoStaticString; srcStartIndex, srcEndIndex : INTEGER );
+(* Required procedure to copy a slice from a source string, indicated by
+   a given start and end index,  into a slice within a target string,
+   indicated by a given start and end index.
+   Consult the documentation for specific details. *)
+
+(* An assignment of the form
+     target := source[2..5];
+   is transformed at compile time into a procedure call of the form
+     StringADT.copySlice(target, 0, -1, source, 2, 5);
+   
+   An assignment of the form
+     target[2..5] := source;
+   is transformed at compile time into a procedure call of the form
+     StringADT.copySlice(target, 2, 5, source, 0, -1);
+   
+   An assignment of the form
+     target[1..4] := source[2..5];
+   is transformed at compile time into a procedure call of the form
+     StringADT.copySlice(target, 1, 4, source, 2, 5);
+   
+   When a slice expression is passed as an argument to a procedure, it is
+   first assigned to a temporary variable,  which is then passed to
+   as a parameter in the subsequent procedure call.
+
+   A procedure invocation of the form
+     FooProc(string[2..5]);
+   is transformed at compile time into a statement sequence of the form
+     StringADT.copySlice(temp, 0, -1, string, 2, 5);
+     FooProc(temp);
+   
+   A function invocation of the form
+     foo := BarFunc(string[2..5]);
+   is transformed at compile time into a statement sequence of the form
+     StringADT.copySlice(temp, 0, -1, string, 2, 5);
+     foo := BarFunc(temp); *)
+
+
+(* Iteration *)
+
+TYPE ProcType = PROCEDURE ( VAR ProtoStaticString; CONST IndexType );
+
+PROCEDURE [FOR] forIterator
+  ( s : ProtoStaticString; forLoopBody : ProcType; ascending : BOOLEAN );
+(* Required procedure to iterate over all characters in a string,
+   executing procedure forLoopBody for each index value,
+   using the iteration order indicated by ascending. *)
+
+   
+(* A statement of the form
+     FOR index IN string DO statementSeq END
+   is transformed at compile time in two steps:
+   
+   The FOR loop header is transformed into a procedure call of the form
+     StringADT.forIterator(string, forLoopBody, TRUE);
+   
+   The FOR loop body is transformed into a procedure declaration of the form
+     PROCEDURE forLoopBody
+       ( VAR string : StringADT; CONST index : IndexType );
+     BEGIN statementSeq END forLoopBody;
+   
+   A FOR DESCENDING loop header is transformed into a call of the form
+     StringADT.forIterator(string, forLoopBody, FALSE);
+
+   The use of FOR DESCENDING syntax is dependent on property isOrdered.
+   If an ADT defines isOrdered as FALSE, the use of FOR DESCENDING is
+   not permitted and will cause a compile time error. *)
+
+
+(* Relational Operations *)
+
+PROCEDURE [=] isEqual ( string1, string2 : ProtoStaticString ) : BOOLEAN;
+(* Required procedure to test the equivalence of two strings. *)
+
+(* An expression of the form
+     string1 = string2
+   is transformed at compile time into a function call of the form
+     StringADT.isEqual(string1, string2)
+   for L- and R-values of the string ADT type. *)
+
+(* The operation for the # operator
+   is synthesized as NOT (string1 = string2) *)
+
+PROCEDURE [<] isLess ( string1, string2 : ProtoStaticString ) : BOOLEAN;
+(* Required procedure to test if the value of a string comes lexically
+   after another. *)
+
+(* An expression of the form
+     string1 < string2
+   is transformed at compile time into a function call of the form
+     StringADT.isLess(string1, string2)
+   for L- and R-values of the string ADT type. *)
+
+(* The operation for the <= operator is synthesized as NOT (s1 > s2) *)
+
+
+PROCEDURE [>] isGreater ( string1, string2 : ProtoStaticString ) : BOOLEAN;
+(* Required procedure to test if the value of a string comes lexically
+   before another. *)
+
+(* An expression of the form
+     string1 > string2
+   is transformed at compile time into a function call of the form
+     StringADT.isGreater(string1, string2)
+   for L- and R-values of the string ADT type. *)
+
+(* The operation for the >= operator is synthesized as NOT (s1 < s2) *)
+
+
+END ProtoStaticString.
