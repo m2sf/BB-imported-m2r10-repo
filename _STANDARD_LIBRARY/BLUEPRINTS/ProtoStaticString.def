@@ -266,6 +266,7 @@ PROCEDURE [=] isEqual ( string1, string2 : ProtoStaticString ) : BOOLEAN;
 (* The operation for the # operator
    is synthesized as NOT (string1 = string2) *)
 
+
 PROCEDURE [<] isLess ( string1, string2 : ProtoStaticString ) : BOOLEAN;
 (* Required procedure to test if the value of a string comes lexically
    after another. *)
@@ -276,7 +277,8 @@ PROCEDURE [<] isLess ( string1, string2 : ProtoStaticString ) : BOOLEAN;
      StringADT.isLess(string1, string2)
    for L- and R-values of the string ADT type. *)
 
-(* The operation for the <= operator is synthesized as NOT (s1 > s2) *)
+(* The operation for the <= operator
+   is synthesized as NOT (string1 > string2) *)
 
 
 PROCEDURE [>] isGreater ( string1, string2 : ProtoStaticString ) : BOOLEAN;
@@ -289,7 +291,8 @@ PROCEDURE [>] isGreater ( string1, string2 : ProtoStaticString ) : BOOLEAN;
      StringADT.isGreater(string1, string2)
    for L- and R-values of the string ADT type. *)
 
-(* The operation for the >= operator is synthesized as NOT (s1 < s2) *)
+(* The operation for the >= operator
+   is synthesized as NOT (string1 < string2) *)
 
 
 END ProtoStaticString.
