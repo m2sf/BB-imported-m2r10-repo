@@ -1,4 +1,4 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE ASSEMBLER; (* OPTIONAL *)
 
@@ -153,11 +153,11 @@ TYPE REGISTER = <target architecture dependent enumeration type>;
 
 (* Access to CPU registers *)
 
-<*INLINE*> PROCEDURE SETREG( r : REGISTER; value : <ValueType> );
+PROCEDURE SETREG( r : REGISTER; value : <ValueType> ) <*INLINE*>;
  (* Copies <value> to register <r> where <value> may be of any type
     as long as TSIZE(ValueType) does not exceed the bitwidth of <r>. *)
 
-<*INLINE*> PROCEDURE GETREG( r : REGISTER; VAR value : <ValueType> );
+PROCEDURE GETREG( r : REGISTER; VAR value : <ValueType> ) <*INLINE*>;
  (* Copies the contents of <r> to <value> where <value> may be of any
     type as long as the bitwidth of <r> does not exceed TSIZE(ValueType). *)
 
@@ -168,7 +168,7 @@ CONST REG;
 
 (* Raw machine code inline facility *)
 
-<*INLINE*> PROCEDURE CODE( <arglist> );
+PROCEDURE CODE( <arglist> ) <*INLINE*>;
  (* Inserts the raw machine code represented by <arglist>.
     The EBNF for <arglist> is:
       arglist : code ( ',' code )* ;
