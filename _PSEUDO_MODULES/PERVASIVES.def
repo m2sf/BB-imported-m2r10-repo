@@ -1,11 +1,11 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* DOCUMENTATION *) MODULE PERVASIVES;
+(* DOCUMENTATION *) MODULE PREDEFINED;
 
-(* Pseudo Module to Document Pervasive Constants, Types and Macros *)
+(* Pseudo Module to Document Predefined Constants, Types and Macros *)
 
 
-(* Pervasive constants *)
+(* Predefined constants *)
 
 CONST NIL = <target dependent value>; (* usually 0 :: ADDRESS *)
 (* Invalid pointer value, compatible with all pointer types *)
@@ -17,18 +17,12 @@ CONST FALSE = BOOLEAN.FALSE;
 (* Boolean truth value 'false' *)
 
 
-(* Pervasive types *)
+(* Predefined types *)
 
 TYPE BOOLEAN = ( FALSE, TRUE );
 (* Boolean type *)
 
-TYPE BITSET = SET OF ( 0 .. TSIZE(CARDINAL) - 1 );
-(* Bitset type of same size as type CARDINAL *)
-
-TYPE LONGBITSET = SET OF ( 0 .. TSIZE(LONGCARD) - 1 );
-(* Bitset type of same size as type LONGCARD *)
-
-TYPE CHAR = 0U .. 7FU ;
+TYPE CHAR = 0u0 .. 0u7F ;
 (* Ordinal type with 7-bit character value set *)
 
 TYPE UNICHAR = <range of all UTF-32 code points>;
@@ -57,7 +51,7 @@ TYPE LONGREAL = <implementation or target dependent real number range>;
 (* Real number type with precision equal to or higher than REAL *)
 
 
-(* Pervasive proper procedures *)
+(* Predefined proper procedures *)
 
 PROCEDURE NEW ( VAR p : <AnyPointerType>; (*OPTIONAL*) n : <UnsignedType> );
 (* NEW(p) => ALLOCATE(p, TSIZE(p^))
@@ -69,11 +63,17 @@ PROCEDURE RETAIN ( VAR p : <RefCountedADT> );
 PROCEDURE RELEASE ( VAR p : <RefCountedADT> );
 (* RELEASE(p) => typeOf(p).release(p) *)
 
+PROCEDURE COPY ( source : <T>; VAR target : <T> );
+(* COPY(s, t) => typeOf(s).copy(s, t) *)
+
 PROCEDURE STORE ( VAR c : <Collection>; s : <SelectorType>; v : <ValueType> );
 (* STORE(c, s, v) => typeOf(c).addValueForKey(c, s, v) *)
 
 PROCEDURE REMOVE ( VAR c : <Collection>; s : <SelectorType> );
 (* REMOVE(c, s) => typeOf(c).removeValueForKey(c, s) *)
+
+PROCEDURE CONCAT ( VAR target : <StringType>; source : ARGLIST OF <StringType> );
+(* CONCAT(t, s1, s2, s3, ...) => typeOf(t).concat(t, s1, s2, s3, ...) *)
 
 PROCEDURE READ ( f : File; VAR v : <AnyType> );
 (* READ(f, v) => typeOf(v).Read(f, v) *)
@@ -85,7 +85,7 @@ PROCEDURE WRITEF ( f : File; fmt : ARRAY OF CHAR; v : VARIADIC OF <AnyType> );
 (* WRITEF(f, fmt, v1, v2, ...) => typeOf(v).WriteF(f, fmt, v1, v2, ...) *)
 
 
-(* Pervasive function procedures *)
+(* Predefined function procedures *)
 
 PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
 (* Returns absolute value of x *)
@@ -109,24 +109,23 @@ PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType>;
 (* Returns the character whose code point is x.
    Return type is CHAR if x < 128, otherwise UNICHAR *)
 
+PROCEDURE DUP ( CONST p : <AnyType> ) : <OperandType> ;
+(* Returns newly allocated copy of p *)
+
+PROCEDURE SUBSET ( a, b : <SetOrCollectionType> ) : BOOLEAN ;
+(* Returns TRUE if b is a subset of a *)
+
 PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD;
 (* Returns number of items stored in c *)
 
 PROCEDURE LENGTH ( CONST s : <CharacterArrayOrStringADT> ) : LONGCARD;
 (* Returns length of character string in s *)
 
-PROCEDURE NEXTV ( ident : <VariadicList> ) : <PointerToVariadicBaseType>;
-(* Returns pointer to next item in value-terminated variadic list,
-   returns NIL if the end of the variadic list has been reached. *)
-
 PROCEDURE PTR ( variable : <AnyType>; T : <TypeIdentifier> ) : <T> ;
 (* Returns a pointer of type T, pointing to variable *)
 
 PROCEDURE RETRIEVE ( c : <CollectionType>; s : <ComponentType> ) : <ReturnType>;
 (* RETRIEVE(c, s) => typeOf(c, s) *)
-
-PROCEDURE CONCAT ( arglist : VARIADIC OF <StringType> ) : <StringType>;
-(* Returns a concatenation of strings passed in for arglist *)
 
 PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T>;
 (* Returns smallest legal value of type T *)
@@ -141,4 +140,4 @@ PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
 (* Returns allocation size required for a variable of type T *)
 
 
-END PERVASIVES.
+END PREDEFINED.
