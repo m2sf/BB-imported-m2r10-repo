@@ -4,12 +4,15 @@
 
 BLUEPRINT ProtoStaticString [ProtoCollection];
 
-REFERENTIAL CharType, ProcType;
+REFERENTIAL CharType (* CHAR or UNICHAR *), ProcType;
+
+(* The index type of a static string ADT is always CARDINAL. *)
+
 
 (* Static string ADTs must be opaque records to be statically allocatable,
-   quoted char or unichar literals are compatible *)
+   quoted literals of base type CHAR or UNICHAR are compatible *)
 
-TYPE ProtoStaticString = OPAQUE RECORD := QUOTED; (* CHAR or UNICHAR *)
+TYPE ProtoStaticString = OPAQUE RECORD := CHAR | UNICHAR;
 
 
 (* Bindings required for Static String ADTs *)
