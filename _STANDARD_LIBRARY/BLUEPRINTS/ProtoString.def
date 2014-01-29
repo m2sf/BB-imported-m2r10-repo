@@ -1,14 +1,15 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Dynamically Allocatable String ADTs *)
 
 BLUEPRINT ProtoString [ProtoCollection];
 
-IMPORT OR DEFINE IndexType, ForLoopBodyProc;
+REFERENTIAL CharType (* CHAR or UNICHAR *), ForLoopBodyProc;
 
-(* String ADTs must be opaque *)
+(* String ADTs must be opaque,
+   quoted literals of base type CHAR or UNICHAR are compatible *)
 
-TYPE ProtoString = OPAQUE (* uses char and string literals *) := CHAR;
+TYPE ProtoString = OPAQUE := CHAR | UNICHAR;
 
 
 (* Bindings required for String ADTs *)
@@ -17,58 +18,83 @@ TYPE ProtoString = OPAQUE (* uses char and string literals *) := CHAR;
 (* Required Constants *)
 
 CONST [:=] isMutable : BOOLEAN;
-(* whether the ADT supports destructive updates *)
+(* whether the ADT is mutable *)
 
-CONST [,>] isOrdered = TRUE;
-(* String ADTs always support both ascending and descending iteration *)
+CONST [DESCENDING] isOrdered = TRUE;
+(* String ADTs are always ordered *)
 
+(* Required Procedures *)
 
 (* Capacity limit *)
 
-(* Binding to pervasive function TLIMIT *)
-
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the character limit of a String ADT. *)
+(* Procedure to return the allocation capacity limit of a string ADT. *)
 
-(* An expression of the form TLIMIT(StringADT))
-   is synthesised as StringADT.capacityLimit() *)
+(* An invocation of TLIMIT(StringADT)) is transformed at compile time to
+   StringADT.capacityLimit() when the operand is of the string ADT type. *)
 
 
 (* Memory Management *)
 
-PROCEDURE [NEW] new ( VAR s : ProtoString );
-(* Procedure to allocate and initialise a new String ADT variable. *)
+PROCEDURE [NEW] new
+  ( VAR s : ProtoString; initWith : ARRAY OF CharType );
+(* Required procedure to allocate and initialise a new string. *)
 
-(* A statement of the form NEW(string)
-   is synthesised as StringADT.new(string) *)
+(* A statement of the form
+     NEW(string);
+   is transformed at compile time to a procedure call of the form
+     StringADT.new(string);
+   for operands of the string ADT type.
+   
+   A statement of the form
+     NEW(string, "foo bar baz");
+   is transformed at compile time to a procedure call of the form
+     StringADT.new(string, "foo bar baz");
+   for operands of the string ADT type. *)
+
 
 PROCEDURE [RETAIN] retain ( VAR s : ProtoString );
-(* Procedure to retain a String ADT variable, incrementing its ref count. *)
+(* Required procedure to retain a string ADT variable. *)
 
-(* A statement of the form RETAIN(string)
-   is synthesised as StringADT.retain(string) *)
+(* A statement of the form
+     RETAIN(string);
+   is transformed at compile time to a procedure call of the form
+     StringADT.retain(string);
+   for operands of the string ADT type. *)
+
 
 PROCEDURE [RELEASE] release ( VAR s : ProtoString );
-(* Procedure to release a String ADT variable, decrementing its ref count
-   and deallocating it if the ref count value has reached zero. *)
+(* Required procedure to release and eventually deallocate a string. *)
 
-(* A statement of the form RELEASE(string)
-   is synthesised as StringADT.release(string) *)
+(* A statement of the form
+     RELEASE(string);
+   is transformed at compile time to a procedure call of the form
+     StringADT.release(string);
+   for operands of the string ADT type. *)
 
 
 (* Assignment and Copying *)
 
-(* Literal assignment is synthesised by invoking procedure STORE. *)
+PROCEDURE [:=] NEW;
+(* Procedure bound to NEW will be used for literal assignment. *)
 
-(* A statement of the form s := "string literal"
-   is synthesised as STORE(s, 0, CHR(0)); STORE(s, 0, "string literal") *)
+(* A statement of the form
+     string := "foo bar baz";
+   is transformed at compile time into a procedure call of the form
+     StringADT.new(string, "foo bar baz");
+   for L-values of the string ADT type. *)
 
-PROCEDURE [COPY] copy ( source, target : ProtoString );
-(* Procedure to copy the contents of one String ADT variable, source, to
-   another, target, thereby replacing the contents of target. *)
 
-(* A statement of the form COPY(string1, string2)
-   is synthesised as StringADT.copy(string1, string2) *)
+PROCEDURE [DUP] duplicateOf ( string : ProtoString ) : ProtoString;
+(* Reuired procedure to return a duplicate of a string. *)
+
+(* An expression of the form
+     DUP(string)
+   is transformed at compile time into a function call of the form
+     StringADT.duplicateOf(string)
+   for operands of the string ADT type. *)
+
+(* ### Revision pending beyond this point ### *)
 
 
 (* Storage, Removal, Retrieval and Inspection of Contents *)
