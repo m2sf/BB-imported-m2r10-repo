@@ -23,6 +23,7 @@ CONST [:=] isMutable : BOOLEAN;
 CONST [DESCENDING] isOrdered = TRUE;
 (* String ADTs are always ordered *)
 
+
 (* Required Procedures *)
 
 (* Capacity limit *)
@@ -99,7 +100,7 @@ PROCEDURE [DUP] duplicateOf ( string : ProtoString ) : ProtoString;
 
 PROCEDURE [STORE] replaceCharAtIndex
   ( string : ProtoString;
-    index : CARDINAL; char : CharType );
+    index : INTEGER; char : CharType );
 (* Required procedure to replace a char at a given index in a string *)
 
 (* A statement of the form
@@ -116,7 +117,7 @@ PROCEDURE [STORE] replaceCharAtIndex
 
 
 PROCEDURE [RETRIEVE] charAtIndex
-  ( string : ProtoString; index : CARDINAL ) : CharType;
+  ( string : ProtoString; index : INTEGER ) : CharType;
 (* Required procedure to return the char at a given index in a string. *)
 
 (* An expression of the form
@@ -133,7 +134,7 @@ PROCEDURE [RETRIEVE] charAtIndex
 
 
 PROCEDURE [REMOVE] removeCharsAtIndex
-  ( string : ProtoString; index : CARDINAL; n : CARDINAL);
+  ( string : ProtoString; index : INTEGER; n : CARDINAL );
 (* Required rocedure to remove n characters from a string,
    starting at a given index. *)
 
