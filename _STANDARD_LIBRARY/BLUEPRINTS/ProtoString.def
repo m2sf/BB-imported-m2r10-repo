@@ -94,33 +94,70 @@ PROCEDURE [DUP] duplicateOf ( string : ProtoString ) : ProtoString;
      StringADT.duplicateOf(string)
    for operands of the string ADT type. *)
 
-(* ### Revision pending beyond this point ### *)
-
 
 (* Storage, Removal, Retrieval and Inspection of Contents *)
 
-PROCEDURE [STORE] replaceCharsAtIndex
-  ( s : ProtoString; index : IndexType; CONST chars : ARRAY OF CHAR );
-(* Procedure to replace one or more characters within a string ADT
-   variable s, at index n, with ASCII character sequence chars. *)
+PROCEDURE [STORE] replaceCharAtIndex
+  ( string : ProtoString;
+    index : CARDINAL; char : CharType );
+(* Required procedure to replace a char at a given index in a string *)
 
-(* An assignment of the form string[42] := value
-   is transformed into STORE(string, 42, value)
-   which is synthesised as StringADT.replaceCharsAtIndex(string, 42, value) *)
+(* A statement of the form
+     STORE(string, index, char);
+   is transformed at compile time into a procedure call of the form
+     StringADT.replaceCharAtIndex(string, index, char);
+   for first operands of the string ADT type.
+   
+   An assignment of the form
+     string[index] := char;
+   is transformed at compile time into a procedure call of the form
+     StringADT.replaceCharAtIndex(string, index, char);
+   for designators of the string ADT type. *)
+
+
+PROCEDURE [RETRIEVE] charAtIndex
+  ( string : ProtoString; index : CARDINAL ) : CharType;
+(* Required procedure to return the char at a given index in a string. *)
+
+(* An expression of the form
+     RETRIEVE(string, index)
+   is transformed at compile time into a function call of the form
+     StringADT.charAtIndex(string, index)
+   for first operands of the string ADT type.
+   
+   An expression of the form
+     string[index]
+   is transformed at compile time into a function call of the form
+     StringADT.charAtIndex(string, index)
+   for designators of the string ADT type. *)
+
+
+PROCEDURE [REMOVE] removeCharsAtIndex
+  ( string : ProtoString; index : CARDINAL; n : CARDINAL);
+(* Required rocedure to remove n characters from a string,
+   starting at a given index. *)
+
+(* A statement of the form
+     REMOVE(string, index, 5);
+   is transformed at compile time into a procedure call of the form
+     StringADT.removeCharsAtIndex(string, index, 5);
+   for first operands of the string ADT type.
+   
+   An assignment of the form
+     string[index] := NIL;
+   is transformed at compile time into a procedure call of the form
+     StringADT.removeCharsAtIndex(string, index, 1);
+   for designators of the string ADT type. *)
+
+
+(* ### Revision pending beyond this point ### *)
+
 
 PROCEDURE insertCharsAtIndex
   ( s : ProtoString; index : IndexType; CONST chars : ARRAY OF CHAR );
 (* Procedure to insert character sequence chars into a String ADT
    variable s starting at index. *)
 
-PROCEDURE [REMOVE] removeCharsAtIndex
-  ( s : ProtoString; index : IndexType; n : LONGCARD);
-(* Procedure to remove n characters starting at index from a String ADT
-   variable s. *)
-
-(* An assignment of the form string[42] := NIL
-   is transformed into REMOVE(string, 42, 1)
-   which is synthesised as StringADT.removeCharsAtIndex(s, 42, 1) *)
 
 PROCEDURE [RETRIEVE] characterAtIndex
   ( s : ProtoString; index : IndexType ) : CHAR;
