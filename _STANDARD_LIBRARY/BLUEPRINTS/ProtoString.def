@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoString [ProtoCollection];
 
-REFERENTIAL CharType (* CHAR or UNICHAR *), ForLoopBodyProc;
+REFERENTIAL CharType (* CHAR or UNICHAR *), POSINT, ForLoopBodyProc;
 
 (* String ADTs must be opaque,
    quoted literals of base type CHAR or UNICHAR are compatible *)
@@ -134,7 +134,7 @@ PROCEDURE [RETRIEVE] charAtIndex
 
 
 PROCEDURE [REMOVE] removeCharsAtIndex
-  ( string : ProtoString; index : INTEGER; n : CARDINAL );
+  ( string : ProtoString; index : INTEGER; n : POSINT );
 (* Required rocedure to remove n characters from a string,
    starting at a given index. *)
 
@@ -151,6 +151,111 @@ PROCEDURE [REMOVE] removeCharsAtIndex
    for designators of the string ADT type. *)
 
 
+(* Introspection *)
+
+PROCEDURE [LENGTH] length ( string : ProtoString ) : POSINT;
+(* Required procedure to return the length of a string. *)
+
+(* An expression of the form
+     LENGTH(string)
+   is transformed at compile time to a function call of the form
+     StringADT.count(string)
+   for operands of the string ADT type. *)
+
+
+(* Concatenation and Slicing *)
+
+PROCEDURE [CONCAT] concat
+  ( VAR result : ProtoString;
+    arglist : ARGLIST OF { lit : ARRAY OF CharType; s : ProtoString } );
+(* Required procedure to concatenate an alternating list of character string
+   literals and string ADT variables, and return a newly allocated result
+   string. Empty literals and NIL values in the argument list are ignored. *)
+
+(* Concatenation of consecutive string literals takes place at compile time.
+   Thus, string literals do not occur consecutively in run time expressions.
+      
+   Invocations of CONCAT are mapped to procedure StringADT.concat as follows:
+   
+   A statement of the form
+     CONCAT(str1, str2, str3);
+   is transformed at compile time into a procedure call of the form
+     StringADT.concat(str1, "", str2, "", str3);
+
+   A statement of the form
+     str1 := CONCAT(str1, str2, "literal", str3);
+   is transfored at compile time into a procedure call of the form
+     StringADT.concat(str1, "", str2, "lit", str3);
+      
+   A statement of the form
+     CONCAT(str1, "lit", str2, str3);
+   is transformed at compile time into a procedure call of the form
+     StringADT.concat(str1, "lit", str2, "", lit3);
+   
+   A statement of the form
+     CONCAT(str1, "lit1", str2, "lit2")
+   is transformed at compile time into a procedure call of the form
+     StringADT.concat(str1, "lit1", str2, "lit2", NIL);
+   
+   When a concatenation expression is passed as an argument to a procedure
+   it is first assigned to a temporary variable,  which is then passed as
+   a parameter in the subsequent procedure call and finally released.
+   
+   A procedure invocation of the form
+     FooProc(str1 + str2);
+   is transformed at compile time into a statement sequence of the form
+     CONCAT(temp, str1, str2);
+     FooProc(temp); RELEASE(temp);
+   
+   A function invocation of the form
+     foo := BarFunc(str1 + str2);
+   is transformed at compile time into a statement sequence of the form   
+     CONCAT(temp, str1, str2);
+     foo := BarFunc(temp); RELEASE(temp); *)
+
+
+PROCEDURE [..] copySlice
+  ( VAR target : ProtoString; tgtStartIndex, tgtEndIndex : INTEGER;
+    source : ProtoString; srcStartIndex, srcEndIndex : INTEGER );
+(* Required procedure to copy a slice from a source string, indicated by
+   a given start and end index,  into a slice within a target string,
+   indicated by a given start and end index.  If target is NIL and the
+   target indices are 0 and -1, a newly allocated string is to be passed
+   back in target as result.
+   Consult the documentation for specific details. *)
+
+(* An assignment of the form
+     target := source[2..5];
+   is transformed at compile time into a procedure call of the form
+     StringADT.copySlice(target, 0, -1, source, 2, 5);
+   
+   An assignment of the form
+     target[2..5] := source;
+   is transformed at compile time into a procedure call of the form
+     StringADT.copySlice(target, 2, 5, source, 0, -1);
+   
+   An assignment of the form
+     target[1..4] := source[2..5];
+   is transformed at compile time into a procedure call of the form
+     StringADT.copySlice(target, 1, 4, source, 2, 5);
+   
+   When a slice expression is passed as an argument to a procedure, it is
+   first assigned to a temporary variable,  which is then passed as a
+   parameter in the subsequent procedure call and finally released.
+
+   A procedure invocation of the form
+     FooProc(string[2..5]);
+   is transformed at compile time into a statement sequence of the form
+     StringADT.copySlice(temp, 0, -1, string, 2, 5);
+     FooProc(temp); RELEASE(temp);
+   
+   A function invocation of the form
+     foo := BarFunc(string[2..5]);
+   is transformed at compile time into a statement sequence of the form
+     StringADT.copySlice(temp, 0, -1, string, 2, 5);
+     foo := BarFunc(temp); RELEASE(temp); *)
+
+
 (* ### Revision pending beyond this point ### *)
 
 
@@ -158,104 +263,6 @@ PROCEDURE insertCharsAtIndex
   ( s : ProtoString; index : IndexType; CONST chars : ARRAY OF CHAR );
 (* Procedure to insert character sequence chars into a String ADT
    variable s starting at index. *)
-
-
-PROCEDURE [RETRIEVE] characterAtIndex
-  ( s : ProtoString; index : IndexType ) : CHAR;
-(* Function to return the character at index in a String ADT variable s. *)
-
-(* An expression of the form s[42] is transformed into RETRIEVE(s, 42)
-   which is synthesised as StringADT.characterAtIndex(s, 42) *)
-
-PROCEDURE [LENGTH] length ( s : ProtoString ) : LONGCARD;
-(* Function to return the length of a String ADT variable s. *)
-
-(* An expression of the form LENGTH(s)
-   is synthesised as StringADT.length(s) *)
-
-
-(* Concatenation and Slicing *)
-
-PROCEDURE [CONCAT] concat
-  ( args : VARIADIC OF { lit : ARRAY OF CHAR; s : ProtoString } ) : ProtoString;
-(* Procedure to concatenate an alternating list of character string literals
-   and String ADT variables, and return the result in a newly allocated
-   String ADT variable. Empty literals and NIL values are ignored. *)
-
-(* Concatenation of consecutive string literals takes place at compile time.
-   Thus, string literals do not occur consecutively in run time expressions.
-   
-   A run time concatenation expression of the form str1 + str2 + ... + strN
-   is transformed into a function invocation CONCAT(str1, str2, ..., strN)
-   
-   Invocations of CONCAT are mapped to function StringADT.concat as follows:
-   
-   A statement of the form str1 := CONCAT(str2, str3)
-   is synthesised as str1 := StringADT.concat("", str2, "", str3)
-
-   A statement of the form str1 := CONCAT(str2, "lit", str3)
-   is transfored to str1 := StringADT.concat("", str2, "lit", str3)
-      
-   A statement of the form str1 := CONCAT("lit", str2, str3)
-   is transformed to str1 := StringADT.concat("lit", str2, "", lit3)
-   
-   A statement of the form str1 := CONCAT("lit1", str2, "lit2")
-   is transformed to str1 := StringADT.concat("lit1", str2, "lit2", NIL)
-   
-   When a concatenation expression is passed as an argument to a procedure
-   it is first assigned to a temporary variable, which is then released
-   following the procedure call.
-   
-   A procedure invocation of the form FooProc(str1 + str2)
-   is transformed to the following statement sequence
-   
-   temp := CONCAT(str1, str2);
-   FooProc(temp); RELEASE(temp)
-   
-   A function invocation of the form foo := BarFunc(str1 + str2)
-   is transformed to the following statement sequence
-   
-   temp := CONCAT(str1, str2);
-   foo := BarFunc(temp); RELEASE(temp)
-      
-   Binding to CONCAT is therefore dependent on memory management. Without
-   bindings to RETAIN and RELEASE no binding to CONCAT is permitted. *)
-
-PROCEDURE [..] copySlice
-  ( target : ProtoString; tgtStartIndex, tgtEndIndex : INTEGER;
-    source : ProtoString; srcStartIndex, srcEndIndex : INTEGER );
-(* Procedure to copy a slice from a String ADT variable source, indicated by
-   start index srcStartIndex  and end index srcEndIndex,  to  a slice within
-   String ADT variable target,  indicated by  start index tgtStartIndex  and
-   end index tgtEndIndex. Consult the documentation for specific details. *)
-
-(* An assignment of the form target := source[2..5]
-   is synthesised as StringADT.copySlice(target, 0, -1, source, 2, 5)
-   
-   An assignment of the form target[2..5] := source
-   is synthesised as StringADT.copySlice(target, 2, 5, source, 0, -1)
-   
-   An assignment of the form target[1..4] := source[2..5]
-   is synthesised as StringADT.copySlice(target, 1, 4, source, 2, 5)
-   
-   When a slice expression is passed as an argument to a procedure, it is
-   first assigned to a newly allocated temporary variable, which is then
-   released following the procedure call.
-
-   A procedure invocation of the form FooProc(string[2..5])
-   is transformed to the following statement sequence
-   
-   NEW(temp); StringADT.copySlice(temp, 0, -1, string, 2, 5);
-   FooProc(temp); RELEASE(temp)
-   
-   A function invocation of the form foo := BarFunc(string[2..5])
-   is transformed to the following statement sequence
-   
-   NEW(temp); StringADT.copySlice(temp, 0, -1, string, 2, 5);
-   foo := BarFunc(temp); RELEASE(temp)
-      
-   Binding to .. is therefore dependent on memory management. Without
-   bindings to RETAIN and RELEASE no binding to .. is permitted. *)
 
 
 (* Iteration *)
