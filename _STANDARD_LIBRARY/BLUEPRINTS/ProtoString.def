@@ -256,6 +256,80 @@ PROCEDURE [..] copySlice
      foo := BarFunc(temp); RELEASE(temp); *)
 
 
+(* Iteration *)
+
+TYPE ProcType = PROCEDURE ( VAR ProtoString; CONST IndexType );
+
+PROCEDURE [FOR] forIterator
+  ( s : ProtoString; forLoopBody : ProcType; ascending : BOOLEAN );
+(* Required procedure to iterate over all characters in a string,
+   executing procedure forLoopBody for each index value,
+   using the iteration order indicated by ascending. *)
+
+   
+(* A statement of the form
+     FOR index IN string DO statementSeq END
+   is transformed at compile time in two steps:
+   
+   The FOR loop header is transformed into a procedure call of the form
+     StringADT.forIterator(string, forLoopBody, TRUE);
+   
+   The FOR loop body is transformed into a procedure declaration of the form
+     PROCEDURE forLoopBody
+       ( VAR string : StringADT; CONST index : IndexType );
+     BEGIN statementSeq END forLoopBody;
+   
+   A FOR DESCENDING loop header is transformed into a call of the form
+     StringADT.forIterator(string, forLoopBody, FALSE);
+
+   The use of FOR DESCENDING syntax is dependent on property isOrdered.
+   If an ADT defines isOrdered as FALSE, the use of FOR DESCENDING is
+   not permitted and will cause a compile time error. *)
+
+
+(* Relational Operations *)
+
+PROCEDURE [=] isEqual ( string1, string2 : ProtoString ) : BOOLEAN;
+(* Required procedure to test the equivalence of two strings. *)
+
+(* An expression of the form
+     string1 = string2
+   is transformed at compile time into a function call of the form
+     StringADT.isEqual(string1, string2)
+   for L- and R-values of the string ADT type. *)
+
+(* The operation for the # operator
+   is synthesized as NOT (string1 = string2) *)
+
+
+PROCEDURE [<] isLess ( string1, string2 : ProtoString ) : BOOLEAN;
+(* Required procedure to test if the value of a string comes lexically
+   after another. *)
+
+(* An expression of the form
+     string1 < string2
+   is transformed at compile time into a function call of the form
+     StringADT.isLess(string1, string2)
+   for L- and R-values of the string ADT type. *)
+
+(* The operation for the <= operator
+   is synthesized as NOT (string1 > string2) *)
+
+
+PROCEDURE [>] isGreater ( string1, string2 : ProtoString ) : BOOLEAN;
+(* Required procedure to test if the value of a string comes lexically
+   before another. *)
+
+(* An expression of the form
+     string1 > string2
+   is transformed at compile time into a function call of the form
+     StringADT.isGreater(string1, string2)
+   for L- and R-values of the string ADT type. *)
+
+(* The operation for the >= operator
+   is synthesized as NOT (string1 < string2) *)
+
+
 (* ### Revision pending beyond this point ### *)
 
 
@@ -263,97 +337,6 @@ PROCEDURE insertCharsAtIndex
   ( s : ProtoString; index : IndexType; CONST chars : ARRAY OF CHAR );
 (* Procedure to insert character sequence chars into a String ADT
    variable s starting at index. *)
-
-
-(* Iteration *)
-
-(* TYPE ForLoopBodyProc = PROCEDURE ( (* index : *) CONST IndexType ); *)
-
-PROCEDURE [FOR] forIterator
-  ( s : STRING; doStatementSeq : ForLoopBodyProc; ascending : BOOLEAN );
-(* Procedure to iterate over all characters in String ADT variable s,
-   executing procedure doStatementSeq for each index value, using the
-   iteration order indicated by ascending. *)
-
-   
-(* A statement of the form FOR index IN string DO statementSeq END
-   is synthesised in two steps.
-   
-   The FOR loop header is synthesised as
-   
-   StringADT.forIterator(string, forLoopBody, TRUE);
-   
-   The FOR loop body is synthesised as
-   
-   PROCEDURE forLoopBody
-     ( VAR string : StringADT; CONST index : IndexType );
-   BEGIN statementSeq END forLoopBody;
-   
-   A FOR DESCENDING loop header is synthesised as
-   
-   StringADT.forIterator(string, forLoopBody, TRUE);
-
-   The use of FOR DESCENDING syntax is dependent on property isOrdered.
-   If the ADT defines isOrdered as FALSE, the use of FOR DESCENDING is
-   not permitted and will cause a compile time error. *)
-
-
-(* Relational Operations *)
-
-PROCEDURE [=] isEqual ( s1, s2 : ProtoString ) : BOOLEAN;
-(* Procedure to test the equivalence of two String ADT values. *)
-
-(* An expression of the form string1 = string2
-   is synthesised as StringADT.isEqual(string1, string2) *)
-
-(* The operation for the # operator
-   is synthesized as NOT (string1 = string2) *)
-
-PROCEDURE [<] isLess ( s1, s2 : ProtoString ) : BOOLEAN;
-(* Procedure to test if String ADT value s1 comes lexically before
-   String ADT value s2. *)
-
-(* The operation for the <= operator is synthesized as NOT (s1 > s2) *)
-
-PROCEDURE [>] isGreater ( s1, s2 : ProtoString ) : BOOLEAN;
-(* Procedure to test if String ADT value s1 comes lexically after
-   String ADT value s2. *)
-
-(* The operation for the >= operator is synthesized as NOT (s1 < s2) *)
-
-
-(* IO Operations *)
-
-PROCEDURE [READ] Read ( infile : File; s : ProtoString );
-(* Procedure to read a value from a file into a String ADT variable. *)
-
-(* A statement of the form READ(string)
-   is synthesised as StringADT.Read(stdIn, string)
-   
-   A statement of the form READ(file, string)
-   is synthesised as StringADT.Read(file, string) *)
-
-PROCEDURE [WRITE] Write ( outfile : File; s : STRING );
-(* Procedure to write the value of String ADT variable to a file. *)
-
-(* A statement of the form WRITE(string)
-   is synthesised as StringADT.Write(stdOut, string)
-   
-   A statement of the form WRITE(file, string)
-   is synthesised as StringADT.Write(file, string) *)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF STRING );
-(* Procedure to write a variadic list of String ADT variables formatted
-   to a file. *)
-
-(* A statement of the form WRITEF("\n", string)
-   is synthesised as StringADT.WriteF(stdIn, "\n", string)
-   
-   A statement of the form WRITEF(file, "\n", string)
-   is synthesised as StringADT.WriteF(file, "\n", string) *)
 
 
 END ProtoString.
