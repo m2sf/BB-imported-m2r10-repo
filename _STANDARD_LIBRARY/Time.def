@@ -1,47 +1,41 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE Time [DateType];
+DEFINITION MODULE Time [ProtoTime];
 
 (* Compound Time ADT *)
 
 
-FROM FileIO IMPORT File; (* required for IO *)
-
 FROM TimeUnits IMPORT
-    Days,    (*    0   .. 4'294'967'295 days *)
-    Hours,   (*    0   .. 23           hours *)
-    Minutes, (*    0   .. 59         minutes *)
-    Seconds; (*    0.0 .. 59.999     seconds *)
+    Days,         (*    0 .. 4'294'967'295  days *)
+    Hours,        (*    0 .. 23            hours *)
+    Minutes,      (*    0 .. 59          minutes *)
+    Milliseconds; (*    0 .. 59'999 milliseconds *)
 
 
-(* Time Type *)
-
-TYPE
-    Time = RECORD
-        days   : Days;
-        hours  : Hours;
-        mins   : Minutes;
-        secs   : Seconds;
-    END; (* Time *)
+TYPE Time = RECORD
+  days  : Days;
+  hours : Hours;
+  mins  : Minutes;
+  msecs : Milliseconds
+END; (* Time *)
     
-(* Example: 100 days, 23 hours, 45 mins => time := { 100, 23, 45, 0.000 }; *)
+(* Example: 100 days, 23 hours, 45 mins, 38 secs => { 100, 23, 45, 38'000 }; *)
+
+
+CONST zero = { 0, 0, 0, 0 };
 
 
 (* Range *)
 
-CONST zero = { 0, 0, 0, 0.0 };
+PROCEDURE [TMIN] minTime : Time;
 
-CONST [TMIN] minValue = zero;
-(* Smallest value of type Time. This value is bound to TMIN for type Time. *) 
-
-CONST [TMAX] maxValue = { TMAX(Days), 0, 0, 0.0 };
-(* Largest value of type Time. This value is bound to TMAX for type Time. *) 
+PROCEDURE [TMAX] maxTime : Time;
 
 
 (* Monadic arithmetic operations *)
 
-PROCEDURE inMilliSeconds ( t : Time ) : REAL;
-(* Returns the value of t in milli-seconds. *)
+PROCEDURE inMilliseconds ( t : Time ) : REAL;
+(* Returns the value of t in milliseconds. *)
 
 PROCEDURE inSeconds ( t : Time ) : REAL;
 (* Returns the value of t in fractional seconds. *)
@@ -87,31 +81,5 @@ PROCEDURE [>] isGreater ( t1, t2 : Time ) : BOOLEAN;
 (* Returns TRUE if Time value t1 is greater than t2, otherwise FALSE.
    This function is bound to operators > and <= for type Time. *)
 
-
-(* IO operations *)
-
-PROCEDURE [READ] Read( infile : File; VAR t : Time );
-(* Reads the textual representation of a Time value from stream infile
-   - any leading whitespace is skipped
-   - any remaining characters that are part of the numeral being read are
-     removed from infile
-   - the numeric value of the numeral string read is assigned to the variable
-     passed in for t
-   - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with a Time argument. *)
-
-PROCEDURE [WRITE] Write( outfile : File; t : Time );
-(* Writes the textual representation of value n to stream outfile. This
-   procedure is substituted for invocations of WRITE with a Time argument.*)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF Time );
-(* Writes a formatted textual representation of one or more Time values to
-   output stream outfile. The output format is determined by fmtStr. This
-   procedure is substituted for invocations of WRITEF with one or more
-   Time arguments. *)
 
 END Time.
