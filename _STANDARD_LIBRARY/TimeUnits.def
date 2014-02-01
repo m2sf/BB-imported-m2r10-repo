@@ -1,33 +1,32 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE TimeUnits;
 
 (* Base Units for Date and Time *)
 
 
-IMPORT INTEGER16, UnsignedReal60;
+IMPORT INTEGER16, CARDINAL16;
 
 
-TYPE
-    Year = INTEGER16;
-    (* base unit for calendar years, -32768 .. 32767 *)
+TYPE CalendarYear = INTEGER16;
+(* Base unit for calendar years, -32768 .. 32767 *)
     
-    Month = ( Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec );
-    (* base unit for calendar months *)
+TYPE CalendarMonth = ( Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec );
+(* Base unit for calendar months *)
     
-    Day = [1 .. 31] OF OCTET;
-    (* base unit for calendar days, 1 .. 31 *)
+TYPE CalendarDay = [1 .. 31] OF OCTET;
+(* Base unit for calendar days, 1 .. 31 *)
     
-    Days = CARDINAL32;
-    (* base unit for elapsed days, 0 .. 4294967295 *)
+TYPE Days = CARDINAL32;
+(* Base unit for elapsed days, 0 .. 4'294'967'295 *)
     
-    Hours = [0 .. 23] OF OCTET;
-    (* base unit for hour of the day, 0 .. 23 *)
+TYPE Hours = [0 .. 23] OF OCTET;
+(* Base unit for hour of the day, 0 .. 23 *)
     
-    Minutes = [0 .. 59] OF OCTET;
-    (* base unit for minutes in an hour, 0 .. 59 *)
+TYPE Minutes = [0 .. 59] OF OCTET;
+(* Base unit for minutes in an hour, 0 .. 59 *)
     
-    Seconds = UnsignedReal60;
-    (* base unit for fractional seconds in a minute, 0 .. 59.999 *)
+TYPE Milliseconds = [0 .. 59'999] OF CARDINAL16;
+(* Base unit for milliseconds in a minute, 0 .. 59'999 *)
 
 END TimeUnits.
