@@ -250,15 +250,15 @@ PROCEDURE [..] copySlice
    A procedure invocation of the form
      FooProc(string[2..5]);
    is transformed at compile time into a temporary variable declaration
-     VAR tempTarget : String.ADT;
+     VAR tempTarget : StringADT;
    and a statement sequence of the form
      StringADT.copySlice(tempTarget, 0, -1, string, 2, 5);
      FooProc(tempTarget); RELEASE(tempTarget);
    
    A function invocation of the form
      foo := BarFunc(string[2..5]);
-   is transformed at compile time into
-     VAR tempTarget : String.ADT;
+   is transformed at compile time into a temporary variable declaration
+     VAR tempTarget : StringADT;
    and a statement sequence of the form
      StringADT.copySlice(tempTarget, 0, -1, string, 2, 5);
      foo := BarFunc(tempTarget); RELEASE(tempTarget); *)
@@ -267,6 +267,7 @@ PROCEDURE [..] copySlice
 (* Iteration *)
 
 TYPE ProcType = PROCEDURE ( ProtoString; CONST IndexType );
+(* Required procedure type to represent a FOR loop body. *)
 
 PROCEDURE [FOR] forIterator
   ( s : ProtoString; forLoopBody : ProcType; ascending : BOOLEAN );
@@ -283,8 +284,7 @@ PROCEDURE [FOR] forIterator
      StringADT.forIterator(string, forLoopBody, TRUE);
    
    The FOR loop body is transformed into a procedure declaration of the form
-     PROCEDURE forLoopBody
-       ( VAR string : StringADT; CONST index : IndexType );
+     PROCEDURE forLoopBody ( string : StringADT; CONST index : IndexType );
      BEGIN statementSeq END forLoopBody;
    
    A FOR DESCENDING loop header is transformed into a call of the form
