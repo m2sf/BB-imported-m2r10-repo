@@ -9,7 +9,7 @@ REFERENTIAL CharType (* CHAR or UNICHAR *), POSINT, ForLoopBodyProc;
 (* String ADTs must be opaque,
    quoted literals of base type CHAR or UNICHAR are compatible *)
 
-TYPE ProtoString = OPAQUE := CHAR | UNICHAR;
+MODULE TYPE = OPAQUE := CHAR | UNICHAR;
 
 
 (* Bindings required for String ADTs *)
@@ -178,24 +178,24 @@ PROCEDURE [CONCAT] concat
    Invocations of CONCAT are mapped to procedure StringADT.concat as follows:
    
    A statement of the form
-     CONCAT(str1, str2, str3);
+     CONCAT(resultStr, str1, str2);
    is transformed at compile time into a procedure call of the form
-     StringADT.concat(str1, "", str2, "", str3);
+     StringADT.concat(resultStr, "", str1, "", str2);
 
    A statement of the form
-     str1 := CONCAT(str1, str2, "literal", str3);
+     CONCAT(resultStr, str1, "literal", str2);
    is transfored at compile time into a procedure call of the form
-     StringADT.concat(str1, "", str2, "lit", str3);
+     StringADT.concat(resultStr, "", str1, "lit", str2);
       
    A statement of the form
-     CONCAT(str1, "lit", str2, str3);
+     CONCAT(resultStr, "lit", str1, str2);
    is transformed at compile time into a procedure call of the form
-     StringADT.concat(str1, "lit", str2, "", lit3);
+     StringADT.concat(resultStr, "lit", str1, "", lit2);
    
    A statement of the form
-     CONCAT(str1, "lit1", str2, "lit2")
+     CONCAT(resultStr, "lit1", str, "lit2")
    is transformed at compile time into a procedure call of the form
-     StringADT.concat(str1, "lit1", str2, "lit2", NIL);
+     StringADT.concat(resultStr, "lit1", str, "lit2", NIL);
    
    When a concatenation expression is passed as an argument to a procedure
    it is first assigned to a temporary variable,  which is then passed as
@@ -203,15 +203,19 @@ PROCEDURE [CONCAT] concat
    
    A procedure invocation of the form
      FooProc(str1 + str2);
-   is transformed at compile time into a statement sequence of the form
-     CONCAT(temp, str1, str2);
-     FooProc(temp); RELEASE(temp);
+   is transformed at compile time into a temporary variable declaration
+     VAR tempResult : StringADT;
+   and a statement sequence of the form
+     CONCAT(tempResult, str1, str2);
+     FooProc(tempResult); RELEASE(tempResult);
    
    A function invocation of the form
      foo := BarFunc(str1 + str2);
-   is transformed at compile time into a statement sequence of the form   
-     CONCAT(temp, str1, str2);
-     foo := BarFunc(temp); RELEASE(temp); *)
+   is transformed at compile time into a temporary variable declaration
+     VAR tempResult : StringADT;
+   and a statement sequence of the form   
+     CONCAT(tempResult, str1, str2);
+     foo := BarFunc(tempResult); RELEASE(tempResult); *)
 
 
 PROCEDURE [..] copySlice
@@ -245,20 +249,24 @@ PROCEDURE [..] copySlice
 
    A procedure invocation of the form
      FooProc(string[2..5]);
-   is transformed at compile time into a statement sequence of the form
-     StringADT.copySlice(temp, 0, -1, string, 2, 5);
-     FooProc(temp); RELEASE(temp);
+   is transformed at compile time into a temporary variable declaration
+     VAR tempTarget : String.ADT;
+   and a statement sequence of the form
+     StringADT.copySlice(tempTarget, 0, -1, string, 2, 5);
+     FooProc(tempTarget); RELEASE(tempTarget);
    
    A function invocation of the form
      foo := BarFunc(string[2..5]);
-   is transformed at compile time into a statement sequence of the form
-     StringADT.copySlice(temp, 0, -1, string, 2, 5);
-     foo := BarFunc(temp); RELEASE(temp); *)
+   is transformed at compile time into
+     VAR tempTarget : String.ADT;
+   and a statement sequence of the form
+     StringADT.copySlice(tempTarget, 0, -1, string, 2, 5);
+     foo := BarFunc(tempTarget); RELEASE(tempTarget); *)
 
 
 (* Iteration *)
 
-TYPE ProcType = PROCEDURE ( VAR ProtoString; CONST IndexType );
+TYPE ProcType = PROCEDURE ( ProtoString; CONST IndexType );
 
 PROCEDURE [FOR] forIterator
   ( s : ProtoString; forLoopBody : ProcType; ascending : BOOLEAN );
