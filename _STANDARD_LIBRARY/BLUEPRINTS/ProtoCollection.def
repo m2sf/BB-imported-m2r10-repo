@@ -9,7 +9,7 @@ REFERENTIAL AccessorType, ValueType, ProcType;
 (* Collection ADTs must be opaque,
    literal compatibility may be specified by more specialised blueprints *)
 
-TYPE ProtoCollection = OPAQUE | OPAQUE RECORD (* uses structured literals *)
+MODULE TYPE = OPAQUE | OPAQUE RECORD (* uses structured literals *)
   := { AccessorType BY * } | { { AccessorType, ValueType } BY * };
 
 
