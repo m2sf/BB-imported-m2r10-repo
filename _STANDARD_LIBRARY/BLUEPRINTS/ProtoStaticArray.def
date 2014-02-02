@@ -9,7 +9,7 @@ REFERENTIAL IndexType, ValueType, ProcType;
 (* Static Array ADTs must be opaque records to be statically allocatable,
    array literals are compatible *)
 
-TYPE ProtoStaticArray = OPAQUE RECORD := { ValueType BY * };
+MODULE TYPE = OPAQUE RECORD := { ValueType BY * };
 
 
 (* Bindings required for Static Array ADTs *)
