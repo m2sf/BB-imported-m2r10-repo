@@ -1,8 +1,8 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE ARRAYOFCHAR [ProtoStaticString];
+DEFINITION MODULE ARRAYOFCHAR [AOC] FOR CHAR;
 
-(* I/O, Concatenation and Slicing for ARRAY OF CHAR Types *)
+(* Runtime Support Library for ARRAY OF CHAR Types - No import required *)
 
 FROM FileIO IMPORT File;
 
@@ -39,27 +39,9 @@ PROCEDURE [..] CopySlice
    If  any index  is out of bounds  of the  associated string,  runtime fault
    indexOutOfBounds shall be raised. *)
 
-PROCEDURE [READ] Read ( infile : File; VAR s : ARRAY OF CHAR );
-(* Reads a string value from stream infile
-   - any leading whitespace is skipped
-   - the character being read is removed from infile
-   - the code point of the character value read is assigned to s
-   - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput.
-   This function is substituted for invocations of READ with an
-   ARRAY OF CHAR type argument. *)
-
-PROCEDURE [WRITE] Write ( outfile : File; s : ARRAY OF CHAR );
-(* Writes string s to stream outfile. This function is substituted
-   for invocations of WRITE with an ARRAY OF CHAR type argument.*)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF ARRAY OF CHAR );
-(* Writes a formatted textual representation of one or more ARRAY OF CHAR
-   values to output stream outfile. The output format is determined by fmtStr.
-   This procedure is substituted for invocations of WRITEF with one or more
-   ARRAY OF CHAR arguments. *)
+PROCEDURE [^] InsertChars
+  ( VAR string : ARRAY OF CHAR; index : INTEGER; CONST chars : ARRAY OF CHAR );
+(* Inserts chars at index into string.  If the resulting string length exceeds
+   the capacity of string, runtime fault StringCapacityExceeded is raised. *)
 
 END ARRAYOFCHAR.
