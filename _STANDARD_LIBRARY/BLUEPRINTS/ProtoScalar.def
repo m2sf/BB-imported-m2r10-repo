@@ -7,7 +7,7 @@ BLUEPRINT ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 (* Scalar number ADTs must be opaque records to be statically allocatable,
    either integer or real number literals may be used, but not both *)
 
-TYPE ProtoScalar = OPAQUE RECORD := INTEGER | REAL;
+MODULE TYPE = OPAQUE RECORD := INTEGER | REAL;
 
 
 (* Bindings required for scalar ADTs *)
