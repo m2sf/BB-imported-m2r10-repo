@@ -6,7 +6,7 @@ BLUEPRINT ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* ProtoCardinal ADTs must be opaque records to be statically allocatable *)
 
-TYPE ProtoCardinal = OPAQUE RECORD (* uses integer literals *) := INTEGER;
+MODULE TYPE = OPAQUE RECORD (* uses integer literals *) := INTEGER;
 
 
 (* Bindings required for ProtoCardinal ADTs *)
