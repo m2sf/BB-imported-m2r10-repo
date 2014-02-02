@@ -4,7 +4,7 @@ BLUEPRINT ProtoCardMath [ProtoExtension] FOR ProtoCardinal;
 
 (* Blueprint for math extension libraries of cardinal types *)
 
-TYPE = NIL;
+MODULE TYPE = NIL;
 
 (* Required Mathematical Functions *)
 
