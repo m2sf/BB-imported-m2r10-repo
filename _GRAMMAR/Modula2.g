@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Jan 25, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Jan 31, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -88,19 +88,19 @@ tokens {
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
     CAST           = 'CAST';           /* RW within procedure header */
-    NIL            = 'NIL';            /* RW within blueprint required type */
+    NIL            = 'NIL';            /* RW within blueprint moduleType */
 
 // *** Bindable Identifiers, 24 tokens ***
 
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
 
-    TLIMIT         = 'TLIMIT';         /* RW within constant definition */
-    TSIGNED        = 'TSIGNED';        /* RW within constant definition */
-    TBASE          = 'TBASE';          /* RW within constant definition */
-    TPRECISION     = 'TPRECISION';     /* RW within constant definition */
-    TMINEXP        = 'TMINEXP';        /* RW within constant definition */
-    TMAXEXP        = 'TMAXEXP';        /* RW within constant definition */
+    TLIMIT         = 'TLIMIT';         /* RW within blueprint reqConst */
+    TSIGNED        = 'TSIGNED';        /* RW within blueprint reqConst */
+    TBASE          = 'TBASE';          /* RW within blueprint reqConst */
+    TPRECISION     = 'TPRECISION';     /* RW within blueprint reqConst */
+    TMINEXP        = 'TMINEXP';        /* RW within blueprint reqConst */
+    TMAXEXP        = 'TMAXEXP';        /* RW within blueprint reqConst */
 
     ABS            = 'ABS';            /* RW within procedure header */
     NEG            = 'NEG';            /* RW within procedure header */
@@ -211,7 +211,7 @@ blueprint :
     BLUEPRINT blueprintIdent
     ( '[' blueprintToRefine ']' )? ( FOR blueprintForTypeToExtend )? ';'
     ( REFERENTIAL identList ';' )? mouleTypeRequirementOrImpediment ';'
-    ( requiredConst ';' )* ( requiredProcedure ';' )*
+    ( requiredConst ';' )* ( reqProcedureOrProcType ';' )*
     END blueprintIdent '.'
     ;
 
@@ -221,58 +221,58 @@ blueprintToRefine : blueprintIdent ;
 // alias #4.2
 blueprintForTypeToExtend : blueprintIdent ;
 
-// alias #4.3
-requiredProcedure : procedureHeader ;
-
 // production #5
 mouleTypeRequirementOrImpediment :
-    TYPE '='
-    ( permittedTypeDeclaration ( '|' permittedTypeDeclaration )*
+    MODULE TYPE '='
+    ( permittedTypeDefinition ( '|' permittedTypeDefinition )*
       ( ':=' protoliteral ( '|' protoliteral )* )? ) | NIL | '*'
     ;
 
+// fragment #5.1
+protoliteral : simpleProtoliteral | structuredProtoliteral ;
+
+// alias #5.2
+simpleProtoliteral : Ident ;
+
 // production #6
-permittedTypeDeclaration :
-    RECORD | OPAQUE RECORD?
-    ;
-
-// production #7
-protoliteral :
-    simpleProtoliteral | structuredProtoliteral
-    ;
-
-// fragment #7.1
-simpleProtoliteral : Ident | ARRAY OF Ident /* CHAR only */ ;
-
-// production #8
 structuredProtoliteral :
     '{' ( Ident ( ',' identList | BY repeatFactor ) |
          '{' identList '}' BY repeatFactor ) '}'
     ;
 
-// fragment #8.1
+// fragment #6.1
 repeatFactor : Ident | * ;
 
-// production #9
+// production #7
 requiredConst :	
     CONST ( '[' constBindableProperty ']' )? Ident
     ( ':' ( range OF)? predefinedType | '=' constExpression )
     ;
 
-// fragment #9.1
+// fragment #7.1
 constBindableProperty : ':=' | DESCENDING | constBindableIdent ;
 
-// fragment #9.2
+// fragment #7.2
 constBindableIdent :  /* Ident */
     TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
     {} /* make ANTLRworks display separate branches */
 	;
 
-// alias #9.3
+// alias #7.3
 predefinedType : Ident ;
 
-// alias #9.4
+// alias #7.4
 constExpression : expression ; /* but no type identifiers */
+
+// production #8
+permittedTypeDefinition :
+    RECORD | OPAQUE RECORD?
+    ;
+
+// production #9
+reqProcedureOrProcType :
+    procedureHeader | TYPE Ident '=' procedureType
+    ;
 
 
 // *** Import Lists, Blocks, Definitions and Declarations ***
@@ -323,8 +323,8 @@ block :
 
 // production #15
 definition :
-    CONST (  constDeclaration ';' )+ |
-    TYPE ( publicTypeDeclaration ';' )+ |
+    CONST (  Ident '=' constExpression ';' )+ |
+    TYPE ( typeDefinitionOrDeclaration ';' )+ |
     VAR ( variableDeclaration ';' )+ |
     privateAccess? procedureHeader ';'
     ;
@@ -333,22 +333,22 @@ definition :
 privateAccess : '-' ;
 
 // production #16
-constDeclaration :
-    Ident '=' constExpression |
-    FOR '*' IN enumTypeIdent
-    ;
-
-// production #17
-publicTypeDeclaration :
+typeDefinitionOrDeclaration :
     Ident '=' ( OPAQUE recordType? | type )
     ;
 
-// production #18
+// production #17
 declaration :
     CONST ( constDeclaration ';' )+ |
     TYPE ( Ident '=' type ';' )+ |
     VAR ( variableDeclaration ';' )+ |
     procedureHeader ';' block Ident ';'
+    ;
+
+// production #18
+constDeclaration :
+    Ident '=' constExpression |
+    FOR '*' IN enumTypeIdent
     ;
 
 
@@ -393,7 +393,7 @@ recordType :
     '(' recBaseType ')' fieldList ( ';' fieldList )* ) END
     ;
 
-// aliase #23.1
+// fragment #23.1
 fieldList : variableDeclaration ;
 
 // alias 23.2
