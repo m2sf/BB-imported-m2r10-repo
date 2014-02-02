@@ -9,7 +9,7 @@ REFERENTIAL ElementType, ProcType;
 (* Static Set ADTs must be opaque records to be statically allocatable,
    structured literals with a list of elements are compatible *)
 
-TYPE ProtoStaticSet = OPAQUE RECORD := { ElementType BY * };
+MODULE TYPE = OPAQUE RECORD := { ElementType BY * };
 
 
 (* Bindings required for static set ADTs *)
