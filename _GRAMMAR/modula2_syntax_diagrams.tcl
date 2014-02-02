@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Jan 25, 2014
+# Syntax diagram generator for Modula-2 (R10), status Jan 31, 2014
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -195,11 +195,15 @@ lappend non_terminals typeToExtend {
 # (4) Blueprint
 lappend non_terminals blueprint {
   stack
-    {line BLUEPRINT blueprintIdent}
-    {line {optx [ blueprintToRefine ]} {optx FOR blueprintForTypeToExtend} ;}
-    {line {optx REFERENTIAL identList ;} moduleTypeRequirementOrImpediment ;}
-    {line {loop nil {nil requiredConst ;}}
-      {loop nil {nil requiredProcedure ;}}
+    {line
+      BLUEPRINT blueprintIdent}
+    {line
+      {optx [ blueprintToRefine ]} {optx FOR blueprintForTypeToExtend} ;}
+    {line
+      {optx REFERENTIAL identList ;}
+      moduleTypeRequirementOrImpediment ; }
+    {line {loop nil {nil reqConst ;}}
+      {loop nil {nil reqProcedureOrProcType ;}}
       END blueprintIdent .}
 }
 
@@ -213,37 +217,28 @@ lappend non_terminals blueprintForTypeToExtend {
   line blueprintIdent
 }
 
-# (4.3) Required Procedure
-lappend non_terminals requiredProcedure {
-  line procedureHeader
-}
-
 # (5) Module Type Requirement or Impediment
-lappend non_terminals moduleTypeRequirementOrImpediment {
-  line TYPE Ident = {
+lappend non_terminals moduleType {
+  line MODULE TYPE = {
     or
-      {line {loop permittedTypeDeclaration |} {optx := {loop protoliteral |}}}
-      /NIL *
+      {line {loop permittedTypeDefinition |} {optx := {loop protoliteral |}}}
+      /NIL
+      *
     }
 }
 
-# (6) Permitted Type Declaration
-lappend non_terminals permittedTypeDeclaration {
-  or RECORD { line OPAQUE {optx RECORD}}
-}
-
-# (7) Proto Literal
+# (5.1) Proto Literal
 lappend non_terminals protoliteral {
   or simpleProtoliteral structuredProtoliteral
 }
 
-# (7.1) Simple Proto Literal
+# (5.2) Simple Proto Literal
 lappend non_terminals simpleProtoliteral {
-  or Ident {line ARRAY OF CHAR}
+  line Ident 
 }
 
-# (8) Structured Proto Literal
-lappend non_terminals structProtoLiteral {
+# (6) Structured Proto Literal
+lappend non_terminals structuredProtoliteral {
   line LBRACE {
     or
       {line Ident {or {line , identList} {line BY repeatFactor}} }
@@ -252,13 +247,18 @@ lappend non_terminals structProtoLiteral {
   RBRACE
 }
 
-# (8.1) Repeat Factor
+# (6.1) Repeat Factor
 lappend non_terminals repeatFactor {
   or Ident *
 }
 
-# (9) Required Constant
-lappend non_terminals requiredConst {
+# (7) Permitted Type Definition
+lappend non_terminals permittedTypeDefinition {
+  or RECORD { line OPAQUE {optx RECORD}}
+}
+
+# (8) Required Constant
+lappend non_terminals reqConst {
   stack
     {line CONST {optx [ constBindableProperty ]} Ident}
     {or
@@ -267,24 +267,31 @@ lappend non_terminals requiredConst {
     }
 }
 
-# (9.1) Constant-Bindable Property
+# (8.1) Constant-Bindable Property
 lappend non_terminals constBindableProperty {
   or := DESCENDING constBindableIdent
 }
 
-# (9.2) Constant-Bindable Identifier
+# (8.2) Constant-Bindable Identifier
 lappend non_terminals constBindableIdent {
   or /TLIMIT /TSIGNED /TBASE /TPRECISION /TMINEXP /TMAXEXP
 }
 
-# (9.3) Predefined Type
+# (8.3) Predefined Type
 lappend non_terminals predefinedType {
   line Ident
 }
 
-# (9.4) Constant Expression
+# (8.4) Constant Expression
 lappend non_terminals constExpression {
   line expression
+}
+
+# (9) Required Procedure Or Procedure Type
+lappend non_terminals reqProcedureOrProcType {
+  or
+    procedureHeader
+    {line TYPE Ident = procedureType}
 }
 
 # (10) Import List
@@ -349,8 +356,8 @@ lappend non_terminals block {
 lappend non_terminals definition {
   line {
     or
-      {line CONST {loop {line constDeclaration ;} {}} }
-      {line TYPE {loop {line publicTypeDeclaration ;} {}}}
+      {line CONST {loop {line ident = constExpression ;} {}} }
+      {line TYPE {loop {line typeDefinitionOrDeclaration ;} {}}}
       {line VAR {loop {line variableDeclaration ;} {}} }
       {line {optx privateAccess} procedureHeader ;}
   }
@@ -361,19 +368,12 @@ lappend non_terminals privateAccess {
   line -
 }
 
-# (16) Const Declaration
-lappend non_terminals constDeclaration {
-  or
-    {line Ident = constExpression}
-    {line FOR * IN enumTypeIdent}
-}
-
-# (17) Public Type Declaration
-lappend non_terminals publicTypeDeclaration {
+# (16) Type Definition Or Declaration
+lappend non_terminals typeDefOrDeclaration {
   line Ident = {or {line OPAQUE {optx recordType}} type}
 }
 
-# (18) Declaration
+# (17) Declaration
 lappend non_terminals declaration {
   line {
     or
@@ -382,6 +382,13 @@ lappend non_terminals declaration {
       {line VAR {loop {line variableDeclaration ;} {}} }
       {line procedureHeader ; block Ident ;}
   }
+}
+
+# (18) Const Declaration
+lappend non_terminals constDeclaration {
+  or
+    {line Ident = constExpression}
+    {line FOR * IN enumTypeIdent}
 }
 
 # (19) Type
@@ -649,14 +656,6 @@ lappend non_terminals forStatement {
     {line FOR {optx DESCENDING} controlVariable}
     {line IN {or designator {line range OF typeIdent}}}
     {line DO statementSequence END}
-}
-
-# (46) FOR Statement (alternative layout)
-lappend non_terminals altForStatement {
-  stack
-    {line FOR {optx DESCENDING} controlVariable}
-    {line IN {or designator {line range OF typeIdent}}
-      {line DO statementSequence END}}
 }
 
 # (46.1) Control Variable
@@ -1288,6 +1287,11 @@ lappend aliases AliasForIdent {
   line Ident
 }
 
+# Alias For Blueprint Identifier
+lappend aliases AliasForBlueprintIdent {
+  line blueprintIdent
+}
+
 # Alias For Qualified Identifier
 lappend aliases AliasForQualident {
   line qualident
@@ -1312,6 +1316,17 @@ lappend aliases AliasForStringLiteral {
 lappend aliases AliasForConstExpr {
   line constExpression
 }
+
+# Alias For Expression
+lappend aliases AliasForExpression {
+  line expression
+}
+
+# Alias For Type Identifier
+lappend aliases AliasForTypeIdent {
+  line typeIdent
+}
+
 
 # ---------------------------------------------------------------------------
 # Legend Diagrams
