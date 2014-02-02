@@ -4,8 +4,6 @@ DEFINITION MODULE ARRAYOFCHAR [AOC] FOR CHAR;
 
 (* Runtime Support Library for ARRAY OF CHAR Types - No import required *)
 
-FROM FileIO IMPORT File;
-
 PROCEDURE [CONCAT] Concat
   ( VAR result : ARRAY OF CHAR; items  : VARIADIC OF ARRAY OF CHAR );
 (* Concatenates two or more ARRAY OF CHAR values  passed in for items  in the
