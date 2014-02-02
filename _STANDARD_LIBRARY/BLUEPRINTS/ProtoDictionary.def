@@ -10,7 +10,7 @@ REFERENTIAL KeyType, ValueType, ProcType, File;
 (* Dictionary ADTs must be opaque,
    variadic structured literals with key/value pairs are compatible *)
 
-TYPE ProtoDictionary = OPAQUE := { VARIADIC OF { KeyType, ValueType } };
+MODULE TYPE = OPAQUE := { VARIADIC OF { KeyType, ValueType } };
 
 
 (* Bindings required for dictionary ADTs *)
