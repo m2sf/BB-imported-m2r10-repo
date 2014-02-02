@@ -1,10 +1,9 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE ARRAYOFUNICHAR [ProtoStaticString];
+DEFINITION MODULE ARRAYOFUNICHAR [AOC] FOR UNICHAR;
 
-(* I/O, Concatenation and Slicing for ARRAY OF UNICHAR Types *)
+(* Runtime Support Library for ARRAY OF UNICHAR Types - No import required *)
 
-FROM FileIO IMPORT File;
 
 PROCEDURE [CONCAT] Concat
   ( VAR result : ARRAY OF UNICHAR; items  : VARIADIC OF ARRAY OF UNICHAR );
@@ -39,27 +38,10 @@ PROCEDURE [..] CopySlice
    If  any index  is out of bounds  of the  associated string,  runtime fault
    indexOutOfBounds shall be raised. *)
 
-PROCEDURE [READ] Read ( infile : File; VAR s : ARRAY OF UNICHAR );
-(* Reads a string value from stream infile
-   - any leading whitespace is skipped
-   - the character being read is removed from infile
-   - the code point of the character value read is assigned to s
-   - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput.
-   This procedure is substituted for invocations of READ with an
-   ARRAY OF UNICHAR type argument. *)
-
-PROCEDURE [WRITE] Write ( outfile : File; CONST s : ARRAY OF UNICHAR );
-(* Writes string s to stream outfile. This procedure is substituted
-   for invocations of WRITE with an ARRAY OF UNICHAR type argument.*)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF ARRAY OF UNICHAR );
-(* Writes a formatted textual representation of one or more ARRAY OF UNICHAR
-   values to output stream outfile. The output format is determined by fmtStr.
-   This procedure is substituted for invocations of WRITEF with one or more
-   ARRAY OF UNICHAR arguments. *)
+PROCEDURE [^] InsertChars
+  ( VAR string : ARRAY OF UNICHAR; index : INTEGER;
+    CONST chars : ARRAY OF UNICHAR );
+(* Inserts chars at index into string.  If the resulting string length exceeds
+   the capacity of string, runtime fault StringCapacityExceeded is raised. *)
 
 END ARRAYOFUNICHAR.
