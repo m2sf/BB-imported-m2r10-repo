@@ -4,7 +4,7 @@ BLUEPRINT ProtoIntMath [ProtoExtension] FOR ProtoInteger;
 
 (* Blueprint for math extension libraries of integer types *)
 
-TYPE = NIL;
+MODULE TYPE = NIL;
 
 (* Required Mathematical Functions *)
 
