@@ -1,4 +1,4 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Dynamically Allocatable Array ADTs *)
 
@@ -9,7 +9,7 @@ REFERENTIAL IndexType, ValueType, ProcType;
 (* Array ADTs must be opaque,
    array literals are compatible *)
 
-TYPE ProtoArray = OPAQUE := { VARIADIC OF ValueType };
+MODULE TYPE = OPAQUE := { VARIADIC OF ValueType };
 
 
 (* Bindings required for Array ADTs *)
