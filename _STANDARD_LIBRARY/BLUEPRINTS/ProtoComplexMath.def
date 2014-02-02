@@ -4,7 +4,7 @@ BLUEPRINT ProtoComplexMath [ProtoExtension] FOR ProtoComplex;
 
 (* Blueprint for math extension libraries of complex number types *)
 
-TYPE = NIL;
+MODULE TYPE = NIL;
 
 (* Required constants *)
 
