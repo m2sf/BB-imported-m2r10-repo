@@ -133,6 +133,18 @@ PROCEDURE [RETRIEVE] charAtIndex
    for designators of the string ADT type. *)
 
 
+PROCEDURE [^] insertCharsAtIndex
+  ( s : ProtoString; index : INTEGER; chars : ARRAY OF CharType );
+(* Required procedure to insert a character sequence into a string,
+   starting at a given index. *)
+
+(* An assignment of the form
+     string[^index] := chars;
+   is transformed at compile time into a procedure call of the form
+     StringADT.insertCharsAtIndex(string, index, chars);
+   for designators of the string ADT type. *)
+
+
 PROCEDURE [REMOVE] removeCharsAtIndex
   ( string : ProtoString; index : INTEGER; n : POSINT );
 (* Required rocedure to remove n characters from a string,
@@ -336,15 +348,6 @@ PROCEDURE [>] isGreater ( string1, string2 : ProtoString ) : BOOLEAN;
 
 (* The operation for the >= operator
    is synthesized as NOT (string1 < string2) *)
-
-
-(* ### Revision pending beyond this point ### *)
-
-
-PROCEDURE insertCharsAtIndex
-  ( s : ProtoString; index : IndexType; CONST chars : ARRAY OF CHAR );
-(* Procedure to insert character sequence chars into a String ADT
-   variable s starting at index. *)
 
 
 END ProtoString.
