@@ -12,7 +12,7 @@ REFERENTIAL CharType (* CHAR or UNICHAR *), ProcType;
 (* Static string ADTs must be opaque records to be statically allocatable,
    quoted literals of base type CHAR or UNICHAR are compatible *)
 
-TYPE ProtoStaticString = OPAQUE RECORD := CHAR | UNICHAR;
+MODULE TYPE = OPAQUE RECORD := CHAR | UNICHAR;
 
 
 (* Bindings required for Static String ADTs *)
