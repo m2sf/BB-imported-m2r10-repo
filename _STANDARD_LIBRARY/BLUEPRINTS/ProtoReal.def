@@ -6,7 +6,7 @@ BLUEPRINT ProtoReal [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* ProtoReal ADTs must be opaque records to be statically allocatable *)
 
-TYPE ProtoReal = OPAQUE RECORD (* uses real number literals *) := REAL;
+MODULE TYPE = OPAQUE RECORD (* uses real number literals *) := REAL;
 
 
 (* Bindings required for ProtoReal ADTs *)
