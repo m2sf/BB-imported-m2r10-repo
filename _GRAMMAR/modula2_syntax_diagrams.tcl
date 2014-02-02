@@ -530,7 +530,7 @@ lappend non_terminals procedureHeader {
 # (32.1) Procedure-Bindable Entity
 lappend non_terminals procBindableEntity {
   or
-    + - * / = < > :: := .. DIV MOD FOR IN procBindableIdent
+    + - * / = < > :: := .. ^ DIV MOD FOR IN procBindableIdent
 }
 
 # (32.2) Procedure-Bindable Identifier
@@ -684,13 +684,14 @@ lappend non_terminals designatorTail {
 
 # (49) Expression List Or Slice
 lappend non_terminals exprListOrSlice {
-  line expression {
-    optx {
-      or
-        {loop {line , expression} nil}
-        {line .. expression}
-    }
-  }
+  or
+    {line expression {
+      optx {
+        or
+          {loop {line , expression} nil}
+          {line .. expression}
+      }}}
+    {line ^ expression}
 }
 
 # (50) Expression
