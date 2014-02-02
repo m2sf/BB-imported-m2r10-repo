@@ -7,7 +7,7 @@ BLUEPRINT ProtoVector [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
 (* Numeric Vector ADTs must be transparent records,
    structurally equivalent literals are compatible by default *)
 
-TYPE ProtoVector = RECORD;
+MODULE TYPE = RECORD;
 
 
 (* Bindings required for ProtoVector ADTs *)
