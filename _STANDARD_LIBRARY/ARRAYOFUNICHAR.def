@@ -1,4 +1,4 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE ARRAYOFUNICHAR [AOC] FOR UNICHAR;
 
