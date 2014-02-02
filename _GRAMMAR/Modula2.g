@@ -471,7 +471,7 @@ procedureHeader :
 
 // fragment #32.1
 procBindableEntity :
-    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' | '..' |
+    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' | '..' | '^' |
     DIV | MOD | FOR | IN | procBindableIdent
     ;
 
@@ -603,7 +603,7 @@ designatorTail :
 
 // production #49
 exprListOrSlice :
-    expression ( ( ',' expression )+ | '..' expression )?
+    expression ( ( ',' expression )+ | '..' expression )? | '^' expression
     ;
 
 // production #50
