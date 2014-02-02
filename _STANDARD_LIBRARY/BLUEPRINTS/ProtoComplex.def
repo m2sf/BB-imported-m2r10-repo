@@ -8,7 +8,7 @@ BLUEPRINT ProtoComplex [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
    have two fields compatible with real number literals,
    structurally equivalent literals are compatible by default *)
 
-TYPE ProtoComplex = RECORD := { REAL, REAL };
+MODULE TYPE = RECORD := { REAL, REAL };
 
 
 (* Bindings required for ProtoComplex ADTs *)
