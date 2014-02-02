@@ -6,7 +6,7 @@ BLUEPRINT ProtoArrayIO [ProtoExtension] FOR ProtoRoot;
 
 REFERENTIAL File;
 
-TYPE = NIL;
+MODULE TYPE = NIL;
 
 (* Required IO bindings *)
 
