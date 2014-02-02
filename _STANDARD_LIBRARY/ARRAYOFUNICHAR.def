@@ -4,7 +4,6 @@ DEFINITION MODULE ARRAYOFUNICHAR [AOC] FOR UNICHAR;
 
 (* Runtime Support Library for ARRAY OF UNICHAR Types - No import required *)
 
-
 PROCEDURE [CONCAT] Concat
   ( VAR result : ARRAY OF UNICHAR; items  : VARIADIC OF ARRAY OF UNICHAR );
 (* Concatenates  two or more ARRAY OF UNICHAR values  passed in for items  in
