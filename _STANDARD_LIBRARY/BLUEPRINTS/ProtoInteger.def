@@ -6,7 +6,7 @@ BLUEPRINT ProtoInteger [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* ProtoInteger ADTs must be opaque records to be statically allocatable *)
 
-TYPE ProtoInteger = OPAQUE RECORD (* uses integer literals *) := INTEGER;
+MODULE TYPE = OPAQUE RECORD (* uses integer literals *) := INTEGER;
 
 
 (* Bindings required for ProtoInteger ADTs *)
