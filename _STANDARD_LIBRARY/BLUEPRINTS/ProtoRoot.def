@@ -4,6 +4,6 @@ BLUEPRINT ProtoRoot; (* Top-level blueprint for ADT libraries *)
 
 (* conforming libraries are required to provide an ADT *)
 
-TYPE = *;
+MODULE TYPE = *;
 
 END ProtoRoot.
