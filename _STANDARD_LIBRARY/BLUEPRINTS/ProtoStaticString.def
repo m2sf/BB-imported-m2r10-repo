@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoStaticString [ProtoCollection];
 
-REFERENTIAL CharType (* CHAR or UNICHAR *), ProcType;
+REFERENTIAL CharType (* CHAR or UNICHAR *), ProcType, POSINT;
 
 (* The index type of a static string ADT is always CARDINAL. *)
 
@@ -41,7 +41,7 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Assignment and Copying *)
 
 PROCEDURE [:=] assignQuotedLiteral
-  ( string : ProtoStaticString; value : ARRAY OF CharType );
+  ( VAR string : ProtoStaticString; value : ARRAY OF CharType );
 (* Required procedure to assign a quoted literal to a string. *)
 
 (* A statement of the form
@@ -51,8 +51,8 @@ PROCEDURE [:=] assignQuotedLiteral
    for L-values of the string ADT type. *)
 
 
-PROCEDURE [COPY] copy
-  ( source : ProtoStaticString; VAR target : ProtoStaticString );
+PROCEDURE [:=] assignCopy
+  ( VAR source : ProtoStaticString; VAR target : ProtoStaticString );
 (* Required procedure to copy the contents of a source string into a
    target string. *)
 
@@ -67,7 +67,7 @@ PROCEDURE [COPY] copy
 
 PROCEDURE [STORE] replaceCharAtIndex
   ( VAR string : ProtoStaticString;
-    index : CARDINAL; char : CharType );
+    index : INTEGER; char : CharType );
 (* Required procedure to replace a char at a given index in a string *)
 
 (* A statement of the form
@@ -83,8 +83,53 @@ PROCEDURE [STORE] replaceCharAtIndex
    for designators of the string ADT type. *)
 
 
+PROCEDURE [RETRIEVE] charAtIndex
+  ( string : ProtoStaticString; index : INTEGER ) : CharType;
+(* Required procedure to return the char at a given index in a string. *)
+
+(* An expression of the form
+     RETRIEVE(string, index)
+   is transformed at compile time into a function call of the form
+     StringADT.charAtIndex(string, index)
+   for first operands of the string ADT type.
+   
+   An expression of the form
+     string[index]
+   is transformed at compile time into a function call of the form
+     StringADT.charAtIndex(string, index)
+   for designators of the string ADT type. *)
+
+
+PROCEDURE [INSERT] insertCharsAtIndex
+  ( VAR targetStr : ProtoStaticString;
+    index : INTEGER;
+    chars : ARRAY OF CharType );
+(* Required procedure to insert a character array into a target string,
+   starting at a given index. *)
+
+(* A statement of the form
+     INSERT(string, index, "foo");
+   is transformed at compile time into a procedure call of the form
+     StringADT.insertCharsAtIndex(string, index, "foo");
+   for designators of the string ADT type. *)
+
+
+PROCEDURE [INSERT] insertStringAtIndex
+  ( VAR targetStr : ProtoStaticString;
+    index : INTEGER;
+    sourceStr : ProtoStaticString );
+(* Required procedure to insert a source string into a target string,
+   starting at a given index. *)
+
+(* A statement of the form
+     INSERT(targetStr, index, sourceStr);
+   is transformed at compile time into a procedure call of the form
+     StringADT.insertStringAtIndex(targetStr, index, stringStr);
+   for designators of the string ADT type. *)
+
+
 PROCEDURE [REMOVE] removeCharsAtIndex
-  ( string : ProtoStaticString; index : CARDINAL; n : CARDINAL);
+  ( string : ProtoStaticString; index : INTEGER; n : CARDINAL);
 (* Required rocedure to remove n characters from a string, starting at a
    given index. *)
 
@@ -101,26 +146,9 @@ PROCEDURE [REMOVE] removeCharsAtIndex
    for designators of the string ADT type. *)
 
 
-PROCEDURE [RETRIEVE] charAtIndex
-  ( string : ProtoStaticString; index : CARDINAL ) : CharType;
-(* Required procedure to return the char at a given index in a string. *)
-
-(* An expression of the form
-     RETRIEVE(string, index)
-   is transformed at compile time into a function call of the form
-     StringADT.charAtIndex(string, index)
-   for first operands of the string ADT type.
-   
-   An expression of the form
-     string[index]
-   is transformed at compile time into a function call of the form
-     StringADT.charAtIndex(string, index)
-   for designators of the string ADT type. *)
-
-
 (* Introspection *)
 
-PROCEDURE [LENGTH] length ( string : ProtoStaticString ) : CARDINAL;
+PROCEDURE [LENGTH] length ( string : ProtoStaticString ) : POSINT;
 (* Required procedure to return the length of a string. *)
 
 (* An expression of the form
@@ -223,7 +251,7 @@ PROCEDURE [..] copySlice
 
 (* Iteration *)
 
-TYPE ProcType = PROCEDURE ( VAR ProtoStaticString; CONST IndexType );
+TYPE ProcType = PROCEDURE ( VAR ProtoStaticString; CONST INTEGER );
 
 PROCEDURE [FOR] forIterator
   ( s : ProtoStaticString; forLoopBody : ProcType; ascending : BOOLEAN );
@@ -241,7 +269,7 @@ PROCEDURE [FOR] forIterator
    
    The FOR loop body is transformed into a procedure declaration of the form
      PROCEDURE forLoopBody
-       ( VAR string : StringADT; CONST index : IndexType );
+       ( VAR string : StringADT; CONST index : INTEGER );
      BEGIN statementSeq END forLoopBody;
    
    A FOR DESCENDING loop header is transformed into a call of the form
