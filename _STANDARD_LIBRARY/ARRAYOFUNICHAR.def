@@ -4,6 +4,12 @@ DEFINITION MODULE ARRAYOFUNICHAR [AOC] FOR UNICHAR;
 
 (* Runtime Support Library for ARRAY OF UNICHAR Types - No import required *)
 
+PROCEDURE [INSERT] InsertChars
+  ( VAR string : ARRAY OF UNICHAR; index : INTEGER;
+    CONST chars : ARRAY OF UNICHAR );
+(* Inserts chars at index into string.  If the resulting string length exceeds
+   the capacity of string, runtime fault StringCapacityExceeded is raised. *)
+
 PROCEDURE [CONCAT] Concat
   ( VAR result : ARRAY OF UNICHAR; items  : VARIADIC OF ARRAY OF UNICHAR );
 (* Concatenates  two or more ARRAY OF UNICHAR values  passed in for items  in
@@ -36,11 +42,5 @@ PROCEDURE [..] CopySlice
    get slice,  only the available characters of the source slice  are copied.
    If  any index  is out of bounds  of the  associated string,  runtime fault
    indexOutOfBounds shall be raised. *)
-
-PROCEDURE [^] InsertChars
-  ( VAR string : ARRAY OF UNICHAR; index : INTEGER;
-    CONST chars : ARRAY OF UNICHAR );
-(* Inserts chars at index into string.  If the resulting string length exceeds
-   the capacity of string, runtime fault StringCapacityExceeded is raised. *)
 
 END ARRAYOFUNICHAR.
