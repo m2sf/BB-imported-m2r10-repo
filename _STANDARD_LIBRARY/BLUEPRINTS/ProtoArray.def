@@ -72,6 +72,35 @@ PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoArray;
    is synthesised as valueAtIndex( array, index ) *)
 
 
+PROCEDURE [INSERT] insertValuesAtIndex
+  ( targetArray : ProtoArray;
+    index : IndexType;
+    values : ARGLIST OF ValueType );
+(* Required procedure to insert a value list into a target array,
+   starting at a given index. *)
+
+(* A statement of the form
+     INSERT(array, index, val1, val2, val3, ...);
+   is transformed at compile time into a procedure call of the form
+     ArrayADT.insertValuesAtIndex(array, index, val1, val2, val3, ...);
+   for designators of the array ADT type. *)
+
+
+PROCEDURE [INSERT] insertArrayAtIndex
+  ( targetArray : ProtoArray;
+    index : IndexType;
+    sourceArray : ProtoArray );
+(* Required procedure to insert a source array into a target array,
+   starting at a given index. *)
+
+(* A statement of the form
+     INSERT(targetArray, index, sourceArray);
+   is transformed at compile time into a procedure call of the form
+     ArrayADT.insertArrayAtIndex(targetArray, index, sourceArray);
+   for designators of the array ADT type. *)
+
+
+
 (* Index/Value count *)
 
 (* Binding to pervasive function COUNT *)
