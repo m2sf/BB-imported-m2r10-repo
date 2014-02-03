@@ -96,7 +96,7 @@ PROCEDURE [DUP] duplicateOf ( string : ProtoString ) : ProtoString;
    for operands of the string ADT type. *)
 
 
-(* Storage, Removal, Retrieval and Inspection of Contents *)
+(* Storage, Retrieval, Insertion and Removal of Contents *)
 
 PROCEDURE [STORE] replaceCharAtIndex
   ( string : ProtoString;
@@ -133,15 +133,27 @@ PROCEDURE [RETRIEVE] charAtIndex
    for designators of the string ADT type. *)
 
 
-PROCEDURE [^] insertCharsAtIndex
-  ( s : ProtoString; index : INTEGER; chars : ARRAY OF CharType );
-(* Required procedure to insert a character sequence into a string,
+PROCEDURE [INSERT] insertCharsAtIndex
+  ( targetStr : ProtoString; index : INTEGER; chars : ARRAY OF CharType );
+(* Required procedure to insert a character array into a target string,
    starting at a given index. *)
 
-(* An assignment of the form
-     string[^index] := chars;
+(* A statement of the form
+     INSERT(string, index, "foo");
    is transformed at compile time into a procedure call of the form
-     StringADT.insertCharsAtIndex(string, index, chars);
+     StringADT.insertCharsAtIndex(string, index, "foo");
+   for designators of the string ADT type. *)
+
+
+PROCEDURE [INSERT] insertStringAtIndex
+  ( targetStr : ProtoString; index : INTEGER; sourceStr : ProtoString );
+(* Required procedure to insert a source string into a target string,
+   starting at a given index. *)
+
+(* A statement of the form
+     INSERT(targetStr, index, sourceStr);
+   is transformed at compile time into a procedure call of the form
+     StringADT.insertStringAtIndex(targetStr, index, stringStr);
    for designators of the string ADT type. *)
 
 
