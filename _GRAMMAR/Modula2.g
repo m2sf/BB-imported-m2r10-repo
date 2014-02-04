@@ -107,11 +107,11 @@ tokens {
     DUP            = 'DUP';            /* RW within procedure header */
     COUNT          = 'COUNT';          /* RW within procedure header */
     LENGTH         = 'LENGTH';         /* RW within procedure header */
-    COPY           = 'COPY';           /* RW within procedure header */
     CONCAT         = 'CONCAT';         /* RW within procedure header */
     STORE          = 'STORE';          /* RW within procedure header */
-    REMOVE         = 'REMOVE';         /* RW within procedure header */
     RETRIEVE       = 'RETRIEVE';       /* RW within procedure header */
+    INSERT         = 'INSERT';         /* RW within procedure header */
+    REMOVE         = 'REMOVE';         /* RW within procedure header */
     NEW            = 'NEW';            /* RW within procedure header */
     RETAIN         = 'RETAIN';         /* RW within procedure header */
     RELEASE        = 'RELEASE';        /* RW within procedure header */
@@ -471,7 +471,7 @@ procedureHeader :
 
 // fragment #32.1
 procBindableEntity :
-    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' | '..' | '^' |
+    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' | '..' |
     DIV | MOD | FOR | IN | procBindableIdent
     ;
 
@@ -479,8 +479,8 @@ procBindableEntity :
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 procBindableIdent : /* Ident */
-    ABS | NEG | DUP | COUNT | LENGTH | NEW | RETAIN | RELEASE | COPY |
-    CONCAT | STORE | REMOVE  | RETRIEVE | SUBSET | TMIN | TMAX |
+    ABS | NEG | DUP | COUNT | LENGTH | NEW | RETAIN | RELEASE | CONCAT |
+    STORE | RETRIEVE | INSERT | REMOVE | SUBSET | TMIN | TMAX |
     SXF | VAL {} /* make ANTLRworks display separate branches */
     ;
 
@@ -603,7 +603,7 @@ designatorTail :
 
 // production #49
 exprListOrSlice :
-    expression ( ( ',' expression )+ | '..' expression )? | '^' expression
+    expression ( ( ',' expression )+ | '..' expression )?
     ;
 
 // production #50
