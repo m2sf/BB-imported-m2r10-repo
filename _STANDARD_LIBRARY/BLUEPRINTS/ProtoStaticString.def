@@ -176,24 +176,24 @@ PROCEDURE [CONCAT] concat
    Invocations of CONCAT are mapped to function StringADT.concat as follows:
    
    A statement of the form
-     CONCAT(str1, str2, str3);
+     CONCAT(resultStr, str1, str2);
    is transformed at compile time into a procedure call of the form
-     StringADT.concat(str1, "", str2, "", str3);
+     StringADT.concat(resultStr, "", str1, "", str2);
 
    A statement of the form
-     str1 := CONCAT(str1, str2, "literal", str3);
+     CONCAT(resultStr, str1, "literal", str2);
    is transfored at compile time into a procedure call of the form
-     StringADT.concat(str1, "", str2, "lit", str3);
+     StringADT.concat(resultStr, "", str1, "lit", str2);
       
    A statement of the form
-     CONCAT(str1, "lit", str2, str3);
+     CONCAT(resultStr, "lit", str1, str2);
    is transformed at compile time into a procedure call of the form
-     StringADT.concat(str1, "lit", str2, "", lit3);
+     StringADT.concat(resultStr, "lit", str2, "", lit3);
    
    A statement of the form
-     CONCAT(str1, "lit1", str2, "lit2")
+     CONCAT(resultStr, "lit1", str, "lit2")
    is transformed at compile time into a procedure call of the form
-     StringADT.concat(str1, "lit1", str2, "lit2", NIL);
+     StringADT.concat(resultStr, "lit1", str, "lit2", NIL);
    
    When a concatenation expression is passed as an argument to a procedure
    it is first assigned to a temporary variable,  which is then passed to
@@ -255,6 +255,7 @@ PROCEDURE [..] copySlice
 (* Iteration *)
 
 TYPE ProcType = PROCEDURE ( VAR ProtoStaticString; CONST INTEGER );
+(* Required procedure type to represent a FOR loop body. *)
 
 PROCEDURE [FOR] forIterator
   ( s : ProtoStaticString; forLoopBody : ProcType; ascending : BOOLEAN );
