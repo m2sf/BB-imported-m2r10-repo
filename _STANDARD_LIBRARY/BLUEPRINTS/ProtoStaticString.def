@@ -124,7 +124,7 @@ PROCEDURE [INSERT] insertStringAtIndex
 (* A statement of the form
      INSERT(targetStr, index, sourceStr);
    is transformed at compile time into a procedure call of the form
-     StringADT.insertStringAtIndex(targetStr, index, stringStr);
+     StringADT.insertStringAtIndex(targetStr, index, sourceStr);
    for designators of the string ADT type. *)
 
 
