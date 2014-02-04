@@ -32,10 +32,13 @@ CONST [DESCENDING] isOrdered = TRUE;
 (* Capacity limit *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the allocation capacity limit of the string ADT. *)
+(* Required procedure to return the ADT's allocation capacity limit. *)
 
-(* An invocation of TLIMIT(ADT)) is transformed at compile time to
-   StringADT.capacityLimit() when the operand is of the string ADT type. *)
+(* An expression of the form
+     TLIMIT(ADT)
+   is transformed at compile time into a function call of the form
+     StringADT.capacityLimit()
+   for operands of the string ADT type. *)
 
 
 (* Assignment and Copying *)
