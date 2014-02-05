@@ -13,6 +13,9 @@ CONST [:=] isMutable : BOOLEAN;
 CONST [DESCENDING] isOrdered : BOOLEAN;
 (* whether an ADT implements descending order for loop iteration *)
 
+CONST [TLIMIT] capacityLimit : LONGCARD;
+(* the capacity limit of a collection ADT *)
+	
 CONST [TSIGNED] isSigned : BOOLEAN;
 (* whether a numeric scalar ADT is signed or unsigned *)
 
@@ -247,5 +250,5 @@ PROCEDURE [TMIN] (* TO DO *)
 
 PROCEDURE [TMAX] (* TO DO *)
 
-	
+
 END BINDINGS.
