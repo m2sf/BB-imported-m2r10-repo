@@ -24,11 +24,11 @@ CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
    of a numeric scalar ADT. *)
 
 CONST [TMINEXP] eMin : [-64..0] OF INTEGER;
-(* the number of digits of the smallest encodable exponent
+(* the value of the smallest encodable exponent
    of a numeric scalar ADT, zero for whole number types *)
 
 CONST [TMAXEXP] eMax : [0..63] OF CARDINAL;
-(* the number of digits of the largest encodable exponent
+(* the value of the largest encodable exponent
    of a numeric scalar ADT, zero for whole number types *)
 
 
