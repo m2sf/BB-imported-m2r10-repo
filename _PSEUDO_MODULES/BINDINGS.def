@@ -60,7 +60,7 @@ PROCEDURE [RELEASE] release ( a : <ADT> );
     dynamically allocatable ADTs only
    Semantics:
     cancels a pending retain of the operand,
-	deallocates the operand if there are no pending retains *)
+    deallocates the operand if there are no pending retains *)
 
 PROCEDURE [CONCAT] concat
  ( VAR target : <StringADT>; source : ARGLIST OF <StringADT> );
@@ -68,7 +68,7 @@ PROCEDURE [CONCAT] concat
     string ADTs only
    Semantics:
     concatenates all source strings from left to right,
-	and returns the resulting string in target *)
+    and returns the resulting string in target *)
 
 PROCEDURE [..] copySlice
   ( VAR target : <StringADT>; tgtStartIndex, tgtEndIndex : INTEGER;
@@ -81,7 +81,7 @@ PROCEDURE [STORE] storeValue
     mutable indexed collection ADTs, including string ADTs
    Semantics:
     stores value at index in an indexed collection,
-	replacing any previous value *)
+    replacing any previous value *)
 
 PROCEDURE [STORE] storeValues
   ( VAR a : <SetADT>; values : ARGLIST OF <ElementType> );
@@ -127,7 +127,7 @@ PROCEDURE [INSERT] insertArray
     mutable dynamically allocatable indexed collection ADTs only
    Semantics:
     inserts a source array into a target array,
-	starting at index *)
+    starting at index *)
 
 PROCEDURE [REMOVE] removeCharsAtIndex
   ( a : <StringADT>; index : INTEGER; n : POSINT );
@@ -163,8 +163,8 @@ PROCEDURE [FOR] forIterator
     ordinal ADTs and collection ADTs
    Semantics:
     iterate over all values of the ADT,
-	executing forLoopBody for each value,
-	in ascending order if ascending is TRUE, else descending *)
+    executing forLoopBody for each value,
+    in ascending order if ascending is TRUE, else descending *)
 
 PROCEDURE [READ] (* TO DO *)
 
