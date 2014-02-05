@@ -46,8 +46,8 @@ PROCEDURE [NEW] new
     dynamically allocatable ADTs only
    Semantics:
     allocates a new variable of the ADT,
-	initialises it with zero or more values of its value type,
-	and returns it in the operand which must be NIL upon entry *)
+    initialises it with zero or more values of its value type,
+    and returns it in the operand which must be NIL upon entry *)
 
 PROCEDURE [RETAIN] retain ( a : <ADT> );
 (* Validity:
