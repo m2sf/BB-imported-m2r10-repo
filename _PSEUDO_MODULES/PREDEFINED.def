@@ -1,6 +1,6 @@
 (* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* DOCUMENTATION *) MODULE PREDEFINED;
+(* DOCUMENTATION *) DEFINITION MODULE PREDEFINED;
 
 (* Pseudo Module to Document Predefined Constants, Types and Macros *)
 
@@ -53,9 +53,23 @@ TYPE LONGREAL = <implementation or target dependent real number range>;
 
 (* Predefined proper procedures *)
 
-PROCEDURE NEW ( VAR p : <AnyPointerType>; (*OPTIONAL*) n : <UnsignedType> );
-(* NEW(p) => ALLOCATE(p, TSIZE(p^))
-   NEW(p, n) => ALLOCATE(p, TSIZE(p) + n * TSIZE(p.variableComponent)) *)
+PROCEDURE NEW (* default signature *)
+  ( VAR p : <PointerType> );
+(* NEW(p) => ALLOCATE(p, TSIZE(PointerType));
+
+PROCEDURE NEW (* indeterminate record use *)
+( VAR p : <PointerToIndeterminateRecord>; n : <UnsignedType> );
+(* NEW(p, n)
+   => ALLOCATE(p, TSIZE(typeOf(p)) +
+      n * TSIZE(p.variableComponent)) *)
+
+PROCEDURE NEW (* ADT bound signature variant 1 *)
+  ( VAR a : <ADT> );
+(* NEW(a) => typeOf(a).new(a) *)
+
+PROCEDURE NEW (* ADT bound signature variant 2 *)
+  ( VAR a : <ADT>; initWith : <literalValueOrValueList> );
+(* NEW(a, v1, v2, v3, ...) => typeOf(a).new(a, v1, v2, v3, ...) *)
 
 PROCEDURE RETAIN ( VAR p : <RefCountedADT> );
 (* RETAIN(p) => typeOf(p).retain(p) *)
@@ -63,17 +77,30 @@ PROCEDURE RETAIN ( VAR p : <RefCountedADT> );
 PROCEDURE RELEASE ( VAR p : <RefCountedADT> );
 (* RELEASE(p) => typeOf(p).release(p) *)
 
-PROCEDURE COPY ( source : <T>; VAR target : <T> );
-(* COPY(s, t) => typeOf(s).copy(s, t) *)
-
-PROCEDURE STORE ( VAR c : <Collection>; s : <SelectorType>; v : <ValueType> );
+PROCEDURE STORE
+  ( VAR c : <Collection>; s : <SelectorType>; v : <ValueType> );
 (* STORE(c, s, v) => typeOf(c).addValueForKey(c, s, v) *)
+
+PROCEDURE INSERT (* signature variant 1 *)
+  ( VAR target : <IndexedCollection>; i : <IndexType>;
+    source : <IndexedCollection> );
+(* STORE(target, i, source)
+   => insert source into target, starting at index i. *)
+
+PROCEDURE INSERT (* signature variant 2 *)
+  ( VAR target : <Collection>; i : <IndexType>;
+   values : ARGLIST OF ValueType );
+(* STORE(target, i, v1, v2, v3, ...)
+   => insert v1, v2, v3, ... into target, statring at index i. *)
+
 
 PROCEDURE REMOVE ( VAR c : <Collection>; s : <SelectorType> );
 (* REMOVE(c, s) => typeOf(c).removeValueForKey(c, s) *)
 
-PROCEDURE CONCAT ( VAR target : <StringType>; source : ARGLIST OF <StringType> );
-(* CONCAT(t, s1, s2, s3, ...) => typeOf(t).concat(t, s1, s2, s3, ...) *)
+PROCEDURE CONCAT
+  ( VAR target : <StringType>; source : ARGLIST OF <StringType> );
+(* CONCAT(t, s1, s2, s3, ...)
+   => concatenate s1, s2, s3, ... and return result string in t. *)
 
 PROCEDURE READ ( f : File; VAR v : <AnyType> );
 (* READ(f, v) => typeOf(v).Read(f, v) *)
@@ -81,8 +108,10 @@ PROCEDURE READ ( f : File; VAR v : <AnyType> );
 PROCEDURE WRITE ( f : File; v : <AnyType> );
 (* WRITE(f, v) => typeOf(v).Write(f, v) *)
 
-PROCEDURE WRITEF ( f : File; fmt : ARRAY OF CHAR; v : VARIADIC OF <AnyType> );
-(* WRITEF(f, fmt, v1, v2, ...) => typeOf(v).WriteF(f, fmt, v1, v2, ...) *)
+PROCEDURE WRITEF
+  ( f : File; fmt : ARRAY OF CHAR; v : ARGLIST OF <AnyType> );
+(* WRITEF(f, fmt, v1, v2, ...)
+   => typeOf(v).WriteF(f, fmt, v1, v2, ...) *)
 
 
 (* Predefined function procedures *)
@@ -118,13 +147,15 @@ PROCEDURE SUBSET ( a, b : <SetOrCollectionType> ) : BOOLEAN ;
 PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD;
 (* Returns number of items stored in c *)
 
-PROCEDURE LENGTH ( CONST s : <CharacterArrayOrStringADT> ) : LONGCARD;
-(* Returns length of character string in s *)
+PROCEDURE LENGTH
+  ( CONST s : <CharacterArrayOrStringADT> ) : [0..TMAX(INTEGER)] OF INTEGER;
+(* Returns the length of character string s. *)
 
 PROCEDURE PTR ( variable : <AnyType>; T : <TypeIdentifier> ) : <T> ;
 (* Returns a pointer of type T, pointing to variable *)
 
-PROCEDURE RETRIEVE ( c : <CollectionType>; s : <ComponentType> ) : <ReturnType>;
+PROCEDURE RETRIEVE
+  ( c : <CollectionType>; s : <ComponentType> ) : <ReturnType>;
 (* RETRIEVE(c, s) => typeOf(c, s) *)
 
 PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T>;
