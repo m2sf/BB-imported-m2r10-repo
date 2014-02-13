@@ -2,24 +2,24 @@ Modula-2 Revision 2010
 
 * M2 R10 Repository *
 
-Welcome to the  development repository of Modula-2 Revision 2010, its language
-report, reference compiler and standard library.
+Welcome to the design and development repository of Modula-2 Revision 2010,
+its language report, reference compiler and standard library.
 
 Quick links:
+
+o  Technical Specification
+
+https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.2014-01-31.tracked.pdf
 
 o  Source Tree
 
 https://bitbucket.org/trijezdci/m2r10/src
 
-o  Specification
-
-https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.Specification.Snapshot.pdf
-
 o  Library Definition Modules
 
 https://bitbucket.org/trijezdci/m2r10/src/tip/_STANDARD_LIBRARY
 
-o  Change Log
+o  Summary of Changes
 
 https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.Changes.Info.txt
 
@@ -71,9 +71,9 @@ This project is a  *private*  and  *self-funded*  effort by the authors who are
 doing this work in their own *spare* *time*.  Further, the authors believe that
 quality design  and proper specification are prerequisites for a quality imple-
 mentation and cannot be rushed.  The finalisation  of the  manuscripts  for the
-book will currently estimated for January 2014, will allow shifting of focus to
+book - currently estimated for end of Q1/2014 - will allow shifting of focus to
 the implementation,  but there is  no fixed schedule  for the completion of the
 project.  It will take as long as it takes.
 
 
-(status: Dec 24, 2013)
+(status: Jan 31, 2014)
