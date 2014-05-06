@@ -8,7 +8,7 @@ BLUEPRINT IntervalType;
 (* ADTs must be opaque records,
    structured literals are assignable *)
 
-TYPE = OPAQUE RECORD := { VARIADIC OF INTEGER };
+TYPE = OPAQUE RECORD := { ARGLIST OF INTEGER };
 
 
 (* Bindings required for Interval ADTs *)
@@ -21,7 +21,7 @@ CONST [TMAX]; (* require binding to TMAX function *)
 (* require binding to assignment symbol *)
 
 PROCEDURE [:=] assign ( literal : INTEGER;
-                 CONST interval : VARIADIC OF INTEGER );
+                 CONST interval : ARGLIST OF INTEGER );
 
 (* require binding to plus operator *)
 

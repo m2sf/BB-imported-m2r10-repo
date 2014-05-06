@@ -471,7 +471,7 @@ PROCEDURE [WRITE] Write ( file : File; array : ##ADT## );
 
 PROCEDURE [WRITEF] WriteF
   ( file : File; fmtStr : ARRAY OF CHAR;
-    items : VARIADIC OF ##ADT## );
+    items : ARGLIST OF ##ADT## );
 
 
 END ##IOLibrary##.

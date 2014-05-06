@@ -10,7 +10,7 @@ REFERENTIAL KeyType, ValueType, ProcType, File;
 (* Dictionary ADTs must be opaque,
    variadic structured literals with key/value pairs are compatible *)
 
-MODULE TYPE = OPAQUE := { VARIADIC OF { KeyType, ValueType } };
+MODULE TYPE = OPAQUE := { ARGLIST OF { KeyType, ValueType } };
 
 
 (* Bindings required for dictionary ADTs *)
@@ -70,7 +70,7 @@ PROCEDURE [COPY] copy ( sourceDict, targetDict : ProtoDictionary );
 
 PROCEDURE [STORE] storeEntries
   ( VAR dict : ProtoDictionary;
-    keyValueList : VARIADIC OF { key : KeyType; value : ValueType } );
+    keyValueList : ARGLIST OF { key : KeyType; value : ValueType } );
 (* Procedure to store or replace zero or more entries in a dictionary. *)
 
 (* An invocation of STORE(dict, key1, value1, key2, value2 ...) is transformed
@@ -80,7 +80,7 @@ PROCEDURE [STORE] storeEntries
 
 PROCEDURE [REMOVE] removeEntries
   ( VAR dict : ProtoDictionary;
-    keyList : VARIADIC OF KeyType );
+    keyList : ARGLIST OF KeyType );
 (* Procedure to remove one or more entries from a dictionary. *)
 
 (* An invocation of REMOVE(dict, key1, key2, key3 ...) is transformed
@@ -167,33 +167,6 @@ PROCEDURE [SUBSET] isSubset ( dict1, dict2 : ProtoDictionary ) : BOOLEAN;
    to (COUNT(dict1) < COUNT(dict1)) AND ADT.isSubset(dict1, dict2) for
    operands of the ADT type. *)
    
-
-(* IO operations *)
-
-PROCEDURE [READ] Read ( infile : File; VAR dict : ProtoDictionary );
-(* Procedure to read a value from a file into a dictionary. *)
-
-(* An invocation of READ(file, dict) is transformed at compile time
-   to ADT.Read(file, dict) for second operands of the ADT type. *)
-
-
-PROCEDURE [WRITE] Write ( outfile : File; dict : ProtoDictionary );
-(* Procedure to write a dictionary to a file. *)
-
-(* An invocation of WRITE(file, dict) is transformed at compile time
-   to ADT.Write(file, dict) for second operands of the ADT type. *)
-
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF ProtoDictionary );
-(* Procedure to write one or more dictionaries formatted into a file. *)
-
-(* An invocation of WRITEF(file, fmt, dict1, dict2, dict3, ...) is transformed
-   at compile time to ADT.WriteF(file, fmt, dict1, dict2, dict3, ...) for
-   third operands and any following operands of the ADT type. *)
-
 
 (* Introspection *)
 

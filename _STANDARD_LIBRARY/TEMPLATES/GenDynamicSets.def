@@ -405,7 +405,7 @@ PROCEDURE [COPY] copy ( source, target : ##ADT## );
 
 PROCEDURE [STORE] storeEntries
   ( VAR dynamicSet : ##ADT##;
-    valueList : VARIADIC OF ##ValueType## );
+    valueList : ARGLIST OF ##ValueType## );
 
 
 (* ---------------------------------------------------------------------------
@@ -445,7 +445,7 @@ PROCEDURE [STORE] storeEntries
 
 PROCEDURE [REMOVE] removeEntries
   ( VAR dynamicSet : ##ADT##;
-    valueList : VARIADIC OF ##ValueType## );
+    valueList : ARGLIST OF ##ValueType## );
 
 
 (* ---------------------------------------------------------------------------
@@ -859,7 +859,7 @@ PROCEDURE [WRITE] Write ( file : File; dynamicSet : ##ADT## );
 
 PROCEDURE [WRITEF] WriteF
   ( file : File; fmtStr : ARRAY OF CHAR;
-    items : VARIADIC OF ##ADT## );
+    items : ARGLIST OF ##ADT## );
 
 
 END ##IOLibrary##.

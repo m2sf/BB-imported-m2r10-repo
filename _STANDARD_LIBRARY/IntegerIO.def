@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INTEGER;
+DEFINITION MODULE IntegerIO [ProtoIO] FOR INTEGER;
 
 (* I/O Module for Type INTEGER *)
 
@@ -32,16 +32,39 @@ PROCEDURE Read ( infile : File; VAR n : INTEGER );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an INTEGER argument.*)
 
-PROCEDURE Write ( outfile : File; n : INTEGER );
+PROCEDURE Write ( outfile : File; CONST n : INTEGER );
 (* Writes the value of INTEGER n in simple format to stream outfile. This pro-
    cedure is substituted for invocations of WRITE with an INTEGER argument. *)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF INTEGER );
+                   items        : ARGLIST OF CONST INTEGER );
 (* Writes a formatted textual representation of one or more INTEGER values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    INTEGER arguments. *)
 
-END INTEGER.
+      (* for arrays of the type *)
+
+PROCEDURE ReadArray ( f : File; VAR value : ARRAY OF INTEGER );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ INTEGER values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF INTEGER argument.*)
+
+
+PROCEDURE WriteArray ( f : File; CONST value : ARRAY OF INTEGER );
+(* Calls Write repeatedly to write an array  of INTEGERin simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF INTEGER argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF INTEGER );
+(* Writes a formatted textual representation of one or more ARRAY OF INTEGER values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF INTEGER arguments. *)
+
+END IntegerIO.

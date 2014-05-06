@@ -1,0 +1,53 @@
+(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CharIO [ProtoIO] FOR CHAR;
+
+(* I/O Module for Type CHAR *) 
+
+FROM FileIO IMPORT File;
+
+PROCEDURE [READ] Read ( infile : File; VAR ch : CHAR );
+(* Reads a CHAR value from stream infile
+   - any leading whitespace is skipped
+   - the character being read is removed from infile
+   - the code point of the character value read is assigned to ch
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with a CHAR argument. *)
+
+PROCEDURE [WRITE] Write ( outfile : File; CONST ch : CHAR );
+(* Writes the textual representation of CHAR ch to stream outfile. This
+   procedure is substituted for invocations of WRITE with a CHAR argument.*)
+
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST CHAR );
+(* Writes a formatted textual representation of one or more CHAR values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   CHAR arguments. *)
+
+PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF CHAR );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ CHAR values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF CHAR argument.*)
+
+
+PROCEDURE [WRITE] WriteArray ( outfile : File; CONST value : ARRAY OF CHAR );
+(* Calls Write repeatedly to write an array  of CHARin simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF CHAR argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF CHAR );
+
+(* Writes a formatted textual representation of one or more ARRAY OF CHAR values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF CHAR arguments. *)
+
+END CharIO.

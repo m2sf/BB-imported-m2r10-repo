@@ -12,26 +12,30 @@ MODULE TYPE = NIL;
 
 (* for single items of the type *)
 
-PROCEDURE [READ] Read ( f : File; VAR value : ProtoRoot );
+PROCEDURE [READ] Read ( infile : File; VAR value : ProtoRoot );
 (* Required binding to macro READ for values of the target type *)
 
-PROCEDURE [WRITE] Write ( f : File; value : ProtoRoot );
+PROCEDURE [WRITE] Write ( outfile : File; CONST value : ProtoRoot );
 (* Required binding to macro WRITE for values of the target type *)
 
 PROCEDURE [WRITEF] WriteF
-  ( f : File; fmt : ARRAY OF CHAR; values : ARGLIST OF ProtoRoot );
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ProtoRoot );
 (* Required binding to macro WRITEF for values of the target type *)
 
 (* for arrays of the type *)
 
-PROCEDURE [READ] Read ( f : File; VAR value : ARRAY OF ProtoRoot );
+PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF ProtoRoot );
 (* Required binding to macro READ for arrays of the target type *)
 
-PROCEDURE [WRITE] Write ( f : File; value : ARRAY OF ProtoRoot );
+PROCEDURE [WRITE] WriteArray ( outfile : File; CONST value : ARRAY OF ProtoRoot );
 (* Required binding to macro WRITE for arrays of the target type *)
 
-PROCEDURE [WRITEF] WriteF
-  ( f : File; fmt : ARRAY OF CHAR; values : ARGLIST OF ARRAY OF ProtoRoot );
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF ProtoRoot );
 (* Required binding to macro WRITEF for arrays of the target type *)
 
 END ProtoIO.

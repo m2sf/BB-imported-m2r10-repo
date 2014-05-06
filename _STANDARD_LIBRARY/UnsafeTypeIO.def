@@ -1,0 +1,16 @@
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE UnsafeTypeIO;
+
+(* Aggregator Module for I/O Operations of unsafe Types *)
+
+IMPORT ByteIO+;
+(* Imports IO modules for unsafe type UNSAFE.BYTE into the importing module. *)
+
+IMPORT WordIO+;
+(* Imports IO modules for unsafe type UNSAFE.WORD into the importing module. *)
+
+IMPORT AddressIO+;
+(* Imports IO modules for unsafe type UNSAFE.ADDRESS into the importing module. *)
+
+END UnsafeTypeIO.

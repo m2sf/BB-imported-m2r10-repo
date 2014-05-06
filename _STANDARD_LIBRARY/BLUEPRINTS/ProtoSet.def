@@ -9,7 +9,7 @@ REFERENTIAL ElementType, ProcType;
 (* Dynamic Set ADTs must be opaque,
    structured literals with a list of elements are compatible *)
 
-MODULE TYPE = OPAQUE := { VARIADIC OF ElementType };
+MODULE TYPE = OPAQUE := { ARGLIST OF ElementType };
 
 
 (* Bindings required for dynamic set ADTs *)
@@ -68,7 +68,7 @@ PROCEDURE [COPY] copy ( sourceSet : ProtoSet; VAR target : ProtoSet );
 (* Storage, Removal, Retrieval and Inspection of Contents *)
 
 PROCEDURE [STORE] storeElements
-  ( VAR set : ProtoSet; valueList : VARIADIC OF ElementType );
+  ( VAR set : ProtoSet; valueList : ARGLIST OF ElementType );
 (* Procedure to store zero or more elements in a set. *)
 
 (* An invocation of STORE(set, elem1, elem2, elem3 ...) is transformed
@@ -77,7 +77,7 @@ PROCEDURE [STORE] storeElements
 
 
 PROCEDURE [REMOVE] removeElements
-  ( VAR set : ProtoSet; valueList : VARIADIC OF ElementType );
+  ( VAR set : ProtoSet; valueList : ARGLIST OF ElementType );
 (* Procedure to remove one or more elements from a set. *)
 
 (* An invocation of REMOVE(set, elem1, elem2, elem3 ...) is transformed
@@ -197,33 +197,6 @@ PROCEDURE [SUBSET] isSubset ( set1, set2 : ProtoSet ) : BOOLEAN;
    to (COUNT(set1) < COUNT(set2)) AND ADT.isSubset(set1, set2) for
    operands of the set ADT type. *)
    
-
-(* IO operations *)
-
-PROCEDURE [READ] Read ( infile : File; VAR set : ProtoSet );
-(* Procedure to read a value from a file into a set. *)
-
-(* A statement of the form READ(file, set) is transformed at compile time
-   to ADT.Read(file, set) for second operands of the ADT type. *)
-
-
-PROCEDURE [READ] Write ( outfile : File; set : ProtoSet );
-(* Procedure to write a set ADT value to a file. *)
-
-(* A statement of the form WRITE(file, set) is transformed at compile time
-   to ADT.Write(file, set) for second operands of the ADT type. *)
-
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF ProtoSet );
-(* Procedure to write one or more sets formatted into a file. *)
-
-(* A statement of the form WRITEF(file, fmt, set1, set2, set3, ...) is trans-
-   formed at compile time to ADT.WriteF(file, fmt, set1, set2, set3, ...) for
-   third operands and any following operands of the ADT type. *)
-
 
 (* Introspection *)
 

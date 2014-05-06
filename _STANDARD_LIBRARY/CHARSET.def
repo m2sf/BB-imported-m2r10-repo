@@ -50,14 +50,14 @@ PROCEDURE [::] toBS128 ( CONST charSet : CHARSET ) : BS128;
 (* Storage, Removal, Retrieval and Inspection of Contents *)
 
 PROCEDURE [STORE] storeElements
-  ( VAR charSet : CHARSET; valueList : VARIADIC OF CHAR );
+  ( VAR charSet : CHARSET; valueList : ARGLIST OF CHAR );
 (* Stores the elements given by valueList in CHARSET variable charSet.
    This procedure is bound to pervasive procedure STORE for first
    operands of type CHARSET. *)
 
 
 PROCEDURE [REMOVE] removeElements
-  ( VAR charSet : CHARSET; valueList : VARIADIC OF CHAR );
+  ( VAR charSet : CHARSET; valueList : ARGLIST OF CHAR );
 (* Removes the elements given by valueList from CHARSET variable charSet. Re-
    moves all elements if no values are passed in valueList. This procedure is
    bound to pervasive procedure REMOVE for first operands of type CHARSET. *)
@@ -124,53 +124,6 @@ PROCEDURE [SUBSET] isSubset ( CONST charSet1, charSet2 : CHARSET ) : BOOLEAN;
 (* Returns TRUE if CHARSET charSet1 is a subset of charSet2, otherwise FALSE.
    This function is used to synthesise bindings to the operators >, >=, < and
    <= for operands of type CHARSET. *)
-
-
-(* IO operations *)
-
-(* EBNF of the textual representation of CHARSET values:
-    charsetValue : simpleFormat | quotedCharFormat | mixedFormat ;
-    simpleFormat : "{" ( codePoint  ( "," codePoint )* )? "}" ; 
-    mnemonicFormat : "{" ( quotedChar ( "," quotedChar )* )? "}" ;
-    mixedFormat : "{" ( codeOrChar ( "," codeOrChar )* )? "}" ;
-    codePoint : "0u" base16Digit base16Digit ;
-    quotedChar : mnemonic | '"' character '"' ;
-    codeOrChar : codePoint | '"' character '"' ;
-    mnemonic : "NUL" | "SOH" | "STX" | "ETX" | "EOT" | "ENQ" | "ACK" |
-        "BEL" | "BS" | "HT" | "LF" | "VT" | "FF" | "CR" | "SO" | "SI" |
-        "DLE" | "DC1" | "DC2" | "DC3" | "DC4" | "NAK" | "SYN" | "ETB" |
-        "CAN" | "EM" | "SUB" | "ESC" | "FS" | "GS" | "RS" | "US" | "DEL" ;
-    character : digit | letter |
-        " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" |
-        "," | "-" | "." | "/" | ":" | ";" | "<" | "=" | ">" | "?" |
-        "@" | "[" | "]" | "^" | "_" | "`" | "{" | "|" | "}" | "~" ;
-    digit : "0" .. "9" ;
-    letter : "A" .. "Z" | "a" .. "z" ;
-    base16Digit : "0" .. "9" | "A" .. "F" ; *)
-
-PROCEDURE [READ] Read ( infile : File; VAR charSet : CHARSET );
-(* Reads the textual representation of CHARSET value charSet from infile
-   - any leading whitespace is skipped
-   - any remaining characters that are part of the value being read are
-     removed from infile
-   - the textual representation of the value read is assigned to set
-   - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with a CHARSET argument.*)
-
-PROCEDURE [WRITE] Write ( outfile : File; CONST charSet : CHARSET );
-(* Writes the value of CHARSET charSet in simple format to stream outfile. This
-   procedure is substituted for invocations of WRITE with a CHARSET argument.*)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF CONST CHARSET );
-(* Writes a formatted textual representation of one or more CHARSET values to
-   output stream outfile. The output format is determined by fmtStr. This
-   procedure is substituted for invocations of WRITEF with one or more
-   CHARSET arguments. *)
-
 
 (* Introspection *)
 

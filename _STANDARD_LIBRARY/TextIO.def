@@ -25,7 +25,7 @@ PROCEDURE SkipLine ( file : File );
 
 (* Write a line of text *)
 
-PROCEDURE WriteLine ( file : File; str : VARIADIC OF ARRAY OF CHAR );
+PROCEDURE WriteLine ( file : File; str : ARGLIST OF ARRAY OF CHAR );
 (* Writes a sequence of character strings as a line to <file>. The line is
    terminated by newline. *)
 

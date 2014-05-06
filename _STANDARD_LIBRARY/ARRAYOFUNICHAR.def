@@ -11,7 +11,7 @@ PROCEDURE [INSERT] InsertChars
    the capacity of string, runtime fault StringCapacityExceeded is raised. *)
 
 PROCEDURE [CONCAT] Concat
-  ( VAR result : ARRAY OF UNICHAR; items  : VARIADIC OF ARRAY OF UNICHAR );
+  ( VAR result : ARRAY OF UNICHAR; items  : ARGLIST OF ARRAY OF UNICHAR );
 (* Concatenates  two or more ARRAY OF UNICHAR values  passed in for items  in
    the order they appear in the argument list  and passes back  the resulting
    ARRAY OF UNICHAR in result.  If  only a single argument  is passed in  for

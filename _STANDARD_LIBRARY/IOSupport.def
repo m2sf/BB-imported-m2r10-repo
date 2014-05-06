@@ -4,34 +4,34 @@ DEFINITION MODULE IOSupport;
 
 (* Aggregator Module for I/O Operations of Predefined Types *)
 
-IMPORT BooleanIO+, BooleanArrayIO+;
+IMPORT BooleanIO+;
 (* Imports IO modules for predefined type BOOLEAN into the importing module. *)
 
-IMPORT CharIO+, CharArrayIO+;
+IMPORT CharIO+;
 (* Imports IO modules for predefined type CHAR into the importing module. *)
 
-IMPORT UnicharIO+, UnicharArrayIO+;
+IMPORT UnicharIO+;
 (* Imports IO modules for predefined type UNICHAR into the importing module. *)
 
-IMPORT OctetIO+, OctetArrayIO+;
+IMPORT OctetIO+;
 (* Imports IO modules for predefined type OCTET into the importing module. *)
 
-IMPORT CardinalIO+, CardinalArrayIO+;
+IMPORT CardinalIO+;
 (* Imports IO modules for predefined type CARDINAL into the importing module. *)
 
-IMPORT LongCardIO+, LongCardArrayIO+;
+IMPORT LongCardIO+;
 (* Imports IO modules for predefined type LONGCARD into the importing module. *)
 
-IMPORT IntegerIO+, IntegerArrayIO+;
+IMPORT IntegerIO+;
 (* Imports IO modules for predefined type INTEGER into the importing module. *)
 
-IMPORT LongIntIO+, LongIntArrayIO+;
+IMPORT LongIntIO+;
 (* Imports IO modules for predefined type LONGINT into the importing module. *)
 
-IMPORT RealIO+, RealArrayIO+;
+IMPORT RealIO+;
 (* Imports IO modules for predefined type REAL into the importing module. *)
 
-IMPORT LongRealIO+, LongRealArrayIO+;
+IMPORT LongRealIO+;
 (* Imports IO modules for pervasive type LONGREAL into the importing module. *)
 
 END IOSupport.

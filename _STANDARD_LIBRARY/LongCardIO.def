@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGCARD;
+DEFINITION MODULE LongCardIO [ProtoIO] FOR LONGCARD;
 
 (* I/O Module for Type LONGCARD *)
 
@@ -32,16 +32,39 @@ PROCEDURE Read ( infile : File; VAR n : LONGCARD );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a LONGCARD argument.*)
 
-PROCEDURE Write ( outfile : File; n : LONGCARD );
+PROCEDURE Write ( outfile : File; CONST n : LONGCARD );
 (* Writes the value of LONGCARD n in simple format to stream outfile. This
    procedure is substituted for invocations of WRITE with a LONGCARD argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF LONGCARD );
+                   items        : ARGLIST OF CONST LONGCARD );
 (* Writes a formatted textual representation of one or more LONGCARD values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    LONGCARD arguments. *)
 
-END LONGCARD.
+      (* for arrays of the type *)
+
+PROCEDURE ReadArray ( infile : File; VAR value : ARRAY OF LONGCARD );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ LONGCARD values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF LONGCARD argument.*)
+
+
+PROCEDURE WriteArray ( outfile : File; CONST value : ARRAY OF LONGCARD );
+(* Calls Write repeatedly to write an array  of LONGCARD simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF LONGCARD argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF LONGCARD );
+(* Writes a formatted textual representation of one or more ARRAY OF LONGCARD values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF LONGCARD arguments. *)
+
+END LongCardIO.

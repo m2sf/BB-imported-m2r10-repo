@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARDINAL;
+DEFINITION MODULE CardinalIO [ProtoIO] FOR CARDINAL;
 
 (* I/O Module for Type CARDINAL *)
 
@@ -32,16 +32,38 @@ PROCEDURE Read ( infile : File; VAR n : CARDINAL );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a CARDINAL argument.*)
 
-PROCEDURE Write ( outfile : File; n : CARDINAL );
+PROCEDURE Write ( outfile : File; CONST n : CARDINAL );
 (* Writes the value of CARDINAL n in simple format to stream outfile. This
    procedure is substituted for invocations of WRITE with a CARDINAL argument.*)
 
 PROCEDURE WriteF ( outfile      : File;
                    CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF CARDINAL );
+                   items        : ARGLIST OF CONST CARDINAL );
 (* Writes a formatted textual representation of one or more CARDINAL values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    CARDINAL arguments. *)
 
-END CARDINAL.
+   (* for arrays of the type *)
+
+PROCEDURE ReadArray ( f : File; VAR value : ARRAY OF CARDINAL );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ CARDINAL values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF CARDINAL argument.*)
+
+PROCEDURE WriteArray ( f : File; CONST value : ARRAY OF CARDINAL );
+(* Calls Write repeatedly to write an array  of CARDINALin simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF CARDINAL argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF CARDINAL );
+(* Writes a formatted textual representation of one or more ARRAY OF CARDINAL values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF CARDINAL arguments. *)
+
+END CardinalIO.

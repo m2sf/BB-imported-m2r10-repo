@@ -1,0 +1,55 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LongBcdIO [ProtoIO] FOR LONGBCD;
+
+(* I/O Module for Type LONGBCD *)
+
+FROM FileIO IMPORT File;
+
+PROCEDURE [READ] Read( infile : File; VAR n : LONGBCD );
+(* Reads the textual representation of a LONGBCD value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the numeral being read are
+     removed from infile
+   - the numeric value of the numeral string read is assigned to the variable
+     passed in for n
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with a LONGBCD argument. *)
+
+PROCEDURE [WRITE] Write( outfile : File; CONST n : LONGBCD );
+(* Writes the textual representation of value n to stream outfile. This
+   procedure is substituted for invocations of WRITE with a LONGBCD argument.*)
+
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST LONGBCD );
+(* Writes a formatted textual representation of one or more BYTE values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   LONGBCD arguments. *)
+
+PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF LONGBCD );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ LONGBCD values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF LONGBCD argument.*)
+
+
+PROCEDURE [WRITE] WriteArray ( outfile : File; CONST value : ARRAY OF LONGBCD );
+(* Calls Write repeatedly to write an array  of LONGBCDin simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF LONGBCD argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF LONGBCD );
+
+(* Writes a formatted textual representation of one or more ARRAY OF LONGBCD values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF LONGBCD arguments. *)
+
+END LongBcdIO.

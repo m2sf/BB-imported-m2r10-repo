@@ -116,33 +116,4 @@ PROCEDURE [>] isGreater ( s1, s2 : UNISTRING ) : BOOLEAN;
 (* Returns TRUE if s1 comes lexically after s2, otherwise FALSE.
    This function is bound to operators > and <= for type UNISTRING. *)
 
-
-(* IO procedures *)
-
-PROCEDURE [READ] Read ( infile : File; s : UNISTRING );
-(* Reads the textual representation of a UNISTRING value from stream infile
-   - any leading whitespace is skipped
-   - any remaining characters that are part of the string being read are
-     removed from infile
-   - the textual representation of the string read is assigned to the variable
-     passed in for s
-   - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-     procedure is substituted for invocations of READ with a UNISTRING
-     argument. *)
-
-PROCEDURE [WRITE] Write ( outfile : File; s : UNISTRING );
-(* Writes the textual representation of UNISTRING s to stream outfile. This
-   procedure is substituted for invocations of WRITE with a UNISTRING
-   argument.*)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF UNISTRING );
-(* Writes a formatted textual representation of one or more UNISTRING values
-   to output stream outfile. The output format is determined by fmtStr. This
-   procedure is substituted for invocations of WRITEF with one or more
-   UNISTRING arguments. *)
-
 END UNISTRING.

@@ -1,0 +1,70 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Int64IO [ProtoIO] FOR INT64;
+
+(* I/O Module for Type INT64 *)
+
+FROM FileIO IMPORT File;
+
+(* EBNF of the textual representation of INT64 values:
+    cardinalValue : simpleFormat |
+        cBase16Format | m2Base16Format | universalFormat ;
+    simpleFormat : decimalDigit+ ;
+    cBase16Format : "0x" base16Digit+ ;
+    m2Base16Format : "0" base16Digit+ "H" ;
+    universalFormat :  sign? fillChar* numeral ;
+    sign : "+" | "-" ;
+    fillChar : " " | "*" | "0" ;
+    numeral : leadDigitGroup ( separator? digitGroup )* ;
+    separator : " " | "." | "," ;
+    leadDigitGroup : decimalDigit decimalDigit? decimalDigit? ;
+    digitGroup : decimalDigit decimalDigit decimalDigit ;
+    decimalDigit  : "0" .. "9" ;
+    base16Digit : decimalDigit | "A" .. "F" ; *)
+
+PROCEDURE [READ] Read ( infile : File; VAR n : INT64 );
+(* Reads the textual representation of an INT64 value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the value being read are
+     removed from infile
+   - the textual representation of the value read is assigned to n
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an INT64 argument.*)
+
+PROCEDURE [WRITE] Write ( outfile : File; CONST n : INT64 );
+(* Writes the value of INT64 n in simple format to stream outfile. This pro-
+   cedure is substituted for invocations of WRITE with an INT64 argument. *)
+
+PROCEDURE [WRITEF] WriteF ( outfile      : File;
+                   CONST fmtStr : ARRAY OF CHAR;
+                   items        : ARGLIST OF CONST INT64 );
+(* Writes a formatted textual representation of one or more INT64 values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   INT64 arguments. *)
+
+      (* for arrays of the type *)
+
+PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF INT64 );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ INT64 values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF INT64 argument.*)
+
+
+PROCEDURE [WRITE] WriteArray ( outfile : File; CONST value : ARRAY OF INT64 );
+(* Calls Write repeatedly to write an array  of INT64in simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF INT64 argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF INT64 );
+(* Writes a formatted textual representation of one or more ARRAY OF INT64 values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF INT64 arguments. *)
+
+END Int64IO.

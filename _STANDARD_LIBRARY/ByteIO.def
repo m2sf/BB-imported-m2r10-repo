@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BYTE;
+DEFINITION MODULE ByteIO [ProtoIO] FOR BYTE;
 
 (* I/O Module for Type BYTE *)
 
@@ -27,17 +27,39 @@ PROCEDURE [READ] Read ( infile : File; VAR b : BYTE );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a BYTE argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : File; b : BYTE );
+PROCEDURE [WRITE] Write ( outfile : File; CONST b : BYTE );
 (* Writes the value of BYTE b in simple format to stream outfile. This
    procedure is substituted for invocations of WRITE with a BYTE argument.*)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF BYTE );
+    items        : ARGLIST OF CONST BYTE );
 (* Writes a formatted textual representation of one or more BYTE values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    BYTE arguments. *)
+   
+PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF BYTE );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ BYTE values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF BYTE argument.*)
 
-END BYTE.
+
+PROCEDURE [WRITE] WriteArray ( outfile : File; CONST value : ARRAY OF BYTE );
+(* Calls Write repeatedly to write an array  of BYTEin simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF BYTE argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF BYTE );
+
+(* Writes a formatted textual representation of one or more ARRAY OF BYTE values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF BYTE arguments. *)
+
+END ByteIO.

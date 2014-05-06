@@ -9,7 +9,7 @@ REFERENTIAL IndexType, ValueType, ProcType;
 (* Array ADTs must be opaque,
    array literals are compatible *)
 
-MODULE TYPE = OPAQUE := { VARIADIC OF ValueType };
+MODULE TYPE = OPAQUE := { ARGLIST OF ValueType };
 
 
 (* Bindings required for Array ADTs *)

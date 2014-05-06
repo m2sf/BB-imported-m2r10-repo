@@ -1,6 +1,6 @@
 (* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BOOLEAN;
+DEFINITION MODULE BooleanIO [ProtoIO] FOR BOOLEAN;
 
 (* I/O Module for Type BOOLEAN *)
 
@@ -21,17 +21,39 @@ PROCEDURE [READ] Read ( infile : File; VAR b : BOOLEAN );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a BOOLEAN argument.*)
 
-PROCEDURE [WRITE] Write ( outfile : File; b : BOOLEAN );
+PROCEDURE [WRITE] Write ( outfile : File; CONST b : BOOLEAN );
 (* Writes the textual representation of BOOLEAN b to stream outfile. This
    procedure is substituted for invocations of WRITE with a BOOLEAN argument.*)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF BOOLEAN );
+    items        : ARGLIST OF CONST BOOLEAN );
 (* Writes a formatted textual representation of one or more BOOLEAN values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    BOOLEAN arguments. *)
 
-END BOOLEAN.
+PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF BOOLEAN );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ BOOLEAN values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF BOOLEAN argument.*)
+
+
+PROCEDURE [WRITE] WriteArray ( outfile : File; CONST value : ARRAY OF BOOLEAN );
+(* Calls Write repeatedly to write an array  of BOOLEANin simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF BOOLEAN argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF BOOLEAN );
+
+(* Writes a formatted textual representation of one or more ARRAY OF BOOLEAN values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF BOOLEAN arguments. *)
+
+END BooleanIO.

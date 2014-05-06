@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE ADDRESS;
+DEFINITION MODULE AddressIO [ProtoIO] FOR ADDRESS;
 
 (* I/O Module for Type ADDRESS *)
 
@@ -30,17 +30,39 @@ PROCEDURE [READ] Read ( infile : File; VAR adr : ADDRESS );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an ADDRESS argument.*)
 
-PROCEDURE [WRITE] Write ( outfile : File; adr : ADDRESS );
+PROCEDURE [WRITE] Write ( outfile : File; CONST adr : ADDRESS );
 (* Writes the value of ADDRESS adr in standard format to stream outfile. This
    procedure is substituted for invocations of WRITE with an ADDRESS argument.*)
 
 PROCEDURE [WRITE] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF ADDRESS );
+    items        : ARGLIST OF CONST ADDRESS );
 (* Writes a formatted textual representation of one or more ADDRESS values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    ADDRESS arguments. *)
 
-END ADDRESS.
+PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF ADDRESS );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ ADDRESS values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF ADDRESS argument.*)
+
+
+PROCEDURE [WRITE] WriteArray ( outfile : File; CONST value : ARRAY OF ADDRESS );
+(* Calls Write repeatedly to write an array  of ADDRESSin simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF ADDRESS argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF ADDRESS );
+
+(* Writes a formatted textual representation of one or more ARRAY OF ADDRESS values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF ADDRESS arguments. *)
+
+END AddressIO.

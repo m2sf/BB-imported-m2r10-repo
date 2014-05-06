@@ -83,7 +83,7 @@ PROCEDURE [LENGTH] length ( s : STRING ) : LONGCARD;
 (* Concatenation and Slicing *)
 
 PROCEDURE [CONCAT] concat
-  ( args : VARIADIC OF { literal : ARRAY OF CHAR; str : STRING } ) : STRING;
+  ( args : ARGLIST OF { literal : ARRAY OF CHAR; str : STRING } ) : STRING;
 (* Concatenates all strings in the argument list returns the result in a
    newly allocated string. The function is bound to CONCAT for type STRING. *)
 
@@ -133,33 +133,5 @@ PROCEDURE [<] isLess ( s1, s2 : STRING ) : BOOLEAN;
 PROCEDURE [>] isGreater ( s1, s2 : STRING ) : BOOLEAN;
 (* Returns TRUE if s1 comes lexically after s2, otherwise FALSE.
    This function is bound to operators > and <= for type STRING. *)
-
-
-(* IO Operations *)
-
-PROCEDURE [READ] Read ( infile : File; s : STRING );
-(* Reads the textual representation of a STRING value from stream infile
-   - any leading whitespace is skipped
-   - any remaining characters that are part of the string being read are
-     removed from infile
-   - the textual representation of the string read is assigned to the variable
-     passed in for s
-   - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with a STRING argument. *)
-
-PROCEDURE [WRITE] Write ( outfile : File; s : STRING );
-(* Writes the textual representation of STRING s to stream outfile. This
-   procedure is substituted for invocations of WRITE with a STRING argument.*)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF STRING );
-(* Writes a formatted textual representation of one or more STRING values to
-   output stream outfile. The output format is determined by fmtStr. This
-   procedure is substituted for invocations of WRITEF with one or more
-   STRING arguments. *)
-
 
 END STRING.

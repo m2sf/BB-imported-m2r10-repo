@@ -20,4 +20,10 @@ PROCEDURE WriteString ( CONST s : ARRAY OF CHAR );
 PROCEDURE WriteLn;
 (* Writes Newline to stdOut. *)
 
+PROCEDURE SkipLine;
+  (* Removes successive items from the default input stream up to and including
+   the next line mark or until the end of input is reached. 
+   The read result is set to the value allRight, or endOfInput. *)
+
+
 END Terminal.

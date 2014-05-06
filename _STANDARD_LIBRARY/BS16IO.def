@@ -1,0 +1,65 @@
+(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE BS16IO [ProtoIO] FOR BS16;
+
+(* I/O Module for Type BS16 *)
+
+FROM FileIO IMPORT File;
+
+(* The EBNF for the textual representation of BS16 values is:
+    bitsetValue : simpleFormat | compactFormat | bitGroupFormat ;
+    simpleFormat : bit+ ;
+    compactFormat : base16Digit+ ;
+    bitGroupFormat : "{" bit+ ( groupSeparator? bit+ )* "}" ;
+    groupSeparator : " " | "." ;
+    bit  : "0" | "1" ;
+    base16Digit : "0" .. "9" | "A" .. "F" ;
+   The number of bits shown is equal to the bitwidth of the BS16 type. *)
+
+PROCEDURE [READ] Read ( infile : File; VAR bitset : BS16 );
+(* Reads the textual representation of a BS16 value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the value being read are
+     removed from infile
+   - the textual representation of the value read is assigned to set
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with a BS16 argument. *)
+
+PROCEDURE [WRITE] ( outfile : File; CONST bitset : BS16 );
+(* Writes the value of BS16 bitset in simple format to stream outfile. This
+   procedure is substituted for invocations of WRITE with a BS16 argument.*)
+
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST BS16 );
+(* Writes a formatted textual representation of one or more BS16 values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   BS16 arguments. *)
+
+   (* for arrays of the type *)
+
+PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF BS16 );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ BS16 values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF BS16 argument.*)
+
+
+PROCEDURE [WRITE] WriteArray ( outfile : File; CONST value : ARRAY OF BS16 );
+(* Calls Write repeatedly to write an array  of BS16in simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF BS16 argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF BS16 );
+(* Writes a formatted textual representation of one or more ARRAY OF BS16 values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF BS16 arguments. *)
+
+END BS16IO.

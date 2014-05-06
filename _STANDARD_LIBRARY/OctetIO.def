@@ -1,6 +1,6 @@
 (* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE OCTET;
+DEFINITION MODULE OctetIO [ProtoIO] FOR OCTET;;
 
 (* I/O Module for Type OCTET *)
 
@@ -26,17 +26,38 @@ PROCEDURE [READ] Read ( infile : File; VAR n : OCTET );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an OCTET argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : File; n : OCTET );
+PROCEDURE [WRITE] Write ( outfile : File; CONST n : OCTET );
 (* Writes the value of OCTET n in simple format to stream outfile. This
    procedure is substituted for invocations of WRITE with an OCTET argument.*)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF OCTET );
+    items        : ARGLIST OF CONST OCTET );
 (* Writes a formatted textual representation of one or more OCTET values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    OCTET arguments. *)
+   
+PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF OCTET );
+(* Calls Read repeatedly to read the textual representation of a sequence of
+ OCTET values from stream infile nto an array 
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ARRAY OF OCTET argument.*)
 
-END OCTET.
+
+PROCEDURE [WRITE] WriteArray ( outfile : File; CONST value : ARRAY OF OCTET );
+(* Calls Write repeatedly to write an array  of OCTETin simple format to stream outfile.
+  This procedure is substituted for invocations of WRITE with an ARRAY OF OCTET argument.*)
+
+PROCEDURE [WRITEF] WriteArrayF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST OF CONST ARRAY OF OCTET );
+(* Writes a formatted textual representation of one or more ARRAY OF OCTET values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   ARRAY OF OCTET arguments. *)
+
+END OctetIO.

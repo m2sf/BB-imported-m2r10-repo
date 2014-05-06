@@ -117,31 +117,4 @@ PROCEDURE [>] isGreater ( n1, n2 : CARD32 ) : BOOLEAN;
 (* Returns TRUE if CARD32 value n1 is greater than n2, otherwise FALSE.
    This function is bound to operators > and <= for type CARD32. *)
 
-
-(* IO operations *)
-
-PROCEDURE [READ] Read( infile : File; VAR n : CARD32 );
-(* Reads the textual representation of a CARD32 value from stream infile
-   - any leading whitespace is skipped
-   - any remaining characters that are part of the numeral being read are
-     removed from infile
-   - the numeric value of the numeral string read is assigned to the variable
-     passed in for n
-   - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with a CARD32 argument. *)
-
-PROCEDURE [WRITE] Write( outfile : File; n : CARD32 );
-(* Writes the textual representation of value n to stream outfile. This
-   procedure is substituted for invocations of WRITE with a CARD32 argument.*)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF CARD32 );
-(* Writes a formatted textual representation of one or more CARD32 values to
-   output stream outfile. The output format is determined by fmtStr. This
-   procedure is substituted for invocations of WRITEF with one or more
-   CARD32 arguments. *)
-
 END CARD32. (* thirty-two *)
