@@ -45,7 +45,7 @@ PROCEDURE [WRITE] WriteF
 
 PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF ADDRESS );
 (* Calls Read repeatedly to read the textual representation of a sequence of
- ADDRESS values from stream infile nto an array 
+ ADDRESS values from stream infile into an array.
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an ARRAY OF ADDRESS argument.*)

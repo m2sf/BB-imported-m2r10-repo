@@ -48,7 +48,7 @@ PROCEDURE [WRITEF] WriteF ( outfile      : File;
 
 PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF INT128 );
 (* Calls Read repeatedly to read the textual representation of a sequence of
- INT128 values from stream infile nto an array 
+ INT128 values from stream infile into an array.
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an ARRAY OF INT128 argument.*)

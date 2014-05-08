@@ -43,7 +43,7 @@ PROCEDURE [WRITEF] WriteF
 
 PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF BS16 );
 (* Calls Read repeatedly to read the textual representation of a sequence of
- BS16 values from stream infile nto an array 
+ BS16 values from stream infile into an array.
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an ARRAY OF BS16 argument.*)

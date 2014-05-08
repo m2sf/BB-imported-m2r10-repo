@@ -48,7 +48,7 @@ PROCEDURE WriteF ( outfile      : File;
 
 PROCEDURE ReadArray ( f : File; VAR value : ARRAY OF CARDINAL );
 (* Calls Read repeatedly to read the textual representation of a sequence of
- CARDINAL values from stream infile nto an array 
+ CARDINAL values from stream infile into an array.
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an ARRAY OF CARDINAL argument.*)

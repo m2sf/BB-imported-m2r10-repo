@@ -48,7 +48,7 @@ PROCEDURE WriteF ( outfile      : File;
 
 PROCEDURE ReadArray ( infile : File; VAR value : ARRAY OF LONGINT );
 (* Calls Read repeatedly to read the textual representation of a sequence of
- LONGINT values from stream infile nto an array 
+ LONGINT values from stream infile into an array.
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an ARRAY OF LONGINT argument.*)

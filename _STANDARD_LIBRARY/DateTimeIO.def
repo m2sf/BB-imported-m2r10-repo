@@ -33,7 +33,7 @@ PROCEDURE [WRITEF] WriteF
 
 PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF DateTime );
 (* Calls Read repeatedly to read the textual representation of a sequence of
- DateTime values from stream infile nto an array 
+ DateTime values from stream infile into an array.
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an ARRAY OF DateTime argument.*)

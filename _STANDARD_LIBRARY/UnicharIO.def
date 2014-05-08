@@ -30,7 +30,7 @@ PROCEDURE [WRITEF] WriteF
 
 PROCEDURE [READ] ReadArray ( infile : File; VAR value : ARRAY OF UNICHAR );
 (* Calls Read repeatedly to read the textual representation of a sequence of
- UNICHAR values from stream infile nto an array 
+ UNICHAR values from stream infile into an array.
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an ARRAY OF UNICHAR argument.*)
