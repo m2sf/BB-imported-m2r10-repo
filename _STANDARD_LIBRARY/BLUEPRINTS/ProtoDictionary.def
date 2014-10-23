@@ -1,4 +1,4 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Dynamically Allocatable Dictionary ADTs *)
 
@@ -59,11 +59,11 @@ PROCEDURE [RELEASE] release ( VAR dict : ProtoDictionary );
 
 (* Copying *)
 
-PROCEDURE [COPY] copy ( sourceDict, targetDict : ProtoDictionary );
-(* Procedure to copy the contents of one dictionary to another. *)
+PROCEDURE [DUP] duplicate ( dict : ProtoDictionary ) : ProtoDictionary;
+(* Function to return a newly allocated copy of a dictionary. *)
 
-(* An invocation of COPY(dict1, dict2) is transformed at compile time to
-   ADT.copy(dict1, dict2) for operands of the ADT type. *)
+(* An invocation of DUP(dict) is transformed at compile time to
+   ADT.duplicate(dict) for operands of the ADT type. *)
 
 
 (* Storage, Removal, Retrieval and Inspection of Contents *)
