@@ -32,13 +32,13 @@ CONST [TMAXEXP] eMax = 0;
 
 (* Required Procedures *)
 
-(* Bindings to pervasive functions TMIN and TMAX *)
+(* Bindings to predefined functions TMIN and TMAX *)
 
 PROCEDURE [TMIN] minValue : ProtoInteger;
-(* procedure to return minimal value of a whole number ADT *)
+(* function to return the minimal value of the integer ADT *)
 
 PROCEDURE [TMAX] maxValue : ProtoInteger;
-(* procedure to return maximal value of a whole number ADT *)
+(* function to return the maximal value of the integer ADT *)
 
 
 (* Bindings to scalar conversion primitives *)
@@ -54,51 +54,51 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoInteger );
 
 
 PROCEDURE [ABS] abs ( i : ProtoInteger ) : ProtoInteger;
-(* procedure to bind to pervasive ABS for operands of the ProtoInteger ADT *)
+(* function to bind to predefined function ABS for operands of the integer ADT *)
 
 PROCEDURE [NEG] neg ( i : ProtoInteger ) : ProtoInteger;
-(* procedure to bind to pervasive NEG for operands of the ProtoInteger ADT *)
+(* function to bind to predefined function NEG for operands of the integer ADT *)
 
 PROCEDURE [ODD] odd ( i : ProtoInteger ) : BOOLEAN;
-(* procedure to bind to pervasive ODD for operands of the ProtoInteger ADT *)
+(* function to bind to predefined function ODD for operands of the integer ADT *)
 
 
 (* Bindings to dyadic operations *)
 
 PROCEDURE [+] add ( i, j : ProtoInteger ) : ProtoInteger;
-(* procedure to bind to the + operator for operands of the ProtoInteger ADT *)
+(* function to bind to the + operator for operands of the integer ADT *)
 
 (* The operation for the ++ statement is synthesized as i := i + VAL(1) *)
 
 PROCEDURE [-] subtract ( i, j : ProtoInteger ) : ProtoInteger;
-(* procedure to bind to the - operator for operands of the ProtoInteger ADT *)
+(* function to bind to the - operator for operands of the integer ADT *)
 
 (* The operation for the -- statement is synthesized as i := i - VAL(1) *)
 
 PROCEDURE [*] multiply ( i, j : ProtoInteger ) : ProtoInteger;
-(* procedure to bind to the * operator for operands of the ProtoInteger ADT *)
+(* function to bind to the * operator for operands of the integer ADT *)
 
 PROCEDURE [DIV] divide ( i, j : ProtoInteger ) : ProtoInteger;
-(* procedure to bind to the DIV operator for operands of the ProtoInteger ADT *)
+(* function to bind to the DIV operator for operands of the integer ADT *)
 
 PROCEDURE [MOD] modulus ( i, j : ProtoInteger ) : ProtoInteger;
-(* procedure to bind to the MOD operator for operands of the ProtoInteger ADT *)
+(* function to bind to the MOD operator for operands of the integer ADT *)
 
 
 (* Bindings to relational operations *)
 
 PROCEDURE [=] isEqual ( i, j : ProtoInteger ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the ProtoInteger ADT *)
+(* function to bind to the = operator for operands of the integer ADT *)
 
 (* The operation for the # operator is synthesized as NOT (i = j) *)
 
 PROCEDURE [>] isGreater ( i, j : ProtoInteger ) : BOOLEAN;
-(* procedure to bind to the > operator for operands of the ProtoInteger ADT *)
+(* function to bind to the > operator for operands of the integer ADT *)
 
 (* The operation for the <= operator is synthesized as NOT (i > j) *)
 
 PROCEDURE [<] isLess ( i, j : ProtoInteger ) : BOOLEAN;
-(* procedure to bind to the < operator for operands of the ProtoInteger ADT *)
+(* function to bind to the < operator for operands of the integer ADT *)
 
 (* The operation for the >= operator is synthesized as NOT (i < j) *)
 
