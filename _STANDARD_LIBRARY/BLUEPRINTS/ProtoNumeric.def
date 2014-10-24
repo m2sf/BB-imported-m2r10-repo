@@ -27,10 +27,10 @@ MODULE TYPE = RECORD | OPAQUE RECORD := INTEGER | REAL | { REAL BY * };
 (* Bindings to dyadic operations *)
 
 PROCEDURE [+] add ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
-(* procedure to bind to the + operator for operands of the ADT *)
+(* function to bind to the + operator for operands of the ADT *)
 
 PROCEDURE [-] subtract ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
-(* procedure to bind to the - operator for operands of the ADT *)
+(* function to bind to the - operator for operands of the ADT *)
 
 (* The operations *, /, DIV and MOD are not common to all numeric types,
    their bindings may be required by more specialised blueprints. *)
@@ -39,7 +39,7 @@ PROCEDURE [-] subtract ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
 (* Bindings to relational operations *)
 
 PROCEDURE [=] isEqual ( op1, op2 : ProtoNumeric ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the numeric ADT *)
+(* function to bind to the = operator for operands of the numeric ADT *)
 
 (* The operation for the # operator is synthesized as NOT (op1 = op2) *)
 
