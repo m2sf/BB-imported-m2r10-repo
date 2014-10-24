@@ -10,7 +10,7 @@ REFERENTIAL KeyType, ValueType, ProcType, File;
 (* Dictionary ADTs must be opaque,
    variadic structured literals with key/value pairs are compatible *)
 
-MODULE TYPE = OPAQUE := { VARIADIC OF { KeyType, ValueType } };
+MODULE TYPE = OPAQUE := { ARGLIST OF { KeyType, ValueType } };
 
 
 (* Bindings required for dictionary ADTs *)
@@ -28,7 +28,7 @@ CONST [DESCENDING] isOrdered : BOOLEAN;
 (* Capacity limit *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the allocation capacity limit of the ADT type. *)
+(* Function to return the allocation capacity limit of the ADT type. *)
 
 (* An invocation of TLIMIT(ADT)) is transformed at compile time to
    ADT.capacityLimit() when the operand is the ADT type. *)
@@ -62,7 +62,7 @@ PROCEDURE [RELEASE] release ( VAR dict : ProtoDictionary );
 PROCEDURE [DUP] duplicate ( dict : ProtoDictionary ) : ProtoDictionary;
 (* Function to return a newly allocated copy of a dictionary. *)
 
-(* An invocation of DUP(dict) is transformed at compile time to
+(* An expression of the form DUP(dict) is transformed at compile time to
    ADT.duplicate(dict) for operands of the ADT type. *)
 
 
@@ -70,7 +70,7 @@ PROCEDURE [DUP] duplicate ( dict : ProtoDictionary ) : ProtoDictionary;
 
 PROCEDURE [STORE] storeEntries
   ( VAR dict : ProtoDictionary;
-    keyValueList : VARIADIC OF { key : KeyType; value : ValueType } );
+    keyValueList : ARGLIST OF { key : KeyType; value : ValueType } );
 (* Procedure to store or replace zero or more entries in a dictionary. *)
 
 (* An invocation of STORE(dict, key1, value1, key2, value2 ...) is transformed
@@ -80,7 +80,7 @@ PROCEDURE [STORE] storeEntries
 
 PROCEDURE [REMOVE] removeEntries
   ( VAR dict : ProtoDictionary;
-    keyList : VARIADIC OF KeyType );
+    keyList : ARGLIST OF KeyType );
 (* Procedure to remove one or more entries from a dictionary. *)
 
 (* An invocation of REMOVE(dict, key1, key2, key3 ...) is transformed
@@ -105,7 +105,7 @@ PROCEDURE [IN] entryExists
 
 
 PROCEDURE [COUNT] count ( dict : ProtoDictionary ) : LONGCARD;
-(* Procedure to return the number of key/value pairs in a dictionary. *)
+(* Function to return the number of key/value pairs in a dictionary. *)
 
 (* An expression of the form COUNT(dict) is transformed at compile time to
    ADT.count(dict) for operands of the ADT type. *)
@@ -126,7 +126,7 @@ PROCEDURE [FOR] forIterator
    The loop header is transformed to
      ADT.forIterator(dict, forLoopBody, TRUE);
    The loop body is transformed to a procedure definition
-     <* INLINE *> PROCEDURE forLoopBody ( key : KeyType );
+     PROCEDURE forLoopBody ( key : KeyType ) <*INLINE*>;
      BEGIN statementSeq END forLoopBody;
    inserted before the current scope's BEGIN-END block.
    
@@ -141,7 +141,7 @@ PROCEDURE [FOR] forIterator
 (* Relational operations *)
 
 PROCEDURE [=] isEqual ( dict1, dict2 : ProtoDictionary ) : BOOLEAN;
-(* Procedure to test the equality of two dictionaries. *)
+(* Function to test the equality of two dictionaries. *)
 
 (* An expression of the form dict1 = dict2 is transformed at compile time to
    ADT.isEqual(dict1, dict2) for operands of the ADT type.
@@ -151,7 +151,7 @@ PROCEDURE [=] isEqual ( dict1, dict2 : ProtoDictionary ) : BOOLEAN;
 
 
 PROCEDURE [SUBSET] isSubset ( dict1, dict2 : ProtoDictionary ) : BOOLEAN;
-(* Procedure to test whether one dictionary is a subset of another *)
+(* Function to test whether one dictionary is a subset of another *)
 
 (* An expression of the form dict1 > dict2 is transformed at compile time to
    ADT.isSubset(dict2, dict1) for operands of the ADT type.
@@ -187,7 +187,7 @@ PROCEDURE [WRITE] Write ( outfile : File; dict : ProtoDictionary );
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF ProtoDictionary );
+    items        : ARGLIST OF ProtoDictionary );
 (* Procedure to write one or more dictionaries formatted into a file. *)
 
 (* An invocation of WRITEF(file, fmt, dict1, dict2, dict3, ...) is transformed
