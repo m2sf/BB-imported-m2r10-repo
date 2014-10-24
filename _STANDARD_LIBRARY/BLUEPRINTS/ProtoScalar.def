@@ -16,19 +16,19 @@ MODULE TYPE = OPAQUE RECORD := INTEGER | REAL;
 (* Required Constants *)
 
 CONST [TSIGNED] isSigned : BOOLEAN;
-(* whether the scalar ADT is signed or unsigned *)
+(* whether the ADT is signed or unsigned *)
 
 CONST [TBASE] base : CARDINAL;
-(* radix in which the scalar value is encoded, 2 or 10 *)
+(* radix in which values of the ADT are encoded, 2 or 10 *)
 
 CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
-(* maximum number of digits the scalar ADT can encode *)
+(* maximum number of digits the ADT can encode *)
 
 CONST [TMINEXP] eMin : INTEGER;
-(* smallest exponent the scalar ADT can encode *)
+(* smallest exponent the ADT can encode *)
 
 CONST [TMAXEXP] eMax : CARDINAL;
-(* largest exponent the scalar ADT can encode *)
+(* largest exponent the ADT can encode *)
 
 
 (* Required Procedures *)
@@ -36,10 +36,10 @@ CONST [TMAXEXP] eMax : CARDINAL;
 (* Bindings to predefined functions TMIN and TMAX *)
 
 PROCEDURE [TMIN] minValue : ProtoScalar;
-(* procedure to return minimal value of a scalar ADT *)
+(* function to return the minimal value of the ADT *)
 
 PROCEDURE [TMAX] maxValue : ProtoScalar;
-(* procedure to return maximal value of a scalar ADT *)
+(* function to return the maximal value of the ADT *)
 
 
 (* Bindings to scalar conversion primitives *)
@@ -61,17 +61,17 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoScalar );
 (* Bindings to dyadic operations *)
 
 PROCEDURE [+] add ( op1, op2 : ProtoScalar ) : ProtoScalar;
-(* procedure to bind to the + operator for operands of the scalar ADT *)
+(* function to bind to the + operator for operands of the ADT *)
 
 (* The operation for the ++ statement is synthesized as op := op + VAL(1) *)
 
 PROCEDURE [-] subtract ( op1, op2 : ProtoScalar ) : ProtoScalar;
-(* procedure to bind to the - operator for operands of the scalar ADT *)
+(* function to bind to the - operator for operands of the ADT *)
 
 (* The operation for the -- statement is synthesized as op := op - VAL(1) *)
 
 PROCEDURE [*] multiply ( op1, op2 : ProtoScalar ) : ProtoScalar;
-(* procedure to bind to the * operator for operands of the scalar ADT *)
+(* function to bind to the * operator for operands of the ADT *)
 
 (* The operations /, DIV and MOD are not common to all scalar types,
    their bindings may be required by more specialised blueprints. *)
@@ -80,17 +80,17 @@ PROCEDURE [*] multiply ( op1, op2 : ProtoScalar ) : ProtoScalar;
 (* Bindings to relational operations *)
 
 PROCEDURE [=] isEqual ( op1, op2 : ProtoScalar ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the scalar ADT *)
+(* function to bind to the = operator for operands of the ADT *)
 
 (* The operation for the # operator is synthesized as NOT (op1 = op2) *)
 
 PROCEDURE [>] isGreater ( op1, op2 : ProtoScalar ) : BOOLEAN;
-(* procedure to bind to the > operator for operands of the scalar ADT *)
+(* function to bind to the > operator for operands of the ADT *)
 
 (* The operation for the <= operator is synthesized as NOT (op1 > op2) *)
 
 PROCEDURE [<] isLess ( op1, op2 : ProtoScalar ) : BOOLEAN;
-(* procedure to bind to the < operator for operands of the scalar ADT *)
+(* function to bind to the < operator for operands of the ADT *)
 
 (* The operation for the >= operator is synthesized as NOT (op1 < op2) *)
 
