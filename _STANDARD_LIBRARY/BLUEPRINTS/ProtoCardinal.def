@@ -32,13 +32,13 @@ CONST [TMAXEXP] eMax = 0;
 
 (* Required Procedures *)
 
-(* Bindings to pervasive functions TMIN and TMAX *)
+(* Bindings to predefined functions TMIN and TMAX *)
 
 PROCEDURE [TMIN] minValue : ProtoCardinal;
-(* procedure to return minimal value of a cardinal number ADT *)
+(* function to return the minimal value of a cardinal number ADT *)
 
 PROCEDURE [TMAX] maxValue : ProtoCardinal;
-(* procedure to return maximal value of a cardinal number ADT *)
+(* function to return the maximal value of a cardinal number ADT *)
 
 
 (* Bindings to scalar conversion primitives *)
@@ -54,10 +54,10 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
 
 
 PROCEDURE [ABS] abs ( n : ProtoCardinal ) : ProtoCardinal;
-(* procedure to bind to the ABS operator for operands of the ProtoCardinal ADT *)
+(* function to bind to the ABS operator for operands of the cardinal ADT *)
 
 PROCEDURE [ODD] odd ( n : ProtoCardinal ) : BOOLEAN;
-(* procedure to bind to the ODD operator for operands of the ProtoCardinal ADT *)
+(* function to bind to the ODD operator for operands of the cardinal ADT *)
 
 (* The operation NEG is not meaningful for cardinal number types *)
 
@@ -65,39 +65,39 @@ PROCEDURE [ODD] odd ( n : ProtoCardinal ) : BOOLEAN;
 (* Bindings to dyadic operations *)
 
 PROCEDURE [+] add ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* procedure to bind to the + operator for operands of the ProtoCardinal ADT *)
+(* function to bind to the + operator for operands of the cardinal ADT *)
 
 (* The operation for the ++ statement is synthesized as n := n + VAL(1) *)
 
 PROCEDURE [-] subtract ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* procedure to bind to the - operator for operands of the ProtoCardinal ADT *)
+(* function to bind to the - operator for operands of the cardinal ADT *)
 
 (* The operation for the -- statement is synthesized as n := n - VAL(1) *)
 
 PROCEDURE [*] multiply ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* procedure to bind to the * operator for operands of the ProtoCardinal ADT *)
+(* function to bind to the * operator for operands of the cardinal ADT *)
 
 PROCEDURE [DIV] divide ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* procedure to bind to the DIV operator for operands of the ProtoCardinal ADT *)
+(* function to bind to the DIV operator for operands of the cardinal ADT *)
 
 PROCEDURE [MOD] modulus ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* procedure to bind to the MOD operator for operands of the ProtoCardinal ADT *)
+(* function to bind to the MOD operator for operands of the cardinal ADT *)
 
 
 (* Bindings to relational operations *)
 
 PROCEDURE [=] isEqual ( n, m : ProtoCardinal ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the ProtoCardinal ADT *)
+(* function to bind to the = operator for operands of the cardinal ADT *)
 
 (* The operation for the # operator is synthesized as NOT (n = m) *)
 
 PROCEDURE [>] isGreater ( n, m : ProtoCardinal ) : BOOLEAN;
-(* procedure to bind to the > operator for operands of the ProtoCardinal ADT *)
+(* function to bind to the > operator for operands of the cardinal ADT *)
 
 (* The operation for the <= operator is synthesized as NOT (n > m) *)
 
 PROCEDURE [<] isLess ( n, m : ProtoCardinal ) : BOOLEAN;
-(* procedure to bind to the < operator for operands of the ProtoCardinal ADT *)
+(* function to bind to the < operator for operands of the cardinal ADT *)
 
 (* The operation for the >= operator is synthesized as NOT (n < m) *)
 
