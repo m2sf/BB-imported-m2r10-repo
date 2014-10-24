@@ -19,7 +19,7 @@ MODULE TYPE = OPAQUE | OPAQUE RECORD (* uses structured literals *)
 (* Required Constants *)
 
 CONST [:=] isMutable : BOOLEAN;
-(* whether the Array ADT is mutable *)
+(* whether the collection ADT is mutable *)
 
 CONST [DESCENDING] isOrdered : BOOLEAN;
 (* whether the collection ADT is ordered *)
@@ -44,7 +44,7 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 
 (* Assignment and Copying *)
 
-(* The assignment, COPY and DUP operations are not common to all collection
+(* Assignment and the DUP operation are not common to all collection
    ADTs, their bindings may be required by more specialised blueprints. *)
 
 
