@@ -25,7 +25,7 @@ CONST [DESCENDING] isOrdered = TRUE;
 
 (* Capacity limit *)
 
-(* Binding to pervasive function TLIMIT *)
+(* Binding to predefined function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Procedure to return the index/value pair limit of an Array ADT. *)
@@ -51,7 +51,7 @@ PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
 
 (* Storage and retrieval *)
 
-(* Binding to [ ] notation within left hand entities *)
+(* Binding to [ ] notation within L-values *)
 
 PROCEDURE [STORE] storeValue ( VAR array : ProtoArray;
                                    index : IndexType; value : ValueType );
@@ -103,7 +103,7 @@ PROCEDURE [INSERT] insertArrayAtIndex
 
 (* Index/Value count *)
 
-(* Binding to pervasive function COUNT *)
+(* Binding to predefined function COUNT *)
 
 PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
 (* Procedure to return the index/value count of an Array ADT value. *)
@@ -138,7 +138,7 @@ PROCEDURE [FOR] forIterator
 (* Dyadic operations *)
 
 (* The operations +, -, * and / are not common to all Array ADTs,
-   their bindings may be required by more specialised prototypes. *)
+   their bindings may be required by more specialised blueprints. *)
 
 
 (* Relational operations *)
@@ -157,12 +157,12 @@ PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
 
 (* Binding to < operator *)
 
-(* The operations < and <= are not meaningful for arrays. *)
+(* The operations < and <= are not meaningful for array ADTs. *)
 
 
 (* Binding to > operator *)
 
-(* The operations > and >= are not meaningful for arrays. *)
+(* The operations > and >= are not meaningful for array ADTs. *)
 
 
 END ProtoArray.
