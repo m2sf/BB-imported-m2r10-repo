@@ -24,7 +24,7 @@ PROCEDURE sgn ( r : ProtoReal ) : ProtoReal;
 (* Required function to return the signum value of r. *)
 
 PROCEDURE floor ( r : ProtoReal ) : ProtoReal;
-(* Function to return the floor value of r. *)
+(* Required function to return the floor value of r. *)
 
 PROCEDURE ceil ( r : ProtoReal ) : ProtoReal;
 (* Required function to return the ceiling value of r. *)
