@@ -9,7 +9,7 @@ REFERENTIAL ElementType, ProcType;
 (* Dynamic Set ADTs must be opaque,
    structured literals with a list of elements are compatible *)
 
-MODULE TYPE = OPAQUE := { VARIADIC OF ElementType };
+MODULE TYPE = OPAQUE := { ARGLIST OF ElementType };
 
 
 (* Bindings required for dynamic set ADTs *)
@@ -18,16 +18,16 @@ MODULE TYPE = OPAQUE := { VARIADIC OF ElementType };
 (* Required Constants *)
 
 CONST [:=] isMutable : BOOLEAN;
-(* whether the set ADT is mutable *)
+(* whether the ADT is mutable *)
 
 CONST [DESCENDING] isOrdered : BOOLEAN;
-(* whether the set ADT is ordered *)
+(* whether the ADT is ordered *)
 
 
 (* Capacity limit *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the allocation capacity limit of a set ADT. *)
+(* Function to return the allocation capacity limit of the ADT. *)
 
 (* An expression of the form TLIMIT(ADT)) is transformed at compile
    time to ADT.capacityLimit() when the operand is the ADT type. *)
@@ -36,7 +36,7 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Memory Management *)
 
 PROCEDURE [NEW] new ( VAR set : ProtoSet; capacity : LONGCARD );
-(* Procedure to allocate and initialise a new set. *)
+(* Procedure to allocate and initialise a new set of the ADT type. *)
 
 (* An invocation of NEW(set, n) is transformed at compile time to
    ADT.new(set, n) for first operands of the ADT type. *)
@@ -58,17 +58,17 @@ PROCEDURE [RELEASE] release ( VAR set : ProtoSet );
 
 (* Copying *)
 
-PROCEDURE [COPY] copy ( sourceSet : ProtoSet; VAR target : ProtoSet );
-(* Procedure to copy the contents of one set to another. *)
+PROCEDURE [DUP] duplicate ( set : ProtoSet ) : ProtoSet;
+(* Function to return a newly allocated copy of a set of the ADT type. *)
 
-(* An invocation of COPY(set1, set2) is transformed at compile time to
-   ADT.copy(set1, set2) for operands of the ADT type. *)
+(* An expression of the form DUP(set) is transformed at compile time to
+   ADT.duplicate(set) for operands of the ADT type. *)
 
 
 (* Storage, Removal, Retrieval and Inspection of Contents *)
 
 PROCEDURE [STORE] storeElements
-  ( VAR set : ProtoSet; valueList : VARIADIC OF ElementType );
+  ( VAR set : ProtoSet; valueList : ARGLIST OF ElementType );
 (* Procedure to store zero or more elements in a set. *)
 
 (* An invocation of STORE(set, elem1, elem2, elem3 ...) is transformed
@@ -77,7 +77,7 @@ PROCEDURE [STORE] storeElements
 
 
 PROCEDURE [REMOVE] removeElements
-  ( VAR set : ProtoSet; valueList : VARIADIC OF ElementType );
+  ( VAR set : ProtoSet; valueList : ARGLIST OF ElementType );
 (* Procedure to remove one or more elements from a set. *)
 
 (* An invocation of REMOVE(set, elem1, elem2, elem3 ...) is transformed
@@ -89,8 +89,9 @@ PROCEDURE [RETRIEVE] membershipForElement
   ( set : ProtoSet; value : ElementType ) : BOOLEAN;
 (* Function to retrieve a value from a set. *)
 
-(* An incocation of RETRIEVE(set, elem) is transformed at compile time to
-   ADT.membershipForElement(set, elem) for first operands of the ADT type. *)
+(* An expression of the form RETRIEVE(set, elem)
+   is transformed at compile time to ADT.membershipForElement(set, elem)
+   for first operands of the ADT type. *)
 
 
 PROCEDURE [IN] isElement
@@ -102,7 +103,7 @@ PROCEDURE [IN] isElement
 
 
 PROCEDURE [COUNT] count ( set : ProtoSet ) : LONGCARD;
-(* Procedure to return the element count of a set. *)
+(* Function to return the element count of a set. *)
 
 (* An expression of the form COUNT(set) is transformed at compile time to
    ADT.count(set) for operands of the ADT type. *)
@@ -123,7 +124,7 @@ PROCEDURE [FOR] forIterator
    The loop header is transformed to
      ADT.forIterator( set, forLoopBody, TRUE );
    The loop body is transformed to a procedure definition
-     <* INLINE *> PROCEDURE forLoopBody ( element : ElementType );
+     PROCEDURE forLoopBody ( element : ElementType ) <*INLINE*>;
      BEGIN statementSeq END forLoopBody;
    inserted before the current scope's BEGIN-END block.
    
@@ -138,7 +139,7 @@ PROCEDURE [FOR] forIterator
 
 PROCEDURE [+] union
   ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Procedure to return the union of two sets. *)
+(* Function to return the union of two sets. *)
 
 (* An expression of the form set1 + set2 is transformed at compile time to
    ADT.union(set1, set2) for operands of the ADT type. *)
@@ -146,7 +147,7 @@ PROCEDURE [+] union
 
 PROCEDURE [-] difference
   ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Procedure to return the set difference of two sets. *)
+(* Function to return the set difference of two sets. *)
 
 (* An expression of the form set1 - set2 is transformed at compile time to
    ADT.difference(set1, set2) for operands of the ADT type. *)
@@ -154,7 +155,7 @@ PROCEDURE [-] difference
 
 PROCEDURE [*] intersection
   ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Procedure to return the intersection of two sets. *)
+(* Function to return the intersection of two sets. *)
 
 (* An expression of the form set1 * set2 is transformed at compile time to
    ADT.intersection(set1, set2) for operands of the set ADT type. *)
@@ -162,7 +163,7 @@ PROCEDURE [*] intersection
 
 PROCEDURE [/] symmetricDiff
   ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Procedure to return the symmetric difference of two sets. *)
+(* Functon to return the symmetric difference of two sets. *)
 
 (* An expression of the form set1 / set2 is transformed at compile time to
    ADT.symmetricDiff(set1, set2) for operands of the set ADT type. *)
@@ -171,7 +172,7 @@ PROCEDURE [/] symmetricDiff
 (* Relational operations *)
 
 PROCEDURE [=] isEqual ( set1, set2 : ProtoSet ) : BOOLEAN;
-(* Procedure to test the equality of two sets. *)
+(* Function to test the equality of two sets. *)
 
 (* An expression of the form set1 = set2 is transformed at compile time to
    ADT.isEqual(set1, set2) for operands of the set ADT type.
@@ -181,7 +182,7 @@ PROCEDURE [=] isEqual ( set1, set2 : ProtoSet ) : BOOLEAN;
 
 
 PROCEDURE [SUBSET] isSubset ( set1, set2 : ProtoSet ) : BOOLEAN;
-(* Procedure to test whether one set is a subset of another. *)
+(* Function to test whether one set is a subset of another. *)
 
 (* An expression of the form set1 > set2 is transformed at compile time to
    ADT.isSubset(set2, set1) for operands of the set ADT type.
@@ -217,7 +218,7 @@ PROCEDURE [READ] Write ( outfile : File; set : ProtoSet );
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF ProtoSet );
+    items        : ARGLIST OF ProtoSet );
 (* Procedure to write one or more sets formatted into a file. *)
 
 (* A statement of the form WRITEF(file, fmt, set1, set2, set3, ...) is trans-
