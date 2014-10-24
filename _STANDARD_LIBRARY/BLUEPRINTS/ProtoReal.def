@@ -35,10 +35,10 @@ CONST [TMAXEXP] eMax : CARDINAL;
 (* Bindings to pervasive functions TMIN and TMAX *)
 
 PROCEDURE [TMIN] minValue : ProtoReal;
-(* procedure to return minimal value of a real number ADT *)
+(* function to return the minimal value of the ADT *)
 
 PROCEDURE [TMAX] maxValue : ProtoReal;
-(* procedure to return maximal value of a real number ADT *)
+(* function to return the maximal value of the ADT *)
 
 
 (* Bindings to scalar conversion primitives *)
@@ -54,10 +54,10 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoReal );
 
 
 PROCEDURE [ABS] abs ( r : ProtoReal ) : ProtoReal;
-(* procedure to bind to the ABS operator for operands of the ProtoReal ADT *)
+(* function to bind to the ABS operator for operands of the ADT *)
 
 PROCEDURE [NEG] neg ( r : ProtoReal ) : ProtoReal;
-(* procedure to bind to the NEG operator for operands of the ProtoReal ADT. *)
+(* function to bind to the NEG operator for operands of the ADT. *)
 
 (* binding NEG is only permitted if constant isSigned is defined to be TRUE. *)
 
@@ -65,36 +65,36 @@ PROCEDURE [NEG] neg ( r : ProtoReal ) : ProtoReal;
 (* Bindings to dyadic operations *)
 
 PROCEDURE [+] add ( r1, r2 : ProtoReal ) : ProtoReal;
-(* procedure to bind to the + operator for operands of the ProtoReal ADT *)
+(* function to bind to the + operator for operands of the ADT *)
 
 (* The operation for the ++ statement is synthesized as r := r + VAL(1.0) *)
 
 PROCEDURE [-] subtract ( r1, r2 : ProtoReal ) : ProtoReal;
-(* procedure to bind to the - operator for operands of the ProtoReal ADT *)
+(* function to bind to the - operator for operands of the ADT *)
 
 (* The operation for the -- statement is synthesized as r := r - VAL(1.0) *)
 
 PROCEDURE [*] multiply ( r1, r2 : ProtoReal ) : ProtoReal;
-(* procedure to bind to the * operator for operands of the ProtoReal ADT *)
+(* function to bind to the * operator for operands of the ADT *)
 
 PROCEDURE [/] divide ( r1, r2 : ProtoReal ) : ProtoReal;
-(* procedure to bind to the / operator for operands of the ProtoReal ADT *)
+(* function to bind to the / operator for operands of the ADT *)
 
 
 (* Bindings to relational operations *)
 
 PROCEDURE [=] isEqual ( r1, r2 : ProtoReal ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the ProtoReal ADT *)
+(* function to bind to the = operator for operands of the ADT *)
 
 (* The operation for the # operator is synthesized as NOT (r1 = r2) *)
 
 PROCEDURE [>] isGreater ( r1, r2 : ProtoReal ) : BOOLEAN;
-(* procedure to bind to the > operator for operands of the ProtoReal ADT *)
+(* function to bind to the > operator for operands of the ADT *)
 
 (* The operation for the <= operator is synthesized as NOT (r1 > r2) *)
 
 PROCEDURE [<] isLess ( r1, r2 : ProtoReal ) : BOOLEAN;
-(* procedure to bind to the < operator for operands of the ProtoReal ADT *)
+(* function to bind to the < operator for operands of the ADT *)
 
 (* The operation for the >= operator is synthesized as NOT (r1 < r2) *)
 
