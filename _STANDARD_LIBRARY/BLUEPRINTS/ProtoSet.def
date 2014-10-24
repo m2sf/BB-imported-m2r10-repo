@@ -208,7 +208,7 @@ PROCEDURE [READ] Read ( infile : File; VAR set : ProtoSet );
    to ADT.Read(file, set) for second operands of the ADT type. *)
 
 
-PROCEDURE [READ] Write ( outfile : File; set : ProtoSet );
+PROCEDURE [WRITE] Write ( outfile : File; set : ProtoSet );
 (* Procedure to write a set ADT value to a file. *)
 
 (* A statement of the form WRITE(file, set) is transformed at compile time
