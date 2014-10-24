@@ -1,4 +1,4 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Complex Number ADTs *)
 
@@ -20,7 +20,7 @@ MODULE TYPE = RECORD := { REAL, REAL };
 (* Bindings to monadic operations *)
 
 PROCEDURE [NEG] neg ( z : ProtoComplex ) : ProtoComplex;
-(* procedure to bind to pervasive function NEG for arguments of the ADT *)
+(* procedure to bind to predefined function NEG for arguments of the ADT *)
 
 
 (* Bindings to dyadic operations *)
