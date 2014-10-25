@@ -106,7 +106,7 @@ PROCEDURE [COUNT] count ( array : ProtoStaticArray ) : LONGCARD;
 TYPE ProcType = PROCEDURE ( VAR ProtoStaticArray; CONST IndexType );
 
 PROCEDURE [FOR] forIterator
-  ( VAR array : ProtoStaticArray; doStatements : ProcType );
+  ( VAR array : ProtoStaticArray; doStatements : ProcType; ascending : BOOLEAN );
 
 (* Required procedure to iterate over all index/value pairs of an array
    in ascending order and execute doStatements for each pair. *)
@@ -115,7 +115,7 @@ PROCEDURE [FOR] forIterator
      FOR index IN array DO statementSeq END
    is synthesised in two steps.
    The loop header is synthesised as
-     ArrayADT.forIterator( array, forLoopBody );
+     ArrayADT.forIterator( array, forLoopBody, TRUE );
    The loop body is synthesised as
      PROCEDURE forLoopBody
        ( VAR array : ArrayADT; CONST index : IndexType ) <*INLINE*>;
