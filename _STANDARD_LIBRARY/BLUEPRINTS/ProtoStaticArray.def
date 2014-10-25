@@ -4,12 +4,12 @@
 
 BLUEPRINT ProtoStaticArray [ProtoCollection];
 
-REFERENTIAL IndexType, ValueType, ProcType;
+REFERENTIAL IndexType, ValueType, ComponentCount, ProcType;
 
 (* Static Array ADTs must be opaque records to be statically allocatable,
    array literals are compatible *)
 
-MODULE TYPE = OPAQUE RECORD := { ARGLIST OF ValueType };
+MODULE TYPE = OPAQUE RECORD := { ARGLIST ComponentCount OF ValueType };
 
 
 (* Bindings required for Static Array ADTs *)
@@ -38,7 +38,7 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Assignment and Copying *)
 
 PROCEDURE [:=] assignStructuredValue
-  ( array : ProtoStaticArray; value : ARGLIST capacityLimit OF ValueType );
+  ( array : ProtoStaticArray; value : ARGLIST ComponentCount OF ValueType );
 (* Required procedure to assign a structured value to an array. *)
 
 (* A statement of the form
