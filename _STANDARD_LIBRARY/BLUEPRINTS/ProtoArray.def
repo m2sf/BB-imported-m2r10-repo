@@ -116,7 +116,7 @@ PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
 
 (* Binding to FOR IN iterator *)
 
-TYPE ProcType = PROCEDURE ( VAR ProtoArray; CONST IndexType );
+TYPE ProcType = PROCEDURE ( VAR ProtoArray, CONST IndexType );
 
 PROCEDURE [FOR] forIterator
   ( VAR array : ProtoArray; doStatements : ProcType; ascending : BOOLEAN );
