@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoArray [ProtoCollection];
 
-REFERENTIAL IndexType, ValueType, ProcType;
+REFERENTIAL IndexType, ValueType, HandlerType, ProcType;
 
 (* Array ADTs must be opaque,
    array literals are compatible *)
@@ -70,7 +70,7 @@ PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoArray;
 (* An expression of the form array[index]
    is synthesised as valueAtIndex( array, index ) *)
 
-TYPE IndexOutOfRangeHandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
+TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
 (* Required procedure type for user defined index-out-of-range handlers. *)
 
 (* An index-out-of-range handler function may be used to modify the default
@@ -87,8 +87,7 @@ TYPE IndexOutOfRangeHandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
      RETURN FALSE;
    END mayAbortOnIndexOutOfRange; *)
 
-PROCEDURE installIndexOutOfRangeHandler
-  ( handler : IndexOutOfRangeHandlerType );
+PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
 (* Required procedure to install a user defined index-out-of-range handler. *)
 
 
