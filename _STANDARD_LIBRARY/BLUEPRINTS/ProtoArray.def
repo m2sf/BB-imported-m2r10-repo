@@ -17,10 +17,10 @@ MODULE TYPE = OPAQUE := { VARIADIC OF ValueType };
 (* Required Constants *)
 
 CONST [:=] isMutable : BOOLEAN;
-(* whether the Array ADT is mutable or immutable *)
+(* whether the ADT is mutable or immutable *)
 
 CONST [DESCENDING] isOrdered = TRUE;
-(* arrays are ordered and support ascending and descending iteration *)
+(* arrays are ordered, descending iteration is supported *)
 
 
 (* Capacity limit *)
@@ -28,7 +28,7 @@ CONST [DESCENDING] isOrdered = TRUE;
 (* Binding to predefined function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the index/value pair limit of an Array ADT. *)
+(* Function to return the index/value pair limit of the ADT. *)
 
 (* An expression of the form TLIMIT(ArrayADT))
    is synthesised as ArrayADT.capacityLimit() *)
@@ -49,7 +49,7 @@ PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
    is synthesised as ArrayADT.release(array) *)
 
 
-(* Storage and retrieval *)
+(* Storage, retrieval and insertion *)
 
 (* Binding to [ ] notation within L-values *)
 
@@ -65,19 +65,39 @@ PROCEDURE [STORE] storeValue ( VAR array : ProtoArray;
 
 PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoArray;
                                     index : IndexType ) : ValueType;
-(* Procedure to return the value stored at a given index in an Array ADT
-   value. *)
+(* Required function to return the value stored in an array at a given index. *)
 
 (* An expression of the form array[index]
    is synthesised as valueAtIndex( array, index ) *)
+
+TYPE IndexOutOfRangeHandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
+(* Required procedure type for user defined index-out-of-range handlers. *)
+
+(* An index-out-of-range handler function may be used to modify the default
+   behaviour when RETRIEVE is called with an out-of-range index. 
+   
+   An example of an index-out-of-range handler is given below:
+   
+   PROCEDURE mayAbortOnIndexOutOfRange
+     ( VAR valueToReturn : CARDINAL ) : BOOLEAN;
+   BEGIN
+     (* tell caller to return zero *)
+     valueToReturn := 0;
+     (* tell caller NOT to abort *)
+     RETURN FALSE;
+   END mayAbortOnIndexOutOfRange; *)
+
+PROCEDURE installIndexOutOfRangeHandler
+  ( handler : IndexOutOfRangeHandlerType );
+(* Required procedure to install a user defined index-out-of-range handler. *)
 
 
 PROCEDURE [INSERT] insertValuesAtIndex
   ( targetArray : ProtoArray;
     index : IndexType;
     values : ARGLIST OF ValueType );
-(* Required procedure to insert a value list into a target array,
-   starting at a given index. *)
+(* Required procedure to insert a value list into a target array at a given
+   index. *)
 
 (* A statement of the form
      INSERT(array, index, val1, val2, val3, ...);
@@ -90,8 +110,8 @@ PROCEDURE [INSERT] insertArrayAtIndex
   ( targetArray : ProtoArray;
     index : IndexType;
     sourceArray : ProtoArray );
-(* Required procedure to insert a source array into a target array,
-   starting at a given index. *)
+(* Required procedure to insert a source array into a target array at a given
+   index. *)
 
 (* A statement of the form
      INSERT(targetArray, index, sourceArray);
@@ -106,7 +126,7 @@ PROCEDURE [INSERT] insertArrayAtIndex
 (* Binding to predefined function COUNT *)
 
 PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
-(* Procedure to return the index/value count of an Array ADT value. *)
+(* Required function to return the index/value count of an array. *)
 
 (* An expression of the form COUNT(array)
    is synthesised as ArrayADT.count(array) *)
@@ -117,22 +137,26 @@ PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
 (* Binding to FOR IN iterator *)
 
 TYPE ProcType = PROCEDURE ( VAR ProtoArray, CONST IndexType );
+(* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
   ( VAR array : ProtoArray; doStatements : ProcType; ascending : BOOLEAN );
 
-(* Procedure to iterate over all index/value pairs of an Array ADT value in
-   ascending order and execute the passed in doStatements for each pair. *)
+(* Required procedure to iterate over all index/value pairs of an array
+   in a given order and execute the passed in doStatements for each pair. *)
    
 (* A statement of the form
      FOR index IN array DO statementSeq END
    is synthesised in two steps.
-   The loop header is synthesised as
+   First, the loop header is synthesised as
      ArrayADT.forIterator( array, forLoopBody, TRUE );
-   The loop body is synthesised as
+   Then the loop body is synthesised as
      PROCEDURE forLoopBody
        ( VAR array : ArrayADT; CONST index : IndexType ) <*INLINE*>;
-     BEGIN statementSeq END forLoopBody; *)
+     BEGIN statementSeq END forLoopBody;
+   
+   The loop header of a FOR DESCENDING statement is sythesised with
+   FALSE passed for parameter ascending in the forIterator call. *)
 
 
 (* Dyadic operations *)
@@ -146,7 +170,7 @@ PROCEDURE [FOR] forIterator
 (* Binding to = operator *)
 
 PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
-(* Procedure to test the equivalence of two Array ADT values. *)
+(* Required procedure to test the equivalence of two arrays. *)
 
 (* An expression of the form array1 = array2
    is synthesised as ArrayADT.isEqual(array1, array2) *)
@@ -159,10 +183,16 @@ PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
 
 (* The operations < and <= are not meaningful for array ADTs. *)
 
+PROCEDURE [<] NIL;
+(* Conforming blueprints may not require a binding to the < operator. *)
+
 
 (* Binding to > operator *)
 
 (* The operations > and >= are not meaningful for array ADTs. *)
+
+PROCEDURE [>] NIL;
+(* Conforming blueprints may not require a binding to the > operator. *)
 
 
 END ProtoArray.
