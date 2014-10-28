@@ -127,7 +127,6 @@ PROCEDURE [INSERT] insertArrayAtIndex
    for designators of the array ADT type. *)
 
 
-
 (* Index/Value count *)
 
 (* Binding to predefined function COUNT *)
@@ -177,13 +176,21 @@ PROCEDURE [FOR] forIterator
 (* Binding to = operator *)
 
 PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
-(* Required procedure to test the equivalence of two arrays. *)
+(* Required function to test the equivalence of two arrays. *)
 
 (* An expression of the form array1 = array2
    is synthesised as ArrayADT.isEqual(array1, array2) *)
 
 (* The operation for the # operator
    is synthesized as NOT (array1 = array2) *)
+
+
+(* Binding to predefined function SUBSET. *)
+
+(* The SUBSET operation is not meaningful for array ADTs. *)
+
+PROCEDURE [SUBSET] NIL;
+(* Conforming blueprints may not require a binding to SUBSET. *)
 
 
 (* Binding to < operator *)
