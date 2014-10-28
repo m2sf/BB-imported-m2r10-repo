@@ -6,10 +6,13 @@ BLUEPRINT ProtoArray [ProtoCollection];
 
 REFERENTIAL IndexType, ValueType, HandlerType, ProcType;
 
-(* Array ADTs must be opaque,
-   array literals are compatible *)
 
-MODULE TYPE = OPAQUE := { VARIADIC OF ValueType };
+(* Required Module Type *)
+
+MODULE TYPE = OPAQUE := { ARGLIST OF ValueType };
+
+(* Array ADTs must be opaque,
+   array literals with a variable number of values are compatible. *)
 
 
 (* Bindings required for Array ADTs *)
@@ -17,10 +20,16 @@ MODULE TYPE = OPAQUE := { VARIADIC OF ValueType };
 (* Required Constants *)
 
 CONST [:=] isMutable : BOOLEAN;
-(* whether the ADT is mutable or immutable *)
+(* Required constant to define whether the ADT is mutable. TRUE or FALSE. *)
+
+(* Requiring bindings to COPY, STORE and INSERT is permitted when this
+   value is TRUE, otherwise it will cause a compile time error. *)
+
 
 CONST [DESCENDING] isOrdered = TRUE;
-(* arrays are ordered, descending iteration is supported *)
+(* Required constant to define whether the ADT is ordered. Always TRUE. *)
+
+(* The use of FOR DESCENDING syntax is permitted when this value is TRUE. *)
 
 
 (* Capacity limit *)
@@ -28,7 +37,7 @@ CONST [DESCENDING] isOrdered = TRUE;
 (* Binding to predefined function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Function to return the index/value pair limit of the ADT. *)
+(* Required function to return the index/value pair limit of the ADT. *)
 
 (* An expression of the form TLIMIT(ArrayADT))
    is synthesised as ArrayADT.capacityLimit() *)
