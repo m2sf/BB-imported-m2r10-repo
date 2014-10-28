@@ -14,23 +14,65 @@ MODULE TYPE = OPAQUE := { ARGLIST OF ValueType };
    array literals with a variable number of values are compatible. *)
 
 
-(* Bindings required for Array ADTs *)
-
 (* Required Constants *)
 
-CONST [:=] isMutable : BOOLEAN;
-(* Required constant to define whether the ADT is mutable. TRUE or FALSE. *)
+(* Mutability *)
 
-(* Requiring bindings to COPY, STORE and INSERT is permitted when this
-   value is TRUE, otherwise it will cause a compile time error. *)
+CONST isMutable : BOOLEAN;
+(* Required constant to define whether the ADT is mutable.
+   Its value may be TRUE or FALSE. *)
 
+CONST isImmutable = NOT isMutable;
+(* Required constant indicating whether the ADT is immutable.
+   Its value must be the logical inverse of constant isMutable. *)
+
+
+(* Order and Use of Descending Iteration *)
+
+(* Use of FOR DESCENDING syntax with the ADT is only permitted
+   when a constant is bound to DESCENDING and its value is TRUE. *)
 
 CONST [DESCENDING] isOrdered = TRUE;
-(* Required constant to define whether the ADT is ordered. Always TRUE. *)
+(* Required constant to define whether the ADT is ordered.
+   Its value is always TRUE for Array ADTs. *)
 
-(* The use of FOR DESCENDING syntax is permitted when this value is TRUE. *)
+CONST isUnordered = NOT isOrdered;
+(* Required constant indicating whether the ADT is unordered.
+   Its value must be the logical inverse of constant isOrdered. *)
 
 
+(* Memory Management Model *)
+
+CONST isRefCounted : BOOLEAN;
+(* Required constant to define whether the ADT is reference counted.
+   Its value may be TRUE or FALSE. *)
+
+CONST isNotRefCounted = NOT isRefCounted;
+(* Required constant indicating whether the ADT is reference counted.
+   Its value must be the logical inverse of constant isRefCounted. *)
+
+
+(* Binding Impediments *)
+
+(* Conforming blueprints may not require bindings to any of
+   COPY, STORE, INSERT and REMOVE if the ADT is immutable. *)
+
+isImmutable -> PROCEDURE [COPY] NIL;
+
+isImmutable -> PROCEDURE [STORE] NIL;
+
+isImmutable -> PROCEDURE [INSERT] NIL;
+
+isImmutable -> PROCEDURE [REMOVE] NIL;
+
+
+(* Conforming blueprints may not require a binding to RETAIN
+   if the ADT is not reference counted. *)
+
+isNotRefCounted ->
+PROCEDURE [RETAIN] NIL;
+
+   
 (* Capacity limit *)
 
 (* Binding to predefined function TLIMIT *)
@@ -45,13 +87,24 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Construction and Destruction *)
 
 PROCEDURE [NEW] new ( VAR array : ProtoArray );
-(* Procedure to allocate and initialise a new Array ADT variable. *)
+(* Required procedure to allocate and initialise a new array. *)
 
 (* A statement of the form NEW(array)
    is synthesised as ArrayADT.new(array) *)
 
+
+isRefCounted ->
+PROCEDURE [RETAIN] retain ( VAR array : ProtoArray );
+(* Procedure to retain an array and prevent its deallocation.
+   The procedure is required when the ADT is reference counted. *)
+
+(* A statement of the form RETAIN(array)
+   is synthesised as ArrayADT.retain(array) *)
+
+
 PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
-(* Procedure to release an Array ADT variable. *)
+(* Required procedure to cancel an outstanding retain
+   or deallocate an array if no retains are outstanding. *)
 
 (* A statement of the form RELEASE(array)
    is synthesised as ArrayADT.release(array) *)
@@ -61,9 +114,11 @@ PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
 
 (* Binding to [ ] notation within L-values *)
 
+isMutable ->
 PROCEDURE [STORE] storeValue ( VAR array : ProtoArray;
                                    index : IndexType; value : ValueType );
-(* Procedure to store a value at a given index in an Array ADT variable. *)
+(* Procedure to store a value at a given index in an Array ADT variable.
+   The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form array[index] := value
    is synthesised as storeValue( array, index, value) *)
@@ -99,32 +154,47 @@ PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
 (* Required procedure to install a user defined index-out-of-range handler. *)
 
 
+isMutable ->
 PROCEDURE [INSERT] insertValuesAtIndex
   ( targetArray : ProtoArray;
     index : IndexType;
     values : ARGLIST OF ValueType );
-(* Required procedure to insert a value list into a target array at a given
-   index. *)
+(* Procedure to insert a value list into a target array at a given index.
+   The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form
      INSERT(array, index, val1, val2, val3, ...);
    is transformed at compile time into a procedure call of the form
      ArrayADT.insertValuesAtIndex(array, index, val1, val2, val3, ...);
-   for designators of the array ADT type. *)
+   for designators of the ADT type. *)
 
 
+isMutable ->
 PROCEDURE [INSERT] insertArrayAtIndex
   ( targetArray : ProtoArray;
     index : IndexType;
     sourceArray : ProtoArray );
-(* Required procedure to insert a source array into a target array at a given
-   index. *)
+(* Procedure to insert a source array into a target array at a given
+   index. The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form
      INSERT(targetArray, index, sourceArray);
    is transformed at compile time into a procedure call of the form
      ArrayADT.insertArrayAtIndex(targetArray, index, sourceArray);
-   for designators of the array ADT type. *)
+   for designators of the ADT type. *)
+
+
+isMutable ->
+PROCEDURE [REMOVE] removeValueAtIndex
+  ( array : ProtoArray; index : IndexType);
+(* Procedure to remove a value from an array at a given index.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form
+     REMOVE(array, index);
+   is transformed at compile time into a procedure call of the form
+     ArrayADT.removeValueAtIndex(array, index);
+   for designators of the ADT type. *)
 
 
 (* Index/Value count *)
