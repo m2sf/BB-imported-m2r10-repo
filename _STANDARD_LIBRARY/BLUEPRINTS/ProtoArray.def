@@ -85,11 +85,23 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 
 (* Construction and Destruction *)
 
-PROCEDURE [NEW] new ( VAR array : ProtoArray );
-(* Required procedure to allocate and initialise a new array. *)
+PROCEDURE [NEW] new
+  ( VAR array : ProtoArray; values : ARGLIST OF ValueType );
+(* Required procedure to allocate a new array and initialise it
+   with zero or more given values. *)
 
 (* A statement of the form NEW(array)
-   is synthesised as ArrayADT.new(array) *)
+   is synthesised as ArrayADT.new(array).
+   
+   A statement of the form NEW(array, 1, 2, 3, 4, 5 ...)
+   is synthesised as ArrayADT.new(array, 1, 2, 3, 4, 5, ...). *)
+
+
+isMutable ->
+PROCEDURE newWithCapacity
+  ( VAR array : ProtoArray; capacity : LONGCARD );
+(* Procedure to allocate a new array with a given initial capacity.
+   The procedure is required when the ADT is mutable. *)
 
 
 isRefCounted ->
