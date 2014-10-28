@@ -10,7 +10,6 @@ REFERENTIAL IndexType, ValueType, HandlerType, ProcType;
 (* Required Module Type *)
 
 MODULE TYPE = OPAQUE := { ARGLIST OF ValueType };
-
 (* Array ADTs must be opaque,
    array literals with a variable number of values are compatible. *)
 
