@@ -93,8 +93,8 @@ PROCEDURE [NEW] new
 (* A statement of the form NEW(array)
    is synthesised as ArrayADT.new(array).
    
-   A statement of the form NEW(array, 1, 2, 3, 4, 5 ...)
-   is synthesised as ArrayADT.new(array, 1, 2, 3, 4, 5, ...). *)
+   A statement of the form NEW(array, foo, bar, baz, ...)
+   is synthesised as ArrayADT.new(array, foo, bar, baz, ...). *)
 
 
 isMutable ->
