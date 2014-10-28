@@ -26,6 +26,9 @@ CONST isImmutable = NOT isMutable;
 (* Required constant indicating whether the ADT is immutable.
    Its value must be the logical inverse of constant isMutable. *)
 
+CONST [NIL] nilRemovesValue : BOOLEAN;
+(* Required constant to define the semantics of NIL assignment.
+   NIL assignment is treated as a call to REMOVE when its value is TRUE. *)
 
 (* Order and Use of Descending Iteration *)
 
