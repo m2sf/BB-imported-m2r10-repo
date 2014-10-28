@@ -93,8 +93,8 @@ PROCEDURE [NEW] new
 (* A statement of the form NEW(array)
    is synthesised as ArrayADT.new(array).
    
-   A statement of the form NEW(array, foo, bar, baz, ...)
-   is synthesised as ArrayADT.new(array, foo, bar, baz, ...). *)
+   A statement of the form NEW(array, val1, val2, val3, ...)
+   is synthesised as ArrayADT.new(array, val1, val2, val3, ...). *)
 
 
 isMutable ->
@@ -132,7 +132,8 @@ PROCEDURE [STORE] storeValue ( VAR array : ProtoArray;
    The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form array[index] := value
-   is synthesised as storeValue( array, index, value) *)
+   is equivalent to STORE(array, index, value)
+   and is synthesised as ArrayADT.storeValue(array, index, value) *)
 
 
 (* Binding to [ ] notation within expressions *)
@@ -142,7 +143,8 @@ PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoArray;
 (* Required function to return the value stored in an array at a given index. *)
 
 (* An expression of the form array[index]
-   is synthesised as valueAtIndex( array, index ) *)
+   is equivalent to RETRIEVE(array, index)
+   and is synthesised as ArrayADT.valueAtIndex(array, index) *)
 
 
 TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
@@ -183,18 +185,12 @@ PROCEDURE [INSERT] insertValuesAtIndex
 
 
 isMutable ->
-PROCEDURE [INSERT] insertArrayAtIndex
+PROCEDURE insertArrayAtIndex
   ( targetArray : ProtoArray;
     index : IndexType;
     sourceArray : ProtoArray );
 (* Procedure to insert a source array into a target array at a given
    index. The procedure is required when the ADT is mutable. *)
-
-(* A statement of the form
-     INSERT(targetArray, index, sourceArray);
-   is transformed at compile time into a procedure call of the form
-     ArrayADT.insertArrayAtIndex(targetArray, index, sourceArray);
-   for designators of the ADT type. *)
 
 
 isMutable ->
@@ -208,6 +204,13 @@ PROCEDURE [REMOVE] removeValueAtIndex
    is transformed at compile time into a procedure call of the form
      ArrayADT.removeValueAtIndex(array, index);
    for designators of the ADT type. *)
+
+
+isMutable ->
+PROCEDURE removeAllValues
+  ( targetArray : ProtoArray );
+(* Procedure to remove all values from an array.
+   The procedure is required when the ADT is mutable. *)
 
 
 (* Index/Value count *)
