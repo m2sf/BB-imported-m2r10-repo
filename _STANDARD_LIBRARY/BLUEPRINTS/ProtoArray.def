@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoArray [ProtoCollection];
 
-REFERENTIAL IndexType, ValueType, HandlerType, ProcType;
+REFERENTIAL IndexType, ValueType, HandlerType, LoopBodyType;
 
 
 (* Required Module Type *)
@@ -142,11 +142,11 @@ PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
 
 (* Binding to FOR IN iterator *)
 
-TYPE ProcType = PROCEDURE ( VAR ProtoArray, CONST IndexType );
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoArray, CONST IndexType );
 (* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
-  ( VAR array : ProtoArray; doStatements : ProcType; ascending : BOOLEAN );
+  ( VAR array : ProtoArray; doStatements : LoopBodyType; ascending : BOOLEAN );
 
 (* Required procedure to iterate over all index/value pairs of an array
    in a given order and execute the passed in doStatements for each pair. *)
