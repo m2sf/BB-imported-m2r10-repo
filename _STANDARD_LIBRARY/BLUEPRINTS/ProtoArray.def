@@ -69,8 +69,7 @@ isImmutable -> PROCEDURE [REMOVE] NIL;
 (* Conforming blueprints may not require a binding to RETAIN
    if the ADT is not reference counted. *)
 
-isNotRefCounted ->
-PROCEDURE [RETAIN] NIL;
+isNotRefCounted -> PROCEDURE [RETAIN] NIL;
 
    
 (* Capacity limit *)
@@ -133,6 +132,7 @@ PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoArray;
 (* An expression of the form array[index]
    is synthesised as valueAtIndex( array, index ) *)
 
+
 TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
 (* Required procedure type for user defined index-out-of-range handlers. *)
 
@@ -144,11 +144,12 @@ TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
    PROCEDURE mayAbortOnIndexOutOfRange
      ( VAR valueToReturn : CARDINAL ) : BOOLEAN;
    BEGIN
-     (* tell caller to return zero *)
      valueToReturn := 0;
-     (* tell caller NOT to abort *)
-     RETURN FALSE;
-   END mayAbortOnIndexOutOfRange; *)
+     RETURN FALSE
+   END mayAbortOnIndexOutOfRange;
+   
+   This handler tells its caller to return zero and not to abort. *)
+
 
 PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
 (* Required procedure to install a user defined index-out-of-range handler. *)
