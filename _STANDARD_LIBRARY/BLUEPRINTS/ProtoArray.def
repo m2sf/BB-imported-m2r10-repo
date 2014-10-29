@@ -238,23 +238,22 @@ PROCEDURE insertArrayAtIndex
 (* Binding to Predefined Procedure REMOVE *)
 
 isMutable ->
-PROCEDURE [REMOVE] removeValueAtIndex
-  ( array : ProtoArray; index : IndexType);
-(* Procedure to remove a value from an array at a given index.
+PROCEDURE [REMOVE] removeValuesAtIndex
+  ( array : ProtoArray; index : IndexType; valueCount : LONGCARD );
+(* Procedure to remove one or more values from an array at a given index.
    The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form
-     REMOVE(array, index);
+     REMOVE(array, index, n);
    is transformed at compile time into a procedure call of the form
-     ArrayADT.removeValueAtIndex(array, index);
-   for designators of the ADT type. *)
-
-
-isMutable ->
-PROCEDURE removeAllValues
-  ( targetArray : ProtoArray );
-(* Procedure to remove all values from an array.
-   The procedure is required when the ADT is mutable. *)
+     ArrayADT.removeValuesAtIndex(array, index, n);
+   for first arguments of the ADT type.
+   
+   A statement of the form
+     array[index] := NIL
+   is treated equivalent to
+     REMOVE(array, index, 1)
+   if a constant of value TRUE is bound to NIL. *)
 
 
 (* Iteration *)
