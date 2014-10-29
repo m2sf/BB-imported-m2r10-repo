@@ -16,6 +16,7 @@ MODULE TYPE = OPAQUE := { ARGLIST OF ValueType };
 
 (* Required Constants *)
 
+
 (* Mutability *)
 
 CONST isMutable : BOOLEAN;
@@ -27,7 +28,7 @@ CONST isImmutable = NOT isMutable;
    Its value must be the logical inverse of constant isMutable. *)
 
 
-(* Order and Use of Descending Iteration *)
+(* Orderedness *)
 
 (* Use of FOR DESCENDING syntax with the ADT is only permitted
    when a constant is bound to DESCENDING and its value is TRUE. *)
@@ -41,10 +42,10 @@ CONST isUnordered = NOT isOrdered;
    Its value must be the logical inverse of constant isOrdered. *)
 
 
-(* Semantics of NIL assignment *)
+(* Semantics of NIL Assignment *)
 
 CONST [NIL] nilRemovesValue : BOOLEAN;
-(* Required constant to define the semantics of NIL assignment.
+(* Required constant to define the semantics of assigning NIL to a value.
    NIL assignment is treated as a call to REMOVE when its value is TRUE. *)
 
 
@@ -78,10 +79,13 @@ isImmutable -> PROCEDURE [REMOVE] NIL;
 
 isNotRefCounted -> PROCEDURE [RETAIN] NIL;
 
-   
-(* Capacity limit *)
 
-(* Binding to predefined function TLIMIT *)
+(* Required Procedures *)
+
+
+(* Introspection *)
+
+(* Binding to Predefined Function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Required function to return the index/value pair limit of the ADT. *)
@@ -90,7 +94,18 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
    is synthesised as ArrayADT.capacityLimit() *)
 
 
-(* Construction and Destruction *)
+(* Binding to Predefined Function COUNT *)
+
+PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
+(* Required function to return the index/value count of an array. *)
+
+(* An expression of the form COUNT(array)
+   is synthesised as ArrayADT.count(array) *)
+
+
+(* Memory Management *)
+
+(* Binding to Predefined Procedure NEW *)
 
 PROCEDURE [NEW] new
   ( VAR array : ProtoArray; values : ARGLIST OF ValueType );
@@ -111,6 +126,8 @@ PROCEDURE newWithCapacity
    The procedure is required when the ADT is mutable. *)
 
 
+(* Binding to Predefined Procedure RETAIN *)
+
 isRefCounted ->
 PROCEDURE [RETAIN] retain ( VAR array : ProtoArray );
 (* Procedure to retain an array and prevent its deallocation.
@@ -119,6 +136,8 @@ PROCEDURE [RETAIN] retain ( VAR array : ProtoArray );
 (* A statement of the form RETAIN(array)
    is synthesised as ArrayADT.retain(array) *)
 
+
+(* Binding to Predefined Procedure RELEASE *)
 
 PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
 (* Required procedure to cancel an outstanding retain
@@ -130,12 +149,16 @@ PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
 
 (* Copying *)
 
+(* Binding to Predefined Function DUP *)
+
 PROCEDURE [DUP] newWithCopy ( source : ProtoArray ) : ProtoArray;
 (* Required function to return a newly allocated copy of an array. *)
 
 (* An expression of the form DUP(array)
    is synthesised as ArrayADT.newWithCopy(array) *)
 
+
+(* Binding to Predefined Procedure COPY *)
 
 isMutable ->
 PROCEDURE [COPY] copy ( source : ProtoArray; VAR target : ProtoArray );
@@ -146,9 +169,9 @@ PROCEDURE [COPY] copy ( source : ProtoArray; VAR target : ProtoArray );
    is synthesised as ArrayADT.copy(array1, array2) *)
 
 
-(* Storage, retrieval and insertion *)
+(* Value Storage *)
 
-(* Binding to [ ] notation within L-values *)
+(* Binding to Predefined Procedure STORE *)
 
 isMutable ->
 PROCEDURE [STORE] storeValue ( VAR array : ProtoArray;
@@ -161,7 +184,9 @@ PROCEDURE [STORE] storeValue ( VAR array : ProtoArray;
    and is synthesised as ArrayADT.storeValue(array, index, value) *)
 
 
-(* Binding to [ ] notation within expressions *)
+(* Value Retrieval *)
+
+(* Binding to Predefined Function RETRIEVE *)
 
 PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoArray;
                                     index : IndexType ) : ValueType;
@@ -171,6 +196,8 @@ PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoArray;
    is equivalent to RETRIEVE(array, index)
    and is synthesised as ArrayADT.valueAtIndex(array, index) *)
 
+
+(* Index Out Of Range Retrieval Error Handling *)
 
 TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
 (* Required procedure type for user defined index-out-of-range handlers. *)
@@ -193,6 +220,10 @@ TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
 PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
 (* Required procedure to install a user defined index-out-of-range handler. *)
 
+
+(* Value Insertion *)
+
+(* Binding to Predefined Procedure INSERT *)
 
 isMutable ->
 PROCEDURE [INSERT] insertValuesAtIndex
@@ -218,6 +249,10 @@ PROCEDURE insertArrayAtIndex
    index. The procedure is required when the ADT is mutable. *)
 
 
+(* Value Removal *)
+
+(* Binding to Predefined Procedure REMOVE *)
+
 isMutable ->
 PROCEDURE [REMOVE] removeValueAtIndex
   ( array : ProtoArray; index : IndexType);
@@ -236,17 +271,6 @@ PROCEDURE removeAllValues
   ( targetArray : ProtoArray );
 (* Procedure to remove all values from an array.
    The procedure is required when the ADT is mutable. *)
-
-
-(* Index/Value count *)
-
-(* Binding to predefined function COUNT *)
-
-PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
-(* Required function to return the index/value count of an array. *)
-
-(* An expression of the form COUNT(array)
-   is synthesised as ArrayADT.count(array) *)
 
 
 (* Iteration *)
@@ -276,15 +300,15 @@ PROCEDURE [FOR] forIterator
    FALSE passed for parameter ascending in the forIterator call. *)
 
 
-(* Dyadic operations *)
+(* Arithmetic Operations *)
 
 (* The operations +, -, * and / are not common to all Array ADTs,
    their bindings may be required by more specialised blueprints. *)
 
 
-(* Relational operations *)
+(* Relational Operations *)
 
-(* Binding to = operator *)
+(* Binding to the = and # Operators *)
 
 PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
 (* Required function to test the equivalence of two arrays. *)
@@ -296,7 +320,7 @@ PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
    is synthesized as NOT (array1 = array2) *)
 
 
-(* Binding to predefined function SUBSET. *)
+(* Binding to Predefined Function SUBSET *)
 
 (* The SUBSET operation is not meaningful for array ADTs. *)
 
@@ -304,7 +328,7 @@ PROCEDURE [SUBSET] NIL;
 (* Conforming blueprints may not require a binding to SUBSET. *)
 
 
-(* Binding to < operator *)
+(* Binding to < and <= Operators *)
 
 (* The operations < and <= are not meaningful for array ADTs. *)
 
@@ -312,7 +336,7 @@ PROCEDURE [<] NIL;
 (* Conforming blueprints may not require a binding to the < operator. *)
 
 
-(* Binding to > operator *)
+(* Binding to > and >= Operators *)
 
 (* The operations > and >= are not meaningful for array ADTs. *)
 
