@@ -111,6 +111,13 @@ PROCEDURE newWithCapacity
    The procedure is required when the ADT is mutable. *)
 
 
+PROCEDURE [DUP] newWithCopy ( source : ProtoArray ) : ProtoArray;
+(* Required function to return a newly allocated copy of an array. *)
+
+(* An expression of the form DUP(array)
+   is synthesised as ArrayADT.newWithCopy(array) *)
+
+
 isRefCounted ->
 PROCEDURE [RETAIN] retain ( VAR array : ProtoArray );
 (* Procedure to retain an array and prevent its deallocation.
