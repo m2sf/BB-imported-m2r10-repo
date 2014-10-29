@@ -60,26 +60,6 @@ CONST isNotRefCounted = NOT isRefCounted;
    Its value must be the logical inverse of constant isRefCounted. *)
 
 
-(* Binding Impediments *)
-
-(* Conforming blueprints may not require bindings to any of
-   COPY, STORE, INSERT and REMOVE if the ADT is immutable. *)
-
-isImmutable -> PROCEDURE [COPY] NIL;
-
-isImmutable -> PROCEDURE [STORE] NIL;
-
-isImmutable -> PROCEDURE [INSERT] NIL;
-
-isImmutable -> PROCEDURE [REMOVE] NIL;
-
-
-(* Conforming blueprints may not require a binding to RETAIN
-   if the ADT is not reference counted. *)
-
-isNotRefCounted -> PROCEDURE [RETAIN] NIL;
-
-
 (* Required Procedures *)
 
 
@@ -342,6 +322,27 @@ PROCEDURE [<] NIL;
 
 PROCEDURE [>] NIL;
 (* Conforming blueprints may not require a binding to the > operator. *)
+
+
+(* Conditionally Inhibited Bindings *)
+
+
+(* Conforming blueprints may not require bindings to any of
+   COPY, STORE, INSERT and REMOVE if the ADT is immutable. *)
+
+isImmutable -> PROCEDURE [COPY] NIL;
+
+isImmutable -> PROCEDURE [STORE] NIL;
+
+isImmutable -> PROCEDURE [INSERT] NIL;
+
+isImmutable -> PROCEDURE [REMOVE] NIL;
+
+
+(* Conforming blueprints may not require a binding to RETAIN
+   if the ADT is not reference counted. *)
+
+isNotRefCounted -> PROCEDURE [RETAIN] NIL;
 
 
 END ProtoArray.
