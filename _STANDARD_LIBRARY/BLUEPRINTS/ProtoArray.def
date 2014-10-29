@@ -42,13 +42,6 @@ CONST isUnordered = NOT isOrdered;
    Its value must be the logical inverse of constant isOrdered. *)
 
 
-(* Semantics of NIL Assignment *)
-
-CONST [NIL] nilRemovesValue : BOOLEAN;
-(* Required constant to define the semantics of assigning NIL to a value.
-   NIL assignment is treated as a call to REMOVE when its value is TRUE. *)
-
-
 (* Memory Management Model *)
 
 CONST isRefCounted : BOOLEAN;
@@ -58,6 +51,13 @@ CONST isRefCounted : BOOLEAN;
 CONST isNotRefCounted = NOT isRefCounted;
 (* Required constant indicating whether the ADT is reference counted.
    Its value must be the logical inverse of constant isRefCounted. *)
+
+
+(* Semantics of NIL Assignment *)
+
+CONST [NIL] nilRemovesValue : BOOLEAN;
+(* Required constant to define the semantics of assigning NIL to a value.
+   NIL assignment is treated as a call to REMOVE when its value is TRUE. *)
 
 
 (* Required Procedures *)
