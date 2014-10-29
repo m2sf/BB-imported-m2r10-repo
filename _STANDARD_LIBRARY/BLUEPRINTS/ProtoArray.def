@@ -140,7 +140,7 @@ PROCEDURE [DUP] newWithCopy ( source : ProtoArray ) : ProtoArray;
 isMutable ->
 PROCEDURE [COPY] copy ( source : ProtoArray; VAR target : ProtoArray );
 (* Procedure to destructively copy the contents of one array to another.
-   The procedur is required when the ADT is mutable. *)
+   The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form COPY(array1, array2)
    is synthesised as ArrayADT.copy(array1, array2) *)
