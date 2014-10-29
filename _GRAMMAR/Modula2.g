@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Jan 31, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Oct 28, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -90,7 +90,7 @@ tokens {
     CAST           = 'CAST';           /* RW within procedure header */
     NIL            = 'NIL';            /* RW within blueprint moduleType */
 
-// *** Bindable Identifiers, 24 tokens ***
+// *** Bindable Identifiers, 28 tokens ***
 
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
@@ -105,6 +105,7 @@ tokens {
     ABS            = 'ABS';            /* RW within procedure header */
     NEG            = 'NEG';            /* RW within procedure header */
     DUP            = 'DUP';            /* RW within procedure header */
+    COPY           = 'COPY';           /* RW within procedure header */
     COUNT          = 'COUNT';          /* RW within procedure header */
     LENGTH         = 'LENGTH';         /* RW within procedure header */
     CONCAT         = 'CONCAT';         /* RW within procedure header */
@@ -116,6 +117,9 @@ tokens {
     RETAIN         = 'RETAIN';         /* RW within procedure header */
     RELEASE        = 'RELEASE';        /* RW within procedure header */
     SUBSET         = 'SUBSET';         /* RW within procedure header */
+    READ           = 'READ';           /* RW within procedure header */
+    WRITE          = 'WRITE';          /* RW within procedure header */
+    WRITEF         = 'WRITEF';         /* RW within procedure header */
     TMAX           = 'TMAX';           /* RW within procedure header */
     TMIN           = 'TMIN';           /* RW within procedure header */
     SXF            = 'SXF';            /* RW within procedure header */
@@ -210,7 +214,7 @@ typeToExtend : Ident ;
 blueprint :
     BLUEPRINT blueprintIdent
     ( '[' blueprintToRefine ']' )? ( FOR blueprintForTypeToExtend )? ';'
-    ( REFERENTIAL identList ';' )? mouleTypeRequirementOrImpediment ';'
+    ( REFERENTIAL identList ';' )? moduleTypeRequirement ';'
     ( requiredConst ';' )* ( reqProcedureOrProcType ';' )*
     END blueprintIdent '.'
     ;
@@ -222,44 +226,50 @@ blueprintToRefine : blueprintIdent ;
 blueprintForTypeToExtend : blueprintIdent ;
 
 // production #5
-mouleTypeRequirementOrImpediment :
+moduleTypeRequirement :
     MODULE TYPE '='
     ( permittedTypeDefinition ( '|' permittedTypeDefinition )*
       ( ':=' protoliteral ( '|' protoliteral )* )? ) | NIL | '*'
     ;
 
-// fragment #5.1
-protoliteral : simpleProtoliteral | structuredProtoliteral ;
-
-// alias #5.2
-simpleProtoliteral : Ident ;
-
 // production #6
-structuredProtoliteral :
-    '{' ( Ident ( ',' identList | BY repeatFactor ) |
-         '{' identList '}' BY repeatFactor ) '}'
+protoLiteral :
+    simpleProtoLiteral |
+    '{' ( protoLiteralList |
+        ARGLIST itemCount? OF
+          ( simpleProtoLiteral | '{' protoLiteralList '}' ) ) '}'
     ;
 
-// fragment #6.1
-repeatFactor : Ident | * ;
+// alias #6.1
+simpleProtoLiteral : Ident;
+
+// alias #6.2
+protoLiteralList : identList;
+
+// alias #6.3
+itemCount : constIdent;
+
+// alias #6.4
+constIdent : Ident ; /* only identifiers of constants */
+
 
 // production #7
 requiredConst :	
     CONST ( '[' constBindableProperty ']' )? Ident
-    ( ':' ( range OF)? predefinedType | '=' constExpression )
+    ( ':' ( range OF)? predefOrRefTypeIdent | '=' constExpression )
     ;
 
 // fragment #7.1
-constBindableProperty : ':=' | DESCENDING | constBindableIdent ;
+constBindableProperty : DESCENDING | constBindableIdent ;
 
 // fragment #7.2
 constBindableIdent :  /* Ident */
-    TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
+    NIL | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
     {} /* make ANTLRworks display separate branches */
 	;
 
 // alias #7.3
-predefinedType : Ident ;
+predefOrRefTypeIdent : Ident ;
 
 // alias #7.4
 constExpression : expression ; /* but no type identifiers */
@@ -271,7 +281,8 @@ permittedTypeDefinition :
 
 // production #9
 reqProcedureOrProcType :
-    procedureHeader | TYPE Ident '=' procedureType
+    ( constIdent '->' )?
+    ( procedureHeader | TYPE Ident '=' procedureType )
     ;
 
 
@@ -305,15 +316,12 @@ replacement : StringLiteral ;
 
 // production #13
 importDirective :
-    IMPORT moduleIdent importMode? ( ',' moduleIdent importMode? )* |
+    IMPORT moduleIdent reExport? ( ',' moduleIdent reExport? )* |
     FROM moduleIdent IMPORT ( identList | '*' )
     ;
 
-// fragment #13.1
-importMode :
-    '+' | '-'
-    {} /* make ANTLRworks display separate branches */
-    ;
+// alias #13.1
+reExport : '+' ;
 
 // production #14
 block :
@@ -326,11 +334,11 @@ definition :
     CONST (  Ident '=' constExpression ';' )+ |
     TYPE ( typeDefinitionOrDeclaration ';' )+ |
     VAR ( variableDeclaration ';' )+ |
-    privateAccess? procedureHeader ';'
+    restrictedExport? procedureHeader ';'
     ;
 
 // alias #15.1
-privateAccess : '-' ;
+restrictedExport : '*' ;
 
 // production #16
 typeDefinitionOrDeclaration :
@@ -479,9 +487,10 @@ procBindableEntity :
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 procBindableIdent : /* Ident */
-    ABS | NEG | DUP | COUNT | LENGTH | NEW | RETAIN | RELEASE | CONCAT |
-    STORE | RETRIEVE | INSERT | REMOVE | SUBSET | TMIN | TMAX |
-    SXF | VAL {} /* make ANTLRworks display separate branches */
+    ABS | NEG | DUP | COPY | COUNT | LENGTH | NEW | RETAIN | RELEASE |
+    CONCAT | STORE | RETRIEVE | INSERT | REMOVE | SUBSET |
+    READ | WRITE | WRITEF | TMIN | TMAX | SXF | VAL
+    {} /* make ANTLRworks display separate branches */
     ;
 
 // *** Formal Parameters ***
