@@ -111,13 +111,6 @@ PROCEDURE newWithCapacity
    The procedure is required when the ADT is mutable. *)
 
 
-PROCEDURE [DUP] newWithCopy ( source : ProtoArray ) : ProtoArray;
-(* Required function to return a newly allocated copy of an array. *)
-
-(* An expression of the form DUP(array)
-   is synthesised as ArrayADT.newWithCopy(array) *)
-
-
 isRefCounted ->
 PROCEDURE [RETAIN] retain ( VAR array : ProtoArray );
 (* Procedure to retain an array and prevent its deallocation.
@@ -135,6 +128,24 @@ PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
    is synthesised as ArrayADT.release(array) *)
 
 
+(* Copying *)
+
+PROCEDURE [DUP] newWithCopy ( source : ProtoArray ) : ProtoArray;
+(* Required function to return a newly allocated copy of an array. *)
+
+(* An expression of the form DUP(array)
+   is synthesised as ArrayADT.newWithCopy(array) *)
+
+
+isMutable ->
+PROCEDURE [COPY] copy ( source : ProtoArray; VAR target : ProtoArray );
+(* Procedure to destructively copy the contents of one array to another.
+   The procedur is required when the ADT is mutable. *)
+
+(* A statement of the form COPY(array1, array2)
+   is synthesised as ArrayADT.copy(array1, array2) *)
+
+
 (* Storage, retrieval and insertion *)
 
 (* Binding to [ ] notation within L-values *)
@@ -142,7 +153,7 @@ PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
 isMutable ->
 PROCEDURE [STORE] storeValue ( VAR array : ProtoArray;
                                    index : IndexType; value : ValueType );
-(* Procedure to store a value at a given index in an Array ADT variable.
+(* Procedure to store a value at a given index in an array.
    The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form array[index] := value
