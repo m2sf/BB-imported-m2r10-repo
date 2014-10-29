@@ -85,15 +85,6 @@ isNotRefCounted -> PROCEDURE [RETAIN] NIL;
 
 (* Introspection *)
 
-(* Binding to Predefined Function TLIMIT *)
-
-PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Required function to return the index/value pair limit of the ADT. *)
-
-(* An expression of the form TLIMIT(ArrayADT))
-   is synthesised as ArrayADT.capacityLimit() *)
-
-
 (* Binding to Predefined Function COUNT *)
 
 PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
@@ -101,6 +92,15 @@ PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
 
 (* An expression of the form COUNT(array)
    is synthesised as ArrayADT.count(array) *)
+
+
+(* Binding to Predefined Function TLIMIT *)
+
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Required function to return the index/value pair limit of the ADT. *)
+
+(* An expression of the form TLIMIT(ArrayADT))
+   is synthesised as ArrayADT.capacityLimit() *)
 
 
 (* Memory Management *)
