@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Jan 31, 2014
+# Syntax diagram generator for Modula-2 (R10), status Oct 30, 2014
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -200,8 +200,7 @@ lappend non_terminals blueprint {
     {line
       {optx [ blueprintToRefine ]} {optx FOR blueprintForTypeToExtend} ;}
     {line
-      {optx REFERENTIAL identList ;}
-      moduleTypeRequirementOrImpediment ; }
+      {optx REFERENTIAL identList ;} moduleTypeRequirement ;}
     {line {loop nil {nil reqConst ;}}
       {loop nil {nil reqProcedureOrProcType ;}}
       END blueprintIdent .}
@@ -217,81 +216,83 @@ lappend non_terminals blueprintForTypeToExtend {
   line blueprintIdent
 }
 
-# (5) Module Type Requirement or Impediment
-lappend non_terminals moduleType {
+# (5) Module Type Requirement
+lappend non_terminals moduleTypeRequirement {
   line MODULE TYPE = {
     or
-      {line {loop permittedTypeDefinition |} {optx := {loop protoliteral |}}}
+      {line {loop permittedTypeDefinition |} {optx := {loop protoLiteral |}}}
       /NIL
       *
     }
 }
 
-# (5.1) Proto Literal
+# (6) Proto Literal
 lappend non_terminals protoliteral {
-  or simpleProtoliteral structuredProtoliteral
+  or
+    simpleProtoLiteral
+    {line LBRACE
+      or
+        protoLiteralList
+        {line ARGLIST {optx itemCount} OF
+          or simpleProtoLiteral {line LBRACE protoLiteralList RBRACE}}
+      RBRACE
+    }
 }
 
-# (5.2) Simple Proto Literal
+# (6.1) Simple Proto Literal
 lappend non_terminals simpleProtoliteral {
   line Ident 
 }
 
-# (6) Structured Proto Literal
-lappend non_terminals structuredProtoliteral {
-  line LBRACE {
-    or
-      {line Ident {or {line , identList} {line BY repeatFactor}} }
-      {line LBRACE identList RBRACE BY repeatFactor }
-    }
-  RBRACE
+# (6.2) Proto Literal List
+lappend non_terminals protoLiteralList {
+  line identList 
 }
 
-# (6.1) Repeat Factor
-lappend non_terminals repeatFactor {
-  or Ident *
+# (6.3) Item Count
+lappend non_terminals itemCount {
+  line constIdent
 }
 
-# (7) Permitted Type Definition
-lappend non_terminals permittedTypeDefinition {
-  or RECORD { line OPAQUE {optx RECORD}}
+# (6.4) Item Count
+lappend non_terminals constIdent {
+  line Ident
 }
 
-# (8) Required Constant
+# (7) Required Constant
 lappend non_terminals reqConst {
   stack
     {line CONST {optx [ constBindableProperty ]} Ident}
     {or
-      {line : {optx range OF} predefinedType}
+      {line : {optx range OF} predefOrRefTypeIdent}
       {line = constExpression}
     }
 }
 
-# (8.1) Constant-Bindable Property
+# (7.1) Constant-Bindable Property
 lappend non_terminals constBindableProperty {
-  or := DESCENDING constBindableIdent
+  or DESCENDING ConstBindableIdent
 }
 
-# (8.2) Constant-Bindable Identifier
-lappend non_terminals constBindableIdent {
-  or /TLIMIT /TSIGNED /TBASE /TPRECISION /TMINEXP /TMAXEXP
-}
-
-# (8.3) Predefined Type
-lappend non_terminals predefinedType {
+# (7.2) Predefined Or Referential Type Identifier
+lappend non_terminals predefOrRefTypeIdent {
   line Ident
 }
 
-# (8.4) Constant Expression
+# (7.3) Constant Expression
 lappend non_terminals constExpression {
   line expression
 }
 
+# (8) Permitted Type Definition
+lappend non_terminals permittedTypeDefinition {
+  or RECORD { line OPAQUE {optx RECORD}}
+}
+
 # (9) Required Procedure Or Procedure Type
 lappend non_terminals reqProcedureOrProcType {
-  or
-    procedureHeader
-    {line TYPE Ident = procedureType}
+  {optx constIdent ->} 
+  {or procedureHeader {line TYPE Ident = procedureType}}
 }
 
 # (10) Import List
@@ -332,7 +333,7 @@ lappend non_terminals replacement {
 # (13) Import Directive
 lappend non_terminals importDirective {
   or
-    {line IMPORT {loop {line moduleIdent {optx importMode}} ,}}
+    {line IMPORT {loop {line moduleIdent {optx reExport}} ,}}
     {line FROM moduleIdent IMPORT {
       or
         {line identList}
@@ -341,9 +342,9 @@ lappend non_terminals importDirective {
   }
 }
 
-# (13.1) importMode
-lappend non_terminals importMode {
-  or + -
+# (13.1) Re-Export
+lappend non_terminals reExport {
+  line +
 }
 
 # (14) Block
@@ -359,13 +360,13 @@ lappend non_terminals definition {
       {line CONST {loop {line ident = constExpression ;} {}} }
       {line TYPE {loop {line typeDefinitionOrDeclaration ;} {}}}
       {line VAR {loop {line variableDeclaration ;} {}} }
-      {line {optx privateAccess} procedureHeader ;}
+      {line {optx restrictedExport} procedureHeader ;}
   }
 }
 
-# (15.1) Private Access
-lappend non_terminals privateAccess {
-  line -
+# (15.1) Restricted Export
+lappend non_terminals restrictedExport {
+  line *
 }
 
 # (16) Type Definition Or Declaration
@@ -522,22 +523,14 @@ lappend non_terminals variableDeclaration {
 # (32) Procedure Header
 lappend non_terminals procedureHeader {
   stack
-    {line PROCEDURE
-      {optx {line [ procBindableEntity ]} } }
-    {line Ident {optx ( formalParamList )} {optx : returnedType}}
+    {line PROCEDURE {optx {line [ procBindableEntity ]} } Ident }
+    {line {optx ( formalParamList )} {optx : returnedType}}
 }
 
 # (32.1) Procedure-Bindable Entity
 lappend non_terminals procBindableEntity {
   or
-    + - * / = < > :: := .. DIV MOD FOR IN procBindableIdent
-}
-
-# (32.2) Procedure-Bindable Identifier
-lappend non_terminals procBindableIdent {
-  or
-    /ABS /NEG /DUP /COUNT /LENGTH /NEW /RETAIN /RELEASE /CONCAT
-    /STORE /RETRIEVE /INSERT /REMOVE /SUBSET /TMIN /TMAX /SXF /VAL
+    + - * / = < > :: := .. IN DIV MOD FOR ProcBindableIdent
 }
 
 # (33) Formal Parameter List
@@ -887,6 +880,19 @@ lappend terminals IdentLeadChar {
 # (2.2) Identifier Tail
 lappend terminals IdentTail {
   loop {or IdentLeadChar Digit} {}
+}
+
+# (2.3) Constant-Bindable Identifier
+lappend terminals ConstBindableIdent {
+  or /NIL /TLIMIT /TSIGNED /TBASE /TPRECISION /TMINEXP /TMAXEXP
+}
+
+# (2.4) Procedure-Bindable Identifier
+lappend terminals ProcBindableIdent {
+  or
+    /ABS /NEG /DUP /COPY /COUNT /LENGTH /NEW /RETAIN /RELEASE /CONCAT
+    /STORE /RETRIEVE /INSERT /REMOVE /SUBSET /READ /WRITE /WRITEF
+    /TMIN /TMAX /SXF /VAL
 }
 
 # (3) Numeric Literal
