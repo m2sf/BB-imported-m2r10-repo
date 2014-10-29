@@ -226,35 +226,37 @@ lappend non_terminals moduleTypeRequirement {
     }
 }
 
-# (6) Proto Literal
+# (5.1) Proto Literal
 lappend non_terminals protoLiteral {
-  or
-    simpleProtoLiteral
-    {line LBRACE
-      or
-        protoLiteralList
-        {line ARGLIST {optx itemCount} OF
-          or simpleProtoLiteral {line LBRACE protoLiteralList RBRACE}}
-      RBRACE
-    }
+  or simpleProtoLiteral structuredProtoLiteral 
 }
 
-# (6.1) Simple Proto Literal
+# (5.2) Simple Proto Literal
 lappend non_terminals simpleProtoLiteral {
   line Ident 
 }
 
-# (6.2) Proto Literal List
+# (6) Structured Proto Literal
+lappend non_terminals structuredProtoLiteral {
+  line LBRACE {
+    or
+      {line ARGLIST {optx itemCount} OF
+        {or simpleProtoLiteral {line LBRACE protoLiteralList RBRACE}}}
+      protoLiteralList
+  } RBRACE
+}
+
+# (6.1) Proto Literal List
 lappend non_terminals protoLiteralList {
   line identList 
 }
 
-# (6.3) Item Count
+# (6.2) Item Count
 lappend non_terminals itemCount {
   line constIdent
 }
 
-# (6.4) Item Count
+# (6.3) Item Count
 lappend non_terminals constIdent {
   line Ident
 }
@@ -291,8 +293,9 @@ lappend non_terminals permittedTypeDefinition {
 
 # (9) Required Procedure Or Procedure Type
 lappend non_terminals reqProcedureOrProcType {
-  {optx constIdent ->} 
-  {or procedureHeader {line TYPE Ident = procedureType}}
+  line
+    {optx constIdent ->} 
+    {or procedureHeader {line TYPE Ident = procedureType}}
 }
 
 # (10) Import List
