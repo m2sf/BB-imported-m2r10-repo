@@ -227,7 +227,7 @@ lappend non_terminals moduleTypeRequirement {
 }
 
 # (6) Proto Literal
-lappend non_terminals protoliteral {
+lappend non_terminals protoLiteral {
   or
     simpleProtoLiteral
     {line LBRACE
@@ -240,7 +240,7 @@ lappend non_terminals protoliteral {
 }
 
 # (6.1) Simple Proto Literal
-lappend non_terminals simpleProtoliteral {
+lappend non_terminals simpleProtoLiteral {
   line Ident 
 }
 
