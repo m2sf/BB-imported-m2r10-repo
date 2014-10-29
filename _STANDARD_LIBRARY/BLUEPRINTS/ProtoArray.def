@@ -179,13 +179,15 @@ PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoArray;
 
 (* Index Out Of Range Retrieval Error Handling *)
 
+(* A user defined index-out-of-range handler function may be used to change
+   the default behaviour when RETRIEVE is called with an out-of-range index. *)
+
+(* Handler Type *)
+
 TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
 (* Required procedure type for user defined index-out-of-range handlers. *)
 
-(* An index-out-of-range handler function may be used to modify the default
-   behaviour when RETRIEVE is called with an out-of-range index. 
-   
-   An example of an index-out-of-range handler is given below:
+(* An example of an index-out-of-range handler is given below:
    
    PROCEDURE mayAbortOnIndexOutOfRange
      ( VAR valueToReturn : CARDINAL ) : BOOLEAN;
@@ -196,6 +198,8 @@ TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
    
    This handler tells its caller to return zero and not to abort. *)
 
+
+(* Handler Installation *)
 
 PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
 (* Required procedure to install a user defined index-out-of-range handler. *)
