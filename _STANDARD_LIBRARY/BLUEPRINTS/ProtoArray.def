@@ -212,7 +212,7 @@ TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
      RETURN FALSE
    END mayAbortOnIndexOutOfRange;
    
-   This handler tells its caller to return zero and not to abort. *)
+   This handler tells its caller not to abort and to return zero. *)
 
 
 (* Handler Installation *)
@@ -294,13 +294,7 @@ PROCEDURE [FOR] forIterator
      BEGIN statementSeq END forLoopBody;
    
    The loop header of a FOR DESCENDING statement is sythesised with
-   FALSE passed for parameter ascending in the forIterator call. *)
-
-
-(* Arithmetic Operations *)
-
-(* The operations +, -, * and / are not common to all Array ADTs,
-   their bindings may be required by more specialised blueprints. *)
+   FALSE passed for parameter ascending in the call to forIterator. *)
 
 
 (* Relational Operations *)
@@ -317,31 +311,10 @@ PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
    is synthesized as NOT (array1 = array2). *)
 
 
-(* Binding to Predefined Function SUBSET *)
-
-(* The SUBSET operation is not meaningful for array ADTs. *)
-
-PROCEDURE [SUBSET] NIL;
-(* Conforming blueprints may not require a binding to SUBSET. *)
-
-
-(* Binding to the < and <= Operators *)
-
-(* The operations < and <= are not meaningful for array ADTs. *)
-
-PROCEDURE [<] NIL;
-(* Conforming blueprints may not require a binding to the < operator. *)
-
-
-(* Binding to the > and >= Operators *)
-
-(* The operations > and >= are not meaningful for array ADTs. *)
-
-PROCEDURE [>] NIL;
-(* Conforming blueprints may not require a binding to the > operator. *)
-
-
 (* Conditionally Inhibited Bindings *)
+
+
+(* Note: LENGTH and COUNT are always mutually exclusive. *)
 
 
 (* Conforming blueprints may not require bindings to any of
@@ -358,10 +331,72 @@ isImmutable -> PROCEDURE [INSERT] NIL;
 isImmutable -> PROCEDURE [REMOVE] NIL;
 
 
-(* Conforming blueprints may not require a binding to RETAIN
-   if the ADT is not reference counted. *)
+(* Conforming blueprints may not require bindings to
+   RETAIN and CONCAT if the ADT is not reference counted. *)
 
 isNotRefCounted -> PROCEDURE [RETAIN] NIL;
+
+isNotRefCounted -> PROCEDURE [CONCAT] NIL;
+
+
+(* Unconditionally Inhibited Bindings *)
+
+
+(* Introspection *)
+
+(* Operations TMIN and TMAX are not meaningful for Array ADTs.
+   Conforming blueprints may not require bindings to these operations. *)
+
+PROCEDURE [TMIN] NIL; (* TMIN is inhibited *)
+
+PROCEDURE [TMAX] NIL; (* TMAX is inhibited *)
+
+
+(* Arithmetic Operations *)
+
+(* Arithmetic operations are not meaningful for Array ADTs.
+   Conforming blueprints may not require bindings to these operations. *)
+
+PROCEDURE [ABS] NIL; (* ABS is inhibited *)
+
+PROCEDURE [NEG] NIL; (* NEG is inhibited *)
+
+PROCEDURE [+] NIL; (* Addition is inhibited *)
+
+PROCEDURE [-] NIL; (* Subtraction is inhibited *)
+
+PROCEDURE [*] NIL; (* Multiplication is inhibited *)
+
+PROCEDURE [/] NIL; (* Division is inhibited *)
+
+PROCEDURE [DIV] NIL; (* DIV is inhibited *)
+
+PROCEDURE [MOD] NIL; (* MOD is inhibited *)
+
+
+(* Arithmetic Conversion *)
+
+(* Arithmetic conversions are not meaningful for Array ADTs.
+   Conforming blueprints may not require bindings to these operations. *)
+
+PROCEDURE [SXF] NIL; (* SXF is inhibited *)
+
+PROCEDURE [VAL] NIL; (* VAL is inhibited *)
+
+
+(* Relational Operations *)
+
+(* Relational operations >, >=, < and <= are not meaningful for Array ADTs.
+   Conforming blueprints may not require bindings to these operations. *)
+
+PROCEDURE [<] NIL;
+
+PROCEDURE [>] NIL;
+
+(* The SUBSET operation is not meaningful for array ADTs.
+   Conforming blueprints may not require a binding to it. *)
+
+PROCEDURE [SUBSET] NIL;
 
 
 END ProtoArray.
