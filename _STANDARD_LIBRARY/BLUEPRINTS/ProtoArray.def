@@ -313,7 +313,7 @@ PROCEDURE [SUBSET] NIL;
 (* Conforming blueprints may not require a binding to SUBSET. *)
 
 
-(* Binding to < and <= Operators *)
+(* Binding to the < and <= Operators *)
 
 (* The operations < and <= are not meaningful for array ADTs. *)
 
@@ -321,7 +321,7 @@ PROCEDURE [<] NIL;
 (* Conforming blueprints may not require a binding to the < operator. *)
 
 
-(* Binding to > and >= Operators *)
+(* Binding to the > and >= Operators *)
 
 (* The operations > and >= are not meaningful for array ADTs. *)
 
