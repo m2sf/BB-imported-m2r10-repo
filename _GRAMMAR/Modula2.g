@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Oct 28, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Oct 30, 2014 */
 
 
 // ---------------------------------------------------------------------------
