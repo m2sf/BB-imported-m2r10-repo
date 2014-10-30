@@ -57,7 +57,7 @@ CONST isNotRefCounted = NOT isRefCounted;
 
 CONST [NIL] nilRemovesValue : BOOLEAN;
 (* Required constant to define the semantics of assigning NIL to a value.
-   NIL assignment is treated as a call to REMOVE when its value is TRUE. *)
+   NIL assignment is treated as a call to REMOVE when this value is TRUE. *)
 
 
 (* Required Procedures *)
@@ -71,7 +71,7 @@ PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
 (* Required function to return the index/value count of an array. *)
 
 (* An expression of the form COUNT(array)
-   is synthesised as ArrayADT.count(array) *)
+   is synthesised as ArrayADT.count(array). *)
 
 
 (* Binding to Predefined Function TLIMIT *)
@@ -80,7 +80,7 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Required function to return the index/value pair limit of the ADT. *)
 
 (* An expression of the form TLIMIT(ArrayADT))
-   is synthesised as ArrayADT.capacityLimit() *)
+   is synthesised as ArrayADT.capacityLimit(). *)
 
 
 (* Memory Management *)
@@ -114,7 +114,7 @@ PROCEDURE [RETAIN] retain ( VAR array : ProtoArray );
    The procedure is required when the ADT is reference counted. *)
 
 (* A statement of the form RETAIN(array)
-   is synthesised as ArrayADT.retain(array) *)
+   is synthesised as ArrayADT.retain(array). *)
 
 
 (* Binding to Predefined Procedure RELEASE *)
@@ -124,7 +124,7 @@ PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
    or deallocate an array if no retains are outstanding. *)
 
 (* A statement of the form RELEASE(array)
-   is synthesised as ArrayADT.release(array) *)
+   is synthesised as ArrayADT.release(array). *)
 
 
 (* Literal Assignment *)
@@ -137,6 +137,11 @@ PROCEDURE [:=] assignLiteral
 (* Procedure to destructively copy the contents of an array literal to an
    array. The procedure is required when the ADT is mutable. *)
 
+(* A statement of the form
+     array := { val1, val2, val3, ... };
+   is synthesised as
+     ArrayADT.assignLiteral(array, val1, val2, val3, ...). *)
+
 
 (* Copying *)
 
@@ -146,7 +151,7 @@ PROCEDURE [DUP] newWithCopy ( source : ProtoArray ) : ProtoArray;
 (* Required function to return a newly allocated copy of an array. *)
 
 (* An expression of the form DUP(array)
-   is synthesised as ArrayADT.newWithCopy(array) *)
+   is synthesised as ArrayADT.newWithCopy(array). *)
 
 
 (* Binding to Predefined Procedure COPY *)
@@ -157,7 +162,7 @@ PROCEDURE [COPY] copy ( source : ProtoArray; VAR target : ProtoArray );
    The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form COPY(array1, array2)
-   is synthesised as ArrayADT.copy(array1, array2) *)
+   is synthesised as ArrayADT.copy(array1, array2). *)
 
 
 (* Value Storage *)
@@ -165,27 +170,27 @@ PROCEDURE [COPY] copy ( source : ProtoArray; VAR target : ProtoArray );
 (* Binding to Predefined Procedure STORE *)
 
 isMutable ->
-PROCEDURE [STORE] storeValue ( VAR array : ProtoArray;
-                                   index : IndexType; value : ValueType );
+PROCEDURE [STORE] storeValue
+ ( VAR array : ProtoArray; index : IndexType; value : ValueType );
 (* Procedure to store a value at a given index in an array.
    The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form array[index] := value
-   is equivalent to STORE(array, index, value)
-   and is synthesised as ArrayADT.storeValue(array, index, value) *)
+   is equivalent to STORE(array, index, value) and
+   is synthesised as ArrayADT.storeValue(array, index, value). *)
 
 
 (* Value Retrieval *)
 
 (* Binding to Predefined Function RETRIEVE *)
 
-PROCEDURE [RETRIEVE] valueAtIndex ( array : ProtoArray;
-                                    index : IndexType ) : ValueType;
+PROCEDURE [RETRIEVE] valueAtIndex
+ ( array : ProtoArray; index : IndexType ) : ValueType;
 (* Required function to return the value stored in an array at a given index. *)
 
 (* An expression of the form array[index]
-   is equivalent to RETRIEVE(array, index)
-   and is synthesised as ArrayADT.valueAtIndex(array, index) *)
+   is equivalent to RETRIEVE(array, index) and
+   is synthesised as ArrayADT.valueAtIndex(array, index). *)
 
 
 (* Index Out Of Range Retrieval Error Handling *)
@@ -229,17 +234,14 @@ PROCEDURE [INSERT] insertValuesAtIndex
    The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form
-     INSERT(array, index, val1, val2, val3, ...);
-   is transformed at compile time into a procedure call of the form
-     ArrayADT.insertValuesAtIndex(array, index, val1, val2, val3, ...);
-   for designators of the ADT type. *)
+     INSERT(array, index, val1, val2, val3, ...)
+   is synthesised as
+     ArrayADT.insertValuesAtIndex(array, index, val1, val2, val3, ...). *)
 
 
 isMutable ->
 PROCEDURE insertArrayAtIndex
-  ( targetArray : ProtoArray;
-    index : IndexType;
-    sourceArray : ProtoArray );
+  ( targetArray : ProtoArray; index : IndexType; sourceArray : ProtoArray );
 (* Procedure to insert a source array into a target array at a given
    index. The procedure is required when the ADT is mutable. *)
 
@@ -256,9 +258,8 @@ PROCEDURE [REMOVE] removeValuesAtIndex
 
 (* A statement of the form
      REMOVE(array, index, n);
-   is transformed at compile time into a procedure call of the form
-     ArrayADT.removeValuesAtIndex(array, index, n);
-   for first arguments of the ADT type.
+   is synthesised as
+     ArrayADT.removeValuesAtIndex(array, index, n).
    
    A statement of the form
      array[index] := NIL
@@ -310,10 +311,10 @@ PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
 (* Required function to test the equivalence of two arrays. *)
 
 (* An expression of the form array1 = array2
-   is synthesised as ArrayADT.isEqual(array1, array2) *)
+   is synthesised as ArrayADT.isEqual(array1, array2). *)
 
 (* The operation for the # operator
-   is synthesized as NOT (array1 = array2) *)
+   is synthesized as NOT (array1 = array2). *)
 
 
 (* Binding to Predefined Function SUBSET *)
