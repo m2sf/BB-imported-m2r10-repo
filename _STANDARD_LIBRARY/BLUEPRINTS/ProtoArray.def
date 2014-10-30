@@ -272,9 +272,11 @@ PROCEDURE [FOR] forIterator
 (* A statement of the form
      FOR index IN array DO statementSeq END
    is synthesised in two steps.
-   First, the loop header is synthesised as
+   
+   The loop header is synthesised as
      ArrayADT.forIterator( array, forLoopBody, TRUE );
-   Then the loop body is synthesised as
+   
+   The loop body is synthesised as
      PROCEDURE forLoopBody
        ( VAR array : ArrayADT; CONST index : IndexType ) <*INLINE*>;
      BEGIN statementSeq END forLoopBody;
