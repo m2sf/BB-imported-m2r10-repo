@@ -127,6 +127,17 @@ PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
    is synthesised as ArrayADT.release(array) *)
 
 
+(* Literal Assignment *)
+
+(* Binding to the := Operator *)
+
+isMutable ->
+PROCEDURE [:=] assignLiteral
+  ( array : ProtoArray; literal : ARGLIST OF ValueType );
+(* Procedure to destructively copy the contents of an array literal to an
+   array. The procedure is required when the ADT is mutable. *)
+
+
 (* Copying *)
 
 (* Binding to Predefined Function DUP *)
@@ -333,7 +344,9 @@ PROCEDURE [>] NIL;
 
 
 (* Conforming blueprints may not require bindings to any of
-   COPY, STORE, INSERT and REMOVE if the ADT is immutable. *)
+   :=, COPY, STORE, INSERT and REMOVE if the ADT is immutable. *)
+
+isImmutable -> PROCEDURE [:=] NIL;
 
 isImmutable -> PROCEDURE [COPY] NIL;
 
