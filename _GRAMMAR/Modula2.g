@@ -160,9 +160,9 @@ tokens {
 */
 // *** Special Characters, 3 tokens ***
 
-    BACKSLASH      = '\\';             /* for readability */
-    SINGLE_QUOTE   = '\'' ;            /* for readability */
-    DOUBLE_QUOTE   = '\"' ;            /* for readability */
+    BACKSLASH      = '\\';  /*\*/      /* for readability */
+    SINGLE_QUOTE   = '\'' ; /*'*/      /* for readability */
+    DOUBLE_QUOTE   = '\"' ; /*"*/      /* for readability */
 
 // *** Ignore Characters, 3 tokens ***
 
@@ -232,24 +232,28 @@ moduleTypeRequirement :
       ( ':=' protoliteral ( '|' protoliteral )* )? ) | NIL | '*'
     ;
 
-// production #6
+// fragment #5.1
 protoLiteral :
-    simpleProtoLiteral |
+    simpleProtoLiteral | structuredProtoLiteral
+    ;
+
+// alias #5.2
+simpleProtoLiteral : Ident;
+
+// production #6
+structuredProtoLiteral :
     '{' ( protoLiteralList |
         ARGLIST itemCount? OF
           ( simpleProtoLiteral | '{' protoLiteralList '}' ) ) '}'
     ;
 
 // alias #6.1
-simpleProtoLiteral : Ident;
-
-// alias #6.2
 protoLiteralList : identList;
 
-// alias #6.3
+// alias #6.2
 itemCount : constIdent;
 
-// alias #6.4
+// alias #6.3
 constIdent : Ident ; /* only identifiers of constants */
 
 
@@ -260,18 +264,12 @@ requiredConst :
     ;
 
 // fragment #7.1
-constBindableProperty : DESCENDING | constBindableIdent ;
+constBindableProperty : DESCENDING | ConstBindableIdent ;
 
-// fragment #7.2
-constBindableIdent :  /* Ident */
-    NIL | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
-    {} /* make ANTLRworks display separate branches */
-	;
-
-// alias #7.3
+// alias #7.2
 predefOrRefTypeIdent : Ident ;
 
-// alias #7.4
+// alias #7.3
 constExpression : expression ; /* but no type identifiers */
 
 // production #8
@@ -480,17 +478,7 @@ procedureHeader :
 // fragment #32.1
 procBindableEntity :
     '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' | '..' |
-    DIV | MOD | FOR | IN | procBindableIdent
-    ;
-
-// fragment #32.2
-// both an identifier and a reserved word
-// resolve using Schroedinger's Token
-procBindableIdent : /* Ident */
-    ABS | NEG | DUP | COPY | COUNT | LENGTH | NEW | RETAIN | RELEASE |
-    CONCAT | STORE | RETRIEVE | INSERT | REMOVE | SUBSET |
-    READ | WRITE | WRITEF | TMIN | TMAX | SXF | VAL
-    {} /* make ANTLRworks display separate branches */
+    DIV | MOD | FOR | IN | ProcBindableIdent
     ;
 
 // *** Formal Parameters ***
@@ -1008,6 +996,24 @@ IdentLeadChar :
 fragment /* #2.2 */
 IdentTail :
     ( IdentLeadChar | Digit )+
+    ;
+
+// fragment #2.3
+// both an identifier and a reserved word
+// resolve using Schroedinger's Token
+ConstBindableIdent :  /* Ident */
+    NIL | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
+    {} /* make ANTLRworks display separate branches */
+	;
+
+// fragment #2.4
+// both an identifier and a reserved word
+// resolve using Schroedinger's Token
+ProcBindableIdent : /* Ident */
+    ABS | NEG | DUP | COPY | COUNT | LENGTH | NEW | RETAIN | RELEASE |
+    CONCAT | STORE | RETRIEVE | INSERT | REMOVE | SUBSET |
+    READ | WRITE | WRITEF | TMIN | TMAX | SXF | VAL
+    {} /* make ANTLRworks display separate branches */
     ;
 
 // production #3
