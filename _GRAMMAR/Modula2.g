@@ -215,7 +215,7 @@ blueprint :
     BLUEPRINT blueprintIdent
     ( '[' blueprintToRefine ']' )? ( FOR blueprintForTypeToExtend )? ';'
     ( REFERENTIAL identList ';' )? moduleTypeRequirement ';'
-    ( reqDefinitionOrInhibition ';' )*
+    ( reqDefinition ';' )* ( inhibition ';' )*
     END blueprintIdent '.'
     ;
 
@@ -262,9 +262,9 @@ permittedTypeDefinition :
     ;
 
 // production #8
-reqDefinitionOrInhibition :
+reqDefinition :
     ( boolConstIdent '->' )?
-    ( reqConstDef | TYPE Ident '=' procedureType | reqProcDef | inhibition )
+    ( reqConstDef | TYPE Ident '=' procedureType | reqProcDef )
     ;
 
 // alias #8.1
