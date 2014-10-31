@@ -193,9 +193,6 @@ PROCEDURE installInvalidAccessorHandler ( handler : HandlerType );
 (* The operations INSERT and REMOVE are not common to all collection
    ADTs, their bindings may be required by more specialised blueprints. *)
 
-isImmutable -> PROCEDURE [INSERT] : NIL;
-(* Value insertion is inhibited when the ADT is immutable. *)
-
 
 (* Accessor or Value Test *)
 
