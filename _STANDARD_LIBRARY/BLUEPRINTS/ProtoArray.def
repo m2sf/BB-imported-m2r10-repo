@@ -320,26 +320,41 @@ PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
 (* Conforming blueprints may not require bindings to any of
    :=, COPY, STORE, INSERT and REMOVE if the ADT is immutable. *)
 
-isImmutable -> PROCEDURE [:=] NIL;
+isImmutable -> [:=] : NIL;
 
-isImmutable -> PROCEDURE [COPY] NIL;
+isImmutable -> [COPY] : NIL;
 
-isImmutable -> PROCEDURE [STORE] NIL;
+isImmutable -> [STORE] : NIL;
 
-isImmutable -> PROCEDURE [INSERT] NIL;
+isImmutable -> [INSERT] : NIL;
 
-isImmutable -> PROCEDURE [REMOVE] NIL;
+isImmutable -> [REMOVE] : NIL;
 
 
 (* Conforming blueprints may not require bindings to
    RETAIN and CONCAT if the ADT is not reference counted. *)
 
-isNotRefCounted -> PROCEDURE [RETAIN] NIL;
+isNotRefCounted -> [RETAIN] : NIL;
 
-isNotRefCounted -> PROCEDURE [CONCAT] NIL;
+isNotRefCounted -> [CONCAT] : NIL;
 
 
 (* Unconditionally Inhibited Bindings *)
+
+(* Numeric Properties *)
+
+(* Numeric properties are not meaningful for Array ADTs.
+   Conforming blueprints may not require bindings to these properties. *)
+
+[TSIGNED] : NIL; (* TSIGNED is inhibited *)
+
+[TBASE] : NIL; (* TBASE is inhibited *)
+
+[TPRECISION] : NIL; (* TPRECISION is inhibited *)
+
+[TMINEXP] : NIL; (* TMINEXP is inhibited *)
+
+[TMAXEXP] : NIL; (* TMAXEXP is inhibited *)
 
 
 (* Introspection *)
@@ -347,9 +362,9 @@ isNotRefCounted -> PROCEDURE [CONCAT] NIL;
 (* Operations TMIN and TMAX are not meaningful for Array ADTs.
    Conforming blueprints may not require bindings to these operations. *)
 
-PROCEDURE [TMIN] NIL; (* TMIN is inhibited *)
+[TMIN] : NIL; (* TMIN is inhibited *)
 
-PROCEDURE [TMAX] NIL; (* TMAX is inhibited *)
+[TMAX] : NIL; (* TMAX is inhibited *)
 
 
 (* Arithmetic Operations *)
@@ -357,21 +372,21 @@ PROCEDURE [TMAX] NIL; (* TMAX is inhibited *)
 (* Arithmetic operations are not meaningful for Array ADTs.
    Conforming blueprints may not require bindings to these operations. *)
 
-PROCEDURE [ABS] NIL; (* ABS is inhibited *)
+[ABS] : NIL; (* ABS is inhibited *)
 
-PROCEDURE [NEG] NIL; (* NEG is inhibited *)
+[NEG] : NIL; (* NEG is inhibited *)
 
-PROCEDURE [+] NIL; (* Addition is inhibited *)
+[+] : NIL; (* Addition is inhibited *)
 
-PROCEDURE [-] NIL; (* Subtraction is inhibited *)
+[-] : NIL; (* Subtraction is inhibited *)
 
-PROCEDURE [*] NIL; (* Multiplication is inhibited *)
+[*] : NIL; (* Multiplication is inhibited *)
 
-PROCEDURE [/] NIL; (* Division is inhibited *)
+[/] : NIL; (* Division is inhibited *)
 
-PROCEDURE [DIV] NIL; (* DIV is inhibited *)
+[DIV] : NIL; (* DIV is inhibited *)
 
-PROCEDURE [MOD] NIL; (* MOD is inhibited *)
+[MOD] : NIL; (* MOD is inhibited *)
 
 
 (* Arithmetic Conversion *)
@@ -379,9 +394,9 @@ PROCEDURE [MOD] NIL; (* MOD is inhibited *)
 (* Arithmetic conversions are not meaningful for Array ADTs.
    Conforming blueprints may not require bindings to these operations. *)
 
-PROCEDURE [SXF] NIL; (* SXF is inhibited *)
+[SXF] : NIL; (* SXF is inhibited *)
 
-PROCEDURE [VAL] NIL; (* VAL is inhibited *)
+[VAL] : NIL; (* VAL is inhibited *)
 
 
 (* Relational Operations *)
@@ -389,14 +404,14 @@ PROCEDURE [VAL] NIL; (* VAL is inhibited *)
 (* Relational operations >, >=, < and <= are not meaningful for Array ADTs.
    Conforming blueprints may not require bindings to these operations. *)
 
-PROCEDURE [<] NIL;
+[<] : NIL; (* less-than inhibited *)
 
-PROCEDURE [>] NIL;
+[>] : NIL; (* greater-than inhibited *)
 
 (* The SUBSET operation is not meaningful for array ADTs.
    Conforming blueprints may not require a binding to it. *)
 
-PROCEDURE [SUBSET] NIL;
+[SUBSET] : NIL; (* SUBSET inhibited *)
 
 
 END ProtoArray.
