@@ -1,0 +1,144 @@
+(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Built-in Blueprint Consistency Rules *)
+
+PSEUDO BLUEPRINT BUILTIN;
+(* Not a compilation unit, documentation only *)
+
+[TSIGNED] -> CONST [TBASE];
+[TBASE] -> CONST [TPRECISION];
+[TPRECISION] -> CONST [TMINEXP];
+[TMINEXP] -> CONST [TMAXEXP];
+[TMAXEXP] -> CONST [TSIGNED];
+(* If any one of TSIGNED, TBASE, TPRECISION, TMINEXP
+   and TMAXEXP is required, all of them are required. *)
+
+[TSIGNED=TRUE] -> PROCEDURE [NEG];
+(* If value bound to TSIGNED is TRUE, unary minus is required. *)
+
+[TSIGNED=FALSE] -> PROCEDURE [NEG] : NIL;
+(* If value bound to TSIGNED is FALSE, unary minus is inhibited. *)
+
+[TMINEXP=0] AND [TMAXEXP=0] -> PROCEDURE [/] : NIL;
+(* If values bound to TMINEXP and TMAXEXP
+   are both zero, real division is inhibited. *)
+
+[TMINEXP>0] OR [TMAXEXP>0] -> PROCEDURE [DIV] : NIL;
+(* If either value bound to TMINEXP or TMAXEXP
+   is greather than zero, integer division is inhibited. *)
+
+[TSIGNED] -> PROCEDURE [TMIN];
+(* If TSIGNED is required, TMIN is required. *)
+
+[TMIN] -> PROCEDURE [TMAX];
+(* If TMIN is required, TMAX is required. *)
+
+[TMAX] -> PROCEDURE [TMIN];
+(* If TMAX is required, TMIN is required. *)
+
+[+] -> PROCEDURE [-];
+(* If addition is required, subtraction is required. *)
+
+[-] -> PROCEDURE [+];
+(* If subtraction is required, addition is required. *)
+
+[*] -> PROCEDURE [DIV | /];
+(* If multiplication is required, division is required. *)
+
+[/] -> PROCEDURE [*];
+(* If real divition is required, multiplication is required. *)
+
+[DIV] -> PROCEDURE [*];
+(* If integer division is required, multiplication is required. *)
+
+[DIV] -> PROCEDURE [MOD];
+(* If integer division is required, modulus is required. *)
+
+[MOD] -> PROCEDURE [DIV];
+(* If modulus is required, integer division is required. *)
+
+[TSIGNED] -> PROCEDURE [=];
+(* If TSIGNED required, is-equal is required. *)
+
+[<] -> PROCEDURE [=];
+(* If less-than is required, is-equal is required. *)
+
+[<] -> PROCEDURE [>];
+(* If less-than is required, greater-than is required. *)
+
+[>] -> PROCEDURE [<];
+(* If greater-than is required, less-than is required. *)
+
+[TSIGNED] -> PROCEDURE [SUBSET] : NIL;
+(* If TSIGNED is required, SUBSET is inhibited. *)
+
+[SUBSET] -> CONST [TSIGNED] -> NIL;
+(* If SUBSET is required, TSIGNED is inhibited. *)
+
+[SUBSET] -> PROCEDURE [=];
+(* If SUBSET is required, is-equal is required. *)
+
+[SUBSET] -> PROCEDURE [+] : NIL;
+(* If SUBSET is required, addition is inhibited. *)
+
+[SUBSET] -> PROCEDURE [-] : NIL;
+(* If SUBSET is required, subtraction is inhibited. *)
+
+[SUBSET] -> PROCEDURE [*] : NIL;
+(* If SUBSET is required, multiplication is inhibited. *)
+
+[SUBSET] -> PROCEDURE [/] : NIL;
+(* If SUBSET is required, real divition is inhibited. *)
+
+[SUBSET] -> PROCEDURE [DIV] : NIL;
+(* If SUBSET is required, integer divition is inhibited. *)
+
+[SUBSET] -> PROCEDURE [MOD] : NIL;
+(* If SUBSET is required, modulus is inhibited. *)
+
+[TLIMIT] -> PROCEDURE [COUNT | LENGTH];
+(* If TLIMIT is required, either COUNT or LENGTH is required. *)
+
+[COUNT] -> PROCEDURE [LENGTH] : NIL;
+(* If COUNT is required, LENGTH is inhibited. *)
+
+[LENGTH] -> PROCEDURE [COUNT] : NIL;
+(* If LENGTH is required, COUNT is inhibited. *)
+
+[NEW] -> PROCEDURE [RELEASE];
+(* If NEW is required, RELEASE is required. *)
+
+[RETAIN] -> PROCEDURE [NEW];
+(* If RETAIN is required, NEW is required. *)
+
+[CONCAT] -> PROCEDURE [RETAIN];
+(* If CONCAT is required, RETAIN is required. *)
+
+[CONCAT] -> PROCEDURE [+] : NIL;
+(* If CONCAT is required, addition is inhibited. *)
+
+[DESCENDING] -> PROCEDURE [FOR];
+
+(* If DESCENDING is required, for loop iteration is required. *)
+
+[FOR] -> PROCEDURE [COUNT | LENGTH];
+(* If for loop iteration is required, either COUNT or LENGTH is required. *)
+
+[COPY] -> PROCEDURE [DUP];
+(* IF COPY is required, DUP is required. *)
+
+[STORE] -> PROCEDURE [RETRIEVE];
+(* If STORE is required, RETRIEVE is required. *)
+
+[INSERT] -> PROCEDURE [REMOVE];
+(* If INSERT is required, REMOVE is required. *)
+
+[REMOVE] -> PROCEDURE [INSERT];
+(* If INSERT is required, REMOVE is required. *)
+
+[READ] -> PROCEDURE [WRITE];
+[WRITE] -> PROCEDURE [WRITEF];
+[WRITEF] -> PROCEDURE [READ];
+(* If any of READ, WRITE, WRITEF is required, all of them are required. *)
+
+END BUILTIN.
