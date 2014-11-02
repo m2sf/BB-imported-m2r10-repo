@@ -215,7 +215,7 @@ blueprint :
     BLUEPRINT blueprintIdent
     ( '[' blueprintToRefine ']' )? ( FOR blueprintForTypeToExtend )? ';'
     ( REFERENTIAL identList ';' )? moduleTypeRequirement ';'
-    ( reqDefinition ';' )* ( inhibition ';' )*
+    ( constOrTypeOrProcRequirement ';' )*
     END blueprintIdent '.'
     ;
 
@@ -227,9 +227,9 @@ blueprintForTypeToExtend : blueprintIdent ;
 
 // production #5
 moduleTypeRequirement :
-    MODULE TYPE '='
-    ( permittedTypeDefinition ( '|' permittedTypeDefinition )*
-      ( ':=' protoliteral ( '|' protoliteral )* )? ) | NIL | '*'
+    MODULE TYPE
+      ( '=' ( OPAQUE | RECORD | '*' )
+        ( ':=' protoLiteral ( '|' protoLiteral )* )? | ':' NIL )
     ;
 
 // fragment #5.1
@@ -257,37 +257,49 @@ itemCount : constIdent;
 constIdent : Ident ; /* only identifiers of constants */
 
 // production #7
-permittedTypeDefinition :
-    RECORD | OPAQUE RECORD?
+constOrTypeOrProcRequirement :
+    ( boolConstIdent '->' )?
+    ( constRequirement | procedureRequirement | TYPE Ident '=' procedureType )
     ;
 
 // production #8
-reqDefinition :
-    ( boolConstIdent '->' )?
-    ( reqConstDef | TYPE Ident '=' procedureType | reqProcDef )
+constRequirement :
+    CONST (
+    ( simpleConstRequirement |
+      '[' constBindableProperty ']' ( simpleConstRequirement | ':' NIL ) )
     ;
 
-// alias #8.1
-reqProcDef : procedureHeader ;
+// fragment #8.1
+constBindableProperty :
+    DESCENDING | ConstBindableIdent
+    ;
 
 // production #9
-reqConstDef :	
-    CONST ( '[' constBindableProperty ']' )? Ident
-    ( ':' ( range OF)? predefOrRefTypeIdent | '=' constExpression )
+simpleConstReq :
+    Ident ( '=' constExpression | ':' predefOrRefTypeIdent )
     ;
 
-// fragment #9.1
-constBindableProperty : DESCENDING | ConstBindableIdent ;
-
-// alias #9.2
-    predefOrRefTypeIdent : Ident ;
-
-// alias #9.3
+// alias #9.1
 constExpression : expression ; /* but no type identifiers */
 
+// alias #9.2
+predefOrRefTypeIdent : Ident ;
+
 // production #10
-inhibition :
-    '[' ( constBindableProperty | procBindableEntity ) ']' ':' NIL
+procedureRequirement :
+    PROCEDURE (
+    ( restrictedExport? procedureSignature ) |
+    ( '[' procBindableEntity ']' ( procedureSignature | ':' NIL ) ) )
+    ;
+
+// alias #10.1
+restrictedExport : '*' ;
+
+// fragment #10.2
+procBindableEntity :
+    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' | '..' |
+    IN | DIV | MOD | FOR | ProcBindableIdent
+    {} /* make ANTLRworks display separate branches */
     ;
 
 
@@ -347,38 +359,31 @@ block :
 
 // production #16
 definition :
-    CONST ( boundConstDefinition ';' | ( constDeclaration ';' )+ ) |
-    TYPE ( typeDefinitionOrDeclaration ';' )+ |
+    CONST ( constDeclaration ';' )+ |
+    TYPE ( Ident '=' typeOrOpaqueType ';' )+ |
     VAR ( variableDeclaration ';' )+ |
-    restrictedExport? procedureHeader ';'
+    procedureHeader ';'
     ;
 
-// alias #16.1
-restrictedExport : '*' ;
+// fragment #16.1
+typeOrOpaqueType :
+    type | OPAQUE
+    ;
 
 // production #17
-boundConstDefinition :
-    '[' constBindableProperty ']' constDeclaration ';' )+ |
-
-// production #18
-constDeclaration :
-    Ident '=' constExpression
-    ;
-
-// production #19
-typeDefinitionOrDeclaration :
-    Ident '=' ( OPAQUE recordType? | type )
-    ;
-
-// production #20
 declaration :
-    CONST ( constDeclaration ';' )+ |
+    CONST ( Ident '=' constExpression ';' )+ |
     TYPE ( Ident '=' type ';' )+ |
     VAR ( variableDeclaration ';' )+ |
     procedureHeader ';' block Ident ';'
     ;
 
-// production #21
+// production #18
+constDefinition :
+    ( '[' constBindableProperty ']' )? Ident '=' constExpression
+    ;
+
+// production #19
 variableDeclaration :
     identList ':' ( range OF )? typeIdent
     ;
@@ -386,98 +391,100 @@ variableDeclaration :
 
 // *** Types ***
 
-// production #22
+// production #20
 type :
     (( ALIAS | SET | range ) OF )? typeIdent |
     enumType | arrayType | recordType | pointerType | procedureType
     ;
 
-// alias 22.1
+// alias 20.1
 typeIdent : qualident ;
 
-// production #23
+// production #21
 range :
     '[' '>'? constExpression '..' '<'? constExpression ']'
     ;
 
-// production #24
+// production #22
 enumType :
     '(' ( '+' enumBaseType ',' )? identList ')'
     ;
 
-// alias 24.1
+// alias 22.1
 enumBaseType : enumTypeIdent ;
 
-// alias 24.2
+// alias 22.2
 enumTypeIdent : typeIdent ;
 
-// production #25
+// production #23
 arrayType :
     ARRAY componentCount ( ',' componentCount )* OF typeIdent
     ;
 
-// alias #25.1
+// alias #23.1
 componentCount : constExpression ;
 
-// production #26
+// production #24
 recordType :
     RECORD ( fieldList ( ';' fieldList )* indeterminateField? |
     '(' recBaseType ')' fieldList ( ';' fieldList )* ) END
     ;
 
-// fragment #26.1
-fieldList : variableDeclaration ;
-
-// alias 26.2
+// alias 24.1
 recBaseType : recTypeIdent ;
 
-// alias 26.3
+// alias 24.2
 recTypeIdent : typeIdent ;
 
-// production #27
+// production #25
+fieldList :
+    restrictedExport? variableDeclaration
+    ;
+
+// production #26
 indeterminateField :
     INDETERMINATE Ident ':' ARRAY discriminantFieldIdent OF typeIdent
     ;
 
-// alias #27.1
+// alias #26.1
 discriminantFieldIdent : Ident ;
 
-// production #28
+// production #27
 pointerType :
     POINTER TO CONST? typeIdent
     ;
 
-// production #29
+// production #28
 procedureType :
     PROCEDURE
     ( '(' formalTypeList ')' )?
     ( ':' returnedType )?
     ;
 
-// alias #29.1
+// alias #28.1
 returnedType : typeIdent ;
 
-// production #30
+// production #29
 formalTypeList :
     formalType ( ',' formalType )*
     ;
 
-// fragment #30.1
+// fragment #29.1
 formalType :
     attributedFormalType | variadicFormalType
     ;
 
-// production #31
+// production #30
 attributedFormalType :
     ( CONST | VAR {})? simpleFormalType
     ;
 
-// production #32
+// production #31
 simpleFormalType :
     CAST? ( ARRAY OF )? typeIdent
     ;
 
-// production #33
+// production #32
 variadicFormalType :
     ARGLIST numberOfArgumentsToPass? OF
     ( attributedFormalType |
@@ -488,17 +495,15 @@ variadicFormalType :
 
 // *** Procedures ***
 
-// production #34
+// production #33
 procedureHeader :
-    PROCEDURE ( '[' procBindableEntity ']' )?
-    Ident ( '(' formalParamList ')' )?
-    ( ':' returnedType )?
+    PROCEDURE ( '[' procBindableEntity ']' | restrictedExport )?
+    procedureSignature
     ;
 
-// fragment #34.1
-procBindableEntity :
-    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' | '..' |
-    DIV | MOD | FOR | IN | ProcBindableIdent
+// production #34
+procedureSignature :
+    Ident ( '(' formalParamList ')' )? returnedType?
     ;
 
 // *** Formal Parameters ***
