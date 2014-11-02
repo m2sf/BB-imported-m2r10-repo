@@ -105,6 +105,9 @@ PSEUDO BLUEPRINT BUILTIN;
 [LENGTH] -> PROCEDURE [COUNT] : NIL;
 (* If LENGTH is required, COUNT is inhibited. *)
 
+[CHAR] OR [UNICHAR]-> PROCEDURE [LENGTH];
+(* If proto literal is CHAR or UNICHAR, LENGTH is required. *)
+
 [NEW] -> PROCEDURE [RELEASE];
 (* If NEW is required, RELEASE is required. *)
 
