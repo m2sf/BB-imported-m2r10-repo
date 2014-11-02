@@ -46,7 +46,7 @@ PSEUDO BLUEPRINT BUILTIN;
 (* If multiplication is required, division is required. *)
 
 [/] -> PROCEDURE [*];
-(* If real divition is required, multiplication is required. *)
+(* If real division is required, multiplication is required. *)
 
 [DIV] -> PROCEDURE [*];
 (* If integer division is required, multiplication is required. *)
@@ -88,10 +88,10 @@ PSEUDO BLUEPRINT BUILTIN;
 (* If SUBSET is required, multiplication is inhibited. *)
 
 [SUBSET] -> PROCEDURE [/] : NIL;
-(* If SUBSET is required, real divition is inhibited. *)
+(* If SUBSET is required, real division is inhibited. *)
 
 [SUBSET] -> PROCEDURE [DIV] : NIL;
-(* If SUBSET is required, integer divition is inhibited. *)
+(* If SUBSET is required, integer division is inhibited. *)
 
 [SUBSET] -> PROCEDURE [MOD] : NIL;
 (* If SUBSET is required, modulus is inhibited. *)
