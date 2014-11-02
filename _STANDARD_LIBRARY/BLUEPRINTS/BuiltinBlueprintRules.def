@@ -118,7 +118,6 @@ PSEUDO BLUEPRINT BUILTIN;
 (* If CONCAT is required, addition is inhibited. *)
 
 [DESCENDING] -> PROCEDURE [FOR];
-
 (* If DESCENDING is required, for loop iteration is required. *)
 
 [FOR] -> PROCEDURE [COUNT | LENGTH];
@@ -134,7 +133,7 @@ PSEUDO BLUEPRINT BUILTIN;
 (* If INSERT is required, REMOVE is required. *)
 
 [REMOVE] -> PROCEDURE [INSERT];
-(* If INSERT is required, REMOVE is required. *)
+(* If REMOVE is required, INSERT is required. *)
 
 [READ] -> PROCEDURE [WRITE];
 [WRITE] -> PROCEDURE [WRITEF];
