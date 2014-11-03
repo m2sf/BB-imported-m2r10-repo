@@ -258,7 +258,7 @@ constIdent : Ident ; /* only identifiers of constants */
 
 // production #7
 constOrTypeOrProcRequirement :
-    ( boolConstIdent '->' )?
+    ( NOT? boolConstIdent '->' )?
     ( constRequirement | procedureRequirement | TYPE Ident '=' procedureType )
     ;
 
