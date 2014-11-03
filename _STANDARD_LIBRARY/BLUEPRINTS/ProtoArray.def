@@ -23,10 +23,6 @@ CONST isMutable : BOOLEAN;
 (* Required constant to define whether the ADT is mutable.
    Its value may be TRUE or FALSE. *)
 
-CONST isImmutable = NOT isMutable;
-(* Required constant indicating whether the ADT is immutable.
-   Its value must be the logical inverse of constant isMutable. *)
-
 
 (* Orderedness *)
 
@@ -37,20 +33,12 @@ CONST [DESCENDING] isOrdered = TRUE;
 (* Required constant to define whether the ADT is ordered.
    Its value is always TRUE for Array ADTs. *)
 
-CONST isUnordered = NOT isOrdered;
-(* Required constant indicating whether the ADT is unordered.
-   Its value must be the logical inverse of constant isOrdered. *)
-
 
 (* Memory Management Model *)
 
 CONST isRefCounted : BOOLEAN;
 (* Required constant to define whether the ADT is reference counted.
    Its value may be TRUE or FALSE. *)
-
-CONST isNotRefCounted = NOT isRefCounted;
-(* Required constant indicating whether the ADT is reference counted.
-   Its value must be the logical inverse of constant isRefCounted. *)
 
 
 (* Semantics of NIL Assignment *)
@@ -314,29 +302,26 @@ PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
 (* Conditionally Inhibited Bindings *)
 
 
-(* Note: LENGTH and COUNT are always mutually exclusive. *)
-
-
 (* Conforming blueprints may not require bindings to any of
    :=, COPY, STORE, INSERT and REMOVE if the ADT is immutable. *)
 
-isImmutable -> PROCEDURE [:=] : NIL;
+NOT isMutable -> PROCEDURE [:=] : NIL;
 
-isImmutable -> PROCEDURE [COPY] : NIL;
+NOT isMutable -> PROCEDURE [COPY] : NIL;
 
-isImmutable -> PROCEDURE [STORE] : NIL;
+NOT isMutable -> PROCEDURE [STORE] : NIL;
 
-isImmutable -> PROCEDURE [INSERT] : NIL;
+NOT isMutable -> PROCEDURE [INSERT] : NIL;
 
-isImmutable -> PROCEDURE [REMOVE] : NIL;
+NOT isMutable -> PROCEDURE [REMOVE] : NIL;
 
 
 (* Conforming blueprints may not require bindings to
    RETAIN and CONCAT if the ADT is not reference counted. *)
 
-isNotRefCounted -> PROCEDURE [RETAIN] : NIL;
+NOT isRefCounted -> PROCEDURE [RETAIN] : NIL;
 
-isNotRefCounted -> PROCEDURE [CONCAT] : NIL;
+NOT isRefCounted -> PROCEDURE [CONCAT] : NIL;
 
 
 (* Unconditionally Inhibited Bindings *)
