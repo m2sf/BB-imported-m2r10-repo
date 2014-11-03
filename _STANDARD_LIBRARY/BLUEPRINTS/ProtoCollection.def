@@ -32,27 +32,22 @@ CONST isMutable : BOOLEAN;
 
 (* Orderedness *)
 
-(* Use of FOR DESCENDING syntax with the ADT is only permitted
-   when a constant is bound to DESCENDING and its value is TRUE. *)
-
 CONST [DESCENDING] isOrdered : BOOLEAN;
-(* Required constant to define whether the ADT is ordered.
-   Its value is always TRUE or FALSE. *)
+(* Required constant to define whether conforming ADTs shall be ordered.
+   Its value may be TRUE or FALSE. *)
 
 
 (* Memory Management Model *)
 
 CONST isRefCounted : BOOLEAN;
-(* Required constant to define whether the ADT is reference counted.
-   Its value may be TRUE or FALSE. *)
+(* Required constant to define whether conforming ADTs shall be reference
+   counted. Its value may be TRUE or FALSE. *)
 
 
 (* Semantics of NIL Assignment *)
 
-CONST [NIL] nilRemovesValue : BOOLEAN;
-(* Required constant to define the semantics of assigning NIL to a value.
-   NIL assignment is treated as a call to REMOVE when this value is TRUE. *)
-
+CONST [NIL];
+(* Specialised blueprints must always require binding to NIL. *)
 
 
 (* Required Procedures *)
@@ -62,17 +57,14 @@ CONST [NIL] nilRemovesValue : BOOLEAN;
 
 (* Binding to Predefined Function TLIMIT *)
 
-PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Required function to return the index/value pair limit of the ADT. *)
-
-(* An expression of the form TLIMIT(CollectionADT))
-   is synthesised as CollectionADT.capacityLimit(). *)
+PROCEDURE [TLIMIT];
+(* Specialised blueprints must always require binding to TLIMIT. *)
 
 
 (* Binding to Predefined Function COUNT or LENGTH *)
 
-(* The operations COUNT and LENGTH are not common to all collection ADTs,
-   their bindings shall be required by more specialised blueprints. *)
+(* When TLIMIT is required, either COUNT or LENGTH is required.
+   Specialised blueprints must require one of the two accordingly. *)
 
 
 (* Memory Management *)
@@ -85,63 +77,39 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 
 (* Binding to the := Operator *)
 
-(* The signatures of procedures for literal assignment are not common to
-   all collection ADTs. Bindings must therefore be finalised by more
-   specialised blueprints. *)
-
 isMutable -> PROCEDURE [:=];
-(* Conforming blueprints must require binding when the ADT is mutable. *)
+(* Specialised blueprints must require binding to := when mutable. *)
 
 
 (* Copying *)
 
 (* Binding to Predefined Function DUP *)
 
-PROCEDURE [DUP] newWithCopy ( source : ProtoCollection ) : ProtoCollection;
-(* Required function to return a newly allocated copy of a collection. *)
-
-(* An expression of the form DUP(collection)
-   is synthesised as CollectionADT.newWithCopy(collection). *)
+PROCEDURE [DUP];
+(* Specialised blueprints must always require binding to DUP. *)
 
 
 (* Binding to Predefined Procedure COPY *)
 
-isMutable ->
-PROCEDURE [COPY] copy
-  ( source : ProtoCollection; VAR target : ProtoCollection );
-(* Procedure to destructively copy the contents of one collection to another.
-   The procedure is required when the ADT is mutable. *)
-
-(* A statement of the form COPY(collection1, collection2)
-   is synthesised as ArrayADT.copy(collection1, collection2). *)
+isMutable -> PROCEDURE [COPY];
+(* Specialised blueprints must require binding to COPY when mutable. *)
 
 
 (* Value Storage *)
 
 (* Binding to Predefined Procedure STORE *)
 
-isMutable ->
-PROCEDURE [STORE] storeValue
- ( VAR c : ProtoCollection; accessor : AccessorType; value : ValueType );
-(* Procedure to store a value by accessor in a collection.
-   The procedure is required when the ADT is mutable. *)
-
-(* A statement of the form collection[accessor] := value
-   is equivalent to STORE(collection, accessor, value) and
-   is synthesised as CollectionADT.storeValue(collection, accessor, value). *)
+isMutable -> PROCEDURE [STORE];
+(* Specialised blueprints must require binding to STORE when mutable. *)
 
 
 (* Value Retrieval *)
 
 (* Binding to Predefined Function RETRIEVE *)
 
-PROCEDURE [RETRIEVE] valueForAccessor
- ( c : ProtoCollection; accessor : AccessorType ) : ValueType;
-(* Required function to return a value by accessor from a collection. *)
+PROCEDURE [RETRIEVE];
+(* Specialised blueprints must always require binding to RETRIEVE. *)
 
-(* An expression of the form collection[accessor]
-   is equivalent to RETRIEVE(collection, accessor) and
-   is synthesised as CollectionADT.valueByAccessor(collection, accessor). *)
 
 (* Invalid Accessor Retrieval Error Handling *)
 
@@ -151,24 +119,15 @@ PROCEDURE [RETRIEVE] valueForAccessor
 (* Handler Type *)
 
 TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
-(* Required procedure type for user defined invalid-accessor handlers. *)
-
-(* An example of an invalid-accessor handler is given below:
-   
-   PROCEDURE mayAbortOnInvalidAccessor
-     ( VAR valueToReturn : CARDINAL ) : BOOLEAN;
-   BEGIN
-     valueToReturn := 0;
-     RETURN FALSE
-   END mayAbortOnInvalidAccessor;
-   
-   This handler tells its caller not to abort and to return zero. *)
+(* Specialised blueprints must require procedure type for user defined
+   invalid-accessor handlers. *)
 
 
 (* Handler Installation *)
 
-PROCEDURE installInvalidAccessorHandler ( handler : HandlerType );
-(* Required procedure to install a user defined invalid-accessor handler. *)
+PROCEDURE installHandler ( handler : HandlerType );
+(* Specialised blueprints must require procedure to install user defined
+   invalid-accessor handlers. *)
 
 
 (* Value Insertion and Removal *)
@@ -192,42 +151,21 @@ PROCEDURE installInvalidAccessorHandler ( handler : HandlerType );
 (* Binding to FOR IN iterator *)
 
 TYPE LoopBodyType = PROCEDURE ( VAR ProtoCollection, CONST AccessorType );
-(* Required procedure type to synthesise the body of a for loop. *)
+(* Specialised blueprints must require procedure type for synthesised
+   FOR loop bodies. *)
 
-PROCEDURE [FOR] forIterator
-  ( VAR c : ProtoCollection; doStatements : LoopBodyType; ascending : BOOLEAN );
-
-(* Required procedure to iterate over all accessor/value pairs of a collection
-   in a given order and execute the passed in doStatements for each pair. *)
-   
-(* A statement of the form
-     FOR accessor IN collection DO statementSeq END
-   is synthesised in two steps.
-   
-   The loop header is synthesised as
-     CollectionADT.forIterator( collection, forLoopBody, TRUE );
-   
-   The loop body is synthesised as
-     PROCEDURE forLoopBody
-       ( VAR c : CollectionADT; CONST accessor : AccessorType ) <*INLINE*>;
-     BEGIN statementSeq END forLoopBody;
-   
-   The loop header of a FOR DESCENDING statement is sythesised with
-   FALSE passed for parameter ascending in the call to forIterator. *)
+PROCEDURE [FOR];
+(* Specialised blueprints must always require binding to FOR. *)
 
 
 (* Relational Operations *)
 
 (* Binding to the = and # Operators *)
 
-PROCEDURE [=] isEqual ( collection1, collection2 : ProtoArray ) : BOOLEAN;
-(* Required function to test the equivalence of two collections. *)
+PROCEDURE [=];
+(* Specialised blueprints must always require binding to = operator. *)
 
-(* An expression of the form collection1 = collection2
-   is synthesised as CollectionADT.isEqual(collection1, collection2). *)
-
-(* The operation for the # operator
-   is synthesized as NOT (collection1 = collection2). *)
+(* The operation for the # operator is automatically synthesised. *)
 
 
 (* Conditionally Inhibited Bindings *)
