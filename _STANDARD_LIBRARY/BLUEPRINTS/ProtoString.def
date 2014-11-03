@@ -1,99 +1,192 @@
 (* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Blueprint for Dynamically Allocatable String ADTs *)
+(* Specialised Blueprint for Dynamically Allocatable String ADTs *)
 
 BLUEPRINT ProtoString [ProtoCollection];
 
-REFERENTIAL CharType (* CHAR or UNICHAR *), POSINT, ForLoopBodyProc;
+REFERENTIAL POSINT (* index type *),
+  CharType (* value type CHAR or UNICHAR *), HandlerType, LoopBodyType;
 
-(* String ADTs must be opaque,
-   quoted literals of base type CHAR or UNICHAR are compatible *)
+
+(* Required Module Type *)
 
 MODULE TYPE = OPAQUE := CHAR | UNICHAR;
-
-
-(* Bindings required for String ADTs *)
+(* String ADTs must be opaque,
+   quoted literals of base type CHAR or UNICHAR are compatible *)
 
 
 (* Required Constants *)
 
-CONST [:=] isMutable : BOOLEAN;
-(* whether the ADT is mutable *)
+
+(* Mutability *)
+
+CONST isMutable : BOOLEAN;
+(* Required constant to define whether the ADT is mutable.
+   Its value may be TRUE or FALSE. *)
+
+
+(* Orderedness *)
+
+(* Use of FOR DESCENDING syntax with the ADT is only permitted
+   when a constant is bound to DESCENDING and its value is TRUE. *)
 
 CONST [DESCENDING] isOrdered = TRUE;
-(* String ADTs are always ordered *)
+(* Required constant to define whether the ADT is ordered.
+   Its value is always TRUE for String ADTs. *)
+
+
+(* Memory Management Model *)
+
+CONST isRefCounted : BOOLEAN;
+(* Required constant to define whether the ADT is reference counted.
+   Its value may be TRUE or FALSE. *)
+
+
+(* Semantics of NIL Assignment *)
+
+CONST [NIL] nilRemovesValue = TRUE;
+(* Required constant to define whether NIL assignment is treated as
+   a call to REMOVE. The constant is always TRUE for String ADTs. *)
+
+
+(* Sliceability *)
+
+CONST isSliceable = isMutable AND isRefCounted;
+(* Required constant indicating whether the ADT supports slicing.
+   Its value is TRUE if the ADT is both mutable and reference counted. *)
 
 
 (* Required Procedures *)
 
-(* Capacity limit *)
+(* Introspection *)
+
+(* Binding to Predefined Function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the allocation capacity limit of a string ADT. *)
+(* Required function to return the index/value pair limit of the ADT. *)
 
-(* An invocation of TLIMIT(StringADT)) is transformed at compile time to
-   StringADT.capacityLimit() when the operand is of the string ADT type. *)
+(* An expression of the form TLIMIT(StringADT))
+   is synthesised as StringADT.capacityLimit(). *)
+
+
+(* Binding to Predefined Function LENGTH *)
+
+PROCEDURE [LENGTH] length ( string : ProtoString ) : LONGCARD;
+(* Required function to return the length of a string. *)
+
+(* An expression of the form LENGTH(string)
+   is synthesised as ArrayADT.length(string). *)
 
 
 (* Memory Management *)
 
 PROCEDURE [NEW] new
-  ( VAR s : ProtoString; initWith : ARRAY OF CharType );
+  ( VAR string : ProtoString; initWith : ARRAY OF CharType );
 (* Required procedure to allocate and initialise a new string. *)
 
-(* A statement of the form
-     NEW(string);
-   is transformed at compile time to a procedure call of the form
-     StringADT.new(string);
-   for operands of the string ADT type.
+(* A statement of the form NEW(string)
+   is synthesised as StringADT.new(string).
    
-   A statement of the form
-     NEW(string, "foo bar baz");
-   is transformed at compile time to a procedure call of the form
-     StringADT.new(string, "foo bar baz");
-   for operands of the string ADT type. *)
+   A statement of the form NEW(string, "foo bar baz")
+   is synthesised as StringADT.new(string, "foo bar baz").  *)
 
 
-PROCEDURE [RETAIN] retain ( VAR s : ProtoString );
-(* Required procedure to retain a string ADT variable. *)
-
-(* A statement of the form
-     RETAIN(string);
-   is transformed at compile time to a procedure call of the form
-     StringADT.retain(string);
-   for operands of the string ADT type. *)
+isMutable ->
+PROCEDURE newWithCapacity
+  ( VAR string : ProtoString; capacity : POSINT );
+(* Procedure to allocate a new string with a given initial capacity.
+   The procedure is required when the ADT is mutable. *)
 
 
-PROCEDURE [RELEASE] release ( VAR s : ProtoString );
-(* Required procedure to release and eventually deallocate a string. *)
+(* Binding to Predefined Procedure RETAIN *)
 
-(* A statement of the form
-     RELEASE(string);
-   is transformed at compile time to a procedure call of the form
-     StringADT.release(string);
-   for operands of the string ADT type. *)
+isRefCounted ->
+PROCEDURE [RETAIN] retain ( VAR string : ProtoString );
+(* Procedure to retain an array and prevent its deallocation.
+   The procedure is required when the ADT is reference counted. *)
+
+(* A statement of the form RETAIN(string)
+   is synthesised as StringADT.retain(string). *)
 
 
-(* Assignment and Copying *)
+(* Binding to Predefined Procedure RELEASE *)
 
-PROCEDURE [:=] NEW;
-(* Procedure bound to NEW will be used for literal assignment. *)
+PROCEDURE [RELEASE] release ( VAR string : ProtoString );
+(* Required procedure to cancel an outstanding retain
+   or deallocate a string if no retains are outstanding. *)
+
+(* A statement of the form RELEASE(string)
+   is synthesised as StringADT.release(string). *)
+
+
+(* Literal Assignment *)
+
+(* Binding to the := Operator *)
+
+isMutable ->
+PROCEDURE [:=] assignLiteral
+  ( string : ProtoString; literal : ARRAY OF CharType );
+(* Procedure to destructively copy the contents of a string literal to a
+   string. The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form
      string := "foo bar baz";
-   is transformed at compile time into a procedure call of the form
-     StringADT.new(string, "foo bar baz");
-   for L-values of the string ADT type. *)
+   is synthesised as
+     StringADT.assignLiteral(string, "foo bar baz"). *)
 
 
-PROCEDURE [DUP] duplicateOf ( string : ProtoString ) : ProtoString;
-(* Reuired procedure to return a duplicate of a string. *)
+(* Copying *)
 
-(* An expression of the form
-     DUP(string)
-   is transformed at compile time into a function call of the form
-     StringADT.duplicateOf(string)
-   for operands of the string ADT type. *)
+(* Binding to Predefined Function DUP *)
+
+PROCEDURE [DUP] newWithCopy ( source : ProtoString ) : ProtoString;
+(* Required function to return a newly allocated copy of a string. *)
+
+(* An expression of the form DUP(string)
+   is synthesised as StringADT.newWithCopy(string). *)
+
+
+(* Binding to Predefined Procedure COPY *)
+
+isMutable ->
+PROCEDURE [COPY] copy ( source : ProtoString; VAR target : ProtoString );
+(* Procedure to destructively copy the contents of one string to another.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form COPY(string1, string2)
+   is synthesised as StringADT.copy(string1, string2). *)
+
+
+(* Value Storage *)
+
+(* Binding to Predefined Procedure STORE *)
+
+isMutable ->
+PROCEDURE [STORE] replaceCharAtIndex
+ ( VAR string : ProtoString; index : POSINT; char : CharType );
+(* Procedure to store a character at a given index in a string.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form
+     string[index] := char
+   is equivalent to
+     STORE(string, index, char)
+   and is synthesised as
+     StringADT.replaceCharAtIndex(string, index, char). *)
+
+
+(* Value Retrieval *)
+
+(* Binding to Predefined Function RETRIEVE *)
+
+PROCEDURE [RETRIEVE] charAtIndex
+ ( string : ProtoString; index : POSINT ) : CharType;
+(* Required function to return the character stored in a string
+   at a given index. *)
+
+(* An expression of the form string[index]
+   is equivalent to RETRIEVE(string, index) and
+   is synthesised as StringADT.charAtIndex(string, index). *)
 
 
 (* Storage, Retrieval, Insertion and Removal of Contents *)
@@ -103,17 +196,12 @@ PROCEDURE [STORE] replaceCharAtIndex
     index : INTEGER; char : CharType );
 (* Required procedure to replace a char at a given index in a string *)
 
-(* A statement of the form
-     STORE(string, index, char);
-   is transformed at compile time into a procedure call of the form
-     StringADT.replaceCharAtIndex(string, index, char);
-   for first operands of the string ADT type.
-   
-   An assignment of the form
-     string[index] := char;
-   is transformed at compile time into a procedure call of the form
-     StringADT.replaceCharAtIndex(string, index, char);
-   for designators of the string ADT type. *)
+(* An assignment of the form
+     string[index] := char
+   is equivalent to
+     STORE(string, index, char)
+   and is synthesised as
+     StringADT.replaceCharAtIndex(string, index, char). *)
 
 
 PROCEDURE [RETRIEVE] charAtIndex
@@ -121,80 +209,100 @@ PROCEDURE [RETRIEVE] charAtIndex
 (* Required procedure to return the char at a given index in a string. *)
 
 (* An expression of the form
-     RETRIEVE(string, index)
-   is transformed at compile time into a function call of the form
-     StringADT.charAtIndex(string, index)
-   for first operands of the string ADT type.
-   
-   An expression of the form
      string[index]
-   is transformed at compile time into a function call of the form
-     StringADT.charAtIndex(string, index)
-   for designators of the string ADT type. *)
+   is equivalent to
+     RETRIEVE(string, index)
+   and is synthesised as
+     StringADT.charAtIndex(string, index). *)
 
 
-PROCEDURE [INSERT] insertCharsAtIndex
-  ( targetStr : ProtoString; index : INTEGER; chars : ARRAY OF CharType );
-(* Required procedure to insert a character array into a target string,
-   starting at a given index. *)
+(* Index Out Of Range Retrieval Error Handling *)
 
-(* A statement of the form
-     INSERT(string, index, "foo");
-   is transformed at compile time into a procedure call of the form
-     StringADT.insertCharsAtIndex(string, index, "foo");
-   for designators of the string ADT type. *)
+(* A user defined index-out-of-range handler function may be used to change
+   the default behaviour when RETRIEVE is called with an out-of-range index. *)
 
+(* Handler Type *)
 
-PROCEDURE [INSERT] insertStringAtIndex
-  ( targetStr : ProtoString; index : INTEGER; sourceStr : ProtoString );
-(* Required procedure to insert a source string into a target string,
-   starting at a given index. *)
+TYPE HandlerType = PROCEDURE ( VAR CharType ) : BOOLEAN;
+(* Required procedure type for user defined index-out-of-range handlers. *)
 
-(* A statement of the form
-     INSERT(targetStr, index, sourceStr);
-   is transformed at compile time into a procedure call of the form
-     StringADT.insertStringAtIndex(targetStr, index, stringStr);
-   for designators of the string ADT type. *)
-
-
-PROCEDURE [REMOVE] removeCharsAtIndex
-  ( string : ProtoString; index : INTEGER; n : POSINT );
-(* Required rocedure to remove n characters from a string,
-   starting at a given index. *)
-
-(* A statement of the form
-     REMOVE(string, index, 5);
-   is transformed at compile time into a procedure call of the form
-     StringADT.removeCharsAtIndex(string, index, 5);
-   for first operands of the string ADT type.
+(* An example of an index-out-of-range handler is given below:
    
-   An assignment of the form
-     string[index] := NIL;
-   is transformed at compile time into a procedure call of the form
-     StringADT.removeCharsAtIndex(string, index, 1);
-   for designators of the string ADT type. *)
+   PROCEDURE mayAbortOnIndexOutOfRange
+     ( VAR valueToReturn : CARDINAL ) : BOOLEAN;
+   BEGIN
+     valueToReturn := 0u0;
+     RETURN FALSE
+   END mayAbortOnIndexOutOfRange;
+   
+   This handler tells its caller not to abort and to return ASCII-NUL. *)
 
 
-(* Introspection *)
+(* Handler Installation *)
 
-PROCEDURE [LENGTH] length ( string : ProtoString ) : POSINT;
-(* Required procedure to return the length of a string. *)
+PROCEDURE installHandler ( handler : HandlerType );
+(* Required procedure to install a user defined index-out-of-range handler. *)
 
-(* An expression of the form
-     LENGTH(string)
-   is transformed at compile time to a function call of the form
-     StringADT.count(string)
-   for operands of the string ADT type. *)
+
+(* Value Insertion *)
+
+(* Binding to Predefined Procedure INSERT *)
+
+isMutable ->
+PROCEDURE [INSERT] insertCharsAtIndex
+  ( targetString : ProtoString;
+    index : POSINT;
+    values : ARRAY OF CharType );
+(* Procedure to insert characters into a target string at a given index.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form
+     INSERT(string, index, "foo" )
+   is synthesised as
+     StringADT.insertCharsAtIndex(array, index, "foo"). *)
+
+
+isMutable ->
+PROCEDURE insertStringAtIndex
+  ( targetStr : ProtoString; index : POSINT; sourceStr : ProtoString );
+(* Procedure to insert a source string into a string array at a given
+   index. The procedure is required when the ADT is mutable. *)
+
+
+(* Value Removal *)
+
+(* Binding to Predefined Procedure REMOVE *)
+
+isMutable ->
+PROCEDURE [REMOVE] removeCharsAtIndex
+  ( string : ProtoString; index : POSINT; charCount : POSINT );
+(* Procedure to remove one or more characters from a string at a given index.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form
+     REMOVE(string, index, n);
+   is synthesised as
+     StringADT.removeCharsAtIndex(string, index, n).
+   
+   A statement of the form
+     string[index] := NIL
+   is treated equivalent to
+     REMOVE(string, index, 1)
+   if a constant of value TRUE is bound to NIL. *)
 
 
 (* Concatenation and Slicing *)
 
+(* Binding to Predefined Procedure CONCAT *)
+
+isRefCounted ->
 PROCEDURE [CONCAT] concat
   ( VAR result : ProtoString;
     arglist : ARGLIST OF { lit : ARRAY OF CharType; s : ProtoString } );
 (* Required procedure to concatenate an alternating list of character string
    literals and string ADT variables, and return a newly allocated result
-   string. Empty literals and NIL values in the argument list are ignored. *)
+   string. Empty literals and NIL values in the argument list are ignored.
+   The Procedure is required if the ADT is reference counted. *)
 
 (* Concatenation of consecutive string literals takes place at compile time.
    Thus, string literals do not occur consecutively in run time expressions.
@@ -242,6 +350,9 @@ PROCEDURE [CONCAT] concat
      foo := BarFunc(tempResult); RELEASE(tempResult); *)
 
 
+(* Binding to the Slicing Operator *)
+
+isSliceable ->
 PROCEDURE [..] copySlice
   ( VAR target : ProtoString; tgtStartIndex, tgtEndIndex : INTEGER;
     source : ProtoString; srcStartIndex, srcEndIndex : INTEGER );
@@ -249,8 +360,8 @@ PROCEDURE [..] copySlice
    a given start and end index,  into a slice within a target string,
    indicated by a given start and end index.  If target is NIL and the
    target indices are 0 and -1, a newly allocated string is to be passed
-   back in target as result.
-   Consult the documentation for specific details. *)
+   back in target as result. The procedure is required if the ADT is
+   mutable and reference counted. *)
 
 (* An assignment of the form
      target := source[2..5];
@@ -290,59 +401,53 @@ PROCEDURE [..] copySlice
 
 (* Iteration *)
 
-TYPE ProcType = PROCEDURE ( ProtoString; CONST IndexType );
-(* Required procedure type to represent a FOR loop body. *)
+(* Binding to FOR IN iterator *)
+
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoString, CONST POSINT );
+(* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
-  ( s : ProtoString; forLoopBody : ProcType; ascending : BOOLEAN );
-(* Required procedure to iterate over all characters in a string,
-   executing procedure forLoopBody for each index value,
-   using the iteration order indicated by ascending. *)
+  ( VAR string : ProtoString; doStatements : LoopBodyType; ascending : BOOLEAN );
 
+(* Required procedure to iterate over all characters of a string in a
+   given order and execute the passed in doStatements for each character. *)
    
 (* A statement of the form
      FOR index IN string DO statementSeq END
-   is transformed at compile time in two steps:
+   is synthesised in two steps.
    
-   The FOR loop header is transformed into a procedure call of the form
-     StringADT.forIterator(string, forLoopBody, TRUE);
+   The loop header is synthesised as
+     StringADT.forIterator( string, forLoopBody, TRUE );
    
-   The FOR loop body is transformed into a procedure declaration of the form
-     PROCEDURE forLoopBody ( string : StringADT; CONST index : IndexType );
+   The loop body is synthesised as
+     PROCEDURE forLoopBody
+       ( VAR string : StringADT; CONST index : POSINT ) <*INLINE*>;
      BEGIN statementSeq END forLoopBody;
    
-   A FOR DESCENDING loop header is transformed into a call of the form
-     StringADT.forIterator(string, forLoopBody, FALSE);
-
-   The use of FOR DESCENDING syntax is dependent on property isOrdered.
-   If an ADT defines isOrdered as FALSE, the use of FOR DESCENDING is
-   not permitted and will cause a compile time error. *)
+   The loop header of a FOR DESCENDING statement is sythesised with
+   FALSE passed for parameter ascending in the call to forIterator. *)
 
 
 (* Relational Operations *)
 
-PROCEDURE [=] isEqual ( string1, string2 : ProtoString ) : BOOLEAN;
-(* Required procedure to test the equivalence of two strings. *)
+(* Binding to the = and # Operators *)
 
-(* An expression of the form
-     string1 = string2
-   is transformed at compile time into a function call of the form
-     StringADT.isEqual(string1, string2)
-   for L- and R-values of the string ADT type. *)
+PROCEDURE [=] isEqual ( string1, string2 : ProtoString ) : BOOLEAN;
+(* Required function to test the equivalence of two strings. *)
+
+(* An expression of the form string1 = string2
+   is synthesised as StringADT.isEqual(string1, string2). *)
 
 (* The operation for the # operator
-   is synthesized as NOT (string1 = string2) *)
+   is synthesized as NOT (string1 = string2). *)
 
 
 PROCEDURE [<] isLess ( string1, string2 : ProtoString ) : BOOLEAN;
 (* Required procedure to test if the value of a string comes lexically
    after another. *)
 
-(* An expression of the form
-     string1 < string2
-   is transformed at compile time into a function call of the form
-     StringADT.isLess(string1, string2)
-   for L- and R-values of the string ADT type. *)
+(* An expression of the form string1 < string2
+   is synthesised as StringADT.isLess(string1, string2). *)
 
 (* The operation for the <= operator
    is synthesized as NOT (string1 > string2) *)
@@ -352,11 +457,8 @@ PROCEDURE [>] isGreater ( string1, string2 : ProtoString ) : BOOLEAN;
 (* Required procedure to test if the value of a string comes lexically
    before another. *)
 
-(* An expression of the form
-     string1 > string2
-   is transformed at compile time into a function call of the form
-     StringADT.isGreater(string1, string2)
-   for L- and R-values of the string ADT type. *)
+(* An expression of the form string1 > string2
+   is synthesised as StringADT.isGreater(string1, string2). *)
 
 (* The operation for the >= operator
    is synthesized as NOT (string1 < string2) *)
