@@ -266,7 +266,7 @@ constOrTypeOrProcRequirement :
 constRequirement :
     CONST (
     ( simpleConstRequirement |
-      '[' constBindableProperty ']' ( simpleConstRequirement | ':' NIL ) )
+      '[' constBindableProperty ']' ( simpleConstRequirement | ':' NIL )? )
     ;
 
 // fragment #8.1
@@ -289,7 +289,7 @@ predefOrRefTypeIdent : Ident ;
 procedureRequirement :
     PROCEDURE (
     ( restrictedExport? procedureSignature ) |
-    ( '[' procBindableEntity ']' ( procedureSignature | ':' NIL ) ) )
+    ( '[' procBindableEntity ']' ( procedureSignature | ':' NIL )? ) )
     ;
 
 // alias #10.1
