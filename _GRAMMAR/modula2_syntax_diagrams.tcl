@@ -270,9 +270,9 @@ lappend non_terminals constOrTypeOrProcRequirement {
 lappend non_terminals constRequirement {
   line CONST {
     or
-      simpleConstRequirement
       {line [ constBindableProperty ]
-        {or simpleConstRequirement {line : /NIL}}}
+        {or simpleConstRequirement {line : /NIL} nil}}
+      simpleConstRequirement
     }
 }
 
@@ -304,10 +304,9 @@ lappend non_terminals predefOrRefTypeIdent {
 lappend non_terminals procedureRequirement {
   line PROCEDURE {
     or
+      {line [ procBindableEntity ] {or procedureSignature {line : /NIL} nil}}
       {line {optx restrictedExport} procedureSignature}
-      {line [ procBindableEntity ] {or procedureSignature {line : /NIL}}}
     }
-  
 }
 
 # (10.1) Restricted Export
