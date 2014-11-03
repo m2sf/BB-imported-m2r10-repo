@@ -9,11 +9,11 @@ REFERENTIAL AccessorType, ValueType, HandlerType, LoopBodyType;
 
 (* Required Module Type *)
 
-MODULE TYPE = OPAQUE | OPAQUE RECORD :=
+MODULE TYPE = * :=
   CHAR | UNICHAR |
   { ARGLIST OF AccessorType } |
   { ARGLIST OF { AccessorType, ValueType } };
-(* Collection ADTs must be opaque,
+(* Collection ADTs may be opaque pointers or record types,
    quoted literals or structured literals are compatible. *)
 
 
@@ -29,10 +29,6 @@ CONST isMutable : BOOLEAN;
 (* Required constant to define whether the ADT is mutable.
    Its value may be TRUE or FALSE. *)
 
-CONST isImmutable = NOT isMutable;
-(* Required constant indicating whether the ADT is immutable.
-   Its value must be the logical inverse of constant isMutable. *)
-
 
 (* Orderedness *)
 
@@ -43,20 +39,12 @@ CONST [DESCENDING] isOrdered : BOOLEAN;
 (* Required constant to define whether the ADT is ordered.
    Its value is always TRUE or FALSE. *)
 
-CONST isUnordered = NOT isOrdered;
-(* Required constant indicating whether the ADT is unordered.
-   Its value must be the logical inverse of constant isOrdered. *)
-
 
 (* Memory Management Model *)
 
 CONST isRefCounted : BOOLEAN;
 (* Required constant to define whether the ADT is reference counted.
    Its value may be TRUE or FALSE. *)
-
-CONST isNotRefCounted = NOT isRefCounted;
-(* Required constant indicating whether the ADT is reference counted.
-   Its value must be the logical inverse of constant isRefCounted. *)
 
 
 (* Semantics of NIL Assignment *)
@@ -72,15 +60,6 @@ CONST [NIL] nilRemovesValue : BOOLEAN;
 
 (* Introspection *)
 
-(* Binding to Predefined Function COUNT or LENGTH *)
-
-(* COUNT and LENGTH are mutually exclusive.
-   COUNT is for non-string ADTs, LENGTH is for string ADTs.
-   Bindings shall be required by more specialised blueprints accordingly. *)
-
-PROCEDURE [COUNT] | [LENGTH] * ;
-
-
 (* Binding to Predefined Function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
@@ -88,6 +67,12 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 
 (* An expression of the form TLIMIT(CollectionADT))
    is synthesised as CollectionADT.capacityLimit(). *)
+
+
+(* Binding to Predefined Function COUNT or LENGTH *)
+
+(* The operations COUNT and LENGTH are not common to all collection ADTs,
+   their bindings shall be required by more specialised blueprints. *)
 
 
 (* Memory Management *)
@@ -250,23 +235,23 @@ PROCEDURE [=] isEqual ( collection1, collection2 : ProtoArray ) : BOOLEAN;
 (* Conforming blueprints may not require bindings to any of
    :=, COPY, STORE, INSERT and REMOVE if the ADT is immutable. *)
 
-isImmutable -> PROCEDURE [:=] : NIL; (* inhibited *)
+NOT isMutable -> PROCEDURE [:=] : NIL; (* inhibited *)
 
-isImmutable -> PROCEDURE [COPY] : NIL; (* inhibited *)
+NOT isMutable -> PROCEDURE [COPY] : NIL; (* inhibited *)
 
-isImmutable -> PROCEDURE [STORE] : NIL; (* inhibited *)
+NOT isMutable -> PROCEDURE [STORE] : NIL; (* inhibited *)
 
-isImmutable -> PROCEDURE [INSERT] : NIL; (* inhibited *)
+NOT isMutable -> PROCEDURE [INSERT] : NIL; (* inhibited *)
 
-isImmutable -> PROCEDURE [REMOVE] : NIL; (* inhibited *)
+NOT isMutable -> PROCEDURE [REMOVE] : NIL; (* inhibited *)
 
 
 (* Conforming blueprints may not require bindings to
    RETAIN and CONCAT if the ADT is not reference counted. *)
 
-isNotRefCounted -> PROCEDURE [RETAIN] : NIL; (* inhibited *)
+NOT isRefCounted -> PROCEDURE [RETAIN] : NIL; (* inhibited *)
 
-isNotRefCounted -> PROCEDURE [CONCAT] : NIL; (* inhibited *)
+NOT isRefCounted  -> PROCEDURE [CONCAT] : NIL; (* inhibited *)
 
 
 (* Unconditionally Inhibited Bindings *)
@@ -337,12 +322,6 @@ PROCEDURE [VAL] : NIL; (* inhibited *)
 PROCEDURE [<] : NIL; (* inhibited *)
 
 PROCEDURE [>] : NIL; (* inhibited *)
-
-
-(* The SUBSET operation is not meaningful for collection ADTs.
-   Conforming blueprints may not require a binding to it. *)
-
-PROCEDURE [SUBSET] : NIL; (* inhibited *)
 
 
 END ProtoCollection.
