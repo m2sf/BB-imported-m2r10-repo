@@ -53,15 +53,6 @@ CONST [NIL] nilRemovesValue : BOOLEAN;
 
 (* Introspection *)
 
-(* Binding to Predefined Function COUNT *)
-
-PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
-(* Required function to return the index/value count of an array. *)
-
-(* An expression of the form COUNT(array)
-   is synthesised as ArrayADT.count(array). *)
-
-
 (* Binding to Predefined Function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
@@ -69,6 +60,15 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 
 (* An expression of the form TLIMIT(ArrayADT))
    is synthesised as ArrayADT.capacityLimit(). *)
+
+
+(* Binding to Predefined Function COUNT *)
+
+PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
+(* Required function to return the index/value count of an array. *)
+
+(* An expression of the form COUNT(array)
+   is synthesised as ArrayADT.count(array). *)
 
 
 (* Memory Management *)
