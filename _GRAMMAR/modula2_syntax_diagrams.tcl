@@ -262,7 +262,7 @@ lappend non_terminals constIdent {
 
 # (7) Constant Or Type Or Procedure Requirement
 lappend non_terminals constOrTypeOrProcRequirement {
-  line {optx boolConstIdent ->}
+  line {optx {optx NOT} boolConstIdent ->}
   {or constRequirement procedureRequirement {line TYPE = procedureType}}
 }
 
