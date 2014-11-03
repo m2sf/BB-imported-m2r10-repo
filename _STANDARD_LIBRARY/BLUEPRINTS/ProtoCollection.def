@@ -89,8 +89,8 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
    all collection ADTs. Bindings must therefore be finalised by more
    specialised blueprints. *)
 
-isMutable -> PROCEDURE [:=] * ;
-(* Binding required when the ADT is mutable. *)
+isMutable -> PROCEDURE [:=];
+(* Conforming blueprints must require binding when the ADT is mutable. *)
 
 
 (* Copying *)
