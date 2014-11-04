@@ -41,11 +41,18 @@ CONST isRefCounted : BOOLEAN;
    Its value may be TRUE or FALSE. *)
 
 
-(* Semantics of NIL Assignment *)
+(* Storability of NIL *)
 
-CONST [NIL] nilRemovesValue : BOOLEAN;
-(* Required constant to define the semantics of assigning NIL to a value.
-   NIL assignment is treated as a call to REMOVE when this value is TRUE. *)
+CONST [NIL] allowsNilStorage : BOOLEAN;
+(* Required constant to define whether NIL is a storable value.
+   Its value may be TRUE or FALSE. *)
+
+
+(* Use of IN Operator *)
+
+CONST [IN] supportsIN = FALSE;
+(* Required constant to define whether the ADT supports the IN operator.
+   Its value is always FALSE for Array ADTs. *)
 
 
 (* Required Procedures *)
