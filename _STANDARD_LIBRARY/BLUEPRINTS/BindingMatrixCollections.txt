@@ -61,7 +61,7 @@ Legend:    R always required     # always inhibited     : required value
 
 
 
-Binding Matrix for Numeric Non-Scalars
+Binding Matrix for Collections (continued)
 
 Bindable   | Proto-   | ProtoSet | Proto-   | Proto-   | Proto-   | Proto-
 Entity     | Collec-  |          | Counted- | Array    | String   | Dictionary
