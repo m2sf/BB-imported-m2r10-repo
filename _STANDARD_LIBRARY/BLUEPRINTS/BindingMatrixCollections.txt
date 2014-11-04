@@ -57,7 +57,9 @@ VAL        | #        | #        | #        | #        |          |
 SUBSET     |          | R        | #        | #        |          | 
 -----------+----------+----------+----------+----------+----------+------------
 
-Legend:    R always required     # always inhibited     : required value           
+Legend:
+  R always required                     # always inhibited
+  : required value                      #im inhibited if immutable
 
 
 
