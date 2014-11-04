@@ -71,6 +71,16 @@ PROCEDURE [COUNT] count ( set : ProtoSet ) : LONGCARD;
    is synthesised as SetADT.count(set). *)
 
 
+PROCEDURE capacity ( set : ProtoSet ) : LONGCARD;
+(* Required function to return the allocated capacity of a set. *)
+
+PROCEDURE entryLimit ( set : ProtoSet ) : LONGCARD;
+(* Required function to return the value limit of a set. *)
+
+PROCEDURE isResizable ( set : ProtoSet ) : BOOLEAN;
+(* Required function to return the resizable property of a set. *)
+
+
 (* Memory Management *)
 
 (* Binding to Predefined Procedure NEW *)
@@ -226,12 +236,19 @@ PROCEDURE [REMOVE] removeElements
    if a constant of value TRUE is bound to NIL. *)
 
 
-PROCEDURE [IN]
-(* How do we express that IN and RETRIEVE share the same function? *);
-(* Function to test whether a value is stored in a set. *)
+(* TO DO:
+   How do we express that IN and RETRIEVE share the same function? *)
 
-(* An expression of the form elem IN set is transformed at compile time to
-   ADT.isElement(set, elem) for first operands of the ADT type. *)
+
+(* Membership Test *)
+
+(* Binding to the IN Operator *)
+
+PROCEDURE [IN] ... ;
+(* Required function to test whether a value is stored in a set. *)
+
+(* An expression of the form elem IN set
+   is synthesised as SetADT.isElement(set, elem). *)
 
 
 (* Iteration *)
@@ -263,116 +280,82 @@ PROCEDURE [FOR] forIterator
    FALSE passed for parameter ascending in the call to forIterator. *)
 
 
-(* TO DO : review from this point forward *)
-
-
 (* Set Operations *) 
 
-isRefCounted ->
-PROCEDURE [+] union
-  ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Function to return the union of two sets. *)
-
-(* An expression of the form set1 + set2 is transformed at compile time to
-   ADT.union(set1, set2) for operands of the ADT type. *)
-
+(* Binding to the + Operator *)
 
 isRefCounted ->
-PROCEDURE [-] difference
-  ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Function to return the set difference of two sets. *)
+PROCEDURE [+] union ( set1, set2 : ProtoSet ) : ProtoSet;
+(* Function to return the union of two sets.
+   The function is required when the ADT is reference counted. *)
 
-(* An expression of the form set1 - set2 is transformed at compile time to
-   ADT.difference(set1, set2) for operands of the ADT type. *)
+(* An expression of the form set1 + set2
+   is synthesised as SetADT.union(set1, set2). *)
 
 
-isRefCounted ->
-PROCEDURE [*] intersection
-  ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Function to return the intersection of two sets. *)
-
-(* An expression of the form set1 * set2 is transformed at compile time to
-   ADT.intersection(set1, set2) for operands of the set ADT type. *)
-
+(* Binding to the - Operator *)
 
 isRefCounted ->
-PROCEDURE [/] symmetricDiff
-  ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Functon to return the symmetric difference of two sets. *)
+PROCEDURE [-] difference ( set1, set2 : ProtoSet ) : ProtoSet;
+(* Function to return the set difference of two sets.
+   The function is required when the ADT is reference counted. *)
 
-(* An expression of the form set1 / set2 is transformed at compile time to
-   ADT.symmetricDiff(set1, set2) for operands of the set ADT type. *)
+(* An expression of the form set1 - set2
+   is synthesised as SetADT.difference(set1, set2). *)
+
+
+(* Binding to the * Operator *)
+
+isRefCounted ->
+PROCEDURE [*] intersection ( set1, set2 : ProtoSet ) : ProtoSet;
+(* Function to return the intersection of two sets.
+   The function is required when the ADT is reference counted. *)
+
+(* An expression of the form set1 * set2
+   is synthesised as SetADT.intersection(set1, set2). *)
+
+
+(* Binding to the / Operator *)
+
+isRefCounted ->
+PROCEDURE [/] symmetricDiff ( set1, set2 : ProtoSet ) : ProtoSet;
+(* Functon to return the symmetric difference of two sets.
+   The function is required when the ADT is reference counted. *)
+
+(* An expression of the form set1 / set2
+   is synthesised as SetADT.symmetricDiff(set1, set2). *)
 
 
 (* Relational Operations *)
 
+(* Binding to the = and # Operators *)
+
 PROCEDURE [=] isEqual ( set1, set2 : ProtoSet ) : BOOLEAN;
-(* Function to test the equality of two sets. *)
+(* Required unction to test the equality of two sets. *)
 
-(* An expression of the form set1 = set2 is transformed at compile time to
-   ADT.isEqual(set1, set2) for operands of the set ADT type.
+(* An expression of the form set1 = set2
+   is synthesised as SetADT.isEqual(set1, set2).
    
-   An expression of the form set1 # set2 is transformed at compile time to
-   NOT ADT.isEqual(set1, set2) for operands of the set ADT type. *)
+   An expression of the form set1 # set2
+   is synthesised as NOT SetADT.isEqual(set1, set2). *)
 
+
+(* Binding to Predefined Function SUBSET *)
 
 PROCEDURE [SUBSET] isSubset ( set1, set2 : ProtoSet ) : BOOLEAN;
-(* Function to test whether one set is a subset of another. *)
+(* Required function to test whether one set is a subset of another. *)
 
-(* An expression of the form set1 > set2 is transformed at compile time to
-   ADT.isSubset(set2, set1) for operands of the set ADT type.
+(* An expression of the form set1 > set2
+   is synthesised as SetADT.isSubset(set2, set1).
    
-   An expression of the form set1 >= set2 is transformed at compile time
-   to (COUNT(set1) > COUNT(set2)) AND ADT.isSubset(set2, set1) for
-   operands of the set ADT type.
+   An expression of the form set1 >= set2 is synthesised as
+   (COUNT(set1) > COUNT(set2)) AND SetADT.isSubset(set2, set1). *)
    
-   An expression of the form set1 < set2 is transformed at compile time to
-   ADT.isSubset(set1, set2) for operands of the set ADT type.
+   An expression of the form set1 < set2
+   is synthesised as SetADT.isSubset(set1, set2).
    
-   An expression of the form set1 <= set2 is transformed at compile time
-   to (COUNT(set1) < COUNT(set2)) AND ADT.isSubset(set1, set2) for
-   operands of the set ADT type. *)
-   
-
-(* IO operations *)
-
-PROCEDURE [READ] Read ( infile : File; VAR set : ProtoSet );
-(* Procedure to read a value from a file into a set. *)
-
-(* A statement of the form READ(file, set) is transformed at compile time
-   to ADT.Read(file, set) for second operands of the ADT type. *)
-
-
-PROCEDURE [WRITE] Write ( outfile : File; set : ProtoSet );
-(* Procedure to write a set ADT value to a file. *)
-
-(* A statement of the form WRITE(file, set) is transformed at compile time
-   to ADT.Write(file, set) for second operands of the ADT type. *)
-
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST OF ProtoSet );
-(* Procedure to write one or more sets formatted into a file. *)
-
-(* A statement of the form WRITEF(file, fmt, set1, set2, set3, ...) is trans-
-   formed at compile time to ADT.WriteF(file, fmt, set1, set2, set3, ...) for
-   third operands and any following operands of the ADT type. *)
-
-
-(* Introspection *)
-
-PROCEDURE capacity ( set : ProtoSet ) : LONGCARD;
-(* Function to return the allocated capacity of a set. *)
-
-
-PROCEDURE entryLimit ( set : ProtoSet ) : LONGCARD;
-(* Function to return the value limit of a set. *)
-
-
-PROCEDURE isResizable ( set : ProtoSet ) : BOOLEAN;
-(* Function to return the resizable property of a set. *)
+   An expression of the form set1 <= set2 is synthesised as
+   (COUNT(set1) < COUNT(set2)) AND SetADT.isSubset(set1, set2). *)
 
 
 END ProtoSet.
