@@ -63,12 +63,15 @@ Legend:    R always required     # always inhibited     : required value
 
 Binding Matrix for Collections (continued)
 
-Bindable   | Proto-   | ProtoSet | Proto-   | Proto-   | Proto-   | Proto-
-Entity     | Collec-  |          | Counted- | Array    | String   | Dictionary
-           | tion     |          | Set      |          |          |
+Property/  | Proto-   | ProtoSet | Proto-   | Proto-   | Proto-   | Proto-
+Bindable   | Collec-  |          | Counted- | Array    | String   | Dictionary
+Entity     | tion     |          | Set      |          |          |
 -----------+----------+----------+----------+----------+----------+------------
 DESCENDING |          | R:FALSE  | R:FALSE  | R:TRUE   | R:TRUE   | R
-NIL        | R        | R:FALSE  | R:FALSE  | R:FALSE  | R:FALSE  | R
+NIL        | R        | R:FALSE  | R:FALSE  | R        | R:FALSE  | R
+-----------+----------+----------+----------+----------+----------+------------
+Reference  |          |          |          |          |          |
+counted    |          | R        | R        |          | R        | 
 -----------+----------+----------+----------+----------+----------+------------
 TSIGNED    | #        | #        | #        | #        | #        | #
 TBASE      | #        | #        | #        | #        | #        | #
@@ -98,7 +101,7 @@ INSERT     | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
 REMOVE     | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
 -----------+----------+----------+----------+----------+----------+------------
 FOR        | R        | R        | R        | R        | R        | R
-CONCAT     |          | #        | #        | #nr      | R        | #nr
+CONCAT     |          | #        | #        | #nr      | R #nr    | #nr
 ..         |          | #        | #        | #nr      | R        | #
 -----------+----------+----------+----------+----------+----------+------------
 ABS        | #        | #        | #        | #        | #        | #
@@ -116,7 +119,7 @@ VAL        | #        | #        | #        | #        | #        | #
 =          | R        | R        | R        | R        | R        | R
 >          |          | #        | #        | #        | R        | 
 <          |          | #        | #        | #        | R        | 
-SUBSET     |          | R        | R        | #        | #        | #
+SUBSET     |          | R #nr    | R #nr    | #        | #        | #
 -----------+----------+----------+----------+----------+----------+------------
 
 Legend:
