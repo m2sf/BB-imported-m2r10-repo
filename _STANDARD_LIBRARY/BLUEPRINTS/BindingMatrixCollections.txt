@@ -25,15 +25,15 @@ NEW        |          | #        | #        | #        |          |
 RETAIN     |          | #        | #        | #        |          | 
 RELEASE    |          | #        | #        | #        |          | 
 -----------+----------+----------+----------+----------+----------+------------
-:=         | R        | R        | R        | R        |          | 
-DUP        | #        | #        | #        | #        |          | 
-COPY       |          |          |          |          |          | 
+:=         | Rm #im   | R        | R        | R        |          | 
+DUP        |          | #        | #        | #        |          | 
+COPY       | Rm #im   |          |          |          |          | 
 -----------+----------+----------+----------+----------+----------+------------
-STORE      | R        | R        | R        | R        |          | 
+STORE      | Rm #im   | R        | R        | R        |          | 
 RETRIEVE   | R        | R        | R        | R        |          | 
-IN         |          | R        |          |          |          | 
-INSERT     | R        | R        | R        | R        |          | 
-REMOVE     | R        | R        | R        | R        |          | 
+IN         |          | R        | #        | #        |          | 
+INSERT     | Rm #im   | R        | R        | R        |          | 
+REMOVE     | Rm #im   | R        | R        | R        |          | 
 -----------+----------+----------+----------+----------+----------+------------
 FOR        | R        | R        | R        | R        |          | 
 CONCAT     |          | #        | #        | R        |          | 
@@ -91,11 +91,11 @@ RETAIN     |          | R        | R        | Rr #nr   | R #nr    | Rr
 RELEASE    |          | R        | R        | R        | R        | R
 -----------+----------+----------+----------+----------+----------+------------
 :=         | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
-DUP        | R        | R        | R        | R        | R        | R
+DUP        |          | R        | R        | R        | R        | R
 COPY       | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
 -----------+----------+----------+----------+----------+----------+------------
 STORE      | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
-RETRIEVE   | Rm #im   | R        | R        | R        | R        | R
+RETRIEVE   | R        | R        | R        | R        | R        | R
 IN         |          | R        | R        | #        | #        | R
 INSERT     | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
 REMOVE     | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
