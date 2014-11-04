@@ -27,8 +27,8 @@ PSEUDO BLUEPRINT BUILTIN;
 (* If either value bound to TMINEXP or TMAXEXP
    is greather than zero, integer division is inhibited. *)
 
-[TSIGNED] -> PROCEDURE [TMIN];
-(* If TSIGNED is required, TMIN is required. *)
+[TBASE] -> PROCEDURE [TMIN];
+(* If TBASE is required, TMIN is required. *)
 
 [TMIN] -> PROCEDURE [TMAX];
 (* If TMIN is required, TMAX is required. *)
@@ -69,11 +69,9 @@ PSEUDO BLUEPRINT BUILTIN;
 [>] -> PROCEDURE [<];
 (* If greater-than is required, less-than is required. *)
 
-[TSIGNED] -> PROCEDURE [SUBSET] : NIL;
-(* If TSIGNED is required, SUBSET is inhibited. *)
-
-[SUBSET] -> CONST [TSIGNED] -> NIL;
-(* If SUBSET is required, TSIGNED is inhibited. *)
+[TMIN] -> PROCEDURE [SUBSET] : NIL;
+[SUBSET] -> PROCEDURE [TMIN] -> NIL;
+(* TMIN and SUBSET are mutually exclusive. *)
 
 [SUBSET] -> PROCEDURE [=];
 (* If SUBSET is required, is-equal is required. *)
@@ -95,6 +93,10 @@ PSEUDO BLUEPRINT BUILTIN;
 
 [SUBSET] -> PROCEDURE [MOD] : NIL;
 (* If SUBSET is required, modulus is inhibited. *)
+
+[TMIN] -> PROCEDURE [TLIMIT] : NIL;
+[TLIMIT] -> PROCEDURE [TMIN] : NIL;
+(* TMIN and TLIMIT are mutually exculsive. *)
 
 [TLIMIT] -> PROCEDURE [COUNT | LENGTH];
 (* If TLIMIT is required, either COUNT or LENGTH is required. *)
