@@ -42,11 +42,11 @@ CONST isRefCounted : BOOLEAN;
    Its value may be TRUE or FALSE. *)
 
 
-(* Semantics of NIL Assignment *)
+(* Storability of NIL *)
 
-CONST [NIL] nilRemovesValue = TRUE;
-(* Required constant to define whether NIL assignment is treated as
-   a call to REMOVE. The constant is always TRUE for String ADTs. *)
+CONST [NIL] allowsNilStorage = FALSE;
+(* Required constant to define whether NIL is a storable value.
+   Its value is always FALSE for String ADTs. *)
 
 
 (* Sliceability *)
@@ -181,39 +181,12 @@ PROCEDURE [STORE] replaceCharAtIndex
 
 PROCEDURE [RETRIEVE] charAtIndex
  ( string : ProtoString; index : POSINT ) : CharType;
-(* Required function to return the character stored in a string
-   at a given index. *)
+(* Required function to return the character
+   stored at a given index in a string. *)
 
 (* An expression of the form string[index]
    is equivalent to RETRIEVE(string, index) and
    is synthesised as StringADT.charAtIndex(string, index). *)
-
-
-(* Storage, Retrieval, Insertion and Removal of Contents *)
-
-PROCEDURE [STORE] replaceCharAtIndex
-  ( string : ProtoString;
-    index : INTEGER; char : CharType );
-(* Required procedure to replace a char at a given index in a string *)
-
-(* An assignment of the form
-     string[index] := char
-   is equivalent to
-     STORE(string, index, char)
-   and is synthesised as
-     StringADT.replaceCharAtIndex(string, index, char). *)
-
-
-PROCEDURE [RETRIEVE] charAtIndex
-  ( string : ProtoString; index : INTEGER ) : CharType;
-(* Required procedure to return the char at a given index in a string. *)
-
-(* An expression of the form
-     string[index]
-   is equivalent to
-     RETRIEVE(string, index)
-   and is synthesised as
-     StringADT.charAtIndex(string, index). *)
 
 
 (* Index Out Of Range Retrieval Error Handling *)
