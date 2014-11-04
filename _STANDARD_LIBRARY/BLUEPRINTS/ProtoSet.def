@@ -41,11 +41,18 @@ CONST isRefCounted : BOOLEAN;
    Its value may be TRUE or FALSE. *)
 
 
-(* Semantics of NIL Assignment *)
+(* Storability of NIL *)
 
-CONST [NIL] nilRemovesValue : BOOLEAN;
-(* Required constant to define the semantics of assigning NIL to a value.
-   NIL assignment is treated as a call to REMOVE when this value is TRUE. *)
+CONST [NIL] allowsNilStorage = FALSE;
+(* Required constant to define whether NIL is a storable value.
+   Its value is always FALSE for Set ADTs. *)
+
+
+(* Use of IN Operator *)
+
+CONST [IN] supportsIN = TRUE;
+(* Required constant to define whether the ADT supports the IN operator.
+   Its value is always TRUE for Set ADTs. *)
 
 
 (* Required Procedures *)
@@ -180,13 +187,17 @@ PROCEDURE [STORE] storeElement
 
 (* Value Retrieval *)
 
-(* Binding to Predefined Function RETRIEVE *)
+(* Binding to Predefined Function RETRIEVE and Operator IN *)
 
 PROCEDURE [RETRIEVE] isElement
   ( set : ProtoSet; element : ElementType ) : BOOLEAN;
 (* Required function to return the membership value for an element in a set. *)
 
 (* An expression of the form set[element]
+   is equivalent to RETRIEVE(set, element) and
+   is synthesised as SetADT.isElement(set, element).
+   
+   An expression of the form element IN set
    is equivalent to RETRIEVE(set, element) and
    is synthesised as SetADT.isElement(set, element). *)
 
@@ -234,21 +245,6 @@ PROCEDURE [REMOVE] removeElements
    is treated equivalent to
      REMOVE(set, element)
    if a constant of value TRUE is bound to NIL. *)
-
-
-(* TO DO:
-   How do we express that IN and RETRIEVE share the same function? *)
-
-
-(* Membership Test *)
-
-(* Binding to the IN Operator *)
-
-PROCEDURE [IN] ... ;
-(* Required function to test whether a value is stored in a set. *)
-
-(* An expression of the form elem IN set
-   is synthesised as SetADT.isElement(set, elem). *)
 
 
 (* Iteration *)
