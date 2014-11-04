@@ -184,12 +184,20 @@ NOT isMutable -> PROCEDURE [INSERT] : NIL; (* inhibited *)
 NOT isMutable -> PROCEDURE [REMOVE] : NIL; (* inhibited *)
 
 
-(* Conforming blueprints may not require bindings to
-   RETAIN and CONCAT if the ADT is not reference counted. *)
+(* Conforming blueprints may not require bindings to RETAIN and CONCAT,
+   nor to any set operations if the ADT is not reference counted. *)
 
 NOT isRefCounted -> PROCEDURE [RETAIN] : NIL; (* inhibited *)
 
 NOT isRefCounted  -> PROCEDURE [CONCAT] : NIL; (* inhibited *)
+
+NOT isRefCounted  -> PROCEDURE [+] : NIL; (* inhibited *)
+
+NOT isRefCounted  -> PROCEDURE [-] : NIL; (* inhibited *)
+
+NOT isRefCounted  -> PROCEDURE [*] : NIL; (* inhibited *)
+
+NOT isRefCounted  -> PROCEDURE [/] : NIL; (* inhibited *)
 
 
 (* Unconditionally Inhibited Bindings *)
@@ -222,20 +230,12 @@ CONST [TMAXEXP] : NIL; (* inhibited *)
 
 (* Arithmetic Operations *)
 
-(* Arithmetic operations are not meaningful for collection ADTs.
+(* Operations ABS, NEG, DIV and MOD are not meaningful for collection ADTs.
    Conforming blueprints may not require bindings to these operations. *)
 
 PROCEDURE [ABS] : NIL; (* inhibited *)
 
 PROCEDURE [NEG] : NIL; (* inhibited *)
-
-PROCEDURE [+] : NIL; (* inhibited *)
-
-PROCEDURE [-] : NIL; (* inhibited *)
-
-PROCEDURE [*] : NIL; (* inhibited *)
-
-PROCEDURE [/] : NIL; (* inhibited *)
 
 PROCEDURE [DIV] : NIL; (* inhibited *)
 
@@ -254,8 +254,9 @@ PROCEDURE [VAL] : NIL; (* inhibited *)
 
 (* Relational Operations *)
 
-(* Relational operations >, >=, < and <= are not meaningful for collection ADTs.
-   Conforming blueprints may not require bindings to these operations. *)
+(* Operations less-than, less-or-equal, greater-than and greater-or-equal are
+   not meaningful for collection ADTs. Conforming blueprints may not require
+   bindings to these operations. *)
 
 PROCEDURE [<] : NIL; (* inhibited *)
 
