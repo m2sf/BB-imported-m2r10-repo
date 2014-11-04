@@ -7,7 +7,7 @@ Entity     | Numeric  | Scalar   | Real     | Integer  | Cardinal | Modular
 DESCENDING |          |          | #        | R:TRUE   | R:TRUE   | R:TRUE
 NIL        | # (FALSE)| # (FALSE)| # (FALSE)| # (FALSE)| # (FALSE)| # (FALSE)
 -----------+----------+----------+----------+----------+----------+------------
-TSIGNED    | R        | R        | R        | R:TRUE   | R:FALSE  | R
+TSIGNED    |          | R        | R        | R:TRUE   | R:FALSE  | R
 TBASE      |          | R        | R        | R        | R        | R
 TPRECISION |          | R        | R        | R        | R        | R
 TMINEXP    |          | R        | R        | R:0      | R:0      | R:0
@@ -70,11 +70,11 @@ Entity     | Numeric  | NonScalar| Tuple    | Vector   | Complex  |
 DESCENDING |          |          | #        | #        | #        | 
 NIL        | # (FALSE)| # (FALSE)| # (FALSE)| # (FALSE)| # (FALSE)| 
 -----------+----------+----------+----------+----------+----------+------------
-TSIGNED    | R        | R        | R:TRUE   | R:TRUE   | R:TRUE   | 
-TBASE      |          | #        | #        | #        | #        | 
-TPRECISION |          | #        | #        | #        | #        | 
-TMINEXP    |          | #        | #        | #        | #        | 
-TMAXEXP    |          | #        | #        | #        | #        | 
+TSIGNED    |          |          | R:TRUE   | R:TRUE   | R:TRUE   | 
+TBASE      |          |          | #        | #        | #        | 
+TPRECISION |          |          | #        | #        | #        | 
+TMINEXP    |          |          | #        | #        | #        | 
+TMAXEXP    |          |          | #        | #        | #        | 
 -----------+----------+----------+----------+----------+----------+------------
 TLIMIT     | #        | #        | #        | #        | #        | 
 COUNT      | #        | #        | #        | #        | #        | 
