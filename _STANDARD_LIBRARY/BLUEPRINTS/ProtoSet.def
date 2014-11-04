@@ -75,7 +75,7 @@ PROCEDURE capacity ( set : ProtoSet ) : LONGCARD;
 (* Required function to return the allocated capacity of a set. *)
 
 PROCEDURE entryLimit ( set : ProtoSet ) : LONGCARD;
-(* Required function to return the value limit of a set. *)
+(* Required function to return the element limit of a set. *)
 
 PROCEDURE isResizable ( set : ProtoSet ) : BOOLEAN;
 (* Required function to return the resizable property of a set. *)
