@@ -2,7 +2,7 @@
 
 (* Built-in Blueprint Consistency Rules *)
 
-PSEUDO BLUEPRINT BUILTIN;
+(*PSEUDO*) BLUEPRINT BUILTIN;
 (* Not a compilation unit, documentation only *)
 
 [TBASE] -> CONST [TPRECISION];
