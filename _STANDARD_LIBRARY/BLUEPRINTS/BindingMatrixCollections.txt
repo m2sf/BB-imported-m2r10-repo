@@ -5,7 +5,7 @@ Bindable   | Proto-   | Proto-   | Proto-   | Proto-   |          |
 Entity     | Collec-  | Static-  | Static-  | Static-  |          | 
            | tion     | Set      | Array    | String   |          |
 -----------+----------+----------+----------+----------+----------+------------
-DESCENDING |          | R:FALSE  | R:TRUE   | R:TRUE   |          | 
+DESCENDING | R        | R:FALSE  | R:TRUE   | R:TRUE   |          | 
 NIL        | R        | R:FALSE  | R:FALSE  | R:FALSE  |          | 
 -----------+----------+----------+----------+----------+----------+------------
 TSIGNED    | #        | #        | #        | #        |          | 
@@ -67,7 +67,7 @@ Property/  | Proto-   | ProtoSet | Proto-   | Proto-   | Proto-   | Proto-
 Bindable   | Collec-  |          | Counted- | Array    | String   | Dictionary
 Entity     | tion     |          | Set      |          |          |
 -----------+----------+----------+----------+----------+----------+------------
-DESCENDING |          | R:FALSE  | R:FALSE  | R:TRUE   | R:TRUE   | R
+DESCENDING | R        | R:FALSE  | R:FALSE  | R:TRUE   | R:TRUE   | R
 NIL        | R        | R:FALSE  | R:FALSE  | R        | R:FALSE  | R
 -----------+----------+----------+----------+----------+----------+------------
 Reference  |          |          |          |          |          |
