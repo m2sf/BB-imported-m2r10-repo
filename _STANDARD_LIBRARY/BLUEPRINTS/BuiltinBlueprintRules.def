@@ -5,13 +5,13 @@
 PSEUDO BLUEPRINT BUILTIN;
 (* Not a compilation unit, documentation only *)
 
-[TSIGNED] -> CONST [TBASE];
 [TBASE] -> CONST [TPRECISION];
 [TPRECISION] -> CONST [TMINEXP];
 [TMINEXP] -> CONST [TMAXEXP];
-[TMAXEXP] -> CONST [TSIGNED];
-(* If any one of TSIGNED, TBASE, TPRECISION, TMINEXP
-   and TMAXEXP is required, all of them are required. *)
+[TMAXEXP] -> CONST [TBASE];
+[TBASE] -> CONST [TSIGNED];
+(* If any one of TBASE, TPRECISION, TMINEXP and TMAXEXP
+   is required, all of them and TSIGNED are required. *)
 
 [TSIGNED=TRUE] -> PROCEDURE [NEG];
 (* If value bound to TSIGNED is TRUE, unary minus is required. *)
