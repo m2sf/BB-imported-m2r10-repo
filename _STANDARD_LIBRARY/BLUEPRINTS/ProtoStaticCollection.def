@@ -1,0 +1,255 @@
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* General Blueprint for Statically Allocatable Collection ADTs *)
+
+BLUEPRINT ProtoStaticCollection [ProtoRoot];
+
+REFERENTIAL AccessorType, ValueType, HandlerType, LoopBodyType;
+
+
+(* Required Module Type *)
+
+MODULE TYPE = RECORD :=
+  CHAR | UNICHAR |
+  { ARGLIST OF AccessorType } |
+  { ARGLIST OF { AccessorType, ValueType } };
+(* Static Collection ADTs must be record types,
+   quoted literals or structured literals are compatible. *)
+
+
+(* Bindings required for static collection ADTs *)
+
+
+(* Required Constants *)
+
+
+(* Orderedness *)
+
+CONST [DESCENDING] isOrdered : BOOLEAN;
+(* Required constant to define whether conforming ADTs shall be ordered.
+   Its value may be TRUE or FALSE. *)
+
+
+(* NIL Storage *)
+
+CONST [NIL] allowsNilStorage : BOOLEAN;
+(* Required constant to define whether NIL is a storable value.
+   Its value may be TRUE or FALSE. *)
+
+
+(* Required Procedures *)
+
+
+(* Introspection *)
+
+(* Binding to Predefined Function TLIMIT *)
+
+PROCEDURE [TLIMIT];
+(* Specialised blueprints must always require binding to TLIMIT. *)
+
+
+(* Binding to Predefined Function COUNT or LENGTH *)
+
+(* When TLIMIT is required, either COUNT or LENGTH is required.
+   Specialised blueprints must require one of the two accordingly. *)
+
+
+(* Literal Assignment *)
+
+(* Binding to the := Operator *)
+
+PROCEDURE [:=];
+(* Specialised blueprints must always require binding to :=. *)
+
+
+(* Copying *)
+
+(* Binding to Predefined Procedure COPY *)
+
+PROCEDURE [COPY];
+(* Specialised blueprints must always require binding to COPY. *)
+
+
+(* Value Storage *)
+
+(* Binding to Predefined Procedure STORE *)
+
+PROCEDURE [STORE];
+(* Specialised blueprints must always require binding to STORE. *)
+
+
+(* Value Retrieval *)
+
+(* Binding to Predefined Function RETRIEVE *)
+
+PROCEDURE [RETRIEVE];
+(* Specialised blueprints must always require binding to RETRIEVE. *)
+
+
+(* Invalid Accessor Retrieval Error Handling *)
+
+(* A user defined invalid-accessor handler function may be used to change
+   the default behaviour when RETRIEVE is called with an invalid accessor. *)
+
+(* Handler Type *)
+
+TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
+(* Specialised blueprints must require procedure type for user defined
+   invalid-accessor handlers. *)
+
+
+(* Handler Installation *)
+
+PROCEDURE installHandler ( handler : HandlerType );
+(* Specialised blueprints must require procedure to install user defined
+   invalid-accessor handlers. *)
+
+
+(* Value Insertion and Removal *)
+
+(* Binding to Predefined Procedures INSERT and REMOVE *)
+
+(* The operations INSERT and REMOVE are not common to all collection
+   ADTs, their bindings may be required by more specialised blueprints. *)
+
+
+(* Membership Test *)
+
+(* Binding to IN syntax *)
+
+(* The operation IN is not common to all collection ADTs,
+   its binding may be required by more specialised blueprints. *)
+
+
+(* Iteration *)
+
+(* Binding to the FOR IN iterator *)
+
+TYPE LoopBodyType =
+  PROCEDURE ( VAR ProtoStaticCollection, CONST AccessorType );
+(* Specialised blueprints must require procedure type
+   for synthesised FOR loop bodies. *)
+
+PROCEDURE [FOR];
+(* Specialised blueprints must always require binding to FOR. *)
+
+
+(* Concatenation *)
+
+(* Binding to Predefined Procedure CONCAT *)
+
+(* The operation CONCAT is not common to all collection ADTs,
+   its binding may be required by more specialised blueprints. *)
+
+
+(* Slicing *)
+
+(* Binding to the .. Operator *)
+
+(* The operation .. is not common to all collection ADTs,
+   its binding may be required by more specialised blueprints. *)
+
+
+(* Relational Operations *)
+
+(* Binding to the = and # Operators *)
+
+PROCEDURE [=];
+(* Specialised blueprints must always require binding to =. *)
+
+(* The operation for the # operator is automatically synthesised. *)
+
+
+(* Binding to < and > Operators *)
+
+(* The operations less-than, less-or-equal, greater-than and
+   greater-than-equal are not common to all collection ADTs,
+   their binding may be required by more specialised blueprints. *)
+
+
+(* Set Operations *)
+
+(* Binding to Predefined Function SUBSET *)
+
+(* The operation SUBSET is not common to all collection ADTs,
+   its binding may be required by more specialised blueprints. *)
+
+
+(* Conditionally Inhibited Bindings *)
+
+(* None *)
+
+
+(* Unconditionally Inhibited Bindings *)
+
+(* Numeric Properties *)
+
+(* Numeric properties are not meaningful for collection ADTs.
+   Conforming blueprints may not require bindings to these properties. *)
+
+CONST [TSIGNED] : NIL; (* inhibited *)
+
+CONST [TBASE] : NIL; (* inhibited *)
+
+CONST [TPRECISION] : NIL; (* inhibited *)
+
+CONST [TMINEXP] : NIL; (* inhibited *)
+
+CONST [TMAXEXP] : NIL; (* inhibited *)
+
+
+(* Introspection *)
+
+(* Operations TMIN and TMAX are not meaningful for collection ADTs.
+   Conforming blueprints may not require bindings to these operations. *)
+
+PROCEDURE [TMIN] : NIL; (* inhibited *)
+
+PROCEDURE [TMAX] : NIL; (* inhibited *)
+
+
+(* Memory Management *)
+
+(* Operations NEW, RETAIN and RELEASE are not meaningful for static ADTs.
+   Conforming blueprints may not require bindings to these operations. *)
+
+PROCEDURE [NEW] : NIL; (* inhibited *)
+
+PROCEDURE [RETAIN] : NIL; (* inhibited *)
+
+PROCEDURE [RELEASE] : NIL; (* inhibited *)
+
+
+(* Copying *)
+
+(* Operation DUP is not meaningful for statically allocated ADTs.
+   Conforming blueprints may not require binding to DUP. *)
+
+PROCEDURE [DUP] : NIL; (* inhibited *)
+
+
+(* Arithmetic Operations *)
+
+(* Operations ABS, NEG, DIV and MOD are not meaningful for collection ADTs.
+   Conforming blueprints may not require bindings to these operations. *)
+
+PROCEDURE [ABS] : NIL; (* inhibited *)
+
+PROCEDURE [NEG] : NIL; (* inhibited *)
+
+PROCEDURE [DIV] : NIL; (* inhibited *)
+
+PROCEDURE [MOD] : NIL; (* inhibited *)
+
+
+(* Arithmetic Conversion *)
+
+(* Arithmetic conversions are not meaningful for collection ADTs.
+   Conforming blueprints may not require bindings to these operations. *)
+
+PROCEDURE [SXF] : NIL; (* inhibited *)
+
+PROCEDURE [VAL] : NIL; (* inhibited *)
+
+
+END ProtoStaticCollection.
