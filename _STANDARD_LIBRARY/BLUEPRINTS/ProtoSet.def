@@ -11,7 +11,7 @@ REFERENTIAL ElementType, HandlerType, LoopBodyType;
 
 MODULE TYPE = OPAQUE := { ARGLIST OF ElementType };
 (* Dynamic Set ADTs must be opaque,
-   structured literals with a list of elements are compatible *)
+   structured literals with a list of elements are compatible. *)
 
 
 (* Required Constants *)
@@ -27,8 +27,8 @@ CONST isMutable : BOOLEAN;
 (* Memory Management Model *)
 
 CONST isRefCounted = TRUE;
-(* Required constant to define whether conforming ADTs should be reference
-   counted. Its value is always TRUE for dynamic Set ADTs. *)
+(* Required constant to define whether conforming ADTs should be
+   reference counted. Its value is always TRUE for dynamic Set ADTs. *)
 
 
 (* Orderedness *)
@@ -40,7 +40,7 @@ CONST [DESCENDING] isOrdered : BOOLEAN;
 
 (* NIL Storage *)
 
-CONST [NIL] allowsNilStorage : BOOLEAN;
+CONST [NIL] allowsNilStorage = FALSE;
 (* Required constant to define whether NIL should be a storable value.
    Its value is always FALSE for Set ADTs. *)
 
@@ -136,8 +136,8 @@ PROCEDURE [RELEASE] release ( set : ProtoSet );
 isMutable ->
 PROCEDURE [:=] assignLiteral
   ( set : ProtoSet; literal : ARGLIST OF ElementType );
-(* Procedure to destructively copy the contents of a set literal to an
-   array. The procedure is required when the ADT is mutable. *)
+(* Procedure to destructively copy the contents of a set literal to a set.
+   The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form set := { elem1, elem2, elem3, ... };
    is synthesised as SetADT.assignLiteral(set, elem1, elem2, elem3, ...). *)
@@ -186,7 +186,7 @@ PROCEDURE [STORE] storeElement
 
 (* Value Retrieval *)
 
-(* Binding to Predefined Function RETRIEVE and Operator IN *)
+(* Binding to Predefined Function RETRIEVE *)
 
 PROCEDURE [RETRIEVE] isElement
   ( set : ProtoSet; element : ElementType ) : BOOLEAN;
@@ -331,7 +331,7 @@ PROCEDURE [SUBSET] isSubset ( set1, set2 : ProtoSet ) : BOOLEAN;
    is synthesised as SetADT.isSubset(set2, set1).
    
    An expression of the form set1 >= set2 is synthesised as
-   (COUNT(set1) > COUNT(set2)) AND SetADT.isSubset(set2, set1). *)
+   (COUNT(set1) > COUNT(set2)) AND SetADT.isSubset(set2, set1).
    
    An expression of the form set1 < set2
    is synthesised as SetADT.isSubset(set1, set2).
