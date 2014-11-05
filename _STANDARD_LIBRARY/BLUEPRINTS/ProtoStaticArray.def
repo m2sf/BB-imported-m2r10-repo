@@ -2,83 +2,118 @@
 
 (* Blueprint for Statically Allocatable Array ADTs *)
 
-BLUEPRINT ProtoStaticArray [ProtoCollection];
+BLUEPRINT ProtoStaticArray [ProtoStaticCollection];
 
-REFERENTIAL IndexType, ValueType, ComponentCount, ProcType;
+REFERENTIAL IndexType, ValueType, ComponentCount, BodyLoopType;
 
-(* Static Array ADTs must be opaque records to be statically allocatable,
-   array literals are compatible *)
+
+(* Required Module Type *)
 
 MODULE TYPE = OPAQUE RECORD := { ARGLIST ComponentCount OF ValueType };
-
-
-(* Bindings required for Static Array ADTs *)
+(* Static Array ADTs must be opaque records to be statically allocatable,
+   array literals with a fixed number of components are compatible. *)
 
 
 (* Required Constants *)
 
-CONST [:=] isMutable = TRUE;
-(* Static array ADTs are always mutable *)
+
+(* Orderedness *)
 
 CONST [DESCENDING] isOrdered = TRUE;
-(* Static array ADTs are always ordered *)
+(* Required constant to define whether conforming ADTs shall be ordered.
+   Its value is always TRUE for arrays. *)
+
+
+(* NIL Storage *)
+
+CONST [NIL] allowsNilStorage : BOOLEAN;
+(* Required constant to define whether NIL is a storable value.
+   Its value may be TRUE or FALSE. *)
+
+
+(* Support for Invalid Accessor Retrieval Intercept *)
+
+CONST * invAccessorRetrievalIntercept = TRUE;
+(* Required constant to define whether invalid accessor retrieval errors
+   may be intercepted by user defined handlers. Always TRUE for arrays. *)
 
 
 (* Required Procedures *)
 
-(* Capacity limit *)
+
+(* Introspection *)
+
+(* Binding to Predefined Function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Function to return the allocation capacity limit of the array ADT. *)
+(* Required function to return the allocation capacity limit of the ADT. *)
 
-(* An invocation of TLIMIT(ADT)) is transformed at compile time to
-   ArrayADT.capacityLimit() when the operand is of the array ADT type. *)
+(* An expression of the form TLIMIT(ArrayADT)
+   is synthesised as ArrayADT.capacityLimit(). *)
 
 
-(* Assignment and Copying *)
+(* Binding to Predefined Function COUNT *)
 
-PROCEDURE [:=] assignStructuredValue
-  ( array : ProtoStaticArray; value : ARGLIST ComponentCount OF ValueType );
+PROCEDURE [COUNT] count ( array : ProtoStaticArray ) : LONGCARD;
+(* Required function to return the number of values stored in an array. *)
+
+(* An expression of the form COUNT(array)
+   is synthesised as ArrayADT.length(array). *)
+
+
+(* Literal Assignment *)
+
+(* Binding to the := Operator *)
+
+PROCEDURE [:=] assign
+  ( VAR array : ProtoStaticArray;
+    valueList : ARGLIST ComponentCount OF ValueType );
 (* Required procedure to assign a structured value to an array. *)
 
-(* A statement of the form
-     array := { 1, 2, 3, 4, 5 };
-   is transformed at compile time into a procedure call of the form
-     ArrayADT.assignStructuredValue(array, 1, 2, 3, 4, 5); *)
+(* A statement of the form array := { val1, val2, val3 }
+   is synthesised as ArrayADT.assign(array, val1, val2, val3). *)
 
+
+(* Copying *)
+
+(* Binding to Predefined Procedure COPY *)
 
 PROCEDURE [COPY] copy
   ( source : ProtoStaticArray; VAR target : ProtoStaticArray );
 (* Required procedure to copy the contents of a source array into a
    target array. *)
 
-(* A statement of the form
-     array1 := array2;
-   is transformed at compile time into a procedure call of the form
-     ArrayADT.copy(array2, array1); *)
+(* A statement of the form array1 := array2
+   is synthesised as ArrayADT.copy(array2, array1). *)
 
 
-(* Storage, Retrieval and Inspection of Contents *)
+(* Value Storage *)
 
-PROCEDURE [STORE] storeValue
-  ( VAR array : ProtoStaticArray;
-    index : IndexType; value : ValueType );
-(* Required procedure to store a given value for a given index in an array *)
+(* Binding to Predefined Procedure STORE *)
 
-(* A statement of the form
-     array[index] := value
-   is transformed at compile time into a procedure call of the form
-     ArrayADT.storeValue(array, index, value); *)
+PROCEDURE [STORE] storeValueAtIndex
+  ( VAR array : ProtoStaticArray; index : IndexType; value : ValueType );
+  (* Required procedure to store a value in an array at a given index. *)
 
+(* A statement of the form array[index] := value
+   is equivalent to STORE(array, index, value )
+   and is synthesised as ArrayADT.storeValueAtIndex(array, index, value). *)
+
+
+(* Value Retrieval *)
+
+(* Binding to Predefined Function RETRIEVE *)
 
 PROCEDURE [RETRIEVE] valueAtIndex
-  ( array : ProtoStaticArray; index : IndexType ) : ValueType;
-(* Required procedure to return the value for a given index in an array. *)
+  ( CONST array : ProtoStaticArray; index : IndexType ) : ValueType;
+(* Required function to retrieve a value stored at a given index in an array. *)
 
-(* An expression of the form
-     array[index]
-   is transformed at compile time into a function call of the form
-     ArrayADT.valueAtIndex(array, index) *)
+(* An expression of the form array[index]
+   is equivalent to RETRIEVE(array, index)
+   and is synthesised as ArrayADT.valueAtIndex(array, index). *)
+
+
+(* TO DO: continue review from this point forward ... *)
 
 
 (* Operations INSERT and REMOVE are not meaningful for static arrays. *)
