@@ -13,8 +13,6 @@ MODULE TYPE = RECORD := CHAR | UNICHAR;
 (* Static string ADTs must be records to be statically allocatable,
    quoted literals of base type CHAR or UNICHAR are compatible. *)
 
-MODULE TYPE = OPAQUE RECORD := CHAR | UNICHAR;
-
 
 (* Required Constants *)
 
