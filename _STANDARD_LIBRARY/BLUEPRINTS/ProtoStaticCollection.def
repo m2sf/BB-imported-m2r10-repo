@@ -37,6 +37,13 @@ CONST [NIL] allowsNilStorage : BOOLEAN;
    Its value may be TRUE or FALSE. *)
 
 
+(* Support for Invalid Accessor Retrieval Intercept *)
+
+CONST * invAccessorRetrievalIntercept : BOOLEAN;
+(* Required constant to define whether invalid accessor retrieval errors may
+   be intercepted by user defined handlers. Its value may be TRUE or FALSE. *)
+
+
 (* Required Procedures *)
 
 
@@ -93,6 +100,7 @@ PROCEDURE [RETRIEVE];
 
 (* Handler Type *)
 
+invAccessorRetrievalIntercept ->
 TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
 (* Specialised blueprints must require procedure type for user defined
    invalid-accessor handlers. *)
@@ -100,6 +108,7 @@ TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
 
 (* Handler Installation *)
 
+invAccessorRetrievalIntercept ->
 PROCEDURE installHandler ( handler : HandlerType );
 (* Specialised blueprints must require procedure to install user defined
    invalid-accessor handlers. *)
