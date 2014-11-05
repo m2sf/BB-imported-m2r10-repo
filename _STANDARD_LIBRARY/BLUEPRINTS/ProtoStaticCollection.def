@@ -26,14 +26,14 @@ MODULE TYPE = RECORD :=
 (* Orderedness *)
 
 CONST [DESCENDING] isOrdered : BOOLEAN;
-(* Required constant to define whether conforming ADTs shall be ordered.
+(* Required constant to define whether conforming ADTs should be ordered.
    Its value may be TRUE or FALSE. *)
 
 
 (* NIL Storage *)
 
 CONST [NIL] allowsNilStorage : BOOLEAN;
-(* Required constant to define whether NIL is a storable value.
+(* Required constant to define whether NIL should be a storable value.
    Its value may be TRUE or FALSE. *)
 
 
