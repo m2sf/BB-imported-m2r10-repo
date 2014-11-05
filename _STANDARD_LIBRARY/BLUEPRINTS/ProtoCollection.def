@@ -1,6 +1,6 @@
 (* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Blueprint for Collection ADTs *)
+(* General Blueprint for Dynamically Allocatable Collection ADTs *)
 
 BLUEPRINT ProtoCollection [ProtoRoot];
 
@@ -13,7 +13,7 @@ MODULE TYPE = OPAQUE :=
   CHAR | UNICHAR |
   { ARGLIST OF AccessorType } |
   { ARGLIST OF { AccessorType, ValueType } };
-(* Collection ADTs must be opaque,
+(* Dynamic Collection ADTs must be opaque,
    quoted literals or structured literals are compatible. *)
 
 
@@ -133,7 +133,7 @@ PROCEDURE [RETRIEVE];
 invAccessorRetrievalIntercept ->
 TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
 (* Specialised blueprints must require procedure type for user defined
-   invalid-accessor handlers. *)
+   invalid-accessor handlers when invAccessorRetrievalIntercept is TRUE. *)
 
 
 (* Handler Installation *)
@@ -141,15 +141,23 @@ TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
 invAccessorRetrievalIntercept ->
 PROCEDURE installHandler ( handler : HandlerType );
 (* Specialised blueprints must require procedure to install user defined
-   invalid-accessor handlers. *)
+   invalid-accessor handlers when invAccessorRetrievalIntercept is TRUE. *)
 
 
-(* Value Insertion and Removal *)
+(* Value Insertion *)
 
-(* Binding to Predefined Procedures INSERT and REMOVE *)
+(* Binding to Predefined Procedure INSERT *)
 
-(* The operations INSERT and REMOVE are not common to all collection
-   ADTs, their bindings may be required by more specialised blueprints. *)
+isMutable -> PROCEDURE [INSERT];
+(* Specialised blueprints must require binding to INSERT when mutable. *)
+
+
+(* Value Removal *)
+
+(* Binding to Predefined Procedure REMOVE *)
+
+isMutable -> PROCEDURE [REMOVE];
+(* Specialised blueprints must require binding to REMOVE when mutable. *)
 
 
 (* Membership Test *)
