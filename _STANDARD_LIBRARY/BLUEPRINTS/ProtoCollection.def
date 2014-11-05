@@ -44,10 +44,11 @@ CONST isRefCounted : BOOLEAN;
    counted. Its value may be TRUE or FALSE. *)
 
 
-(* Semantics of NIL Assignment *)
+(* NIL Storage *)
 
-CONST [NIL];
-(* Specialised blueprints must always require binding to NIL. *)
+CONST [NIL] allowsNilStorage : BOOLEAN;
+(* Required constant to define whether NIL is a storable value.
+   Its value may be TRUE or FALSE. *)
 
 
 (* Required Procedures *)
@@ -202,16 +203,6 @@ NOT isRefCounted  -> PROCEDURE [/] : NIL; (* inhibited *)
 
 (* Unconditionally Inhibited Bindings *)
 
-(* Introspection *)
-
-(* Operations TMIN and TMAX are not meaningful for collection ADTs.
-   Conforming blueprints may not require bindings to these operations. *)
-
-PROCEDURE [TMIN] : NIL; (* inhibited *)
-
-PROCEDURE [TMAX] : NIL; (* inhibited *)
-
-
 (* Numeric Properties *)
 
 (* Numeric properties are not meaningful for collection ADTs.
@@ -226,6 +217,16 @@ CONST [TPRECISION] : NIL; (* inhibited *)
 CONST [TMINEXP] : NIL; (* inhibited *)
 
 CONST [TMAXEXP] : NIL; (* inhibited *)
+
+
+(* Introspection *)
+
+(* Operations TMIN and TMAX are not meaningful for collection ADTs.
+   Conforming blueprints may not require bindings to these operations. *)
+
+PROCEDURE [TMIN] : NIL; (* inhibited *)
+
+PROCEDURE [TMAX] : NIL; (* inhibited *)
 
 
 (* Arithmetic Operations *)
@@ -250,17 +251,6 @@ PROCEDURE [MOD] : NIL; (* inhibited *)
 PROCEDURE [SXF] : NIL; (* inhibited *)
 
 PROCEDURE [VAL] : NIL; (* inhibited *)
-
-
-(* Relational Operations *)
-
-(* Operations less-than, less-or-equal, greater-than and greater-or-equal are
-   not meaningful for collection ADTs. Conforming blueprints may not require
-   bindings to these operations. *)
-
-PROCEDURE [<] : NIL; (* inhibited *)
-
-PROCEDURE [>] : NIL; (* inhibited *)
 
 
 END ProtoCollection.
