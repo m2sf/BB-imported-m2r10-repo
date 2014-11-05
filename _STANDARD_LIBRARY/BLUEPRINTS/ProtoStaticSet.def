@@ -2,254 +2,253 @@
 
 (* Blueprint for Statically Allocatable Set ADTs *)
 
-BLUEPRINT ProtoStaticSet [ProtoCollection];
+BLUEPRINT ProtoStaticSet [ProtoStaticCollection];
 
 REFERENTIAL ElementType, ProcType;
 
-(* Static Set ADTs must be opaque records to be statically allocatable,
+(* Static Set ADTs must be records to be statically allocatable,
    structured literals with a list of elements are compatible *)
 
-MODULE TYPE = OPAQUE RECORD := { ElementType BY * };
+MODULE TYPE = RECORD := { ARGLIST OF ElementType };
 
 
-(* Bindings required for static set ADTs *)
+(* Bindings required for static Set ADTs *)
 
 
 (* Required Constants *)
 
-CONST [:=] isMutable = TRUE;
-(* Static set ADTs are always mutable *)
 
-CONST [DESCENDING] isOrdered = TRUE;
-(* Static set ADTs are always ordered *)
+(* Orderedness *)
+
+CONST [DESCENDING] isOrdered = FALSE;
+(* Required constant to define whether conforming ADTs shall be ordered.
+   Its value is always FALSE for static sets. *)
+
+
+(* NIL Storage *)
+
+CONST [NIL] allowsNilStorage : BOOLEAN;
+(* Required constant to define whether NIL is a storable value.
+   Its value is always FALSE for static sets. *)
+
+
+CONST * invAccessorRetrievalIntercept = FALSE;
+(* Required constant to define whether invalid accessor retrieval errors
+   may be intercepted by user defined handlers. Always FALSE for sets. *)
 
 
 (* Required Procedures *)
 
-(* Capacity limit *)
+
+(* Introspection *)
+
+(* Binding to Predefined Function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Procedure to return the allocation capacity limit of the set ADT. *)
+(* Required function to return the allocation capacity limit of the set ADT. *)
 
-(* An invocation of TLIMIT(ADT)) is transformed at compile time to
-   SetADT.capacityLimit() when the operand is the set ADT type. *)
+(* An expression of the form TLIMIT(SetADT)
+   is synthesised as SetADT.capacityLimit(). *)
 
 
-(* Assignment and Copying *)
+(* Binding to Predefined Function COUNT *)
 
-PROCEDURE [:=] assignStructuredValue
+PROCEDURE [COUNT] count ( set : ProtoStaticSet ) : LONGCARD;
+(* Required function to return the number of elements stored in a set. *)
+
+(* An expression of the form COUNT(set)
+   is synthesised as SetADT.length(set). *)
+
+
+(* Literal Assignment *)
+
+(* Binding to the := Operator *)
+
+PROCEDURE [:=] assign
   ( VAR set : ProtoStaticSet; elementList : ARGLIST OF ElementType );
 (* Required procedure to assign a structured value to a set. *)
 
 (* A statement of the form
-     set := { elem1, elem2, elem3, ... };
-   is transformed at compile time into a procedure call of the form
-     SetADT.assignStructuredValue(set, elem1, elem2, elem3, ...);
-   for L-values of the set ADT type. *)
+     set := { elem1, elem2, elem3, ... }
+   is synthesised as
+     SetADT.assignStructuredValue(set, elem1, elem2, elem3, ...). *)
 
+
+(* Copying *)
+
+(* Binding to Predefined Procedure COPY *)
 
 PROCEDURE [COPY] copy
   ( source : ProtoStaticSet; VAR target : ProtoStaticSet );
 (* Required procedure to copy the contents of a source set into a
    target set. *)
 
-(* A statement of the form
-     set1 := set2;
-   is transformed at compile time into a procedure call of the form
-     SetADT.copy(set2, set1);
-   for L- and R-values of the set ADT type. *)
+(* A statement of the form set1 := set2
+   is synthesised as SetADT.copy(set2, set1). *)
 
 
-(* Storage, Retrieval and Inspection of Contents *)
+(* Value Storage *)
 
-PROCEDURE [STORE] storeElements
+(* Binding to Predefined Procedure STORE *)
+
+PROCEDURE [STORE] storeElement
   ( VAR set : ProtoStaticSet; elementList : ARGLIST OF ElementType );
-(* Required procedure to store zero or more elements in a set. *)
+(* Required procedure to store an element in a set. *)
 
-(* A statement of the form
-     STORE(set, elem1, elem2, elem3 ...)
-   is transformed at compile time into a procedure call of the form
-     SetADT.storeElements(set, elem1, elem2, elem3 ...)
-   for first operands of the set ADT type.
-   
-   A statement of the form
-     set[element] := TRUE;
-   is transformed at compile time into a procedure call of the form
-     SetADT.storeElements(set, element);
-   for designators of the set ADT type. *)
+(* A statement of the form set[element] := TRUE
+   is equivalent to STORE(set, elem )
+   and is synthesised as  SetADT.storeElement(set, elem ). *)
 
+
+(* Value Retrieval *)
+
+(* Binding to Predefined Function RETRIEVE *)
+
+PROCEDURE [RETRIEVE] isElement
+  ( CONST set : ProtoStaticSet; element : ElementType ) : BOOLEAN;
+(* Required function to retrieve an element from a set. *)
+
+(* An expression of the form set[element]
+   is equivalent to RETRIEVE(set, element)
+   and is synthesised as SetADT.isElement(set, element). *)
+
+
+(* Value Insertion *)
+
+(* Binding to Predefined Procedure INSERT *)
+
+PROCEDURE [INSERT] insertElements
+  ( VAR set : ProtoStaticSet; elementList : VARGLIST OF ElementType );
+(* Required procedure to insert one or more elements into a set. *)
+
+(* A statement of the form INSERT(set, elem1, elem2, elem3, ...)
+   is synthesised as SetADT.insertElements(set, elem1, elem2, elem3, ...). *)
+
+
+(* Value Removal *)
+
+(* Binding to Predefined Procedure REMOVE *)
 
 PROCEDURE [REMOVE] removeElements
   ( VAR set : ProtoStaticSet; elementList : ARGLIST OF ElementType );
 (* Required procedure to remove one or more elements from a set. *)
 
-(* A statement of the form
-     REMOVE(set, elem1, elem2, elem3 ...)
-   is transformed at compile time into a procedure call of the form
-     SetADT.removeElements(set, elem1, elem2, elem3 ...)
-   for first operands of the set ADT type.
+(* A statement of the form INSERT(set, elem1, elem2, elem3, ...)
+   is synthesised as SetADT.insertElements(set, elem1, elem2, elem3, ...).
    
-   A statement of the form
-     set[element] := FALSE;
-   is transformed at compile time into a procedure call of the form
-     SetADT.removeElements(set, element);
-   for designators of the set ADT type. *)
+   A statement of the form set[element] := NIL
+   is equivalent to REMOVE(set, element)
+   and is synthesised as SetADT.insertElements(set, element). *)
 
 
-PROCEDURE [RETRIEVE] membershipOfElement
-  ( CONST set : ProtoStaticSet; element : ElementType ) : BOOLEAN;
-(* Required function to retrieve an element from a set. *)
+(* Membership Test *)
 
-(* An expression of the form
-     RETRIEVE(set, element)
-   is transformed at compile time into a function call of the form
-     SetADT.membershipOfElement(set, element)
-   for first operands of the set ADT type.
-   
-   An expression of the form
-     set[element]
-   is transformed at compile time into a function call of the form
-     SetADT.membershipOfElement(set, element)
-   for designators of the set ADT type. *)
+(* Binding to IN syntax *)
 
-
-PROCEDURE [IN] isElement
+PROCEDURE [IN] in
   ( CONST set : ProtoStaticSet; element : ElementType ) : BOOLEAN;
 (* Function to test whether a value is stored in a set. *)
 
-(* An expression of the form
-     elem IN set
-   is transformed at compile time into a function call of the form
-     SetADT.isElement(set, elem)
-   for right operands of the set ADT type. *)
-
-
-PROCEDURE [COUNT] count ( CONST set : ProtoStaticSet ) : LONGCARD;
-(* Procedure to return the number of elements stored in a set. *)
-
-(* An expression of the form
-     COUNT(set)
-   is transformed at compile time into a function call of the form
-     SetADT.count(set)
-   for operands of the set ADT type. *)
+(* An expression of the form elem IN set
+   is synthesised as SetADT.in(set, elem). *)
 
 
 (* Iteration *)
 
-TYPE ProcType = PROCEDURE ( ElementType );
+(* Binding to FOR IN iterator *)
+
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoStaticSet, CONST ElementType );
+(* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
-  ( VAR set : ProtoStaticSet; forLoopBody : ProcType; ascending : BOOLEAN );
-(* Procedure to iterate over all elements of a set and invoke procedure
-   forLoopBody for each element with the given iteration order. *)
+  ( VAR set : ProtoStaticSet;
+    doStatements : LoopBodyType;
+    ascending : BOOLEAN );
+(* Required procedure to iterate over all elements of a set
+   and execute the passed in doStatements for each element. *)
    
 (* A statement of the form
-     FOR elem IN set DO statementSeq END
-   is transformed at compile time in two steps.
-   The loop header is transformed to
-     SetADT.forIterator( set, forLoopBody, TRUE );
-   The loop body is transformed to a procedure definition
-     PROCEDURE forLoopBody ( element : ElementType ) <*INLINE*>;
-     BEGIN statementSeq END forLoopBody;
-   inserted before the current scope's BEGIN-END block.
+     FOR element IN set DO statementSeq END
+   is synthesised in two steps.
    
-   A loop header of the form
-     FOR DESCENDING elem IN set
-   is transformed at compile time to
-     SetADT.forIterator(set, forLoopBody, FALSE)
-   To allow this, an ADT must bind a constant of value TRUE to DESCENDING. *)   
+   The loop header is synthesised as
+     SetADT.forIterator( set, forLoopBody, TRUE );
+   
+   The loop body is synthesised as
+     PROCEDURE forLoopBody
+       ( VAR set : SetADT; CONST element : ElementType ) <*INLINE*>;
+     BEGIN statementSeq END forLoopBody; *)
+
 
 
 (* Set Operations *) 
 
-PROCEDURE [+] union
-  ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Required procedure to return the union of two sets. *)
+(* Binding to the + Operator *)
 
-(* An expression of the form
-     set1 + set2
-   is transformed at compile time into a function call of the form
-     SetADT.union(set1, set2)
-   for operands of the set ADT type. *)
+PROCEDURE [+] union ( set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
+(* Required function to return the union of two sets. *)
+
+(* An expression of the form set1 + set2
+   is synthesised as SetADT.union(set1, set2). *)
 
 
-PROCEDURE [-] difference
-  ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Required procedure to return the set difference of two sets. *)
+(* Binding to the - Operator *)
 
-(* An expression of the form
-     set1 - set2
-   is transformed at compile time into a function call of the form
-     SetADT.difference(set1, set2)
-   for operands of the set ADT type. *)
+PROCEDURE [-] difference ( set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
+(* Required function to return the set difference of two sets. *)
+
+(* An expression of the form set1 - set2
+   is synthesised as SetADT.difference(set1, set2). *)
 
 
-PROCEDURE [*] intersection
-  ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Required procedure to return the intersection of two sets. *)
+(* Binding to the * Operator *)
 
-(* An expression of the form
-     set1 * set2
-   is transformed at compile time into a function call of the form
-     SetADT.intersection(set1, set2)
-   for operands of the set ADT type. *)
+PROCEDURE [*] intersection ( set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
+(* Required function to return the intersection of two sets. *)
+
+(* An expression of the form set1 * set2
+   is synthesised as SetADT.intersection(set1, set2). *)
 
 
-PROCEDURE [/] symmetricDiff
-  ( CONST set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
-(* Required procedure to return the symmetric difference of two sets. *)
+(* Binding to the / Operator *)
 
-(* An expression of the form
-     set1 / set2
-   is transformed at compile time into a function call of the form
-     SetADT.symmetricDiff(set1, set2)
-   for operands of the set ADT type. *)
+PROCEDURE [/] symmetricDiff ( set1, set2 : ProtoStaticSet ) : ProtoStaticSet;
+(* Required functon to return the symmetric difference of two sets. *)
+
+(* An expression of the form set1 / set2
+   is synthesised as SetADT.symmetricDiff(set1, set2). *)
 
 
-(* Relational operations *)
+(* Relational Operations *)
 
-PROCEDURE [=] isEqual ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
-(* Required procedure to test the equality of two sets. *)
+(* Binding to the = and # Operators *)
 
-(* An expression of the form
-     set1 = set2
-   is transformed at compile time into a function call of the form
-     SetADT.isEqual(set1, set2)
-   for operands of the set ADT type.
+PROCEDURE [=] isEqual ( set1, set2 : ProtoStaticSet ) : BOOLEAN;
+(* Required function to test the equality of two sets. *)
+
+(* An expression of the form set1 = set2
+   is synthesised as SetADT.isEqual(set1, set2).
    
-   An expression of the form
-     set1 # set2
-   is transformed at compile time into an expression of the form
-     NOT SetADT.isEqual(set1, set2)
-   for operands of the set ADT type. *)
+   An expression of the form set1 # set2
+   is synthesised as NOT SetADT.isEqual(set1, set2). *)
 
 
-PROCEDURE [SUBSET] isSubset ( CONST set1, set2 : ProtoStaticSet ) : BOOLEAN;
-(* Required procedure to test whether one set is a subset of another. *)
+(* Binding to Predefined Function SUBSET *)
 
-(* An expression of the form
-     set1 > set2
-   is transformed at compile time into a function call of the form
-     SetADT.isSubset(set2, set1)
-   for operands of the set ADT type.
+PROCEDURE [SUBSET] isSubset ( set1, set2 : ProtoStaticSet ) : BOOLEAN;
+(* Required function to test whether one set is a subset of another. *)
+
+(* An expression of the form set1 > set2
+   is synthesised as SetADT.isSubset(set2, set1).
    
-   An expression of the form
-     set1 >= set2
-   is transformed at compile time into an expression of the form
-     (COUNT(set1) > COUNT(set2)) AND SetADT.isSubset(set2, set1)
-   for operands of the set ADT type.
+   An expression of the form set1 >= set2 is synthesised as
+   (COUNT(set1) > COUNT(set2)) AND SetADT.isSubset(set2, set1). *)
    
-   An expression of the form
-     set1 < set2
-   is transformed at compile time into a function call of the form
-     SetADT.isSubset(set1, set2)
-   for operands of the set ADT type.
+   An expression of the form set1 < set2
+   is synthesised as SetADT.isSubset(set1, set2).
    
-   An expression of the form
-     set1 <= set2
-   is transformed at compile time into an expression of the form
-     (COUNT(set1) < COUNT(set2)) AND SetADT.isSubset(set1, set2)
-   for operands of the set ADT type. *)
+   An expression of the form set1 <= set2 is synthesised as
+   (COUNT(set1) < COUNT(set2)) AND SetADT.isSubset(set1, set2). *)
 
 
 END ProtoStaticSet.
