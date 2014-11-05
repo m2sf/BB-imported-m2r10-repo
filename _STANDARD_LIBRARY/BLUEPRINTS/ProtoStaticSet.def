@@ -58,7 +58,7 @@ PROCEDURE [COUNT] count ( set : ProtoStaticSet ) : LONGCARD;
 (* Required function to return the number of elements stored in a set. *)
 
 (* An expression of the form COUNT(set)
-   is synthesised as SetADT.length(set). *)
+   is synthesised as SetADT.count(set). *)
 
 
 (* Literal Assignment *)
@@ -175,13 +175,12 @@ PROCEDURE [FOR] forIterator
    is synthesised in two steps.
    
    The loop header is synthesised as
-     SetADT.forIterator( set, forLoopBody, TRUE );
+     SetADT.forIterator(set, forLoopBody, TRUE);
    
    The loop body is synthesised as
      PROCEDURE forLoopBody
        ( VAR set : SetADT; CONST element : ElementType ) <*INLINE*>;
      BEGIN statementSeq END forLoopBody; *)
-
 
 
 (* Set Operations *) 
