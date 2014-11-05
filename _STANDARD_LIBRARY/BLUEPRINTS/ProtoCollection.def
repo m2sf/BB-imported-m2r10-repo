@@ -23,28 +23,28 @@ MODULE TYPE = OPAQUE :=
 (* Mutability *)
 
 CONST isMutable : BOOLEAN;
-(* Required constant to define whether the ADT is mutable.
+(* Required constant to define whether the ADT should be mutable.
    Its value may be TRUE or FALSE. *)
 
 
 (* Memory Management Model *)
 
 CONST isRefCounted : BOOLEAN;
-(* Required constant to define whether conforming ADTs shall be reference
+(* Required constant to define whether conforming ADTs should be reference
    counted. Its value may be TRUE or FALSE. *)
 
 
 (* Orderedness *)
 
 CONST [DESCENDING] isOrdered : BOOLEAN;
-(* Required constant to define whether conforming ADTs shall be ordered.
+(* Required constant to define whether conforming ADTs should be ordered.
    Its value may be TRUE or FALSE. *)
 
 
 (* NIL Storage *)
 
 CONST [NIL] allowsNilStorage : BOOLEAN;
-(* Required constant to define whether NIL is a storable value.
+(* Required constant to define whether NIL should be a storable value.
    Its value may be TRUE or FALSE. *)
 
 
