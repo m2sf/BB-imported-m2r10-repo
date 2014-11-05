@@ -26,7 +26,7 @@ CONST [DESCENDING] isOrdered = FALSE;
 
 (* NIL Storage *)
 
-CONST [NIL] allowsNilStorage : BOOLEAN;
+CONST [NIL] allowsNilStorage = FALSE;
 (* Required constant to define whether NIL is a storable value.
    Its value is always FALSE for static sets. *)
 
