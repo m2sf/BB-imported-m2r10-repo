@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoStaticArray [ProtoStaticCollection];
 
-REFERENTIAL IndexType, ValueType, ComponentCount, BodyLoopType;
+REFERENTIAL IndexType, ValueType, ComponentCount, LoopBodyType;
 
 
 (* Required Module Type *)
@@ -58,7 +58,7 @@ PROCEDURE [COUNT] count ( array : ProtoStaticArray ) : LONGCARD;
 (* Required function to return the number of values stored in an array. *)
 
 (* An expression of the form COUNT(array)
-   is synthesised as ArrayADT.length(array). *)
+   is synthesised as ArrayADT.count(array). *)
 
 
 (* Literal Assignment *)
@@ -151,7 +151,7 @@ TYPE LoopBodyType = PROCEDURE ( VAR ProtoStaticArray, CONST IndexType );
 (* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
-  ( VAR set : ProtoStaticArray;
+  ( VAR array : ProtoStaticArray;
     doStatements : LoopBodyType;
     ascending : BOOLEAN );
 (* Required procedure to iterate over all index/value pairs of an array
@@ -162,7 +162,7 @@ PROCEDURE [FOR] forIterator
    is synthesised in two steps.
    
    The loop header is synthesised as
-     ArrayADT.forIterator( set, forLoopBody, TRUE );
+     ArrayADT.forIterator( array, forLoopBody, TRUE );
    
    The loop body is synthesised as
      PROCEDURE forLoopBody
