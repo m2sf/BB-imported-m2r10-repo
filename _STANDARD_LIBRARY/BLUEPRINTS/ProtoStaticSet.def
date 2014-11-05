@@ -69,10 +69,8 @@ PROCEDURE [:=] assign
   ( VAR set : ProtoStaticSet; elementList : ARGLIST OF ElementType );
 (* Required procedure to assign a structured value to a set. *)
 
-(* A statement of the form
-     set := { elem1, elem2, elem3, ... }
-   is synthesised as
-     SetADT.assignStructuredValue(set, elem1, elem2, elem3, ...). *)
+(* A statement of the form set := { elem1, elem2, elem3, ... }
+   is synthesised as SetADT.assign(set, elem1, elem2, elem3, ...). *)
 
 
 (* Copying *)
@@ -80,7 +78,7 @@ PROCEDURE [:=] assign
 (* Binding to Predefined Procedure COPY *)
 
 PROCEDURE [COPY] copy
-  ( source : ProtoStaticSet; VAR target : ProtoStaticSet );
+  ( CONST source : ProtoStaticSet; VAR target : ProtoStaticSet );
 (* Required procedure to copy the contents of a source set into a
    target set. *)
 
@@ -93,12 +91,16 @@ PROCEDURE [COPY] copy
 (* Binding to Predefined Procedure STORE *)
 
 PROCEDURE [STORE] storeElement
-  ( VAR set : ProtoStaticSet; elementList : ARGLIST OF ElementType );
+  ( VAR set : ProtoStaticSet; element : ElementType; value : BOOLEAN );
 (* Required procedure to store an element in a set. *)
 
 (* A statement of the form set[element] := TRUE
-   is equivalent to STORE(set, elem )
-   and is synthesised as  SetADT.storeElement(set, elem ). *)
+   is equivalent to STORE(set, element, TRUE)
+   and is synthesised as SetADT.storeElement(set, element, TRUE).
+   
+   A statement of the form set[element] := FALSE
+   is equivalent to STORE(set, element, FALSE)
+   and is synthesised as SetADT.storeElement(set, element, FALSE). *)
 
 
 (* Value Retrieval *)
@@ -134,12 +136,12 @@ PROCEDURE [REMOVE] removeElements
   ( VAR set : ProtoStaticSet; elementList : ARGLIST OF ElementType );
 (* Required procedure to remove one or more elements from a set. *)
 
-(* A statement of the form INSERT(set, elem1, elem2, elem3, ...)
-   is synthesised as SetADT.insertElements(set, elem1, elem2, elem3, ...).
+(* A statement of the form REMOVE(set, elem1, elem2, elem3, ...)
+   is synthesised as SetADT.removeElements(set, elem1, elem2, elem3, ...).
    
    A statement of the form set[element] := NIL
    is equivalent to REMOVE(set, element)
-   and is synthesised as SetADT.insertElements(set, element). *)
+   and is synthesised as SetADT.removeElements(set, element). *)
 
 
 (* Membership Test *)
@@ -150,8 +152,8 @@ PROCEDURE [IN] in
   ( CONST set : ProtoStaticSet; element : ElementType ) : BOOLEAN;
 (* Function to test whether a value is stored in a set. *)
 
-(* An expression of the form elem IN set
-   is synthesised as SetADT.in(set, elem). *)
+(* An expression of the form element IN set
+   is synthesised as SetADT.in(set, element). *)
 
 
 (* Iteration *)
