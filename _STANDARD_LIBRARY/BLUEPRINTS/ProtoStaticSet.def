@@ -6,13 +6,12 @@ BLUEPRINT ProtoStaticSet [ProtoStaticCollection];
 
 REFERENTIAL ElementType, ProcType;
 
-(* Static Set ADTs must be records to be statically allocatable,
-   structured literals with a list of elements are compatible *)
+
+(* Required Module Type *)
 
 MODULE TYPE = RECORD := { ARGLIST OF ElementType };
-
-
-(* Bindings required for static Set ADTs *)
+(* Static Set ADTs must be records to be statically allocatable,
+   structured literals with a list of elements are compatible *)
 
 
 (* Required Constants *)
@@ -31,6 +30,8 @@ CONST [NIL] allowsNilStorage : BOOLEAN;
 (* Required constant to define whether NIL is a storable value.
    Its value is always FALSE for static sets. *)
 
+
+(* Support for Invalid Accessor Retrieval Intercept *)
 
 CONST * invAccessorRetrievalIntercept = FALSE;
 (* Required constant to define whether invalid accessor retrieval errors
