@@ -20,39 +20,36 @@ MODULE TYPE = OPAQUE := { ARGLIST OF ElementType };
 (* Mutability *)
 
 CONST isMutable : BOOLEAN;
-(* Required constant to define whether the ADT is mutable.
-   Its value may be TRUE or FALSE. *)
-
-
-(* Orderedness *)
-
-(* Use of FOR DESCENDING syntax with the ADT is only permitted
-   when a constant is bound to DESCENDING and its value is TRUE. *)
-
-CONST [DESCENDING] isOrdered : BOOLEAN;
-(* Required constant to define whether the ADT is ordered.
+(* Required constant to define whether the ADT should be mutable.
    Its value may be TRUE or FALSE. *)
 
 
 (* Memory Management Model *)
 
-CONST isRefCounted : BOOLEAN;
-(* Required constant to define whether the ADT is reference counted.
+CONST isRefCounted = TRUE;
+(* Required constant to define whether conforming ADTs should be reference
+   counted. Its value is always TRUE for dynamic Set ADTs. *)
+
+
+(* Orderedness *)
+
+CONST [DESCENDING] isOrdered : BOOLEAN;
+(* Required constant to define whether conforming ADTs should be ordered.
    Its value may be TRUE or FALSE. *)
 
 
-(* Storability of NIL *)
+(* NIL Storage *)
 
-CONST [NIL] allowsNilStorage = FALSE;
-(* Required constant to define whether NIL is a storable value.
+CONST [NIL] allowsNilStorage : BOOLEAN;
+(* Required constant to define whether NIL should be a storable value.
    Its value is always FALSE for Set ADTs. *)
 
 
-(* Use of IN Operator *)
+(* Support for Invalid Accessor Retrieval Intercept *)
 
-CONST [IN] supportsIN = TRUE;
-(* Required constant to define whether the ADT supports the IN operator.
-   Its value is always TRUE for Set ADTs. *)
+CONST * invAccessorRetrievalIntercept : BOOLEAN;
+(* Required constant to define whether invalid accessor retrieval errors may
+   be intercepted by user defined handlers. Always FALSE for Set ADTs. *)
 
 
 (* Required Procedures *)
@@ -63,16 +60,16 @@ CONST [IN] supportsIN = TRUE;
 (* Binding to Predefined Function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Required function to return the element limit of the ADT. *)
+(* Required function to return the allocation capacity limit of the set ADT. *)
 
-(* An expression of the form TLIMIT(SetADT))
+(* An expression of the form TLIMIT(SetADT)
    is synthesised as SetADT.capacityLimit(). *)
 
 
 (* Binding to Predefined Function COUNT *)
 
 PROCEDURE [COUNT] count ( set : ProtoSet ) : LONGCARD;
-(* Required function to return the element count of a set. *)
+(* Required function to return the number of elements stored in a set. *)
 
 (* An expression of the form COUNT(set)
    is synthesised as SetADT.count(set). *)
@@ -114,7 +111,7 @@ PROCEDURE newWithCapacity
 (* Binding to Predefined Procedure RETAIN *)
 
 isRefCounted ->
-PROCEDURE [RETAIN] retain ( VAR set : ProtoSet );
+PROCEDURE [RETAIN] retain ( set : ProtoSet );
 (* Procedure to retain a set and prevent its deallocation.
    The procedure is required when the ADT is reference counted. *)
 
@@ -124,7 +121,7 @@ PROCEDURE [RETAIN] retain ( VAR set : ProtoSet );
 
 (* Binding to Predefined Procedure RELEASE *)
 
-PROCEDURE [RELEASE] release ( VAR set : ProtoSet );
+PROCEDURE [RELEASE] release ( set : ProtoSet );
 (* Required procedure to cancel an outstanding retain
    or deallocate a set if no retains are outstanding. *)
 
@@ -142,10 +139,8 @@ PROCEDURE [:=] assignLiteral
 (* Procedure to destructively copy the contents of a set literal to an
    array. The procedure is required when the ADT is mutable. *)
 
-(* A statement of the form
-     set := { elem1, elem2, elem3, ... };
-   is synthesised as
-     SetADT.assignLiteral(set, elem1, elem2, elem3, ...). *)
+(* A statement of the form set := { elem1, elem2, elem3, ... };
+   is synthesised as SetADT.assignLiteral(set, elem1, elem2, elem3, ...). *)
 
 
 (* Copying *)
@@ -162,7 +157,7 @@ PROCEDURE [DUP] newWithCopy ( source : ProtoSet ) : ProtoSet;
 (* Binding to Predefined Procedure COPY *)
 
 isMutable ->
-PROCEDURE [COPY] copy ( source : ProtoSet; VAR target : ProtoSet );
+PROCEDURE [COPY] copy ( source : ProtoSet; target : ProtoSet );
 (* Procedure to destructively copy the contents of one set to another.
    The procedure is required when the ADT is mutable. *)
 
@@ -176,13 +171,17 @@ PROCEDURE [COPY] copy ( source : ProtoSet; VAR target : ProtoSet );
 
 isMutable ->
 PROCEDURE [STORE] storeElement
- ( VAR set : ProtoSet; element : ElementType; membership : BOOLEAN );
+ ( set : ProtoSet; element : ElementType; membership : BOOLEAN );
 (* Procedure to store a membership value for an element in a set.
    The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form set[element] := TRUE
    is equivalent to STORE(set, element, TRUE) and
-   is synthesised as SetADT.storeElement(set, element, TRUE). *)
+   is synthesised as SetADT.storeElement(set, element, TRUE).
+   
+   A statement of the form set[element] := FALSE
+   is equivalent to STORE(set, element, FALSE) and
+   is synthesised as SetADT.storeElement(set, element, FALSE). *)
 
 
 (* Value Retrieval *)
@@ -195,10 +194,6 @@ PROCEDURE [RETRIEVE] isElement
 
 (* An expression of the form set[element]
    is equivalent to RETRIEVE(set, element) and
-   is synthesised as SetADT.isElement(set, element).
-   
-   An expression of the form element IN set
-   is equivalent to RETRIEVE(set, element) and
    is synthesised as SetADT.isElement(set, element). *)
 
 
@@ -206,45 +201,40 @@ PROCEDURE [RETRIEVE] isElement
 
 (* Binding to Predefined Procedure INSERT *)
 
-isMutable ->
 PROCEDURE [INSERT] insertElements
-  ( targetSet : ProtoSet;
-    elements : ARGLIST OF ElementType );
-(* Procedure to insert a list of elements into a target set.
-   The procedure is required when the ADT is mutable. *)
+  ( set : ProtoSet; elementList : VARGLIST OF ElementType );
+(* Required procedure to insert one or more elements into a set. *)
 
-(* A statement of the form
-     INSERT(set, elem1, elem2, elem3, ...)
-   is synthesised as
-     SetADT.insertElements(set, elem1, elem2, elem3, ...). *)
-
-
-isMutable ->
-PROCEDURE insertSet ( targetSet, sourceSet : ProtoSet );
-(* Procedure to insert the elements of a source set into a target set.
-   The procedure is required when the ADT is mutable. *)
+(* A statement of the form INSERT(set, elem1, elem2, elem3, ...)
+   is synthesised as SetADT.insertElements(set, elem1, elem2, elem3, ...). *)
 
 
 (* Value Removal *)
 
 (* Binding to Predefined Procedure REMOVE *)
 
-isMutable ->
 PROCEDURE [REMOVE] removeElements
-  ( set : ProtoSet; elements : ARGLIST OF ElementType );
-(* Procedure to remove one or more elements from a set.
-   The procedure is required when the ADT is mutable. *)
+  ( set : ProtoSet; elementList : ARGLIST OF ElementType );
+(* Required procedure to remove one or more elements from a set. *)
 
-(* A statement of the form
-     REMOVE(set, elem1, elem2, elem3, ...);
-   is synthesised as
-     SetADT.removeElements(set, elem1, elem2, elem3, ...).
+(* A statement of the form REMOVE(set, elem1, elem2, elem3, ...)
+   is synthesised as SetADT.removeElements(set, elem1, elem2, elem3, ...).
    
-   A statement of the form
-     set[element] := NIL
-   is treated equivalent to
-     REMOVE(set, element)
-   if a constant of value TRUE is bound to NIL. *)
+   A statement of the form set[element] := NIL
+   is equivalent to REMOVE(set, element)
+   and is synthesised as SetADT.removeElements(set, element). *)
+
+
+(* Membership Test *)
+
+(* Binding to IN syntax *)
+
+PROCEDURE [IN] in
+  ( set : ProtoSet; element : ElementType ) : BOOLEAN;
+(* Function to test whether a value is stored in a set. *)
+
+(* An expression of the form element IN set
+   is synthesised as SetADT.in(set, element). *)
 
 
 (* Iteration *)
@@ -256,24 +246,20 @@ TYPE LoopBodyType = PROCEDURE ( VAR ProtoSet, CONST ElementType );
 
 PROCEDURE [FOR] forIterator
   ( VAR set : ProtoSet; doStatements : LoopBodyType; ascending : BOOLEAN );
-
-(* Required procedure to iterate over all index/value pairs of an array
-   in a given order and execute the passed in doStatements for each pair. *)
+(* Required procedure to iterate over all elements of a set
+   and execute the passed in doStatements for each element. *)
    
 (* A statement of the form
      FOR element IN set DO statementSeq END
    is synthesised in two steps.
    
    The loop header is synthesised as
-     SetADT.forIterator( set, forLoopBody, TRUE );
+     SetADT.forIterator(set, forLoopBody, TRUE);
    
    The loop body is synthesised as
      PROCEDURE forLoopBody
        ( VAR set : SetADT; CONST element : ElementType ) <*INLINE*>;
-     BEGIN statementSeq END forLoopBody;
-   
-   The loop header of a FOR DESCENDING statement is sythesised with
-   FALSE passed for parameter ascending in the call to forIterator. *)
+     BEGIN statementSeq END forLoopBody; *)
 
 
 (* Set Operations *) 
