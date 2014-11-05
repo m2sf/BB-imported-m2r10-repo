@@ -20,39 +20,36 @@ MODULE TYPE = OPAQUE := { ARGLIST OF ValueType };
 (* Mutability *)
 
 CONST isMutable : BOOLEAN;
-(* Required constant to define whether the ADT is mutable.
+(* Required constant to define whether the ADT should be mutable.
    Its value may be TRUE or FALSE. *)
-
-
-(* Orderedness *)
-
-(* Use of FOR DESCENDING syntax with the ADT is only permitted
-   when a constant is bound to DESCENDING and its value is TRUE. *)
-
-CONST [DESCENDING] isOrdered = TRUE;
-(* Required constant to define whether the ADT is ordered.
-   Its value is always TRUE for Array ADTs. *)
 
 
 (* Memory Management Model *)
 
-CONST isRefCounted : BOOLEAN;
-(* Required constant to define whether the ADT is reference counted.
-   Its value may be TRUE or FALSE. *)
+CONST isRefCounted = TRUE;
+(* Required constant to define whether conforming ADTs should be
+   reference counted. Its value may be TRUE or FALSE. *)
 
 
-(* Storability of NIL *)
+(* Orderedness *)
+
+CONST [DESCENDING] isOrdered = TRUE;
+(* Required constant to define whether conforming ADTs should be ordered.
+   Its value is always TRUE for Array ADTs. *)
+
+
+(* NIL Storage *)
 
 CONST [NIL] allowsNilStorage : BOOLEAN;
-(* Required constant to define whether NIL is a storable value.
+(* Required constant to define whether NIL should be a storable value.
    Its value may be TRUE or FALSE. *)
 
 
-(* Use of IN Operator *)
+(* Support for Invalid Accessor Retrieval Intercept *)
 
-CONST [IN] supportsIN = FALSE;
-(* Required constant to define whether the ADT supports the IN operator.
-   Its value is always FALSE for Array ADTs. *)
+CONST * invAccessorRetrievalIntercept = TRUE;
+(* Required constant to define whether invalid accessor retrieval errors may
+   be intercepted by user defined handlers. Always TRUE for Array ADTs. *)
 
 
 (* Required Procedures *)
@@ -72,10 +69,20 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Binding to Predefined Function COUNT *)
 
 PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
-(* Required function to return the index/value count of an array. *)
+(* Required function to return the number of values stored in an array. *)
 
 (* An expression of the form COUNT(array)
    is synthesised as ArrayADT.count(array). *)
+
+
+PROCEDURE capacity ( array : ProtoArray ) : LONGCARD;
+(* Required function to return the allocated capacity of an array. *)
+
+PROCEDURE entryLimit ( array : ProtoArray ) : LONGCARD;
+(* Required function to return the value limit of an array. *)
+
+PROCEDURE isResizable ( array : ProtoArray ) : BOOLEAN;
+(* Required function to return the resizable property of an array. *)
 
 
 (* Memory Management *)
@@ -83,7 +90,7 @@ PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
 (* Binding to Predefined Procedure NEW *)
 
 PROCEDURE [NEW] new
-  ( VAR array : ProtoArray; values : ARGLIST OF ValueType );
+  ( VAR array : ProtoArray; initWith : ARGLIST OF ValueType );
 (* Required procedure to allocate a new array and initialise it
    with zero or more given values. *)
 
@@ -104,7 +111,7 @@ PROCEDURE newWithCapacity
 (* Binding to Predefined Procedure RETAIN *)
 
 isRefCounted ->
-PROCEDURE [RETAIN] retain ( VAR array : ProtoArray );
+PROCEDURE [RETAIN] retain ( array : ProtoArray );
 (* Procedure to retain an array and prevent its deallocation.
    The procedure is required when the ADT is reference counted. *)
 
@@ -114,7 +121,7 @@ PROCEDURE [RETAIN] retain ( VAR array : ProtoArray );
 
 (* Binding to Predefined Procedure RELEASE *)
 
-PROCEDURE [RELEASE] release ( VAR array : ProtoArray );
+PROCEDURE [RELEASE] release ( array : ProtoArray );
 (* Required procedure to cancel an outstanding retain
    or deallocate an array if no retains are outstanding. *)
 
@@ -132,10 +139,8 @@ PROCEDURE [:=] assignLiteral
 (* Procedure to destructively copy the contents of an array literal to an
    array. The procedure is required when the ADT is mutable. *)
 
-(* A statement of the form
-     array := { val1, val2, val3, ... };
-   is synthesised as
-     ArrayADT.assignLiteral(array, val1, val2, val3, ...). *)
+(* A statement of the form array := { val1, val2, val3, ... }
+   is synthesised as ArrayADT.assignLiteral(array, val1, val2, val3, ...). *)
 
 
 (* Copying *)
@@ -152,7 +157,7 @@ PROCEDURE [DUP] newWithCopy ( source : ProtoArray ) : ProtoArray;
 (* Binding to Predefined Procedure COPY *)
 
 isMutable ->
-PROCEDURE [COPY] copy ( source : ProtoArray; VAR target : ProtoArray );
+PROCEDURE [COPY] copy ( source : ProtoArray; target : ProtoArray );
 (* Procedure to destructively copy the contents of one array to another.
    The procedure is required when the ADT is mutable. *)
 
@@ -166,7 +171,7 @@ PROCEDURE [COPY] copy ( source : ProtoArray; VAR target : ProtoArray );
 
 isMutable ->
 PROCEDURE [STORE] storeValue
- ( VAR array : ProtoArray; index : IndexType; value : ValueType );
+ ( array : ProtoArray; index : IndexType; value : ValueType );
 (* Procedure to store a value at a given index in an array.
    The procedure is required when the ADT is mutable. *)
 
@@ -195,8 +200,11 @@ PROCEDURE [RETRIEVE] valueAtIndex
 
 (* Handler Type *)
 
+invAccessorRetrievalIntercept ->
 TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
-(* Required procedure type for user defined index-out-of-range handlers. *)
+(* Procedure type for user defined index-out-of-range handlers.
+   The type is required when invAccessorRetrievalIntercept is TRUE. *)
+
 
 (* An example of an index-out-of-range handler is given below:
    
@@ -212,8 +220,10 @@ TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
 
 (* Handler Installation *)
 
+invAccessorRetrievalIntercept ->
 PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
-(* Required procedure to install a user defined index-out-of-range handler. *)
+(* Procedure to install a user defined index-out-of-range handler.
+   The procedure is required when invAccessorRetrievalIntercept is TRUE. *)
 
 
 (* Value Insertion *)
@@ -251,16 +261,12 @@ PROCEDURE [REMOVE] removeValuesAtIndex
 (* Procedure to remove one or more values from an array at a given index.
    The procedure is required when the ADT is mutable. *)
 
-(* A statement of the form
-     REMOVE(array, index, n);
-   is synthesised as
-     ArrayADT.removeValuesAtIndex(array, index, n).
+(* A statement of the form REMOVE(array, index, n);
+   is synthesised as ArrayADT.removeValuesAtIndex(array, index, n).
    
-   A statement of the form
-     array[index] := NIL
-   is treated equivalent to
-     REMOVE(array, index, 1)
-   if a constant of value TRUE is bound to NIL. *)
+   A statement of the form array[index] := NIL
+   is treated equivalent to REMOVE(array, index, 1)
+   if constant allowsNilStorage is TRUE. *)
 
 
 (* Iteration *)
@@ -281,7 +287,7 @@ PROCEDURE [FOR] forIterator
    is synthesised in two steps.
    
    The loop header is synthesised as
-     ArrayADT.forIterator( array, forLoopBody, TRUE );
+     ArrayADT.forIterator(array, forLoopBody, TRUE);
    
    The loop body is synthesised as
      PROCEDURE forLoopBody
@@ -308,102 +314,38 @@ PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
 
 (* Conditionally Inhibited Bindings *)
 
-
-(* Conforming blueprints may not require bindings to any of
-   :=, COPY, STORE, INSERT and REMOVE if the ADT is immutable. *)
-
-NOT isMutable -> PROCEDURE [:=] : NIL;
-
-NOT isMutable -> PROCEDURE [COPY] : NIL;
-
-NOT isMutable -> PROCEDURE [STORE] : NIL;
-
-NOT isMutable -> PROCEDURE [INSERT] : NIL;
-
-NOT isMutable -> PROCEDURE [REMOVE] : NIL;
-
-
-(* Conforming blueprints may not require bindings to
-   RETAIN and CONCAT if the ADT is not reference counted. *)
-
-NOT isRefCounted -> PROCEDURE [RETAIN] : NIL;
-
-NOT isRefCounted -> PROCEDURE [CONCAT] : NIL;
+(* None *)
 
 
 (* Unconditionally Inhibited Bindings *)
 
-(* Numeric Properties *)
-
-(* Numeric properties are not meaningful for Array ADTs.
-   Conforming blueprints may not require bindings to these properties. *)
-
-CONST [TSIGNED] : NIL; (* TSIGNED is inhibited *)
-
-CONST [TBASE] : NIL; (* TBASE is inhibited *)
-
-CONST [TPRECISION] : NIL; (* TPRECISION is inhibited *)
-
-CONST [TMINEXP] : NIL; (* TMINEXP is inhibited *)
-
-CONST [TMAXEXP] : NIL; (* TMAXEXP is inhibited *)
-
-
-(* Introspection *)
-
-(* Operations TMIN and TMAX are not meaningful for Array ADTs.
-   Conforming blueprints may not require bindings to these operations. *)
-
-PROCEDURE [TMIN] : NIL; (* TMIN is inhibited *)
-
-PROCEDURE [TMAX] : NIL; (* TMAX is inhibited *)
-
-
 (* Arithmetic Operations *)
 
-(* Arithmetic operations are not meaningful for Array ADTs.
-   Conforming blueprints may not require bindings to these operations. *)
+(* Arithmetic operations +, -, *, and / are not meaningful for Array ADTs.
+   Conforming blueprints may not require binding to these operations. *)
 
-PROCEDURE [ABS] : NIL; (* ABS is inhibited *)
+PROCEDURE [+] : NIL; (* inhibited *)
 
-PROCEDURE [NEG] : NIL; (* NEG is inhibited *)
+PROCEDURE [-] : NIL; (* inhibited *)
 
-PROCEDURE [+] : NIL; (* Addition is inhibited *)
+PROCEDURE [*] : NIL; (* inhibited *)
 
-PROCEDURE [-] : NIL; (* Subtraction is inhibited *)
-
-PROCEDURE [*] : NIL; (* Multiplication is inhibited *)
-
-PROCEDURE [/] : NIL; (* Division is inhibited *)
-
-PROCEDURE [DIV] : NIL; (* DIV is inhibited *)
-
-PROCEDURE [MOD] : NIL; (* MOD is inhibited *)
-
-
-(* Arithmetic Conversion *)
-
-(* Arithmetic conversions are not meaningful for Array ADTs.
-   Conforming blueprints may not require bindings to these operations. *)
-
-PROCEDURE [SXF] : NIL; (* SXF is inhibited *)
-
-PROCEDURE [VAL] : NIL; (* VAL is inhibited *)
+PROCEDURE [/] : NIL; (* inhibited *)
 
 
 (* Relational Operations *)
 
 (* Relational operations >, >=, < and <= are not meaningful for Array ADTs.
-   Conforming blueprints may not require bindings to these operations. *)
+   Conforming blueprints may not require binding to these operations. *)
 
-PROCEDURE [<] : NIL; (* less-than inhibited *)
+PROCEDURE [<] : NIL; (* inhibited *)
 
-PROCEDURE [>] : NIL; (* greater-than inhibited *)
+PROCEDURE [>] : NIL; (* inhibited *)
 
 (* The SUBSET operation is not meaningful for array ADTs.
-   Conforming blueprints may not require a binding to it. *)
+   Conforming blueprints may not require binding to SUBSET. *)
 
-PROCEDURE [SUBSET] : NIL; (* SUBSET inhibited *)
+PROCEDURE [SUBSET] : NIL; (* inhibited *)
 
 
 END ProtoArray.
