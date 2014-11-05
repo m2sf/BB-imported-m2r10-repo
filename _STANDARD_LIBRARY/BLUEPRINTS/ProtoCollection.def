@@ -9,11 +9,11 @@ REFERENTIAL AccessorType, ValueType, HandlerType, LoopBodyType;
 
 (* Required Module Type *)
 
-MODULE TYPE = * :=
+MODULE TYPE = OPAQUE :=
   CHAR | UNICHAR |
   { ARGLIST OF AccessorType } |
   { ARGLIST OF { AccessorType, ValueType } };
-(* Collection ADTs may be opaque pointers or record types,
+(* Collection ADTs must be opaque,
    quoted literals or structured literals are compatible. *)
 
 
@@ -30,18 +30,18 @@ CONST isMutable : BOOLEAN;
    Its value may be TRUE or FALSE. *)
 
 
-(* Orderedness *)
-
-CONST [DESCENDING] isOrdered : BOOLEAN;
-(* Required constant to define whether conforming ADTs shall be ordered.
-   Its value may be TRUE or FALSE. *)
-
-
 (* Memory Management Model *)
 
 CONST isRefCounted : BOOLEAN;
 (* Required constant to define whether conforming ADTs shall be reference
    counted. Its value may be TRUE or FALSE. *)
+
+
+(* Orderedness *)
+
+CONST [DESCENDING] isOrdered : BOOLEAN;
+(* Required constant to define whether conforming ADTs shall be ordered.
+   Its value may be TRUE or FALSE. *)
 
 
 (* NIL Storage *)
@@ -70,8 +70,15 @@ PROCEDURE [TLIMIT];
 
 (* Memory Management *)
 
-(* The operations NEW, RETAIN and RELEASE are not common to all collection
-   ADTs, their bindings may be required by more specialised blueprints. *)
+PROCEDURE [NEW];
+(* Specialised blueprints must always require binding to NEW. *)
+
+isRefCounted -> PROCEDURE [RETAIN];
+(* Specialised blueprints must require binding to RETAIN when the
+   ADT is reference counted. *)
+
+PROCEDURE [RELEASE];
+(* Specialised blueprints must always require binding to RELEASE. *)
 
 
 (* Literal Assignment *)
@@ -139,7 +146,7 @@ PROCEDURE installHandler ( handler : HandlerType );
    ADTs, their bindings may be required by more specialised blueprints. *)
 
 
-(* Accessor or Value Test *)
+(* Membership Test *)
 
 (* Binding to IN syntax *)
 
@@ -159,6 +166,22 @@ PROCEDURE [FOR];
 (* Specialised blueprints must always require binding to FOR. *)
 
 
+(* Concatenation *)
+
+(* Binding to Predefined Procedure CONCAT *)
+
+(* The operation CONCAT is not common to all collection ADTs,
+   its binding may be required by more specialised blueprints. *)
+
+
+(* Slicing *)
+
+(* Binding to the .. Operator *)
+
+(* The operation .. is not common to all collection ADTs,
+   its binding may be required by more specialised blueprints. *)
+
+
 (* Relational Operations *)
 
 (* Binding to the = and # Operators *)
@@ -167,6 +190,21 @@ PROCEDURE [=];
 (* Specialised blueprints must always require binding to = operator. *)
 
 (* The operation for the # operator is automatically synthesised. *)
+
+
+(* Binding to < and > Operators *)
+
+(* The operations less-than, less-or-equal, greater-than and
+   greater-than-equal are not common to all collection ADTs,
+   their binding may be required by specialised blueprints. *)
+
+
+(* Set Operations *)
+
+(* Binding to Predefined Function SUBSET *)
+
+(* The operation SUBSET is not common to all collection ADTs,
+   its binding may be required by specialised blueprints. *)
 
 
 (* Conditionally Inhibited Bindings *)
