@@ -9,8 +9,8 @@ REFERENTIAL IndexType, ValueType, ComponentCount, BodyLoopType;
 
 (* Required Module Type *)
 
-MODULE TYPE = OPAQUE RECORD := { ARGLIST ComponentCount OF ValueType };
-(* Static Array ADTs must be opaque records to be statically allocatable,
+MODULE TYPE = RECORD := { ARGLIST ComponentCount OF ValueType };
+(* Static Array ADTs must be records to be statically allocatable,
    array literals with a fixed number of components are compatible. *)
 
 
