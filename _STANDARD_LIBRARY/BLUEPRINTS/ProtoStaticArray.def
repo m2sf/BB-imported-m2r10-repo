@@ -113,27 +113,64 @@ PROCEDURE [RETRIEVE] valueAtIndex
    and is synthesised as ArrayADT.valueAtIndex(array, index). *)
 
 
-(* TO DO: continue review from this point forward ... *)
+(* Index Out Of Range Retrieval Error Handling *)
+
+(* A user defined index-out-of-range handler function may be used to change
+   the default behaviour when RETRIEVE is called with an out-of-range index. *)
+
+(* Handler Type *)
+
+invAccessorRetrievalIntercept ->
+TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
+(* Required procedure type for user defined index-out-of-range handlers. *)
+
+(* An example of an index-out-of-range handler is given below:
+   
+   PROCEDURE mayAbortOnIndexOutOfRange
+     ( VAR valueToReturn : CARDINAL ) : BOOLEAN;
+   BEGIN
+     valueToReturn := 0;
+     RETURN FALSE
+   END mayAbortOnIndexOutOfRange;
+   
+   This handler tells its caller not to abort and to return zero. *)
 
 
-(* Operations INSERT and REMOVE are not meaningful for static arrays. *)
+(* Handler Installation *)
 
-PROCEDURE [INSERT] NIL;
-(* Conforming blueprints may not require a binding to INSERT. *)
-
-PROCEDURE [REMOVE] NIL;
-(* Conforming blueprints may not require a binding to REMOVE. *)
+invAccessorRetrievalIntercept ->
+PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
+(* Required procedure to install a user defined index-out-of-range handler. *)
 
 
-(* Introspection *)
+(* Iteration *)
 
-PROCEDURE [COUNT] count ( array : ProtoStaticArray ) : LONGCARD;
-(* Required function to return the number of components of an array. *)
+(* Binding to FOR IN iterator *)
 
-(* An expression of the form
-    COUNT(array)
-   is transformed at compile time to a function call of the form
-    ArrayADT.count(array) *)
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoStaticArray, CONST IndexType );
+(* Required procedure type to synthesise the body of a for loop. *)
+
+PROCEDURE [FOR] forIterator
+  ( VAR set : ProtoStaticArray;
+    doStatements : LoopBodyType;
+    ascending : BOOLEAN );
+(* Required procedure to iterate over all index/value pairs of an array
+   in a given order and execute the passed in doStatements for each pair. *)
+   
+(* A statement of the form
+     FOR element IN set DO statementSeq END
+   is synthesised in two steps.
+   
+   The loop header is synthesised as
+     ArrayADT.forIterator( set, forLoopBody, TRUE );
+   
+   The loop body is synthesised as
+     PROCEDURE forLoopBody
+       ( VAR array : ArrayADT; CONST index : IndexType ) <*INLINE*>;
+     BEGIN statementSeq END forLoopBody;
+   
+   The loop header of a FOR DESCENDING statement is sythesised with
+   FALSE passed for parameter ascending in the call to forIterator. *)
 
 
 (* Iteration *)
@@ -157,27 +194,59 @@ PROCEDURE [FOR] forIterator
      BEGIN statementSeq END forLoopBody; *)
 
 
-(* Relational operations *)
+(* Relational Operations *)
 
-PROCEDURE [=] isEqual ( array1, array2 : ProtoStaticArray ) : BOOLEAN;
+(* Binding to the = and # Operators *)
+
+PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
 (* Required function to test the equivalence of two arrays. *)
 
-(* An expression of the form
-     array1 = array2
-   is transformed at compile time to a function call of the form
-     ArrayADT.isEqual(array1, array2) *)
+(* An expression of the form array1 = array2
+   is synthesised as ArrayADT.isEqual(array1, array2). *)
 
 (* The operation for the # operator
-   is synthesized as NOT (array1 = array2) *)
+   is synthesized as NOT (array1 = array2). *)
 
 
-(* The <, <=, > and >= operations are not meaningful for static arrays. *)
+(* Conditionally Inhibited Bindings *)
 
-PROCEDURE [<] NIL;
-(* Conforming blueprints may not require a binding to the > operator. *)
+(* None *)
 
-PROCEDURE [>] NIL;
-(* Conforming blueprints may not require a binding to the > operator. *)
+
+(* Unconditionally Inhibited Bindings *)
+
+(* Value Insertion and Removal *)
+
+(* Operations INSERT and REMOVE are not meaningful for static array ADTs.
+   Conforming blueprints may not require binding to these operations. *)
+
+PROCEDURE [INSERT] NIL; (* inhibited *)
+
+PROCEDURE [REMOVE] NIL; (* inhibited *)
+
+
+(* Membership Test *)
+
+(* Operation IN is not meaningful for static array ADTs.
+   Conforming blueprints may not require binding to IN. *)
+
+PROCEDURE [IN] NIL; (* inhibited *)
+
+
+(* Relational Operations *)
+
+(* Operations <, <=, > and >= are not meaningful for static array ADTs.
+   Conforming blueprints may not require binding to these operations. *)
+
+PROCEDURE [<] NIL; (* inhibited *)
+
+PROCEDURE [>] NIL; (* inhibited *)
+
+
+(* Operation SUBSET is not meaningful for static array ADTs.
+   Conforming blueprints may not require binding to SUBSET. *)
+
+PROCEDURE [SUBSET] NIL; (* inhibited *)
 
 
 END ProtoStaticArray.
