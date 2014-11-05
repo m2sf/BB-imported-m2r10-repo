@@ -243,7 +243,7 @@ PROCEDURE [SUBSET] isSubset ( set1, set2 : ProtoStaticSet ) : BOOLEAN;
    is synthesised as SetADT.isSubset(set2, set1).
    
    An expression of the form set1 >= set2 is synthesised as
-   (COUNT(set1) > COUNT(set2)) AND SetADT.isSubset(set2, set1). *)
+   (COUNT(set1) > COUNT(set2)) AND SetADT.isSubset(set2, set1).
    
    An expression of the form set1 < set2
    is synthesised as SetADT.isSubset(set1, set2).
