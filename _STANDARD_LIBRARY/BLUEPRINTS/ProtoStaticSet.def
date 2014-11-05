@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoStaticSet [ProtoStaticCollection];
 
-REFERENTIAL ElementType, ProcType;
+REFERENTIAL ElementType, LoopBodyType;
 
 
 (* Required Module Type *)
