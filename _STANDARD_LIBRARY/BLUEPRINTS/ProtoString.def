@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoString [ProtoCollection];
 
-REFERENTIAL POSINT (* index type *),
+REFERENTIAL IndexType, SliceIndexType,
   CharType (* value type CHAR or UNICHAR *), HandlerType, LoopBodyType;
 
 
@@ -21,49 +21,57 @@ MODULE TYPE = OPAQUE := CHAR | UNICHAR;
 (* Mutability *)
 
 CONST isMutable : BOOLEAN;
-(* Required constant to define whether the ADT is mutable.
+(* Required constant to define whether the ADT should be mutable.
    Its value may be TRUE or FALSE. *)
-
-
-(* Orderedness *)
-
-(* Use of FOR DESCENDING syntax with the ADT is only permitted
-   when a constant is bound to DESCENDING and its value is TRUE. *)
-
-CONST [DESCENDING] isOrdered = TRUE;
-(* Required constant to define whether the ADT is ordered.
-   Its value is always TRUE for String ADTs. *)
 
 
 (* Memory Management Model *)
 
-CONST isRefCounted : BOOLEAN;
-(* Required constant to define whether the ADT is reference counted.
-   Its value may be TRUE or FALSE. *)
+CONST isRefCounted = TRUE;
+(* Required constant to define whether conforming ADTs should be
+   reference counted. Its value is always TRUE for Dynamic String ADTs. *)
 
 
-(* Storability of NIL *)
+(* Orderedness *)
+
+CONST [DESCENDING] isOrdered = TRUE;
+(* Required constant to define whether conforming ADTs should be ordered.
+   Its value is always TRUE for String ADTs. *)
+
+
+(* NIL Storage *)
 
 CONST [NIL] allowsNilStorage = FALSE;
-(* Required constant to define whether NIL is a storable value.
+(* Required constant to define whether NIL should be a storable value.
    Its value is always FALSE for String ADTs. *)
 
 
-(* Sliceability *)
+(* Support for Invalid Accessor Retrieval Intercept *)
 
-CONST isSliceable = isMutable AND isRefCounted;
-(* Required constant indicating whether the ADT supports slicing.
-   Its value is TRUE if the ADT is both mutable and reference counted. *)
+CONST * invAccessorRetrievalIntercept = TRUE;
+(* Required constant to define whether invalid accessor retrieval errors may
+   be intercepted by user defined handlers. Always TRUE for String ADTs. *)
+
+
+(* Required Types *)
+
+
+(* Index Type *)
+
+TYPE IndexType = [0..TMAX(SliceIndexType)] OF SliceIndexType;
+(* Required type for indexing charaters in a string.
+   Always a subrange of the slice index type. *)
 
 
 (* Required Procedures *)
+
 
 (* Introspection *)
 
 (* Binding to Predefined Function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Required function to return the index/value pair limit of the ADT. *)
+(* Required function to return the character limit of the ADT. *)
 
 (* An expression of the form TLIMIT(StringADT))
    is synthesised as StringADT.capacityLimit(). *)
@@ -93,7 +101,7 @@ PROCEDURE [NEW] new
 
 isMutable ->
 PROCEDURE newWithCapacity
-  ( VAR string : ProtoString; capacity : POSINT );
+  ( VAR string : ProtoString; capacity : IndexType );
 (* Procedure to allocate a new string with a given initial capacity.
    The procedure is required when the ADT is mutable. *)
 
@@ -101,7 +109,7 @@ PROCEDURE newWithCapacity
 (* Binding to Predefined Procedure RETAIN *)
 
 isRefCounted ->
-PROCEDURE [RETAIN] retain ( VAR string : ProtoString );
+PROCEDURE [RETAIN] retain ( string : ProtoString );
 (* Procedure to retain an array and prevent its deallocation.
    The procedure is required when the ADT is reference counted. *)
 
@@ -111,7 +119,7 @@ PROCEDURE [RETAIN] retain ( VAR string : ProtoString );
 
 (* Binding to Predefined Procedure RELEASE *)
 
-PROCEDURE [RELEASE] release ( VAR string : ProtoString );
+PROCEDURE [RELEASE] release ( string : ProtoString );
 (* Required procedure to cancel an outstanding retain
    or deallocate a string if no retains are outstanding. *)
 
@@ -124,15 +132,13 @@ PROCEDURE [RELEASE] release ( VAR string : ProtoString );
 (* Binding to the := Operator *)
 
 isMutable ->
-PROCEDURE [:=] assignLiteral
+PROCEDURE [:=] assignQuotedLiteral
   ( string : ProtoString; literal : ARRAY OF CharType );
-(* Procedure to destructively copy the contents of a string literal to a
-   string. The procedure is required when the ADT is mutable. *)
+(* Procedure to assign a quoted literal to a string.
+   The procedure is required when the ADT is mutable. *)
 
-(* A statement of the form
-     string := "foo bar baz";
-   is synthesised as
-     StringADT.assignLiteral(string, "foo bar baz"). *)
+(* A statement of the form string := "foo bar baz"
+   is synthesised as StringADT.assignQuotedLiteral(string, "foo bar baz"). *)
 
 
 (* Copying *)
@@ -149,7 +155,7 @@ PROCEDURE [DUP] newWithCopy ( source : ProtoString ) : ProtoString;
 (* Binding to Predefined Procedure COPY *)
 
 isMutable ->
-PROCEDURE [COPY] copy ( source : ProtoString; VAR target : ProtoString );
+PROCEDURE [COPY] copy ( source : ProtoString; target : ProtoString );
 (* Procedure to destructively copy the contents of one string to another.
    The procedure is required when the ADT is mutable. *)
 
@@ -163,7 +169,7 @@ PROCEDURE [COPY] copy ( source : ProtoString; VAR target : ProtoString );
 
 isMutable ->
 PROCEDURE [STORE] replaceCharAtIndex
- ( VAR string : ProtoString; index : POSINT; char : CharType );
+ ( VAR string : ProtoString; index : IndexType; char : CharType );
 (* Procedure to store a character at a given index in a string.
    The procedure is required when the ADT is mutable. *)
 
@@ -180,7 +186,7 @@ PROCEDURE [STORE] replaceCharAtIndex
 (* Binding to Predefined Function RETRIEVE *)
 
 PROCEDURE [RETRIEVE] charAtIndex
- ( string : ProtoString; index : POSINT ) : CharType;
+ ( string : ProtoString; index : IndexType ) : CharType;
 (* Required function to return the character
    stored at a given index in a string. *)
 
@@ -196,15 +202,16 @@ PROCEDURE [RETRIEVE] charAtIndex
 
 (* Handler Type *)
 
+invAccessorRetrievalIntercept ->
 TYPE HandlerType = PROCEDURE ( VAR CharType ) : BOOLEAN;
 (* Required procedure type for user defined index-out-of-range handlers. *)
 
 (* An example of an index-out-of-range handler is given below:
    
    PROCEDURE mayAbortOnIndexOutOfRange
-     ( VAR valueToReturn : CARDINAL ) : BOOLEAN;
+     ( VAR charToReturn : CharType ) : BOOLEAN;
    BEGIN
-     valueToReturn := 0u0;
+     charToReturn := 0u0;
      RETURN FALSE
    END mayAbortOnIndexOutOfRange;
    
@@ -213,6 +220,7 @@ TYPE HandlerType = PROCEDURE ( VAR CharType ) : BOOLEAN;
 
 (* Handler Installation *)
 
+invAccessorRetrievalIntercept ->
 PROCEDURE installHandler ( handler : HandlerType );
 (* Required procedure to install a user defined index-out-of-range handler. *)
 
@@ -224,7 +232,7 @@ PROCEDURE installHandler ( handler : HandlerType );
 isMutable ->
 PROCEDURE [INSERT] insertCharsAtIndex
   ( targetString : ProtoString;
-    index : POSINT;
+    index : IndexType;
     values : ARRAY OF CharType );
 (* Procedure to insert characters into a target string at a given index.
    The procedure is required when the ADT is mutable. *)
@@ -237,7 +245,7 @@ PROCEDURE [INSERT] insertCharsAtIndex
 
 isMutable ->
 PROCEDURE insertStringAtIndex
-  ( targetStr : ProtoString; index : POSINT; sourceStr : ProtoString );
+  ( targetStr : ProtoString; index : IndexType; sourceStr : ProtoString );
 (* Procedure to insert a source string into a string array at a given
    index. The procedure is required when the ADT is mutable. *)
 
@@ -248,23 +256,20 @@ PROCEDURE insertStringAtIndex
 
 isMutable ->
 PROCEDURE [REMOVE] removeCharsAtIndex
-  ( string : ProtoString; index : POSINT; charCount : POSINT );
+  ( string : ProtoString; index : IndexType; charCount : IndexType );
 (* Procedure to remove one or more characters from a string at a given index.
    The procedure is required when the ADT is mutable. *)
 
-(* A statement of the form
-     REMOVE(string, index, n);
-   is synthesised as
-     StringADT.removeCharsAtIndex(string, index, n).
+(* A statement of the form REMOVE(string, index, n)
+   is synthesised as StringADT.removeCharsAtIndex(string, index, n).
    
-   A statement of the form
-     string[index] := NIL
-   is treated equivalent to
-     REMOVE(string, index, 1)
-   if a constant of value TRUE is bound to NIL. *)
+   A statement of the form string[index] := NIL
+   is treated equivalent to REMOVE(string, index, 1)
+   and synthesised as StringADT.removeCharsAtIndex(string, index, 1)
+   if and only if constant allowsNilStorage is FALSE. *)
 
 
-(* Concatenation and Slicing *)
+(* Concatenation *)
 
 (* Binding to Predefined Procedure CONCAT *)
 
@@ -325,10 +330,10 @@ PROCEDURE [CONCAT] concat
 
 (* Binding to the Slicing Operator *)
 
-isSliceable ->
+isRefCounted ->
 PROCEDURE [..] copySlice
-  ( VAR target : ProtoString; tgtStartIndex, tgtEndIndex : INTEGER;
-    source : ProtoString; srcStartIndex, srcEndIndex : INTEGER );
+  ( VAR target : ProtoString; tgtStartIndex, tgtEndIndex : IndexType;
+    source : ProtoString; srcStartIndex, srcEndIndex : IndexType );
 (* Required procedure to copy a slice from a source string, indicated by
    a given start and end index,  into a slice within a target string,
    indicated by a given start and end index.  If target is NIL and the
@@ -376,7 +381,7 @@ PROCEDURE [..] copySlice
 
 (* Binding to FOR IN iterator *)
 
-TYPE LoopBodyType = PROCEDURE ( VAR ProtoString, CONST POSINT );
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoString, CONST IndexType );
 (* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
@@ -394,7 +399,7 @@ PROCEDURE [FOR] forIterator
    
    The loop body is synthesised as
      PROCEDURE forLoopBody
-       ( VAR string : StringADT; CONST index : POSINT ) <*INLINE*>;
+       ( VAR string : StringADT; CONST index : IndexType ) <*INLINE*>;
      BEGIN statementSeq END forLoopBody;
    
    The loop header of a FOR DESCENDING statement is sythesised with
