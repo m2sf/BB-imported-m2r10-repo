@@ -78,7 +78,7 @@ PROCEDURE [LENGTH] length ( string : ProtoString ) : LONGCARD;
 (* Required function to return the length of a string. *)
 
 (* An expression of the form LENGTH(string)
-   is synthesised as ArrayADT.length(string). *)
+   is synthesised as StringADT.length(string). *)
 
 
 (* Memory Management *)
@@ -168,12 +168,9 @@ PROCEDURE [STORE] replaceCharAtIndex
 (* Procedure to store a character at a given index in a string.
    The procedure is required when the ADT is mutable. *)
 
-(* A statement of the form
-     string[index] := char
-   is equivalent to
-     STORE(string, index, char)
-   and is synthesised as
-     StringADT.replaceCharAtIndex(string, index, char). *)
+(* A statement of the form string[index] := char
+   is equivalent to STORE(string, index, char)
+   and is synthesised as StringADT.replaceCharAtIndex(string, index, char). *)
 
 
 (* Value Retrieval *)
@@ -232,10 +229,8 @@ PROCEDURE [INSERT] insertCharsAtIndex
 (* Procedure to insert characters into a target string at a given index.
    The procedure is required when the ADT is mutable. *)
 
-(* A statement of the form
-     INSERT(string, index, "foo" )
-   is synthesised as
-     StringADT.insertCharsAtIndex(array, index, "foo"). *)
+(* A statement of the form INSERT(string, index, "foo" )
+   is synthesised as StringADT.insertCharsAtIndex(array, index, "foo"). *)
 
 
 isMutable ->
