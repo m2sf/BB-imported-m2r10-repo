@@ -148,8 +148,8 @@ PROCEDURE [DUP] newWithCopy ( source : ProtoString ) : ProtoString;
 
 isMutable ->
 PROCEDURE [COPY] copy
-  ( target, source : ProtoString;
-    tgtStartIndex, tgtEndIndex, srcStartIndex, srcEndIndex : IndexType );
+  ( sourceString, targetString : ProtoString;
+    srcStartIndex, srcEndIndex, tgtStartIndex, tgtEndIndex : IndexType );
 (* Procedure to destructively copy the whole or a slice of a source string,
    indicated by a given source start and end index, to the whole or a slice
    of a target string, indicated by a given target start and end index.
@@ -158,23 +158,26 @@ PROCEDURE [COPY] copy
 (* An assignment of the form
      target := source
    is synthesised as
-     StringADT.copy(target, source, 0, -1, 0, -1)
+     StringADT.copy(source, target, 0, -1, 0, -1)
    where indices 0 and -1 indicate the whole of a string.
    
    An assignment of the form
      target := source[2..5]
    is synthesised as
-     StringADT.copy(target, source, 0, -1, 2, 5).
+     StringADT.copy(source, target, 2, 5, 0, -1).
    
    An assignment of the form
      target[2..5] := source
    is synthesised as
-     StringADT.copy(target, source, 2, 5, 0, -1).
+     StringADT.copy(source, target, 0, -1, 2, 5).
    
    An assignment of the form
      target[1..4] := source[2..5]
    is synthesised as
-     StringADT.copy(target, source, 1, 4, 2, 5).
+     StringADT.copy(source, target, 2, 5, 1, 4).
+   
+   When a slice expression is concatenated or passed to a procedure,
+   it is synthesised using the procedure bound to the slice operator. *)
 
 
 (* Value Storage *)
@@ -297,24 +300,24 @@ PROCEDURE [CONCAT] concat
    Invocations of CONCAT are mapped to procedure StringADT.concat as follows:
    
    A statement of the form
-     CONCAT(resultStr, str1, str2);
+     CONCAT(resultString, str1, str2);
    is transformed at compile time into a procedure call of the form
-     StringADT.concat(resultStr, "", str1, "", str2);
+     StringADT.concat(resultString, "", str1, "", str2);
 
    A statement of the form
-     CONCAT(resultStr, str1, "literal", str2);
+     CONCAT(resultString, str1, "literal", str2);
    is transfored at compile time into a procedure call of the form
-     StringADT.concat(resultStr, "", str1, "lit", str2);
+     StringADT.concat(resultString, "", str1, "lit", str2);
       
    A statement of the form
-     CONCAT(resultStr, "lit", str1, str2);
+     CONCAT(resultString, "lit", str1, str2);
    is transformed at compile time into a procedure call of the form
-     StringADT.concat(resultStr, "lit", str1, "", lit2);
+     StringADT.concat(resultString, "lit", str1, "", lit2);
    
    A statement of the form
-     CONCAT(resultStr, "lit1", str, "lit2")
+     CONCAT(resultString, "lit1", str, "lit2")
    is transformed at compile time into a procedure call of the form
-     StringADT.concat(resultStr, "lit1", str, "lit2", NIL);
+     StringADT.concat(resultString, "lit1", str, "lit2", NIL);
    
    When a concatenation expression is passed as an argument to a procedure
    it is first assigned to a temporary variable,  which is then passed as
@@ -323,19 +326,21 @@ PROCEDURE [CONCAT] concat
    A procedure invocation of the form
      FooProc(str1 + str2);
    is transformed at compile time into a temporary variable declaration
-     VAR tempResult : StringADT;
+     VAR tempString : StringADT;
    and a statement sequence of the form
-     CONCAT(tempResult, str1, str2);
-     FooProc(tempResult); RELEASE(tempResult);
+     CONCAT(tempString, str1, str2);
+     FooProc(tempString); RELEASE(tempString);
    
    A function invocation of the form
      foo := BarFunc(str1 + str2);
    is transformed at compile time into a temporary variable declaration
-     VAR tempResult : StringADT;
+     VAR tempString : StringADT;
    and a statement sequence of the form   
-     CONCAT(tempResult, str1, str2);
-     foo := BarFunc(tempResult); RELEASE(tempResult); *)
+     CONCAT(tempString, str1, str2);
+     foo := BarFunc(tempString); RELEASE(tempString); *)
 
+
+(* Slicing *)
 
 (* Binding to the Slicing Operator *)
 
@@ -353,33 +358,8 @@ PROCEDURE [..] newWithSlice
      tempString := StringADT.newWithSlice(string, 2, 5);
      WRITE(tempString); RELEASE(tempString);
    
-   When a slice expression appears within the R-value of an assignment,
+   When a slice expression appears as R-value of an assignment,
    the assignment is synthesised using the procedure bound to COPY. *)
-
-isRefCounted ->
-PROCEDURE [..] copySlice
-  ( VAR target : ProtoString; tgtStartIndex, tgtEndIndex : IndexType;
-    source : ProtoString; srcStartIndex, srcEndIndex : IndexType );
-(*  
-   When a slice expression is passed as an argument to a procedure, it is
-   first assigned to a temporary variable,  which is then passed as a
-   parameter in the subsequent procedure call and finally released.
-
-   A procedure invocation of the form
-     FooProc(string[2..5]);
-   is transformed at compile time into a temporary variable declaration
-     VAR tempTarget : StringADT;
-   and a statement sequence of the form
-     StringADT.copySlice(tempTarget, 0, -1, string, 2, 5);
-     FooProc(tempTarget); RELEASE(tempTarget);
-   
-   A function invocation of the form
-     foo := BarFunc(string[2..5]);
-   is transformed at compile time into a temporary variable declaration
-     VAR tempTarget : StringADT;
-   and a statement sequence of the form
-     StringADT.copySlice(tempTarget, 0, -1, string, 2, 5);
-     foo := BarFunc(tempTarget); RELEASE(tempTarget); *)
 
 
 (* Iteration *)
