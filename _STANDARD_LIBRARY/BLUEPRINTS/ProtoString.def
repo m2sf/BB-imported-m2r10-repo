@@ -147,12 +147,34 @@ PROCEDURE [DUP] newWithCopy ( source : ProtoString ) : ProtoString;
 (* Binding to Predefined Procedure COPY *)
 
 isMutable ->
-PROCEDURE [COPY] copy ( source : ProtoString; target : ProtoString );
-(* Procedure to destructively copy the contents of one string to another.
+PROCEDURE [COPY] copy
+  ( target, source : ProtoString;
+    tgtStartIndex, tgtEndIndex, srcStartIndex, srcEndIndex : IndexType );
+(* Procedure to destructively copy the whole or a slice of a source string,
+   indicated by a given source start and end index, to the whole or a slice
+   of a target string, indicated by a given target start and end index.
    The procedure is required when the ADT is mutable. *)
 
-(* A statement of the form COPY(string1, string2)
-   is synthesised as StringADT.copy(string1, string2). *)
+(* An assignment of the form
+     target := source
+   is synthesised as
+     StringADT.copy(target, source, 0, -1, 0, -1)
+   where indices 0 and -1 indicate the whole of a string.
+   
+   An assignment of the form
+     target := source[2..5]
+   is synthesised as
+     StringADT.copy(target, source, 0, -1, 2, 5).
+   
+   An assignment of the form
+     target[2..5] := source
+   is synthesised as
+     StringADT.copy(target, source, 2, 5, 0, -1).
+   
+   An assignment of the form
+     target[1..4] := source[2..5]
+   is synthesised as
+     StringADT.copy(target, source, 1, 4, 2, 5).
 
 
 (* Value Storage *)
@@ -318,31 +340,27 @@ PROCEDURE [CONCAT] concat
 (* Binding to the Slicing Operator *)
 
 isRefCounted ->
+PROCEDURE [..] newWithSlice
+  ( source : ProtoString; startIndex, endIndex : IndexType) : ProtoString;
+(* Function to return a newly allocated string and initialise it with a
+   slice from a source string, indicated by a given start and end index.
+   The function is required when the ADT is reference counted. *)
+
+(* A statement of the form
+     WRITE(string[2..5]);
+   is synthesised as
+     VAR tempString : StringADT;
+     tempString := StringADT.newWithSlice(string, 2, 5);
+     WRITE(tempString); RELEASE(tempString);
+   
+   When a slice expression appears within the R-value of an assignment,
+   the assignment is synthesised using the procedure bound to COPY. *)
+
+isRefCounted ->
 PROCEDURE [..] copySlice
   ( VAR target : ProtoString; tgtStartIndex, tgtEndIndex : IndexType;
     source : ProtoString; srcStartIndex, srcEndIndex : IndexType );
-(* Required procedure to copy a slice from a source string, indicated by
-   a given start and end index,  into a slice within a target string,
-   indicated by a given start and end index.  If target is NIL and the
-   target indices are 0 and -1, a newly allocated string is to be passed
-   back in target as result. The procedure is required if the ADT is
-   mutable and reference counted. *)
-
-(* An assignment of the form
-     target := source[2..5];
-   is transformed at compile time into a procedure call of the form
-     StringADT.copySlice(target, 0, -1, source, 2, 5);
-   
-   An assignment of the form
-     target[2..5] := source;
-   is transformed at compile time into a procedure call of the form
-     StringADT.copySlice(target, 2, 5, source, 0, -1);
-   
-   An assignment of the form
-     target[1..4] := source[2..5];
-   is transformed at compile time into a procedure call of the form
-     StringADT.copySlice(target, 1, 4, source, 2, 5);
-   
+(*  
    When a slice expression is passed as an argument to a procedure, it is
    first assigned to a temporary variable,  which is then passed as a
    parameter in the subsequent procedure call and finally released.
