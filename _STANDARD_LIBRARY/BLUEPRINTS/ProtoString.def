@@ -4,8 +4,10 @@
 
 BLUEPRINT ProtoString [ProtoCollection];
 
-REFERENTIAL IndexType, SliceIndexType,
+REFERENTIAL IndexType (* ideally INTEGER or LONGINT *),
   CharType (* value type CHAR or UNICHAR *), HandlerType, LoopBodyType;
+
+(* Relative indexing can only be used when IndexType is an integer type . *)
 
 
 (* Required Module Type *)
@@ -54,13 +56,6 @@ CONST * invAccessorRetrievalIntercept = TRUE;
 
 
 (* Required Types *)
-
-
-(* Index Type *)
-
-TYPE IndexType = [0..TMAX(SliceIndexType)] OF SliceIndexType;
-(* Required type for indexing charaters in a string.
-   Always a subrange of the slice index type. *)
 
 
 (* Required Procedures *)
