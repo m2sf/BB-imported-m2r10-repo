@@ -1,10 +1,10 @@
 (* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Blueprint for Dynamically Allocatable Dictionary ADTs *)
+(* Specialised Blueprint for Dynamically Allocatable Dictionary ADTs *)
 
 BLUEPRINT ProtoDictionary [ProtoCollection];
 
-REFERENTIAL KeyType, ValueType, LoopBodyType, File;
+REFERENTIAL KeyType, ValueType, HandlerType, LoopBodyType;
 
 
 (* Required Module Type *)
@@ -69,27 +69,58 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 (* Binding to Predefined Function COUNT *)
 
 PROCEDURE [COUNT] count ( dict : ProtoDictionary ) : LONGCARD;
-(* Required function to return the number of key/value pairs stored
-   in a dictionary. *)
+(* Required function to return the key/value pair count in a dictionary. *)
 
 (* An expression of the form COUNT(dict)
    is synthesised as DictADT.count(dict). *)
 
 
+PROCEDURE capacity ( dict : ProtoDictionary ) : LONGCARD;
+(* Required function to return the allocated capacity of a dictionary. *)
+
+
+PROCEDURE entryLimit ( dict : ProtoDictionary ) : LONGCARD;
+(* Required function to return the key/value pair limit of a dictionary. *)
+
+
+PROCEDURE isResizable ( dict : ProtoDictionary ) : BOOLEAN;
+(* Required function to return the resizable property of a dictionary. *)
+
+
 (* Memory Management *)
 
-PROCEDURE [NEW] new ( VAR dict : ProtoDictionary; capacity : LONGCARD );
-(* Procedure to allocate and initialise a new dictionary. *)
+(* Binding to Predefined Procedure NEW *)
 
-(* An invocation of NEW(dict, n) is transformed at compile time to
-   ADT.new(dict, n) for first operands of the ADT type. *)
+PROCEDURE [NEW] new
+  ( VAR dict : ProtoDictionary;
+    initWith : ARGLIST { key : KeyType; value : ValueType } );
+(* Required procedure to allocate and initialise a new dictionary. *)
+
+(* A statement of the form NEW(dict)
+   is synthesised as DictADT.new(dict).
+   
+   A statement of the form
+     NEW(dict, key1, val1, key2, val2, key3, val3, ...)
+   is synthesised as
+     DictADT.new(dict, key1, val1, key2, val2, key3, val3, ...). *)
 
 
+isMutable ->
+PROCEDURE newWithCapacity
+  ( VAR dict : ProtoDictionary; capacity : LONGCARD );
+(* Procedure to allocate a new dictionary with a given initial capacity.
+   The procedure is required when the ADT is mutable. *)
+
+
+(* Binding to Predefined Procedure RETAIN *)
+
+isRefCounted ->
 PROCEDURE [RETAIN] retain ( dict : ProtoDictionary );
-(* Procedure to retain a dictionary. *)
+(* Procedure to retain a dictionary and prevent its deallocation.
+   The procedure is required when the ADT is reference counted. *)
 
-(* An invocation of RETAIN(dict) is transformed at compile time to
-   ADT.retain(dict) for operands of the ADT type. *)
+(* A statement of the form RETAIN(dict)
+   is synthesised as DictADT.retain(dict). *)
 
 
 PROCEDURE [RELEASE] release ( VAR dict : ProtoDictionary );
@@ -208,47 +239,6 @@ PROCEDURE [SUBSET] isSubset ( dict1, dict2 : ProtoDictionary ) : BOOLEAN;
    An expression of the form dict1 <= dict2 is transformed at compile time
    to (COUNT(dict1) < COUNT(dict1)) AND ADT.isSubset(dict1, dict2) for
    operands of the ADT type. *)
-   
-
-(* IO operations *)
-
-PROCEDURE [READ] Read ( infile : File; VAR dict : ProtoDictionary );
-(* Procedure to read a value from a file into a dictionary. *)
-
-(* An invocation of READ(file, dict) is transformed at compile time
-   to ADT.Read(file, dict) for second operands of the ADT type. *)
-
-
-PROCEDURE [WRITE] Write ( outfile : File; dict : ProtoDictionary );
-(* Procedure to write a dictionary to a file. *)
-
-(* An invocation of WRITE(file, dict) is transformed at compile time
-   to ADT.Write(file, dict) for second operands of the ADT type. *)
-
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST OF ProtoDictionary );
-(* Procedure to write one or more dictionaries formatted into a file. *)
-
-(* An invocation of WRITEF(file, fmt, dict1, dict2, dict3, ...) is transformed
-   at compile time to ADT.WriteF(file, fmt, dict1, dict2, dict3, ...) for
-   third operands and any following operands of the ADT type. *)
-
-
-(* Introspection *)
-
-PROCEDURE capacity ( dict : ProtoDictionary ) : LONGCARD;
-(* Function to return the allocated capacity of a dictionary. *)
-
-
-PROCEDURE entryLimit ( dict : ProtoDictionary ) : LONGCARD;
-(* Function to return the key/value pair limit of a dictionary. *)
-
-
-PROCEDURE isResizable ( dict : ProtoDictionary ) : BOOLEAN;
-(* Function to return the resizable property of a dictionary. *)
 
 
 END ProtoDictionary.
