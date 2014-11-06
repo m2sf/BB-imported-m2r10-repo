@@ -4,7 +4,7 @@ BLUEPRINT ProtoRealMath [ProtoExtension] FOR ProtoReal;
 
 (* Blueprint for math extension libraries of real number types *)
 
-MODULE TYPE = NIL;
+MODULE TYPE : NIL; (* inhibited *)
 
 
 (* Required Mathematical Constants *)
@@ -73,5 +73,6 @@ PROCEDURE arccos ( r : BCD ) : ProtoReal;
 
 PROCEDURE arctan ( r : BCD ) : ProtoReal;
 (* Required function to return the arctangent of r. *)
+
 
 END ProtoRealMath.
