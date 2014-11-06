@@ -4,7 +4,10 @@
 
 BLUEPRINT ProtoStaticString [ProtoStaticCollection];
 
-REFERENTIAL CharType (* CHAR or UNICHAR *), LoopBodyType, POSINT;
+REFERENTIAL IndexType (* ideally INTEGER *),
+  CharType (* value type CHAR or UNICHAR *), LoopBodyType;
+
+(* Relative indexing can only be used when IndexType is an integer type. *)
 
 
 (* Required Module Type *)
@@ -53,7 +56,7 @@ PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
 
 (* Binding to Predefined Function LENGTH *)
 
-PROCEDURE [LENGTH] length ( string : ProtoStaticString ) : POSINT;
+PROCEDURE [LENGTH] length ( string : ProtoStaticString ) : LONGCARD;
 (* Required function to return the length of a string. *)
 
 (* An expression of the form LENGTH(string)
@@ -91,7 +94,7 @@ PROCEDURE [COPY] copy
 (* Binding to Predefined Procedure STORE *)
 
 PROCEDURE [STORE] replaceCharAtIndex
-  ( VAR string : ProtoStaticString; index : POSINT; char : CharType );
+  ( VAR string : ProtoStaticString; index : IndexType; char : CharType );
   (* Required procedure to store a character in a string at a given index. *)
 
 (* A statement of the form string[index] := char
@@ -104,7 +107,7 @@ PROCEDURE [STORE] replaceCharAtIndex
 (* Binding to Predefined Function RETRIEVE *)
 
 PROCEDURE [RETRIEVE] charAtIndex
-  ( CONST string : ProtoStaticString; index : POSINT ) : CharType;
+  ( CONST string : ProtoStaticString; index : IndexType ) : CharType;
 (* Required function to retrieve a character stored at a given index
    in a string. *)
 
@@ -169,7 +172,7 @@ PROCEDURE insertStringAtIndex
 (* Value Removal *)
 
 PROCEDURE [REMOVE] removeCharsAtIndex
-  ( string : ProtoStaticString; index : INTEGER; n : POSINT );
+  ( string : ProtoStaticString; index, n : IntegerType );
 (* Required rocedure to remove n characters from a string,
    starting at a given index. *)
 
@@ -185,7 +188,7 @@ PROCEDURE [REMOVE] removeCharsAtIndex
 
 (* Binding to FOR IN iterator *)
 
-TYPE LoopBodyType = PROCEDURE ( VAR ProtoStaticString, CONST POSINT );
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoStaticString, CONST IntegerType );
 (* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
@@ -204,7 +207,7 @@ PROCEDURE [FOR] forIterator
    
    The loop body is synthesised as
      PROCEDURE forLoopBody
-       ( VAR string : StringADT; CONST index : POSINT ) <*INLINE*>;
+       ( VAR string : StringADT; CONST index : IndexType ) <*INLINE*>;
      BEGIN statementSeq END forLoopBody;
    
    The loop header of a FOR DESCENDING statement is sythesised with
@@ -269,8 +272,8 @@ PROCEDURE [CONCAT] concat
 (* Binding to the .. Operator *)
 
 PROCEDURE [..] copySlice
-  ( target : ProtoStaticString; tgtStartIndex, tgtEndIndex : INTEGER;
-    source : ProtoStaticString; srcStartIndex, srcEndIndex : INTEGER );
+  ( target : ProtoStaticString; tgtStartIndex, tgtEndIndex : IndexType;
+    source : ProtoStaticString; srcStartIndex, srcEndIndex : IndexType );
 (* Required procedure to copy a slice from a source string, indicated by
    a given start and end index,  into a slice within a target string,
    indicated by a given start and end index.
