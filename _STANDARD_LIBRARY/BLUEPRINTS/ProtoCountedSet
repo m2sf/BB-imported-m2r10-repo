@@ -198,7 +198,7 @@ PROCEDURE [RETRIEVE] counterForElement
 (* Binding to Predefined Procedure INSERT *)
 
 PROCEDURE [INSERT] insertElements
-  ( set : ProtoCountedSet; elementList : VARGLIST OF ElementType );
+  ( set : ProtoCountedSet; elementList : ARGLIST OF ElementType );
 (* Required procedure to add one or more elements to a set. *)
 
 (* A statement of the form INSERT(set, elem1, elem2, elem3, ...)
