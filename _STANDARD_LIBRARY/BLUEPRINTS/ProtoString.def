@@ -230,7 +230,7 @@ PROCEDURE [INSERT] insertCharsAtIndex
    The procedure is required when the ADT is mutable. *)
 
 (* A statement of the form INSERT(string, index, "foo" )
-   is synthesised as StringADT.insertCharsAtIndex(array, index, "foo"). *)
+   is synthesised as StringADT.insertCharsAtIndex(string, index, "foo"). *)
 
 
 isMutable ->
