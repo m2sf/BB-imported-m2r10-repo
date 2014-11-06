@@ -93,7 +93,7 @@ PROCEDURE isResizable ( dict : ProtoDictionary ) : BOOLEAN;
 
 PROCEDURE [NEW] new
   ( VAR dict : ProtoDictionary;
-    initWith : ARGLIST { key : KeyType; value : ValueType } );
+    initWith : ARGLIST OF { key : KeyType; value : ValueType } );
 (* Required procedure to allocate and initialise a new dictionary. *)
 
 (* A statement of the form NEW(dict)
@@ -123,122 +123,245 @@ PROCEDURE [RETAIN] retain ( dict : ProtoDictionary );
    is synthesised as DictADT.retain(dict). *)
 
 
-PROCEDURE [RELEASE] release ( VAR dict : ProtoDictionary );
-(* Procedure to release and eventually deallocate a dictionary. *)
+(* Binding to Predefined Procedure RELEASE *)
 
-(* An invocation of RELEASE(dict) is transformed at compile time to
-   ADT.release(dict) for operands of the ADT type. *)
+PROCEDURE [RELEASE] release ( dict : ProtoDictionary );
+(* Required procedure to cancel an outstanding retain
+   or deallocate a dictionary if no retains are outstanding. *)
+
+(* A statement of the form RELEASE(dict)
+   is synthesised as DictADT.release(dict). *)
+
+
+(* Literal Assignment *)
+
+(* Binding to the := Operator *)
+
+isMutable ->
+PROCEDURE [:=] assign
+  ( dict : ProtoDictionary;
+    literal : ARGLIST OF { key : KeyType; value : ValueType } );
+(* Procedure to assign a structured literal to a dictionary.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form
+     dict := {{key1, val1}, {key2, val2}, {key3, val3}, ...}
+   is synthesised as
+     DictADT.assign(dict, key1, val1, key2, val2, key3, val3, ...). *)
 
 
 (* Copying *)
 
-PROCEDURE [DUP] duplicate ( dict : ProtoDictionary ) : ProtoDictionary;
-(* Function to return a newly allocated copy of a dictionary. *)
+(* Binding to Predefined Function DUP *)
 
-(* An expression of the form DUP(dict) is transformed at compile time to
-   ADT.duplicate(dict) for operands of the ADT type. *)
+PROCEDURE [DUP] newWithCopy ( dict : ProtoDictionary ) : ProtoDictionary;
+(* Required function to return a newly allocated copy of a dictionary. *)
 
-
-(* Storage, Removal, Retrieval and Inspection of Contents *)
-
-PROCEDURE [STORE] storeEntries
-  ( VAR dict : ProtoDictionary;
-    keyValueList : ARGLIST OF { key : KeyType; value : ValueType } );
-(* Procedure to store or replace zero or more entries in a dictionary. *)
-
-(* An invocation of STORE(dict, key1, value1, key2, value2 ...) is transformed
-   at compile time to ADT.storeEntries(dict, key1, value1, key2, value2 ...)
-   for first operands of the ADT type. *)
+(* An expression of the form DUP(dict)
+   is synthesised as DictADT.newWithCopy(dict). *)
 
 
-PROCEDURE [REMOVE] removeEntries
-  ( VAR dict : ProtoDictionary;
-    keyList : ARGLIST OF KeyType );
-(* Procedure to remove one or more entries from a dictionary. *)
+(* Binding to Predefined Procedure COPY *)
 
-(* An invocation of REMOVE(dict, key1, key2, key3 ...) is transformed
-   at compile time to ADT.removeEntries(dict, key1, key2, key3 ...)
-   for first operands of the ADT type. *)
+isMutable ->
+PROCEDURE [COPY] copy ( source : ProtoDict; target : ProtoDict );
+(* Procedure to destructively copy the contents of one dictionary to another.
+   The procedure is required when the ADT is mutable. *)
 
+(* A statement of the form COPY(dict1, dict2)
+   is synthesised as DictADT.copy(dict1, dict2). *)
+
+
+(* Value Storage *)
+
+(* Binding to Predefined Procedure STORE *)
+
+isMutable ->
+PROCEDURE [STORE] storeValueForKey
+ ( string : ProtoDictionary; key : KeyType; value : ValueType );
+(* Procedure to store a value for a given key in a dictionary.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form dict[key] := value
+   is equivalent to STORE(dict, key, value)
+   and is synthesised as DictADT.storeValueForKey(dict, key, value). *)
+
+
+(* Value Retrieval *)
+
+(* Binding to Predefined Function RETRIEVE *)
 
 PROCEDURE [RETRIEVE] valueForKey
-  ( dict : ProtoDictionary; key : KeyType ) : ValueType;
-(* Function to retrieve and return a value from a dictionary. *)
+ ( dict : ProtoDictionary; key : KeyType ) : ValueType;
+(* Required function to return the value stored for a given key
+   in a dictionary. *)
 
-(* An invocation of RETRIEVE(dict, key) is transformed at compile time to
-   ADT.valueForKey(dict, key) for first operands of the ADT type. *)
+(* An expression of the form dict[key]
+   is equivalent to RETRIEVE(dict, key) and
+   is synthesised as DictADT.valueForKey(dict, key). *)
+
+(* Invalid Key Retrieval Error Handling *)
+
+(* A user defined invalid-key handler function may be used to change
+   the default behaviour when RETRIEVE is called with an invalid key. *)
+
+(* Handler Type *)
+
+invAccessorRetrievalIntercept ->
+TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
+(* Required procedure type for user defined invalid-key handlers. *)
+
+(* An example of an invalid-key handler is given below:
+   
+   PROCEDURE mayAbortOnInvalidKey
+     ( VAR valueToReturn : ValueType ) : BOOLEAN;
+   BEGIN
+     valueToReturn := default;
+     RETURN FALSE
+   END mayAbortOnInvalidKey;
+   
+   This handler tells its caller not to abort and to return value default. *)
 
 
-PROCEDURE [IN] entryExists
-  ( dict : ProtoDictionary; key : KeyType ) : BOOLEAN;
-(* Function to test whether a key is stored in a dictionary. *)
+(* Handler Installation *)
 
-(* An expression of the form key IN dict is transformed at compile time to
-   ADT.entryExists(dict, key) for right operands of the ADT type. *)
+invAccessorRetrievalIntercept ->
+PROCEDURE installHandler ( handler : HandlerType );
+(* Required procedure to install a user defined invalid-key handler. *)
 
 
-PROCEDURE [COUNT] count ( dict : ProtoDictionary ) : LONGCARD;
-(* Function to return the number of key/value pairs in a dictionary. *)
+(* Value Insertion *)
 
-(* An expression of the form COUNT(dict) is transformed at compile time to
-   ADT.count(dict) for operands of the ADT type. *)
+(* Binding to Predefined Procedure INSERT *)
+
+isMutable ->
+PROCEDURE [INSERT] insertKeysAndValues
+  ( targetDict : ProtoDictionary;
+    keyValueList : ARGLIST OF { key : KeyType; value : ValueType } );
+(* Procedure to insert key/value pairs into a target dictionary.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form
+     INSERT(dict, key1, val1, key2, val2, key3, val3, ...)
+   is synthesised as
+     DictADT.insertKeysAndValues
+       (dict, key1, val1, key2, val2, key3, val3, ...). *)
+
+isMutable ->
+PROCEDURE insertDictionary
+  ( targetDict, sourceDict : ProtoDictionary );
+(* Procedure to insert the key/value pairs of one dictionary into another.
+   The procedure is required when the ADT is mutable. *)
+
+
+(* Value Removal *)
+
+(* Binding to Predefined Procedure REMOVE *)
+
+isMutable ->
+PROCEDURE [REMOVE] removeKeys
+  ( dict : ProtoDictionary; keyList : ARGLIST OF KeyType );
+(* Procedure to remove one or more key/value pairs from a dictionary.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form REMOVE(dict, key1, key2, key3, ...)
+   is synthesised as DictADT.removeKeys(dict, key1, key2, key3, ...).
+   
+   A statement of the form dict[key] := NIL
+   is treated equivalent to REMOVE(dict, key)
+   and synthesised as DictADT.removeKeys(dict, key)
+   if and only if constant allowsNilStorage is FALSE. *)
+
+
+(* Membership Test *)
+
+(* Binding to IN syntax *)
+
+PROCEDURE [IN] keyExists ( dict : ProtoDictionary; key : KeyType ) : BOOLEAN;
+(* Function to test whether a given key is stored in a dictionary. *)
+
+(* An expression of the form key IN dict
+   is synthesised as DictADT.keyExists(dict, key). *)
 
 
 (* Iteration *)
 
-TYPE ProcType = PROCEDURE ( KeyType );
+(* Binding to FOR IN iterator *)
+
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoDictionary, CONST KeyType );
+(* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
-  ( dict : ProtoDictionary; forLoopBody : ProcType; ascending : BOOLEAN );
-(* Procedure to iterate over all keys of a dictionary and invoke procedure
-   forLoopBody for each key with the given iteration order. *)
+  ( VAR dict : ProtoDictionary;
+    doStatements : LoopBodyType;
+    ascending : BOOLEAN );
+(* Required procedure to iterate over all keys of a dictionary in a
+   given order and execute the passed in doStatements for each key. *)
    
 (* A statement of the form
      FOR key IN dict DO statementSeq END
-   is transformed at compile time in two steps.
-   The loop header is transformed to
-     ADT.forIterator(dict, forLoopBody, TRUE);
-   The loop body is transformed to a procedure definition
-     PROCEDURE forLoopBody ( key : KeyType ) <*INLINE*>;
-     BEGIN statementSeq END forLoopBody;
-   inserted before the current scope's BEGIN-END block.
+   is synthesised in two steps.
    
-   If a constant with value TRUE has been bound to DESCENDING, a loop
-   header of the form
-     FOR DESCENDING key IN dict
-   is transformed at compile time to
-     ADT.forIterator(dict, forLoopBody, FALSE)
-   otherwise the use of FOR DESCENDING will cause a compile time error. *)   
+   The loop header is synthesised as
+     DictADT.forIterator(dict, forLoopBody, TRUE);
+   
+   The loop body is synthesised as
+     PROCEDURE forLoopBody
+       ( VAR dict : DictADT; CONST key : KeyType ) <*INLINE*>;
+     BEGIN statementSeq END forLoopBody;
+   
+   The loop header of a FOR DESCENDING statement is sythesised with
+   FALSE passed for parameter ascending in the call to forIterator. *)
 
 
 (* Relational operations *)
 
+(* Binding to the = and # Operators *)
+
 PROCEDURE [=] isEqual ( dict1, dict2 : ProtoDictionary ) : BOOLEAN;
-(* Function to test the equality of two dictionaries. *)
+(* Function to test the equivalence of two dictionaries. *)
 
-(* An expression of the form dict1 = dict2 is transformed at compile time to
-   ADT.isEqual(dict1, dict2) for operands of the ADT type.
+(* An expression of the form dict1 = dict2
+   is synthesised as DictADT.isEqual(dict1, dict2).
    
-   An expression of the form dict1 # dict2 is transformed at compile time to
-   NOT ADT.isEqual(dict1, dict2) for operands of the ADT type. *)
+   An expression of the form dict1 # dict2
+   is synthesised as NOT (dict1 = dict2). *)
 
 
-PROCEDURE [SUBSET] isSubset ( dict1, dict2 : ProtoDictionary ) : BOOLEAN;
-(* Function to test whether one dictionary is a subset of another *)
+(* Conditionally Inhibited Bindings *)
 
-(* An expression of the form dict1 > dict2 is transformed at compile time to
-   ADT.isSubset(dict2, dict1) for operands of the ADT type.
-   
-   An expression of the form dict1 >= dict2 is transformed at compile time
-   to (COUNT(dict1) > COUNT(dict2)) AND ADT.isSubset(dict2, dict1) for
-   operands of the ADT type.
-   
-   An expression of the form dict1 < dict2 is transformed at compile time to
-   ADT.isSubset(dict1, dict2) for operands of the ADT type.
-   
-   An expression of the form dict1 <= dict2 is transformed at compile time
-   to (COUNT(dict1) < COUNT(dict1)) AND ADT.isSubset(dict1, dict2) for
-   operands of the ADT type. *)
+(* None *)
+
+
+(* Unconditionally Inhibited Bindings *)
+
+(* Arithmetic Operations *)
+
+(* Operations +, -, *, and / are not meaningful for Dictionary ADTs.
+   Conforming blueprints may not require binding to these operations. *)
+
+PROCEDURE [+] : NIL; (* inhibited *)
+
+PROCEDURE [-] : NIL; (* inhibited *)
+
+PROCEDURE [*] : NIL; (* inhibited *)
+
+PROCEDURE [/] : NIL; (* inhibited *)
+
+
+(* Relational Operations *)
+
+(* Operations >, >=, < and <= are not meaningful for Dictionary ADTs.
+   Conforming blueprints may not require binding to these operations. *)
+
+PROCEDURE [<] : NIL; (* inhibited *)
+
+PROCEDURE [>] : NIL; (* inhibited *)
+
+(* The SUBSET operation is not meaningful for Dictionary ADTs.
+   Conforming blueprints may not require binding to SUBSET. *)
+
+PROCEDURE [SUBSET] : NIL; (* inhibited *)
 
 
 END ProtoDictionary.
