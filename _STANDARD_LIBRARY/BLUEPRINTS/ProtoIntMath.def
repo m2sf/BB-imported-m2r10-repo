@@ -4,7 +4,8 @@ BLUEPRINT ProtoIntMath [ProtoExtension] FOR ProtoInteger;
 
 (* Blueprint for math extension libraries of integer types *)
 
-MODULE TYPE = NIL;
+MODULE TYPE : NIL; (* inhibited *)
+
 
 (* Required Mathematical Functions *)
 
@@ -31,5 +32,6 @@ PROCEDURE nearestSmallerPowerOf2 ( i : ProtoInteger ) : ProtoInteger;
 
 PROCEDURE nearestLargerPowerOf2 ( i : ProtoInteger ) : ProtoInteger;
 (* Required function to return the nearest power of 2 larger than i. *)
+
 
 END ProtoIntMath.
