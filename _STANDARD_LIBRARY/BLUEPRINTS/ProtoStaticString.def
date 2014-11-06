@@ -88,6 +88,37 @@ PROCEDURE [COPY] copy
 (* A statement of the form string1 := string2
    is synthesised as StringADT.copy(string2, string1). *)
 
+PROCEDURE [COPY] copy
+  ( sourceString : ProtoString; VAR targetString : ProtoString;
+    srcStartIndex, srcEndIndex, tgtStartIndex, tgtEndIndex : IndexType );
+(* Required procedure to destructively copy the whole or a slice of a source
+   string, indicated by a given source start and end index, to the whole or a
+   slice of a target string, indicated by a given target start and end index. *)
+
+(* An assignment of the form
+     target := source
+   is synthesised as
+     StringADT.copy(source, target, 0, -1, 0, -1)
+   where indices 0 and -1 indicate the whole of a string.
+   
+   An assignment of the form
+     target := source[2..5]
+   is synthesised as
+     StringADT.copy(source, target, 2, 5, 0, -1).
+   
+   An assignment of the form
+     target[2..5] := source
+   is synthesised as
+     StringADT.copy(source, target, 0, -1, 2, 5).
+   
+   An assignment of the form
+     target[1..4] := source[2..5]
+   is synthesised as
+     StringADT.copy(source, target, 2, 5, 1, 4).
+   
+   When a slice expression is concatenated or passed to a procedure,
+   it is synthesised using the procedure bound to the slice operator. *)
+
 
 (* Value Storage *)
 
@@ -271,44 +302,32 @@ PROCEDURE [CONCAT] concat
 
 (* Binding to the .. Operator *)
 
-PROCEDURE [..] copySlice
-  ( target : ProtoStaticString; tgtStartIndex, tgtEndIndex : IndexType;
-    source : ProtoStaticString; srcStartIndex, srcEndIndex : IndexType );
-(* Required procedure to copy a slice from a source string, indicated by
-   a given start and end index,  into a slice within a target string,
-   indicated by a given start and end index.
-   Consult the documentation for specific details. *)
+PROCEDURE [..] getSlice
+  ( VAR target : ProtoStaticString; source : ProtoString;
+    startIndex, endIndex : IndexType) : ProtoString;
+(* Required procedure to destructively copy a slice from a source string,
+   indicated by a given start and end index, to a target string. *)
 
-(* An assignment of the form
-     target := source[2..5];
-   is transformed at compile time into a procedure call of the form
-     StringADT.copySlice(target, 0, -1, source, 2, 5);
-   
-   An assignment of the form
-     target[2..5] := source;
-   is transformed at compile time into a procedure call of the form
-     StringADT.copySlice(target, 2, 5, source, 0, -1);
-   
-   An assignment of the form
-     target[1..4] := source[2..5];
-   is transformed at compile time into a procedure call of the form
-     StringADT.copySlice(target, 1, 4, source, 2, 5);
-   
-   When a slice expression is passed as an argument to a procedure, it is
-   first assigned to a temporary variable,  which is then passed to
-   as a parameter in the subsequent procedure call.
+(* When a slice expression is passed as an argument to a procedure,
+   it is first assigned to a temporary variable, which is then
+   passed as a parameter in the subsequent procedure call.
 
    A procedure invocation of the form
      FooProc(string[2..5]);
-   is transformed at compile time into a statement sequence of the form
-     StringADT.copySlice(temp, 0, -1, string, 2, 5);
-     FooProc(temp);
+   is synthesised as
+     VAR tempString : StringADT;
+     StringADT.getSlice(tempString, string, 2, 5);
+     FooProc(tempString);
    
    A function invocation of the form
      foo := BarFunc(string[2..5]);
-   is transformed at compile time into a statement sequence of the form
-     StringADT.copySlice(temp, 0, -1, string, 2, 5);
-     foo := BarFunc(temp); *)
+   is synthesised as
+     VAR tempString : StringADT;
+     StringADT.getSlice(tempString, string, 2, 5);
+     foo := BarFunc(tempString);
+   
+   When a slice expression appears as R-value of an assignment,
+   the assignment is synthesised using the procedure bound to COPY. *)
 
 
 (* Relational Operations *)
