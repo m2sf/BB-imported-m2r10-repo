@@ -6,7 +6,8 @@ BLUEPRINT ProtoArrayIO [ProtoExtension] FOR ProtoRoot;
 
 REFERENTIAL File;
 
-MODULE TYPE = NIL;
+MODULE TYPE : NIL; (* inhibited *)
+
 
 (* Required IO bindings *)
 
@@ -19,5 +20,6 @@ PROCEDURE [WRITE] Write ( f : File; value : ARRAY OF ProtoRoot );
 PROCEDURE [WRITEF] WriteF
   ( f : File; fmt : ARRAY OF CHAR; values : ARGLIST OF ARRAY OF ProtoRoot );
 (* Required binding to macro WRITEF for arrays of the target type *)
+
 
 END ProtoArrayIO.
