@@ -7,7 +7,7 @@ BLUEPRINT ProtoString [ProtoCollection];
 REFERENTIAL IndexType (* ideally INTEGER or LONGINT *),
   CharType (* value type CHAR or UNICHAR *), HandlerType, LoopBodyType;
 
-(* Relative indexing can only be used when IndexType is an integer type . *)
+(* Relative indexing can only be used when IndexType is an integer type. *)
 
 
 (* Required Module Type *)
