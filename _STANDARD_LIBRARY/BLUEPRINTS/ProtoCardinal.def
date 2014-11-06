@@ -4,102 +4,150 @@
 
 BLUEPRINT ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
 
-(* ProtoCardinal ADTs must be opaque records to be statically allocatable *)
 
-MODULE TYPE = OPAQUE RECORD (* uses integer literals *) := INTEGER;
+(* Required Module Type *)
 
-
-(* Bindings required for ProtoCardinal ADTs *)
+MODULE TYPE = RECORD := INTEGER;
+(* Cardinal ADTs must be records to be statically allocatable,
+   integer literals are compatible. *)
 
 
 (* Required Constants *)
 
 CONST [TSIGNED] isSigned = FALSE;
-(* cardinals are always unsigned *)
+(* Cardinal ADTs are always unsigned *)
 
 CONST [TBASE] base : CARDINAL;
-(* radix in which the cardinal is encoded, 2 or 10 *)
+(* Radix in which cardinal values are encoded, 2 or 10 *)
 
 CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
-(* maximum number of digits the cardinal ADT can encode *)
+(* Maximum number of digits the ADT can encode *)
 
 CONST [TMINEXP] eMin = 0;
-(* cardinals always have an exponent of zero *)
+(* Cardinal ADTs always have an exponent of zero *)
 
 CONST [TMAXEXP] eMax = 0;
-(* cardinals always have an exponent of zero *)
+(* Cardinal ADTs always have an exponent of zero *)
 
 
 (* Required Procedures *)
 
-(* Bindings to predefined functions TMIN and TMAX *)
+(* Introspection *)
+
+(* Binding to Predefined Functions TMIN and TMAX *)
 
 PROCEDURE [TMIN] minValue : ProtoCardinal;
-(* function to return the minimal value of a cardinal number ADT *)
+(* Required function to return the minimal value of a cardinal number. *)
 
 PROCEDURE [TMAX] maxValue : ProtoCardinal;
-(* function to return the maximal value of a cardinal number ADT *)
+(* Required function to return the maximal value of a cardinal number. *)
 
 
-(* Bindings to scalar conversion primitives *)
+(* Numeric Conversion *)
 
-PROCEDURE [SXF] toSXF ( lexeme : ARRAY OF CHAR; VAR sxf : ARRAY OF OCTET );
-(* procedure to convert a literal to a value in scalar exchange format *)
+(* Binding to scalar conversion primitives SXF and VAL *)
+
+PROCEDURE [SXF] toSXF ( value : ProtoCardinal; VAR sxf : ARRAY OF OCTET );
+(* Required procedure to convert a cardinal value to scalar exchange format. *)
 
 PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
-(* procedure to convert value in scalar exchange format to the ADT *)
+(* Required procedure to convert from scalar exchange format to the ADT. *)
+
+(* Conversion between any two scalar ADTs can be synthesised utilising the
+   ADTs' conversion procedures bound to SXF and VAL.
+   
+   A conversion expression of the form
+     intValue :: CardinalADT
+   is synthesised as
+     IntegerADT.toSXF(intValue, temp);
+	 CardinalADT.fromSXF(temp, result);
+   when no direct conversion is implemented. *)
 
 
-(* The assignment of literal values is synthesised from SXF and VAL *)
+(* Literal Assignment *)
 
+(* Numeric literals are converted to scalar exchange format at compile time.
+   Assignments of numeric literals to numeric ADTs are then synthesised
+   utilising an ADT's conversion procedure bound to VAL.
+   
+   An assignment of the form
+     n := 123;
+   is synthesised as
+     CardinalADT.fromSXF(sxfCompiletimeValue, n); *)
+
+
+(* Arithmetic Operations *)
+
+(* Binding to Predefined Function ABS *)
 
 PROCEDURE [ABS] abs ( n : ProtoCardinal ) : ProtoCardinal;
-(* function to bind to the ABS operator for operands of the cardinal ADT *)
+(* Required function to return the absolute value of a cardinal. *)
+
+
+(* Binding to Predefined Function ODD *)
 
 PROCEDURE [ODD] odd ( n : ProtoCardinal ) : BOOLEAN;
-(* function to bind to the ODD operator for operands of the cardinal ADT *)
-
-(* The operation NEG is not meaningful for cardinal number types *)
+(* Required function to test whether a cardinal is even or odd. *)
 
 
-(* Bindings to dyadic operations *)
+(* Binding to the + Operator *)
 
 PROCEDURE [+] add ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* function to bind to the + operator for operands of the cardinal ADT *)
+(* Required function to return the result of n + m. *)
 
 (* The operation for the ++ statement is synthesized as n := n + VAL(1) *)
 
+
+(* Binding to the - Operator *)
+
 PROCEDURE [-] subtract ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* function to bind to the - operator for operands of the cardinal ADT *)
+(* Required function to return the result of n - m. *)
 
 (* The operation for the -- statement is synthesized as n := n - VAL(1) *)
 
+
+(* Binding to the * Operator *)
+
 PROCEDURE [*] multiply ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* function to bind to the * operator for operands of the cardinal ADT *)
+(* Required function to return the result of n * m. *)
+
+
+(* Binding to the DIV Operator *)
 
 PROCEDURE [DIV] divide ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* function to bind to the DIV operator for operands of the cardinal ADT *)
+(* Required function to return the result of n DIV m. *)
+
+
+(* Binding to the MOD Operator *)
 
 PROCEDURE [MOD] modulus ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* function to bind to the MOD operator for operands of the cardinal ADT *)
+(* Required function to return the result of n MOD m. *)
 
 
-(* Bindings to relational operations *)
+(* Relational Operations *)
+
+(* Binding to Operators = and # *)
 
 PROCEDURE [=] isEqual ( n, m : ProtoCardinal ) : BOOLEAN;
-(* function to bind to the = operator for operands of the cardinal ADT *)
+(* Required function to test the equivalence of two cardinals. *)
 
 (* The operation for the # operator is synthesized as NOT (n = m) *)
 
-PROCEDURE [>] isGreater ( n, m : ProtoCardinal ) : BOOLEAN;
-(* function to bind to the > operator for operands of the cardinal ADT *)
 
-(* The operation for the <= operator is synthesized as NOT (n > m) *)
+(* Binding to Operators < and >= *)
 
 PROCEDURE [<] isLess ( n, m : ProtoCardinal ) : BOOLEAN;
-(* function to bind to the < operator for operands of the cardinal ADT *)
+(* Required function to test if one cardinal is less than another. *)
 
 (* The operation for the >= operator is synthesized as NOT (n < m) *)
+
+
+(* Binding to Operators > and <= *)
+
+PROCEDURE [>] isGreater ( n, m : ProtoCardinal ) : BOOLEAN;
+(* Required function to test if one cardinal is greater than another. *)
+
+(* The operation for the <= operator is synthesized as NOT (n > m) *)
 
 
 END ProtoCardinal.
