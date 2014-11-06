@@ -4,7 +4,8 @@ BLUEPRINT ProtoCardMath [ProtoExtension] FOR ProtoCardinal;
 
 (* Blueprint for math extension libraries of cardinal types *)
 
-MODULE TYPE = NIL;
+MODULE TYPE : NIL; (* inhibited *)
+
 
 (* Required Mathematical Functions *)
 
@@ -23,5 +24,6 @@ PROCEDURE nearestSmallerPowerOf2 ( n : ProtoCardinal ) : ProtoCardinal;
 
 PROCEDURE nearestLargerPowerOf2 ( n : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the nearest power of 2 larger than n. *)
+
 
 END ProtoCardMath.
