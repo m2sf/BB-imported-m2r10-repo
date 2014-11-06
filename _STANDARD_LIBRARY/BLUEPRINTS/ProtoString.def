@@ -105,7 +105,7 @@ PROCEDURE newWithCapacity
 
 isRefCounted ->
 PROCEDURE [RETAIN] retain ( string : ProtoString );
-(* Procedure to retain an array and prevent its deallocation.
+(* Procedure to retain a string and prevent its deallocation.
    The procedure is required when the ADT is reference counted. *)
 
 (* A statement of the form RETAIN(string)
