@@ -60,7 +60,7 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
      intValue :: CardinalADT
    is synthesised as
      IntegerADT.toSXF(intValue, temp);
-	 CardinalADT.fromSXF(temp, result);
+     CardinalADT.fromSXF(temp, result);
    when no direct conversion is implemented. *)
 
 
@@ -95,7 +95,7 @@ PROCEDURE [ODD] odd ( n : ProtoCardinal ) : BOOLEAN;
 PROCEDURE [+] add ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the result of n + m. *)
 
-(* The operation for the ++ statement is synthesized as n := n + VAL(1) *)
+(* The operation for the ++ statement is synthesized as n := n + 1 *)
 
 
 (* Binding to the - Operator *)
@@ -103,7 +103,7 @@ PROCEDURE [+] add ( n, m : ProtoCardinal ) : ProtoCardinal;
 PROCEDURE [-] subtract ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the result of n - m. *)
 
-(* The operation for the -- statement is synthesized as n := n - VAL(1) *)
+(* The operation for the -- statement is synthesized as n := n - 1 *)
 
 
 (* Binding to the * Operator *)
