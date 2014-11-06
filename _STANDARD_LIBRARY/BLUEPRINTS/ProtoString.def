@@ -55,9 +55,6 @@ CONST * invAccessorRetrievalIntercept = TRUE;
    be intercepted by user defined handlers. Always TRUE for String ADTs. *)
 
 
-(* Required Types *)
-
-
 (* Required Procedures *)
 
 
