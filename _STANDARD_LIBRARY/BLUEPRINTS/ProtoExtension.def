@@ -4,6 +4,6 @@ BLUEPRINT ProtoExtension; (* Top-level blueprint for extension libraries *)
 
 (* conforming libraries MUST NOT provide their own ADT *)
 
-MODULE TYPE = NIL;
+MODULE TYPE : NIL; (* inhibited *)
 
 END ProtoExtension.
