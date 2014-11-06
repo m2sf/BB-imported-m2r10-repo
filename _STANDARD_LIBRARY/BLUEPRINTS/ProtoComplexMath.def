@@ -4,14 +4,18 @@ BLUEPRINT ProtoComplexMath [ProtoExtension] FOR ProtoComplex;
 
 (* Blueprint for math extension libraries of complex number types *)
 
-MODULE TYPE = NIL;
+MODULE TYPE : NIL; (* inhibited *)
 
-(* Required constants *)
+
+(* Required Constants *)
 
 CONST
   i =    { 0.0, 1.0 };
   one =  { 1.0, 0.0 };
   zero = { 0.0, 0.0 };
+
+
+(* Required Functions *)
 
 PROCEDURE arg ( z : ProtoComplex ) : ProtoComplex;
 (* Required function to return the argument of z. *)
@@ -66,5 +70,6 @@ PROCEDURE polarToComplex ( abs, arg : REAL ) : ProtoComplex;
 
 PROCEDURE scalarMult ( scalar : REAL; z : ProtoComplex ) : ProtoComplex;
 (* Required function to return the scalar product of scalar and z. *)
+
 
 END ProtoComplexMath.
