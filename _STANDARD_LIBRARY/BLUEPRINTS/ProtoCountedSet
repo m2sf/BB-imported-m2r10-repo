@@ -1,0 +1,336 @@
+(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Specialised Blueprint for Dynamically Allocatable Counted Set ADTs *)
+
+BLUEPRINT ProtoCountedSet [ProtoCollection];
+
+REFERENTIAL ElementType, CounterType, HandlerType, LoopBodyType;
+
+
+(* Required Module Type *)
+
+MODULE TYPE = OPAQUE := { ARGLIST OF ElementType };
+(* Counted Set ADTs must be opaque,
+   structured literals with a list of elements are compatible. *)
+
+
+(* Required Constants *)
+
+
+(* Mutability *)
+
+CONST isMutable : BOOLEAN;
+(* Required constant to define whether the ADT should be mutable.
+   Its value may be TRUE or FALSE. *)
+
+
+(* Memory Management Model *)
+
+CONST isRefCounted = TRUE;
+(* Required constant to define whether conforming ADTs should be
+   reference counted. Its value is always TRUE for counted Set ADTs. *)
+
+
+(* Orderedness *)
+
+CONST [DESCENDING] isOrdered : BOOLEAN;
+(* Required constant to define whether conforming ADTs should be ordered.
+   Its value may be TRUE or FALSE. *)
+
+
+(* NIL Storage *)
+
+CONST [NIL] allowsNilStorage = FALSE;
+(* Required constant to define whether NIL should be a storable value.
+   Its value is always FALSE for Set ADTs. *)
+
+
+(* Support for Invalid Accessor Retrieval Intercept *)
+
+CONST * invAccessorRetrievalIntercept : BOOLEAN;
+(* Required constant to define whether invalid accessor retrieval errors may
+   be intercepted by user defined handlers. Always FALSE for Set ADTs. *)
+
+
+(* Required Procedures *)
+
+
+(* Introspection *)
+
+(* Binding to Predefined Function TLIMIT *)
+
+PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
+(* Required function to return the allocation capacity limit of the set ADT. *)
+
+(* An expression of the form TLIMIT(SetADT)
+   is synthesised as SetADT.capacityLimit(). *)
+
+
+(* Binding to Predefined Function COUNT *)
+
+PROCEDURE [COUNT] count ( set : ProtoCountedSet ) : LONGCARD;
+(* Required function to return the number of elements stored in a set. *)
+
+(* An expression of the form COUNT(set)
+   is synthesised as SetADT.count(set). *)
+
+
+PROCEDURE capacity ( set : ProtoCountedSet ) : LONGCARD;
+(* Required function to return the allocated capacity of a set. *)
+
+PROCEDURE entryLimit ( set : ProtoCountedSet ) : LONGCARD;
+(* Required function to return the element limit of a set. *)
+
+PROCEDURE isResizable ( set : ProtoCountedSet ) : BOOLEAN;
+(* Required function to return the resizable property of a set. *)
+
+
+(* Memory Management *)
+
+(* Binding to Predefined Procedure NEW *)
+
+PROCEDURE [NEW] new
+  ( VAR set : ProtoCountedSet; initWith : ARGLIST OF ElementType );
+(* Required procedure to allocate a new set and initialise it
+   with zero or more given elements. *)
+
+(* A statement of the form NEW(set)
+   is synthesised as SetADT.new(set).
+   
+   A statement of the form NEW(set, elem1, elem2, elem3, ...)
+   is synthesised as SetADT.new(set, elem1, elem2, elem3, ...). *)
+
+
+isMutable ->
+PROCEDURE newWithCapacity
+  ( VAR set : ProtoCountedSet; capacity : LONGCARD );
+(* Procedure to allocate a new set with a given initial capacity.
+   The procedure is required when the ADT is mutable. *)
+
+
+(* Binding to Predefined Procedure RETAIN *)
+
+isRefCounted ->
+PROCEDURE [RETAIN] retain ( set : ProtoCountedSet );
+(* Procedure to retain a set and prevent its deallocation.
+   The procedure is required when the ADT is reference counted. *)
+
+(* A statement of the form RETAIN(set)
+   is synthesised as SetADT.retain(set). *)
+
+
+(* Binding to Predefined Procedure RELEASE *)
+
+PROCEDURE [RELEASE] release ( set : ProtoCountedSet );
+(* Required procedure to cancel an outstanding retain
+   or deallocate a set if no retains are outstanding. *)
+
+(* A statement of the form RELEASE(set)
+   is synthesised as SetADT.release(set). *)
+
+
+(* Literal Assignment *)
+
+(* Binding to the := Operator *)
+
+isMutable ->
+PROCEDURE [:=] assignLiteral
+  ( set : ProtoCountedSet; literal : ARGLIST OF ElementType );
+(* Procedure to destructively copy the contents of a set literal to a set.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form set := { elem1, elem2, elem3, ... };
+   is synthesised as SetADT.assignLiteral(set, elem1, elem2, elem3, ...). *)
+
+
+(* Copying *)
+
+(* Binding to Predefined Function DUP *)
+
+PROCEDURE [DUP] newWithCopy ( source : ProtoCountedSet ) : ProtoCountedSet;
+(* Required function to return a newly allocated copy of a set. *)
+
+(* An expression of the form DUP(set)
+   is synthesised as SetADT.newWithCopy(set). *)
+
+
+(* Binding to Predefined Procedure COPY *)
+
+isMutable ->
+PROCEDURE [COPY] copy ( source : ProtoCountedSet; target : ProtoCountedSet );
+(* Procedure to destructively copy the contents of one set to another.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form COPY(set1, set2)
+   is synthesised as SetADT.copy(set1, set2). *)
+
+
+(* Value Storage *)
+
+(* Binding to Predefined Procedure STORE *)
+
+isMutable ->
+PROCEDURE [STORE] storeCounterForElement
+ ( set : ProtoCountedSet; element : ElementType; counter : CounterType );
+(* Procedure to store a counter value for an element in a set.
+   The procedure is required when the ADT is mutable. *)
+
+(* A statement of the form set[element] := counter
+   is equivalent to STORE(set, element, counter) and
+   is synthesised as SetADT.storeCounterForElement(set, element, counter). *)
+
+
+(* Value Retrieval *)
+
+(* Binding to Predefined Function RETRIEVE *)
+
+PROCEDURE [RETRIEVE] counterForElement
+  ( set : ProtoCountedSet; element : ElementType ) : CounterType;
+(* Required function to return the counter value for an element in a set. *)
+
+(* An expression of the form set[element]
+   is equivalent to RETRIEVE(set, element) and
+   is synthesised as SetADT.counterForElement(set, element). *)
+
+
+(* Value Insertion *)
+
+(* Binding to Predefined Procedure INSERT *)
+
+PROCEDURE [INSERT] insertElements
+  ( set : ProtoCountedSet; elementList : VARGLIST OF ElementType );
+(* Required procedure to add one or more elements to a set. *)
+
+(* A statement of the form INSERT(set, elem1, elem2, elem3, ...)
+   is synthesised as SetADT.insertElements(set, elem1, elem2, elem3, ...). *)
+
+
+(* Value Removal *)
+
+(* Binding to Predefined Procedure REMOVE *)
+
+PROCEDURE [REMOVE] removeElements
+  ( set : ProtoCountedSet; elementList : ARGLIST OF ElementType );
+(* Required procedure to remove one or more elements from a set. *)
+
+(* A statement of the form REMOVE(set, elem1, elem2, elem3, ...)
+   is synthesised as SetADT.removeElements(set, elem1, elem2, elem3, ...).
+   
+   A statement of the form set[element] := NIL
+   is equivalent to REMOVE(set, element)
+   and is synthesised as SetADT.removeElements(set, element). *)
+
+
+(* Membership Test *)
+
+(* Binding to IN syntax *)
+
+PROCEDURE [IN] hasNonZeroCounter
+  ( set : ProtoCountedSet; element : ElementType ) : BOOLEAN;
+(* Function to test whether a counter for an element in a set is non-zero. *)
+
+(* An expression of the form element IN set
+   is synthesised as SetADT.hasNonZeroCounter(set, element). *)
+
+
+(* Iteration *)
+
+(* Binding to FOR IN iterator *)
+
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoCountedSet, CONST ElementType );
+(* Required procedure type to synthesise the body of a for loop. *)
+
+PROCEDURE [FOR] forIterator
+  ( VAR set : ProtoCountedSet;
+    doStatements : LoopBodyType;
+    ascending : BOOLEAN );
+(* Required procedure to iterate over all elements of a set
+   and execute the passed in doStatements for each element. *)
+   
+(* A statement of the form
+     FOR element IN set DO statementSeq END
+   is synthesised in two steps.
+   
+   The loop header is synthesised as
+     SetADT.forIterator(set, forLoopBody, TRUE);
+   
+   The loop body is synthesised as
+     PROCEDURE forLoopBody
+       ( VAR set : SetADT; CONST element : ElementType ) <*INLINE*>;
+     BEGIN statementSeq END forLoopBody; *)
+
+
+(* Set Operations *) 
+
+(* Binding to the + Operator *)
+
+isRefCounted ->
+PROCEDURE [+] addCounters ( set1, set2 : ProtoSet ) : ProtoSet;
+(* Function to return the union of two counted sets.
+   The function is required when the ADT is reference counted. *)
+
+(* An expression of the form set1 + set2
+   is synthesised as SetADT.addCounters(set1, set2). *)
+
+
+(* Binding to the - Operator *)
+
+isRefCounted ->
+PROCEDURE [-] subCounters ( set1, set2 : ProtoSet ) : ProtoSet;
+(* Function to return the set difference of two counted sets.
+   The function is required when the ADT is reference counted. *)
+
+(* An expression of the form set1 - set2
+   is synthesised as SetADT.subCounters(set1, set2). *)
+
+
+(* Relational Operations *)
+
+(* Binding to the = and # Operators *)
+
+PROCEDURE [=] isEqual ( set1, set2 : ProtoCountedSet ) : BOOLEAN;
+(* Required unction to test the equality of two sets. *)
+
+(* An expression of the form set1 = set2
+   is synthesised as SetADT.isEqual(set1, set2).
+   
+   An expression of the form set1 # set2
+   is synthesised as NOT SetADT.isEqual(set1, set2). *)
+
+
+(* Binding to Predefined Function SUBSET *)
+
+PROCEDURE [SUBSET] isSubset ( set1, set2 : ProtoCountedSet ) : BOOLEAN;
+(* Required function to test whether one set is a subset of another. *)
+
+(* An expression of the form set1 > set2
+   is synthesised as SetADT.isSubset(set2, set1).
+   
+   An expression of the form set1 >= set2 is synthesised as
+   (COUNT(set1) > COUNT(set2)) AND SetADT.isSubset(set2, set1).
+   
+   An expression of the form set1 < set2
+   is synthesised as SetADT.isSubset(set1, set2).
+   
+   An expression of the form set1 <= set2 is synthesised as
+   (COUNT(set1) < COUNT(set2)) AND SetADT.isSubset(set1, set2). *)
+
+
+(* Conditionally Inhibited Bindings *)
+
+(* None *)
+
+
+(* Unconditionally Inhibited Bindings *)
+
+(* Set Operations *)
+
+(* Operations * and / are not meaningful for counted set ADTs.
+   Conforming blueprints may not require binding to these operations. *)
+
+PROCEDURE [*] : NIL; (* inhibited *)
+
+PROCEDURE [/] : NIL; (* inhibited *)
+
+
+END ProtoCountedSet.
