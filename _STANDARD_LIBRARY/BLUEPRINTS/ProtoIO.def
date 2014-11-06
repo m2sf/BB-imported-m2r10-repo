@@ -6,7 +6,8 @@ BLUEPRINT ProtoIO [ProtoExtension] FOR ProtoRoot;
 
 REFERENTIAL File;
 
-MODULE TYPE = NIL;
+MODULE TYPE : NIL; (* inhibited *)
+
 
 (* Required IO bindings *)
 
@@ -19,5 +20,6 @@ PROCEDURE [WRITE] Write ( f : File; value : ProtoRoot );
 PROCEDURE [WRITEF] WriteF
   ( f : File; fmt : ARRAY OF CHAR; values : ARGLIST OF ProtoRoot );
 (* Required binding to macro WRITEF for values of the target type *)
+
 
 END ProtoIO.
