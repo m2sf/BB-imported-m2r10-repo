@@ -4,34 +4,76 @@
 
 BLUEPRINT ProtoDictionary [ProtoCollection];
 
-REFERENTIAL KeyType, ValueType, ProcType, File;
+REFERENTIAL KeyType, ValueType, LoopBodyType, File;
 
 
-(* Dictionary ADTs must be opaque,
-   variadic structured literals with key/value pairs are compatible *)
+(* Required Module Type *)
 
 MODULE TYPE = OPAQUE := { ARGLIST OF { KeyType, ValueType } };
-
-
-(* Bindings required for dictionary ADTs *)
+(* Dictionary ADTs must be opaque,
+   variadic structured literals with key/value pairs are compatible *)
 
 
 (* Required Constants *)
 
-CONST [:=] isMutable : BOOLEAN;
-(* whether the dictionary ADT is mutable *)
+
+(* Mutability *)
+
+CONST isMutable : BOOLEAN;
+(* Required constant to define whether the ADT should be mutable.
+   Its value may be TRUE or FALSE. *)
+
+
+(* Memory Management Model *)
+
+CONST isRefCounted : BOOLEAN;
+(* Required constant to define whether conforming ADTs should be
+   reference counted. Its value may be TRUE or FALSE. *)
+
+
+(* Orderedness *)
 
 CONST [DESCENDING] isOrdered : BOOLEAN;
-(* whether the dictionary ADT is ordered *)
+(* Required constant to define whether conforming ADTs should be ordered.
+   Its value may be TRUE or FALSE. *)
 
 
-(* Capacity limit *)
+(* NIL Storage *)
+
+CONST [NIL] allowsNilStorage : BOOLEAN;
+(* Required constant to define whether NIL should be a storable value.
+   Its value may be TRUE or FALSE. *)
+
+
+(* Support for Invalid Accessor Retrieval Intercept *)
+
+CONST * invAccessorRetrievalIntercept = TRUE;
+(* Required constant to define whether invalid accessor retrieval errors may
+   be intercepted by user defined handlers. Its value may be TRUE or FALSE. *)
+
+
+(* Required Procedures *)
+
+
+(* Introspection *)
+
+(* Binding to Predefined Function TLIMIT *)
 
 PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Function to return the allocation capacity limit of the ADT type. *)
+(* Required function to return the allocation capacity limit of the ADT. *)
 
-(* An invocation of TLIMIT(ADT)) is transformed at compile time to
-   ADT.capacityLimit() when the operand is the ADT type. *)
+(* An expression of the form TLIMIT(DictADT))
+   is synthesised as DictADT.capacityLimit(). *)
+
+
+(* Binding to Predefined Function COUNT *)
+
+PROCEDURE [COUNT] count ( dict : ProtoDictionary ) : LONGCARD;
+(* Required function to return the number of key/value pairs stored
+   in a dictionary. *)
+
+(* An expression of the form COUNT(dict)
+   is synthesised as DictADT.count(dict). *)
 
 
 (* Memory Management *)
