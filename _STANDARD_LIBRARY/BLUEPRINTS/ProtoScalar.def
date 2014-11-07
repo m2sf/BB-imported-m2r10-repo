@@ -1,98 +1,278 @@
 (* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Blueprint for Scalar Numeric ADTs *)
+(* Specialised Blueprint for Scalar ADTs *)
 
-BLUEPRINT ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
-
-(* Scalar number ADTs must be opaque records to be statically allocatable,
-   either integer or real number literals may be used, but not both *)
-
-MODULE TYPE = OPAQUE RECORD := INTEGER | REAL;
+BLUEPRINT ProtoCardinal [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
 
-(* Bindings required for scalar ADTs *)
+(* Required Module Type *)
+
+MODULE TYPE = RECORD := INTEGER | REAL;
+(* Cardinal ADTs must be records to be statically allocatable,
+   integer and real number literals are compatible. *)
 
 
 (* Required Constants *)
 
+
 CONST [TSIGNED] isSigned : BOOLEAN;
-(* whether the ADT is signed or unsigned *)
+(* Required constant to define whether the ADT is signed. *)
 
 CONST [TBASE] base : CARDINAL;
-(* radix in which values of the ADT are encoded, 2 or 10 *)
+(* Radix in which the ADT's values are encoded, 2 or 10. *)
 
 CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
-(* maximum number of digits the ADT can encode *)
+(* Maximum number of digits the ADT can encode. *)
 
 CONST [TMINEXP] eMin : INTEGER;
-(* smallest exponent the ADT can encode *)
+(* Value of the ADT's smallest exponent. *)
 
-CONST [TMAXEXP] eMax : CARDINAL;
-(* largest exponent the ADT can encode *)
+CONST [TMAXEXP] eMax : INTEGER;
+(* Value of the ADT's largest exponent. *)
+
+CONST * isWholeNumberADT = (eMin=0 AND eMax=0);
+(* Internal flag to test whether the ADT represents whole numbers. *)
 
 
 (* Required Procedures *)
 
-(* Bindings to predefined functions TMIN and TMAX *)
+
+(* Introspection *)
+
+(* Binding to Predefined Function TMIN *)
 
 PROCEDURE [TMIN] minValue : ProtoScalar;
-(* function to return the minimal value of the ADT *)
+(* Required function to return the minimal value the ADT can encode. *)
+
+(* An expression of the form TMIN(ScalarADT)
+   is synthesised as ScalarADT.minValue(). *)
+
+
+(* Binding to Predefined Function TMAX *)
 
 PROCEDURE [TMAX] maxValue : ProtoScalar;
-(* function to return the maximal value of the ADT *)
+(* Required function to return the maximal value the ADT can encode. *)
+
+(* An expression of the form TMAX(CardinalADT)
+   is synthesised as CardinalADT.maxValue(). *)
 
 
-(* Bindings to scalar conversion primitives *)
+(* Numeric Conversion *)
 
-PROCEDURE [SXF] toSXF ( lexeme : ARRAY OF CHAR; VAR sxf : ARRAY OF OCTET );
-(* procedure to convert a literal to a value in scalar exchange format *)
+(* Binding to scalar conversion primitives SXF and VAL *)
+
+PROCEDURE [SXF] toSXF ( value : ProtoScalar; VAR sxf : ARRAY OF OCTET );
+(* Required procedure to convert a scalar value to scalar exchange format. *)
 
 PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoScalar );
-(* procedure to convert value in scalar exchange format to the scalar ADT *)
+(* Required procedure to convert from scalar exchange format to the ADT. *)
+
+(* Conversion between any two scalar ADTs can be synthesised utilising the
+   ADTs' conversion procedures bound to SXF and VAL.
+   
+   A conversion expression of the form
+     intValue :: CardinalADT
+   is synthesised as
+     IntegerADT.toSXF(intValue, temp);
+     CardinalADT.fromSXF(temp, result);
+   when no direct conversion is implemented. *)
 
 
-(* The assignment of literal values is synthesised from SXF and VAL. *)
+(* Literal Assignment *)
+
+(* Numeric literals are converted to scalar exchange format at compile time.
+   Assignments of numeric literals to numeric ADTs are then synthesised
+   utilising an ADT's conversion procedure bound to VAL.
+   
+   An assignment of the form
+     scalar := 123;
+   is synthesised as
+     ScalarADT.fromSXF(sxfCompiletimeValue, scalar); *)
 
 
-(* The operations ABS, NEG and ODD are not common to all scalar types,
-   their bindings may be required by more specialised blueprints. *)
+(* Iteration *)
+
+(* Binding to FOR IN iterator *)
+
+(* Scalar ADTs may not bind any procedure to FOR.
+   
+   Instead, iteration over scalar ADTs and subranges of Scalar ADTs is auto-
+   matically supported if and only if all of the following conditions are met:
+   
+   (1) the ADT binds a constant value of zero to both TMINEXP and TMAXEXP,
+   (2) the ADT provides bindings for TMIN and TMAX,
+   (3) the ADT provides bindings for + and -,
+   (4) the ADT provides bindings for < and >.
+   
+   A statement of the form
+     FOR n IN ScalarADT DO ...
+   is equivalent to
+     FOR n IN [lower .. upper] OF ScalarADT DO ...
+   where lower = TMIN(ScalarADT) and upper = TMAX(ScalarADT).
+     
+   A statement of the form
+     FOR n IN [lower .. upper] OF ScalarADT DO statementSeq END
+   is synthesised as
+     VAR n : ScalarADT;
+     n := lower;
+     LOOP
+       statementSeq;
+       IF n < upper THEN n++ ELSE EXIT END
+     END;
+   
+   A statement of the form
+     FOR DESCENDING n IN ScalarADT DO ...
+   is equivalent to
+     FOR DESCENDING n IN [lower .. upper] OF ScalarADT DO ...
+   where lower = TMIN(ScalarADT) and upper = TMAX(ScalarADT).
+
+   A statement of the form
+     FOR DESCENDING n IN [lower .. upper] OF ScalarADT DO statementSeq END
+   is synthesised as
+     VAR n : ScalarADT;
+     n := upper;
+     LOOP
+       statementSeq;
+       IF n > lower THEN n-- ELSE EXIT END
+     END; *)
 
 
-(* Bindings to dyadic operations *)
+(* Arithmetic Operations *)
 
-PROCEDURE [+] add ( op1, op2 : ProtoScalar ) : ProtoScalar;
-(* function to bind to the + operator for operands of the ADT *)
+(* Binding to Predefined Function ABS *)
 
-(* The operation for the ++ statement is synthesized as op := op + VAL(1) *)
+PROCEDURE [ABS] abs ( scalar : ProtoScalar ) : ProtoScalar;
+(* Required function to return the absolute value of a scalar. *)
 
-PROCEDURE [-] subtract ( op1, op2 : ProtoScalar ) : ProtoScalar;
-(* function to bind to the - operator for operands of the ADT *)
-
-(* The operation for the -- statement is synthesized as op := op - VAL(1) *)
-
-PROCEDURE [*] multiply ( op1, op2 : ProtoScalar ) : ProtoScalar;
-(* function to bind to the * operator for operands of the ADT *)
-
-(* The operations /, DIV and MOD are not common to all scalar types,
-   their bindings may be required by more specialised blueprints. *)
+(* An expression of the form ABS(scalar)
+   is synthesised as ScalarADT.abs(scalar). *)
 
 
-(* Bindings to relational operations *)
+(* Binding to Predefined Function ODD *)
 
-PROCEDURE [=] isEqual ( op1, op2 : ProtoScalar ) : BOOLEAN;
-(* function to bind to the = operator for operands of the ADT *)
+isWholeNumberADT ->
+PROCEDURE [ODD] odd ( scalar : ProtoScalar ) : BOOLEAN;
+(* Function to test whether a scalar is even or odd.
+   The function is required when the TMINEXP and TMAXEXP are both zero. *)
 
-(* The operation for the # operator is synthesized as NOT (op1 = op2) *)
+(* An expression of the form ODD(scalar)
+   is synthesised as ScalarADT.odd(scalar). *)
 
-PROCEDURE [>] isGreater ( op1, op2 : ProtoScalar ) : BOOLEAN;
-(* function to bind to the > operator for operands of the ADT *)
 
-(* The operation for the <= operator is synthesized as NOT (op1 > op2) *)
+(* Binding to Predefined Function NEG *)
 
-PROCEDURE [<] isLess ( op1, op2 : ProtoScalar ) : BOOLEAN;
-(* function to bind to the < operator for operands of the ADT *)
+isSigned ->
+PROCEDURE [NEG] neg ( scalar : ProtoScalar ) : BOOLEAN;
+(* Function to return the sign reversed value of a scalar.
+   The function is required when the TSIGNED is true. *)
 
-(* The operation for the >= operator is synthesized as NOT (op1 < op2) *)
+(* An expression of the form -scalar
+   is equivalent to NEG(scalar)
+   and synthesised as ScalarADT.neg(scalar). *)
+
+
+(* Binding to the + Operator *)
+
+PROCEDURE [+] add ( s1, s2 : ProtoScalar ) : ProtoScalar;
+(* Required function to return the sum of two scalars. *)
+
+(* An expression of the form s1 + s2
+   is synthesised as ScalarADT.add(s1, s2).
+   
+   A statement of the form scalar++
+   is synthesised as ScalarADT.add(scalar, 1 :: ScalarADT). *)
+
+
+(* Binding to the - Operator *)
+
+PROCEDURE [-] subtract ( s1, s2 : ProtoScalar ) : ProtoScalar;
+(* Required function to return the difference of two scalars. *)
+
+(* An expression of the form s1 - s2
+   is synthesised as ScalarADT.subtract(s1, s2).
+   
+   A statement of the form scalar--
+   is synthesised as ScalarADT.subtract(scalar, 1 :: ScalarADT). *)
+
+
+(* Binding to the * Operator *)
+
+PROCEDURE [*] multiply ( s1, s2 : ProtoScalar ) : ProtoScalar;
+(* Required function to return the product of two scalars. *)
+
+(* An expression of the form scalar1 * scalar2
+   is synthesised as ScalarADT.multiply(scalar1, scalar2). *)
+
+
+(* Binding to the / Operator *)
+
+NOT isWholeNumberADT ->
+PROCEDURE [/] divide ( s1, s2 : ProtoScalar ) : ProtoScalar;
+(* Function to return the quotient of two scalars, using real number division.
+   The function is required when the ADT represents real numbers. *)
+
+(* An expression of the form scalar1 / scalar2
+   is synthesised as ScalarADT.divide(scalar1, scalar2). *)
+
+
+(* Binding to the DIV Operator *)
+
+isWholeNumberADT ->
+PROCEDURE [DIV] divide ( s1, s2 : ProtoScalar ) : ProtoScalar;
+(* Function to return the quotient of two scalars, using integer division.
+   The function is required when the ADT represents whole numbers. *)
+
+(* An expression of the form scalar1 DIV scalar2
+   is synthesised as ScalarADT.divide(scalar1, scalar2). *)
+
+
+(* Binding to the MOD Operator *)
+
+isWholeNumberADT ->
+PROCEDURE [MOD] modulus ( s1, s2 : ProtoScalar ) : ProtoScalar;
+(* Function to return the modulus of two scalars.
+   The function is required when the ADT represents whole numbers. *)
+
+(* An expression of the form scalar1 MOD scalar2
+   is synthesised as ScalarADT.modulus(scalar1, scalar2). *)
+
+
+(* Relational Operations *)
+
+(* Binding to Operators = and # *)
+
+PROCEDURE [=] isEqual ( s1, s2 : ProtoScalar ) : BOOLEAN;
+(* Required function to test the equivalence of two scalars. *)
+
+(* An expression of the form scalar1 = scalar2
+   is synthesised as ScalarADT.isEqual(scalar1, scalar2).
+   
+   An expression of the form s1 # s2
+   is synthesised as (NOT ScalarADT.isEqual(s1, s2)). *)
+
+
+(* Binding to Operators < and >= *)
+
+PROCEDURE [<] isLess ( s1, s2 : ProtoScalar ) : BOOLEAN;
+(* Required function to test if one scalar is less than another. *)
+
+(* An expression of the form s1 < s2
+   is synthesised as ScalarADT.isLess(s1, s2).
+   
+   An expression of the form s1 >= s2
+   is synthesised as (NOT ScalarADT.isLess(s1, s2)). *)
+
+
+(* Binding to Operators > and <= *)
+
+PROCEDURE [>] isGreater ( s1, s2 : ProtoScalar ) : BOOLEAN;
+(* Required function to test if one scalar is greater than another. *)
+
+(* An expression of the form s1 > s2
+   is synthesised as ScalarADT.isGreater(s1, s2).
+   
+   An expression of the form s1 <= s2
+   is synthesised as (NOT ScalarADT.isGreater(s1, s2)). *)
 
 
 END ProtoScalar.
