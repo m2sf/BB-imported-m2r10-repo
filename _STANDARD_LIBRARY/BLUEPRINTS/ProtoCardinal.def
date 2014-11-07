@@ -1,13 +1,13 @@
 (* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Blueprint for Cardinal Number ADTs *)
+(* Specialised Blueprint for Cardinal ADTs *)
 
-BLUEPRINT ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
+BLUEPRINT ProtoCardinal [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
 
 (* Required Module Type *)
 
-MODULE TYPE = RECORD := INTEGER;
+MODULE TYPE = RECORD := INTEGER | REAL;
 (* Cardinal ADTs must be records to be statically allocatable,
    integer literals are compatible. *)
 
@@ -16,19 +16,22 @@ MODULE TYPE = RECORD := INTEGER;
 
 
 CONST [TSIGNED] isSigned = FALSE;
-(* Cardinal ADTs are always unsigned *)
+(* Cardinal ADTs are always signed. *)
 
 CONST [TBASE] base : CARDINAL;
-(* Radix in which cardinal values are encoded, 2 or 10 *)
+(* Radix in which the ADT's values are encoded, 2 or 10. *)
 
 CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
-(* Maximum number of digits the ADT can encode *)
+(* Maximum number of digits the ADT can encode. *)
 
 CONST [TMINEXP] eMin = 0;
 (* Cardinal ADTs always have an exponent of zero *)
 
 CONST [TMAXEXP] eMax = 0;
 (* Cardinal ADTs always have an exponent of zero *)
+
+CONST * isWholeNumberADT = TRUE;
+(* Internal flag indicating that the ADT represents whole numbers. *)
 
 
 (* Required Procedures *)
@@ -39,7 +42,7 @@ CONST [TMAXEXP] eMax = 0;
 (* Binding to Predefined Function TMIN *)
 
 PROCEDURE [TMIN] minValue : ProtoCardinal;
-(* Required function to return the minimal value of a cardinal number. *)
+(* Required function to return the minimal value the ADT can encode. *)
 
 (* An expression of the form TMIN(CardinalADT)
    is synthesised as CardinalADT.minValue(). *)
@@ -48,7 +51,7 @@ PROCEDURE [TMIN] minValue : ProtoCardinal;
 (* Binding to Predefined Function TMAX *)
 
 PROCEDURE [TMAX] maxValue : ProtoCardinal;
-(* Required function to return the maximal value of a cardinal number. *)
+(* Required function to return the maximal value the ADT can encode. *)
 
 (* An expression of the form TMAX(CardinalADT)
    is synthesised as CardinalADT.maxValue(). *)
@@ -87,6 +90,53 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
      CardinalADT.fromSXF(sxfCompiletimeValue, n); *)
 
 
+(* Iteration *)
+
+(* Binding to FOR IN iterator *)
+
+(* Scalar ADTs may not bind any procedure to FOR.
+   
+   Instead, iteration over scalar ADTs and subranges of Scalar ADTs is auto-
+   matically supported if and only if all of the following conditions are met:
+   
+   (1) the ADT binds a constant value of zero to both TMINEXP and TMAXEXP,
+   (2) the ADT provides bindings for TMIN and TMAX,
+   (3) the ADT provides bindings for + and -,
+   (4) the ADT provides bindings for < and >.
+   
+   A statement of the form
+     FOR n IN CardinalADT DO ...
+   is equivalent to
+     FOR n IN [lower .. upper] OF CardinalADT DO ...
+   where lower = TMIN(CardinalADT) and upper = TMAX(CardinalADT).
+     
+   A statement of the form
+     FOR n IN [lower .. upper] OF CardinalADT DO statementSeq END
+   is synthesised as
+     VAR n : CardinalADT;
+     n := lower;
+     LOOP
+       statementSeq;
+       IF n < upper THEN n++ ELSE EXIT END
+     END;
+   
+   A statement of the form
+     FOR DESCENDING n IN CardinalADT DO ...
+   is equivalent to
+     FOR DESCENDING n IN [lower .. upper] OF CardinalADT DO ...
+   where lower = TMIN(CardinalADT) and upper = TMAX(CardinalADT).
+
+   A statement of the form
+     FOR DESCENDING n IN [lower .. upper] OF CardinalADT DO statementSeq END
+   is synthesised as
+     VAR n : CardinalADT;
+     n := upper;
+     LOOP
+       statementSeq;
+       IF n > lower THEN n-- ELSE EXIT END
+     END; *)
+
+
 (* Arithmetic Operations *)
 
 (* Binding to Predefined Function ABS *)
@@ -110,31 +160,31 @@ PROCEDURE [ODD] odd ( n : ProtoCardinal ) : BOOLEAN;
 (* Binding to the + Operator *)
 
 PROCEDURE [+] add ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* Required function to return the result of n + m. *)
+(* Required function to return the sum of two cardinals. *)
 
-(* An expression of the form n + m
+(* An expression of the form n + sm
    is synthesised as CardinalADT.add(n, m).
    
    A statement of the form n++
-   is synthesised as CardinalADT.add(n, 1). *)
+   is synthesised as CardinalADT.add(n, 1 :: CardinalADT). *)
 
 
 (* Binding to the - Operator *)
 
 PROCEDURE [-] subtract ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* Required function to return the result of n - m. *)
+(* Required function to return the difference of two cardinals. *)
 
 (* An expression of the form n - m
    is synthesised as CardinalADT.subtract(n, m).
    
    A statement of the form n--
-   is synthesised as CardinalADT.subtract(n, 1). *)
+   is synthesised as CardinalADT.subtract(n, 1 :: CardinalADT). *)
 
 
 (* Binding to the * Operator *)
 
 PROCEDURE [*] multiply ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* Required function to return the result of n * m. *)
+(* Required function to return the product of two cardinals. *)
 
 (* An expression of the form n * m
    is synthesised as CardinalADT.multiply(n, m). *)
@@ -143,7 +193,8 @@ PROCEDURE [*] multiply ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Binding to the DIV Operator *)
 
 PROCEDURE [DIV] divide ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* Required function to return the result of n DIV m. *)
+(* Required function to return the quotient of two cardinals, using
+   integer division. *)
 
 (* An expression of the form n DIV m
    is synthesised as CardinalADT.divide(n, m). *)
@@ -152,7 +203,7 @@ PROCEDURE [DIV] divide ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Binding to the MOD Operator *)
 
 PROCEDURE [MOD] modulus ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* Required function to return the result of n MOD m. *)
+(* Function to return the modulus of two cardinals. *)
 
 (* An expression of the form n MOD m
    is synthesised as CardinalADT.modulus(n, m). *)
