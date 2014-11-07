@@ -111,7 +111,7 @@ PROCEDURE [VAL];
      s := lower;
      LOOP
        statementSeq;
-       IF s < upper THEN n++ ELSE EXIT END
+       IF s < upper THEN s++ ELSE EXIT END
      END;
    
    A statement of the form
