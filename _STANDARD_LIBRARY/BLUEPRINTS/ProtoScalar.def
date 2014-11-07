@@ -53,8 +53,8 @@ PROCEDURE [TMIN] minValue : ProtoScalar;
 PROCEDURE [TMAX] maxValue : ProtoScalar;
 (* Required function to return the maximal value the ADT can encode. *)
 
-(* An expression of the form TMAX(CardinalADT)
-   is synthesised as CardinalADT.maxValue(). *)
+(* An expression of the form TMAX(ScalarADT)
+   is synthesised as ScalarADT.maxValue(). *)
 
 
 (* Numeric Conversion *)
