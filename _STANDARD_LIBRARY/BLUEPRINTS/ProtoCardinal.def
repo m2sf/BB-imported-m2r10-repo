@@ -36,13 +36,22 @@ CONST [TMAXEXP] eMax = 0;
 
 (* Introspection *)
 
-(* Binding to Predefined Functions TMIN and TMAX *)
+(* Binding to Predefined Function TMIN *)
 
 PROCEDURE [TMIN] minValue : ProtoCardinal;
 (* Required function to return the minimal value of a cardinal number. *)
 
+(* An expression of the form TMIN(CardinalADT)
+   is synthesised as CardinalADT.minValue(). *)
+
+
+(* Binding to Predefined Function TMAX *)
+
 PROCEDURE [TMAX] maxValue : ProtoCardinal;
 (* Required function to return the maximal value of a cardinal number. *)
+
+(* An expression of the form TMAX(CardinalADT)
+   is synthesised as CardinalADT.maxValue(). *)
 
 
 (* Numeric Conversion *)
@@ -85,11 +94,17 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
 PROCEDURE [ABS] abs ( n : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the absolute value of a cardinal. *)
 
+(* An expression of the form ABS(n)
+   is synthesised as CardinalADT.abs(n). *)
+
 
 (* Binding to Predefined Function ODD *)
 
 PROCEDURE [ODD] odd ( n : ProtoCardinal ) : BOOLEAN;
 (* Required function to test whether a cardinal is even or odd. *)
+
+(* An expression of the form ODD(n)
+   is synthesised as CardinalADT.odd(n). *)
 
 
 (* Binding to the + Operator *)
@@ -97,7 +112,11 @@ PROCEDURE [ODD] odd ( n : ProtoCardinal ) : BOOLEAN;
 PROCEDURE [+] add ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the result of n + m. *)
 
-(* The operation for the ++ statement is synthesized as n := n + 1 *)
+(* An expression of the form n + m
+   is synthesised as CardinalADT.add(n, m).
+   
+   A statement of the form n++
+   is synthesised as CardinalADT.add(n, 1). *)
 
 
 (* Binding to the - Operator *)
@@ -105,7 +124,11 @@ PROCEDURE [+] add ( n, m : ProtoCardinal ) : ProtoCardinal;
 PROCEDURE [-] subtract ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the result of n - m. *)
 
-(* The operation for the -- statement is synthesized as n := n - 1 *)
+(* An expression of the form n - m
+   is synthesised as CardinalADT.subtract(n, m).
+   
+   A statement of the form n--
+   is synthesised as CardinalADT.subtract(n, 1). *)
 
 
 (* Binding to the * Operator *)
@@ -113,17 +136,26 @@ PROCEDURE [-] subtract ( n, m : ProtoCardinal ) : ProtoCardinal;
 PROCEDURE [*] multiply ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the result of n * m. *)
 
+(* An expression of the form n * m
+   is synthesised as CardinalADT.multiply(n, m). *)
+
 
 (* Binding to the DIV Operator *)
 
 PROCEDURE [DIV] divide ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the result of n DIV m. *)
 
+(* An expression of the form n DIV m
+   is synthesised as CardinalADT.div(n, m). *)
+
 
 (* Binding to the MOD Operator *)
 
 PROCEDURE [MOD] modulus ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the result of n MOD m. *)
+
+(* An expression of the form n MOD m
+   is synthesised as CardinalADT.modulus(n, m). *)
 
 
 (* Relational Operations *)
@@ -133,7 +165,11 @@ PROCEDURE [MOD] modulus ( n, m : ProtoCardinal ) : ProtoCardinal;
 PROCEDURE [=] isEqual ( n, m : ProtoCardinal ) : BOOLEAN;
 (* Required function to test the equivalence of two cardinals. *)
 
-(* The operation for the # operator is synthesized as NOT (n = m) *)
+(* An expression of the form n = m
+   is synthesised as CardinalADT.isEqual(n, m).
+   
+   An expression of the form n # m
+   is synthesised as (NOT CardinalADT.isEqual(n, m)). *)
 
 
 (* Binding to Operators < and >= *)
@@ -141,7 +177,11 @@ PROCEDURE [=] isEqual ( n, m : ProtoCardinal ) : BOOLEAN;
 PROCEDURE [<] isLess ( n, m : ProtoCardinal ) : BOOLEAN;
 (* Required function to test if one cardinal is less than another. *)
 
-(* The operation for the >= operator is synthesized as NOT (n < m) *)
+(* An expression of the form n < m
+   is synthesised as CardinalADT.isLess(n, m).
+   
+   An expression of the form n >= m
+   is synthesised as (NOT CardinalADT.isLess(n, m)). *)
 
 
 (* Binding to Operators > and <= *)
@@ -149,7 +189,11 @@ PROCEDURE [<] isLess ( n, m : ProtoCardinal ) : BOOLEAN;
 PROCEDURE [>] isGreater ( n, m : ProtoCardinal ) : BOOLEAN;
 (* Required function to test if one cardinal is greater than another. *)
 
-(* The operation for the <= operator is synthesized as NOT (n > m) *)
+(* An expression of the form n > m
+   is synthesised as CardinalADT.isGreater(n, m).
+   
+   An expression of the form n <= m
+   is synthesised as (NOT CardinalADT.isGreater(n, m)). *)
 
 
 END ProtoCardinal.
