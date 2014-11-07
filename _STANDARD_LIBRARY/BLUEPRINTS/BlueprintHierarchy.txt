@@ -11,15 +11,15 @@ Numeric Blueprints     Collection Blueprints              Extension Blueprints
   |  +--ProtoInteger     |  +--ProtoStaticString            +--ProtoIntMath
   |  |                   |                                  |
   |  +--ProtoCardinal    +--ProtoCollection (dynamic)       +--ProtoRealMath
-  |  |                      |                               |
-  |  +--ProtoModular        +--ProtoSet (dynamic)           +--ProtoTupleMath
   |                         |                               |
-  +--ProtoNonScalar         +--ProtoCountedSet (dynamic)    +--ProtoVectorMath
+  +--ProtoNonScalar         +--ProtoSet (dynamic)           +--ProtoTupleMath
      |                      |                               |
-     +--ProtoTuple          +--ProtoArray (dynamic)         +--ProtoComplexMath
+     +--ProtoTuple          +--ProtoCountedSet (dynamic)    +--ProtoVectorMath
      |                      |                               |
-     +--ProtoVector         +--ProtoString (dynamic)        +--ProtoSetMath
+     +--ProtoVector         +--ProtoArray (dynamic)         +--ProtoComplexMath
+     |                      |                               |
+     +--ProtoComplex        +--ProtoString (dynamic)        +--ProtoSetMath
      |                      |
-     +--ProtoComplex        +--ProtoDictionary (dynamic)
+     +--ProtoDateTime       +--ProtoDictionary (dynamic)
 
-[Status: Nov 5, 2014]
+[Status: Nov 7, 2014]
