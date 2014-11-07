@@ -87,7 +87,7 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoReal );
    An assignment of the form
      r := 1.23;
    is synthesised as
-     RealADT.fromSXF(sxfCompiletimeValue, i); *)
+     RealADT.fromSXF(sxfCompiletimeValue, r); *)
 
 
 (* Arithmetic Operations *)
