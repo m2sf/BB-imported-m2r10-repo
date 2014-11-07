@@ -162,7 +162,7 @@ PROCEDURE [ODD] odd ( n : ProtoCardinal ) : BOOLEAN;
 PROCEDURE [+] add ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the sum of two cardinals. *)
 
-(* An expression of the form n + sm
+(* An expression of the form n + m
    is synthesised as CardinalADT.add(n, m).
    
    A statement of the form n++
