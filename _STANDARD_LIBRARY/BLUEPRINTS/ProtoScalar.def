@@ -141,16 +141,14 @@ PROCEDURE [ABS];
 
 (* Binding to Predefined Function ODD *)
 
-isWholeNumberADT ->
-PROCEDURE [ODD];
+isWholeNumberADT -> PROCEDURE [ODD];
 (* Specialised blueprints must require binding to ODD
    when the ADT represents whole numbers. *)
 
 
 (* Binding to Predefined Function NEG *)
 
-isSigned ->
-PROCEDURE [NEG];
+isSigned -> PROCEDURE [NEG];
 (* Specialised blueprints must require binding to NEG
    when the ADT is signed. *)
 
@@ -175,24 +173,21 @@ PROCEDURE [*];
 
 (* Binding to the / Operator *)
 
-NOT isWholeNumberADT ->
-PROCEDURE [/];
+NOT isWholeNumberADT -> PROCEDURE [/];
 (* Specialised blueprints must require binding to the / operator
    when the ADT does not represent whole numbers. *)
 
 
 (* Binding to the DIV Operator *)
 
-isWholeNumberADT ->
-PROCEDURE [DIV];
+isWholeNumberADT -> PROCEDURE [DIV];
 (* Specialised blueprints must require binding to the DIV operator
    when the ADT represents whole numbers. *)
 
 
 (* Binding to the MOD Operator *)
 
-isWholeNumberADT ->
-PROCEDURE [MOD];
+isWholeNumberADT -> PROCEDURE [MOD];
 (* Specialised blueprints must require binding to the MOD operator
    when the ADT represents whole numbers. *)
 
