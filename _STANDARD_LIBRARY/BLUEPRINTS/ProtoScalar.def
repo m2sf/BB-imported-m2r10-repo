@@ -180,7 +180,8 @@ PROCEDURE [+] add ( s1, s2 : ProtoScalar ) : ProtoScalar;
    is synthesised as ScalarADT.add(s1, s2).
    
    A statement of the form scalar++
-   is synthesised as ScalarADT.add(scalar, 1 :: ScalarADT). *)
+   is synthesised as ScalarADT.add(scalar, 1 :: ScalarADT)
+   when the ADT represents whole numbers. *)
 
 
 (* Binding to the - Operator *)
@@ -192,7 +193,8 @@ PROCEDURE [-] subtract ( s1, s2 : ProtoScalar ) : ProtoScalar;
    is synthesised as ScalarADT.subtract(s1, s2).
    
    A statement of the form scalar--
-   is synthesised as ScalarADT.subtract(scalar, 1 :: ScalarADT). *)
+   is synthesised as ScalarADT.subtract(scalar, 1 :: ScalarADT).
+   when the ADT represents whole numbers. *)
 
 
 (* Binding to the * Operator *)
