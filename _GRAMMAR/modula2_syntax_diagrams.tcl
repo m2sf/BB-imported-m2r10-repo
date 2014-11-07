@@ -220,7 +220,7 @@ lappend non_terminals blueprintForTypeToExtend {
 lappend non_terminals moduleTypeRequirement {
   line MODULE TYPE {
     or
-      {line = {or OPAQUE RECORD *} {optx {loop {line := protoLiteral} |}}}
+      {line = {or OPAQUE RECORD *} {optx := {loop protoLiteral |}}}
       {line : /NIL}
     }
 }
