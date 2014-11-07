@@ -1,6 +1,6 @@
 (* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Blueprint for Scalar ADTs *)
+(* General Blueprint for Scalar ADTs *)
 
 BLUEPRINT ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
@@ -41,31 +41,25 @@ CONST * isWholeNumberADT = (eMin=0 AND eMax=0);
 
 (* Binding to Predefined Function TMIN *)
 
-PROCEDURE [TMIN] minValue : ProtoScalar;
-(* Required function to return the minimal value the ADT can encode. *)
-
-(* An expression of the form TMIN(ScalarADT)
-   is synthesised as ScalarADT.minValue(). *)
+PROCEDURE [TMIN];
+(* Specialised blueprints must always require binding to TMIN. *)
 
 
 (* Binding to Predefined Function TMAX *)
 
-PROCEDURE [TMAX] maxValue : ProtoScalar;
-(* Required function to return the maximal value the ADT can encode. *)
-
-(* An expression of the form TMAX(ScalarADT)
-   is synthesised as ScalarADT.maxValue(). *)
+PROCEDURE [TMAX];
+(* Specialised blueprints must always require binding to TMAX. *)
 
 
 (* Numeric Conversion *)
 
 (* Binding to scalar conversion primitives SXF and VAL *)
 
-PROCEDURE [SXF] toSXF ( value : ProtoScalar; VAR sxf : ARRAY OF OCTET );
-(* Required procedure to convert a scalar value to scalar exchange format. *)
+PROCEDURE [SXF];
+(* Specialised blueprints must always require binding to SXF. *)
 
-PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoScalar );
-(* Required procedure to convert from scalar exchange format to the ADT. *)
+PROCEDURE [VAL];
+(* Specialised blueprints must always require binding to VAL. *)
 
 (* Conversion between any two scalar ADTs can be synthesised utilising the
    ADTs' conversion procedures bound to SXF and VAL.
@@ -105,35 +99,35 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoScalar );
    (4) the ADT provides bindings for < and >.
    
    A statement of the form
-     FOR n IN ScalarADT DO ...
+     FOR s IN ScalarADT DO ...
    is equivalent to
-     FOR n IN [lower .. upper] OF ScalarADT DO ...
+     FOR s IN [lower .. upper] OF ScalarADT DO ...
    where lower = TMIN(ScalarADT) and upper = TMAX(ScalarADT).
      
    A statement of the form
-     FOR n IN [lower .. upper] OF ScalarADT DO statementSeq END
+     FOR s IN [lower .. upper] OF ScalarADT DO statementSeq END
    is synthesised as
-     VAR n : ScalarADT;
-     n := lower;
+     VAR s : ScalarADT;
+     s := lower;
      LOOP
        statementSeq;
-       IF n < upper THEN n++ ELSE EXIT END
+       IF s < upper THEN n++ ELSE EXIT END
      END;
    
    A statement of the form
-     FOR DESCENDING n IN ScalarADT DO ...
+     FOR DESCENDING s IN ScalarADT DO ...
    is equivalent to
-     FOR DESCENDING n IN [lower .. upper] OF ScalarADT DO ...
+     FOR DESCENDING s IN [lower .. upper] OF ScalarADT DO ...
    where lower = TMIN(ScalarADT) and upper = TMAX(ScalarADT).
 
    A statement of the form
-     FOR DESCENDING n IN [lower .. upper] OF ScalarADT DO statementSeq END
+     FOR DESCENDING s IN [lower .. upper] OF ScalarADT DO statementSeq END
    is synthesised as
-     VAR n : ScalarADT;
-     n := upper;
+     VAR s : ScalarADT;
+     s := upper;
      LOOP
        statementSeq;
-       IF n > lower THEN n-- ELSE EXIT END
+       IF s > lower THEN s-- ELSE EXIT END
      END; *)
 
 
@@ -141,140 +135,115 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoScalar );
 
 (* Binding to Predefined Function ABS *)
 
-PROCEDURE [ABS] abs ( scalar : ProtoScalar ) : ProtoScalar;
-(* Required function to return the absolute value of a scalar. *)
-
-(* An expression of the form ABS(scalar)
-   is synthesised as ScalarADT.abs(scalar). *)
+PROCEDURE [ABS];
+(* Specialised blueprints must always require binding to TMAX. *)
 
 
 (* Binding to Predefined Function ODD *)
 
 isWholeNumberADT ->
-PROCEDURE [ODD] odd ( scalar : ProtoScalar ) : BOOLEAN;
-(* Function to test whether a scalar is even or odd.
-   The function is required when TMINEXP and TMAXEXP are both zero. *)
-
-(* An expression of the form ODD(scalar)
-   is synthesised as ScalarADT.odd(scalar). *)
+PROCEDURE [ODD];
+(* Specialised blueprints must require binding to ODD
+   when the ADT represents whole numbers. *)
 
 
 (* Binding to Predefined Function NEG *)
 
 isSigned ->
-PROCEDURE [NEG] neg ( scalar : ProtoScalar ) : BOOLEAN;
-(* Function to return the sign reversed value of a scalar.
-   The function is required when TSIGNED is true. *)
-
-(* An expression of the form -scalar
-   is equivalent to NEG(scalar)
-   and synthesised as ScalarADT.neg(scalar). *)
+PROCEDURE [NEG];
+(* Specialised blueprints must require binding to NEG
+   when the ADT is signed. *)
 
 
 (* Binding to the + Operator *)
 
-PROCEDURE [+] add ( s1, s2 : ProtoScalar ) : ProtoScalar;
-(* Required function to return the sum of two scalars. *)
-
-(* An expression of the form s1 + s2
-   is synthesised as ScalarADT.add(s1, s2).
-   
-   A statement of the form scalar++
-   is synthesised as ScalarADT.add(scalar, 1 :: ScalarADT)
-   when the ADT represents whole numbers. *)
+PROCEDURE [+];
+(* Specialised blueprints must always require binding to the + operator. *)
 
 
 (* Binding to the - Operator *)
 
-PROCEDURE [-] subtract ( s1, s2 : ProtoScalar ) : ProtoScalar;
-(* Required function to return the difference of two scalars. *)
-
-(* An expression of the form s1 - s2
-   is synthesised as ScalarADT.subtract(s1, s2).
-   
-   A statement of the form scalar--
-   is synthesised as ScalarADT.subtract(scalar, 1 :: ScalarADT).
-   when the ADT represents whole numbers. *)
+PROCEDURE [-];
+(* Specialised blueprints must always require binding to the - operator. *)
 
 
 (* Binding to the * Operator *)
 
-PROCEDURE [*] multiply ( s1, s2 : ProtoScalar ) : ProtoScalar;
-(* Required function to return the product of two scalars. *)
-
-(* An expression of the form s1 * s2
-   is synthesised as ScalarADT.multiply(s1, s2). *)
+PROCEDURE [*];
+(* Specialised blueprints must always require binding to the * operator. *)
 
 
 (* Binding to the / Operator *)
 
 NOT isWholeNumberADT ->
-PROCEDURE [/] divide ( s1, s2 : ProtoScalar ) : ProtoScalar;
-(* Function to return the quotient of two scalars, using real number division.
-   The function is required when the ADT represents real numbers. *)
-
-(* An expression of the form s1 / s2
-   is synthesised as ScalarADT.divide(s1, s2). *)
+PROCEDURE [/];
+(* Specialised blueprints must require binding to the / operator
+   when the ADT does not represent whole numbers. *)
 
 
 (* Binding to the DIV Operator *)
 
 isWholeNumberADT ->
-PROCEDURE [DIV] divide ( s1, s2 : ProtoScalar ) : ProtoScalar;
-(* Function to return the quotient of two scalars, using integer division.
-   The function is required when the ADT represents whole numbers. *)
-
-(* An expression of the form s1 DIV s2
-   is synthesised as ScalarADT.divide(s1, s2). *)
+PROCEDURE [DIV];
+(* Specialised blueprints must require binding to the DIV operator
+   when the ADT represents whole numbers. *)
 
 
 (* Binding to the MOD Operator *)
 
 isWholeNumberADT ->
-PROCEDURE [MOD] modulus ( s1, s2 : ProtoScalar ) : ProtoScalar;
-(* Function to return the modulus of two scalars.
-   The function is required when the ADT represents whole numbers. *)
-
-(* An expression of the form s1 MOD s2
-   is synthesised as ScalarADT.modulus(s1, s2). *)
+PROCEDURE [MOD];
+(* Specialised blueprints must require binding to the MOD operator
+   when the ADT represents whole numbers. *)
 
 
 (* Relational Operations *)
 
 (* Binding to Operators = and # *)
 
-PROCEDURE [=] isEqual ( s1, s2 : ProtoScalar ) : BOOLEAN;
-(* Required function to test the equivalence of two scalars. *)
+PROCEDURE [=];
+(* Specialised blueprints must always require binding to the = operator. *)
 
-(* An expression of the form s1 = s2
-   is synthesised as ScalarADT.isEqual(s1, s2).
-   
-   An expression of the form s1 # s2
-   is synthesised as (NOT ScalarADT.isEqual(s1, s2)). *)
+(* The # operation is synthesised as (NOT s1 = s2). *)
 
 
 (* Binding to Operators < and >= *)
 
-PROCEDURE [<] isLess ( s1, s2 : ProtoScalar ) : BOOLEAN;
-(* Required function to test if one scalar is less than another. *)
+PROCEDURE [<];
+(* Specialised blueprints must always require binding to the = operator. *)
 
-(* An expression of the form s1 < s2
-   is synthesised as ScalarADT.isLess(s1, s2).
-   
-   An expression of the form s1 >= s2
-   is synthesised as (NOT ScalarADT.isLess(s1, s2)). *)
+(* The >= operation is synthesised as (NOT s1 < s2). *)
 
 
 (* Binding to Operators > and <= *)
 
-PROCEDURE [>] isGreater ( s1, s2 : ProtoScalar ) : BOOLEAN;
-(* Required function to test if one scalar is greater than another. *)
+PROCEDURE [>];
+(* Specialised blueprints must always require binding to the = operator. *)
 
-(* An expression of the form s1 > s2
-   is synthesised as ScalarADT.isGreater(s1, s2).
-   
-   An expression of the form s1 <= s2
-   is synthesised as (NOT ScalarADT.isGreater(s1, s2)). *)
+(* The <= operation is synthesised as (NOT s1 > s2). *)
+
+
+(* Conditional Inhibited Bindings *)
+
+(* Conforming blueprints may not require bindings to any of
+   ODD, DIV and MOD if the ADT does not represent whole numbers. *)
+
+NOT isWholeNumberADT -> PROCEDURE [ODD] : NIL; (* inhibited *)
+
+NOT isWholeNumberADT -> PROCEDURE [DIV] : NIL; (* inhibited *)
+
+NOT isWholeNumberADT -> PROCEDURE [MOD] : NIL; (* inhibited *)
+
+(* Conforming blueprints may not require binding to NEG
+   if the ADT is unsigned. *)
+
+NOT isSigned -> PROCEDURE [NEG] : NIL; (* inhibited *)
+
+
+(* Conforming blueprints may not require binding to the / operator
+   if the ADT represents whole numbers. *)
+
+isWholeNumberADT -> PROCEDURE [/] : NIL; (* inhibited *)
 
 
 END ProtoScalar.
