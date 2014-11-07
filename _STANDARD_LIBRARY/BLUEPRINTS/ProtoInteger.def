@@ -1,106 +1,258 @@
 (* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Blueprint for Whole Number ADTs *)
+(* Specialised Blueprint for Integer ADTs *)
 
 BLUEPRINT ProtoInteger [ProtoScalar]; (* conforms to ProtoScalar *)
 
-(* ProtoInteger ADTs must be opaque records to be statically allocatable *)
 
-MODULE TYPE = OPAQUE RECORD (* uses integer literals *) := INTEGER;
+(* Required Module Type *)
 
-
-(* Bindings required for ProtoInteger ADTs *)
+MODULE TYPE = RECORD := INTEGER | REAL;
+(* Integer ADTs must be records to be statically allocatable,
+   integer literals are compatible. *)
 
 
 (* Required Constants *)
 
-CONST [TSIGNED] isSigned = TRUE;
-(* integers are always signed *)
+
+CONST [TSIGNED] isSigned = FALSE;
+(* Integer ADTs are always signed. *)
 
 CONST [TBASE] base : CARDINAL;
-(* radix in which the integer is encoded, 2 or 10 *)
+(* Radix in which the ADT's values are encoded, 2 or 10. *)
 
 CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
-(* maximum number of digits the integer ADT can encode *)
+(* Maximum number of digits the ADT can encode. *)
 
 CONST [TMINEXP] eMin = 0;
-(* integers always have an exponent of zero *)
+(* Integer ADTs always have an exponent of zero *)
 
 CONST [TMAXEXP] eMax = 0;
-(* integers always have an exponent of zero *)
+(* Integer ADTs always have an exponent of zero *)
+
+CONST * isWholeNumberADT = TRUE;
+(* Internal flag indicating that the ADT represents whole numbers. *)
 
 
 (* Required Procedures *)
 
-(* Bindings to predefined functions TMIN and TMAX *)
+
+(* Introspection *)
+
+(* Binding to Predefined Function TMIN *)
 
 PROCEDURE [TMIN] minValue : ProtoInteger;
-(* function to return the minimal value of the integer ADT *)
+(* Required function to return the minimal value the ADT can encode. *)
+
+(* An expression of the form TMIN(IntegerADT)
+   is synthesised as IntegerADT.minValue(). *)
+
+
+(* Binding to Predefined Function TMAX *)
 
 PROCEDURE [TMAX] maxValue : ProtoInteger;
-(* function to return the maximal value of the integer ADT *)
+(* Required function to return the maximal value the ADT can encode. *)
+
+(* An expression of the form TMAX(IntegerADT)
+   is synthesised as IntegerADT.maxValue(). *)
 
 
-(* Bindings to scalar conversion primitives *)
+(* Numeric Conversion *)
 
-PROCEDURE [SXF] toSXF ( lexeme : ARRAY OF CHAR; VAR sxf : ARRAY OF OCTET );
-(* procedure to convert a literal to a value in scalar exchange format *)
+(* Binding to scalar conversion primitives SXF and VAL *)
+
+PROCEDURE [SXF] toSXF ( value : ProtoInteger; VAR sxf : ARRAY OF OCTET );
+(* Required procedure to convert an integer value to scalar exchange format. *)
 
 PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoInteger );
-(* procedure to convert value in scalar exchange format to the ADT *)
+(* Required procedure to convert from scalar exchange format to the ADT. *)
+
+(* Conversion between any two scalar ADTs can be synthesised utilising the
+   ADTs' conversion procedures bound to SXF and VAL.
+   
+   A conversion expression of the form
+     intValue :: CardinalADT
+   is synthesised as
+     IntegerADT.toSXF(intValue, temp);
+     CardinalADT.fromSXF(temp, result);
+   when no direct conversion is implemented. *)
 
 
-(* The assignment of literal values is synthesised from SXF and VAL *)
+(* Literal Assignment *)
 
+(* Numeric literals are converted to scalar exchange format at compile time.
+   Assignments of numeric literals to numeric ADTs are then synthesised
+   utilising an ADT's conversion procedure bound to VAL.
+   
+   An assignment of the form
+     i := 123;
+   is synthesised as
+     IntegerADT.fromSXF(sxfCompiletimeValue, i); *)
+
+
+(* Iteration *)
+
+(* Binding to FOR IN iterator *)
+
+(* Scalar ADTs may not bind any procedure to FOR.
+   
+   Instead, iteration over scalar ADTs and subranges of scalar ADTs is auto-
+   matically supported if and only if all of the following conditions are met:
+   
+   (1) the ADT binds a constant value of zero to both TMINEXP and TMAXEXP,
+   (2) the ADT provides bindings for TMIN and TMAX,
+   (3) the ADT provides bindings for + and -,
+   (4) the ADT provides bindings for < and >.
+   
+   A statement of the form
+     FOR i IN IntegerADT DO ...
+   is equivalent to
+     FOR i IN [lower .. upper] OF IntegerADT DO ...
+   where lower = TMIN(IntegerADT) and upper = TMAX(IntegerADT).
+     
+   A statement of the form
+     FOR i IN [lower .. upper] OF IntegerADT DO statementSeq END
+   is synthesised as
+     VAR i : IntegerADT;
+     i := lower;
+     LOOP
+       statementSeq;
+       IF i < upper THEN i++ ELSE EXIT END
+     END;
+   
+   A statement of the form
+     FOR DESCENDING i IN IntegerADT DO ...
+   is equivalent to
+     FOR DESCENDING i IN [lower .. upper] OF IntegerADT DO ...
+   where lower = TMIN(IntegerADT) and upper = TMAX(IntegerADT).
+
+   A statement of the form
+     FOR DESCENDING i IN [lower .. upper] OF IntegerADT DO statementSeq END
+   is synthesised as
+     VAR i : IntegerADT;
+     i := upper;
+     LOOP
+       statementSeq;
+       IF i > lower THEN i-- ELSE EXIT END
+     END; *)
+
+
+(* Arithmetic Operations *)
+
+(* Binding to Predefined Function ABS *)
 
 PROCEDURE [ABS] abs ( i : ProtoInteger ) : ProtoInteger;
-(* function to bind to predefined function ABS for operands of the integer ADT *)
+(* Required function to return the absolute value of an integer. *)
 
-PROCEDURE [NEG] neg ( i : ProtoInteger ) : ProtoInteger;
-(* function to bind to predefined function NEG for operands of the integer ADT *)
+(* An expression of the form ABS(i)
+   is synthesised as IntegerADT.abs(i). *)
+
+
+(* Binding to Predefined Function ODD *)
 
 PROCEDURE [ODD] odd ( i : ProtoInteger ) : BOOLEAN;
-(* function to bind to predefined function ODD for operands of the integer ADT *)
+(* Required function to test whether an integer is even or odd. *)
+
+(* An expression of the form ODD(i)
+   is synthesised as IntegerADT.odd(i). *)
 
 
-(* Bindings to dyadic operations *)
+PROCEDURE [NEG] neg ( i : ProtoInteger ) : BOOLEAN;
+(* Required function to return the sign reversed value of an integer. *)
+
+(* An expression of the form -i
+   is equivalent to NEG(i)
+   and synthesised as IntegerADT.neg(i). *)
+
+
+(* Binding to the + Operator *)
 
 PROCEDURE [+] add ( i, j : ProtoInteger ) : ProtoInteger;
-(* function to bind to the + operator for operands of the integer ADT *)
+(* Required function to return the sum of two integers. *)
 
-(* The operation for the ++ statement is synthesized as i := i + VAL(1) *)
+(* An expression of the form i + j
+   is synthesised as IntegerADT.add(i, j).
+   
+   A statement of the form i++
+   is synthesised as IntegerADT.add(i, 1 :: IntegerADT). *)
+
+
+(* Binding to the - Operator *)
 
 PROCEDURE [-] subtract ( i, j : ProtoInteger ) : ProtoInteger;
-(* function to bind to the - operator for operands of the integer ADT *)
+(* Required function to return the difference of two integers. *)
 
-(* The operation for the -- statement is synthesized as i := i - VAL(1) *)
+(* An expression of the form i - j
+   is synthesised as IntegerADT.subtract(i, j).
+   
+   A statement of the form i--
+   is synthesised as IntegerADT.subtract(i, 1 :: IntegerADT). *)
+
+
+(* Binding to the * Operator *)
 
 PROCEDURE [*] multiply ( i, j : ProtoInteger ) : ProtoInteger;
-(* function to bind to the * operator for operands of the integer ADT *)
+(* Required function to return the product of two integers. *)
+
+(* An expression of the form i * j
+   is synthesised as IntegerADT.multiply(i, j). *)
+
+
+(* Binding to the DIV Operator *)
 
 PROCEDURE [DIV] divide ( i, j : ProtoInteger ) : ProtoInteger;
-(* function to bind to the DIV operator for operands of the integer ADT *)
+(* Required function to return the quotient of two integers, using
+   integer division. *)
+
+(* An expression of the form i DIV j
+   is synthesised as IntegerADT.divide(i, j). *)
+
+
+(* Binding to the MOD Operator *)
 
 PROCEDURE [MOD] modulus ( i, j : ProtoInteger ) : ProtoInteger;
-(* function to bind to the MOD operator for operands of the integer ADT *)
+(* Function to return the modulus of two integers. *)
+
+(* An expression of the form i MOD j
+   is synthesised as IntegerADT.modulus(i, j). *)
 
 
-(* Bindings to relational operations *)
+(* Relational Operations *)
+
+(* Binding to Operators = and # *)
 
 PROCEDURE [=] isEqual ( i, j : ProtoInteger ) : BOOLEAN;
-(* function to bind to the = operator for operands of the integer ADT *)
+(* Required function to test the equivalence of two integers. *)
 
-(* The operation for the # operator is synthesized as NOT (i = j) *)
+(* An expression of the form i = j
+   is synthesised as IntegerADT.isEqual(i, j).
+   
+   An expression of the form i # j
+   is synthesised as (NOT IntegerADT.isEqual(i, j)). *)
 
-PROCEDURE [>] isGreater ( i, j : ProtoInteger ) : BOOLEAN;
-(* function to bind to the > operator for operands of the integer ADT *)
 
-(* The operation for the <= operator is synthesized as NOT (i > j) *)
+(* Binding to Operators < and >= *)
 
 PROCEDURE [<] isLess ( i, j : ProtoInteger ) : BOOLEAN;
-(* function to bind to the < operator for operands of the integer ADT *)
+(* Required function to test if one integer is less than another. *)
 
-(* The operation for the >= operator is synthesized as NOT (i < j) *)
+(* An expression of the form i < j
+   is synthesised as IntegerADT.isLess(i, j).
+   
+   An expression of the form i >= j
+   is synthesised as (NOT IntegerADT.isLess(i, j)). *)
+
+
+(* Binding to Operators > and <= *)
+
+PROCEDURE [>] isGreater ( i, j : ProtoInteger ) : BOOLEAN;
+(* Required function to test if one integer is greater than another. *)
+
+(* An expression of the form i > j
+   is synthesised as IntegerADT.isGreater(i, j).
+   
+   An expression of the form i <= j
+   is synthesised as (NOT IntegerADT.isGreater(i, j)). *)
 
 
 END ProtoInteger.
