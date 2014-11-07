@@ -244,7 +244,7 @@ simpleProtoLiteral : Ident;
 structuredProtoLiteral :
     '{' ( protoLiteralList |
         ARGLIST itemCount? OF
-          ( simpleProtoLiteral | '{' protoLiteralList '}' ) ) '}'
+          ( '{' protoLiteralList '}' | simpleProtoLiteral ) | '*' ) '}'
     ;
 
 // alias #6.1
@@ -265,8 +265,8 @@ constOrTypeOrProcRequirement :
 // production #8
 constRequirement :
     CONST (
-    ( simpleConstRequirement |
-      '[' constBindableProperty ']' ( simpleConstRequirement | ':' NIL )? )
+    ( '[' constBindableProperty ']' ( simpleConstRequirement | ':' NIL )? |
+      restrictedExport? simpleConstRequirement )
     ;
 
 // fragment #8.1
