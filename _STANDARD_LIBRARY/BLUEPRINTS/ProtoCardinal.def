@@ -2,7 +2,7 @@
 
 (* Specialised Blueprint for Cardinal ADTs *)
 
-BLUEPRINT ProtoCardinal [ProtoNumeric]; (* conforms to ProtoNumeric *)
+BLUEPRINT ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
 
 
 (* Required Module Type *)
