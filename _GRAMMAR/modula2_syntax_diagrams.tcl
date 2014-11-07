@@ -240,7 +240,7 @@ lappend non_terminals structuredProtoLiteral {
   line LBRACE {
     or
       {line ARGLIST {optx itemCount} OF
-        {or simpleProtoLiteral {line LBRACE protoLiteralList RBRACE}}}
+        {or {line LBRACE protoLiteralList RBRACE} simpleProtoLiteral *}}
       protoLiteralList
   } RBRACE
 }
