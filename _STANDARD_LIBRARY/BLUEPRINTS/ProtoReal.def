@@ -1,6 +1,6 @@
 (* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Blueprint for Real ADTs *)
+(* Specialised Blueprint for Real Number ADTs *)
 
 BLUEPRINT ProtoReal [ProtoScalar]; (* conforms to ProtoScalar *)
 
