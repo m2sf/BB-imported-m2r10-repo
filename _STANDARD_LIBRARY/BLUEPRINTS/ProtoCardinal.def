@@ -7,7 +7,7 @@ BLUEPRINT ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* Required Module Type *)
 
-MODULE TYPE = RECORD := INTEGER | REAL;
+MODULE TYPE = RECORD := INTEGER;
 (* Cardinal ADTs must be records to be statically allocatable,
    integer literals are compatible. *)
 
