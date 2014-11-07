@@ -153,7 +153,7 @@ PROCEDURE [ABS] abs ( scalar : ProtoScalar ) : ProtoScalar;
 isWholeNumberADT ->
 PROCEDURE [ODD] odd ( scalar : ProtoScalar ) : BOOLEAN;
 (* Function to test whether a scalar is even or odd.
-   The function is required when the TMINEXP and TMAXEXP are both zero. *)
+   The function is required when TMINEXP and TMAXEXP are both zero. *)
 
 (* An expression of the form ODD(scalar)
    is synthesised as ScalarADT.odd(scalar). *)
@@ -164,7 +164,7 @@ PROCEDURE [ODD] odd ( scalar : ProtoScalar ) : BOOLEAN;
 isSigned ->
 PROCEDURE [NEG] neg ( scalar : ProtoScalar ) : BOOLEAN;
 (* Function to return the sign reversed value of a scalar.
-   The function is required when the TSIGNED is true. *)
+   The function is required when TSIGNED is true. *)
 
 (* An expression of the form -scalar
    is equivalent to NEG(scalar)
@@ -200,8 +200,8 @@ PROCEDURE [-] subtract ( s1, s2 : ProtoScalar ) : ProtoScalar;
 PROCEDURE [*] multiply ( s1, s2 : ProtoScalar ) : ProtoScalar;
 (* Required function to return the product of two scalars. *)
 
-(* An expression of the form scalar1 * scalar2
-   is synthesised as ScalarADT.multiply(scalar1, scalar2). *)
+(* An expression of the form s1 * s2
+   is synthesised as ScalarADT.multiply(s1, s2). *)
 
 
 (* Binding to the / Operator *)
@@ -211,8 +211,8 @@ PROCEDURE [/] divide ( s1, s2 : ProtoScalar ) : ProtoScalar;
 (* Function to return the quotient of two scalars, using real number division.
    The function is required when the ADT represents real numbers. *)
 
-(* An expression of the form scalar1 / scalar2
-   is synthesised as ScalarADT.divide(scalar1, scalar2). *)
+(* An expression of the form s1 / s2
+   is synthesised as ScalarADT.divide(s1, s2). *)
 
 
 (* Binding to the DIV Operator *)
@@ -222,8 +222,8 @@ PROCEDURE [DIV] divide ( s1, s2 : ProtoScalar ) : ProtoScalar;
 (* Function to return the quotient of two scalars, using integer division.
    The function is required when the ADT represents whole numbers. *)
 
-(* An expression of the form scalar1 DIV scalar2
-   is synthesised as ScalarADT.divide(scalar1, scalar2). *)
+(* An expression of the form s1 DIV s2
+   is synthesised as ScalarADT.divide(s1, s2). *)
 
 
 (* Binding to the MOD Operator *)
@@ -233,8 +233,8 @@ PROCEDURE [MOD] modulus ( s1, s2 : ProtoScalar ) : ProtoScalar;
 (* Function to return the modulus of two scalars.
    The function is required when the ADT represents whole numbers. *)
 
-(* An expression of the form scalar1 MOD scalar2
-   is synthesised as ScalarADT.modulus(scalar1, scalar2). *)
+(* An expression of the form s1 MOD s2
+   is synthesised as ScalarADT.modulus(s1, s2). *)
 
 
 (* Relational Operations *)
@@ -244,8 +244,8 @@ PROCEDURE [MOD] modulus ( s1, s2 : ProtoScalar ) : ProtoScalar;
 PROCEDURE [=] isEqual ( s1, s2 : ProtoScalar ) : BOOLEAN;
 (* Required function to test the equivalence of two scalars. *)
 
-(* An expression of the form scalar1 = scalar2
-   is synthesised as ScalarADT.isEqual(scalar1, scalar2).
+(* An expression of the form s1 = s2
+   is synthesised as ScalarADT.isEqual(s1, s2).
    
    An expression of the form s1 # s2
    is synthesised as (NOT ScalarADT.isEqual(s1, s2)). *)
