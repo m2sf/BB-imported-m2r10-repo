@@ -272,7 +272,7 @@ lappend non_terminals constRequirement {
     or
       {line [ constBindableProperty ]
         {or simpleConstRequirement {line : /NIL} nil}}
-      simpleConstRequirement
+      {line {optx restrictedExport} simpleConstRequirement}
     }
 }
 
