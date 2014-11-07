@@ -2,13 +2,13 @@
 
 (* Specialised Blueprint for Scalar ADTs *)
 
-BLUEPRINT ProtoCardinal [ProtoNumeric]; (* conforms to ProtoNumeric *)
+BLUEPRINT ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
 
 (* Required Module Type *)
 
 MODULE TYPE = RECORD := INTEGER | REAL;
-(* Cardinal ADTs must be records to be statically allocatable,
+(* Scalar ADTs must be records to be statically allocatable,
    integer and real number literals are compatible. *)
 
 
