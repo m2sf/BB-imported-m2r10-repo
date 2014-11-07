@@ -146,7 +146,7 @@ PROCEDURE [DIV] divide ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the result of n DIV m. *)
 
 (* An expression of the form n DIV m
-   is synthesised as CardinalADT.div(n, m). *)
+   is synthesised as CardinalADT.divide(n, m). *)
 
 
 (* Binding to the MOD Operator *)
