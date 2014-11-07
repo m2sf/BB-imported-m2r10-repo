@@ -5,6 +5,32 @@
 (*PSEUDO*) BLUEPRINT BUILTIN;
 (* Not a compilation unit, documentation only *)
 
+(* Classification *)
+
+[TSIGNED|TBASE|TPRECISION|TMINEXP|TMAXEXP|SXF|VAL] -> isNumeric = TRUE;
+(* If any of TSIGNED, TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF or VAL is required,
+   the ADT is deemed numeric. *)
+
+[TBASE|TPRECISION|TMINEXP|TMAXEXP|SXF|VAL] -> isScalar = TRUE;
+(* If any of TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF or VAL is required,
+   the ADT is deemed a numeric scalar. *)
+
+[TSIGNED] AND NOT [TBASE|TPRECISION|TMINEXP|TMAXEXP|SXF|VAL] -> isNonScalar = TRUE;
+(* If TSIGNED is required but none of TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF nor VAL,
+   the ADT is deemed a numeric non-scalar. *)
+
+[DESCENDING|STORE|RETRIEVE] -> isCollection = TRUE;
+(* If any of DESCENDING, STORE or RETRIEVE is required,
+   the ADT is deemed a collection. *)
+
+[OPAQUE|NEW|RELEASE] -> isDynamic = TRUE;
+(* If the module type is an opaque pointer or NEW or RELEASE are required,
+   the ADT is deemed dynamically allocatable. *)
+
+NOT isDynamic -> isStatic = TRUE;
+(* If the ADT is not dynamically allocatable, it is deemed statically allocatable. *)
+
+
 [TBASE] -> CONST [TPRECISION];
 [TPRECISION] -> CONST [TMINEXP];
 [TMINEXP] -> CONST [TMAXEXP];
@@ -23,9 +49,9 @@
 (* If values bound to TMINEXP and TMAXEXP
    are both zero, real division is inhibited. *)
 
-[TMINEXP>0] OR [TMAXEXP>0] -> PROCEDURE [DIV] : NIL;
+[TMINEXP#0] OR [TMAXEXP#0] -> PROCEDURE [DIV] : NIL;
 (* If either value bound to TMINEXP or TMAXEXP
-   is greather than zero, integer division is inhibited. *)
+   is not zero, integer division is inhibited. *)
 
 [TBASE] -> PROCEDURE [TMIN];
 (* If TBASE is required, TMIN is required. *)
@@ -35,6 +61,10 @@
 
 [TMAX] -> PROCEDURE [TMIN];
 (* If TMAX is required, TMIN is required. *)
+
+[TMIN] -> PROCEDURE [CONCAT] : NIL;
+[CONCAT] -> PROCEDURE [TMIN] : NIL;
+(* TMIN and CONCAT are mutually exclusive. *)
 
 [+] -> PROCEDURE [-];
 (* If addition is required, subtraction is required. *)
@@ -69,30 +99,20 @@
 [>] -> PROCEDURE [<];
 (* If greater-than is required, less-than is required. *)
 
-[TMIN] -> PROCEDURE [SUBSET] : NIL;
-[SUBSET] -> PROCEDURE [TMIN] -> NIL;
-(* TMIN and SUBSET are mutually exclusive. *)
-
 [SUBSET] -> PROCEDURE [=];
 (* If SUBSET is required, is-equal is required. *)
 
-[SUBSET] -> PROCEDURE [+] : NIL;
-(* If SUBSET is required, addition is inhibited. *)
+[SUBSET] -> PROCEDURE [<] : NIL;
+[<] -> PROCEDURE [SUBSET] : NIL;
+(* SUBSET and less-than are mutually exclusive. *)
 
-[SUBSET] -> PROCEDURE [-] : NIL;
-(* If SUBSET is required, subtraction is inhibited. *)
+[SUBSET] -> PROCEDURE [>] : NIL;
+[>] -> PROCEDURE [SUBSET] : NIL;
+(* SUBSET and greater-than are mutually exclusive. *)
 
-[SUBSET] -> PROCEDURE [*] : NIL;
-(* If SUBSET is required, multiplication is inhibited. *)
-
-[SUBSET] -> PROCEDURE [/] : NIL;
-(* If SUBSET is required, real division is inhibited. *)
-
-[SUBSET] -> PROCEDURE [DIV] : NIL;
-(* If SUBSET is required, integer division is inhibited. *)
-
-[SUBSET] -> PROCEDURE [MOD] : NIL;
-(* If SUBSET is required, modulus is inhibited. *)
+[CONCAT] -> PROCEDURE [+] : NIL;
+[+] -> PROCEDURE [CONCAT] : NIL;
+(* CONCAT and addition are mutually exclusive. *)
 
 [TMIN] -> PROCEDURE [TLIMIT] : NIL;
 [TLIMIT] -> PROCEDURE [TMIN] : NIL;
@@ -102,12 +122,10 @@
 (* If TLIMIT is required, either COUNT or LENGTH is required. *)
 
 [COUNT] -> PROCEDURE [LENGTH] : NIL;
-(* If COUNT is required, LENGTH is inhibited. *)
-
 [LENGTH] -> PROCEDURE [COUNT] : NIL;
-(* If LENGTH is required, COUNT is inhibited. *)
+(* COUNT and LENGTH are mutually exclusive. *)
 
-[CHAR] OR [UNICHAR]-> PROCEDURE [LENGTH];
+[CHAR] OR [UNICHAR] -> PROCEDURE [LENGTH];
 (* If proto literal is CHAR or UNICHAR, LENGTH is required. *)
 
 [NEW] -> PROCEDURE [RELEASE];
@@ -116,11 +134,14 @@
 [RETAIN] -> PROCEDURE [NEW];
 (* If RETAIN is required, NEW is required. *)
 
-[CONCAT] -> PROCEDURE [RETAIN];
-(* If CONCAT is required, RETAIN is required. *)
+[OPAQUE] AND [CONCAT] -> PROCEDURE [RETAIN];
+(* If the ADT is dynamic and CONCAT is required, RETAIN is required. *)
 
 [CONCAT] -> PROCEDURE [+] : NIL;
 (* If CONCAT is required, addition is inhibited. *)
+
+[OPAQUE] AND [..] -> PROCEDURE [RETAIN];
+(* If the ADT is dynamic and slicing is required, RETAIN is required. *)
 
 [DESCENDING] -> PROCEDURE [FOR];
 (* If DESCENDING is required, for loop iteration is required. *)
