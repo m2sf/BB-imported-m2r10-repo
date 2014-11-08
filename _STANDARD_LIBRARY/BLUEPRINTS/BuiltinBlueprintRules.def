@@ -48,7 +48,7 @@ implication :
   ;
 
 term :
-  '[' BindableEntity ']'
+  '[' BindableEntity ( ('=' | '#') (TRUE | FALSE | 0) )? ']'
   ;
 *)
 
