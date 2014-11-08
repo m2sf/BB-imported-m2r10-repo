@@ -33,7 +33,7 @@
 
 (* Grammar *)
 
-(* The notation used in this file follows the EBNF below:
+(* The notation used in this document follows the EBNF below:
 
 rule :
   condition '->' implication
@@ -166,7 +166,7 @@ term :
 (* IF COPY is required, DUP is required. *)
 [COPY] -> [DUP];
 
-(* If for loop iteration is required, either COUNT or LENGTH is required. *)
+(* If for-loop iteration is required, either COUNT or LENGTH is required. *)
 [FOR] -> [COUNT] OR [LENGTH];
 
 
