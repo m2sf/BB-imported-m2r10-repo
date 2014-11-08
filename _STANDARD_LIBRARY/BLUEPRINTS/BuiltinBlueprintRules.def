@@ -31,6 +31,28 @@
    :=, COPY, STORE, INSERT, REMOVE is required. *)
 
 
+(* Grammar *)
+
+(* The notation used in this file follows the EBNF below:
+
+rule :
+  condition '->' implication
+
+condition :
+  term (( AND NOT? | OR ) term )?
+  ;
+
+implication :
+  term ( ('->' term)* | (AND term)* | (OR term)* ) |
+  NOT term
+  ;
+
+term :
+  '[' BindableEntity ']'
+  ;
+*)
+
+
 (* Mutual Inclusion *)
 
 (* TBASE, TPRECISION, TMINEXP and TMAXEXP are mutually inclusive. *)
@@ -171,27 +193,5 @@
 [DESCENDING] -> PROCEDURE [FOR];
 (* If DESCENDING is required, for loop iteration is required. *)
 
-
-(* Grammar *)
-
-(* EBNF
-
-rule :
-  condition '->' implication
-
-condition :
-  term (( AND NOT? | OR ) term )?
-  ;
-
-implication :
-  term ( ('->' term)* | (AND term)* | (OR term)* ) |
-  NOT term
-  ;
-
-term :
-  '[' BindableEntity ']'
-  ;
-
-*)
 
 END BUILTIN.
