@@ -19,6 +19,18 @@
 (* An ADT is deemed to be a Collection ADT if binding to any of
    DESCENDING, STORE, RETRIEVE, IN or SUBSET is required. *)
 
+(* A Scalar ADT is deemed a (signed or unsigned) Integer ADT
+   if the values bound to TMINEXP and TMAXEXP are both zero. *)
+
+(* An Integer ADT is deemed a Signed Integer ADT
+   if the value bound to TSIGNED is TRUE. *)
+
+(* An Integer ADT is deemed an Unsigned Integer ADT
+   if the value bound to TSIGNED is FALSE. *)
+
+(* A Scalar ADT is deemed a Real Number ADT
+   if the values bound to TMINEXP and TMAXEXP are not both zero. *)
+
 (* An ADT is allocatable at runtime (aka dynamic)
    if its module type is an opaque pointer or binding to NEW is required. *)
 
