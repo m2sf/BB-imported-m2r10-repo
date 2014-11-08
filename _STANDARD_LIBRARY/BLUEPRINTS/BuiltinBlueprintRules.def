@@ -25,6 +25,11 @@
 (* An ADT is allocatable at compile time (aka static) if its module
    type is not an opaque pointer and binding to NEW is not required. *)
 
+(* A static ADT is always deemed mutable. *)
+
+(* A dynamic ADT is deemed mutable if binding to any of
+   :=, COPY, STORE, INSERT, REMOVE is required. *)
+
 
 (* Mutual Inclusion *)
 
