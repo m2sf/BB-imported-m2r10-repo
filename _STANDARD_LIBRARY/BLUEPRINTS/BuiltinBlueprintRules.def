@@ -175,8 +175,8 @@ term :
 (* If the proto literal is CHAR or UNICHAR, LENGTH is required. *)
 [CHAR] OR [UNICHAR] -> [LENGTH];
 
-(* IF COPY is required, DUP is required. *)
-[COPY] -> [DUP];
+(* If NEW is required, COPY requires DUP. *)
+[NEW] AND [COPY] -> [DUP];
 
 (* If for-loop iteration is required, either COUNT or LENGTH is required. *)
 [FOR] -> [COUNT] OR [LENGTH];
