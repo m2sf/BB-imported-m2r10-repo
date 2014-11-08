@@ -7,163 +7,186 @@
 
 (* Classification *)
 
-[TSIGNED|TBASE|TPRECISION|TMINEXP|TMAXEXP|SXF|VAL] -> isNumeric = TRUE;
-(* If any of TSIGNED, TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF or VAL is required,
-   the ADT is deemed numeric. *)
+(* An ADT is deemed a Numeric ADT if binding to any of TSIGNED,
+   TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF or VAL is required. *)
 
-[TBASE|TPRECISION|TMINEXP|TMAXEXP|SXF|VAL] -> isScalar = TRUE;
-(* If any of TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF or VAL is required,
-   the ADT is deemed a numeric scalar. *)
+(* An ADT is deemed to be a Scalar ADT if binding to any of
+   TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF or VAL is required. *)
 
-[TSIGNED] AND NOT [TBASE|TPRECISION|TMINEXP|TMAXEXP|SXF|VAL] -> isNonScalar = TRUE;
-(* If TSIGNED is required but none of TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF nor VAL,
-   the ADT is deemed a numeric non-scalar. *)
+(* An ADT is deemed to be a Non-Scalar ADT if binding to TSIGNED is
+   required but none of TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF nor VAL. *)
 
-[DESCENDING|STORE|RETRIEVE] -> isCollection = TRUE;
-(* If any of DESCENDING, STORE or RETRIEVE is required,
-   the ADT is deemed a collection. *)
+(* An ADT is deemed to be a Collection ADT if binding to any of
+   DESCENDING, STORE, RETRIEVE, IN or SUBSET is required. *)
 
-[OPAQUE|NEW|RELEASE] -> isDynamic = TRUE;
-(* If the module type is an opaque pointer or NEW or RELEASE are required,
-   the ADT is deemed dynamically allocatable. *)
+(* An ADT is allocatable at runtime (aka dynamic)
+   if its module type is an opaque pointer or binding to NEW is required. *)
 
-NOT isDynamic -> isStatic = TRUE;
-(* If the ADT is not dynamically allocatable, it is deemed statically allocatable. *)
+(* An ADT is allocatable at compile time (aka static) if its module
+   type is not an opaque pointer and binding to NEW is not required. *)
 
 
-[TBASE] -> CONST [TPRECISION];
-[TPRECISION] -> CONST [TMINEXP];
-[TMINEXP] -> CONST [TMAXEXP];
-[TMAXEXP] -> CONST [TBASE];
-[TBASE] -> CONST [TSIGNED];
-(* If any one of TBASE, TPRECISION, TMINEXP and TMAXEXP
-   is required, all of them and TSIGNED are required. *)
+(* Mutual Inclusion *)
 
-[TSIGNED=TRUE] -> PROCEDURE [NEG];
-(* If value bound to TSIGNED is TRUE, unary minus is required. *)
+(* TBASE, TPRECISION, TMINEXP and TMAXEXP are mutually inclusive. *)
+[TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
 
-[TSIGNED=FALSE] -> PROCEDURE [NEG] : NIL;
-(* If value bound to TSIGNED is FALSE, unary minus is inhibited. *)
+(* TSIGNED having a value of TRUE is mutually inclusive with NEG. *)
+[TSIGNED=TRUE] -> [NEG] -> [TSIGNED=TRUE];
 
-[TMINEXP=0] AND [TMAXEXP=0] -> PROCEDURE [/] : NIL;
+(* SXF and VAL are mutually inclusive. *)
+[SXF] -> [VAL] -> [SXF];
+
+(* TMIN and TMAX are mutually inclusive. *)
+[TMIN] -> [TMAX] -> [TMIN];
+
+(* NEW and RELEASE are mutually inclusive. *)
+[NEW] -> [RELEASE] -> [NEW];
+
+(* INSERT and REMOVE are mutually inclusive. *)
+[INSERT] -> [REMOVE] -> [INSERT];
+
+(* DIV and MOD are mutually inclusive. *)
+[DIV] -> [MOD] -> [DIV];
+
+
+(* Mutual Exclusions *)
+
+(* TLIMIT and TBASE are mutually exclusive. *)
+[TLIMIT] -> NOT [TBASE];
+[TBASE] -> NOT [TLIMIT];
+
+(* COUNT and LENGTH are mutually exclusive *)
+[COUNT] -> NOT [LENGTH];
+[LENGTH] -> NOT [COUNT];
+
+(* CONCAT and + are mutually exclusive *)
+[CONCAT] -> NOT [+];
+[+] -> NOT [CONCAT];
+
+(* DIV and / are mutually exclusive *)
+[DIV] -> NOT [/];
+[/] -> NOT [DIV];
+
+(* SUBSET and < are mutually exclusive. *)
+[SUBSET] -> NOT [<];
+[<] -> NOT [SUBSET];
+
+(* SUBSET and > are mutually exclusive. *)
+[SUBSET] -> NOT [>];
+[>] -> NOT [SUBSET];
+
+
+(* Unidirectional Dependencies *)
+
+(* TLIMIT requires either COUNT or LENGTH. *)
+[TLIMIT] -> [COUNT] OR [LENGTH];
+
+(* RETAIN requires NEW. *)
+[RETAIN] -> [NEW];
+
+(* DUP requires NEW. *)
+[DUP] -> [NEW];
+
+(* STORE requires RETRIEVE. *)
+[STORE] -> [RETRIEVE];
+
+(* If NEW is required, CONCAT requires RETAIN. *)
+[NEW] AND [CONCAT] -> [RETAIN];
+
+(* If NEW is required, L-value slicing requires RETAIN. *)
+[NEW] AND [..] -> [RETAIN];
+
+(* If TBASE is required, + and - are mutually inclusive. *)
+[TBASE] AND [+] -> [-] -> [+];
+
+(* If TBASE is required, * requires either / or DIV. *)
+[TBASE] AND [*] -> [/] OR [DIV];
+
+(* If TBASE is required, / requires *. *)
+[TBASE] AND [/] -> [*];
+
+(* If TBASE is required, DIV requires *. *)
+[TBASE] AND [DIV] -> [*];
+
+(* If SUBSET is required, +, -, * and / are mutually inclusive. *)
+[SUBSET] AND [+] -> [-] -> [*] -> [/] -> [+];
+
+(* Relational operations require TMIN (and TMAX). *)
+[<] -> [TMIN];
+[>] -> [TMIN];
+
+
+(* Unidirectional Exclusions *)
+
+(* If TSIGNED is FALSE, NEG is inhibited. *)
+[TSIGNED=FALSE] -> NOT [NEG];
+
 (* If values bound to TMINEXP and TMAXEXP
    are both zero, real division is inhibited. *)
+[TMINEXP=0] AND [TMAXEXP=0] -> NOT [/];
 
-[TMINEXP#0] OR [TMAXEXP#0] -> PROCEDURE [DIV] : NIL;
 (* If either value bound to TMINEXP or TMAXEXP
    is not zero, integer division is inhibited. *)
+[TMINEXP#0] OR [TMAXEXP#0] -> NOT [DIV];
 
 [TBASE] -> PROCEDURE [TMIN];
 (* If TBASE is required, TMIN is required. *)
 
-[TMIN] -> PROCEDURE [TMAX];
-(* If TMIN is required, TMAX is required. *)
+(* If the proto literal is CHAR or UNICHAR, LENGTH is required. *)
+[CHAR] OR [UNICHAR] -> [LENGTH];
 
-[TMAX] -> PROCEDURE [TMIN];
-(* If TMAX is required, TMIN is required. *)
+(* IF COPY is required, DUP is required. *)
+[COPY] -> [DUP];
+
+(* If for loop iteration is required, either COUNT or LENGTH is required. *)
+[FOR] -> [COUNT] OR [LENGTH];
+
+
+(* IO *)
+
+(* READ requires WRITE. *)
+[READ] -> [WRITE];
+
+(* If STORE is required, WRITE requires READ. *)
+[NEW] AND [STORE] AND [WRITE] -> [READ];
+
+[WRITE] AND NOT [NEW] -> [READ];
+
+(* WRITE and WRITEF are mutually inclusive. *)
+[WRITE] -> [WRITEF] -> [WRITE];
+
+
+(* To be reviewed ... *)
 
 [TMIN] -> PROCEDURE [CONCAT] : NIL;
 [CONCAT] -> PROCEDURE [TMIN] : NIL;
 (* TMIN and CONCAT are mutually exclusive. *)
 
-[+] -> PROCEDURE [-];
-(* If addition is required, subtraction is required. *)
-
-[-] -> PROCEDURE [+];
-(* If subtraction is required, addition is required. *)
-
-[*] -> PROCEDURE [DIV | /];
-(* If multiplication is required, division is required. *)
-
-[/] -> PROCEDURE [*];
-(* If real division is required, multiplication is required. *)
-
-[DIV] -> PROCEDURE [*];
-(* If integer division is required, multiplication is required. *)
-
-[DIV] -> PROCEDURE [MOD];
-(* If integer division is required, modulus is required. *)
-
-[MOD] -> PROCEDURE [DIV];
-(* If modulus is required, integer division is required. *)
-
-[TSIGNED] -> PROCEDURE [=];
-(* If TSIGNED required, is-equal is required. *)
-
-[<] -> PROCEDURE [=];
-(* If less-than is required, is-equal is required. *)
-
-[<] -> PROCEDURE [>];
-(* If less-than is required, greater-than is required. *)
-
-[>] -> PROCEDURE [<];
-(* If greater-than is required, less-than is required. *)
-
-[SUBSET] -> PROCEDURE [=];
-(* If SUBSET is required, is-equal is required. *)
-
-[SUBSET] -> PROCEDURE [<] : NIL;
-[<] -> PROCEDURE [SUBSET] : NIL;
-(* SUBSET and less-than are mutually exclusive. *)
-
-[SUBSET] -> PROCEDURE [>] : NIL;
-[>] -> PROCEDURE [SUBSET] : NIL;
-(* SUBSET and greater-than are mutually exclusive. *)
-
-[CONCAT] -> PROCEDURE [+] : NIL;
-[+] -> PROCEDURE [CONCAT] : NIL;
-(* CONCAT and addition are mutually exclusive. *)
-
-[TMIN] -> PROCEDURE [TLIMIT] : NIL;
-[TLIMIT] -> PROCEDURE [TMIN] : NIL;
-(* TMIN and TLIMIT are mutually exculsive. *)
-
-[TLIMIT] -> PROCEDURE [COUNT | LENGTH];
-(* If TLIMIT is required, either COUNT or LENGTH is required. *)
-
-[COUNT] -> PROCEDURE [LENGTH] : NIL;
-[LENGTH] -> PROCEDURE [COUNT] : NIL;
-(* COUNT and LENGTH are mutually exclusive. *)
-
-[CHAR] OR [UNICHAR] -> PROCEDURE [LENGTH];
-(* If proto literal is CHAR or UNICHAR, LENGTH is required. *)
-
-[NEW] -> PROCEDURE [RELEASE];
-(* If NEW is required, RELEASE is required. *)
-
-[RETAIN] -> PROCEDURE [NEW];
-(* If RETAIN is required, NEW is required. *)
-
-[OPAQUE] AND [CONCAT] -> PROCEDURE [RETAIN];
-(* If the ADT is dynamic and CONCAT is required, RETAIN is required. *)
-
-[CONCAT] -> PROCEDURE [+] : NIL;
-(* If CONCAT is required, addition is inhibited. *)
-
-[OPAQUE] AND [..] -> PROCEDURE [RETAIN];
-(* If the ADT is dynamic and slicing is required, RETAIN is required. *)
-
 [DESCENDING] -> PROCEDURE [FOR];
 (* If DESCENDING is required, for loop iteration is required. *)
 
-[FOR] -> PROCEDURE [COUNT | LENGTH];
-(* If for loop iteration is required, either COUNT or LENGTH is required. *)
 
-[COPY] -> PROCEDURE [DUP];
-(* IF COPY is required, DUP is required. *)
+(* Grammar *)
 
-[STORE] -> PROCEDURE [RETRIEVE];
-(* If STORE is required, RETRIEVE is required. *)
+(* EBNF
 
-[INSERT] -> PROCEDURE [REMOVE];
-(* If INSERT is required, REMOVE is required. *)
+rule :
+  condition '->' implication
 
-[REMOVE] -> PROCEDURE [INSERT];
-(* If REMOVE is required, INSERT is required. *)
+condition :
+  term (( AND NOT? | OR ) term )?
+  ;
 
-[READ] -> PROCEDURE [WRITE];
-[WRITE] -> PROCEDURE [WRITEF];
-[WRITEF] -> PROCEDURE [READ];
-(* If any of READ, WRITE, WRITEF is required, all of them are required. *)
+implication :
+  term ( ('->' term)* | (AND term)* | (OR term)* ) |
+  NOT term
+  ;
+
+term :
+  '[' BindableEntity ']'
+  ;
+
+*)
 
 END BUILTIN.
