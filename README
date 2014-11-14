@@ -49,7 +49,7 @@ http://en.wikipedia.org/wiki/Modula-2
 
 Modula-2 R10 is a modern revision of N.Wirth's Modula-2 language undertaken by
 B.Kowarsch  and R.Sutcliffe  in 2009  and 2010.  A pragma system  was added in
-in 2011 and 2012.  The Design was  refined and polished in 2013.  Extensive work was done on the standard library in 2014. The language report is  currently under editorial review  and will be pubished in book form in 2015.
+in 2011 and 2012.  The Design was  refined and polished in 2013.  Extensive work was done on blueprints and templates for the standard library in 2014. The language report is  currently under editorial review  and will be published in book form in 2015.
 
 The primary design goals of the revision were type safety,  utmost readability
 and consistency,  and  suitability  as a  core language   for domain  specific
@@ -62,7 +62,9 @@ and thereby eliminate one of the major causes of feature growth.
 
 A reference compiler  for Modula-2 R10 has been  under development  since 2010
 but work had been suspended until the design has been finalised.  Some updates
-were done in 2013 and 2014.  Development will fully resume after finalising the manuscripts for the book. Initially, the compiler will generate C99 source code,  and eventually LLVM IR.
+were done in 2013 and 2014.  Development will fully resume after finalising the manuscripts for the book. Initially, the compiler will generate C99 source code,  and eventually it will generate LLVM IR.
+
+The developer of GNU Modula-2 has pledged to add support M2 R10 in GM2 when the M2R10 specification is final.
 
 
 ### Development Schedule ###
