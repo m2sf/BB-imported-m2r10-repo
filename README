@@ -60,11 +60,14 @@ A particular strength  of the design  is  a set of facilities  to make library
 defined abstract data types  practically indistinguishable from built-in types
 and thereby eliminate one of the major causes of feature growth.
 
-A reference compiler  for Modula-2 R10 has been  under development  since 2010
-but work had been suspended until the design has been finalised.  Some updates
-were done in 2013 and 2014.  Development will fully resume after finalising the manuscripts for the book. Initially, the compiler will generate C99 source code,  and eventually it will generate LLVM IR.
 
-The developer of GNU Modula-2 has pledged to add support M2 R10 in GM2 when the M2R10 specification is final.
+### Compiler Support ###
+
+A reference compiler  for Modula-2 R10 has been  under development  since 2010
+but work had been suspended until the design is finalised. Initially, the compiler will generate C99 source code,  and eventually it will generate LLVM IR. Some updates
+were done in 2013 and 2014.  Development will fully resume after finalising the manuscripts for the book. 
+
+The developer of GNU Modula-2 has pledged to add support for M2 R10 in GM2 when the M2R10 specification is final. The GM2 compiler is a front-end for GCC.
 
 
 ### Development Schedule ###
@@ -76,10 +79,6 @@ mentation and cannot be rushed.  The finalisation  of the  manuscripts  for the
 book and library - currently estimated for the end of 2014 - will allow shifting
 of focus to the compiler implementation,  but at present there is
 *no fixed schedule* for the completion of the compiler.
-
-** o  Compiler Roadmap **
-
-https://bitbucket.org/trijezdci/m2r10/src/tip/_REFERENCE_COMPILER/CompilerRoadmap.txt
 
 Please consider [making a donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=B42FJ4CJARB2S) to speed up the development work.
 
