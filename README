@@ -1,38 +1,38 @@
 ### Modula-2 Revision 2010 ###
 
-**M2 R10 Repository**
+** M2 R10 Repository **
 
 Welcome to the design and development repository of Modula-2 Revision 2010,
 its language report, reference compiler and standard library.
 
 Quick links:
 
-**o  Technical Specification**
+** o  Technical Specification **
 
 https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.2014-01-31.tracked.pdf
 
-**o  Source Tree**
+** o  Source Tree **
 
 https://bitbucket.org/trijezdci/m2r10/src
 
-**o  Library Definition Modules**
+** o  Library Definition Modules **
 
 https://bitbucket.org/trijezdci/m2r10/src/tip/_STANDARD_LIBRARY
 
-**o  Summary of Changes**
+** o  Summary of Changes **
 
 https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.Changes.Info.txt
 
-**o  Design Journal**
+** o  Design Journal **
 
 http://knightsoftype.blogspot.com
 
-**o  Compiler Roadmap**
+** o  Compiler Roadmap **
 
 https://bitbucket.org/trijezdci/m2r10/src/tip/_REFERENCE_COMPILER/CompilerRoadmap.txt
 
 
-**About Classic Modula-2**
+** About Classic Modula-2 **
 
 Modula-2 is a modular, imperative programming language designed in 1978 at the
 Swiss Federal Institute of Technology in Zurich (ETHZ)  by Prof. Niklaus Wirth
@@ -42,7 +42,7 @@ classic Modula-2 language and its history can be found at:
 http://en.wikipedia.org/wiki/Modula-2
 
 
-**About Modula-2 Revision 2010**
+** About Modula-2 Revision 2010 **
 
 Modula-2 R10 is a modern revision of N.Wirth's Modula-2 language undertaken by
 B.Kowarsch  and R.Sutcliffe  in 2009  and 2010.  A pragma system  was added in
@@ -65,7 +65,7 @@ were done in 2013.  Development will fully resume in 2014. Initially, the com-
 piler will generate C99 source code,  and eventually LLVM IR.
 
 
-**Development Schedule**
+** Development Schedule **
 
 This project is a  *private*  and  *self-funded*  effort by the authors who are
 doing this work in their own *spare* *time*.  Further, the authors believe that
