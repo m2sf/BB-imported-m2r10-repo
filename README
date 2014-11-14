@@ -27,10 +27,6 @@ https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.Changes.Info.txt
 
 http://knightsoftype.blogspot.com
 
-** o  Compiler Roadmap **
-
-https://bitbucket.org/trijezdci/m2r10/src/tip/_REFERENCE_COMPILER/CompilerRoadmap.txt
-
 
 ### Donations ###
 
@@ -53,9 +49,7 @@ http://en.wikipedia.org/wiki/Modula-2
 
 Modula-2 R10 is a modern revision of N.Wirth's Modula-2 language undertaken by
 B.Kowarsch  and R.Sutcliffe  in 2009  and 2010.  A pragma system  was added in
-in 2011 and 2012.  The Design was  refined and polished in 2013.  The language
-report is  currently under editorial review  and will be publshed in book form
-in 2014.
+in 2011 and 2012.  The Design was  refined and polished in 2013.  Extensive work was done on the standard library in 2014. The language report is  currently under editorial review  and will be pubished in book form in 2015.
 
 The primary design goals of the revision were type safety,  utmost readability
 and consistency,  and  suitability  as a  core language   for domain  specific
@@ -68,8 +62,7 @@ and thereby eliminate one of the major causes of feature growth.
 
 A reference compiler  for Modula-2 R10 has been  under development  since 2010
 but work had been suspended until the design has been finalised.  Some updates
-were done in 2013.  Development will fully resume in 2014. Initially, the com-
-piler will generate C99 source code,  and eventually LLVM IR.
+were done in 2013 and 2014.  Development will fully resume after finalising the manuscripts for the book. Initially, the compiler will generate C99 source code,  and eventually LLVM IR.
 
 
 ### Development Schedule ###
@@ -78,9 +71,15 @@ This project is a  *private*  and  *self-funded*  effort by the authors who are
 doing this work in their own *spare* *time*.  Further, the authors believe that
 quality design  and proper specification are prerequisites for a quality imple-
 mentation and cannot be rushed.  The finalisation  of the  manuscripts  for the
-book - currently estimated for end of Q1/2014 - will allow shifting of focus to
-the implementation,  but there is  no fixed schedule  for the completion of the
-project.  It will take as long as it takes.
+book and library - currently estimated for the end of 2014 - will allow shifting
+of focus to the compiler implementation,  but at present there is
+*no fixed schedule* for the completion of the compiler.
+
+** o  Compiler Roadmap **
+
+https://bitbucket.org/trijezdci/m2r10/src/tip/_REFERENCE_COMPILER/CompilerRoadmap.txt
+
+Please consider [making a donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=B42FJ4CJARB2S) to speed up the development work.
 
 
-(status: Jan 31, 2014)
+[Status: Nov 14, 2014]
