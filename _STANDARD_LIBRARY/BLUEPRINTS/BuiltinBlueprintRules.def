@@ -65,45 +65,120 @@ term :
 *)
 
 
+(* GENERAL REQUIREMENTS *)
+
+
 (* Mandatory Pairings *)
 
+
 (* One-way Dependencies *)
+
+(* TBASE always implies TSIGNED. *)
+[TBASE] -> [TSIGNED];
+
+(* Rationale: Paired for integrity.
+   TBASE indicates a scalar ADT. Scalar ADTs are always signed. *)
+
 
 (* RETAIN always implies RELEASE. *)
 [RETAIN] -> [RELEASE];
 
+(* Rationale: Paired for integrity.
+   RETAIN indicates reference counting.
+   Reference counting requires both a retain and release operation. *)
+
+
 (* DUP always implies runtime allocation. *)
 [DUP] -> [NEW];
+
+(* Rationale: Paired for integrity.
+   DUP is per definition a runtime allocator function.
+   It therefore necessitates a dynamicaly allocatable ADT. *)
+
 
 (* STORE always implies RETRIEVE. *)
 [STORE] -> [RETRIEVE];
 
+(* Rationale: Paired for integrity.
+   Mutable ADTs require both storage and retrieval.
+   Immutable ADTs require retrieval but no storage. *)
+
+
 (* NEG always implies ABS. *)
 [NEG] -> [ABS];
+
+(* Rationale: Paired for integrity.
+   NEG indicates a Signed ADT.
+   Signed ADTs require both sign reversal and sign removal.
+   Unsigned ADTs require sign removal but no reversal. *)
+
 
 (* DIV always implies multiplication. *)
 [DIV] -> [*];
 
+(* Rationale: Paired for integrity.
+   DIV indicates an Integer ADT.
+   Integer ADTs require integer division and multiplication.
+   Other ADTs may require multiplication but not integer division. *)
+
 
 (* Mutual Dependencies *)
 
-(* TMIN and TMAX imply each other. *)
-[TMIN] -> [TMAX] -> [TMIN];
+(* TBASE, SXF and VAL imply each other. *)
+[TBASE] -> [SXF] -> [VAL] -> [TBASE];
 
-(* SXF and VAL imply each other. *)
-[SXF] -> [VAL] -> [SXF];
+(* Rationale: Grouped for integrity.
+   TBASE implies a Scalar ADT.
+   Scalar ADTs require scalar conversion.
+   Scalar conversion is per definition limited to Scalar ADTs. *)
+
+
+(* TBASE, TMIN and TMAX imply each other. *)
+[TBASE] -> [TMIN] -> [TMAX] -> [TBASE];
+
+(* Rationale: Grouped for integrity.
+   TBASE implies a Scalar ADT.
+   Scalar ADTs require a minimal and maximal value.
+   Non-scalars do not have a minimal and maximal value. *)
+
 
 (* NEW and RELEASE imply each other. *)
 [NEW] -> [RELEASE] -> [NEW];
 
+(* Rationale: Paired for integrity.
+   NEW indicates runtime allocation.
+   Runtime allocation requires deallocation.
+   Even garbage collectors may need to call RELEASE internally. *)
+
+
 (* INSERT and REMOVE imply each other. *)
 [INSERT] -> [REMOVE] -> [INSERT];
+
+(* Rationale: Paired for integrity. *)
+
 
 (* DIV and MOD imply each other. *)
 [DIV] -> [MOD] -> [DIV];
 
+(* Rationale: Paired for integrity. *)
 
-(* Inhibit *)
+
+(* Inhibited Pairings *)
+
+
+(* One-Way Inhibition *)
+
+(* Absence of TSIGNED always inhibits ABS. *)
+NOT [TSIGNED] -> NOT [ABS];
+
+(* Absence of TSIGNED always inhibits NEG. *)
+NOT [TSIGNED] -> NOT [NEG];
+
+(* Absence of TSIGNED always inhibits DIV. *)
+NOT [TSIGNED] -> NOT [DIV];
+
+
+(* Mutual Inhibition *)
 
 (* TBASE and TLIMIT are always mutually exclusive. *)
 [TBASE] -> NOT [TLIMIT];
@@ -130,37 +205,34 @@ term :
 [>] -> NOT [SUBSET];
 
 
-(* Linear Exclusions *)
-
-(* For non-numeric ADTs, ABS, NEG, DIV and MOD are inhibited. *)
-NOT [TSIGNED] -> NOT [ABS];
-NOT [TSIGNED] -> NOT [NEG];
-NOT [TSIGNED] -> NOT [DIV];
+(* NUMERIC ADT REQUIREMENTS *)
 
 
-(* Numeric ADTs *)
+(* Signed and Unsigned ADTs *)
 
-(* Requirements for Signed and Unsigned ADTs *)
-
-(* For Signed ADTs, binding to NEG shall be required. *)
+(* Signed ADTs always require NEG. *)
 [TSIGNED=TRUE] -> [NEG];
 
-(* For Unsigned ADTs, binding to NEG is inhibited. *)
+(* Unsigned ADTs always inhibit NEG. *)
 [TSIGNED=FALSE] -> NOT [NEG];
 
 
-(* Scalar Properties *)
+(* Scalar ADTs *)
 
-(* A Scalar ADT shall be required to define properties
-   TSIGNED, TBASE, TPRECISION, TMINEXP, and TMAXEXP. *)
+(* Scalar ADTs are always signed. *)
 [TBASE] -> [TSIGNED];
+
+(* Scalar ADTs always require scalar properties
+    TBASE, TPRECISION, TMINEXP, and TMAXEXP. *)
 [TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
 
-(* For Scalar ADTs, binding to TMIN and TMAX shall be required. *)
-[TBASE] -> [TMIN];
+(* Scalar ADTs always require TMIN and TMAX. *)
+[TBASE] -> [TMIN] -> [TMAX] -> [TBASE];
 
-(* For Scalar ADTs, binding to SXF and VAL shall be required. *)
-[TBASE] -> [SXF];
+(* Scalar ADTs always require scalar conversion primitives *)
+[TBASE] -> [SXF] -> [VAL] -> [TBASE];
+
+
 
 (* For Scalar ADTs, binding to +, - and * shall be required. *)
 [TBASE] -> [+];
