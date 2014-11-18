@@ -7,8 +7,7 @@
 
 (* Classification *)
 
-(* An ADT is deemed a Numeric ADT if binding to any of TSIGNED,
-   TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF or VAL is required. *)
+(* An ADT is deemed a Numeric ADT if binding to TSIGNED is required. *)
 
 (* An ADT is deemed to be a Scalar ADT if binding to any of
    TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF or VAL is required. *)
@@ -17,7 +16,7 @@
    required but none of TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF nor VAL. *)
 
 (* An ADT is deemed to be a Collection ADT if binding to any of
-   DESCENDING, STORE, RETRIEVE, IN or SUBSET is required. *)
+   TLIMIT, DESCENDING, STORE, RETRIEVE, IN or SUBSET is required. *)
 
 (* A Scalar ADT is deemed a (signed or unsigned) Integer ADT
    if the values bound to TMINEXP and TMAXEXP are both zero. *)
@@ -29,7 +28,7 @@
    if the value bound to TSIGNED is FALSE. *)
 
 (* A Scalar ADT is deemed a Real Number ADT
-   if the values bound to TMINEXP and TMAXEXP are not both zero. *)
+   if one or both values bound to TMINEXP and TMAXEXP is not zero. *)
 
 (* An ADT is allocatable at runtime (aka dynamic)
    if its module type is an opaque pointer or binding to NEW is required. *)
@@ -43,7 +42,7 @@
    :=, COPY, STORE, INSERT, REMOVE is required. *)
 
 
-(* Grammar *)
+(* Notation *)
 
 (* The notation used in this document follows the EBNF below:
 
@@ -51,7 +50,8 @@ rule :
   condition '->' implication
 
 condition :
-  term (( AND NOT? | OR ) term )?
+  term (( AND NOT? | OR ) term )? |
+  NOT term
   ;
 
 implication :
@@ -65,55 +65,115 @@ term :
 *)
 
 
-(* Mutual Inclusion *)
+(* Mandatory Pairings *)
 
-(* TBASE, TPRECISION, TMINEXP and TMAXEXP are mutually inclusive. *)
-[TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
+(* One-way Dependencies *)
 
-(* TSIGNED having a value of TRUE is mutually inclusive with NEG. *)
-[TSIGNED=TRUE] -> [NEG] -> [TSIGNED=TRUE];
+(* RETAIN always implies RELEASE. *)
+[RETAIN] -> [RELEASE];
 
-(* SXF and VAL are mutually inclusive. *)
-[SXF] -> [VAL] -> [SXF];
+(* DUP always implies runtime allocation. *)
+[DUP] -> [NEW];
 
-(* TMIN and TMAX are mutually inclusive. *)
+(* STORE always implies RETRIEVE. *)
+[STORE] -> [RETRIEVE];
+
+(* NEG always implies ABS. *)
+[NEG] -> [ABS];
+
+(* DIV always implies multiplication. *)
+[DIV] -> [*];
+
+
+(* Mutual Dependencies *)
+
+(* TMIN and TMAX imply each other. *)
 [TMIN] -> [TMAX] -> [TMIN];
 
-(* NEW and RELEASE are mutually inclusive. *)
+(* SXF and VAL imply each other. *)
+[SXF] -> [VAL] -> [SXF];
+
+(* NEW and RELEASE imply each other. *)
 [NEW] -> [RELEASE] -> [NEW];
 
-(* INSERT and REMOVE are mutually inclusive. *)
+(* INSERT and REMOVE imply each other. *)
 [INSERT] -> [REMOVE] -> [INSERT];
 
-(* DIV and MOD are mutually inclusive. *)
+(* DIV and MOD imply each other. *)
 [DIV] -> [MOD] -> [DIV];
 
 
-(* Mutual Exclusions *)
+(* Inhibit *)
 
-(* TLIMIT and TBASE are mutually exclusive. *)
-[TLIMIT] -> NOT [TBASE];
+(* TBASE and TLIMIT are always mutually exclusive. *)
 [TBASE] -> NOT [TLIMIT];
+[TLIMIT] -> NOT [TBASE];
 
-(* COUNT and LENGTH are mutually exclusive *)
+(* COUNT and LENGTH are always mutually exclusive. *)
 [COUNT] -> NOT [LENGTH];
 [LENGTH] -> NOT [COUNT];
 
-(* CONCAT and + are mutually exclusive *)
+(* CONCAT and + are always mutually exclusive. *)
 [CONCAT] -> NOT [+];
 [+] -> NOT [CONCAT];
 
-(* DIV and / are mutually exclusive *)
+(* DIV and / are always mutually exclusive. *)
 [DIV] -> NOT [/];
 [/] -> NOT [DIV];
 
-(* SUBSET and < are mutually exclusive. *)
+(* SUBSET and < are always mutually exclusive. *)
 [SUBSET] -> NOT [<];
 [<] -> NOT [SUBSET];
 
-(* SUBSET and > are mutually exclusive. *)
+(* SUBSET and > are always mutually exclusive. *)
 [SUBSET] -> NOT [>];
 [>] -> NOT [SUBSET];
+
+
+(* Linear Exclusions *)
+
+(* For non-numeric ADTs, ABS, NEG, DIV and MOD are inhibited. *)
+NOT [TSIGNED] -> NOT [ABS];
+NOT [TSIGNED] -> NOT [NEG];
+NOT [TSIGNED] -> NOT [DIV];
+
+
+(* Numeric ADTs *)
+
+(* Requirements for Signed and Unsigned ADTs *)
+
+(* For Signed ADTs, binding to NEG shall be required. *)
+[TSIGNED=TRUE] -> [NEG];
+
+(* For Unsigned ADTs, binding to NEG is inhibited. *)
+[TSIGNED=FALSE] -> NOT [NEG];
+
+
+(* Scalar Properties *)
+
+(* A Scalar ADT shall be required to define properties
+   TSIGNED, TBASE, TPRECISION, TMINEXP, and TMAXEXP. *)
+[TBASE] -> [TSIGNED];
+[TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
+
+(* For Scalar ADTs, binding to TMIN and TMAX shall be required. *)
+[TBASE] -> [TMIN];
+
+(* For Scalar ADTs, binding to SXF and VAL shall be required. *)
+[TBASE] -> [SXF];
+
+(* For Scalar ADTs, binding to +, - and * shall be required. *)
+[TBASE] -> [+];
+[TBASE] -> [-];
+[TBASE] -> [*];
+
+(* For Real Number ADTs, binding to / shall be required. *)
+[TMINEXP#0] OR [TMAXEXP#0] -> [/];
+
+(* For Whole Number ADTs, binding to DIV and MOD shall be required. *)
+[TMINEXP=0] AND [TMAXEXP=0] -> [DIV];
+
+
 
 
 (* Unidirectional Dependencies *)
@@ -136,41 +196,12 @@ term :
 (* If NEW is required, L-value slicing requires RETAIN. *)
 [NEW] AND [..] -> [RETAIN];
 
-(* If TBASE is required, + and - are mutually inclusive. *)
-[TBASE] AND [+] -> [-] -> [+];
-
-(* If TBASE is required, * requires either / or DIV. *)
-[TBASE] AND [*] -> [/] OR [DIV];
-
-(* If TBASE is required, / requires *. *)
-[TBASE] AND [/] -> [*];
-
-(* If TBASE is required, DIV requires *. *)
-[TBASE] AND [DIV] -> [*];
 
 (* If SUBSET is required, +, -, * and / are mutually inclusive. *)
 [SUBSET] AND [+] -> [-] -> [*] -> [/] -> [+];
 
-(* Relational operations require TMIN (and TMAX). *)
-[<] -> [TMIN];
-[>] -> [TMIN];
 
 
-(* Unidirectional Exclusions *)
-
-(* If TSIGNED is FALSE, NEG is inhibited. *)
-[TSIGNED=FALSE] -> NOT [NEG];
-
-(* If values bound to TMINEXP and TMAXEXP
-   are both zero, real division is inhibited. *)
-[TMINEXP=0] AND [TMAXEXP=0] -> NOT [/];
-
-(* If either value bound to TMINEXP or TMAXEXP
-   is not zero, integer division is inhibited. *)
-[TMINEXP#0] OR [TMAXEXP#0] -> NOT [DIV];
-
-[TBASE] -> PROCEDURE [TMIN];
-(* If TBASE is required, TMIN is required. *)
 
 (* If the proto literal is CHAR or UNICHAR, LENGTH is required. *)
 [CHAR] OR [UNICHAR] -> [LENGTH];
@@ -198,11 +229,11 @@ term :
 
 (* To be reviewed ... *)
 
-[TMIN] -> PROCEDURE [CONCAT] : NIL;
-[CONCAT] -> PROCEDURE [TMIN] : NIL;
+[TMIN] -> [CONCAT];
+[CONCAT] -> [TMIN];
 (* TMIN and CONCAT are mutually exclusive. *)
 
-[DESCENDING] -> PROCEDURE [FOR];
+[DESCENDING] -> [FOR];
 (* If DESCENDING is required, for loop iteration is required. *)
 
 
