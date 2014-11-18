@@ -217,8 +217,9 @@ NOT [TSIGNED] -> NOT [DIV];
 (* CONCAT and + always inhibit each other's presence. *)
 
 (* Rationale: Correctness.
-   CONCAT binds to the + operator.
-   Directly binding to the + operator must therefore be prevented. *)
+   Binding to the + operator is for arithmetic operations exclusively.
+   CONCAT binds to the + operator for string concatenation.
+   The two are mutually exclusive. *)
 
 
 [DIV] -> NOT [/];
