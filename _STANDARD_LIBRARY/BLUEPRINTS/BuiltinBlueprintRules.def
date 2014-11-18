@@ -74,51 +74,51 @@ term :
 (* One-way Dependencies *)
 
 [TBASE] -> [TSIGNED];
-(* TBASE always implies TSIGNED. *)
+(* TBASE always implies the presence of TSIGNED. *)
 
-(* Rationale: Paired for integrity.
+(* Rationale: Integrity.
    TBASE indicates a scalar ADT.
    Scalar ADTs are always signed, but not all signed ADTs are scalars. *)
 
 
 [RETAIN] -> [RELEASE];
-(* RETAIN always implies RELEASE. *)
+(* RETAIN always implies the presence of RELEASE. *)
 
-(* Rationale: Paired for integrity.
+(* Rationale: Integrity.
    RETAIN indicates reference counting.
    Reference counting requires both a retain and release operation,
    but not all dynamically allocatable ADTs are reference counted. *)
 
 
 [DUP] -> [NEW];
-(* DUP always implies runtime allocation. *)
+(* DUP always implies the presence of runtime allocation. *)
 
-(* Rationale: Paired for integrity.
+(* Rationale: Integrity.
    DUP is per definition a runtime allocator function.
    It therefore necessitates a dynamicaly allocatable ADT. *)
 
 
 [STORE] -> [RETRIEVE];
-(* STORE always implies RETRIEVE. *)
+(* STORE always implies the presence of RETRIEVE. *)
 
-(* Rationale: Paired for integrity.
+(* Rationale: Integrity.
    Mutable ADTs require both storage and retrieval.
    Immutable ADTs require retrieval but no storage. *)
 
 
 [NEG] -> [ABS];
-(* NEG always implies ABS. *)
+(* NEG always implies the presence of ABS. *)
 
-(* Rationale: Paired for integrity.
+(* Rationale: Integrity.
    NEG indicates a Signed ADT.
    Signed ADTs require both sign reversal and sign removal.
    Unsigned ADTs require sign removal but no reversal. *)
 
 
 [DIV] -> [*];
-(* DIV always implies multiplication. *)
+(* DIV always implies the presence of multiplication. *)
 
-(* Rationale: Paired for integrity.
+(* Rationale: Integrity.
    DIV indicates an Integer ADT.
    Integer ADTs require integer division and multiplication.
    Other ADTs may require multiplication but not integer division. *)
@@ -127,42 +127,42 @@ term :
 (* Mutual Dependencies *)
 
 [TBASE] -> [TMIN] -> [TMAX] -> [TBASE];
-(* TBASE, TMIN and TMAX imply each other. *)
+(* TBASE, TMIN and TMAX always imply each other's presence. *)
 
-(* Rationale: Grouped for integrity.
+(* Rationale: Integrity.
    TBASE implies a Scalar ADT.
    Scalar ADTs require a minimal and maximal value.
    Non-scalars do not have a minimal and maximal value. *)
 
 
 [TBASE] -> [SXF] -> [VAL] -> [TBASE];
-(* TBASE, SXF and VAL imply each other. *)
+(* TBASE, SXF and VAL always imply each other's presence. *)
 
-(* Rationale: Grouped for integrity.
+(* Rationale: Integrity.
    TBASE implies a Scalar ADT.
    Scalar ADTs require scalar conversion.
    Scalar conversion is per definition limited to Scalar ADTs. *)
 
 
 [NEW] -> [RELEASE] -> [NEW];
-(* NEW and RELEASE imply each other. *)
+(* NEW and RELEASE always imply each other's presence. *)
 
-(* Rationale: Paired for integrity.
+(* Rationale: Integrity.
    NEW indicates runtime allocation.
    Runtime allocation requires deallocation.
    Even garbage collectors may need to call RELEASE internally. *)
 
 
 [INSERT] -> [REMOVE] -> [INSERT];
-(* INSERT and REMOVE imply each other. *)
+(* INSERT and REMOVE always imply each other's presence. *)
 
-(* Rationale: Paired for integrity. *)
+(* Rationale: Integrity. *)
 
 
 [DIV] -> [MOD] -> [DIV];
-(* DIV and MOD imply each other. *)
+(* DIV and MOD always imply each other's presence. *)
 
-(* Rationale: Paired for integrity. *)
+(* Rationale: Integrity. *)
 
 
 (* Inhibited Pairings *)
@@ -171,40 +171,83 @@ term :
 (* One-Way Inhibition *)
 
 NOT [TSIGNED] -> NOT [ABS];
-(* Absence of TSIGNED always inhibits ABS. *)
+(* Absence of TSIGNED always inhibits the presence of ABS. *)
+
+(* Rationale: Correctness.
+   Without a signed property, sign removal makes no sense. *)
+
 
 NOT [TSIGNED] -> NOT [NEG];
-(* Absence of TSIGNED always inhibits NEG. *)
+(* Absence of TSIGNED always inhibits the presence of NEG. *)
+
+(* Rationale: Correctness.
+   Without a signed property, sign reversal makes no sense. *)
+
 
 NOT [TSIGNED] -> NOT [DIV];
-(* Absence of TSIGNED always inhibits DIV. *)
+(* Absence of TSIGNED always inhibits the presence of DIV. *)
+
+(* Rationale: Correctness.
+   Without a signed property, DIV and MOD make no sense. *)
 
 
 (* Mutual Inhibition *)
 
 [TBASE] -> NOT [TLIMIT];
 [TLIMIT] -> NOT [TBASE];
-(* TBASE and TLIMIT are always mutually exclusive. *)
+(* TBASE and TLIMIT always inhibit each other's presence. *)
+
+(* Rationale: Integrity.
+   TBASE indicates a Scalar ADT.
+   TLIMIT indicates a Collection ADT.
+   The two are mutually exclusive. *)
+
 
 [COUNT] -> NOT [LENGTH];
 [LENGTH] -> NOT [COUNT];
-(* COUNT and LENGTH are always mutually exclusive. *)
+(* COUNT and LENGTH always inhibit each other's presence. *)
+
+(* Rationale: Consistency.
+   LENGTH is defined exclusively for String ADTs.
+   COUNT is defined for Collection ADTs other than String ADTs. *)
+
 
 [CONCAT] -> NOT [+];
 [+] -> NOT [CONCAT];
-(* CONCAT and + are always mutually exclusive. *)
+(* CONCAT and + always inhibit each other's presence. *)
+
+(* Rationale: Correctness.
+   CONCAT binds to the + operator.
+   Directly binding to the + operator must therefore be prevented. *)
+
 
 [DIV] -> NOT [/];
 [/] -> NOT [DIV];
-(* DIV and / are always mutually exclusive. *)
+(* DIV and / always inhibit each other's presence. *)
+
+(* Rationale: Consistency.
+   DIV is defined exclusively for integer division.
+   The / operator is defined for non-integer division and set difference. *)
+
 
 [SUBSET] -> NOT [<];
 [<] -> NOT [SUBSET];
-(* SUBSET and < are always mutually exclusive. *)
+(* SUBSET and < always inhibit each other's presence. *)
+
+(* Rationale: Correctness.
+   Binding to the < operator is for arithmetic operations exclusively.
+   SUBSET binds to the < operator for relational set operations.
+   The two are mutually exclusive. *)
+
 
 [SUBSET] -> NOT [>];
 [>] -> NOT [SUBSET];
-(* SUBSET and > are always mutually exclusive. *)
+(* SUBSET and > always inhibit each other. *)
+
+(* Rationale: Correctness.
+   Binding to the > operator is for arithmetic operations exclusively.
+   SUBSET binds to the > operator for relational set operations.
+   The two are mutually exclusive. *)
 
 
 (* NUMERIC ADT REQUIREMENTS *)
