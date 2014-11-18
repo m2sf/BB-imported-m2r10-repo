@@ -67,9 +67,7 @@ term :
 
 (* GENERAL REQUIREMENTS *)
 
-
 (* Mandatory Pairings *)
-
 
 (* One-way Dependencies *)
 
@@ -79,6 +77,15 @@ term :
 (* Rationale: Integrity.
    TBASE indicates a scalar ADT.
    Scalar ADTs are always signed, but not all signed ADTs are scalars. *)
+
+
+[TLIMIT] -> [COUNT] OR [LENGTH];
+(* TLIMIT always implies the presence of either COUNT or LENGTH. *)
+
+(* Rationale: Integrity.
+   TLIMIT indicates a Collection ADT.
+   String ADTs always require a length function.
+   Non-String Collection ADTs always require a count function. *)
 
 
 [RETAIN] -> [RELEASE];
@@ -176,7 +183,6 @@ term :
 
 (* Inhibited Pairings *)
 
-
 (* One-Way Inhibition *)
 
 NOT [TSIGNED] -> NOT [ABS];
@@ -262,7 +268,6 @@ NOT [TSIGNED] -> NOT [DIV];
 
 (* NUMERIC ADT REQUIREMENTS *)
 
-
 (* Signed and Unsigned ADTs *)
 
 [TSIGNED=TRUE] -> [NEG];
@@ -274,63 +279,65 @@ NOT [TSIGNED] -> NOT [DIV];
 
 (* Scalar ADTs *)
 
-[TBASE] -> [TSIGNED];
-(* Scalar ADTs are always signed. *)
-
-[TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
-(* Scalar ADTs always require scalar properties
-    TBASE, TPRECISION, TMINEXP, and TMAXEXP. *)
-
-[TBASE] -> [TMIN] -> [TMAX] -> [TBASE];
-(* Scalar ADTs always require TMIN and TMAX. *)
-
-[TBASE] -> [SXF] -> [VAL] -> [TBASE];
-(* Scalar ADTs always require scalar conversion primitives *)
-
-
 [TBASE] -> [+];
 [TBASE] -> [-];
 [TBASE] -> [*];
-(* For Scalar ADTs, binding to +, - and * shall be required. *)
+(* Scalar ADTs imply the availability of +, - and * notation. *)
+
+(* Rationale: Consistency.
+   TBASE indicates a Scalar ADT.
+   Scalar ADTs require arithmetic operators common to all scalars. *)
+
 
 [TMINEXP#0] OR [TMAXEXP#0] -> [/];
-(* For Real Number ADTs, binding to / shall be required. *)
+(* Number ADTs imply the availability of / notation. *)
+
+(* Rationale: Consistency.
+   TMINEXP or TMAXEXP with a non-zero value indicates a Real Number ADT.
+   Real Number ADTs require the real number division operator. *)
+
 
 [TMINEXP=0] AND [TMAXEXP=0] -> [DIV];
-(* For Whole Number ADTs, binding to DIV and MOD shall be required. *)
+(* Whole Number ADTs imply the availability of DIV and MOD operators. *)
+
+(* Rationale: Consistency.
+   TMINEXP and TMAXEXP both with zero value indicate a Whole Number ADT.
+   Whole Number ADTs require the integer division and modulus operators. *)
 
 
+(* COLLECTION ADT REQUIREMENTS *)
 
+(* Concatenation *)
 
-(* Unidirectional Dependencies *)
-
-(* TLIMIT requires either COUNT or LENGTH. *)
-[TLIMIT] -> [COUNT] OR [LENGTH];
-
-(* RETAIN requires NEW. *)
-[RETAIN] -> [NEW];
-
-(* DUP requires NEW. *)
-[DUP] -> [NEW];
-
-(* STORE requires RETRIEVE. *)
-[STORE] -> [RETRIEVE];
-
-(* If NEW is required, CONCAT requires RETAIN. *)
 [NEW] AND [CONCAT] -> [RETAIN];
+(* If NEW is present, CONCAT implies the presence of RETAIN. *)
 
-(* If NEW is required, L-value slicing requires RETAIN. *)
+(* Rationale: Correctness.
+   NEW indicates a dynamically allocatable ADT.
+   Concatenation of dynamic ADTs requires reference counting. *)
+
+
+(* Slicing *)
+
+
 [NEW] AND [..] -> [RETAIN];
+(* If NEW is present, L-value slicing implies the presence of RETAIN. *)
+
+(* Rationale: Correctness.
+   NEW indicates a dynamically allocatable ADT.
+   L-value slicing of dynamic ADTs requires reference counting. *)
 
 
-(* If SUBSET is required, +, -, * and / are mutually inclusive. *)
+(* Set Operations *)
+
 [SUBSET] AND [+] -> [-] -> [*] -> [/] -> [+];
+(* If SUBSET is present, +, -, * and / imply each other's presence. *)
+
+(* Rationale: Integrity.
+   SUBSET in combination with any of +, -, * or / indicates a Set ADT.
+   Set operations +, -, * and / are required on an all-or-nothing basis. *)
 
 
-
-
-(* If the proto literal is CHAR or UNICHAR, LENGTH is required. *)
-[CHAR] OR [UNICHAR] -> [LENGTH];
 
 (* If NEW is required, COPY requires DUP. *)
 [NEW] AND [COPY] -> [DUP];
@@ -355,12 +362,23 @@ NOT [TSIGNED] -> NOT [DIV];
 
 (* To be reviewed ... *)
 
-[TMIN] -> [CONCAT];
-[CONCAT] -> [TMIN];
-(* TMIN and CONCAT are mutually exclusive. *)
+[CONCAT] -> [TLIMIT];
+(* CONCAT implies the presence of TLIMIT. *)
+
+(* We certainly don't want concatenation for scalars.
+   But should it be limited to collections? or even strings? *)
+
 
 [DESCENDING] -> [FOR];
-(* If DESCENDING is required, for loop iteration is required. *)
+(* DESCENDING implies the presence of FOR. *)
+
+(* Should this be a mutual dependency? *)
+
+
+(* If the proto literal is CHAR or UNICHAR, LENGTH is required. *)
+[CHAR] OR [UNICHAR] -> [LENGTH];
+
+(* But how about character set ADTs? *)
 
 
 END BUILTIN.
