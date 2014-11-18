@@ -126,13 +126,22 @@ term :
 
 (* Mutual Dependencies *)
 
+[TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
+(* TBASE, TPRECISION, TMINEXP and TMAXEXP always imply each other's presence. *)
+
+(* Rationale: Integrity.
+   TBASE indicates a Scalar ADT.
+   Scalar ADTs require base, precision, eMax and eMin to be implemented. 
+   An ADT that defines scalar properties is always a Scalar ADT. *)
+
+
 [TBASE] -> [TMIN] -> [TMAX] -> [TBASE];
 (* TBASE, TMIN and TMAX always imply each other's presence. *)
 
 (* Rationale: Integrity.
    TBASE implies a Scalar ADT.
    Scalar ADTs require a minimal and maximal value.
-   Non-scalars do not have a minimal and maximal value. *)
+   An ADT that has a minimal and maximal value is always a Scalar ADT. *)
 
 
 [TBASE] -> [SXF] -> [VAL] -> [TBASE];
