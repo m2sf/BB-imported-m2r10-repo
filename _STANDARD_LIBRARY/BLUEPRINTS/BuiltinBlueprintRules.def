@@ -78,7 +78,7 @@ term :
 
 (* Rationale: Paired for integrity.
    TBASE indicates a scalar ADT.
-   Scalar ADTs are always signed but not all signed ADTs are scalars. *)
+   Scalar ADTs are always signed, but not all signed ADTs are scalars. *)
 
 
 (* RETAIN always implies RELEASE. *)
@@ -86,7 +86,8 @@ term :
 
 (* Rationale: Paired for integrity.
    RETAIN indicates reference counting.
-   Reference counting requires both a retain and release operation. *)
+   Reference counting requires both a retain and release operation,
+   but not all dynamically allocatable ADTs are reference counted. *)
 
 
 (* DUP always implies runtime allocation. *)
