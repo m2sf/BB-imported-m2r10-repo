@@ -77,7 +77,8 @@ term :
 [TBASE] -> [TSIGNED];
 
 (* Rationale: Paired for integrity.
-   TBASE indicates a scalar ADT. Scalar ADTs are always signed. *)
+   TBASE indicates a scalar ADT.
+   Scalar ADTs are always signed but not all signed ADTs are scalars. *)
 
 
 (* RETAIN always implies RELEASE. *)
