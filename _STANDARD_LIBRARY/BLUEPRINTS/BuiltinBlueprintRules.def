@@ -73,16 +73,16 @@ term :
 
 (* One-way Dependencies *)
 
-(* TBASE always implies TSIGNED. *)
 [TBASE] -> [TSIGNED];
+(* TBASE always implies TSIGNED. *)
 
 (* Rationale: Paired for integrity.
    TBASE indicates a scalar ADT.
    Scalar ADTs are always signed, but not all signed ADTs are scalars. *)
 
 
-(* RETAIN always implies RELEASE. *)
 [RETAIN] -> [RELEASE];
+(* RETAIN always implies RELEASE. *)
 
 (* Rationale: Paired for integrity.
    RETAIN indicates reference counting.
@@ -90,24 +90,24 @@ term :
    but not all dynamically allocatable ADTs are reference counted. *)
 
 
-(* DUP always implies runtime allocation. *)
 [DUP] -> [NEW];
+(* DUP always implies runtime allocation. *)
 
 (* Rationale: Paired for integrity.
    DUP is per definition a runtime allocator function.
    It therefore necessitates a dynamicaly allocatable ADT. *)
 
 
-(* STORE always implies RETRIEVE. *)
 [STORE] -> [RETRIEVE];
+(* STORE always implies RETRIEVE. *)
 
 (* Rationale: Paired for integrity.
    Mutable ADTs require both storage and retrieval.
    Immutable ADTs require retrieval but no storage. *)
 
 
-(* NEG always implies ABS. *)
 [NEG] -> [ABS];
+(* NEG always implies ABS. *)
 
 (* Rationale: Paired for integrity.
    NEG indicates a Signed ADT.
@@ -115,8 +115,8 @@ term :
    Unsigned ADTs require sign removal but no reversal. *)
 
 
-(* DIV always implies multiplication. *)
 [DIV] -> [*];
+(* DIV always implies multiplication. *)
 
 (* Rationale: Paired for integrity.
    DIV indicates an Integer ADT.
@@ -126,17 +126,8 @@ term :
 
 (* Mutual Dependencies *)
 
-(* TBASE, SXF and VAL imply each other. *)
-[TBASE] -> [SXF] -> [VAL] -> [TBASE];
-
-(* Rationale: Grouped for integrity.
-   TBASE implies a Scalar ADT.
-   Scalar ADTs require scalar conversion.
-   Scalar conversion is per definition limited to Scalar ADTs. *)
-
-
-(* TBASE, TMIN and TMAX imply each other. *)
 [TBASE] -> [TMIN] -> [TMAX] -> [TBASE];
+(* TBASE, TMIN and TMAX imply each other. *)
 
 (* Rationale: Grouped for integrity.
    TBASE implies a Scalar ADT.
@@ -144,8 +135,17 @@ term :
    Non-scalars do not have a minimal and maximal value. *)
 
 
-(* NEW and RELEASE imply each other. *)
+[TBASE] -> [SXF] -> [VAL] -> [TBASE];
+(* TBASE, SXF and VAL imply each other. *)
+
+(* Rationale: Grouped for integrity.
+   TBASE implies a Scalar ADT.
+   Scalar ADTs require scalar conversion.
+   Scalar conversion is per definition limited to Scalar ADTs. *)
+
+
 [NEW] -> [RELEASE] -> [NEW];
+(* NEW and RELEASE imply each other. *)
 
 (* Rationale: Paired for integrity.
    NEW indicates runtime allocation.
@@ -153,14 +153,14 @@ term :
    Even garbage collectors may need to call RELEASE internally. *)
 
 
-(* INSERT and REMOVE imply each other. *)
 [INSERT] -> [REMOVE] -> [INSERT];
+(* INSERT and REMOVE imply each other. *)
 
 (* Rationale: Paired for integrity. *)
 
 
-(* DIV and MOD imply each other. *)
 [DIV] -> [MOD] -> [DIV];
+(* DIV and MOD imply each other. *)
 
 (* Rationale: Paired for integrity. *)
 
@@ -170,41 +170,41 @@ term :
 
 (* One-Way Inhibition *)
 
-(* Absence of TSIGNED always inhibits ABS. *)
 NOT [TSIGNED] -> NOT [ABS];
+(* Absence of TSIGNED always inhibits ABS. *)
 
-(* Absence of TSIGNED always inhibits NEG. *)
 NOT [TSIGNED] -> NOT [NEG];
+(* Absence of TSIGNED always inhibits NEG. *)
 
-(* Absence of TSIGNED always inhibits DIV. *)
 NOT [TSIGNED] -> NOT [DIV];
+(* Absence of TSIGNED always inhibits DIV. *)
 
 
 (* Mutual Inhibition *)
 
-(* TBASE and TLIMIT are always mutually exclusive. *)
 [TBASE] -> NOT [TLIMIT];
 [TLIMIT] -> NOT [TBASE];
+(* TBASE and TLIMIT are always mutually exclusive. *)
 
-(* COUNT and LENGTH are always mutually exclusive. *)
 [COUNT] -> NOT [LENGTH];
 [LENGTH] -> NOT [COUNT];
+(* COUNT and LENGTH are always mutually exclusive. *)
 
-(* CONCAT and + are always mutually exclusive. *)
 [CONCAT] -> NOT [+];
 [+] -> NOT [CONCAT];
+(* CONCAT and + are always mutually exclusive. *)
 
-(* DIV and / are always mutually exclusive. *)
 [DIV] -> NOT [/];
 [/] -> NOT [DIV];
+(* DIV and / are always mutually exclusive. *)
 
-(* SUBSET and < are always mutually exclusive. *)
 [SUBSET] -> NOT [<];
 [<] -> NOT [SUBSET];
+(* SUBSET and < are always mutually exclusive. *)
 
-(* SUBSET and > are always mutually exclusive. *)
 [SUBSET] -> NOT [>];
 [>] -> NOT [SUBSET];
+(* SUBSET and > are always mutually exclusive. *)
 
 
 (* NUMERIC ADT REQUIREMENTS *)
@@ -212,40 +212,39 @@ NOT [TSIGNED] -> NOT [DIV];
 
 (* Signed and Unsigned ADTs *)
 
-(* Signed ADTs always require NEG. *)
 [TSIGNED=TRUE] -> [NEG];
+(* Signed ADTs always require NEG. *)
 
-(* Unsigned ADTs always inhibit NEG. *)
 [TSIGNED=FALSE] -> NOT [NEG];
+(* Unsigned ADTs always inhibit NEG. *)
 
 
 (* Scalar ADTs *)
 
-(* Scalar ADTs are always signed. *)
 [TBASE] -> [TSIGNED];
+(* Scalar ADTs are always signed. *)
 
+[TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
 (* Scalar ADTs always require scalar properties
     TBASE, TPRECISION, TMINEXP, and TMAXEXP. *)
-[TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
 
-(* Scalar ADTs always require TMIN and TMAX. *)
 [TBASE] -> [TMIN] -> [TMAX] -> [TBASE];
+(* Scalar ADTs always require TMIN and TMAX. *)
 
-(* Scalar ADTs always require scalar conversion primitives *)
 [TBASE] -> [SXF] -> [VAL] -> [TBASE];
+(* Scalar ADTs always require scalar conversion primitives *)
 
 
-
-(* For Scalar ADTs, binding to +, - and * shall be required. *)
 [TBASE] -> [+];
 [TBASE] -> [-];
 [TBASE] -> [*];
+(* For Scalar ADTs, binding to +, - and * shall be required. *)
 
-(* For Real Number ADTs, binding to / shall be required. *)
 [TMINEXP#0] OR [TMAXEXP#0] -> [/];
+(* For Real Number ADTs, binding to / shall be required. *)
 
-(* For Whole Number ADTs, binding to DIV and MOD shall be required. *)
 [TMINEXP=0] AND [TMAXEXP=0] -> [DIV];
+(* For Whole Number ADTs, binding to DIV and MOD shall be required. *)
 
 
 
