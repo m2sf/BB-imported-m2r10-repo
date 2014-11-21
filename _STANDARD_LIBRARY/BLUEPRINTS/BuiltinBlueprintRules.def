@@ -76,7 +76,8 @@ term :
 
 (* Rationale: Integrity.
    TBASE indicates a scalar ADT.
-   Scalar ADTs are always signed, but not all signed ADTs are scalars. *)
+   Scalar ADTs always have a signed property,
+   but not all ADTs that have a signed property are scalars. *)
 
 
 [TLIMIT] -> [COUNT] OR [LENGTH];
