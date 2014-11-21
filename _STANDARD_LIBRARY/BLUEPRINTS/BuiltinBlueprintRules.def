@@ -131,6 +131,44 @@ term :
    Other ADTs may require multiplication but not integer division. *)
 
 
+[NEW] AND [ABS] -> [RETAIN];
+[NEW] AND [NEG] -> [RETAIN];
+(* If NEW is present, any of ABS and NEG imply the presence of RETAIN. *)
+
+(* Rationale: Safety and Reliability.
+   NEW indicates a dynamically allocatable ADT.
+   For dynamic ADTs, ABS and NEG must return a newly allocated instance.
+   Reference counting is required in order to prevent memory leakage
+   when such an instance is passed as an argument to a procedure or
+   when it occurs as a sub-expression within an expression. *)
+
+
+[NEW] AND [+] -> [RETAIN];
+[NEW] AND [-] -> [RETAIN];
+[NEW] AND [*] -> [RETAIN];
+[NEW] AND [/] -> [RETAIN];
+(* If NEW is present, any of +, -, *, / imply the presence of RETAIN. *)
+
+(* Rationale: Safety and Reliability.
+   NEW indicates a dynamically allocatable ADT.
+   For dynamic ADTs, +, -, * and / must return a newly allocated instance.
+   Reference counting is required in order to prevent memory leakage when
+   such an instance is passed as an argument to a procedure or when it
+   occurs as a sub-expression within an expression. *)
+
+
+[NEW] AND [DIV] -> [RETAIN];
+[NEW] AND [MOD] -> [RETAIN];
+(* If NEW is present, any of DIV and MOD imply the presence of RETAIN. *)
+
+(* Rationale: Safety and Reliability.
+   NEW indicates a dynamically allocatable ADT.
+   For dynamic ADTs, DIV and MOD must return a newly allocated instance.
+   Reference counting is required in order to prevent memory leakage
+   when such an instance is passed as an argument to a procedure or
+   when it occurs as a sub-expression within an expression. *)
+
+
 (* Mutual Dependencies *)
 
 [TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
@@ -290,7 +328,7 @@ NOT [TSIGNED] -> NOT [DIV];
 
 
 [TMINEXP#0] OR [TMAXEXP#0] -> [/];
-(* Number ADTs imply the availability of / notation. *)
+(* Real Number ADTs imply the availability of / notation. *)
 
 (* Rationale: Consistency.
    TMINEXP or TMAXEXP with a non-zero value indicates a Real Number ADT.
@@ -312,9 +350,12 @@ NOT [TSIGNED] -> NOT [DIV];
 [NEW] AND [CONCAT] -> [RETAIN];
 (* If NEW is present, CONCAT implies the presence of RETAIN. *)
 
-(* Rationale: Correctness.
+(* Rationale: Safety and Reliability.
    NEW indicates a dynamically allocatable ADT.
-   Concatenation of dynamic ADTs requires reference counting. *)
+   For dynamic ADTs, CONCAT must return a newly allocated instance.
+   Reference counting is required in order to prevent memory leakage when
+   such an instance is passed as an argument to a procedure or when it
+   occurs as a sub-expression within an expression. *)
 
 
 (* Slicing *)
@@ -323,9 +364,12 @@ NOT [TSIGNED] -> NOT [DIV];
 [NEW] AND [..] -> [RETAIN];
 (* If NEW is present, L-value slicing implies the presence of RETAIN. *)
 
-(* Rationale: Correctness.
+(* Rationale: Safety and Reliability.
    NEW indicates a dynamically allocatable ADT.
-   L-value slicing of dynamic ADTs requires reference counting. *)
+   For dynamic ADTs, L-value slicing must return a newly allocated instance.
+   Reference counting is required in order to prevent memory leakage when
+   such an instance is passed as an argument to a procedure or when it
+   occurs as a sub-expression within an expression. *)
 
 
 (* Set Operations *)
@@ -339,28 +383,43 @@ NOT [TSIGNED] -> NOT [DIV];
 
 
 
-(* If NEW is required, COPY requires DUP. *)
 [NEW] AND [COPY] -> [DUP];
+(* If NEW is present, COPY implies the presence of DUP. *)
 
-(* If for-loop iteration is required, either COUNT or LENGTH is required. *)
+(* Rationale: Consistency.
+   NEW indicates a dynamically allocatable ADT.
+   DUP is always required for immutable ADTs. For consistency,
+   the mutable counterpart of an immutable ADT should be a superset. *)
+   
+
 [FOR] -> [COUNT] OR [LENGTH];
+(* For-loop iteration implies the presence of either COUNT or LENGTH. *)
+
+(* Rationale: Integrity. *)
 
 
 (* IO *)
 
-(* READ requires WRITE. *)
 [READ] -> [WRITE];
+(* READ implies the presence of WRITE. *)
 
-(* If STORE is required, WRITE requires READ. *)
-[NEW] AND [STORE] AND [WRITE] -> [READ];
+(* Rationale: Consistency. *)
+
 
 [WRITE] AND NOT [NEW] -> [READ];
+[NEW] AND [STORE] AND [WRITE] -> [READ];
+(* WRITE implies the presence of READ if and only if the ADT is mutable. *)
 
-(* WRITE and WRITEF are mutually inclusive. *)
+(* Rationale: Consistency. *)
+
+
 [WRITE] -> [WRITEF] -> [WRITE];
+(* WRITE and WRITEF always imply each other's presence. *)
+
+(* Rationale: Consistency. *)
 
 
-(* To be reviewed ... *)
+(* Under consideration ... *)
 
 [CONCAT] -> [TLIMIT];
 (* CONCAT implies the presence of TLIMIT. *)
@@ -378,7 +437,8 @@ NOT [TSIGNED] -> NOT [DIV];
 (* If the proto literal is CHAR or UNICHAR, LENGTH is required. *)
 [CHAR] OR [UNICHAR] -> [LENGTH];
 
-(* But how about character set ADTs? *)
+(* But how about character set ADTs?
+   Somehow this ought to be limited to string ADTs. *)
 
 
 END BUILTIN.
