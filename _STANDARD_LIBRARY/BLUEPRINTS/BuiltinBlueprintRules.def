@@ -178,7 +178,7 @@ term :
 (* Rationale: Integrity.
    TBASE indicates a Scalar ADT.
    Scalar ADTs require base, precision, eMax and eMin to be implemented. 
-   An ADT that defines scalar properties is always a Scalar ADT. *)
+   An ADT that defines any of these scalar properties is always a Scalar ADT. *)
 
 
 [TBASE] -> [TMIN] -> [TMAX] -> [TBASE];
