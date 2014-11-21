@@ -413,6 +413,12 @@ NOT [TSIGNED] -> NOT [DIV];
 (* Rationale: Consistency. *)
 
 
+[NEW] AND NOT [STORE] -> NOT [READ];
+(* NEW and absence of STORE inhibit the presence of READ. *)
+
+(* Rationale: Consistency. *)
+
+
 [WRITE] -> [WRITEF] -> [WRITE];
 (* WRITE and WRITEF always imply each other's presence. *)
 
