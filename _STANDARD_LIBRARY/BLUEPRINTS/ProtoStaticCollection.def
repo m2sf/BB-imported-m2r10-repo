@@ -219,22 +219,16 @@ PROCEDURE [TMAX] : NIL; (* inhibited *)
 
 (* Memory Management *)
 
-(* Operations NEW, RETAIN and RELEASE are not meaningful for static ADTs.
-   Conforming blueprints may not require bindings to these operations. *)
+(* Operations NEW, NEWCOPY, RETAIN and RELEASE are not meaningful for static
+   ADTs. Conforming blueprints may not require bindings to these operations. *)
 
 PROCEDURE [NEW] : NIL; (* inhibited *)
+
+PROCEDURE [NEWCOPY] : NIL; (* inhibited *)
 
 PROCEDURE [RETAIN] : NIL; (* inhibited *)
 
 PROCEDURE [RELEASE] : NIL; (* inhibited *)
-
-
-(* Copying *)
-
-(* Operation DUP is not meaningful for statically allocated ADTs.
-   Conforming blueprints may not require binding to DUP. *)
-
-PROCEDURE [DUP] : NIL; (* inhibited *)
 
 
 (* Arithmetic Operations *)
