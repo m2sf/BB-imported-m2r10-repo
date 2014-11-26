@@ -399,6 +399,9 @@ type :
     ;
 
 // alias 20.1
+opaquePointerTypeIdent : qualident ;
+
+// alias 20.2
 typeIdent : qualident ;
 
 // production #21
