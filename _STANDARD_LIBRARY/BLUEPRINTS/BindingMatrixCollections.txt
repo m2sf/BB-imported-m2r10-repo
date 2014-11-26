@@ -21,11 +21,11 @@ TMIN        | #          | #          | #          | #          |
 TMAX        | #          | #          | #          | #          |  
 ------------+------------+------------+------------+------------+-------------
 NEW         | #          | #          | #          | #          |  
+NEWCOPY     | #          | #          | #          | #          |  
 RETAIN      | #          | #          | #          | #          |  
 RELEASE     | #          | #          | #          | #          |  
 ------------+------------+------------+------------+------------+-------------
 :=          | R          | R          | R          | R          |  
-DUP         | #          | #          | #          | #          |  
 COPY        | R          | R          | R          | R          |  
 ------------+------------+------------+------------+------------+-------------
 STORE       | R          | R          | R          | R          |  
@@ -67,7 +67,6 @@ Property/  | Proto-   | ProtoSet | Proto-   | Proto-   | Proto-   | Proto-
 Bindable   | Collec-  |          | Counted- | Array    | String   | Dictionary
 Entity     | tion     |          | Set      |          |          |
 -----------+----------+----------+----------+----------+----------+-----------
-Mutable    | R        | R        | R        | R        | R        | R
 RefCounted | R        | R:TRUE   | R:TRUE   | R        | R        | R
 -----------+----------+----------+----------+----------+----------+-----------
 DESCENDING | R        | R:FALSE  | R:FALSE  | R:TRUE   | R:TRUE   | R
@@ -87,17 +86,17 @@ TMIN       | #        | #        | #        | #        | #        | #
 TMAX       | #        | #        | #        | #        | #        | #
 -----------+----------+----------+----------+----------+----------+-----------
 NEW        | R        | R        | R        | R        | R        | R
+NEWCOPY    | R        | R        | R        | R        | R        | R
 RETAIN     | Rr #nr   | R        | R        | Rr #nr   | R #nr    | Rr
 RELEASE    | R        | R        | R        | R        | R        | R
 -----------+----------+----------+----------+----------+----------+-----------
-:=         | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
-DUP        | R        | R        | R        | R        | R        | R
-COPY       | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
+:=         | R        | R        | R        | R        | R        | R
+COPY       | R        | R        | R        | R        | R        | R
 -----------+----------+----------+----------+----------+----------+-----------
-STORE      | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
+STORE      | R        | R        | R        | R        | R        | R
 RETRIEVE   | R        | R        | R        | R        | R        | R
-INSERT     | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
-REMOVE     | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im   | Rm #im
+INSERT     | R        | R        | R        | R        | R        | R
+REMOVE     | R        | R        | R        | R        | R        | R
 -----------+----------+----------+----------+----------+----------+-----------
 IN         |          | R        | R        | #        | #        | R
 FOR        | R        | R        | R        | R        | R        | R
@@ -124,9 +123,8 @@ SUBSET     |          | R #nr    | R #nr    | #        | #        | #
 
 Legend:
   R always required                   # always inhibited
-  Rm required if mutable              #im inhibited if immutable
   Rr required if reference counted    #nr inhibited if not reference counted
   : required value
 
 
-[Status: Nov 5, 2014]
+[Status: Nov 25, 2014]
