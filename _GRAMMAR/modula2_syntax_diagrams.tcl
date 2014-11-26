@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Oct 31, 2014
+# Syntax diagram generator for Modula-2 (R10), status Nov 25, 2014
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -424,6 +424,7 @@ lappend non_terminals variableDeclaration {
 lappend non_terminals type {
   line {
     or
+      {line CONST opaquePointerTypeIdent}
       {line {optx {or ALIAS SET range} OF} typeIdent}
       {line enumType}
       {line arrayType}
@@ -433,7 +434,12 @@ lappend non_terminals type {
   }
 }
 
-# (20.1) Type Identifier
+# (20.1) Opaque Pointer Type Identifier
+lappend non_terminals opaquePointerTypeIdent {
+  line qualident
+}
+
+# (20.2) Type Identifier
 lappend non_terminals typeIdent {
   line qualident
 }
@@ -910,8 +916,8 @@ lappend terminals ConstBindableIdent {
 # (2.4) Procedure-Bindable Identifier
 lappend terminals ProcBindableIdent {
   or
-    /ABS /NEG /DUP /COPY /COUNT /LENGTH /NEW /RETAIN /RELEASE /CONCAT
-    /STORE /RETRIEVE /INSERT /REMOVE /SUBSET /READ /WRITE /WRITEF
+    /ABS /NEG /COPY /COUNT /LENGTH /NEW /NEWCOPY /RETAIN /RELEASE /CONCAT
+    /STORE /RETRIEVE /INSERT /REMOVE /SUBSET /READ /READNEW /WRITE /WRITEF
     /TMIN /TMAX /SXF /VAL
 }
 
