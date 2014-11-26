@@ -419,13 +419,12 @@ lappend non_terminals variableDeclaration {
   line identList : {optx range OF} typeIdent
 }
 
-
 # (20) Type
 lappend non_terminals type {
   line {
     or
-      {line CONST opaquePointerTypeIdent}
       {line {optx {or ALIAS SET range} OF} typeIdent}
+      {line CONST opaquePointerTypeIdent}
       {line enumType}
       {line arrayType}
       {line recordType}
@@ -434,14 +433,14 @@ lappend non_terminals type {
   }
 }
 
-# (20.1) Opaque Pointer Type Identifier
-lappend non_terminals opaquePointerTypeIdent {
+# (20.1) Type Identifier
+lappend non_terminals typeIdent {
   line qualident
 }
 
-# (20.2) Type Identifier
-lappend non_terminals typeIdent {
-  line qualident
+# (20.2) Opaque Pointer Type Identifier
+lappend non_terminals opaquePointerTypeIdent {
+  line typeIdent
 }
 
 # (21) Range
