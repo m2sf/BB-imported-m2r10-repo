@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Oct 31, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Nov 25, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -30,7 +30,7 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 45 reserved words, 26 identifiers, 23 pragma symbols
+// 45 reserved words, 29 identifiers, 23 pragma symbols
 
 tokens {
 	
@@ -90,7 +90,7 @@ tokens {
     CAST           = 'CAST';           /* RW within formal parameter */
     NIL            = 'NIL';            /* RW within blueprint */
 
-// *** Bindable Identifiers, 28 tokens ***
+// *** Bindable Identifiers, 29 tokens ***
 
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
@@ -104,7 +104,6 @@ tokens {
 
     ABS            = 'ABS';            /* RW within procedure header */
     NEG            = 'NEG';            /* RW within procedure header */
-    DUP            = 'DUP';            /* RW within procedure header */
     COPY           = 'COPY';           /* RW within procedure header */
     COUNT          = 'COUNT';          /* RW within procedure header */
     LENGTH         = 'LENGTH';         /* RW within procedure header */
@@ -114,10 +113,12 @@ tokens {
     INSERT         = 'INSERT';         /* RW within procedure header */
     REMOVE         = 'REMOVE';         /* RW within procedure header */
     NEW            = 'NEW';            /* RW within procedure header */
+    NEWCOPY        = 'NEWCOPY';        /* RW within procedure header */
     RETAIN         = 'RETAIN';         /* RW within procedure header */
     RELEASE        = 'RELEASE';        /* RW within procedure header */
     SUBSET         = 'SUBSET';         /* RW within procedure header */
     READ           = 'READ';           /* RW within procedure header */
+    READNEW        = 'READNEW';        /* RW within procedure header */
     WRITE          = 'WRITE';          /* RW within procedure header */
     WRITEF         = 'WRITEF';         /* RW within procedure header */
     TMAX           = 'TMAX';           /* RW within procedure header */
@@ -299,7 +300,6 @@ restrictedExport : '*' ;
 procBindableEntity :
     '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' | '..' |
     IN | DIV | MOD | FOR | ProcBindableIdent
-    {} /* make ANTLRworks display separate branches */
     ;
 
 
@@ -393,6 +393,7 @@ variableDeclaration :
 
 // production #20
 type :
+    CONST opaquePointerTypeIdent |
     (( ALIAS | SET | range ) OF )? typeIdent |
     enumType | arrayType | recordType | pointerType | procedureType
     ;
@@ -1036,9 +1037,9 @@ ConstBindableIdent :  /* Ident */
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 ProcBindableIdent : /* Ident */
-    ABS | NEG | DUP | COPY | COUNT | LENGTH | NEW | RETAIN | RELEASE |
-    CONCAT | STORE | RETRIEVE | INSERT | REMOVE | SUBSET |
-    READ | WRITE | WRITEF | TMIN | TMAX | SXF | VAL
+    ABS | NEG | COPY | COUNT | LENGTH | NEW | NEWCOPY | RETAIN |
+    RELEASE | CONCAT | STORE | RETRIEVE | INSERT | REMOVE | SUBSET |
+    READ | READNEW | WRITE | WRITEF | TMIN | TMAX | SXF | VAL
     {} /* make ANTLRworks display separate branches */
     ;
 
