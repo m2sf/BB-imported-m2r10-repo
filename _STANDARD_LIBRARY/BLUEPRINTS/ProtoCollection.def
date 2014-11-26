@@ -219,6 +219,8 @@ NOT isRefCounted -> PROCEDURE [RETAIN] : NIL; (* inhibited *)
 
 NOT isRefCounted  -> PROCEDURE [CONCAT] : NIL; (* inhibited *)
 
+NOT isRefCounted  -> PROCEDURE [..] : NIL; (* inhibited *)
+
 NOT isRefCounted  -> PROCEDURE [+] : NIL; (* inhibited *)
 
 NOT isRefCounted  -> PROCEDURE [-] : NIL; (* inhibited *)
