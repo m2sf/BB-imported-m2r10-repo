@@ -98,14 +98,6 @@ term :
    but not all dynamically allocatable ADTs are reference counted. *)
 
 
-[DUP] -> [NEW];
-(* DUP always implies the presence of runtime allocation. *)
-
-(* Rationale: Integrity.
-   DUP is per definition a runtime allocator function.
-   It therefore necessitates a dynamicaly allocatable ADT. *)
-
-
 [STORE] -> [RETRIEVE];
 (* STORE always implies the presence of RETRIEVE. *)
 
@@ -199,8 +191,8 @@ term :
    Scalar conversion is per definition limited to Scalar ADTs. *)
 
 
-[NEW] -> [RELEASE] -> [NEW];
-(* NEW and RELEASE always imply each other's presence. *)
+[NEW] -> [NEWCOPY] -> [RELEASE] -> [NEW];
+(* NEW, NEWCOPY and RELEASE always imply each other's presence. *)
 
 (* Rationale: Integrity.
    NEW indicates runtime allocation.
@@ -381,16 +373,6 @@ NOT [TSIGNED] -> NOT [DIV];
 (* Rationale: Integrity.
    SUBSET in combination with any of +, -, * or / indicates a Set ADT.
    Set operations +, -, * and / are required on an all-or-nothing basis. *)
-
-
-
-[NEW] AND [COPY] -> [DUP];
-(* If NEW is present, COPY implies the presence of DUP. *)
-
-(* Rationale: Consistency.
-   NEW indicates a dynamically allocatable ADT.
-   DUP is always required for immutable ADTs. For consistency,
-   the mutable counterpart of an immutable ADT should be a superset. *)
    
 
 [FOR] -> [COUNT] OR [LENGTH];
@@ -402,20 +384,13 @@ NOT [TSIGNED] -> NOT [DIV];
 (* IO *)
 
 [READ] -> [WRITE];
-(* READ implies the presence of WRITE. *)
+(* READ always implies the presence of WRITE. *)
 
 (* Rationale: Consistency. *)
 
 
-[WRITE] AND NOT [NEW] -> [READ];
-[NEW] AND [STORE] AND [WRITE] -> [READ];
-(* WRITE implies the presence of READ if and only if the ADT is mutable. *)
-
-(* Rationale: Consistency. *)
-
-
-[NEW] AND NOT [STORE] -> NOT [READ];
-(* NEW and absence of STORE inhibit the presence of READ. *)
+[READNEW] -> [WRITE];
+(* READNEW always implies the presence of WRITE. *)
 
 (* Rationale: Consistency. *)
 
@@ -426,26 +401,60 @@ NOT [TSIGNED] -> NOT [DIV];
 (* Rationale: Consistency. *)
 
 
+[WRITE] AND NOT [NEW] -> [READ];
+(* WRITE implies the presence of READ if the ADT is static. *)
+
+(* Rationale: Consistency. *)
+
+
+[WRITE] AND [NEW] -> [READNEW];
+(* WRITE implies the presence of READNEW if the ADT is dynamic. *)
+
+(* Rationale: Consistency. *)
+
+
+[WRITE] AND [STORE] -> [READ];
+(* WRITE implies the presence of READ if the ADT is mutable. *)
+
+(* Rationale: Consistency. *)
+
+
 (* Under consideration ... *)
+
+(* Somehow, we should link the use of LENGTH to string ADTs.
+   A simple solution would be to require LENGTH when the proto
+   literal is CHAR or UNICHAR ... *)
+   
+[CHAR] OR [UNICHAR] -> [LENGTH];
+
+(* However, that would impose LENGTH also on character set ADTs *)
+
+(* Perhaps LENGTH should be inhibited
+   if the proto literal is neither CHAR nor UNICHAR ...  *)
+NOT [CHAR] AND NOT [UNICHAR] -> NOT [LENGTH];
+
+
+(* We certainly don't want concatenation for scalars.
+   Should it be limited to collections? *)
 
 [CONCAT] -> [TLIMIT];
 (* CONCAT implies the presence of TLIMIT. *)
 
-(* We certainly don't want concatenation for scalars.
-   But should it be limited to collections? or even strings? *)
+(* Or should it be limited to strings? *)
 
+NOT [LENGTH] -> NOT [CONCAT];
+(* Absence of LENGTH inhibits the presence of CONCAT. *)
+
+
+(* Should Descending and FOR be linked? *)
 
 [DESCENDING] -> [FOR];
 (* DESCENDING implies the presence of FOR. *)
 
-(* Should this be a mutual dependency? *)
+(* If so, should this be a mutual dependency? *)
 
-
-(* If the proto literal is CHAR or UNICHAR, LENGTH is required. *)
-[CHAR] OR [UNICHAR] -> [LENGTH];
-
-(* But how about character set ADTs?
-   Somehow this ought to be limited to string ADTs. *)
+[DESCENDING] -> [FOR] -> [DESCENDING];
+(* DESCENDING and FOR imply each other's presence. *)
 
 
 END BUILTIN.
