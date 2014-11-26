@@ -393,16 +393,16 @@ variableDeclaration :
 
 // production #20
 type :
-    CONST opaquePointerTypeIdent |
     (( ALIAS | SET | range ) OF )? typeIdent |
+    CONST opaquePointerTypeIdent |
     enumType | arrayType | recordType | pointerType | procedureType
     ;
 
 // alias 20.1
-opaquePointerTypeIdent : qualident ;
+typeIdent : qualident ;
 
 // alias 20.2
-typeIdent : qualident ;
+opaquePointerTypeIdent : typeIdent ;
 
 // production #21
 range :
