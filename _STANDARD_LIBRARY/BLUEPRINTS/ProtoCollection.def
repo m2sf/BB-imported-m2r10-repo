@@ -19,19 +19,11 @@ MODULE TYPE = OPAQUE :=
 
 (* Required Constants *)
 
+(* NIL Storage *)
 
-(* Mutability *)
-
-CONST isMutable : BOOLEAN;
-(* Required constant to define whether the ADT should be mutable.
+CONST [NIL] allowsNilStorage : BOOLEAN;
+(* Required constant to define whether NIL should be a storable value.
    Its value may be TRUE or FALSE. *)
-
-
-(* Memory Management Model *)
-
-CONST isRefCounted : BOOLEAN;
-(* Required constant to define whether conforming ADTs should be reference
-   counted. Its value may be TRUE or FALSE. *)
 
 
 (* Orderedness *)
@@ -41,11 +33,11 @@ CONST [DESCENDING] isOrdered : BOOLEAN;
    Its value may be TRUE or FALSE. *)
 
 
-(* NIL Storage *)
+(* Memory Management Model *)
 
-CONST [NIL] allowsNilStorage : BOOLEAN;
-(* Required constant to define whether NIL should be a storable value.
-   Its value may be TRUE or FALSE. *)
+CONST isRefCounted : BOOLEAN;
+(* Required constant to define whether conforming ADTs should be reference
+   counted. Its value may be TRUE or FALSE. *)
 
 
 (* Support for Invalid Accessor Retrieval Intercept *)
@@ -77,6 +69,9 @@ PROCEDURE [TLIMIT];
 PROCEDURE [NEW];
 (* Specialised blueprints must always require binding to NEW. *)
 
+PROCEDURE [NEWCOPY];
+(* Specialised blueprints must always require binding to NEWCOPY. *)
+
 isRefCounted -> PROCEDURE [RETAIN];
 (* Specialised blueprints must require binding to RETAIN when the
    ADT is reference counted. *)
@@ -89,30 +84,24 @@ PROCEDURE [RELEASE];
 
 (* Binding to the := Operator *)
 
-isMutable -> PROCEDURE [:=];
-(* Specialised blueprints must require binding to := when mutable. *)
+PROCEDURE [:=];
+(* Specialised blueprints must always require binding to the := operator. *)
 
 
 (* Copying *)
 
-(* Binding to Predefined Function DUP *)
-
-PROCEDURE [DUP];
-(* Specialised blueprints must always require binding to DUP. *)
-
-
 (* Binding to Predefined Procedure COPY *)
 
-isMutable -> PROCEDURE [COPY];
-(* Specialised blueprints must require binding to COPY when mutable. *)
+PROCEDURE [COPY];
+(* Specialised blueprints must always require binding to COPY. *)
 
 
 (* Value Storage *)
 
 (* Binding to Predefined Procedure STORE *)
 
-isMutable -> PROCEDURE [STORE];
-(* Specialised blueprints must require binding to STORE when mutable. *)
+PROCEDURE [STORE];
+(* Specialised blueprints must always require binding to STORE. *)
 
 
 (* Value Retrieval *)
@@ -148,16 +137,16 @@ PROCEDURE installHandler ( handler : HandlerType );
 
 (* Binding to Predefined Procedure INSERT *)
 
-isMutable -> PROCEDURE [INSERT];
-(* Specialised blueprints must require binding to INSERT when mutable. *)
+PROCEDURE [INSERT];
+(* Specialised blueprints must always require binding to INSERT. *)
 
 
 (* Value Removal *)
 
 (* Binding to Predefined Procedure REMOVE *)
 
-isMutable -> PROCEDURE [REMOVE];
-(* Specialised blueprints must require binding to REMOVE when mutable. *)
+PROCEDURE [REMOVE];
+(* Specialised blueprints must always require binding to REMOVE. *)
 
 
 (* Membership Test *)
@@ -222,20 +211,6 @@ PROCEDURE [=];
 
 
 (* Conditionally Inhibited Bindings *)
-
-(* Conforming blueprints may not require bindings to any of
-   :=, COPY, STORE, INSERT and REMOVE if the ADT is immutable. *)
-
-NOT isMutable -> PROCEDURE [:=] : NIL; (* inhibited *)
-
-NOT isMutable -> PROCEDURE [COPY] : NIL; (* inhibited *)
-
-NOT isMutable -> PROCEDURE [STORE] : NIL; (* inhibited *)
-
-NOT isMutable -> PROCEDURE [INSERT] : NIL; (* inhibited *)
-
-NOT isMutable -> PROCEDURE [REMOVE] : NIL; (* inhibited *)
-
 
 (* Conforming blueprints may not require bindings to RETAIN and CONCAT,
    nor to any set operations if the ADT is not reference counted. *)
