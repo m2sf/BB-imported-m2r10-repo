@@ -7,39 +7,44 @@
 
 (* Classification *)
 
+(* An ADT is allocatable at runtime (aka dynamic)
+   if its module type is an opaque pointer or binding to NEW is required. *)
+
+(* A Dynamic ADT is deemed to be a Reference Counted ADT
+   if binding to RETAIN is required. *)
+
+(* An ADT is allocatable at compile time (aka static) if its module
+   type is not an opaque pointer and binding to NEW is not required. *)
+
 (* An ADT is deemed a Numeric ADT if binding to TSIGNED is required. *)
 
-(* An ADT is deemed to be a Scalar ADT if binding to any of
-   TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF or VAL is required. *)
+(* An ADT is deemed to be a Scalar ADT if binding to any of TBASE,
+   TPRECISION, TMINEXP, TMAXEXP, TMIN, TMAX, SXF or VAL is required. *)
 
-(* An ADT is deemed to be a Non-Scalar ADT if binding to TSIGNED is
-   required but none of TBASE, TPRECISION, TMINEXP, TMAXEXP, SXF nor VAL. *)
+(* An ADT is deemed to be a Non-Scalar ADT
+   if it is a Numeric ADT but not a Scalar ADT. *)
 
-(* An ADT is deemed to be a Collection ADT if binding to any of
-   TLIMIT, DESCENDING, STORE, RETRIEVE, IN or SUBSET is required. *)
-
-(* A Scalar ADT is deemed a (signed or unsigned) Integer ADT
+(* A Scalar ADT is deemed a Whole Number ADT (signed or unsigned integer)
    if the values bound to TMINEXP and TMAXEXP are both zero. *)
 
-(* An Integer ADT is deemed a Signed Integer ADT
+(* An Whole Number ADT is deemed an Integer ADT (signed integer)
    if the value bound to TSIGNED is TRUE. *)
 
-(* An Integer ADT is deemed an Unsigned Integer ADT
+(* An Whole Number ADT is deemed a Cardinal ADT (unsigned integer)
    if the value bound to TSIGNED is FALSE. *)
 
 (* A Scalar ADT is deemed a Real Number ADT
    if one or both values bound to TMINEXP and TMAXEXP is not zero. *)
 
-(* An ADT is allocatable at runtime (aka dynamic)
-   if its module type is an opaque pointer or binding to NEW is required. *)
+(* An ADT is deemed to be a Collection ADT if binding to any of TLIMIT,
+   NIL, COUNT, LENGTH, STORE, RETRIEVE, INSERT, REMOVE, FOR, DESCENDING,
+   concatenation, slicing or SUBSET is required. *)
 
-(* An ADT is allocatable at compile time (aka static) if its module
-   type is not an opaque pointer and binding to NEW is not required. *)
+(* A Collection ADT is deemed to be a Set ADT
+   if binding to SUBSET is required. *)
 
-(* A static ADT is always deemed mutable. *)
-
-(* A dynamic ADT is deemed mutable if binding to any of
-   :=, COPY, STORE, INSERT, REMOVE is required. *)
+(* A Collection ADT is deemed to be a String ADT if it requires the use of
+   proto-literal CHAR or UNICHAR but is not a Set ADT. *)
 
 
 (* Notation *)
@@ -65,179 +70,9 @@ term :
 *)
 
 
-(* GENERAL REQUIREMENTS *)
+(*  G e n e r a l  *)
 
-(* Mandatory Pairings *)
-
-(* One-way Dependencies *)
-
-[TBASE] -> [TSIGNED];
-(* TBASE always implies the presence of TSIGNED. *)
-
-(* Rationale: Integrity.
-   TBASE indicates a scalar ADT.
-   Scalar ADTs always have a signed property,
-   but not all ADTs that have a signed property are scalars. *)
-
-
-[TLIMIT] -> [COUNT] OR [LENGTH];
-(* TLIMIT always implies the presence of either COUNT or LENGTH. *)
-
-(* Rationale: Integrity.
-   TLIMIT indicates a Collection ADT.
-   String ADTs always require a length function.
-   Non-String Collection ADTs always require a count function. *)
-
-
-[RETAIN] -> [RELEASE];
-(* RETAIN always implies the presence of RELEASE. *)
-
-(* Rationale: Integrity.
-   RETAIN indicates reference counting.
-   Reference counting requires both a retain and release operation,
-   but not all dynamically allocatable ADTs are reference counted. *)
-
-
-[STORE] -> [RETRIEVE];
-(* STORE always implies the presence of RETRIEVE. *)
-
-(* Rationale: Integrity.
-   Mutable ADTs require both storage and retrieval.
-   Immutable ADTs require retrieval but no storage. *)
-
-
-[NEG] -> [ABS];
-(* NEG always implies the presence of ABS. *)
-
-(* Rationale: Integrity.
-   NEG indicates a Signed ADT.
-   Signed ADTs require both sign reversal and sign removal.
-   Unsigned ADTs require sign removal but no reversal. *)
-
-
-[DIV] -> [*];
-(* DIV always implies the presence of multiplication. *)
-
-(* Rationale: Integrity.
-   DIV indicates an Integer ADT.
-   Integer ADTs require integer division and multiplication.
-   Other ADTs may require multiplication but not integer division. *)
-
-
-[NEW] AND [ABS] -> [RETAIN];
-[NEW] AND [NEG] -> [RETAIN];
-(* If NEW is present, any of ABS and NEG imply the presence of RETAIN. *)
-
-(* Rationale: Safety and Reliability.
-   NEW indicates a dynamically allocatable ADT.
-   For dynamic ADTs, ABS and NEG must return a newly allocated instance.
-   Reference counting is required in order to prevent memory leakage
-   when such an instance is passed as an argument to a procedure or
-   when it occurs as a sub-expression within an expression. *)
-
-
-[NEW] AND [+] -> [RETAIN];
-[NEW] AND [-] -> [RETAIN];
-[NEW] AND [*] -> [RETAIN];
-[NEW] AND [/] -> [RETAIN];
-(* If NEW is present, any of +, -, *, / imply the presence of RETAIN. *)
-
-(* Rationale: Safety and Reliability.
-   NEW indicates a dynamically allocatable ADT.
-   For dynamic ADTs, +, -, * and / must return a newly allocated instance.
-   Reference counting is required in order to prevent memory leakage when
-   such an instance is passed as an argument to a procedure or when it
-   occurs as a sub-expression within an expression. *)
-
-
-[NEW] AND [DIV] -> [RETAIN];
-[NEW] AND [MOD] -> [RETAIN];
-(* If NEW is present, any of DIV and MOD imply the presence of RETAIN. *)
-
-(* Rationale: Safety and Reliability.
-   NEW indicates a dynamically allocatable ADT.
-   For dynamic ADTs, DIV and MOD must return a newly allocated instance.
-   Reference counting is required in order to prevent memory leakage
-   when such an instance is passed as an argument to a procedure or
-   when it occurs as a sub-expression within an expression. *)
-
-
-(* Mutual Dependencies *)
-
-[TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
-(* TBASE, TPRECISION, TMINEXP and TMAXEXP always imply each other's presence. *)
-
-(* Rationale: Integrity.
-   TBASE indicates a Scalar ADT.
-   Scalar ADTs require base, precision, eMax and eMin to be implemented. 
-   An ADT that defines any of these scalar properties is always a Scalar ADT. *)
-
-
-[TBASE] -> [TMIN] -> [TMAX] -> [TBASE];
-(* TBASE, TMIN and TMAX always imply each other's presence. *)
-
-(* Rationale: Integrity.
-   TBASE implies a Scalar ADT.
-   Scalar ADTs require a minimal and maximal value.
-   An ADT that has a minimal and maximal value is always a Scalar ADT. *)
-
-
-[TBASE] -> [SXF] -> [VAL] -> [TBASE];
-(* TBASE, SXF and VAL always imply each other's presence. *)
-
-(* Rationale: Integrity.
-   TBASE implies a Scalar ADT.
-   Scalar ADTs require scalar conversion.
-   Scalar conversion is per definition limited to Scalar ADTs. *)
-
-
-[NEW] -> [NEWCOPY] -> [RELEASE] -> [NEW];
-(* NEW, NEWCOPY and RELEASE always imply each other's presence. *)
-
-(* Rationale: Integrity.
-   NEW indicates runtime allocation.
-   Runtime allocation requires deallocation.
-   Even garbage collectors may need to call RELEASE internally. *)
-
-
-[INSERT] -> [REMOVE] -> [INSERT];
-(* INSERT and REMOVE always imply each other's presence. *)
-
-(* Rationale: Integrity. *)
-
-
-[DIV] -> [MOD] -> [DIV];
-(* DIV and MOD always imply each other's presence. *)
-
-(* Rationale: Integrity. *)
-
-
-(* Inhibited Pairings *)
-
-(* One-Way Inhibition *)
-
-NOT [TSIGNED] -> NOT [ABS];
-(* Absence of TSIGNED always inhibits the presence of ABS. *)
-
-(* Rationale: Correctness.
-   Without a signed property, sign removal makes no sense. *)
-
-
-NOT [TSIGNED] -> NOT [NEG];
-(* Absence of TSIGNED always inhibits the presence of NEG. *)
-
-(* Rationale: Correctness.
-   Without a signed property, sign reversal makes no sense. *)
-
-
-NOT [TSIGNED] -> NOT [DIV];
-(* Absence of TSIGNED always inhibits the presence of DIV. *)
-
-(* Rationale: Correctness.
-   Without a signed property, DIV and MOD make no sense. *)
-
-
-(* Mutual Inhibition *)
+(* Properties *)
 
 [TBASE] -> NOT [TLIMIT];
 [TLIMIT] -> NOT [TBASE];
@@ -249,139 +84,57 @@ NOT [TSIGNED] -> NOT [DIV];
    The two are mutually exclusive. *)
 
 
-[COUNT] -> NOT [LENGTH];
-[LENGTH] -> NOT [COUNT];
-(* COUNT and LENGTH always inhibit each other's presence. *)
+(*  Memory Management  *)
 
-(* Rationale: Consistency.
-   LENGTH is defined exclusively for String ADTs.
-   COUNT is defined for Collection ADTs other than String ADTs. *)
-
-
-[CONCAT] -> NOT [+];
-[+] -> NOT [CONCAT];
-(* CONCAT and + always inhibit each other's presence. *)
-
-(* Rationale: Correctness.
-   Binding to the + operator is for arithmetic operations exclusively.
-   CONCAT binds to the + operator for string concatenation.
-   The two are mutually exclusive. *)
-
-
-[DIV] -> NOT [/];
-[/] -> NOT [DIV];
-(* DIV and / always inhibit each other's presence. *)
-
-(* Rationale: Consistency.
-   DIV is defined exclusively for integer division.
-   The / operator is defined for non-integer division and set difference. *)
-
-
-[SUBSET] -> NOT [<];
-[<] -> NOT [SUBSET];
-(* SUBSET and < always inhibit each other's presence. *)
-
-(* Rationale: Correctness.
-   Binding to the < operator is for arithmetic operations exclusively.
-   SUBSET binds to the < operator for relational set operations.
-   The two are mutually exclusive. *)
-
-
-[SUBSET] -> NOT [>];
-[>] -> NOT [SUBSET];
-(* SUBSET and > always inhibit each other. *)
-
-(* Rationale: Correctness.
-   Binding to the > operator is for arithmetic operations exclusively.
-   SUBSET binds to the > operator for relational set operations.
-   The two are mutually exclusive. *)
-
-
-(* NUMERIC ADT REQUIREMENTS *)
-
-(* Signed and Unsigned ADTs *)
-
-[TSIGNED=TRUE] -> [NEG];
-(* Signed ADTs always require NEG. *)
-
-[TSIGNED=FALSE] -> NOT [NEG];
-(* Unsigned ADTs always inhibit NEG. *)
-
-
-(* Scalar ADTs *)
-
-[TBASE] -> [+];
-[TBASE] -> [-];
-[TBASE] -> [*];
-(* Scalar ADTs imply the availability of +, - and * notation. *)
-
-(* Rationale: Consistency.
-   TBASE indicates a Scalar ADT.
-   Scalar ADTs require arithmetic operators common to all scalars. *)
-
-
-[TMINEXP#0] OR [TMAXEXP#0] -> [/];
-(* Real Number ADTs imply the availability of / notation. *)
-
-(* Rationale: Consistency.
-   TMINEXP or TMAXEXP with a non-zero value indicates a Real Number ADT.
-   Real Number ADTs require the real number division operator. *)
-
-
-[TMINEXP=0] AND [TMAXEXP=0] -> [DIV];
-(* Whole Number ADTs imply the availability of DIV and MOD operators. *)
-
-(* Rationale: Consistency.
-   TMINEXP and TMAXEXP both with zero value indicate a Whole Number ADT.
-   Whole Number ADTs require the integer division and modulus operators. *)
-
-
-(* COLLECTION ADT REQUIREMENTS *)
-
-(* Concatenation *)
-
-[NEW] AND [CONCAT] -> [RETAIN];
-(* If NEW is present, CONCAT implies the presence of RETAIN. *)
-
-(* Rationale: Safety and Reliability.
-   NEW indicates a dynamically allocatable ADT.
-   For dynamic ADTs, CONCAT must return a newly allocated instance.
-   Reference counting is required in order to prevent memory leakage when
-   such an instance is passed as an argument to a procedure or when it
-   occurs as a sub-expression within an expression. *)
-
-
-(* Slicing *)
-
-
-[NEW] AND [..] -> [RETAIN];
-(* If NEW is present, L-value slicing implies the presence of RETAIN. *)
-
-(* Rationale: Safety and Reliability.
-   NEW indicates a dynamically allocatable ADT.
-   For dynamic ADTs, L-value slicing must return a newly allocated instance.
-   Reference counting is required in order to prevent memory leakage when
-   such an instance is passed as an argument to a procedure or when it
-   occurs as a sub-expression within an expression. *)
-
-
-(* Set Operations *)
-
-[SUBSET] AND [+] -> [-] -> [*] -> [/] -> [+];
-(* If SUBSET is present, +, -, * and / imply each other's presence. *)
+[NEW] -> [NEWCOPY] -> [RELEASE] -> [NEW];
+(* NEW, NEWCOPY and RELEASE always imply each other's presence. *)
 
 (* Rationale: Integrity.
-   SUBSET in combination with any of +, -, * or / indicates a Set ADT.
-   Set operations +, -, * and / are required on an all-or-nothing basis. *)
-   
-
-[FOR] -> [COUNT] OR [LENGTH];
-(* For-loop iteration implies the presence of either COUNT or LENGTH. *)
-
-(* Rationale: Integrity. *)
+   NEW indicates runtime allocation.
+   Runtime allocation requires deallocation.
+   Even garbage collectors may need to call RELEASE internally. *)
 
 
-(* IO *)
+[RETAIN] -> [RELEASE];
+(* RETAIN always implies the presence of RELEASE. *)
+
+(* Rationale: Integrity.
+   RETAIN indicates reference counting.
+   Reference counting requires both a retain and release operation,
+   but not all dynamically allocatable ADTs are reference counted. *)
+
+
+(* Operations that Require Reference Counting *)
+
+[ABS] AND [NEW] -> [RETAIN];
+[NEG] AND [NEW] -> [RETAIN];
+[DIV] AND [NEW] -> [RETAIN];
+[MOD] AND [NEW] -> [RETAIN];
+(* Any of ABS, NEG, DIV and MOD imply require RETAIN when NEW is present. *)
+
+(* Rationale: Safety and Reliability.
+   NEW indicates a dynamically allocatable ADT.
+   For dynamic ADTs, ABS, NEG, DIV and MOD must return a newly allocated
+   instance. Reference counting is required in order to prevent memory
+   leakage when such an instance is passed as an argument to a procedure
+   or when it occurs as a sub-expression within an expression. *)
+
+
+[+] AND [NEW] -> [RETAIN];
+[-] AND [NEW] -> [RETAIN];
+[*] AND [NEW] -> [RETAIN];
+[/] AND [NEW] -> [RETAIN];
+(* Any of +, -, *, and / require RETAIN when NEW is present. *)
+
+(* Rationale: Safety and Reliability.
+   NEW indicates a dynamically allocatable ADT.
+   For dynamic ADTs, +, -, * and / must return a newly allocated
+   instance. Reference counting is required in order to prevent memory
+   leakage when such an instance is passed as an argument to a procedure
+   or when it occurs as a sub-expression within an expression. *)
+
+
+(*  IO  *)
 
 [READ] -> [WRITE];
 (* READ always implies the presence of WRITE. *)
@@ -419,42 +172,321 @@ NOT [TSIGNED] -> NOT [DIV];
 (* Rationale: Consistency. *)
 
 
-(* Under consideration ... *)
+(*  N u m e r i c   A D T s  *)
 
-(* Somehow, we should link the use of LENGTH to string ADTs.
-   A simple solution would be to require LENGTH when the proto
-   literal is CHAR or UNICHAR ... *)
-   
-[CHAR] OR [UNICHAR] -> [LENGTH];
+(* Signed and Unsigned ADTs *)
 
-(* However, that would impose LENGTH also on character set ADTs *)
+(* Sign Removal and Reversal *)
 
-(* Perhaps LENGTH should be inhibited
-   if the proto literal is neither CHAR nor UNICHAR ...  *)
-NOT [CHAR] AND NOT [UNICHAR] -> NOT [LENGTH];
+[ABS] -> [NEG] -> [TSIGNED=TRUE] -> [ABS];
+(* Signed ADTs always require ABS and NEG, and vice versa. *)
+
+(* Rationale: Correctness.
+   Sign removal and reversal are required by and limited to signed ADTs. *)
 
 
-(* We certainly don't want concatenation for scalars.
-   Should it be limited to collections? *)
+(* Integer Division and Modulus *)
 
-[CONCAT] -> [TLIMIT];
-(* CONCAT implies the presence of TLIMIT. *)
+[DIV] -> [TSIGNED];
+(* DIV always implies the presence of TSIGNED. *)
 
-(* Or should it be limited to strings? *)
-
-NOT [LENGTH] -> NOT [CONCAT];
-(* Absence of LENGTH inhibits the presence of CONCAT. *)
+(* Rationale: Correctness.
+   TSIGNED indicates a numeric ADT.
+   Integer division is limited to numeric ADTs. *)
 
 
-(* Should Descending and FOR be linked? *)
+[DIV] -> [MOD] -> [DIV];
+(* DIV and MOD always imply each other's presence. *)
 
-[DESCENDING] -> [FOR];
-(* DESCENDING implies the presence of FOR. *)
+(* Rationale: Integrity. *)
 
-(* If so, should this be a mutual dependency? *)
 
-[DESCENDING] -> [FOR] -> [DESCENDING];
-(* DESCENDING and FOR imply each other's presence. *)
+[DIV] -> [*];
+(* DIV always implies the presence of multiplication. *)
+
+(* Rationale: Integrity. *)
+
+
+[DIV] -> NOT [/];
+[/] -> NOT [DIV];
+(* DIV and / always inhibit each other's presence. *)
+
+(* Rationale: Correctness.
+   DIV indicates integer division while / indicates real division or
+   set difference. The respective operations are mutually exclusive. *)
+
+
+(* Scalar ADTs *)
+
+(* Properties *)
+
+[TBASE] -> [TSIGNED];
+(* TBASE always implies the presence of TSIGNED. *)
+
+(* Rationale: Integrity.
+   TSIGNED indicates a numeric ADT.
+   Scalar ADTs are always numeric, but not all numeric ADTs are scalars. *)
+
+
+[TBASE] -> [TPRECISION] -> [TMINEXP] -> [TMAXEXP] -> [TBASE];
+(* TBASE, TPRECISION, TMINEXP and TMAXEXP always imply each other's presence. *)
+
+(* Rationale: Integrity.
+   TBASE indicates a scalar ADT.
+   Scalar ADTs require base, precision, eMax and eMin to be implemented. 
+   An ADT that defines any of these scalar properties is always a Scalar ADT. *)
+
+
+[TBASE] -> [TMIN] -> [TMAX] -> [TBASE];
+(* TBASE, TMIN and TMAX always imply each other's presence. *)
+
+(* Rationale: Integrity.
+   TBASE implies a scalar ADT.
+   Scalar ADTs require a minimal and maximal value.
+   An ADT that has a minimal and maximal value is always a Scalar ADT. *)
+
+
+(* Scalar Conversion *)
+
+[TBASE] -> [SXF] -> [VAL] -> [TBASE];
+(* TBASE, SXF and VAL always imply each other's presence. *)
+
+(* Rationale: Integrity.
+   TBASE implies a scalar ADT.
+   Scalar conversion is required by and limited to scalar ADTs. *)
+
+
+(* Arithmetic Operations *)
+
+[TBASE] -> [+];
+[TBASE] -> [-];
+[TBASE] -> [*];
+(* Scalar ADTs imply the availability of +, - and * notation. *)
+
+(* Rationale: Consistency.
+   TBASE indicates a Scalar ADT.
+   Scalar ADTs require arithmetic operators common to all scalars. *)
+
+
+[TMINEXP#0] OR [TMAXEXP#0] -> [/];
+(* Real Number ADTs imply the availability of / notation. *)
+
+(* Rationale: Consistency.
+   TMINEXP or TMAXEXP with a non-zero value indicates a Real Number ADT.
+   Real Number ADTs require the real number division operator. *)
+
+
+[TMINEXP=0] AND [TMAXEXP=0] -> [DIV];
+(* Whole Number ADTs imply the availability of DIV and MOD operators. *)
+
+(* Rationale: Consistency.
+   TMINEXP and TMAXEXP both with zero value indicate a Whole Number ADT.
+   Whole Number ADTs require the integer division and modulus operators. *)
+
+
+(*  C o l l e c t i o n   A D T s  *)
+
+(* Properties *)
+
+[NIL] -> [TLIMIT];
+(* NIL always implies the presence of TLIMIT. *)
+
+(* Rationale: Correctness.
+   TLIMIT indicates a collection ADT.
+   Binding to NIL is limited to collection ADTs. *)
+
+
+(* Introspection *)
+
+[COUNT] -> NOT [LENGTH];
+[LENGTH] -> NOT [COUNT];
+(* COUNT and LENGTH always inhibit each other's presence. *)
+
+(* Rationale: Correctness.
+   LENGTH is limited to string ADTs.
+   COUNT is limited to collection ADTs other than string ADTs. *)
+
+
+[LENGTH] -> NOT [SUBSET];
+[LENGTH] -> [CHAR] OR [UNICHAR];
+(* LENGTH always inhibits SUBSET and implies proto-literal CHAR or UNICHAR. *)
+
+(* Rationale: Integrity.
+   Use of proto-literal CHAR or UNICHAR indicates either a string or
+   character set ADT. SUBSET indicates a set ADT.
+   Binding to LENGTH is exclusive to string ADTs. *)
+
+
+[TLIMIT] -> [COUNT] OR [LENGTH] -> [TLIMIT];
+(* TLIMIT always implies the presence of either COUNT or LENGTH.
+   Conversely COUNT and LENGTH always imply the presence of TLIMIT. *)
+
+(* Rationale: Integrity.
+   TLIMIT indicates a collection ADT.
+   String ADTs always require a length function.
+   Non-String Collection ADTs always require a count function. *)
+
+
+(* Storage and Retrieval *)
+
+[STORE] -> [TLIMIT];
+(* STORE always implies the presence of TLIMIT. *)
+
+(* Rationale: Correctness.
+   TLIMIT indicates a collection ADT.
+   The store operation is limited to collection ADTs. *)
+
+
+[RETRIEVE] -> [TLIMIT];
+(* RETRIEVE always implies the presence of TLIMIT. *)
+
+(* Rationale: Correctness.
+   TLIMIT indicates a collection ADT.
+   The retrieval operation is limited to collection ADTs. *)
+
+
+[STORE] -> [RETRIEVE];
+(* STORE always implies the presence of RETRIEVE. *)
+
+(* Rationale: Integrity. *)
+
+
+(* Insertion and Removal *)
+
+[INSERT] -> [TLIMIT];
+(* INSERT always implies the presence of TLIMIT. *)
+
+(* Rationale: Correctness.
+   TLIMIT indicates a collection ADT.
+   The insert operation is limited to collection ADTs. *)
+
+
+[REMOVE] -> [TLIMIT];
+(* REMOVE always implies the presence of TLIMIT. *)
+
+(* Rationale: Correctness.
+   TLIMIT indicates a collection ADT.
+   The removal operation is limited to collection ADTs. *)
+
+
+[INSERT] -> [REMOVE] -> [INSERT];
+(* INSERT and REMOVE always imply each other's presence. *)
+
+(* Rationale: Integrity. *)
+
+
+(* Membership Test *)
+
+[IN] -> [TLIMIT];
+(* IN always implies the presence of TLIMIT. *)
+
+(* Rationale: Consistency.
+   TLIMIT indicates a collection ADT.
+   The IN operation for Whole Number ADTs is synthesised and does not
+   require binding. Binding to IN is therefore limited to Collection ADTs. *)
+
+
+(* Iteration *)
+
+[FOR] -> [TLIMIT];
+(* FOR always implies the presence of TLIMIT. *)
+
+(* Rationale: Correctness.
+   TLIMIT indicates a collection ADT.
+   Iteration over scalars is synthesised and does not require binding.
+   Binding to FOR is therefore limited to collection ADTs. *)
+
+
+[DESCENDING] -> [TLIMIT];
+(* DESCENDING always implies the presence of TLIMIT. *)
+
+(* Rationale: Correctness.
+   TLIMIT indicates a collection ADT.
+   Iteration over scalars is synthesised and does not require binding.
+   Binding to DESCENDING is therefore limited to collection ADTs. *)
+
+
+[FOR] -> [DESCENDING] -> [FOR];
+(* FOR and DESCENDING always imply each other's presence. *)
+
+(* Rationale: Integrity. *)
+
+
+(* Concatenation and Slicing *)
+
+[$+] -> [LENGTH];
+(* Concatenation always implies the presence of LENGTH. *)
+
+(* Rationale: Consistency.
+   Presence of LENGTH indicates a string ADT.
+   Concatenation is limited to string ADTs because it binds to the + operator
+   while non-string ADTs may use the + operator for arithmetic operations. *)
+
+
+[..] -> [TLIMIT];
+(* Presence of slicing always implies the presence of TLIMIT. *)
+
+(* Rationale: Correctness.
+   TLIMIT indicates a collection ADT.
+   Slicing is limited to collection ADTs. *)
+
+[$+] -> NOT [+];
+[+] -> NOT [$+];
+(* Concatenation and + always inhibit each other's presence. *)
+
+(* Rationale: Correctness.
+   Binding to the + operator is for arithmetic operations exclusively.
+   Concatenation binds to the + operator for string concatenation.
+   The two are mutually exclusive. *)
+
+
+[$+] AND [..] -> [$.] -> [$+] AND [..];
+(* Presence of both concatenation and slicing always implies the presence of
+   combined concatenation of slices. Conversely, the presence of the latter
+   always implies the presence of both concatenation and slicing. *)
+
+(* Rationale: Consistency and Efficiency.
+   Combined concatenation of slices avoids the need for reference counting
+   for all scenarios but passing a concatenation of slices expression as an
+   argument to a procedure. *)
+
+
+(* Set Operations *)
+
+[SUBSET] -> [TLIMIT];
+(* Presence of SUBSET always implies the presence of TLIMIT. *)
+
+(* Rationale: Correctness.
+   TLIMIT indicates a collection ADT.
+   Set operations are limited to collection ADTs. *)
+
+
+[SUBSET] AND [+] -> [-] -> [*] -> [/] -> [+];
+(* If SUBSET is present, +, -, * and / imply each other's presence. *)
+
+(* Rationale: Integrity.
+   SUBSET in combination with any of +, -, * or / indicates a Set ADT.
+   Set operations +, -, * and / are required on an all-or-nothing basis. *)
+
+
+[SUBSET] -> NOT [<];
+[<] -> NOT [SUBSET];
+(* SUBSET and < always inhibit each other's presence. *)
+
+(* Rationale: Correctness.
+   Binding to the < operator is for arithmetic operations exclusively.
+   SUBSET binds to the < operator for relational set operations.
+   The two are mutually exclusive. *)
+
+
+[SUBSET] -> NOT [>];
+[>] -> NOT [SUBSET];
+(* SUBSET and > always inhibit each other. *)
+
+(* Rationale: Correctness.
+   Binding to the > operator is for arithmetic operations exclusively.
+   SUBSET binds to the > operator for relational set operations.
+   The two are mutually exclusive. *)
 
 
 END BUILTIN.
