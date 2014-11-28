@@ -37,7 +37,7 @@
    if one or both values bound to TMINEXP and TMAXEXP is not zero. *)
 
 (* An ADT is deemed to be a Collection ADT if binding to any of TLIMIT,
-   NIL, COUNT, LENGTH, STORE, RETRIEVE, INSERT, REMOVE, FOR, DESCENDING,
+   NIL, COUNT, LENGTH, STORE, RETRIEVE, INSERT, REMOVE, IN, FOR, DESCENDING,
    concatenation, slicing or SUBSET is required. *)
 
 (* A Collection ADT is deemed to be a Set ADT
@@ -104,13 +104,21 @@ term :
    but not all dynamically allocatable ADTs are reference counted. *)
 
 
+(* Paired Operations *)
+
+[<] -> [>] -> [<];
+(* Bindings to < and > always imply each other's presence. *)
+
+(* Rationale: Integrity. *)
+
+
 (* Operations that Require Reference Counting *)
 
 [ABS] AND [NEW] -> [RETAIN];
 [NEG] AND [NEW] -> [RETAIN];
 [DIV] AND [NEW] -> [RETAIN];
 [MOD] AND [NEW] -> [RETAIN];
-(* Any of ABS, NEG, DIV and MOD imply require RETAIN when NEW is present. *)
+(* Any of ABS, NEG, DIV and MOD require RETAIN when NEW is present. *)
 
 (* Rationale: Safety and Reliability.
    NEW indicates a dynamically allocatable ADT.
@@ -378,12 +386,12 @@ term :
 (* Membership Test *)
 
 [IN] -> [TLIMIT];
-(* IN always implies the presence of TLIMIT. *)
+[SUBSET] -> [IN];
+(* SUBSET always implies IN which always implies TLIMIT. *)
 
 (* Rationale: Consistency.
-   TLIMIT indicates a collection ADT.
-   The IN operation for Whole Number ADTs is synthesised and does not
-   require binding. Binding to IN is therefore limited to Collection ADTs. *)
+   TLIMIT indicates a collection ADT. SUBSET indicates a Set ADT.
+   Binding to IN is limited to Collection ADTs and required for Set ADTs. *)
 
 
 (* Iteration *)
@@ -424,7 +432,7 @@ term :
 
 
 [..] -> [TLIMIT];
-(* Presence of slicing always implies the presence of TLIMIT. *)
+(* Slicing always implies the presence of TLIMIT. *)
 
 (* Rationale: Correctness.
    TLIMIT indicates a collection ADT.
