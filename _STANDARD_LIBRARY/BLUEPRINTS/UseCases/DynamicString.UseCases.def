@@ -1,0 +1,955 @@
+(* M2 R10 Project, (c) 2014 B.Kowarsch & R.Sutcliffe, all rights reserved. *)
+
+(* Dynamic String ADTs *)
+
+(* Use cases for allocation, copying, slicing, insertion and concatenation of
+   dynamic string ADTs, bindings and resulting compile time transformations. *)
+
+(* Status: Dec 5, 2014 *)
+
+
+(* =======================
+ *    U s e   C a s e s
+ * ======================= *)
+
+
+(* Assignment *)
+
+(* assign NIL *)
+
+string := NIL;
+ 
+(* assign string *)
+
+string := source;
+
+(* assign function call result *)
+
+string := function(stringExpression);
+
+
+(* Allocation / Non-destructive Copying *)
+
+(* without initialisation *)
+
+NEW string;
+
+(* allocate and initialise with string literal *)
+
+NEW string := "abc";
+
+(* allocate and initialise with ARRAY OF CHAR value *)
+
+NEW string := aoc;
+
+(* allocate and initialise with string *)
+
+NEW string := source;
+
+(* allocate and initialise with ARRAY OF CHAR slice *)
+
+NEW string := aoc[n..m];
+
+(* allocate and initialise with string slice *)
+
+NEW string := source[n..m];
+
+(* allocate and initialise with concatenation of strings *)
+
+NEW string := source1 + source2 + ... ;
+ 
+(* allocate and initialise with concatenation of strings and slices *)
+
+NEW string := source1[n..m] + source2[p..q] + source3 + ... ;
+
+(* allocate and initialise with concatenation of strings, string slices,
+   literals and ARRAY OF CHAR values and slices *)
+
+NEW string := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
+
+(* allocate and initialise with function call result *)
+
+NEW string := function(stringExpression);
+
+(* where *)
+
+VAR aoc : <ARRAY any OF CHAR>;
+
+
+(* Destructive Copying *)
+
+(* copy literal *)
+
+COPY target := "abc";
+
+(* copy ARRAY OF CHAR value *)
+
+COPY target := aoc;
+
+(* copy string *)
+
+COPY target := source;
+
+(* copy ARRAY OF CHAR slice *)
+
+COPY target := aoc[n..m];
+
+(* copy string slice *)
+
+COPY target := source[n..m];
+
+(* copy concatenation of strings *)
+
+COPY target := source1 + source2 + ... ;
+ 
+(* copy concatenation of strings and slices *)
+
+COPY target := source1[n..m] + source2[p..q] + source3 + ... ;
+
+(* copy concatenation of strings, string slices,
+   literals and ARRAY OF CHAR values and slices *)
+
+COPY target := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
+
+(* copy function call result *)
+
+COPY target := function(stringExpression);
+
+(* where *)
+
+VAR aoc : <ARRAY any OF CHAR>;
+
+
+(* Insertion *)
+
+(* insert literal *)
+
+COPY target[n..] := "abc";
+
+(* insert contents of ARRAY OF CHAR value *)
+
+COPY target[n..] := aoc;
+
+(* insert contents of string *)
+
+COPY target[n..] := source;
+
+(* insert ARRAY OF CHAR slice *)
+
+COPY target[n..] := aoc[m..p];
+
+(* insert string slice *)
+
+COPY target[n..] := source[m..p];
+
+(* insert concatenation of strings *)
+
+COPY target[n..] := source1 + source2 + ... ;
+ 
+(* insert concatenation of strings and slices *)
+
+COPY target[n..] := source1[m..p] + source2[q..r] + source3 + ... ;
+
+(* insert concatenation of strings, string slices,
+   literals and ARRAY OF CHAR values and slices *)
+
+COPY target[n..] := source1[m..p] + source2 + "abc" + aoc[q..r] + ... ;
+
+(* insert function call result *)
+
+COPY target[n..] := function(stringExpression);
+
+(* where *)
+
+VAR aoc : <ARRAY any OF CHAR>;
+
+
+(* L-Value Slicing *)
+
+(* copy literal into slice *)
+
+COPY target[n..m] := "abc";
+
+(* copy contents of ARRAY OF CHAR value into slice *)
+
+COPY target[n..m] := aoc;
+
+(* copy contents of string into slice *)
+
+COPY target[n..m] := source;
+
+(* copy ARRAY OF CHAR slice into L-value slice *)
+
+COPY target[n..m] := aoc[p..q];
+
+(* copy string slice into L-value slice *)
+
+COPY target[n..m] := source[p..q];
+
+(* copy concatenation of strings into slice *)
+
+COPY target[n..m] := source1 + source2 + ... ;
+ 
+(* copy concatenation of strings and slices into L-value slice *)
+
+COPY target[n..m] := source1[p..q] + source2[r..s] + source3 + ... ;
+
+(* copy concatenation of strings, string slices,
+   literals and ARRAY OF CHAR values and slices into L-value slice *)
+
+COPY target[n..m] := source1[p..q] + source2 + "abc" + aoc[r..s] + ... ;
+
+(* copy function call result into slice *)
+
+COPY target[n..m] := function(stringExpression);
+
+(* where *)
+
+VAR aoc : <ARRAY any OF CHAR>;
+
+
+(* =====================
+ *    B i n d i n g s
+ * ===================== *)
+
+
+(* Assignment *)
+
+(* no bindings *)
+
+
+(* Allocation *)
+
+(* binding #1 (a) : when not implementing concatenation and slicing ... *)
+
+PROCEDURE [NEW] new ( VAR newStr : ADT; CONST aoc : ARRAY OF CHAR );
+
+(* supported use cases *)
+
+NEW string;
+
+NEW string := "abc";
+
+NEW string := aoc;
+
+NEW string := { char1, char2, char3, ... };
+
+
+(* binding #1 (b) : when implementing concatenation and slicing ... *)
+
+PROCEDURE [NEW] new
+  ( VAR newStr : ADT; CONST aoc : ARRAY OF CHAR; aocStart, aocEnd : INTEGER );
+
+(* supported use cases *)
+
+NEW string;
+
+NEW string := "abc";
+
+NEW string := aoc;
+
+NEW string := aoc[n..m];
+
+NEW string := { char1, char2, char3, ... };
+
+
+(* binding #2 (a) : when not implementing concatenation and slicing ... *)
+
+PROCEDURE [NEW*] newWithString ( VAR new : ADT; source : ADT );
+
+(* supported use case *)
+
+NEW string := source;
+
+
+(* binding #2 (b) : when implementing concatenation and slicing ... *)
+
+PROCEDURE [NEW*] newWithStringOrSlice
+  ( VAR new : ADT; source : ADT; start, end : INTEGER );
+
+(* supported use cases *)
+
+NEW string := source;
+
+NEW string := source[n..m];
+
+
+(* binding #3 : when implementing concatenation and slicing ... *)
+
+PROCEDURE [NEW+] newWithStringsOrSlices
+  ( VAR new : ADT;
+    initWith : ARGLIST OF { string : ADT; start, end : INTEGER } );
+
+(* supported use cases *)
+
+NEW string := source1 + source2 + ... ;
+
+NEW string := source1[n..m] + source2 + ... ;
+
+NEW string := source1[n..m] + source2[p..q] + source3 ... ;
+
+
+(* binding #4 : when implementing concatenation and slicing ... *)
+
+PROCEDURE [NEW++] newWithStringExpression
+  ( VAR new : ADT;
+    initWith : ARGLIST OF
+      { string : ADT; strStart, strEnd : INTEGER;
+        CONST aoc : ARRAY OF CHAR; aocStart, aocEnd : INTEGER } );
+
+(* supported use cases *)
+
+NEW string := source + "abc" + aoc + ... ;
+
+NEW string := source1[n..m] + source2 + "abc" + aoc + ... ;
+
+NEW string := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
+
+
+(* Copying *)
+
+(* binding #1 (a) : when not implementing concatenation and slicing ... *)
+
+PROCEDURE [COPY] copyAOC ( VAR target : ADT; CONST aoc : ARRAY OF CHAR );
+
+(* supported use cases *)
+
+COPY target := "abc";
+
+COPY target := aoc;
+
+COPY target := { char1, char2, char3, ... };
+
+
+(* binding #1 (b) : when implementing concatenation and slicing ... *)
+
+PROCEDURE [COPY] copyAOCorSlice
+  ( VAR target : ADT; CONST aoc : ARRAY OF CHAR; aocStart, aocEnd : INTEGER );
+
+(* supported use cases *)
+
+COPY target := "abc";
+
+COPY target := aoc;
+
+COPY target := aoc[n..m];
+
+COPY target := { char1, char2, char3, ... };
+
+
+(* binding #2 (a) : when not implementing concatenation and slicing ... *)
+
+PROCEDURE [COPY*] copyString ( VAR target : ADT; source : ADT );
+
+(* supported use case *)
+
+COPY target := source;
+
+
+(* binding #2 (b) : when implementing concatenation and slicing ... *)
+
+PROCEDURE [COPY*] copyStringOrSlice
+  ( VAR target : ADT; source : ADT; start, end : INTEGER );
+
+(* supported use cases *)
+
+COPY target := source;
+
+COPY target := source[n..m];
+
+
+(* binding #3 : when implementing concatenation and slicing ... *)
+
+PROCEDURE [COPY+] copyStringsOrSlices
+  ( VAR target : ADT;
+    source : ARGLIST OF { string : ADT; start, end : INTEGER } );
+
+(* supported use cases *)
+
+COPY target := source1 + source2 + ... ;
+
+COPY target := source1[n..m] + source2 + ... ;
+
+COPY target := source1[n..m] + source2[p..q] + source3 ... ;
+
+
+(* binding #4 : when implementing concatenation and slicing ... *)
+
+PROCEDURE [COPY++] copyStringExpression
+  ( VAR target : ADT;
+    source : ARGLIST OF
+      { string : ADT; strStart, strEnd : INTEGER;
+        CONST aoc : ARRAY OF CHAR; aocStart, aocEnd : INTEGER } );
+
+(* supported use cases *)
+
+COPY target := source + "abc" + aoc + ... ;
+
+COPY target := source1[n..m] + source2 + "abc" + aoc + ... ;
+
+COPY target := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
+
+
+(* Insertion *)
+
+(* binding #1 (a) : when not implementing concatenation and slicing ... *)
+
+PROCEDURE [INSERT] insertAOC
+  ( VAR target : ADT; atIndex : INTEGER; CONST aoc : ARRAY OF CHAR );
+
+(* supported use cases *)
+
+COPY target[n..] := "abc";
+
+COPY target[n..] := aoc;
+
+COPY target[n..] := { char1, char2, char3, ... };
+
+
+(* binding #1 (b) : when implementing concatenation and slicing ... *)
+
+PROCEDURE [INSERT] insertAOCorSlice
+  ( VAR target : ADT; atIndex : INTEGER;
+    CONST aoc : ARRAY OF CHAR; aocStart, aocEnd : INTEGER );
+
+(* supported use cases *)
+
+COPY target[n..] := "abc";
+
+COPY target[n..] := aoc;
+
+COPY target[n..] := aoc[m..p];
+
+COPY target[n..] := { char1, char2, char3, ... };
+
+
+(* binding #2 (a) : when not implementing concatenation and slicing ... *)
+
+PROCEDURE [INSERT*] insertString
+  ( VAR target : ADT; atIndex : INTEGER; source : ADT );
+
+(* supported use case *)
+
+COPY target[n..] := source;
+
+
+(* binding #2 (b) : when implementing concatenation and slicing ... *)
+
+PROCEDURE [INSERT*] insertStringOrSlice
+  ( VAR target : ADT; atIndex : INTEGER; source : ADT; start, end : INTEGER );
+
+(* supported use cases *)
+
+COPY target[n..] := source;
+
+COPY target[n..] := source[m..p];
+
+
+(* binding #3 : when implementing concatenation and slicing ... *)
+
+PROCEDURE [INSERT+] insertStringsOrSlices
+  ( VAR target : ADT; atIndex : INTEGER;
+    source : ARGLIST OF { string : ADT; start, end : INTEGER } );
+
+(* supported use cases *)
+
+COPY target[n..] := source1 + source2 + ... ;
+
+COPY target[n..] := source1[m..p] + source2 + ... ;
+
+COPY target[n..] := source1[m..p] + source2[q..r] + source3 ... ;
+
+
+(* binding #4 : when implementing concatenation and slicing ... *)
+
+PROCEDURE [INSERT++] insertStringExpression
+  ( VAR target : ADT; atIndex : INTEGER;
+    source : ARGLIST OF
+      { string : ADT; strStart, strEnd : INTEGER;
+        CONST aoc : ARRAY OF CHAR; aocStart, aocEnd : INTEGER } );
+
+(* supported use cases *)
+
+COPY target[n..] := source + "abc" + aoc + ... ;
+
+COPY target[n..] := source1[m..p] + source2 + "abc" + aoc + ... ;
+
+COPY target[n..] := source1[m..p] + source2 + "abc" + aoc[q..r] + ... ;
+
+
+(* L-Value Slicing *)
+
+(* binding #1 : when implementing concatenation and slicing ... *)
+
+PROCEDURE [..] updateSliceWithAOCorSlice
+  ( VAR target : ADT; tgtStart, tgtEnd : INTEGER;
+    CONST aoc : ARRAY OF CHAR; aocStart, aocEnd : INTEGER );
+
+(* supported use cases *)
+
+COPY target[n..m] := "abc";
+
+COPY target[n..m] := aoc;
+
+COPY target[n..m] := aoc[p..q];
+
+COPY target[n..m] := { char1, char2, char3, ... };
+
+
+(* binding #2 : when implementing concatenation and slicing ... *)
+
+PROCEDURE [..*] updateSliceWithStringOrSlice
+  ( VAR target : ADT; tgtStart, tgtEnd : INTEGER;
+    source : ADT; start, end : INTEGER );
+
+(* supported use cases *)
+
+COPY target[n..m] := source;
+
+COPY target[n..m] := source[p..q];
+
+
+(* binding #3 : when implementing concatenation and slicing ... *)
+
+PROCEDURE [..+] updateSliceWithStringsOrSlices
+  ( VAR target : ADT; tgtStart, tgtEnd : INTEGER;
+    source : ARGLIST OF { string : ADT; start, end : INTEGER } );
+
+(* supported use cases *)
+
+COPY target[n..m] := source1 + source2 + ... ;
+
+COPY target[n..m] := source1[p..q] + source2 + ... ;
+
+COPY target[n..m] := source1[p..q] + source2[r..s] + source3 ... ;
+
+
+(* binding #4 : when implementing concatenation and slicing ... *)
+
+PROCEDURE [..++] updateSliceWithStringExpression
+  ( VAR target : ADT; tgtStart, tgtEnd : INTEGER;
+    source : ARGLIST OF
+      { string : ADT; strStart, strEnd : INTEGER;
+        CONST aoc : ARRAY OF CHAR; aocStart, aocEnd : INTEGER } );
+
+(* supported use cases *)
+
+COPY target[n..m] := source + "abc" + aoc + ... ;
+
+COPY target[n..m] := source1[p..q] + source2 + "abc" + aoc + ... ;
+
+COPY target[n..m] := source1[p..q] + source2 + "abc" + aoc[r..s] + ... ;
+
+
+(* Argument Passing *)
+
+(* required binding *)
+
+PROCEDURE [RETAIN] retain ( VAR string : ADT );
+
+(* supported use cases *)
+
+target := function(stringExpression);
+
+NEW string := function(stringExpression);
+
+COPY target := function(stringExpression);
+
+COPY target[n..] := function(stringExpression);
+
+COPY target[n..m] := function(stringExpression);
+
+
+(* ===================================
+ *    T r a n s f o r m a t i o n s
+ * =================================== *)
+
+
+(* Assignment *)
+
+(* assign NIL *)
+
+string := NIL;
+
+=> string := NIL;
+ 
+
+(* assign string *)
+
+string := source;
+
+=> string := source;
+
+
+(* assign function call result *)
+
+string := function(stringExpression);
+
+=> VAR temp : ADT;
+   (* prepare argument *)
+   temp := stringExpression;
+   (* call function and assign result *)
+   string := function(temp); ADT.release(temp);
+
+
+(* Allocation / Non-destructive Copying *)
+
+(* without initialisation *)
+
+NEW string;
+
+=> ADT.new(string);
+
+
+(* allocate and initialise with string literal *)
+
+NEW string := "abc";
+
+(* if concatenation and slicing is not implemented ... *)
+
+=> ADT.new(string, "abc");
+
+(* if concatenation and slicing is implemented ... *)
+
+=> ADT.new(string, "abc", 0, -1);
+
+
+(* allocate and initialise with ARRAY OF CHAR value *)
+
+NEW string := aoc;
+
+(* if concatenation and slicing is not implemented ... *)
+
+=> ADT.new(string, aoc);
+
+(* if concatenation and slicing is implemented ... *)
+
+=> ADT.new(string, aoc, 0, -1);
+
+
+(* allocate and initialise with string *)
+
+NEW string := source;
+
+(* if concatenation and slicing is not implemented ... *)
+
+=> ADT.newWithString(string, source);
+
+(* if concatenation and slicing is implemented ... *)
+
+=> ADT.newWithStringOrSlice(string, source, 0, -1);
+
+
+(* allocate and initialise with ARRAY OF CHAR slice *)
+
+NEW string := aoc[n..m];
+
+=> ADT.new(string, aoc, n, m);
+
+
+(* allocate and initialise with string slice *)
+
+NEW string := source[n..m];
+
+=> ADT.newWithStringOrSlice(string, source, n, m);
+
+
+(* allocate and initialise with concatenation of strings *)
+
+NEW string := source1 + source2 + ... ;
+
+=> ADT.newWithStringsOrSlices(
+    (* L-value *) string,
+    (* R-value *) source1, 0, -1, source2, 0, -1, ... );
+
+(* allocate and initialise with concatenation of strings and slices *)
+
+NEW string := source1[n..m] + source2[p..q] + source3 + ... ;
+
+=> ADT.newWithStringsOrSlices(
+    (* L-value *) string,
+    (* R-value *) source1, n, m, source2, p, q, source3, 0, -1, ... );
+
+
+(* allocate and initialise with concatenation of strings, string slices,
+   literals and ARRAY OF CHAR values and slices *)
+
+NEW string := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
+
+=> ADT.newWithStringExpression(
+    (* L-value *) string,
+    (* R-value *) source1, n, m, "", 0, 0,
+                  source2, 0, -1, "abc",
+                  NIL, 0, 0, aoc, p, 1, ... );
+
+
+(* allocate and initialise with function call result *)
+
+NEW string := function(stringExpression);
+
+=> VAR temp : ADT;
+   (* prepare argument *)
+   temp := stringExpression;
+   (* call function and create string with result *)
+   ADT.newWithString(string, function(temp)); ADT.release(temp);
+
+
+(* Destructive Copying *)
+
+(* copy values *)
+
+COPY target := { val1, val2, val3, ... };
+
+=> ADT.copyValues(target, val1, val2, val3, ...);
+
+ 
+(* copy literal *)
+
+COPY target := "abc";
+
+(* if concatenation and slicing is not implemented ... *)
+
+=> ADT.copyAOC(target, "abc");
+
+(* if concatenation and slicing is implemented ... *)
+
+=> ADT.copyAOCOrSlice(target, "abc", 0, -1);
+
+
+(* copy ARRAY OF CHAR value *)
+
+COPY target := aoc;
+
+(* if concatenation and slicing is not implemented ... *)
+
+=> ADT.copyAOC(target, aoc);
+
+(* if concatenation and slicing is implemented ... *)
+
+=> ADT.copyAOCOrSlice(target, aoc, 0, -1);
+
+
+(* copy string *)
+
+COPY target := source;
+
+(* if concatenation and slicing is not implemented ... *)
+
+=> ADT.copyString(string, source);
+
+(* if concatenation and slicing is implemented ... *)
+
+=> ADT.copyStringOrSlice(string, source, 0, -1);
+
+
+(* copy ARRAY OF CHAR slice *)
+
+COPY target := aoc[n..m];
+
+=> ADT.copyAOCOrSlice(target, aoc, 0, -1);
+
+
+(* copy string slice *)
+
+COPY target := source[n..m];
+
+=> ADT.copyStringOrSlice(target, source, n, m);
+
+
+(* copy concatenation of strings *)
+
+COPY target := source1 + source2 + ... ;
+
+=> ADT.copyStringsOrSlices(
+    (* L-value *) target,
+    (* R-value *) source1, 0, -1, source2, 0, -1, ... );
+
+
+(* copy concatenation of strings and slices *)
+
+COPY target := source1[n..m] + source2[p..q] + source3 + ... ;
+
+=> ADT.copyStringsOrSlices(
+    (* L-value *) target,
+    (* R-value *) source1, n, m, source2, p, q, source3, 0, -1, ...);
+
+
+(* copy concatenation of strings, string slices,
+   literals and ARRAY OF CHAR values and slices *)
+
+COPY target := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
+
+=> ADT.copyStringExpression(
+    (* L-value *) target,
+    (* R-value *) source1, n, m, "", 0, 0,
+                  source2, 0, -1, "abc", 0, -1,
+                  NIL, 0, 0, aoc, p, q, ... );
+
+
+(* copy function call result *)
+
+COPY target := function(stringExpression);
+
+=> VAR tempArg, tempResult : ADT;
+   (* prepare argument *)
+   tempArg := stringExpression;
+   (* call function *)
+   tempResult := function(tempArg); ADT.release(tempArg);
+   (* copy function call result into target *)
+   ADT.copyString(target, tempResult); ADT.release(tempResult);
+
+
+(* Insertion *)
+
+(* insert values *)
+
+COPY target[n..] := { val1, val2, val3, ... };
+
+=> ADT.insertValues(target, n, val1, val2, val3, ...);
+
+ 
+(* insert contents of string *)
+
+COPY target[n..] := source;
+
+(* if concatenation and slicing is not implemented ... *)
+
+=> ADT.insertString(target, n, source);
+
+(* if concatenation and slicing is implemented ... *)
+
+=> ADT.insertStringOrSlice(target, n, source, 0, -1);
+
+
+(* insert slice *)
+
+COPY target[n..] := source[m..p];
+
+=> ADT.insertStringOrSlice(target, n, source, m, p);
+
+
+(* insert concatenation of string *)
+
+COPY target[n..] := source1 + source2 + ... ;
+
+=> ADT.insertStringsOrSlices(
+    (* L-value *) target, n,
+    (* R-value *) source1, 0, -1, source2, 0, -1, ...);
+
+
+(* insert concatenation of strings and slices *)
+
+COPY target[n..] := source1[m..p] + source2[q..r] + source3 + ... ;
+
+=> ADT.insertStringsOrSlices(
+    (* L-value *) target, n,
+    (* R-value *) source1, m, p, source2, q, r, source3, 0, -1, ...);
+
+
+(* insert concatenation of strings, string slices,
+   literals and ARRAY OF CHAR values and slices *)
+
+COPY target[n..] := src1[m..p] + src2 + "abc" + aoc[q..r] + ... ;
+
+=> ADT.insertStringExpression(
+    (* L-value *) target, n,
+    (* R-value *) src1, m, p, "", 0, 0,
+                  src2, 0, -1, "abc",
+                  NIL, 0, 0, aoc, q, r, ... );
+
+
+(* insert function call result *)
+
+COPY target[n..] := function(stringExpression);
+
+=> VAR tempArg, tempResult : ADT;
+   (* prepare argument *)
+   tempArg := stringExpression;
+   (* call function *)
+   tempResult := function(tempArg); ADT.release(tempArg);
+   (* insert function call result into target *)
+   ADT.insertString(target, n, tempResult); ADT.release(tempResult);
+
+
+(* L-Value Slicing *)
+
+(* copy literal into slice *)
+
+COPY target[n..m] := "abc";
+
+=> ADT.updateSliceWithAOCorSlice(target, n, m, "abc", 0, -1);
+
+
+(* copy contents of ARRAY OF CHAR value into slice *)
+
+COPY target[n..m] := aoc;
+
+=> ADT.updateSliceWithAOCorSlice(target, n, m, aoc, 0, -1);
+
+
+(* copy contents of string into slice *)
+
+COPY target[n..m] := source;
+
+=> ADT.updateSliceWithStringOrSlice(target, n, m, source, 0, -1);
+
+
+(* copy ARRAY OF CHAR slice into L-value slice *)
+
+COPY target[n..m] := aoc[p..q];
+
+=> ADT.updateSliceWithAOCorSlice(target, n, m, aoc, p, q);
+
+
+(* copy string slice into L-value slice *)
+
+COPY target[n..m] := source[p..q];
+
+=> ADT.updateSliceWithStringOrSlice(target, n, m, source, p, q);
+
+
+(* copy concatenation of strings into slice *)
+
+COPY target[n..m] := source1 + source2 + ... ;
+
+=> ADT.updateSliceWithStringsOrSlices(
+    (* L-value *) target, n, m,
+    (* R-value *) source1, 0, -1, source2, 0, -1, ...);
+
+
+(* copy concatenation of strings and slices into L-value slice *)
+
+COPY target[n..m] := source1[p..q] + source2[r..s] + source3 + ... ;
+
+=> ADT.updateSliceWithStringsOrSlices(
+    (* L-value *) target, n, m,
+    (* R-value *) source1, p, q, source2, r, s, source3, 0, -1, ...);
+
+
+(* copy concatenation of strings, string slices,
+   literals and ARRAY OF CHAR values and slices into L-value slice *)
+
+COPY target[n..m] := source1[p..q] + source2 + "abc" + aoc[r..s] + ... ;
+
+=> ADT.updateSliceWithStringExpression(
+    (* L-value *) target, n, m,
+    (* R-value *) source1, p, q, "", 0, 0,
+                  source2, 0, -1, "abc", 0, -1,
+                  NIL, 0, 0, aoc, r, s, ... );
+
+
+(* copy function call result into slice *)
+
+COPY target[n..m] := function(stringExpression);
+
+=> VAR tempArg, tempResult : ADT;
+   (* prepare argument *)
+   tempArg := stringExpression;
+   (* call function *)
+   tempResult := function(tempArg); ADT.release(tempArg);
+   (* update target slice with function call result *)
+   ADT.updateSliceWithStringOrSlice(target, n, m, tempResult, 0, -1);
+   ADT.release(tempResult);
+
+
+(* END OF FILE *)
