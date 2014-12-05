@@ -42,6 +42,10 @@ NEW string := "abc";
 
 NEW string := aoc;
 
+(* allocate and initialise with characters from list *)
+
+NEW string := { char1, char2, char3, ... };
+
 (* allocate and initialise with string *)
 
 NEW string := source;
@@ -78,13 +82,17 @@ VAR aoc : <ARRAY any OF CHAR>;
 
 (* Destructive Copying *)
 
-(* copy literal *)
+(* copy string literal *)
 
 COPY target := "abc";
 
 (* copy ARRAY OF CHAR value *)
 
 COPY target := aoc;
+
+(* copy characters from list *)
+
+NEW target := { char1, char2, char3, ... };
 
 (* copy string *)
 
@@ -122,13 +130,23 @@ VAR aoc : <ARRAY any OF CHAR>;
 
 (* Insertion *)
 
-(* insert literal *)
+(* insert string literal *)
+
+INSERT(target, n, "abc");
 
 COPY target[n..] := "abc";
 
-(* insert contents of ARRAY OF CHAR value *)
+(* insert ARRAY OF CHAR value *)
+
+INSERT(target, n, aoc);
 
 COPY target[n..] := aoc;
+
+(* insert characters from list *)
+
+INSERT(target, n, char1, char2, char3, ...);
+
+COPY target[n..] := { char1, char2, char3, ... };
 
 (* insert contents of string *)
 
@@ -166,13 +184,17 @@ VAR aoc : <ARRAY any OF CHAR>;
 
 (* L-Value Slicing *)
 
-(* copy literal into slice *)
+(* copy string literal into slice *)
 
 COPY target[n..m] := "abc";
 
-(* copy contents of ARRAY OF CHAR value into slice *)
+(* copy ARRAY OF CHAR value into slice *)
 
 COPY target[n..m] := aoc;
+
+(* copy characters from list into slice *)
+
+NEW target[n..m] := { char1, char2, char3, ... };
 
 (* copy contents of string into slice *)
 
@@ -399,9 +421,15 @@ PROCEDURE [INSERT] insertAOC
 
 (* supported use cases *)
 
+INSERT(target, n, "abc");
+
 COPY target[n..] := "abc";
 
+INSERT(target, n, aoc);
+
 COPY target[n..] := aoc;
+
+INSERT(target, n, char1, char2, char3, ...);
 
 COPY target[n..] := { char1, char2, char3, ... };
 
@@ -801,11 +829,38 @@ COPY target := function(stringExpression);
 
 (* Insertion *)
 
-(* insert values *)
 
-COPY target[n..] := { val1, val2, val3, ... };
+(* insert literal *)
 
-=> ADT.insertValues(target, n, val1, val2, val3, ...);
+INSERT(target, n, "abc");
+
+=> ADT.insertValues(target, n, "abc");
+
+COPY target[n..] := "abc";
+
+=> ADT.insertValues(target, n, "abc");
+
+
+(* insert ARRAY OF CHAR value *)
+
+INSERT(target, n, aoc);
+
+=> ADT.insertValues(target, n, aoc);
+
+COPY target[n..] := aoc;
+
+=> ADT.insertValues(target, n, aoc);
+
+
+(* insert characters from list *)
+
+INSERT(target, n, char1, char2, char3, ...);
+
+=> ADT.insertValues(target, n, char1, char2, char3, ...);
+
+COPY target[n..] := { char1, char2, char3, ... };
+
+=> ADT.insertValues(target, n, char1, char2, char3, ...);
 
  
 (* insert contents of string *)
