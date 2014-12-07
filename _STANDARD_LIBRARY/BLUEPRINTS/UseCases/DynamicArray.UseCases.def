@@ -6,7 +6,7 @@
    allocation, copying, slicing, insertion and concatenation of dynamic
    array ADTs, required bindings and resulting compile time transformations. *)
 
-(* Status: Dec 5, 2014 *)
+(* Status: Dec 7, 2014 *)
 
 
 (* =======================
@@ -49,15 +49,15 @@ NEW array := source[n..m];
 
 (* allocate and initialise with concatenation of arrays *)
 
-NEW array := source1 -> source2 -> ... ;
+NEW array := source1 +> source2 +> ... ;
  
 (* allocate and initialise with concatenation of arrays and slices *)
 
-NEW array := source1[m..p] -> source2[q..r] -> source3 -> ... ;
+NEW array := source1[m..p] +> source2[q..r] +> source3 +> ... ;
 
 (* allocate and initialise with concatenation of arrays, slices and values *)
 
-NEW array := source1[m..p] -> source2 -> { val1, val2, val3, ... } -> ... ;
+NEW array := source1[m..p] +> source2 +> { val1, val2, val3, ... } +> ... ;
 
 (* allocate and initialise with function call result *)
 
@@ -80,15 +80,15 @@ COPY target := source[n..m];
 
 (* copy concatenation of arrays *)
 
-COPY target := source1 -> source2 -> ... ;
+COPY target := source1 +> source2 +> ... ;
  
 (* copy concatenation of arrays and slices *)
 
-COPY target := source1[m..p] -> source2[q..r] -> source3 -> ... ;
+COPY target := source1[m..p] +> source2[q..r] +> source3 +> ... ;
 
 (* copy concatenation of arrays, slices and values *)
 
-COPY target := source1[m..p] -> source2 -> { val1, val2, val3, ... } -> ... ;
+COPY target := source1[m..p] +> source2 +> { val1, val2, val3, ... } +> ... ;
 
 (* copy function call result *)
 
@@ -111,15 +111,15 @@ COPY target[n..] := source[n..m];
 
 (* insert concatenation of arrays *)
 
-COPY target[n..] := source1 -> source2 -> ... ;
+COPY target[n..] := source1 +> source2 +> ... ;
 
 (* insert concatenation of arrays and slices *)
 
-COPY target[n..] := source1[m..p] -> source2[q..r] -> source3 -> ... ;
+COPY target[n..] := source1[m..p] +> source2[q..r] +> source3 +> ... ;
 
 (* insert concatenation of arrays, slices and values *)
 
-COPY target[n..] := src1[m..p] -> src2 -> { val1, val2, val3, ... } -> ... ;
+COPY target[n..] := src1[m..p] +> src2 +> { val1, val2, val3, ... } +> ... ;
 
 (* insert function call result *)
 
@@ -142,15 +142,15 @@ COPY target[n..m] := source[p..q];
 
 (* copy concatenation of arrays into slice *)
 
-COPY target[n..m] := source1 -> source2 -> ... ;
+COPY target[n..m] := source1 +> source2 +> ... ;
 
 (* copy concatenation of arrays and slices into slice *)
 
-COPY target[n..m] := source1[p..q] -> source2[r..s] -> source3 -> ... ;
+COPY target[n..m] := source1[p..q] +> source2[r..s] +> source3 +> ... ;
 
 (* copy concatenation of arrays, slices and values into slice *)
 
-COPY target[n..m] := src1[p..q] -> src2 -> { val1, val2, val3, ... } -> ... ;
+COPY target[n..m] := src1[p..q] +> src2 +> { val1, val2, val3, ... } +> ... ;
 
 (* copy function call result into slice *)
 
@@ -182,13 +182,13 @@ VAR builtinArray : <ARRAY any OF ValueType>;
 
 (* Using a Built-in Array within an Array Expression *)
 
-NEW array := source -> builtinArray -> ... ;
+NEW array := source +> builtinArray +> ... ;
 
-COPY target := source -> builtinArray -> ... ;
+COPY target := source +> builtinArray +> ... ;
 
-COPY target[n..] := source -> builtinArray -> ... ;
+COPY target[n..] := source +> builtinArray +> ... ;
 
-COPY target[n..m] := source -> builtinArray -> ... ;
+COPY target[n..m] := source +> builtinArray +> ... ;
 
 (* where *)
 
@@ -197,13 +197,13 @@ VAR builtinArray : <ARRAY any OF ValueType>;
 
 (* Using a Built-in Array Slice within an Array Expression *)
 
-NEW array := source -> builtinArray[n..m] -> ... ;
+NEW array := source +> builtinArray[n..m] +> ... ;
 
-COPY target := source -> builtinArray[n..m] -> ... ;
+COPY target := source +> builtinArray[n..m] +> ... ;
 
-COPY target[n..] := source -> builtinArray[m..p] -> ... ;
+COPY target[n..] := source +> builtinArray[m..p] +> ... ;
 
-COPY target[n..m] := source -> builtinArray[p..q] -> ... ;
+COPY target[n..m] := source +> builtinArray[p..q] +> ... ;
 
 (* where *)
 
@@ -262,11 +262,11 @@ PROCEDURE [NEW+] newWithArraysOrSlices
 
 (* supported use cases *)
 
-NEW array := source1 -> source2 -> ... ;
+NEW array := source1 +> source2 +> ... ;
 
-NEW array := source1[n..m] -> source2 -> ... ;
+NEW array := source1[n..m] +> source2 +> ... ;
 
-NEW array := source1[n..m] -> source2[p..q] -> ... ;
+NEW array := source1[n..m] +> source2[p..q] +> ... ;
 
 
 (* binding #4 : when implementing concatenation and slicing ... *)
@@ -274,17 +274,17 @@ NEW array := source1[n..m] -> source2[p..q] -> ... ;
 PROCEDURE [NEW++] newWithArrayExpression
   ( VAR new : ADT;
     initWith : ARGLIST OF
-      { array : ADT; start, end : INTEGER; values : ARGLIST OF ValueType } );
+      { array : ADT; start, end : INTEGER; values : ARRAY OF ValueType } );
 
 (* supported use cases *)
 
-NEW array := source -> { val1, val2, val3, ... } -> ... ;
+NEW array := source +> { val1, val2, val3, ... } +> ... ;
 
-NEW array := { val1, val2, val3, ... } -> source -> ... ;
+NEW array := { val1, val2, val3, ... } +> source +> ... ;
 
-NEW array := source[n..m] -> { val1, val2, val3, ... } -> ... ;
+NEW array := source[n..m] +> { val1, val2, val3, ... } +> ... ;
 
-NEW array := { val1, val2, val3, ... } -> source[n..m] -> ... ;
+NEW array := { val1, val2, val3, ... } +> source[n..m] +> ... ;
 
 
 (* Copying *)
@@ -327,11 +327,11 @@ PROCEDURE [COPY+] copyArraysOrSlices
 
 (* supported use cases *)
 
-COPY target := source1 -> source2 -> ... ;
+COPY target := source1 +> source2 +> ... ;
 
-COPY target := source1[n..m] -> source2 -> ... ;
+COPY target := source1[n..m] +> source2 +> ... ;
 
-COPY target := source1[n..m] -> source2[p..q] -> ... ;
+COPY target := source1[n..m] +> source2[p..q] +> ... ;
 
 
 (* binding #4 : when implementing concatenation and slicing ... *)
@@ -339,17 +339,17 @@ COPY target := source1[n..m] -> source2[p..q] -> ... ;
 PROCEDURE [COPY++] copyArrayExpression
   ( VAR target : ADT;
     source : ARGLIST OF
-      { array : ADT; start, end : INTEGER; values : ARGLIST OF ValueType } );
+      { array : ADT; start, end : INTEGER; values : ARRAY OF ValueType } );
 
 (* supported use cases *)
 
-COPY target := source -> { val1, val2, val3, ... } -> ... ;
+COPY target := source +> { val1, val2, val3, ... } +> ... ;
 
-COPY target := { val1, val2, val3, ... } -> source -> ... ;
+COPY target := { val1, val2, val3, ... } +> source +> ... ;
 
-COPY target := source[n..m] -> { val1, val2, val3, ... } -> ... ;
+COPY target := source[n..m] +> { val1, val2, val3, ... } +> ... ;
 
-COPY target := { val1, val2, val3, ... } -> source[n..m] -> ... ;
+COPY target := { val1, val2, val3, ... } +> source[n..m] +> ... ;
 
 
 (* Insertion *)
@@ -394,11 +394,11 @@ PROCEDURE [INSERT+] insertArraysOrSlices
 
 (* supported use cases *)
 
-COPY target[n..] := source1 -> source2 -> ... ;
+COPY target[n..] := source1 +> source2 +> ... ;
 
-COPY target[n..] := source1[m..p] -> source2 -> ... ;
+COPY target[n..] := source1[m..p] +> source2 +> ... ;
 
-COPY target[n..] := source1[m..p] -> source2[q..r] -> ... ;
+COPY target[n..] := source1[m..p] +> source2[q..r] +> ... ;
 
 
 (* binding #4 : when implementing concatenation and slicing ... *)
@@ -406,17 +406,17 @@ COPY target[n..] := source1[m..p] -> source2[q..r] -> ... ;
 PROCEDURE [INSERT++] insertArrayExpression
   ( VAR target : ADT; atIndex : INTEGER;
     source : ARGLIST OF
-      { array : ADT; start, end : INTEGER; values : ARGLIST OF ValueType } );
+      { array : ADT; start, end : INTEGER; values : ARRAY OF ValueType } );
 
 (* supported use cases *)
 
-COPY target[n..] := source -> { val1, val2, val3, ... } -> ... ;
+COPY target[n..] := source +> { val1, val2, val3, ... } +> ... ;
 
-COPY target[n..] := { val1, val2, val3, ... } -> source -> ... ;
+COPY target[n..] := { val1, val2, val3, ... } +> source +> ... ;
 
-COPY target[n..] := source[m..p] -> { val1, val2, val3, ... } -> ... ;
+COPY target[n..] := source[m..p] +> { val1, val2, val3, ... } +> ... ;
 
-COPY target[n..] := { val1, val2, val3, ... } -> source[m..p] -> ... ;
+COPY target[n..] := { val1, val2, val3, ... } +> source[m..p] +> ... ;
 
 
 (* L-Value Slicing *)
@@ -452,11 +452,11 @@ PROCEDURE [..+] updateSliceWithArraysOrSlices
 
 (* supported use cases *)
 
-COPY target[n..m] := source1 -> source2 -> ... ;
+COPY target[n..m] := source1 +> source2 +> ... ;
 
-COPY target[n..m] := source1[p..q] -> source2 -> ... ;
+COPY target[n..m] := source1[p..q] +> source2 +> ... ;
 
-COPY target[n..m] := source1[p..q] -> source2[r..s] -> ... ;
+COPY target[n..m] := source1[p..q] +> source2[r..s] +> ... ;
 
 
 (* binding #4 : when implementing concatenation and slicing ... *)
@@ -464,17 +464,17 @@ COPY target[n..m] := source1[p..q] -> source2[r..s] -> ... ;
 PROCEDURE [..++] updateSliceWithArrayExpression
   ( VAR target : ADT; tgtStart, tgtEnd : INTEGER;
     source : ARGLIST OF
-      { array : ADT; start, end : INTEGER; values : ARGLIST OF ValueType } );
+      { array : ADT; start, end : INTEGER; values : ARRAY OF ValueType } );
 
 (* supported use cases *)
 
-COPY target[n..m] := source -> { val1, val2, val3, ... } -> ... ;
+COPY target[n..m] := source +> { val1, val2, val3, ... } +> ... ;
 
-COPY target[n..m] := { val1, val2, val3, ... } -> source -> ... ;
+COPY target[n..m] := { val1, val2, val3, ... } +> source +> ... ;
 
-COPY target[n..m] := source[p..q] -> { val1, val2, val3, ... } -> ... ;
+COPY target[n..m] := source[p..q] +> { val1, val2, val3, ... } +> ... ;
 
-COPY target[n..m] := { val1, val2, val3, ... } -> source[p..q] -> ... ;
+COPY target[n..m] := { val1, val2, val3, ... } +> source[p..q] +> ... ;
 
 
 (* Argument Passing *)
@@ -539,13 +539,13 @@ PROCEDURE [RETAIN] retain ( VAR array : ADT );
 
 (* supported use cases *)
 
-NEW array := source -> builtinArray -> ... ;
+NEW array := source +> builtinArray +> ... ;
 
-COPY target := source -> builtinArray -> ... ;
+COPY target := source +> builtinArray +> ... ;
 
-COPY target[n..] := source -> builtinArray -> ... ;
+COPY target[n..] := source +> builtinArray +> ... ;
 
-COPY target[n..m] := source -> builtinArray -> ... ;
+COPY target[n..m] := source +> builtinArray +> ... ;
 
 
 (* Using a Built-in Array Slice within an Array Expression *)
@@ -556,13 +556,13 @@ PROCEDURE [RETAIN] retain ( VAR array : ADT );
 
 (* supported use cases *)
 
-NEW array := source -> builtinArray[n..m] -> ... ;
+NEW array := source +> builtinArray[n..m] +> ... ;
 
-COPY target := source -> builtinArray[n..m] -> ... ;
+COPY target := source +> builtinArray[n..m] +> ... ;
 
-COPY target[n..] := source -> builtinArray[m..p] -> ... ;
+COPY target[n..] := source +> builtinArray[m..p] +> ... ;
 
-COPY target[n..m] := source -> builtinArray[p..q] -> ... ;
+COPY target[n..m] := source +> builtinArray[p..q] +> ... ;
 
 
 (* ===================================
@@ -628,7 +628,7 @@ NEW array := source;
 
 (* allocate and initialise with concatenation of arrays *)
 
-NEW array := source1 -> source2 -> ... ;
+NEW array := source1 +> source2 +> ... ;
 
 => ADT.newWithArraysOrSlices(
     (* L-value *) array,
@@ -637,7 +637,7 @@ NEW array := source1 -> source2 -> ... ;
 
 (* allocate and initialise with concatenation of arrays and slices *)
 
-NEW array := source1[n..m] -> source2[p..q] -> source3 -> ... ;
+NEW array := source1[n..m] +> source2[p..q] +> source3 +> ... ;
 
 => ADT.newWithArraysOrSlices(
     (* L-value *) array,
@@ -646,7 +646,7 @@ NEW array := source1[n..m] -> source2[p..q] -> source3 -> ... ;
 
 (* allocate and initialise with concatenation of arrays, slices and values *)
 
-NEW array := source1[n..m] -> source2 -> { val1, val2, val3, ... } -> ... ;
+NEW array := source1[n..m] +> source2 +> { val1, val2, val3, ... } +> ... ;
 
 => ADT.newWithArrayExpression(
     (* L-value *) array,
@@ -696,7 +696,7 @@ COPY target := source[n..m];
 
 (* copy concatenation of arrays *)
 
-COPY target := source1 -> source2 -> ... ;
+COPY target := source1 +> source2 +> ... ;
 
 => ADT.copyArraysOrSlices(
     (* L-value *) target,
@@ -705,7 +705,7 @@ COPY target := source1 -> source2 -> ... ;
 
 (* copy concatenation of arrays and slices *)
 
-COPY target := source1[n..m] -> source2[p..q] -> source3 -> ... ;
+COPY target := source1[n..m] +> source2[p..q] +> source3 +> ... ;
 
 => ADT.copyArraysOrSlices(
     (* L-value *) target,
@@ -714,7 +714,7 @@ COPY target := source1[n..m] -> source2[p..q] -> source3 -> ... ;
 
 (* copy concatenation of arrays, slices and values *)
 
-COPY target := source1[n..m] -> source2 -> { val1, val2, val3, ... } -> ... ;
+COPY target := source1[n..m] +> source2 +> { val1, val2, val3, ... } +> ... ;
 
 => ADT.copyArrayExpression(
     (* L-value *) target,
@@ -766,7 +766,7 @@ COPY target[n..] := source[m..p];
 
 (* insert concatenation of arrays *)
 
-COPY target[n..] := source1 -> source2 -> ... ;
+COPY target[n..] := source1 +> source2 +> ... ;
 
 => ADT.insertArraysOrSlices(
     (* L-value *) target, n,
@@ -775,7 +775,7 @@ COPY target[n..] := source1 -> source2 -> ... ;
 
 (* insert concatenation of arrays and slices *)
 
-COPY target[n..] := source1[m..p] -> source2[q..r] -> source3 -> ... ;
+COPY target[n..] := source1[m..p] +> source2[q..r] +> source3 +> ... ;
 
 => ADT.insertArraysOrSlices(
     (* L-value *) target, n,
@@ -784,7 +784,7 @@ COPY target[n..] := source1[m..p] -> source2[q..r] -> source3 -> ... ;
 
 (* insert concatenation of arrays, slices and values *)
 
-COPY target[n..] := src1[m..p] -> src2 -> { val1, val2, val3, ... } -> ... ;
+COPY target[n..] := src1[m..p] +> src2 +> { val1, val2, val3, ... } +> ... ;
 
 => ADT.insertArrayExpression(
     (* L-value *) target, n,
@@ -830,7 +830,7 @@ COPY target[n..m] := source[p..q];
 
 (* copy concatenation of arrays into slice *)
 
-COPY target[n..m] := source1 -> source2 -> ... ;
+COPY target[n..m] := source1 +> source2 +> ... ;
 
 => ADT.updateSliceWithArraysOrSlices(
     (* L-value *) target, n, m,
@@ -839,7 +839,7 @@ COPY target[n..m] := source1 -> source2 -> ... ;
 
 (* copy concatenation of arrays and slices into slice *)
 
-COPY target[n..m] := source1[p..q] -> source2[r..s] -> source3 -> ... ;
+COPY target[n..m] := source1[p..q] +> source2[r..s] +> source3 +> ... ;
 
 => ADT.updateSliceWithArraysOrSlices(
     (* L-value *) target, n, m,
@@ -848,7 +848,7 @@ COPY target[n..m] := source1[p..q] -> source2[r..s] -> source3 -> ... ;
 
 (* copy concatenation of arrays, slices and values into slice *)
 
-COPY target[n..m] := src1[p..q] -> src2 -> { val1, val2, val3, ... } -> ... ;
+COPY target[n..m] := src1[p..q] +> src2 +> { val1, val2, val3, ... } +> ... ;
 
 => ADT.insertArrayExpression(
     (* L-value *) target, n, m,
@@ -920,56 +920,56 @@ COPY target := builtinArray[n..m];
 
 (* Using a Built-in Array within an Array Expression *)
 
-NEW array := source -> builtinArray -> ... ;
+NEW array := source +> builtinArray +> ... ;
 
 => VAR temp : ADT;
    NEW temp := builtinArray; (* see conversion *)
-   NEW array := source -> temp -> ... ; RELEASE temp;
+   NEW array := source +> temp +> ... ; RELEASE temp;
 
-COPY target := source -> builtinArray -> ... ;
-
-=> VAR temp : ADT;
-   NEW temp := builtinArray; (* see conversion *)
-   COPY target := source -> temp -> ... ; RELEASE temp;
-
-COPY target[n..] := source -> builtinArray -> ... ;
+COPY target := source +> builtinArray +> ... ;
 
 => VAR temp : ADT;
    NEW temp := builtinArray; (* see conversion *)
-   COPY target[n..] := source -> temp -> ... ; RELEASE temp;
+   COPY target := source +> temp +> ... ; RELEASE temp;
 
-COPY target[n..m] := source -> builtinArray -> ... ;
+COPY target[n..] := source +> builtinArray +> ... ;
 
 => VAR temp : ADT;
    NEW temp := builtinArray; (* see conversion *)
-   COPY target[n..m] := source -> temp -> ... ; RELEASE temp;
+   COPY target[n..] := source +> temp +> ... ; RELEASE temp;
+
+COPY target[n..m] := source +> builtinArray +> ... ;
+
+=> VAR temp : ADT;
+   NEW temp := builtinArray; (* see conversion *)
+   COPY target[n..m] := source +> temp +> ... ; RELEASE temp;
 
 
 (* Using a Built-in Array Slice within an Array Expression *)
 
-NEW array := source -> builtinArray[n..m] -> ... ;
+NEW array := source +> builtinArray[n..m] +> ... ;
 
 => VAR temp : ADT;
    NEW temp := builtinArray[n..m]; (* see conversion *)
-   NEW array := source -> temp -> ... ; RELEASE temp;
+   NEW array := source +> temp +> ... ; RELEASE temp;
 
-COPY target := source -> builtinArray[n..m] -> ... ;
+COPY target := source +> builtinArray[n..m] +> ... ;
 
 => VAR temp : ADT;
    NEW temp := builtinArray[n..m]; (* see conversion *)
-   COPY target := source -> temp -> ... ; RELEASE temp;
+   COPY target := source +> temp +> ... ; RELEASE temp;
 
-COPY target[n..] := source -> builtinArray[m..p] -> ... ;
+COPY target[n..] := source +> builtinArray[m..p] +> ... ;
 
 => VAR temp : ADT;
    NEW temp := builtinArray[m..p]; (* see conversion *)
-   COPY target[n..] := source -> temp -> ... ; RELEASE temp;
+   COPY target[n..] := source +> temp +> ... ; RELEASE temp;
 
-COPY target[n..m] := source -> builtinArray[p..q] -> ... ;
+COPY target[n..m] := source +> builtinArray[p..q] +> ... ;
 
 => VAR temp : ADT;
    NEW temp := builtinArray[p..q]; (* see conversion *)
-   COPY target[n..m] := source -> temp -> ... ; RELEASE temp;
+   COPY target[n..m] := source +> temp +> ... ; RELEASE temp;
 
 
 (* END OF FILE *)
