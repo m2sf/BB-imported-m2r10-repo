@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Nov 25, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 7, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -34,7 +34,7 @@ options {
 
 tokens {
 	
-// *** Reserved Words, 45 tokens ***
+// *** Reserved Words, 50 tokens ***
 
     ALIAS          = 'ALIAS';
     AND            = 'AND';            /* also a RW within pragmas */
@@ -45,6 +45,7 @@ tokens {
     BY             = 'BY';
     CASE           = 'CASE';
     CONST          = 'CONST';
+    COPY           = 'COPY';
     DEFINITION     = 'DEFINITION';
     DESCENDING     = 'DESCENDING';
     DIV            = 'DIV';            /* also a RW within pragmas */
@@ -64,6 +65,7 @@ tokens {
     LOOP           = 'LOOP';
     MOD            = 'MOD';            /* also a RW within pragmas */
     MODULE         = 'MODULE';
+    NEW            = 'NEW';
     NOT            = 'NOT';            /* also a RW within pragmas */
     OF             = 'OF';
     OPAQUE         = 'OPAQUE';
@@ -72,7 +74,9 @@ tokens {
     PROCEDURE      = 'PROCEDURE';
     RECORD         = 'RECORD';
     REFERENTIAL    = 'REFERENTIAL';
+    RELEASE        = 'RELEASE';
     REPEAT         = 'REPEAT';
+    RETAIN         = 'RETAIN';
     RETURN         = 'RETURN';
     SET            = 'SET';
     THEN           = 'THEN';
@@ -90,7 +94,7 @@ tokens {
     CAST           = 'CAST';           /* RW within formal parameter */
     NIL            = 'NIL';            /* RW within blueprint */
 
-// *** Bindable Identifiers, 29 tokens ***
+// *** Bindable Identifiers, 23 tokens ***
 
 //  Bindable Identifiers are both Identifiers and Reserved Words
 //  Ambiguity is resolvable using the Schroedinger's Token technique
@@ -104,18 +108,12 @@ tokens {
 
     ABS            = 'ABS';            /* RW within procedure header */
     NEG            = 'NEG';            /* RW within procedure header */
-    COPY           = 'COPY';           /* RW within procedure header */
     COUNT          = 'COUNT';          /* RW within procedure header */
     LENGTH         = 'LENGTH';         /* RW within procedure header */
-    CONCAT         = 'CONCAT';         /* RW within procedure header */
     STORE          = 'STORE';          /* RW within procedure header */
     RETRIEVE       = 'RETRIEVE';       /* RW within procedure header */
     INSERT         = 'INSERT';         /* RW within procedure header */
     REMOVE         = 'REMOVE';         /* RW within procedure header */
-    NEW            = 'NEW';            /* RW within procedure header */
-    NEWCOPY        = 'NEWCOPY';        /* RW within procedure header */
-    RETAIN         = 'RETAIN';         /* RW within procedure header */
-    RELEASE        = 'RELEASE';        /* RW within procedure header */
     SUBSET         = 'SUBSET';         /* RW within procedure header */
     READ           = 'READ';           /* RW within procedure header */
     READNEW        = 'READNEW';        /* RW within procedure header */
@@ -298,8 +296,19 @@ restrictedExport : '*' ;
 
 // fragment #10.2
 procBindableEntity :
-    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' | '..' |
-    IN | DIV | MOD | FOR | ProcBindableIdent
+    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' |
+    ARRAY | RETAIN | RELEASE | IN | FOR | DIV | MOD |
+    procMultiBindableEntity | ProcBindableIdent
+    ;
+
+// fragment #10.3
+procMultiBindableEntity :
+    ( '..' | NEW | COPY | ProcMultiBindableIdent ) bindingSelector?
+    ;
+
+// fragment #10.4
+bindingSelector :
+    '*' | '+' | '++'
     ;
 
 
@@ -545,9 +554,10 @@ variadicTerminator : constExpression ;
 
 // production #38
 statement :
-    ( assignmentOrProcedureCall | ifStatement | caseStatement |
-      whileStatement | repeatStatement | loopStatement |
-      forStatement | RETURN expression? | EXIT )?
+    assignmentOrProcedureCall | ifStatement | caseStatement |
+    whileStatement | repeatStatement | loopStatement |
+    forStatement | ( RETAIN | RELEASE ) expression |
+    RETURN expression? | EXIT
     ;
 
 // production #39
@@ -557,11 +567,12 @@ statementSequence :
 
 // production #40
 assignmentOrProcedureCall :
-    designator ( ':=' expression | incOrDevSuffix | actualParameters )?
+    NEW designator ( ':=' expression )? | COPY designator ':=' expression |
+    designator ( ':=' expression | incOrDecSuffix | actualParameters )?
     ;
 
 // fragment #40.1
-incOrDevSuffix :
+incOrDecSuffix :
     '++' | '--'
     {} /* make ANTLRworks display separate branches */
     ;
@@ -630,7 +641,7 @@ designatorTail :
 
 // production #51
 exprListOrSlice :
-    expression ( ( ',' expression )+ | '..' expression )?
+    expression ( ( ',' expression )+ | '..' expression? )?
     ;
 
 // production #52
@@ -641,7 +652,7 @@ expression :
 
 // fragment #52.1
 relOp :
-    '=' | '#' | '<' | '<=' | '>' | '>=' | '==' | IN
+    '=' | '#' | '<' | '<=' | '>' | '>=' | '==' | IN | '+>'
     {} /* make ANTLRworks display separate branches */
     ;
 
@@ -1040,10 +1051,16 @@ ConstBindableIdent :  /* Ident */
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 ProcBindableIdent : /* Ident */
-    ABS | NEG | COPY | COUNT | LENGTH | NEW | NEWCOPY | RETAIN |
-    RELEASE | CONCAT | STORE | RETRIEVE | INSERT | REMOVE | SUBSET |
+    ABS | NEG | COUNT | LENGTH | STORE | RETRIEVE | REMOVE | SUBSET |
     READ | READNEW | WRITE | WRITEF | TMIN | TMAX | SXF | VAL
     {} /* make ANTLRworks display separate branches */
+    ;
+
+// fragment #2.5
+// both an identifier and a reserved word
+// resolve using Schroedinger's Token
+ProcMultiBindableIdent : /* Ident */
+    INSERT
     ;
 
 // production #3
