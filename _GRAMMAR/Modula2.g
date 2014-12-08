@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 7, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 8, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -652,9 +652,16 @@ expression :
 
 // fragment #52.1
 relOp :
-    '=' | '#' | '<' | '<=' | '>' | '>=' | '==' | IN | '+>'
+    '=' | '#' | '<' | '<=' | '>' | '>=' | '==' | IN |
+    ArrayConcatOp | DictMergeOp 
     {} /* make ANTLRworks display separate branches */
     ;
+
+// alias #52.2
+ArrayConcatOp : '+>' ;
+
+// alias #52.3
+DictMergeOp : '+/' ;
 
 // production #53
 simpleExpression :
