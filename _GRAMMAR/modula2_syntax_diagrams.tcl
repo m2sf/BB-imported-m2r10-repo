@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Nov 25, 2014
+# Syntax diagram generator for Modula-2 (R10), status Dec 8, 2014
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -316,7 +316,18 @@ lappend non_terminals restrictedExport {
 
 # (10.2) Procedure-Bindable Entity
 lappend non_terminals procBindableEntity {
-  or + - * / = < > :: := .. IN DIV MOD FOR ProcBindableIdent
+  or + - * / = < > :: := ARRAY RETAIN RELEASE IN FOR DIV MOD
+     procMultiBindableEntity ProcBindableIdent
+}
+
+# (10.3) Procedure-Multi-Bindable Entity
+lappend non_terminals procMultiBindableEntity {
+  line {or .. NEW COPY ProcMultiBindableIdent} {optx bindingSelector}
+}
+
+# (10.4) Binding Selector
+lappend non_terminals bindingSelector {
+  or * + ++
 }
 
 # (11) Import List
@@ -600,6 +611,7 @@ lappend non_terminals statement {
       repeatStatement
       loopStatement
       forStatement
+      {line {or RETAIN RELEASE} expression}
       {line RETURN {optx expression}}
       EXIT
   }
@@ -612,13 +624,17 @@ lappend non_terminals statementSequence {
 
 # (40) Assignment Or Procedure Call
 lappend non_terminals assignmentOrProcedureCall {
-  line designator {
-    or
-      {}
-      {line := expression}
-      {line incOrDecSuffix}
-      {line actualParameters}
-  }
+  or
+    {line NEW designator {optx := expression}}
+    {line COPY designator := expression}
+    {line designator {
+      or
+        {}
+        {line := expression}
+        {line incOrDecSuffix}
+        {line actualParameters}
+      }
+    }
 }
 
 # (40.1) Increment Or Decrement Suffix
@@ -706,7 +722,7 @@ lappend non_terminals exprListOrSlice {
     optx {
       or
         {loop {line , expression} nil}
-        {line .. expression}
+        {line .. {optx expression}}
     }
   }
 }
@@ -719,7 +735,7 @@ lappend non_terminals expression {
 # (52.1) Relational Operator
 lappend non_terminals relOp {
   or
-    = # < <= > >= == IN
+    = # < <= > >= == IN +> +/
 }
 
 # (53) Simple Expression
@@ -880,16 +896,17 @@ set terminals {}
 # (1a) Reserved Words
 lappend terminals ReservedWords1 {
   or
-    ALIAS AND ARRAY ARGLIST BEGIN BLUEPRINT BY CASE CONST DEFINITION
-    DESCENDING DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF
-    IMPLEMENTATION IMPORT
+    ALIAS AND ARRAY ARGLIST BEGIN BLUEPRINT BY CASE CONST COPY DEFINITION
+    DESCENDING DIV DO ELSE ELSIF END EXIT FOR FROM GENLIB IF IMPLEMENTATION
+    IMPORT IN
 }
 
 # (1b) Reserved Words
 lappend terminals ReservedWords2 {
   or
-    IN INDETERMINATE LOOP MOD MODULE NOT OF OPAQUE OR POINTER PROCEDURE
-    RECORD REFERENTIAL REPEAT RETURN SET THEN TO TYPE UNTIL VAR WHILE
+    INDETERMINATE LOOP MOD MODULE NEW NOT OF OPAQUE OR POINTER PROCEDURE
+    RECORD REFERENTIAL RELEASE REPEAT RETAIN RETURN SET THEN TO TYPE UNTIL
+    VAR WHILE
 }
 
 # (2) Identifier
@@ -915,9 +932,13 @@ lappend terminals ConstBindableIdent {
 # (2.4) Procedure-Bindable Identifier
 lappend terminals ProcBindableIdent {
   or
-    /ABS /NEG /COPY /COUNT /LENGTH /NEW /NEWCOPY /RETAIN /RELEASE /CONCAT
-    /STORE /RETRIEVE /INSERT /REMOVE /SUBSET /READ /READNEW /WRITE /WRITEF
-    /TMIN /TMAX /SXF /VAL
+    /ABS /NEG /COUNT /LENGTH /STORE /RETRIEVE /REMOVE /SUBSET
+    /READ /READNEW /WRITE /WRITEF /TMIN /TMAX /SXF /VAL
+}
+
+# (2.5) Procedure-Multi-Bindable Identifier
+lappend terminals ProcMultiBindableIdent {
+  /INSERT
 }
 
 # (3) Numeric Literal
