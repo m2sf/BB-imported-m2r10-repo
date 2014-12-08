@@ -1,0 +1,308 @@
+(* M2 R10 Project, (c) 2014 B.Kowarsch & R.Sutcliffe, all rights reserved. *)
+
+(* Dictionary ADTs *)
+
+(* Use cases for allocation, copying, and insertion of dictionary ADTs,
+   required bindings and resulting compile time transformations. *)
+
+(* Status: Dec 8, 2014 *)
+
+
+(* =======================
+ *    U s e   C a s e s
+ * ======================= *)
+
+
+(* Assignment *)
+
+(* assign NIL *)
+
+dict := NIL;
+ 
+(* assign dictionary *)
+
+dict := source;
+
+(* assign function call result *)
+
+dict := function(dictExpression);
+
+
+(* Allocation / Non-destructive Copying *)
+
+(* without initialisation *)
+
+NEW dict;
+
+(* allocate and initialise with keys and values *)
+
+NEW dict := { key1, value1, key2, value2, key3, value3, ... };
+
+(* allocate and initialise with dictionary *)
+
+NEW dict := source;
+
+(* allocate and initialise with unique keys of dictionaries *)
+
+NEW dict := source1 +/ source2 +/ ... ;
+
+(* allocate and initialise with function call result *)
+
+NEW dict := function(dictExpression);
+
+
+(* Destructive Copying *)
+
+(* copy values *)
+
+COPY target := { key1, value1, key2, value2, key3, value3, ... };
+
+(* copy dictionary *)
+
+COPY target := source;
+
+(* copy unique keys of dictionaries *)
+
+COPY target := source1 +/ source2 +/ ... ;
+
+(* copy function call result *)
+
+COPY target := function(dictExpression);
+
+
+(* Insertion *)
+
+(* insert values *)
+
+INSERT(dict, key1, value1, key2, value2, key3, value3, ...);
+
+
+(* =====================
+ *    B i n d i n g s
+ * ===================== *)
+
+
+(* Assignment *)
+
+(* no bindings *)
+
+
+(* Allocation *)
+
+(* binding #1 *)
+
+PROCEDURE [NEW] new
+  ( VAR newDict : ADT;
+    keysAndValues : ARGLIST OF { key : KeyType; value : ValueType } );
+
+(* supported use cases *)
+
+NEW dict;
+
+NEW dict := { key1, value1, key2, value2, key3, value3, ... };
+
+
+(* binding #2 *)
+
+PROCEDURE [NEW*] newWithDict ( VAR new : ADT; source : ADT );
+
+(* supported use case *)
+
+NEW dict := source;
+
+
+(* binding #3 *)
+
+PROCEDURE [NEW+] newWithUniqueKeys ( VAR new : ADT; source : ARGLIST OF ADT );
+
+(* supported use cases *)
+
+NEW dict := source1 +/ source2 +/ source3 +/ ... ;
+
+
+(* Copying *)
+
+(* binding #1 *)
+
+PROCEDURE [COPY] copyValues
+  ( VAR target : ADT;
+    keysAndValues : ARGLIST OF { key : KeyType; value : ValueType } );
+
+(* supported use cases *)
+
+COPY target := { key1, value1, key2, value2, key3, value3, ... };
+
+
+(* binding #2 *)
+
+PROCEDURE [COPY*] copyDict ( VAR target : ADT; source : ADT );
+
+(* supported use case *)
+
+COPY target := source;
+
+
+(* binding #3 *)
+
+PROCEDURE [COPY+] copyUniqueKeys ( VAR target : ADT; source : ARGLIST OF ADT );
+
+(* supported use cases *)
+
+COPY target := source1 +/ source2 +/ ... ;
+
+
+(* Insertion *)
+
+(* binding *)
+
+PROCEDURE [INSERT] insertValues
+  ( VAR target : ADT; values : ARGLIST OF ValueType );
+
+(* supported use cases *)
+
+INSERT(target, key1, value1, key2, value2, key3, value3, ... };
+
+
+(* Argument Passing *)
+
+(* required binding *)
+
+PROCEDURE [RETAIN] retain ( VAR set : ADT );
+
+(* supported use cases *)
+
+target := function(dictExpression);
+
+NEW target := function(dictExpression);
+
+COPY target := function(dictExpression);
+
+
+(* ===================================
+ *    T r a n s f o r m a t i o n s
+ * =================================== *)
+
+
+(* Assignment *)
+
+(* assign NIL *)
+
+dict := NIL;
+
+=> dict := NIL;
+ 
+
+(* assign dictionary *)
+
+dict := source;
+
+=> dict := source;
+
+
+(* assign function call result *)
+
+dict := function(dictExpression);
+
+=> VAR temp : ADT;
+   (* prepare argument *)
+   temp := dictExpression;
+   (* call function and assign result *)
+   dict := function(temp); ADT.release(temp);
+
+
+(* Allocation / Non-destructive Copying *)
+
+(* without initialisation *)
+
+NEW dict;
+
+=> ADT.new(dict);
+
+
+(* allocate and initialise with values *)
+
+NEW dict := { key1, value1, key2, value2, key3, value3, ... };
+ 
+=> ADT.new(
+    (* L-value *) dict,
+    (* R-value *) key1, value1, key2, value2, key3, value3, ...);
+
+
+(* allocate and initialise with dictionary *)
+
+NEW dict := source;
+
+=> ADT.newWithDict(dict, source);
+
+
+(* allocate and initialise with unique keys of dictionaries *)
+
+NEW dict := source1 +/ source2 +/ ... ;
+
+=> ADT.newWithUniqueKeys(
+    (* L-value *) dict,
+    (* R-value *) source1, source2, ...);
+
+
+(* allocate and initialise with function call result *)
+
+NEW set := function(dictExpression);
+
+=> VAR temp : ADT;
+   (* prepare argument *)
+   temp := dictExpression;
+   (* call function and create set with result *)
+   ADT.newWithDict(dict, function(temp)); ADT.release(temp);
+
+
+(* Destructive Copying *)
+
+(* copy values *)
+
+COPY target := { key1, value1, key2, value2, key3, value3, ... };
+
+=> ADT.copyKeysAndValues(
+    (* L-value *) target,
+    (* R-value *) key1, value1, key2, value2, key3, value3, ...);
+
+ 
+(* copy dictionary *)
+
+COPY target := source;
+
+=> ADT.copyDict(target, source);
+
+
+
+(* copy unique keys of dictionaries *)
+
+COPY target := source1 + source2 + ... ;
+
+=> ADT.copyUniqueKeys(
+    (* L-value *) target,
+    (* R-value *) source1, source2, ...);
+
+
+(* copy function call result *)
+
+COPY target := function(dictExpression);
+
+=> VAR tempArg, tempResult : ADT;
+   (* prepare argument *)
+   tempArg := dictExpression;
+   (* call function *)
+   tempResult := function(tempArg); ADT.release(tempArg);
+   (* copy function call result into target *)
+   ADT.copyDict(target, tempResult); ADT.release(tempResult);
+
+
+(* Insertion *)
+
+(* insert values *)
+
+INSERT(target, key1, value1, key2, value2, key1, value3, ...);
+
+=> ADT.insertKeysAndValues(target, value1, key2, value2, key1, value3, ...);
+
+
+(* END OF FILE *)
