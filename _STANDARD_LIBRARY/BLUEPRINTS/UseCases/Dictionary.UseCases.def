@@ -117,7 +117,7 @@ PROCEDURE [NEW+] newWithUniqueKeys ( VAR new : ADT; source : ARGLIST OF ADT );
 
 (* supported use cases *)
 
-NEW dict := source1 +/ source2 +/ source3 +/ ... ;
+NEW dict := source1 +/ source2 +/ ... ;
 
 
 (* Copying *)
