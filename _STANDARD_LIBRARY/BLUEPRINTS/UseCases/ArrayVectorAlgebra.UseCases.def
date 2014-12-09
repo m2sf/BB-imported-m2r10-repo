@@ -49,91 +49,137 @@ vector1 := vector2 / vector3;
 
 (* Scalar-to-Vector Addition *)
 
-(* option #1 : special symbol operator *)
+(* option #1 : overload + operator *)
+
+vector1 := scalar + vector2;
+
+
+(* option #2 : special symbol operator *)
 
 vector1 := scalar $+ vector2;
 
 
-(* option #2 : extension library function *)
+(* option #3 : extension library function *)
 
 vector1 := Vector.addScalar(vector2, scalar);
 
 
 (* Scalar-by-Vector Subtraction *)
 
+(* option #1 : overload - operator *)
+
+vector1 := scalar - vector2;
+
+
+(* option #2 : special symbol operator *)
+
 vector1 := scalar $- vector2;
 
-(* option #2 : extension library function *)
+
+(* option #3 : extension library function *)
 
 vector1 := Vector.addScalar(-vector2, scalar);
 
 
 (* Scalar-by-Vector Multiplication *)
 
+(* option #1 : overload + operator *)
+
+vector1 := scalar * vector2;
+
+
+(* option #2 : special symbol operator *)
+
 vector1 := scalar $* vector2;
 
 
-(* option #2 : extension library function *)
+(* option #3 : extension library function *)
 
 vector1 := Vector.mulScalar(vector2, scalar);
 
 
 (* Scalar-by-Vector Division *)
 
+(* option #1 : overload + operator *)
+
+vector1 := scalar / vector2;
+
+
+(* option #2 : special symbol operator *)
+
 vector1 := scalar $% vector2;
 
 
-(* option #2 : extension library function *)
+(* option #3 : extension library function *)
 
 vector1 := Vector.mulScalar(Vector.inv(vector2), scalar);
 
 
-(* Vector-Scalar Arithmetic *)
 
 (* Vector-to-Scalar Addition *)
 
-(* option #1 : special symbol operator *)
+(* option #1 : overload + operator *)
+
+vector1 := vector2 + scalar;
+
+
+(* option #2 : special symbol operator *)
 
 vector1 := vector2 +$ scalar;
 
 
-(* option #2 : extension library function *)
+(* option #3 : extension library function *)
 
 vector1 := Vector.addScalar(vector2, scalar);
 
 
 (* Vector-by-Scalar Subtraction *)
 
-(* option #1 : special symbol operator *)
+(* option #1 : overload - operator *)
+
+vector1 := vector2 - scalar;
+
+
+(* option #2 : special symbol operator *)
 
 vector1 := vector2 -$ scalar;
 
 
-(* option #2 : extension library function *)
+(* option #3 : extension library function *)
 
 vector1 := Vector.addScalar(vector2, -scalar);
 
 
 (* Vector-by-Scalar Multiplication *)
 
-(* option #1 : special symbol operator *)
+(* option #1 : overload + operator *)
+
+vector1 := vector2 * scalar;
+
+
+(* option #2 : special symbol operator *)
 
 vector1 := vector2 *$ scalar;
 
 
-(* option #2 : extension library function *)
+(* option #3 : extension library function *)
 
 vector1 := Vector.mulScalar(vector2, scalar);
 
 
 (* Vector-by-Scalar Division *)
 
-(* option #1 : special symbol operator *)
+(* option #1 : overload + operator *)
+
+vector1 := vector2 / scalar;
+
+
+(* option #2 : special symbol operator *)
 
 vector1 := vector2 %$ scalar;
 
 
-(* option #2 : extension library function *)
+(* option #3 : extension library function *)
 
 vector1 := Vector.divByScalar(vector2, scalar);
 
@@ -322,6 +368,8 @@ vector1 := vector2 / vector3;
 
 (* Scalar-to-Vector Addition *)
 
+vector1 := scalar + vector2;
+
 vector1 := scalar $+ vector2;
 
 (* synthesised as *)
@@ -331,6 +379,8 @@ FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
 END;
 
 (* Scalar-by-Vector Subtraction *)
+
+vector1 := scalar - vector2;
 
 vector1 := scalar $- vector2;
 
@@ -342,6 +392,8 @@ END;
 
 (* Scalar-by-Vector Multiplication *)
 
+vector1 := scalar * vector2;
+
 vector1 := scalar $* vector2;
 
 (* synthesised as *)
@@ -351,6 +403,8 @@ FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
 END;
 
 (* Scalar-by-Vector Division *)
+
+vector1 := scalar / vector2;
 
 vector1 := scalar $% vector2;
 
@@ -365,6 +419,8 @@ END;
 
 (* Vector-to-Scalar Addition *)
 
+vector1 := vector2 + scalar;
+
 vector1 := vector2 +$ scalar;
 
 (* synthesised as *)
@@ -374,6 +430,8 @@ FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
 END;
 
 (* Vector-by-Scalar Subtraction *)
+
+vector1 := vector2 - scalar;
 
 vector1 := vector2 -$ scalar;
 
@@ -385,6 +443,8 @@ END;
 
 (* Vector-by-Scalar Multiplication *)
 
+vector1 := vector2 * scalar;
+
 vector1 := vector2 *$ scalar;
 
 (* synthesised as *)
@@ -394,6 +454,8 @@ FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
 END;
 
 (* Vector-by-Scalar Division *)
+
+vector1 := vector2 / scalar;
 
 vector1 := vector2 %$ scalar;
 
