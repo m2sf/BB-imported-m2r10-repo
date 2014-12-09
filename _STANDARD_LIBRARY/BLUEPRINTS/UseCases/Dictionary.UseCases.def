@@ -155,8 +155,9 @@ COPY target := source1 +/ source2 +/ ... ;
 
 (* binding *)
 
-PROCEDURE [INSERT] insertValues
-  ( VAR target : ADT; values : ARGLIST OF ValueType );
+PROCEDURE [INSERT] insertKeysAndValues
+  ( VAR target : ADT;
+    keysAndValues : ARGLIST OF { key : KeyType; value : ValueType } );
 
 (* supported use cases *)
 
