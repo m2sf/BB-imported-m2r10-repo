@@ -302,7 +302,7 @@ PROCEDURE [DOT] dot ( left, right : Vector ) : ValueType;
 
 (* Cross Product *)
 
-(* options #2 and #3 *)
+(* options #1 *)
 
 PROCEDURE [*^] cross ( VAR result : Vector; left, right : Vector );
 
@@ -484,7 +484,7 @@ scalar := vector1 DOT vector2;
 => scalar := Vector.dot(vector1, vector2);
 
 
-(* option #2 *)
+(* option #3 *)
 
 scalar := DOT(vector1, vector2);
 
