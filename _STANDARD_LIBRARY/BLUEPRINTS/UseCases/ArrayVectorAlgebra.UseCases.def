@@ -1,0 +1,455 @@
+(* M2 R10 Project, (c) 2014 B.Kowarsch & R.Sutcliffe, all rights reserved. *)
+
+(* Numeric Array and Vector Algebra *)
+
+(* Exploration of possible use cases for array and vector algebra,
+   required bindings and resulting compile time transformations. *)
+
+(* Status: Dec 8, 2014 *)
+
+
+(* =======================
+ *    U s e   C a s e s
+ * ======================= *)
+
+
+(* Basic Vector Arithmetic *)
+
+(* Sign Removal *)
+
+vector1 := ABS(vector2);
+
+
+(* Sign Reversal *)
+
+vector1 := -vector2;
+
+
+(* Vector-Vector Addition *)
+
+vector1 := vector2 + vector3;
+
+
+(* Vector-Vector Subtraction *)
+
+vector1 := vector2 - vector3;
+
+
+(* Vector-Vector Multiplication *)
+
+vector1 := vector2 * vector3;
+
+
+(* Vector-Vector Division *)
+
+vector1 := vector2 / vector3;
+
+
+(* Scalar-Vector Arithmetic *)
+
+(* Scalar-to-Vector Addition *)
+
+(* option #1 : special symbol operator *)
+
+vector1 := scalar $+ vector2;
+
+
+(* option #2 : extension library function *)
+
+vector1 := Vector.addScalar(vector2, scalar);
+
+
+(* Scalar-by-Vector Subtraction *)
+
+vector1 := scalar $- vector2;
+
+(* option #2 : extension library function *)
+
+vector1 := Vector.addScalar(-vector2, scalar);
+
+
+(* Scalar-by-Vector Multiplication *)
+
+vector1 := scalar $* vector2;
+
+
+(* option #2 : extension library function *)
+
+vector1 := Vector.mulScalar(vector2, scalar);
+
+
+(* Scalar-by-Vector Division *)
+
+vector1 := scalar $% vector2;
+
+
+(* option #2 : extension library function *)
+
+vector1 := Vector.mulScalar(Vector.inv(vector2), scalar);
+
+
+(* Vector-Scalar Arithmetic *)
+
+(* Vector-to-Scalar Addition *)
+
+(* option #1 : special symbol operator *)
+
+vector1 := vector2 +$ scalar;
+
+
+(* option #2 : extension library function *)
+
+vector1 := Vector.addScalar(vector2, scalar);
+
+
+(* Vector-by-Scalar Subtraction *)
+
+(* option #1 : special symbol operator *)
+
+vector1 := vector2 -$ scalar;
+
+
+(* option #2 : extension library function *)
+
+vector1 := Vector.addScalar(vector2, -scalar);
+
+
+(* Vector-by-Scalar Multiplication *)
+
+(* option #1 : special symbol operator *)
+
+vector1 := vector2 *$ scalar;
+
+
+(* option #2 : extension library function *)
+
+vector1 := Vector.mulScalar(vector2, scalar);
+
+
+(* Vector-by-Scalar Division *)
+
+(* option #1 : special symbol operator *)
+
+vector1 := vector2 %$ scalar;
+
+
+(* option #2 : extension library function *)
+
+vector1 := Vector.divByScalar(vector2, scalar);
+
+
+(* Vector-Only Operations, Not Available to Array ADTs *)
+
+(* Dot Product *)
+
+(* option #1 : special symbol operator *)
+
+vector1 := vector2 *. vector3;
+
+
+(* option #2 : reserved word operator *)
+
+scalar := vector1 DOT vector2;
+
+
+(* option #3 : predefined function *)
+
+scalar := DOT(vector1, vector2);
+
+
+(* option #4 : extension library function *)
+
+scalar := Vector.dot(vector1, vector2);
+
+
+(* Cross Product *)
+
+(* option #1 : special symbol operator *)
+
+vector1 := vector2 *^ vector3;
+
+
+(* option #2 : reserved word operator *)
+
+vector1 := vector2 CROSS vector3;
+
+
+(* option #3 : predefined function *)
+
+vector1 := CROSS(vector2, vector3); (* predefined function *)
+
+
+(* option #4 : extension library function *)
+
+scalar := Vector.cross(vector1, vector2); (* library function *)
+
+
+(* =====================
+ *    B i n d i n g s
+ * ===================== *)
+
+
+(* Basic Vector Arithmetic *)
+
+(* Sign Removal *)
+
+PROCEDURE [ABS] abs ( VAR result : Vector; operand : Vector );
+
+
+(* Sign Reversal *)
+
+PROCEDURE [NEG] neg ( VAR result : Vector; operand : Vector );
+
+
+(* Vector-Vector Addition *)
+
+PROCEDURE [+] add ( VAR result : Vector; left, right : Vector );
+
+
+(* Vector-Vector Subtraction *)
+
+PROCEDURE [-] sub ( VAR result : Vector; left, right : Vector );
+
+
+(* Vector-Vector Multiplication *)
+
+PROCEDURE [*] mul ( VAR result : Vector; left, right : Vector );
+
+
+(* Vector-Vector Division *)
+
+PROCEDURE [/] div ( VAR result : Vector; left, right : Vector );
+
+
+(* Scalar-Vector Arithmetic *)
+
+(* no bindings *)
+
+(* transformations could be synthesised automatically *)
+
+
+(* Vector-Scalar Arithmetic *)
+
+(* no bindings *)
+
+(* transformations could be synthesised automatically *)
+
+
+(* Vector-Only Operations, Not Available to Array ADTs *)
+
+(* Dot Product *)
+
+(* option #1 *)
+
+PROCEDURE [*.] dot ( left, right : Vector ) : ValueType;
+
+
+(* options #2 and #3 *)
+
+PROCEDURE [DOT] dot ( left, right : Vector ) : ValueType;
+
+
+(* option #4 *)
+
+(* no binding *)
+
+
+(* Cross Product *)
+
+(* options #2 and #3 *)
+
+PROCEDURE [*^] cross ( VAR result : Vector; left, right : Vector );
+
+
+(* options #2 and #3 *)
+
+PROCEDURE [CROSS] cross ( VAR result : Vector; left, right : Vector );
+
+
+(* option #4 *)
+
+(* no binding *)
+
+
+(* ===================================
+ *    T r a n s f o r m a t i o n s
+ * =================================== *)
+
+
+(* Sign Removal *)
+
+vector1 := ABS(vector2);
+
+=> Vector.abs(vector1, vector2);
+
+
+(* Sign Reversal *)
+
+vector1 := -vector2;
+
+=> Vector.neg(vector1, vector2);
+
+
+(* Vector-Vector Addition *)
+
+vector1 := vector2 + vector3;
+
+=> Vector.add(vector1, vector2, vector3);
+
+
+(* Vector-Vector Subtraction *)
+
+vector1 := vector2 - vector3;
+
+=> Vector.sub(vector1, vector2, vector3);
+
+
+(* Vector-Vector Multiplication *)
+
+vector1 := vector2 * vector3;
+
+=> Vector.mul(vector1, vector2, vector3);
+
+
+(* Vector-Vector Division *)
+
+vector1 := vector2 / vector3;
+
+=> Vector.div(vector1, vector2, vector3);
+
+
+(* Scalar-Vector Arithmetic *)
+
+(* Scalar-to-Vector Addition *)
+
+vector1 := scalar $+ vector2;
+
+(* synthesised as *)
+
+FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
+  vector1[index] := scalar + vector2[index]
+END;
+
+(* Scalar-by-Vector Subtraction *)
+
+vector1 := scalar $- vector2;
+
+(* synthesised as *)
+
+FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
+  vector1[index] := scalar - vector2[index]
+END;
+
+(* Scalar-by-Vector Multiplication *)
+
+vector1 := scalar $* vector2;
+
+(* synthesised as *)
+
+FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
+  vector1[index] := scalar * vector2[index]
+END;
+
+(* Scalar-by-Vector Division *)
+
+vector1 := scalar $% vector2;
+
+(* synthesised as *)
+
+FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
+  vector1[index] := scalar / vector2[index]
+END;
+
+
+(* Vector-Scalar Arithmetic *)
+
+(* Vector-to-Scalar Addition *)
+
+vector1 := vector2 +$ scalar;
+
+(* synthesised as *)
+
+FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
+  vector1[index] := vector2[index] + scalar
+END;
+
+(* Vector-by-Scalar Subtraction *)
+
+vector1 := vector2 -$ scalar;
+
+(* synthesised as *)
+
+FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
+  vector1[index] := vector2[index] - scalar
+END;
+
+(* Vector-by-Scalar Multiplication *)
+
+vector1 := vector2 *$ scalar;
+
+(* synthesised as *)
+
+FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
+  vector1[index] := vector2[index] * scalar
+END;
+
+(* Vector-by-Scalar Division *)
+
+vector1 := vector2 %$ scalar;
+
+(* synthesised as *)
+
+FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
+  vector1[index] := vector2[index] / scalar
+END;
+
+
+(* Vector-Only Operations, Not Available to Array ADTs *)
+
+(* Dot Product *)
+
+(* option #1 *)
+
+scalar := vector1 *. vector2;
+
+=> scalar := Vector.dot(vector1, vector2);
+
+
+(* option #2 *)
+
+scalar := vector1 DOT vector2;
+
+=> scalar := Vector.dot(vector1, vector2);
+
+
+(* option #2 *)
+
+scalar := DOT(vector1, vector2);
+
+=> scalar := Vector.dot(vector1, vector2);
+
+
+(* Cross Product *)
+
+(* option #1 *)
+
+vector1 := vector2 *^ vector3;
+
+=> Vector.cross(vector1, vector2, vector3);
+
+
+(* option #2 *)
+
+vector1 := vector2 CROSS vector3;
+
+=> Vector.cross(vector1, vector2, vector3);
+
+
+(* option #3 *)
+
+vector1 := CROSS(vector2, vector3);
+
+=> Vector.cross(vector1, vector2, vector3);
+
+
+(* END OF FILE *)
