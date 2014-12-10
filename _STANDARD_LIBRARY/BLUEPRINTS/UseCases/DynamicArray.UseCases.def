@@ -6,7 +6,7 @@
    allocation, copying, slicing, insertion and concatenation of dynamic
    array ADTs, required bindings and resulting compile time transformations. *)
 
-(* Status: Dec 7, 2014 *)
+(* Status: Dec 10, 2014 *)
 
 
 (* =======================
@@ -19,7 +19,7 @@
 (* assign NIL *)
 
 array := NIL;
- 
+
 (* assign array *)
 
 array := source;
@@ -98,6 +98,10 @@ COPY target := function(arrayExpression);
 (* Insertion *)
 
 (* insert values *)
+
+INSERT(target, n, val1, val2, val3, ...);
+
+(* equivalent to *)
 
 COPY target[n..] := { val1, val2, val3, ... };
 
@@ -359,7 +363,9 @@ COPY target := { val1, val2, val3, ... } +> source[n..m] +> ... ;
 PROCEDURE [INSERT] insertValues
   ( VAR target : ADT; atIndex : INTEGER; values : ARGLIST OF ValueType );
 
-(* supported use case *)
+(* supported use cases *)
+
+INSERT(target, n, val1, val2, val3, ...);
 
 COPY target[n..] := { val1, val2, val3, ... };
 
@@ -738,6 +744,10 @@ COPY target := function(arrayExpression);
 (* Insertion *)
 
 (* insert values *)
+
+INSERT(target, n, val1, val2, val3, ...);
+
+(* equivalent to *)
 
 COPY target[n..] := { val1, val2, val3, ... };
 
