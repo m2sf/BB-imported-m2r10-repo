@@ -2,10 +2,11 @@
 
 (* Dictionary ADTs *)
 
-(* Use cases for allocation, copying, and insertion of dictionary ADTs,
-   required bindings and resulting compile time transformations. *)
+(* Use cases for allocation, copying, insertion and removal operations
+   of dictionary ADTs, required bindings and resulting compile time
+   transformations. *)
 
-(* Status: Dec 8, 2014 *)
+(* Status: Dec 10, 2014 *)
 
 
 (* =======================
@@ -75,6 +76,13 @@ COPY target := function(dictExpression);
 (* insert keys and values *)
 
 INSERT(dict, key1, value1, key2, value2, key3, value3, ...);
+
+
+(* Removal *)
+
+(* remove keys/value pairs *)
+
+REMOVE(dict, key1, key2, key3, ...);
 
 
 (* =====================
@@ -177,6 +185,18 @@ target := function(dictExpression);
 NEW target := function(dictExpression);
 
 COPY target := function(dictExpression);
+
+
+(* Removal *)
+
+(* binding *)
+
+PROCEDURE [REMOVE] removeKeys
+  ( VAR target : ADT; keys : ARGLIST OF KeyType );
+
+(* supported use cases *)
+
+REMOVE(target, key1, key2, key3, ...);
 
 
 (* ===================================
@@ -304,6 +324,15 @@ COPY target := function(dictExpression);
 INSERT(target, key1, value1, key2, value2, key1, value3, ...);
 
 => ADT.insertKeysAndValues(target, value1, key2, value2, key1, value3, ...);
+
+
+(* Removal *)
+
+(* remove key/value pairs *)
+
+REMOVE(target, key1, key2, key3, ...);
+
+=> ADT.removeKeys(target, key1, key2, key3, ...);
 
 
 (* END OF FILE *)
