@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 8, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 10, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -489,7 +489,7 @@ formalType :
 
 // production #30
 attributedFormalType :
-    ( CONST | VAR {})? simpleFormalType
+    ( CONST | VAR | NEW {})? simpleFormalType
     ;
 
 // production #31
@@ -533,7 +533,7 @@ formalParams :
 
 // production #36
 simpleFormalParams :
-    ( CONST | VAR {})? identList ':' simpleFormalType
+    ( CONST | VAR | NEW {})? identList ':' simpleFormalType
     ;
 
 // production #37
@@ -647,31 +647,23 @@ exprListOrSlice :
 // production #52
 expression :
 /* represents operator precedence level 1 */
-    simpleExpression ( relOp simpleExpression )?
+    simpleExpression ( op1 simpleExpression )?
     ;
 
 // fragment #52.1
-relOp :
-    '=' | '#' | '<' | '<=' | '>' | '>=' | '==' | IN |
-    ArrayConcatOp | DictMergeOp 
+op1 :
+    '=' | '#' | '<' | '<=' | '>' | '>=' | '==' | '+>' | '+/' | IN
     {} /* make ANTLRworks display separate branches */
     ;
-
-// alias #52.2
-ArrayConcatOp : '+>' ;
-
-// alias #52.3
-DictMergeOp : '+/' ;
 
 // production #53
 simpleExpression :
 /* represents operator precedence level 2 */
-    ( '+' | '-' {} /* make ANTLRworks display separate branches */ )?
-    term ( addOp term )*
+    ( '+' | '-' {})? term ( op2 term )*
     ;
 
 // fragment #53.1
-addOp :
+op2 :
     '+' | '-' | OR
     {} /* make ANTLRworks display separate branches */
 	;
@@ -679,12 +671,12 @@ addOp :
 // production #54
 term :
 /* represents operator precedence level 3 */
-    factorOrNegation ( mulOp factorOrNegation )*
+    factorOrNegation ( op3 factorOrNegation )*
     ;
 
 // fragment #54.1
-mulOp :
-    '*' | '/' | DIV | MOD | AND
+op3 :
+    '*' | '/' | BACKSLASH | DIV | MOD | AND
     {} /* make ANTLRworks display separate branches */
     ;
 
