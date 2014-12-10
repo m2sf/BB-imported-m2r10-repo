@@ -298,7 +298,7 @@ restrictedExport : '*' ;
 // fragment #10.2
 procBindableEntity :
     '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' |
-    ARRAY | RETAIN | RELEASE | IN | FOR | DIV | MOD |
+    ARRAY | RETAIN | RELEASE | IN | FOR | DIV | MOD | DOT |
     procMultiBindableEntity | ProcBindableIdent
     ;
 
