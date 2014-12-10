@@ -80,7 +80,7 @@ INSERT(dict, key1, value1, key2, value2, key3, value3, ...);
 
 (* Removal *)
 
-(* remove keys/value pairs *)
+(* remove key/value pairs *)
 
 REMOVE(dict, key1, key2, key3, ...);
 
