@@ -30,7 +30,7 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 45 reserved words, 29 identifiers, 23 pragma symbols
+// 50 reserved words, 25 identifiers, 23 pragma symbols
 
 tokens {
 	
@@ -50,6 +50,7 @@ tokens {
     DESCENDING     = 'DESCENDING';
     DIV            = 'DIV';            /* also a RW within pragmas */
     DO             = 'DO';
+    DOT            = 'DOT';
     ELSE           = 'ELSE';           /* also a RW within pragma */
     ELSIF          = 'ELSIF';          /* also a RW within pragma */
     END            = 'END';
@@ -676,7 +677,7 @@ term :
 
 // fragment #54.1
 op3 :
-    '*' | '/' | BACKSLASH | DIV | MOD | AND
+    '*' | '/' | BACKSLASH | DIV | MOD | AND | DOT
     {} /* make ANTLRworks display separate branches */
     ;
 
