@@ -1,11 +1,11 @@
 (* M2 R10 Project, (c) 2014 B.Kowarsch & R.Sutcliffe, all rights reserved. *)
 
-(* Numeric Array and Vector Algebra *)
+(* Vector Algebra *)
 
-(* Exploration of possible use cases for array and vector algebra,
+(* Exploration of possible use cases for vector algebra,
    required bindings and resulting compile time transformations. *)
 
-(* Status: Dec 8, 2014 *)
+(* Status: Dec 10, 2014 *)
 
 
 (* =======================
@@ -35,14 +35,9 @@ vector1 := vector2 + vector3;
 vector1 := vector2 - vector3;
 
 
-(* Vector-Vector Multiplication *)
+(* Cross Product, R3 only *)
 
 vector1 := vector2 * vector3;
-
-
-(* Vector-Vector Division *)
-
-vector1 := vector2 / vector3;
 
 
 (* Scalar-Vector Arithmetic *)
@@ -96,24 +91,6 @@ vector1 := scalar $* vector2;
 (* option #3 : extension library function *)
 
 vector1 := Vector.mulScalar(vector2, scalar);
-
-
-(* Scalar-by-Vector Division *)
-
-(* option #1 : overload + operator *)
-
-vector1 := scalar / vector2;
-
-
-(* option #2 : special symbol operator *)
-
-vector1 := scalar $% vector2;
-
-
-(* option #3 : extension library function *)
-
-vector1 := Vector.mulScalar(Vector.inv(vector2), scalar);
-
 
 
 (* Vector-to-Scalar Addition *)
@@ -184,8 +161,6 @@ vector1 := vector2 %$ scalar;
 vector1 := Vector.divByScalar(vector2, scalar);
 
 
-(* Vector-Only Operations, Not Available to Array ADTs *)
-
 (* Dot Product *)
 
 (* option #1 : special symbol operator *)
@@ -206,28 +181,6 @@ scalar := DOT(vector1, vector2);
 (* option #4 : extension library function *)
 
 scalar := Vector.dot(vector1, vector2);
-
-
-(* Cross Product *)
-
-(* option #1 : special symbol operator *)
-
-vector1 := vector2 *^ vector3;
-
-
-(* option #2 : reserved word operator *)
-
-vector1 := vector2 CROSS vector3;
-
-
-(* option #3 : predefined function *)
-
-vector1 := CROSS(vector2, vector3); (* predefined function *)
-
-
-(* option #4 : extension library function *)
-
-scalar := Vector.cross(vector1, vector2); (* library function *)
 
 
 (* =====================
@@ -257,14 +210,10 @@ PROCEDURE [+] add ( VAR result : Vector; left, right : Vector );
 PROCEDURE [-] sub ( VAR result : Vector; left, right : Vector );
 
 
-(* Vector-Vector Multiplication *)
+(* Cross Product *)
 
-PROCEDURE [*] mul ( VAR result : Vector; left, right : Vector );
+PROCEDURE [*] cross ( VAR result : Vector; left, right : Vector );
 
-
-(* Vector-Vector Division *)
-
-PROCEDURE [/] div ( VAR result : Vector; left, right : Vector );
 
 
 (* Scalar-Vector Arithmetic *)
@@ -281,8 +230,6 @@ PROCEDURE [/] div ( VAR result : Vector; left, right : Vector );
 (* transformations could be synthesised automatically *)
 
 
-(* Vector-Only Operations, Not Available to Array ADTs *)
-
 (* Dot Product *)
 
 (* option #1 *)
@@ -293,23 +240,6 @@ PROCEDURE [*.] dot ( left, right : Vector ) : ValueType;
 (* options #2 and #3 *)
 
 PROCEDURE [DOT] dot ( left, right : Vector ) : ValueType;
-
-
-(* option #4 *)
-
-(* no binding *)
-
-
-(* Cross Product *)
-
-(* options #1 *)
-
-PROCEDURE [*^] cross ( VAR result : Vector; left, right : Vector );
-
-
-(* options #2 and #3 *)
-
-PROCEDURE [CROSS] cross ( VAR result : Vector; left, right : Vector );
 
 
 (* option #4 *)
@@ -350,18 +280,11 @@ vector1 := vector2 - vector3;
 => Vector.sub(vector1, vector2, vector3);
 
 
-(* Vector-Vector Multiplication *)
+(* Cross Product *)
 
 vector1 := vector2 * vector3;
 
-=> Vector.mul(vector1, vector2, vector3);
-
-
-(* Vector-Vector Division *)
-
-vector1 := vector2 / vector3;
-
-=> Vector.div(vector1, vector2, vector3);
+=> Vector.cross(vector1, vector2, vector3);
 
 
 (* Scalar-Vector Arithmetic *)
@@ -400,18 +323,6 @@ vector1 := scalar $* vector2;
 
 FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
   vector1[index] := scalar * vector2[index]
-END;
-
-(* Scalar-by-Vector Division *)
-
-vector1 := scalar / vector2;
-
-vector1 := scalar $% vector2;
-
-(* synthesised as *)
-
-FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
-  vector1[index] := scalar / vector2[index]
 END;
 
 
@@ -466,8 +377,6 @@ FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
 END;
 
 
-(* Vector-Only Operations, Not Available to Array ADTs *)
-
 (* Dot Product *)
 
 (* option #1 *)
@@ -489,29 +398,6 @@ scalar := vector1 DOT vector2;
 scalar := DOT(vector1, vector2);
 
 => scalar := Vector.dot(vector1, vector2);
-
-
-(* Cross Product *)
-
-(* option #1 *)
-
-vector1 := vector2 *^ vector3;
-
-=> Vector.cross(vector1, vector2, vector3);
-
-
-(* option #2 *)
-
-vector1 := vector2 CROSS vector3;
-
-=> Vector.cross(vector1, vector2, vector3);
-
-
-(* option #3 *)
-
-vector1 := CROSS(vector2, vector3);
-
-=> Vector.cross(vector1, vector2, vector3);
 
 
 (* END OF FILE *)
