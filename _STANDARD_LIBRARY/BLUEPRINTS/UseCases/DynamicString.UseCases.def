@@ -2,10 +2,11 @@
 
 (* Dynamic String ADTs *)
 
-(* Use cases for allocation, copying, slicing, insertion and concatenation of
-   dynamic string ADTs, bindings and resulting compile time transformations. *)
+(* Use cases for allocation, copying, slicing, insertion, concatenation
+   and removal operations of dynamic string ADTs, required bindings and
+   resulting compile time transformations. *)
 
-(* Status: Dec 5, 2014 *)
+(* Status: Dec 10, 2014 *)
 
 
 (* =======================
@@ -234,6 +235,21 @@ COPY target[n..m] := function(stringExpression);
 (* where *)
 
 VAR aoc : <ARRAY any OF CHAR>;
+
+
+(* Removal *)
+
+(* remove character at index *)
+
+REMOVE(target, n);
+
+(* remove characters in index range *)
+
+REMOVE(target, n, m);
+
+(* remove all characters *)
+
+REMOVE(target, 0, -1);
 
 
 (* =====================
@@ -592,6 +608,21 @@ COPY target := function(stringExpression);
 COPY target[n..] := function(stringExpression);
 
 COPY target[n..m] := function(stringExpression);
+
+
+(* Removal *)
+
+(* binding *)
+
+PROCEDURE [REMOVE] remove ( VAR target : ADT; fromIndex, toIndex : INTEGER );
+
+(* supported use cases *)
+
+REMOVE(target, n);
+
+REMOVE(target, n, m);
+
+REMOVE(target, 0, -1);
 
 
 (* ===================================
@@ -1011,6 +1042,17 @@ COPY target[n..m] := function(stringExpression);
    (* update target slice with function call result *)
    ADT.updateSliceWithStringOrSlice(target, n, m, tempResult, 0, -1);
    ADT.release(tempResult);
+
+
+(* Removal *)
+
+REMOVE(target, n);
+
+=> ADT.remove(target, n, n);
+
+REMOVE(target, n, m);
+
+=> ADT.remove(target, n, m);
 
 
 (* END OF FILE *)
