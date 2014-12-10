@@ -3,8 +3,9 @@
 (* Dynamic Array ADTs *)
 
 (* Use cases for conversion of built-in arrays to dynamic array ADTs,
-   allocation, copying, slicing, insertion and concatenation of dynamic
-   array ADTs, required bindings and resulting compile time transformations. *)
+   allocation, copying, slicing, insertion, concatenation and removal
+   operations of dynamic array ADTs, required bindings and resulting
+   compile time transformations. *)
 
 (* Status: Dec 10, 2014 *)
 
@@ -212,6 +213,21 @@ COPY target[n..m] := source +> builtinArray[p..q] +> ... ;
 (* where *)
 
 VAR builtinArray : <ARRAY any OF ValueType>;
+
+
+(* Removal *)
+
+(* remove value at index *)
+
+REMOVE(target, n);
+
+(* remove values in index range *)
+
+REMOVE(target, n, m);
+
+(* remove all values *)
+
+REMOVE(target, 0, -1);
 
 
 (* =====================
@@ -569,6 +585,21 @@ COPY target := source +> builtinArray[n..m] +> ... ;
 COPY target[n..] := source +> builtinArray[m..p] +> ... ;
 
 COPY target[n..m] := source +> builtinArray[p..q] +> ... ;
+
+
+(* Removal *)
+
+(* binding *)
+
+PROCEDURE [REMOVE] remove ( VAR target : ADT; fromIndex, toIndex : INTEGER );
+
+(* supported use cases *)
+
+REMOVE(target, n);
+
+REMOVE(target, n, m);
+
+REMOVE(target, 0, -1);
 
 
 (* ===================================
@@ -980,6 +1011,17 @@ COPY target[n..m] := source +> builtinArray[p..q] +> ... ;
 => VAR temp : ADT;
    NEW temp := builtinArray[p..q]; (* see conversion *)
    COPY target[n..m] := source +> temp +> ... ; RELEASE temp;
+
+
+(* Removal *)
+
+REMOVE(target, n);
+
+=> ADT.remove(target, n, n);
+
+REMOVE(target, n, m);
+
+=> ADT.remove(target, n, m);
 
 
 (* END OF FILE *)
