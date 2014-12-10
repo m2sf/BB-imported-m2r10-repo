@@ -42,7 +42,7 @@ NEW dict := { key1, value1, key2, value2, key3, value3, ... };
 
 NEW dict := source;
 
-(* allocate and initialise with unique keys of dictionaries *)
+(* allocate and initialise with key/value pairs that have unique keys *)
 
 NEW dict := source1 +/ source2 +/ ... ;
 
@@ -53,7 +53,7 @@ NEW dict := function(dictExpression);
 
 (* Destructive Copying *)
 
-(* copy values *)
+(* copy keys and values *)
 
 COPY target := { key1, value1, key2, value2, key3, value3, ... };
 
@@ -61,7 +61,7 @@ COPY target := { key1, value1, key2, value2, key3, value3, ... };
 
 COPY target := source;
 
-(* copy unique keys of dictionaries *)
+(* copy key/value pairs that have unique keys *)
 
 COPY target := source1 +/ source2 +/ ... ;
 
@@ -72,7 +72,7 @@ COPY target := function(dictExpression);
 
 (* Insertion *)
 
-(* insert values *)
+(* insert keys and values *)
 
 INSERT(dict, key1, value1, key2, value2, key3, value3, ...);
 
@@ -220,7 +220,7 @@ NEW dict;
 => ADT.new(dict);
 
 
-(* allocate and initialise with values *)
+(* allocate and initialise with keys and values *)
 
 NEW dict := { key1, value1, key2, value2, key3, value3, ... };
  
@@ -236,7 +236,7 @@ NEW dict := source;
 => ADT.newWithDict(dict, source);
 
 
-(* allocate and initialise with unique keys of dictionaries *)
+(* allocate and initialise with key/value pairs that have unique keys *)
 
 NEW dict := source1 +/ source2 +/ ... ;
 
@@ -258,7 +258,7 @@ NEW set := function(dictExpression);
 
 (* Destructive Copying *)
 
-(* copy values *)
+(* copy keys and values *)
 
 COPY target := { key1, value1, key2, value2, key3, value3, ... };
 
@@ -275,7 +275,7 @@ COPY target := source;
 
 
 
-(* copy unique keys of dictionaries *)
+(* copy key/value pairs that have unique keys *)
 
 COPY target := source1 + source2 + ... ;
 
@@ -299,7 +299,7 @@ COPY target := function(dictExpression);
 
 (* Insertion *)
 
-(* insert values *)
+(* insert keys and values *)
 
 INSERT(target, key1, value1, key2, value2, key1, value3, ...);
 
