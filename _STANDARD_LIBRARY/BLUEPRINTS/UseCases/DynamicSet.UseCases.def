@@ -179,7 +179,7 @@ PROCEDURE [COPY++] copyUnionOfSetsAndLiterals
 
 (* supported use cases *)
 
-COPY target := source -> { elem1, elem2, elem3, ... } + ... ;
+COPY target := source + { elem1, elem2, elem3, ... } + ... ;
 
 COPY target := { elem1, elem2, elem3, ... } + source + ... ;
 
