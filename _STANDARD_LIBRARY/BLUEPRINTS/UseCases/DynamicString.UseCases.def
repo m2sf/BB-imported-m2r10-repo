@@ -92,7 +92,7 @@ COPY target := aoc;
 
 (* copy characters from list *)
 
-NEW target := { char1, char2, char3, ... };
+COPY target := { char1, char2, char3, ... };
 
 (* copy string *)
 
@@ -134,17 +134,23 @@ VAR aoc : <ARRAY any OF CHAR>;
 
 INSERT(target, n, "abc");
 
+(* equivalent to *)
+
 COPY target[n..] := "abc";
 
 (* insert ARRAY OF CHAR value *)
 
 INSERT(target, n, aoc);
 
+(* equivalent to *)
+
 COPY target[n..] := aoc;
 
 (* insert characters from list *)
 
 INSERT(target, n, char1, char2, char3, ...);
+
+(* equivalent to *)
 
 COPY target[n..] := { char1, char2, char3, ... };
 
@@ -194,7 +200,7 @@ COPY target[n..m] := aoc;
 
 (* copy characters from list into slice *)
 
-NEW target[n..m] := { char1, char2, char3, ... };
+COPY target[n..m] := { char1, char2, char3, ... };
 
 (* copy contents of string into slice *)
 
