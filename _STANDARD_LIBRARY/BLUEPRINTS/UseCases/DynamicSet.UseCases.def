@@ -2,11 +2,11 @@
 
 (* Dynamic Set ADTs *)
 
-(* Use cases for conversion of built-in sets to dynamic set ADTs,
-   allocation, copying, slicing, insertion and concatenation of dynamic
-   set ADTs, required bindings and resulting compile time transformations. *)
+(* Use cases for conversion of built-in sets to dynamic set ADTs, allocation
+   copying, slicing, insertion and removal operations of dynamic set ADTs,
+   required bindings and resulting compile time transformations. *)
 
-(* Status: Dec 7, 2014 *)
+(* Status: Dec 10, 2014 *)
 
 
 (* =======================
@@ -84,6 +84,13 @@ COPY target := function(setExpression);
 (* insert values *)
 
 INSERT(set, elem1, elem2, elem3, ...);
+
+
+(* Removal *)
+
+(* remove values *)
+
+REMOVE(set, elem1, elem2, elem3, ...);
 
 
 (* =====================
@@ -209,6 +216,18 @@ target := function(setExpression);
 NEW target := function(setExpression);
 
 COPY target := function(setExpression);
+
+
+(* Removal *)
+
+(* binding *)
+
+PROCEDURE [REMOVE] removeValues
+  ( VAR target : ADT; values : ARGLIST OF ValueType );
+
+(* supported use cases *)
+
+REMOVE(target, elem1, elem2, elem3, ...);
 
 
 (* ===================================
@@ -362,6 +381,15 @@ COPY target := function(setExpression);
 INSERT(target, elem1, elem2, elem3, ...);
 
 => ADT.insertValues(target, elem1, elem2, elem3, ...);
+
+
+(* Removal *)
+
+(* remove values *)
+
+REMOVE(target, elem1, elem2, elem3, ...);
+
+=> ADT.removeValues(target, elem1, elem2, elem3, ...);
 
 
 (* END OF FILE *)
