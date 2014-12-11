@@ -148,7 +148,7 @@ Array.rotateLeft(array, n);
 
 (* Right Rotation *)
 
-Array.newByRotatingRight(array2, n);
+Array.newByRotatingRight(array1, array2, n);
 
 Array.rotateRight(array, n);
 
@@ -188,24 +188,30 @@ PROCEDURE [NEG] neg ( NEW result : Array; operand : Array );
 
 (* Addition *)
 
-PROCEDURE [+] add ( NEW result : Array; left, right : Array );
+PROCEDURE [+] newWithSums ( NEW result : Array; left, right : Array );
 
-(* or synthesised as *)
+PROCEDURE [+] add ( VAR result : Array; left, right : Array );
 
 
 (* Subtraction *)
 
-PROCEDURE [-] sub ( NEW result : Array; left, right : Array );
+PROCEDURE [-] newWithDifferences ( NEW result : Array; left, right : Array );
+
+PROCEDURE [-] sub ( VAR result : Array; left, right : Array );
 
 
 (* Multiplication *)
 
-PROCEDURE [*] mul ( NEW result : Array; left, right : Array );
+PROCEDURE [*] newWithProducts ( NEW result : Array; left, right : Array );
+
+PROCEDURE [*] mul ( VAR result : Array; left, right : Array );
 
 
 (* Division *)
 
-PROCEDURE [/] div ( NEW result : Array; left, right : Array );
+PROCEDURE [/] newWithQuotients ( NEW result : Array; left, right : Array );
+
+PROCEDURE [/] div ( VAR result : Array; left, right : Array );
 
 
 (* Scalar-Array Operations *)
