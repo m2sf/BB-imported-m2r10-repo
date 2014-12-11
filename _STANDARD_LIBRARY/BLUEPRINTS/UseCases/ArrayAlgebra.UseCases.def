@@ -5,7 +5,7 @@
 (* Exploration of possible use cases for array algebra,
    required bindings and resulting compile time transformations. *)
 
-(* Status: Dec 11, 2014 *)
+(* Status: Dec 12, 2014 *)
 
 
 (* =======================
@@ -232,12 +232,34 @@ PROCEDURE [/] div ( VAR result : Array; left, right : Array );
 
 array1 := ABS(array2);
 
+=> VAR temp : Array;
+   Array.newByRemovingSign(temp, array2);
+   array1 := temp;
+
+NEW array1 := ABS(array2);
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.newByRemovingSign(array1, array2);
+
+COPY array1 := ABS(array2);
+
 => Array.abs(array1, array2);
 
 
 (* Sign Reversal *)
 
 array1 := -array2;
+
+=> VAR temp : Array;
+   Array.newByReversingSign(temp, array2);
+   array1 := temp;
+
+NEW array1 := -array2;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.newByReversingSign(array1, array2);
+
+COPY array1 := -array2;
 
 => Array.neg(array1, array2);
 
@@ -248,12 +270,34 @@ array1 := -array2;
 
 array1 := array2 + array3;
 
+=> VAR temp : Array;
+   Array.newWithSums(temp, array2, array3);
+   array1 := temp;
+
+NEW array1 := array2 + array3;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.newWithSums(array1, array2, array3);
+
+COPY array1 := array2 + array3;
+
 => Array.add(array1, array2, array3);
 
 
 (* Subtraction *)
 
 array1 := array2 - array3;
+
+=> VAR temp : Array;
+   Array.newWithDifferences(temp, array2, array3);
+   array1 := temp;
+
+NEW array1 := array2 - array3;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.newWithDifferences(array1, array2, array3);
+
+COPY array1 := array2 - array3;
 
 => Array.sub(array1, array2, array3);
 
@@ -262,12 +306,34 @@ array1 := array2 - array3;
 
 array1 := array2 * array3;
 
+=> VAR temp : Array;
+   Array.newWithProducts(temp, array2, array3);
+   array1 := temp;
+
+NEW array1 := array2 * array3;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.newWithProducts(array1, array2, array3);
+
+COPY array1 := array2 * array3;
+
 => Array.mul(array1, array2, array3);
 
 
 (* Division *)
 
 array1 := array2 / array3;
+
+=> VAR temp : Array;
+   Array.newWithQuotients(temp, array2, array3);
+   array1 := temp;
+
+NEW array1 := array2 / array3;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.newWithQuotients(array1, array2, array3);
+
+COPY array1 := array2 / array3;
 
 => Array.div(array1, array2, array3);
 
@@ -366,52 +432,81 @@ END;
 
 (* Addition *)
 
+(* non-destructive *)
+
 PROCEDURE [+] newWithSums ( NEW result : Array; left, right : Array );
 VAR
   largerArray : Array;
   maxIndex, largestCommonIndex : CARDINAL;
 BEGIN
 
-  (* if any of the operands is empty, return the other as result *)
+  (* if left operand is empty, result is right operand *)
   IF COUNT(left) = 0 THEN
-    NEW result := right;
-    RETURN
+    NEW result := right
+
+  (* if right operand is empty, result is left operand *)
   ELSIF COUNT(right) = 0 THEN
-    NEW result := left;
-    RETURN
+    NEW result := left
+
+  (* otherwise, add operands component-wise *)
   ELSE
-    NEW result
-  END;
-
-  (* determine largest and largest common index *)
-  IF COUNT(left) < COUNT(right) THEN
-    largerArray := right;
-    maxIndex := COUNT(right)-1;
-    largestCommonIndex := COUNT(left)-1
-  ELSE
-    largerArray := left;
-    maxIndex := COUNT(left)-1;
-    largestCommonIndex := COUNT(right)-1
-  END;
-
-  (* component-wise add items within common index range *)
-  FOR index IN [0..largestCommonIndex] OF CARDINAL DO
-    result[index] := left[index] + right[index]
-  END;
-
-  (* copy any remaining items from larger array *)
-  IF largestCommonIndex < maxIndex THEN
-    FOR index IN [largestCommonIndex+1 .. maxIndex] OF CARDINAL DO
-      result[index] := largerArray[index]
-    END
+    NEW result;
+    add(result, left, right)
   END;
   
-  (* done *)
   RETURN
 END newWithSums;
 
+(* destructive *)
+
+PROCEDURE [+] add ( VAR result : Array; left, right : Array );
+VAR
+  largerArray : Array;
+  maxIndex, largestCommonIndex : CARDINAL;
+BEGIN
+
+  (* if left operand is empty, result is right operand *)
+  IF COUNT(left) = 0 THEN
+    COPY result := right
+  
+  (* if right operand is empty, result is left operand *)
+  ELSIF COUNT(right) = 0 THEN
+    COPY result := left
+  
+  (* otherwise, add operands component-wise *)
+  ELSE
+  
+    (* determine largest and largest common index *)
+    IF COUNT(left) < COUNT(right) THEN
+      largerArray := right;
+      maxIndex := COUNT(right)-1;
+      largestCommonIndex := COUNT(left)-1
+    ELSE
+      largerArray := left;
+      maxIndex := COUNT(left)-1;
+      largestCommonIndex := COUNT(right)-1
+    END;
+    
+    (* add items within common index range *)
+    FOR index IN [0..largestCommonIndex] OF CARDINAL DO
+      result[index] := left[index] + right[index]
+    END;
+    
+    (* copy any remaining items from larger array *)
+    IF largestCommonIndex < maxIndex THEN
+      FOR index IN [largestCommonIndex+1 .. maxIndex] OF CARDINAL DO
+        result[index] := largerArray[index]
+      END
+    END
+  END;
+
+  RETURN
+END add;
+
 
 (* Subtraction *)
+
+(* non-destructive *)
 
 PROCEDURE [-] newWithDifferences ( NEW result : Array; left, right : Array );
 VAR
@@ -419,137 +514,216 @@ VAR
   maxIndex, largestCommonIndex : CARDINAL;
 BEGIN
 
-  (* if any of the operands is empty, return the other as result *)
+  (* if left operand is empty, result is right operand *)
   IF COUNT(left) = 0 THEN
-    NEW result := right;
-    RETURN
+    NEW result := right
+
+  (* if right operand is empty, result is left operand *)
   ELSIF COUNT(right) = 0 THEN
-    NEW result := left;
-    RETURN
+    NEW result := left
+
+  (* otherwise, subtract second operands from first operands component-wise *)
   ELSE
-    NEW result
-  END;
-
-  (* determine largest and largest common index *)
-  IF COUNT(left) < COUNT(right) THEN
-    largerArray := right;
-    maxIndex := COUNT(right)-1;
-    largestCommonIndex := COUNT(left)-1
-  ELSE
-    largerArray := left;
-    maxIndex := COUNT(left)-1;
-    largestCommonIndex := COUNT(right)-1
-  END;
-
-  (* component-wise add items within common index range *)
-  FOR index IN [0..largestCommonIndex] OF CARDINAL DO
-    result[index] := left[index] - right[index]
-  END;
-
-  (* copy any remaining items from larger array *)
-  IF largestCommonIndex < maxIndex THEN
-    FOR index IN [largestCommonIndex+1 .. maxIndex] OF CARDINAL DO
-      result[index] := largerArray[index]
-    END
+    NEW result;
+    sub(result, left, right)
   END;
   
-  (* done *)
   RETURN
 END newWithDifferences;
+
+(* destructive *)
+
+PROCEDURE [-] sub ( VAR result : Array; left, right : Array );
+VAR
+  largerArray : Array;
+  maxIndex, largestCommonIndex : CARDINAL;
+BEGIN
+
+  (* if left operand is empty, result is right operand *)
+  IF COUNT(left) = 0 THEN
+    COPY result := right
+  
+  (* if right operand is empty, result is left operand *)
+  ELSIF COUNT(right) = 0 THEN
+    COPY result := left
+  
+  (* otherwise, subtract second operands from first operands component-wise *)
+  ELSE
+  
+    (* determine largest and largest common index *)
+    IF COUNT(left) < COUNT(right) THEN
+      largerArray := right;
+      maxIndex := COUNT(right)-1;
+      largestCommonIndex := COUNT(left)-1
+    ELSE
+      largerArray := left;
+      maxIndex := COUNT(left)-1;
+      largestCommonIndex := COUNT(right)-1
+    END;
+    
+    (* subtract items within common index range *)
+    FOR index IN [0..largestCommonIndex] OF CARDINAL DO
+      result[index] := left[index] - right[index]
+    END;
+    
+    (* copy any remaining items from larger array *)
+    IF largestCommonIndex < maxIndex THEN
+      FOR index IN [largestCommonIndex+1 .. maxIndex] OF CARDINAL DO
+        result[index] := largerArray[index]
+      END
+    END
+  END;
+
+  RETURN
+END sub;
 
 
 (* Multiplication *)
 
-PROCEDURE [+] newWithProducts ( NEW result : Array; left, right : Array );
+(* non-destructive *)
+
+PROCEDURE [*] newWithProducts ( NEW result : Array; left, right : Array );
 VAR
   largerArray : Array;
   maxIndex, largestCommonIndex : CARDINAL;
 BEGIN
 
-  (* if any of the operands is empty, return the other as result *)
+  (* if left operand is empty, result is right operand *)
   IF COUNT(left) = 0 THEN
-    NEW result := right;
-    RETURN
+    NEW result := right
+
+  (* if right operand is empty, result is left operand *)
   ELSIF COUNT(right) = 0 THEN
-    NEW result := left;
-    RETURN
+    NEW result := left
+
+  (* otherwise, multiply operands component-wise *)
   ELSE
-    NEW result
-  END;
-
-  (* determine largest and largest common index *)
-  IF COUNT(left) < COUNT(right) THEN
-    largerArray := right;
-    maxIndex := COUNT(right)-1;
-    largestCommonIndex := COUNT(left)-1
-  ELSE
-    largerArray := left;
-    maxIndex := COUNT(left)-1;
-    largestCommonIndex := COUNT(right)-1
-  END;
-
-  (* component-wise multiply items within common index range *)
-  FOR index IN [0..largestCommonIndex] OF CARDINAL DO
-    result[index] := left[index] * right[index]
-  END;
-
-  (* copy any remaining items from larger array *)
-  IF largestCommonIndex < maxIndex THEN
-    FOR index IN [largestCommonIndex+1 .. maxIndex] OF CARDINAL DO
-      result[index] := largerArray[index]
-    END
+    NEW result;
+    mul(result, left, right)
   END;
   
-  (* done *)
   RETURN
 END newWithProducts;
+
+(* destructive *)
+
+PROCEDURE [*] mul ( VAR result : Array; left, right : Array );
+VAR
+  largerArray : Array;
+  maxIndex, largestCommonIndex : CARDINAL;
+BEGIN
+
+  (* if left operand is empty, result is right operand *)
+  IF COUNT(left) = 0 THEN
+    COPY result := right
+  
+  (* if right operand is empty, result is left operand *)
+  ELSIF COUNT(right) = 0 THEN
+    COPY result := left
+  
+  (* otherwise, multiply operands component-wise *)
+  ELSE
+  
+    (* determine largest and largest common index *)
+    IF COUNT(left) < COUNT(right) THEN
+      largerArray := right;
+      maxIndex := COUNT(right)-1;
+      largestCommonIndex := COUNT(left)-1
+    ELSE
+      largerArray := left;
+      maxIndex := COUNT(left)-1;
+      largestCommonIndex := COUNT(right)-1
+    END;
+    
+    (* multiply items within common index range *)
+    FOR index IN [0..largestCommonIndex] OF CARDINAL DO
+      result[index] := left[index] * right[index]
+    END;
+    
+    (* copy any remaining items from larger array *)
+    IF largestCommonIndex < maxIndex THEN
+      FOR index IN [largestCommonIndex+1 .. maxIndex] OF CARDINAL DO
+        result[index] := largerArray[index]
+      END
+    END
+  END;
+
+  RETURN
+END mul;
 
 
 (* Division *)
 
-PROCEDURE [+] newWithQuotients ( NEW result : Array; left, right : Array );
+(* non-destructive *)
+
+PROCEDURE [-] newWithQuotients ( NEW result : Array; left, right : Array );
 VAR
   largerArray : Array;
   maxIndex, largestCommonIndex : CARDINAL;
 BEGIN
 
-  (* if any of the operands is empty, return the other as result *)
+  (* if left operand is empty, result is right operand *)
   IF COUNT(left) = 0 THEN
-    NEW result := right;
-    RETURN
+    NEW result := right
+
+  (* if right operand is empty, result is left operand *)
   ELSIF COUNT(right) = 0 THEN
-    NEW result := left;
-    RETURN
+    NEW result := left
+
+  (* otherwise, divide first operands by second operands component-wise *)
   ELSE
-    NEW result
-  END;
-
-  (* determine largest and largest common index *)
-  IF COUNT(left) < COUNT(right) THEN
-    largerArray := right;
-    maxIndex := COUNT(right)-1;
-    largestCommonIndex := COUNT(left)-1
-  ELSE
-    largerArray := left;
-    maxIndex := COUNT(left)-1;
-    largestCommonIndex := COUNT(right)-1
-  END;
-
-  (* component-wise multiply items within common index range *)
-  FOR index IN [0..largestCommonIndex] OF CARDINAL DO
-    result[index] := left[index] / right[index]
-  END;
-
-  (* copy any remaining items from larger array *)
-  IF largestCommonIndex < maxIndex THEN
-    FOR index IN [largestCommonIndex+1 .. maxIndex] OF CARDINAL DO
-      result[index] := largerArray[index]
-    END
+    NEW result;
+    div(result, left, right)
   END;
   
-  (* done *)
   RETURN
 END newWithQuotients;
+
+(* destructive *)
+
+PROCEDURE [/] div ( VAR result : Array; left, right : Array );
+VAR
+  largerArray : Array;
+  maxIndex, largestCommonIndex : CARDINAL;
+BEGIN
+
+  (* if left operand is empty, result is right operand *)
+  IF COUNT(left) = 0 THEN
+    COPY result := right
+  
+  (* if right operand is empty, result is left operand *)
+  ELSIF COUNT(right) = 0 THEN
+    COPY result := left
+  
+  (* otherwise, divide first operands by second operands component-wise *)
+  ELSE
+  
+    (* determine largest and largest common index *)
+    IF COUNT(left) < COUNT(right) THEN
+      largerArray := right;
+      maxIndex := COUNT(right)-1;
+      largestCommonIndex := COUNT(left)-1
+    ELSE
+      largerArray := left;
+      maxIndex := COUNT(left)-1;
+      largestCommonIndex := COUNT(right)-1
+    END;
+    
+    (* divide items within common index range *)
+    FOR index IN [0..largestCommonIndex] OF CARDINAL DO
+      result[index] := left[index] / right[index]
+    END;
+    
+    (* copy any remaining items from larger array *)
+    IF largestCommonIndex < maxIndex THEN
+      FOR index IN [largestCommonIndex+1 .. maxIndex] OF CARDINAL DO
+        result[index] := largerArray[index]
+      END
+    END
+  END;
+
+  RETURN
+END div;
 
 
 (* END OF FILE *)
