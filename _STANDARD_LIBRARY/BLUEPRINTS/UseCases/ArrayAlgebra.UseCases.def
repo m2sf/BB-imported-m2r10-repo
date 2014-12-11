@@ -522,7 +522,7 @@ BEGIN
   ELSIF COUNT(right) = 0 THEN
     NEW result := left
 
-  (* otherwise, subtract second operands from first operands component-wise *)
+  (* otherwise, subtract second operand from first operand component-wise *)
   ELSE
     NEW result;
     sub(result, left, right)
@@ -547,7 +547,7 @@ BEGIN
   ELSIF COUNT(right) = 0 THEN
     COPY result := left
   
-  (* otherwise, subtract second operands from first operands component-wise *)
+  (* otherwise, subtract second operand from first operand component-wise *)
   ELSE
   
     (* determine largest and largest common index *)
@@ -670,7 +670,7 @@ BEGIN
   ELSIF COUNT(right) = 0 THEN
     NEW result := left
 
-  (* otherwise, divide first operands by second operands component-wise *)
+  (* otherwise, divide first operand by second operand component-wise *)
   ELSE
     NEW result;
     div(result, left, right)
@@ -695,7 +695,7 @@ BEGIN
   ELSIF COUNT(right) = 0 THEN
     COPY result := left
   
-  (* otherwise, divide first operands by second operands component-wise *)
+  (* otherwise, divide first operand by second operand component-wise *)
   ELSE
   
     (* determine largest and largest common index *)
