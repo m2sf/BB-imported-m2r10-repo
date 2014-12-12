@@ -745,6 +745,9 @@ COPY array1 := scalar /: array2;
 
 (* Sample Implementations *)
 
+(* TO DO : modify to support result == operand scenarios *)
+
+
 (* Array-Array Operations *)
 
 (* Addition *)
