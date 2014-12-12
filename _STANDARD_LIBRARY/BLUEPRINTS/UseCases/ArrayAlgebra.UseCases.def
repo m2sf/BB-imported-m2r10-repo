@@ -19,10 +19,18 @@
 
 array1 := ABS(array2);
 
+NEW array1 := ABS(array2);
+
+COPY array1 := ABS(array2);
+
 
 (* Sign Reversal *)
 
 array1 := -array2;
+
+NEW array1 := -array2;
+
+COPY array1 := -array2;
 
 
 (* Array-Array Operations *)
@@ -31,20 +39,36 @@ array1 := -array2;
 
 array1 := array2 + array3;
 
+NEW array1 := array2 + array3;
+
+COPY array1 := array2 + array3;
+
 
 (* Subtraction *)
 
 array1 := array2 - array3;
+
+NEW array1 := array2 - array3;
+
+COPY array1 := array2 - array3;
 
 
 (* Multiplication *)
 
 array1 := array2 * array3;
 
+NEW array1 := array2 * array3;
+
+COPY array1 := array2 * array3;
+
 
 (* Division *)
 
 array1 := array2 / array3;
+
+NEW array1 := array2 / array3;
+
+COPY array1 := array2 / array3;
 
 
 (* Scalar-Array Operations *)
@@ -176,40 +200,32 @@ Array.shiftRight(array, n, fillValue);
 
 (* Sign Removal *)
 
-PROCEDURE [ABS] abs ( NEW result : Array; operand : Array );
+PROCEDURE [ABS] abs ( VAR result : Array; operand : Array );
 
 
 (* Sign Reversal *)
 
-PROCEDURE [NEG] neg ( NEW result : Array; operand : Array );
+PROCEDURE [NEG] neg ( VAR result : Array; operand : Array );
 
 
 (* Array-Array Operations *)
 
 (* Addition *)
 
-PROCEDURE [+] newWithSums ( NEW result : Array; left, right : Array );
-
 PROCEDURE [+] add ( VAR result : Array; left, right : Array );
 
 
 (* Subtraction *)
-
-PROCEDURE [-] newWithDifferences ( NEW result : Array; left, right : Array );
 
 PROCEDURE [-] sub ( VAR result : Array; left, right : Array );
 
 
 (* Multiplication *)
 
-PROCEDURE [*] newWithProducts ( NEW result : Array; left, right : Array );
-
 PROCEDURE [*] mul ( VAR result : Array; left, right : Array );
 
 
 (* Division *)
-
-PROCEDURE [/] newWithQuotients ( NEW result : Array; left, right : Array );
 
 PROCEDURE [/] div ( VAR result : Array; left, right : Array );
 
@@ -233,13 +249,12 @@ PROCEDURE [/] div ( VAR result : Array; left, right : Array );
 array1 := ABS(array2);
 
 => VAR temp : Array;
-   Array.newByRemovingSign(temp, array2);
-   array1 := temp;
+   NEW temp := ABS(array2); array1 := temp;
 
 NEW array1 := ABS(array2);
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   Array.newByRemovingSign(array1, array2);
+   NEW array1; Array.abs(array1, array2);
 
 COPY array1 := ABS(array2);
 
@@ -251,13 +266,12 @@ COPY array1 := ABS(array2);
 array1 := -array2;
 
 => VAR temp : Array;
-   Array.newByReversingSign(temp, array2);
-   array1 := temp;
+   NEW temp := -array2; array1 := temp;
 
 NEW array1 := -array2;
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   Array.newByReversingSign(array1, array2);
+   NEW array1; Array.neg(array1, array2);
 
 COPY array1 := -array2;
 
@@ -271,13 +285,12 @@ COPY array1 := -array2;
 array1 := array2 + array3;
 
 => VAR temp : Array;
-   Array.newWithSums(temp, array2, array3);
-   array1 := temp;
+   NEW temp := array2 + array3; array1 := temp;
 
 NEW array1 := array2 + array3;
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   Array.newWithSums(array1, array2, array3);
+   NEW array1; Array.add(array1, array2, array3);
 
 COPY array1 := array2 + array3;
 
@@ -289,13 +302,12 @@ COPY array1 := array2 + array3;
 array1 := array2 - array3;
 
 => VAR temp : Array;
-   Array.newWithDifferences(temp, array2, array3);
-   array1 := temp;
+   NEW temp := array2 - array3; array1 := temp;
 
 NEW array1 := array2 - array3;
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   Array.newWithDifferences(array1, array2, array3);
+   NEW array1; Array.sub(array1, array2, array3);
 
 COPY array1 := array2 - array3;
 
@@ -307,13 +319,12 @@ COPY array1 := array2 - array3;
 array1 := array2 * array3;
 
 => VAR temp : Array;
-   Array.newWithProducts(temp, array2, array3);
-   array1 := temp;
+   NEW temp := array2 * array3; array1 := temp;
 
 NEW array1 := array2 * array3;
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   Array.newWithProducts(array1, array2, array3);
+   NEW array1; Array.mul(array1, array2, array3);
 
 COPY array1 := array2 * array3;
 
@@ -325,13 +336,12 @@ COPY array1 := array2 * array3;
 array1 := array2 / array3;
 
 => VAR temp : Array;
-   Array.newWithQuotients(temp, array2, array3);
-   array1 := temp;
+   NEW temp := array2 / array3; array1 := temp;
 
 NEW array1 := array2 / array3;
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   Array.newWithQuotients(array1, array2, array3);
+   NEW array1; Array.div(array1, array2, array3);
 
 COPY array1 := array2 / array3;
 
@@ -432,33 +442,6 @@ END;
 
 (* Addition *)
 
-(* non-destructive *)
-
-PROCEDURE [+] newWithSums ( NEW result : Array; left, right : Array );
-VAR
-  largerArray : Array;
-  maxIndex, largestCommonIndex : CARDINAL;
-BEGIN
-
-  (* if left operand is empty, result is right operand *)
-  IF COUNT(left) = 0 THEN
-    NEW result := right
-
-  (* if right operand is empty, result is left operand *)
-  ELSIF COUNT(right) = 0 THEN
-    NEW result := left
-
-  (* otherwise, add operands component-wise *)
-  ELSE
-    NEW result;
-    add(result, left, right)
-  END;
-  
-  RETURN
-END newWithSums;
-
-(* destructive *)
-
 PROCEDURE [+] add ( VAR result : Array; left, right : Array );
 VAR
   largerArray : Array;
@@ -505,33 +488,6 @@ END add;
 
 
 (* Subtraction *)
-
-(* non-destructive *)
-
-PROCEDURE [-] newWithDifferences ( NEW result : Array; left, right : Array );
-VAR
-  largerArray : Array;
-  maxIndex, largestCommonIndex : CARDINAL;
-BEGIN
-
-  (* if left operand is empty, result is right operand *)
-  IF COUNT(left) = 0 THEN
-    NEW result := right
-
-  (* if right operand is empty, result is left operand *)
-  ELSIF COUNT(right) = 0 THEN
-    NEW result := left
-
-  (* otherwise, subtract second operand from first operand component-wise *)
-  ELSE
-    NEW result;
-    sub(result, left, right)
-  END;
-  
-  RETURN
-END newWithDifferences;
-
-(* destructive *)
 
 PROCEDURE [-] sub ( VAR result : Array; left, right : Array );
 VAR
@@ -580,33 +536,6 @@ END sub;
 
 (* Multiplication *)
 
-(* non-destructive *)
-
-PROCEDURE [*] newWithProducts ( NEW result : Array; left, right : Array );
-VAR
-  largerArray : Array;
-  maxIndex, largestCommonIndex : CARDINAL;
-BEGIN
-
-  (* if left operand is empty, result is right operand *)
-  IF COUNT(left) = 0 THEN
-    NEW result := right
-
-  (* if right operand is empty, result is left operand *)
-  ELSIF COUNT(right) = 0 THEN
-    NEW result := left
-
-  (* otherwise, multiply operands component-wise *)
-  ELSE
-    NEW result;
-    mul(result, left, right)
-  END;
-  
-  RETURN
-END newWithProducts;
-
-(* destructive *)
-
 PROCEDURE [*] mul ( VAR result : Array; left, right : Array );
 VAR
   largerArray : Array;
@@ -653,33 +582,6 @@ END mul;
 
 
 (* Division *)
-
-(* non-destructive *)
-
-PROCEDURE [-] newWithQuotients ( NEW result : Array; left, right : Array );
-VAR
-  largerArray : Array;
-  maxIndex, largestCommonIndex : CARDINAL;
-BEGIN
-
-  (* if left operand is empty, result is right operand *)
-  IF COUNT(left) = 0 THEN
-    NEW result := right
-
-  (* if right operand is empty, result is left operand *)
-  ELSIF COUNT(right) = 0 THEN
-    NEW result := left
-
-  (* otherwise, divide first operand by second operand component-wise *)
-  ELSE
-    NEW result;
-    div(result, left, right)
-  END;
-  
-  RETURN
-END newWithQuotients;
-
-(* destructive *)
 
 PROCEDURE [/] div ( VAR result : Array; left, right : Array );
 VAR
