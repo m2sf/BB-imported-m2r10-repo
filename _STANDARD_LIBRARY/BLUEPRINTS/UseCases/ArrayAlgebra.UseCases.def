@@ -81,6 +81,14 @@ array1 := scalar + array2;
 
 array1 := array2 + scalar;
 
+NEW array1 := scalar + array2;
+
+NEW array1 := array2 + scalar;
+
+COPY array1 := scalar + array2;
+
+COPY array1 := array2 + scalar;
+
 
 (* option #2 : special symbol operator *)
 
@@ -88,10 +96,22 @@ array1 := scalar +: array2;
 
 array1 := array2 :+ scalar;
 
+NEW array1 := scalar +: array2;
+
+NEW array1 := array2 :+ scalar;
+
+COPY array1 := scalar +: array2;
+
+COPY array1 := array2 :+ scalar;
+
 
 (* option #3 : extension library function *)
 
 array1 := Array.addScalar(array2, scalar);
+
+NEW array1 := Array.addScalar(array2, scalar);
+
+COPY array1 := Array.addScalar(array2, scalar);
 
 
 (* Subtraction *)
@@ -102,6 +122,14 @@ array1 := scalar - array2;
 
 array1 := array2 - scalar;
 
+NEW array1 := scalar - array2;
+
+NEW array1 := array2 - scalar;
+
+COPY array1 := scalar - array2;
+
+COPY array1 := array2 - scalar;
+
 
 (* option #2 : special symbol operator *)
 
@@ -109,12 +137,28 @@ array1 := scalar -: array2;
 
 array1 := array2 :- scalar;
 
+NEW array1 := scalar -: array2;
+
+NEW array1 := array2 :- scalar;
+
+COPY array1 := scalar -: array2;
+
+COPY array1 := array2 :- scalar;
+
 
 (* option #3 : extension library functions *)
 
 array1 := Array.subFromScalar(scalar, array2);
 
 array1 := Array.subScalar(array2, scalar);
+
+NEW array1 := Array.subFromScalar(scalar, array2);
+
+NEW array1 := Array.subScalar(array2, scalar);
+
+COPY array1 := Array.subFromScalar(scalar, array2);
+
+COPY array1 := Array.subScalar(array2, scalar);
 
 
 (* Multiplication *)
@@ -125,6 +169,14 @@ array1 := scalar * array2;
 
 array1 := array2 * scalar;
 
+NEW array1 := scalar * array2;
+
+NEW array1 := array2 * scalar;
+
+COPY array1 := scalar * array2;
+
+COPY array1 := array2 * scalar;
+
 
 (* option #2 : special symbol operator *)
 
@@ -132,10 +184,22 @@ array1 := scalar *: array2;
 
 array1 := array2 :* scalar;
 
+NEW array1 := scalar *: array2;
+
+NEW array1 := array2 :* scalar;
+
+COPY array1 := scalar *: array2;
+
+COPY array1 := array2 :* scalar;
+
 
 (* option #3 : extension library function *)
 
 array1 := Array.mulScalar(array2, scalar);
+
+NEW array1 := Array.mulScalar(array2, scalar);
+
+COPY array1 := Array.mulScalar(array2, scalar);
 
 
 (* Division *)
@@ -146,12 +210,28 @@ array1 := scalar / array2;
 
 array1 := array2 / scalar;
 
+NEW array1 := scalar / array2;
+
+NEW array1 := array2 / scalar;
+
+COPY array1 := scalar / array2;
+
+COPY array1 := array2 / scalar;
+
 
 (* option #2 : special symbol operator *)
 
 array1 := scalar /: array2;
 
 array1 := array2 :/ scalar;
+
+NEW array1 := scalar /: array2;
+
+NEW array1 := array2 :/ scalar;
+
+COPY array1 := scalar /: array2;
+
+COPY array1 := array2 :/ scalar;
 
 
 (* option #3 : extension library functions *)
@@ -160,35 +240,43 @@ array1 := Array.divScalar(scalar, array2);
 
 array1 := Array.divByScalar(array2, scalar);
 
+NEW array1 := Array.divScalar(scalar, array2);
+
+NEW array1 := Array.divByScalar(array2, scalar);
+
+COPY array1 := Array.divScalar(scalar, array2);
+
+COPY array1 := Array.divByScalar(array2, scalar);
+
 
 (* Rotation and Shift Operations *)
 
 (* Left Rotation *)
 
-Array.newByRotatingLeft(array1, array2, n);
-
 Array.rotateLeft(array, n);
+
+Array.newByRotatingLeft(array1, array2, n);
 
 
 (* Right Rotation *)
 
-Array.newByRotatingRight(array1, array2, n);
-
 Array.rotateRight(array, n);
+
+Array.newByRotatingRight(array1, array2, n);
 
 
 (* Left Shift *)
 
-Array.newByShiftingLeft(array1, array2, n, fillValue);
-
 Array.shiftLeft(array, n, fillValue);
+
+Array.newByShiftingLeft(array1, array2, n, fillValue);
 
 
 (* Right Shift *)
 
-Array.newByShiftingRight(array1, array2, n, fillValue);
-
 Array.shiftRight(array, n, fillValue);
+
+Array.newByShiftingRight(array1, array2, n, fillValue);
 
 
 (* =====================
@@ -237,6 +325,11 @@ PROCEDURE [/] div ( VAR result : Array; left, right : Array );
 (* transformations could be synthesised automatically *)
 
 
+(* Rotation and Shift Operations *)
+
+(* no bindings *)
+
+
 (* ===================================
  *    T r a n s f o r m a t i o n s
  * =================================== *)
@@ -254,7 +347,7 @@ array1 := ABS(array2);
 NEW array1 := ABS(array2);
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   NEW array1; Array.abs(array1, array2);
+   Array.new(array1); Array.abs(array1, array2);
 
 COPY array1 := ABS(array2);
 
@@ -266,12 +359,12 @@ COPY array1 := ABS(array2);
 array1 := -array2;
 
 => VAR temp : Array;
-   NEW temp := -array2; array1 := temp;
+   Array.new(temp); Array.neg(temp, array2); array1 := temp;
 
 NEW array1 := -array2;
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   NEW array1; Array.neg(array1, array2);
+   Array.new(array1); Array.neg(array1, array2);
 
 COPY array1 := -array2;
 
@@ -285,12 +378,12 @@ COPY array1 := -array2;
 array1 := array2 + array3;
 
 => VAR temp : Array;
-   NEW temp := array2 + array3; array1 := temp;
+   Array.new(temp); Array.add(temp, array2, array3); array1 := temp;
 
 NEW array1 := array2 + array3;
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   NEW array1; Array.add(array1, array2, array3);
+   Array.new(array1); Array.add(array1, array2, array3);
 
 COPY array1 := array2 + array3;
 
@@ -302,12 +395,12 @@ COPY array1 := array2 + array3;
 array1 := array2 - array3;
 
 => VAR temp : Array;
-   NEW temp := array2 - array3; array1 := temp;
+   Array.new(temp); Array.sub(temp, array2, array3); array1 := temp;
 
 NEW array1 := array2 - array3;
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   NEW array1; Array.sub(array1, array2, array3);
+   Array.new(array1); Array.sub(array1, array2, array3);
 
 COPY array1 := array2 - array3;
 
@@ -319,12 +412,12 @@ COPY array1 := array2 - array3;
 array1 := array2 * array3;
 
 => VAR temp : Array;
-   NEW temp := array2 * array3; array1 := temp;
+   Array.new(temp); Array.mul(temp, array2, array3); array1 := temp;
 
 NEW array1 := array2 * array3;
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   NEW array1; Array.mul(array1, array2, array3);
+   Array.new(array1); Array.mul(array1, array2, array3);
 
 COPY array1 := array2 * array3;
 
@@ -336,12 +429,12 @@ COPY array1 := array2 * array3;
 array1 := array2 / array3;
 
 => VAR temp : Array;
-   NEW temp := array2 / array3; array1 := temp;
+   Array.new(temp); Array.div(temp, array2, array3); array1 := temp;
 
 NEW array1 := array2 / array3;
 
 => IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
-   NEW array1; Array.div(array1, array2, array3);
+   Array.new(array1); Array.div(array1, array2, array3);
 
 COPY array1 := array2 / array3;
 
