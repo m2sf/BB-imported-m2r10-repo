@@ -77,176 +77,176 @@ COPY array1 := array2 / array3;
 
 (* option #1 : overload + operator *)
 
-array1 := scalar + array2;
-
 array1 := array2 + scalar;
 
-NEW array1 := scalar + array2;
+array1 := scalar + array2;
 
 NEW array1 := array2 + scalar;
 
-COPY array1 := scalar + array2;
+NEW array1 := scalar + array2;
 
 COPY array1 := array2 + scalar;
+
+COPY array1 := scalar + array2;
 
 
 (* option #2 : special symbol operator *)
 
-array1 := scalar +: array2;
-
 array1 := array2 :+ scalar;
 
-NEW array1 := scalar +: array2;
+array1 := scalar +: array2;
 
 NEW array1 := array2 :+ scalar;
 
-COPY array1 := scalar +: array2;
+NEW array1 := scalar +: array2;
 
 COPY array1 := array2 :+ scalar;
+
+COPY array1 := scalar +: array2;
 
 
 (* option #3 : extension library function *)
 
-array1 := Array.addScalar(array2, scalar);
+array1 := Array.sumWithScalarTerm(array2, scalar);
 
-NEW array1 := Array.addScalar(array2, scalar);
+NEW array1 := Array.sumWithScalarTerm(array2, scalar);
 
-COPY array1 := Array.addScalar(array2, scalar);
+COPY array1 := Array.sumWithScalarTerm(array2, scalar);
 
 
 (* Subtraction *)
 
 (* option #1 : overload - operator *)
 
-array1 := scalar - array2;
-
 array1 := array2 - scalar;
 
-NEW array1 := scalar - array2;
+array1 := scalar - array2;
 
 NEW array1 := array2 - scalar;
 
-COPY array1 := scalar - array2;
+NEW array1 := scalar - array2;
 
 COPY array1 := array2 - scalar;
+
+COPY array1 := scalar - array2;
 
 
 (* option #2 : special symbol operator *)
 
-array1 := scalar -: array2;
-
 array1 := array2 :- scalar;
 
-NEW array1 := scalar -: array2;
+array1 := scalar -: array2;
 
 NEW array1 := array2 :- scalar;
 
-COPY array1 := scalar -: array2;
+NEW array1 := scalar -: array2;
 
 COPY array1 := array2 :- scalar;
+
+COPY array1 := scalar -: array2;
 
 
 (* option #3 : extension library functions *)
 
-array1 := Array.subFromScalar(scalar, array2);
+array1 := Array.diffWithScalarSubtrahend(array2, scalar);
 
-array1 := Array.subScalar(array2, scalar);
+array1 := Array.diffWithScalarMinuend(scalar, array2);
 
-NEW array1 := Array.subFromScalar(scalar, array2);
+NEW array1 := Array.diffWithScalarSubtrahend(array2, scalar);
 
-NEW array1 := Array.subScalar(array2, scalar);
+NEW array1 := Array.diffWithScalarMinuend(scalar, array2);
 
-COPY array1 := Array.subFromScalar(scalar, array2);
+COPY array1 := Array.diffWithScalarSubtrahend(array2, scalar);
 
-COPY array1 := Array.subScalar(array2, scalar);
+COPY array1 := Array.diffWithScalarMinuend(scalar, array2);
 
 
 (* Multiplication *)
 
 (* option #1 : overload + operator *)
 
-array1 := scalar * array2;
-
 array1 := array2 * scalar;
 
-NEW array1 := scalar * array2;
+array1 := scalar * array2;
 
 NEW array1 := array2 * scalar;
 
-COPY array1 := scalar * array2;
+NEW array1 := scalar * array2;
 
 COPY array1 := array2 * scalar;
+
+COPY array1 := scalar * array2;
 
 
 (* option #2 : special symbol operator *)
 
-array1 := scalar *: array2;
-
 array1 := array2 :* scalar;
 
-NEW array1 := scalar *: array2;
+array1 := scalar *: array2;
 
 NEW array1 := array2 :* scalar;
 
-COPY array1 := scalar *: array2;
+NEW array1 := scalar *: array2;
 
 COPY array1 := array2 :* scalar;
+
+COPY array1 := scalar *: array2;
 
 
 (* option #3 : extension library function *)
 
-array1 := Array.mulScalar(array2, scalar);
+array1 := Array.prodWithScalarFactor(array2, scalar);
 
-NEW array1 := Array.mulScalar(array2, scalar);
+NEW array1 := Array.prodWithScalarFactor(array2, scalar);
 
-COPY array1 := Array.mulScalar(array2, scalar);
+COPY array1 := Array.prodWithScalarFactor(array2, scalar);
 
 
 (* Division *)
 
 (* option #1 : overload / operator *)
 
-array1 := scalar / array2;
-
 array1 := array2 / scalar;
 
-NEW array1 := scalar / array2;
+array1 := scalar / array2;
 
 NEW array1 := array2 / scalar;
 
-COPY array1 := scalar / array2;
+NEW array1 := scalar / array2;
 
 COPY array1 := array2 / scalar;
+
+COPY array1 := scalar / array2;
 
 
 (* option #2 : special symbol operator *)
 
-array1 := scalar /: array2;
-
 array1 := array2 :/ scalar;
 
-NEW array1 := scalar /: array2;
+array1 := scalar /: array2;
 
 NEW array1 := array2 :/ scalar;
 
-COPY array1 := scalar /: array2;
+NEW array1 := scalar /: array2;
 
 COPY array1 := array2 :/ scalar;
+
+COPY array1 := scalar /: array2;
 
 
 (* option #3 : extension library functions *)
 
-array1 := Array.divScalar(scalar, array2);
+array1 := Array.quotWithScalarDivisor(array2, scalar);
 
-array1 := Array.divByScalar(array2, scalar);
+array1 := Array.quotWithScalarDividend(scalar, array2);
 
-NEW array1 := Array.divScalar(scalar, array2);
+NEW array1 := Array.quotWithScalarDivisor(array2, scalar);
 
-NEW array1 := Array.divByScalar(array2, scalar);
+NEW array1 := Array.quotWithScalarDividend(scalar, array2);
 
-COPY array1 := Array.divScalar(scalar, array2);
+COPY array1 := Array.quotWithScalarDivisor(array2, scalar);
 
-COPY array1 := Array.divByScalar(array2, scalar);
+COPY array1 := Array.quotWithScalarDividend(scalar, array2);
 
 
 (* Rotation and Shift Operations *)
@@ -290,10 +290,26 @@ Array.newByShiftingRight(array1, array2, n, fillValue);
 
 PROCEDURE [ABS] abs ( VAR result : Array; operand : Array );
 
+(* supported use cases *)
+
+array1 := ABS(array2);
+
+NEW array1 := ABS(array2);
+
+COPY array1 := ABS(array2);
+
 
 (* Sign Reversal *)
 
 PROCEDURE [NEG] neg ( VAR result : Array; operand : Array );
+
+(* supported use cases *)
+
+array1 := -array2;
+
+NEW array1 := -array2;
+
+COPY array1 := -array2;
 
 
 (* Array-Array Operations *)
@@ -302,27 +318,154 @@ PROCEDURE [NEG] neg ( VAR result : Array; operand : Array );
 
 PROCEDURE [+] add ( VAR result : Array; left, right : Array );
 
+(* supported use cases *)
+
+array1 := array2 + array3;
+
+NEW array1 := array2 + array3;
+
+COPY array1 := array2 + array3;
+
 
 (* Subtraction *)
 
 PROCEDURE [-] sub ( VAR result : Array; left, right : Array );
+
+(* supported use cases *)
+
+array1 := array2 - array3;
+
+NEW array1 := array2 - array3;
+
+COPY array1 := array2 - array3;
 
 
 (* Multiplication *)
 
 PROCEDURE [*] mul ( VAR result : Array; left, right : Array );
 
+(* supported use cases *)
+
+array1 := array2 * array3;
+
+NEW array1 := array2 * array3;
+
+COPY array1 := array2 * array3;
+
 
 (* Division *)
 
 PROCEDURE [/] div ( VAR result : Array; left, right : Array );
 
+(* supported use cases *)
+
+array1 := array2 / array3;
+
+NEW array1 := array2 / array3;
+
+COPY array1 := array2 / array3;
+
 
 (* Scalar-Array Operations *)
 
-(* no bindings *)
+(* Addition *)
 
-(* transformations could be synthesised automatically *)
+PROCEDURE [:+] addScalar
+  ( VAR result : Array; left : Array; right : ValueType );
+
+(* supported use cases *)
+
+array1 := array2 + scalar;
+
+array1 := scalar + array2;
+
+NEW array1 := array2 + scalar;
+
+NEW array1 := scalar + array2;
+
+COPY array1 := array2 + scalar;
+
+COPY array1 := scalar + array2;
+
+
+(* Subtraction *)
+
+(* scalar subtrahend *)
+
+PROCEDURE [:-] subScalar
+  ( VAR result : Array; left : Array; right : ValueType );
+
+(* supported use cases *)
+
+array1 := array2 - scalar;
+
+NEW array1 := array2 - scalar;
+
+COPY array1 := array2 - scalar;
+
+
+(* scalar minuend *)
+
+PROCEDURE [-:] subFromScalar
+  ( VAR result : Array; left : ValueType; right : Array );
+
+(* supported use cases *)
+
+array1 := scalar - array2;
+
+NEW array1 := scalar - array2;
+
+COPY array1 := scalar - array2;
+
+
+(* Multiplication *)
+
+PROCEDURE [:*] mulByScalar
+  ( VAR result : Array; left : Array; right : ValueType );
+
+(* supported use cases *)
+
+array1 := array2 * scalar;
+
+array1 := scalar * array2;
+
+NEW array1 := array2 * scalar;
+
+NEW array1 := scalar * array2;
+
+COPY array1 := array2 * scalar;
+
+COPY array1 := scalar * array2;
+
+
+(* Division *)
+
+(* scalar divisor *)
+
+PROCEDURE [:/] divByScalar
+  ( VAR result : Array; left : Array; right : ValueType );
+
+(* supported use cases *)
+
+array1 := array2 / scalar;
+
+NEW array1 := array2 / scalar;
+
+COPY array1 := array2 / scalar;
+
+
+(* scalar dividend *)
+
+PROCEDURE [/:] divScalarByArray
+  ( VAR result : Array; left : ValueType; right : Array );
+
+(* supported use cases *)
+
+array1 := scalar - array2;
+
+NEW array1 := scalar - array2;
+
+COPY array1 := scalar - array2;
 
 
 (* Rotation and Shift Operations *)
@@ -451,38 +594,73 @@ array1 := scalar +: array2;
 
 array1 := array2 :+ scalar;
 
-(* synthesised as *)
+=> VAR temp : Array;
+   Array.new(temp); Array.addScalar(temp, array, scalar); array1 := temp;
 
-FOR index IN [0..COUNT(array2)] OF CARDINAL DO
-  array1[index] := scalar + array2[index]
-END;
+NEW array1 := scalar + array2;
+
+NEW array1 := scalar +: array2;
+
+NEW array1 := array2 :+ scalar;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.new(array1); Array.addScalar(array1, array2, scalar);
+
+COPY array1 := scalar + array2;
+
+COPY array1 := scalar +: array2;
+
+COPY array1 := array2 :+ scalar;
+
+=> Array.addScalar(array1, array2, scalar);
 
 
 (* Subtraction *)
 
-(* scalar minuend *)
+(* scalar subtrahend *)
 
 array1 := scalar - array2;
 
 array1 := scalar -: array2;
 
-(* synthesised as *)
+=> VAR temp : Array;
+   Array.new(temp); Array.subFromScalar(temp, scalar, array2); array1 := temp;
 
-FOR index IN [0..COUNT(array2)] OF CARDINAL DO
-  array1[index] := scalar - array2[index]
-END;
+NEW array1 := scalar - array2;
 
-(* scalar subtrahend *)
+NEW array1 := scalar -: array2;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.new(array1); Array.subFromScalar(array1, scalar, array2);
+
+COPY array1 := scalar - array2;
+
+COPY array1 := scalar -: array2;
+
+=> Array.subFromScalar(array1, scalar, array2);
+
+
+(* scalar minuend *)
 
 array1 := array2 - scalar;
 
 array1 := array2 :- scalar;
 
-(* synthesised as *)
+=> VAR temp : Array;
+   Array.new(temp); Array.subScalar(temp, scalar, array2); array1 := temp;
 
-FOR index IN [0..COUNT(array2)] OF CARDINAL DO
-  array1[index] := array2[index] - scalar
-END;
+NEW array1 := array2 - scalar;
+
+NEW array1 := array2 :- scalar;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.new(array1); Array.subScalar(array1, array2, scalar);
+
+COPY array1 := array2 - scalar;
+
+COPY array1 := array2 :- scalar;
+
+=> Array.subScalar(array1, array2, scalar);
 
 
 (* Multiplication *)
@@ -493,26 +671,28 @@ array1 := scalar *: array2;
 
 array1 := array2 :* scalar;
 
-(* synthesised as *)
+=> VAR temp : Array;
+   Array.new(temp); Array.mulByScalar(temp, scalar, array2); array1 := temp;
 
-FOR index IN [0..COUNT(array2)] OF CARDINAL DO
-  array1[index] := scalar * array2[index]
-END;
+NEW array1 := scalar * array2;
+
+NEW array1 := scalar *: array2;
+
+NEW array1 := array2 :* scalar;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.new(array1); Array.mulByScalar(array1, array2, scalar);
+
+COPY array1 := scalar * array2;
+
+COPY array1 := scalar *: array2;
+
+COPY array1 := array2 :* scalar;
+
+=> Array.mulByScalar(array1, array2, scalar);
 
 
 (* Division *)
-
-(* scalar dividend *)
-
-array1 := scalar / array2;
-
-array1 := scalar /: array2;
-
-(* synthesised as *)
-
-FOR index IN [0..COUNT(array2)] OF CARDINAL DO
-  array1[index] := scalar / array2[index]
-END;
 
 (* scalar divisor *)
 
@@ -520,11 +700,45 @@ array1 := array2 / scalar;
 
 array1 := array2 :/ scalar;
 
-(* synthesised as *)
+=> VAR temp : Array;
+   Array.new(temp); Array.divByScalar(temp, scalar, array2); array1 := temp;
 
-FOR index IN [0..COUNT(array2)] OF CARDINAL DO
-  array1[index] := array2[index] / scalar
-END;
+NEW array1 := array2 / scalar;
+
+NEW array1 := array2 :/ scalar;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.new(array1); Array.divByScalar(array1, array2, scalar);
+
+COPY array1 := array2 / scalar;
+
+COPY array1 := array2 :/ scalar;
+
+=> Array.divByScalar(array1, array2, scalar);
+
+
+(* scalar dividend *)
+
+array1 := scalar / array2;
+
+array1 := scalar /: array2;
+
+=> VAR temp : Array;
+   Array.new(temp);
+   Array.divScalarByArray(temp, scalar, array2); array1 := temp;
+
+NEW array1 := scalar / array2;
+
+NEW array1 := scalar /: array2;
+
+=> IF array1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Array.new(array1); Array.divScalarByArray(array1, array2, scalar);
+
+COPY array1 := scalar / array2;
+
+COPY array1 := scalar /: array2;
+
+=> Array.divScalarByArray(array1, array2, scalar);
 
 
 (* Semantics *)
@@ -562,6 +776,9 @@ BEGIN
       maxIndex := COUNT(left)-1;
       largestCommonIndex := COUNT(right)-1
     END;
+    
+    (* remove any remaining components from result *)
+    IF COUNT(result) # 0 THEN Array.remove(0, COUNT(result)-1) END;
     
     (* add items within common index range *)
     FOR index IN [0..largestCommonIndex] OF CARDINAL DO
@@ -610,6 +827,9 @@ BEGIN
       largestCommonIndex := COUNT(right)-1
     END;
     
+    (* remove any remaining components from result *)
+    IF COUNT(result) # 0 THEN Array.remove(0, COUNT(result)-1) END;
+    
     (* subtract items within common index range *)
     FOR index IN [0..largestCommonIndex] OF CARDINAL DO
       result[index] := left[index] - right[index]
@@ -657,6 +877,9 @@ BEGIN
       largestCommonIndex := COUNT(right)-1
     END;
     
+    (* remove any remaining components from result *)
+    IF COUNT(result) # 0 THEN Array.remove(0, COUNT(result)-1) END;
+
     (* multiply items within common index range *)
     FOR index IN [0..largestCommonIndex] OF CARDINAL DO
       result[index] := left[index] * right[index]
@@ -704,6 +927,9 @@ BEGIN
       largestCommonIndex := COUNT(right)-1
     END;
     
+    (* remove any remaining components from result *)
+    IF COUNT(result) # 0 THEN Array.remove(0, COUNT(result)-1) END;
+
     (* divide items within common index range *)
     FOR index IN [0..largestCommonIndex] OF CARDINAL DO
       result[index] := left[index] / right[index]
@@ -719,6 +945,89 @@ BEGIN
 
   RETURN
 END div;
+
+
+(* Scalar-Array Operations *)
+
+(* Addition *)
+
+PROCEDURE [:+] addScalar
+  ( VAR result : Array; left : Array; right : ValueType );
+BEGIN
+  IF COUNT(result) # 0 THEN Array.remove(0, COUNT(result)-1) END;
+  FOR index IN [0..COUNT(left)] OF CARDINAL DO
+    result[index] := left[index] + right
+  END;
+  RETURN
+END addScalar;
+
+
+(* Subtraction *)
+
+(* scalar subtrahend *)
+
+PROCEDURE [:-] subScalar
+  ( VAR result : Array; left : Array; right : ValueType );
+BEGIN
+  IF COUNT(result) # 0 THEN Array.remove(0, COUNT(result)-1) END;
+  FOR index IN [0..COUNT(left)] OF CARDINAL DO
+    result[index] := left[index] - right
+  END;
+  RETURN
+END subScalar;
+
+
+(* scalar minuend *)
+
+PROCEDURE [-:] subFromScalar
+  ( VAR result : Array; left : ValueType; right : Array );
+BEGIN
+  IF COUNT(result) # 0 THEN Array.remove(0, COUNT(result)-1) END;
+  FOR index IN [0..COUNT(right)] OF CARDINAL DO
+    result[index] := left - right[index]
+  END;
+  RETURN
+END subFromScalar;
+
+
+(* Multiplication *)
+
+PROCEDURE [:*] mulByScalar
+  ( VAR result : Array; left : Array; right : ValueType );
+BEGIN
+  IF COUNT(result) # 0 THEN Array.remove(0, COUNT(result)-1) END;
+  FOR index IN [0..COUNT(left)] OF CARDINAL DO
+    result[index] := left[index] * right
+  END;
+  RETURN
+END mulByScalar;
+
+
+(* Division *)
+
+(* scalar divisor *)
+
+PROCEDURE [:/] divByScalar
+  ( VAR result : Array; left : Array; right : ValueType );
+BEGIN
+  IF COUNT(result) # 0 THEN Array.remove(0, COUNT(result)-1) END;
+  FOR index IN [0..COUNT(left)] OF CARDINAL DO
+    result[index] := left[index] / right
+  END;
+  RETURN
+END divByScalar;
+
+(* scalar dividend *)
+
+PROCEDURE [/:] divScalarByArray
+  ( VAR result : Array; left : ValueType; right : Array );
+BEGIN
+  IF COUNT(result) # 0 THEN Array.remove(0, COUNT(result)-1) END;
+  FOR index IN [0..COUNT(left)] OF CARDINAL DO
+    result[index] := left / right[index]
+  END;
+  RETURN
+END divScalarByArray;
 
 
 (* END OF FILE *)
