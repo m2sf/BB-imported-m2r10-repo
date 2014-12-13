@@ -2,10 +2,10 @@
 
 (* Vector Algebra *)
 
-(* Exploration of possible use cases for vector algebra,
+(* Exploration of use cases for vector algebra,
    required bindings and resulting compile time transformations. *)
 
-(* Status: Dec 10, 2014 *)
+(* Status: Dec 14, 2014 *)
 
 
 (* =======================
@@ -13,174 +13,168 @@
  * ======================= *)
 
 
-(* Basic Vector Arithmetic *)
+(* Sign Operations *)
 
 (* Sign Removal *)
 
 vector1 := ABS(vector2);
+
+NEW vector1 := ABS(vector2);
+
+COPY vector1 := ABS(vector2);
 
 
 (* Sign Reversal *)
 
 vector1 := -vector2;
 
+NEW vector1 := -vector2;
 
-(* Vector-Vector Addition *)
+COPY vector1 := -vector2;
+
+
+(* Vector-Vector Operations *)
+
+(* Addition *)
 
 vector1 := vector2 + vector3;
 
+NEW vector1 := vector2 + vector3;
 
-(* Vector-Vector Subtraction *)
+COPY vector1 := vector2 + vector3;
+
+
+(* Subtraction *)
 
 vector1 := vector2 - vector3;
+
+NEW vector1 := vector2 - vector3;
+
+COPY vector1 := vector2 - vector3;
+
+
+(* Dot Product *)
+
+scalar := vector1 *. vector2;
 
 
 (* Cross Product, R3 only *)
 
 vector1 := vector2 * vector3;
 
+NEW vector1 := vector2 * vector3;
 
-(* Scalar-Vector Arithmetic *)
-
-(* Scalar-to-Vector Addition *)
-
-(* option #1 : overload + operator *)
-
-vector1 := scalar + vector2;
+COPY vector1 := vector2 * vector3;
 
 
-(* option #2 : special symbol operator *)
+(* Scalar-Vector Operations *)
 
-vector1 := scalar $+ vector2;
-
-
-(* option #3 : extension library function *)
-
-vector1 := Vector.addScalar(vector2, scalar);
-
-
-(* Scalar-by-Vector Subtraction *)
-
-(* option #1 : overload - operator *)
-
-vector1 := scalar - vector2;
-
-
-(* option #2 : special symbol operator *)
-
-vector1 := scalar $- vector2;
-
-
-(* option #3 : extension library function *)
-
-vector1 := Vector.addScalar(-vector2, scalar);
-
-
-(* Scalar-by-Vector Multiplication *)
-
-(* option #1 : overload + operator *)
-
-vector1 := scalar * vector2;
-
-
-(* option #2 : special symbol operator *)
-
-vector1 := scalar $* vector2;
-
-
-(* option #3 : extension library function *)
-
-vector1 := Vector.mulScalar(vector2, scalar);
-
-
-(* Vector-to-Scalar Addition *)
+(* Scalar Addition *)
 
 (* option #1 : overload + operator *)
 
 vector1 := vector2 + scalar;
 
+NEW vector1 := vector2 + scalar;
+
+COPY vector1 := vector2 + scalar;
+
 
 (* option #2 : special symbol operator *)
 
-vector1 := vector2 +$ scalar;
+vector1 := vector2 :+ scalar;
+
+NEW vector1 := vector2 :+ scalar;
+
+COPY vector1 := vector2 :+ scalar;
 
 
-(* option #3 : extension library function *)
+(* option #3 : extension library procedures *)
 
-vector1 := Vector.addScalar(vector2, scalar);
+Vector.addScalar(vector1, vector2, scalar);
+
+Vector.newFromScalarAddition(vector1, vector2, scalar);
 
 
-(* Vector-by-Scalar Subtraction *)
+(* Scalar Subtraction *)
 
 (* option #1 : overload - operator *)
 
 vector1 := vector2 - scalar;
 
+NEW vector1 := vector2 - scalar;
+
+COPY vector1 := vector2 - scalar;
+
 
 (* option #2 : special symbol operator *)
 
-vector1 := vector2 -$ scalar;
+vector1 := vector2 :- scalar;
+
+NEW vector1 := vector2 :- scalar;
+
+COPY vector1 := vector2 :- scalar;
 
 
-(* option #3 : extension library function *)
+(* option #3 : extension library procedures *)
 
-vector1 := Vector.addScalar(vector2, -scalar);
+Vector.subScalar(vector1, vector2, scalar);
+
+Vector.newFromScalarSubtration(vector1, vector2, scalar);
 
 
-(* Vector-by-Scalar Multiplication *)
+(* Scalar Multiplication *)
 
 (* option #1 : overload + operator *)
 
 vector1 := vector2 * scalar;
 
+NEW vector1 := vector2 * scalar;
+
+COPY vector1 := vector2 * scalar;
+
 
 (* option #2 : special symbol operator *)
 
-vector1 := vector2 *$ scalar;
+vector1 := vector2 :* scalar;
+
+NEW vector1 := vector2 :* scalar;
+
+COPY vector1 := vector2 :* scalar;
 
 
-(* option #3 : extension library function *)
+(* option #3 : extension library procedures *)
 
-vector1 := Vector.mulScalar(vector2, scalar);
+Vector.mulScalar(vector1, vector2, scalar);
+
+Vector.newFromScalarMultiplication(vector1, vector2, scalar);
 
 
-(* Vector-by-Scalar Division *)
+(* Scalar Division *)
 
 (* option #1 : overload + operator *)
 
 vector1 := vector2 / scalar;
 
+NEW vector1 := vector2 / scalar;
+
+COPY vector1 := vector2 / scalar;
+
 
 (* option #2 : special symbol operator *)
 
-vector1 := vector2 %$ scalar;
+vector1 := vector2 :/ scalar;
+
+NEW vector1 := vector2 :/ scalar;
+
+COPY vector1 := vector2 :/ scalar;
 
 
 (* option #3 : extension library function *)
 
-vector1 := Vector.divByScalar(vector2, scalar);
+Vector.divScalar(vector1, vector2, scalar);
 
-
-(* Dot Product *)
-
-(* option #1 : special symbol operator *)
-
-vector1 := vector2 *. vector3;
-
-
-(* option #2 : reserved word operator *)
-
-scalar := vector1 DOT vector2;
-
-
-(* option #3 : predefined function *)
-
-scalar := DOT(vector1, vector2);
-
-
-(* option #4 : extension library function *)
-
-scalar := Vector.dot(vector1, vector2);
+Vector.newFromScalarDivision(vector1, vector2, scalar);
 
 
 (* =====================
@@ -188,63 +182,292 @@ scalar := Vector.dot(vector1, vector2);
  * ===================== *)
 
 
-(* Basic Vector Arithmetic *)
+(* Sign Operations *)
 
 (* Sign Removal *)
 
 PROCEDURE [ABS] abs ( VAR result : Vector; operand : Vector );
+
+(* supported use cases *)
+
+vector1 := ABS(vector2);
+
+NEW vector1 := ABS(vector2);
+
+COPY vector1 := ABS(vector2);
 
 
 (* Sign Reversal *)
 
 PROCEDURE [NEG] neg ( VAR result : Vector; operand : Vector );
 
+(* supported use cases *)
 
-(* Vector-Vector Addition *)
+vector1 := -vector2;
+
+NEW vector1 := -vector2;
+
+COPY vector1 := -vector2;
+
+
+(* Vector-Vector Operations *)
+
+(* Addition *)
 
 PROCEDURE [+] add ( VAR result : Vector; left, right : Vector );
 
+(* supported use cases *)
 
-(* Vector-Vector Subtraction *)
+vector1 := vector2 + vector3;
+
+NEW vector1 := vector2 + vector3;
+
+COPY vector1 := vector2 + vector3;
+
+
+(* Subtraction *)
 
 PROCEDURE [-] sub ( VAR result : Vector; left, right : Vector );
+
+(* supported use cases *)
+
+vector1 := vector2 - vector3;
+
+NEW vector1 := vector2 - vector3;
+
+COPY vector1 := vector2 - vector3;
+
+
+(* Dot Product *)
+
+PROCEDURE [*.] dot ( left, right : Vector ) : ValueType;
+
+(* supported use case *)
+
+scalar := vector1 *. vector2;
 
 
 (* Cross Product *)
 
 PROCEDURE [*] cross ( VAR result : Vector; left, right : Vector );
 
+(* supported use cases *)
+
+vector1 := vector2 * vector3;
+
+NEW vector1 := vector2 * vector3;
+
+COPY vector1 := vector2 * vector3;
 
 
-(* Scalar-Vector Arithmetic *)
+(* Scalar-Vector Operations *)
 
-(* no bindings *)
-
-(* transformations could be synthesised automatically *)
-
-
-(* Vector-Scalar Arithmetic *)
-
-(* no bindings *)
-
-(* transformations could be synthesised automatically *)
-
-
-(* Dot Product *)
+(* Scalar Addition *)
 
 (* option #1 *)
 
-PROCEDURE [*.] dot ( left, right : Vector ) : ValueType;
+PROCEDURE [:+] addScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use cases *)
+
+vector1 := vector2 + scalar;
+
+NEW vector1 := vector2 + scalar;
+
+COPY vector1 := vector2 + scalar;
 
 
-(* options #2 and #3 *)
+(* option #2 *)
 
-PROCEDURE [DOT] dot ( left, right : Vector ) : ValueType;
+PROCEDURE [:+] addScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use cases *)
+
+vector1 := vector2 :+ scalar;
+
+NEW vector1 := vector2 :+ scalar;
+
+COPY vector1 := vector2 :+ scalar;
 
 
-(* option #4 *)
+(* option #3 *)
 
-(* no binding *)
+(* no bindings *)
+
+(* library procedure definitions *)
+
+PROCEDURE addScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use case *)
+
+Vector.addScalar(vector1, vector2, scalar);
+
+
+PROCEDURE newFromScalarAddition
+  ( NEW result : Vector; left : Vector; right : ValueType );
+
+(* supported use case *)
+
+Vector.newFromScalarAddition(vector1, vector2, scalar);
+
+
+(* Scalar Subtraction *)
+
+(* option #1 *)
+
+PROCEDURE [:-] subScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use cases *)
+
+vector1 := vector2 - scalar;
+
+NEW vector1 := vector2 - scalar;
+
+COPY vector1 := vector2 - scalar;
+
+
+(* option #2 *)
+
+PROCEDURE [:-] subScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use cases *)
+
+vector1 := vector2 :- scalar;
+
+NEW vector1 := vector2 :- scalar;
+
+COPY vector1 := vector2 :- scalar;
+
+
+(* option #3 *)
+
+(* no bindings *)
+
+(* library procedure definitions *)
+
+PROCEDURE subScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use case *)
+
+Vector.subScalar(vector1, vector2, scalar);
+
+
+PROCEDURE newFromScalarSubtraction
+  ( NEW result : Vector; left : Vector; right : ValueType );
+
+(* supported use case *)
+
+Vector.newFromScalarSubtraction(vector1, vector2, scalar);
+
+
+(* Scalar Multiplication *)
+
+(* option #1 *)
+
+PROCEDURE [:*] mulScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use cases *)
+
+vector1 := vector2 * scalar;
+
+NEW vector1 := vector2 * scalar;
+
+COPY vector1 := vector2 * scalar;
+
+
+(* option #2 *)
+
+PROCEDURE [:*] mulScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use cases *)
+
+vector1 := vector2 :* scalar;
+
+NEW vector1 := vector2 :* scalar;
+
+COPY vector1 := vector2 :* scalar;
+
+
+(* option #3 *)
+
+(* no bindings *)
+
+(* library procedure definitions *)
+
+PROCEDURE mulScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use case *)
+
+Vector.mulScalar(vector1, vector2, scalar);
+
+
+PROCEDURE newFromScalarMultiplication
+  ( NEW result : Vector; left : Vector; right : ValueType );
+
+(* supported use case *)
+
+Vector.newFromScalarMultiplication(vector1, vector2, scalar);
+
+
+(* Scalar Division *)
+
+(* option #1 *)
+
+PROCEDURE [:/] divScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use cases *)
+
+vector1 := vector2 / scalar;
+
+NEW vector1 := vector2 / scalar;
+
+COPY vector1 := vector2 / scalar;
+
+
+(* option #2 *)
+
+PROCEDURE [:/] addScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use cases *)
+
+vector1 := vector2 :/ scalar;
+
+NEW vector1 := vector2 :/ scalar;
+
+COPY vector1 := vector2 :/ scalar;
+
+
+(* option #3 *)
+
+(* no bindings *)
+
+(* library procedure definitions *)
+
+PROCEDURE divScalar
+  ( VAR result : Vector; left : Vector; right : ValueType );
+
+(* supported use case *)
+
+Vector.divScalar(vector1, vector2, scalar);
+
+
+PROCEDURE newFromScalarDivision
+  ( NEW result : Vector; left : Vector; right : ValueType );
+
+(* supported use case *)
+
+Vector.newFromScalarDivision(vector1, vector2, scalar);
 
 
 (* ===================================
@@ -252,9 +475,22 @@ PROCEDURE [DOT] dot ( left, right : Vector ) : ValueType;
  * =================================== *)
 
 
+(* Sign Operations *)
+
 (* Sign Removal *)
 
 vector1 := ABS(vector2);
+
+=> VAR temp : Vector;
+   Vector.new(temp);
+   Vector.abs(vector1, vector2); vector1 := temp;
+
+NEW vector1 := ABS(vector2);
+
+=> IF vector1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Vector.new(vector1); Vector.abs(vector1, vector2);
+
+COPY vector1 := ABS(vector2);
 
 => Vector.abs(vector1, vector2);
 
@@ -263,141 +499,194 @@ vector1 := ABS(vector2);
 
 vector1 := -vector2;
 
+=> VAR temp : Vector;
+   Vector.new(temp);
+   Vector.neg(vector1, vector2); vector1 := temp;
+
+NEW vector1 := -vector2;
+
+=> IF vector1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Vector.new(vector1); Vector.neg(vector1, vector2);
+
+COPY vector1 := -vector2;
+
 => Vector.neg(vector1, vector2);
 
 
-(* Vector-Vector Addition *)
+(* Vector-Vector Operations *)
+
+(* Addition *)
 
 vector1 := vector2 + vector3;
+
+=> VAR temp : Vector;
+   Vector.new(temp);
+   Vector.add(vector1, vector2, vector3); vector1 := temp;
+
+NEW vector1 := vector2 + vector3;
+
+=> IF vector1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Vector.new(vector1); Vector.add(vector1, vector2, vector3);
+
+COPY vector1 := vector2 + vector3;
 
 => Vector.add(vector1, vector2, vector3);
 
 
-(* Vector-Vector Subtraction *)
+(* Subtraction *)
 
 vector1 := vector2 - vector3;
+
+=> VAR temp : Vector;
+   Vector.new(temp);
+   Vector.sub(vector1, vector2, vector3); vector1 := temp;
+
+NEW vector1 := vector2 - vector3;
+
+=> IF vector1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Vector.new(vector1); Vector.sub(vector1, vector2, vector3);
+
+COPY vector1 := vector2 - vector3;
 
 => Vector.sub(vector1, vector2, vector3);
 
 
-(* Cross Product *)
-
-vector1 := vector2 * vector3;
-
-=> Vector.cross(vector1, vector2, vector3);
-
-
-(* Scalar-Vector Arithmetic *)
-
-(* Scalar-to-Vector Addition *)
-
-vector1 := scalar + vector2;
-
-vector1 := scalar $+ vector2;
-
-(* synthesised as *)
-
-FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
-  vector1[index] := scalar + vector2[index]
-END;
-
-(* Scalar-by-Vector Subtraction *)
-
-vector1 := scalar - vector2;
-
-vector1 := scalar $- vector2;
-
-(* synthesised as *)
-
-FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
-  vector1[index] := scalar - vector2[index]
-END;
-
-(* Scalar-by-Vector Multiplication *)
-
-vector1 := scalar * vector2;
-
-vector1 := scalar $* vector2;
-
-(* synthesised as *)
-
-FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
-  vector1[index] := scalar * vector2[index]
-END;
-
-
-(* Vector-Scalar Arithmetic *)
-
-(* Vector-to-Scalar Addition *)
-
-vector1 := vector2 + scalar;
-
-vector1 := vector2 +$ scalar;
-
-(* synthesised as *)
-
-FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
-  vector1[index] := vector2[index] + scalar
-END;
-
-(* Vector-by-Scalar Subtraction *)
-
-vector1 := vector2 - scalar;
-
-vector1 := vector2 -$ scalar;
-
-(* synthesised as *)
-
-FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
-  vector1[index] := vector2[index] - scalar
-END;
-
-(* Vector-by-Scalar Multiplication *)
-
-vector1 := vector2 * scalar;
-
-vector1 := vector2 *$ scalar;
-
-(* synthesised as *)
-
-FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
-  vector1[index] := vector2[index] * scalar
-END;
-
-(* Vector-by-Scalar Division *)
-
-vector1 := vector2 / scalar;
-
-vector1 := vector2 %$ scalar;
-
-(* synthesised as *)
-
-FOR index IN [0..COUNT(vector2)] OF CARDINAL DO
-  vector1[index] := vector2[index] / scalar
-END;
-
-
 (* Dot Product *)
-
-(* option #1 *)
 
 scalar := vector1 *. vector2;
 
 => scalar := Vector.dot(vector1, vector2);
 
 
-(* option #2 *)
+(* Cross Product *)
 
-scalar := vector1 DOT vector2;
+vector1 := vector2 * vector3;
 
-=> scalar := Vector.dot(vector1, vector2);
+=> VAR temp : Vector;
+   (* verify that arguments are vectors in R3 *)
+   IF (COUNT(vector2) # 3) OR (COUNT(vector3) # 3) THEN
+     RaiseRuntimeFault(invalidParam)
+   END;
+   (* calculate cross product *)
+   Vector.new(temp);
+   Vector.cross(vector1, vector2, vector3); vector1 := temp;
+
+NEW vector1 := vector2 * vector3;
+
+=> IF vector1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   (* verify that arguments are vectors in R3 *)
+   IF (COUNT(vector2) # 3) OR (COUNT(vector3) # 3) THEN
+     RaiseRuntimeFault(invalidParam)
+   END;
+   (* calculate cross product *)
+   Vector.new(vector1); Vector.cross(vector1, vector2, vector3);
+
+COPY vector1 := vector2 * vector3;
+
+=> (* verify that arguments are vectors in R3 *)
+   IF (COUNT(vector2) # 3) OR (COUNT(vector3) # 3) THEN
+     RaiseRuntimeFault(invalidParam)
+   END;
+   (* calculate cross product *)
+   Vector.cross(vector1, vector2, vector3);
 
 
-(* option #3 *)
+(* Vector-Scalar Operations *)
 
-scalar := DOT(vector1, vector2);
+(* Scalar Addition *)
 
-=> scalar := Vector.dot(vector1, vector2);
+vector1 := vector2 + scalar; (* option #1 *)
+
+vector1 := vector2 :+ scalar; (* option #2 *)
+
+=> VAR temp : Vector;
+   Vector.new(temp);
+   Vector.addScalar(vector1, vector2, scalar); vector1 := temp;
+
+NEW vector1 := vector2 + scalar;  (* option #1 *)
+
+NEW vector1 := vector2 :+ scalar; (* option #2 *)
+
+=> IF vector1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Vector.new(vector1); Vector.addScalar(vector1, vector2, scalar);
+
+COPY vector1 := vector2 + scalar; (* option #1 *)
+
+COPY vector1 := vector2 :+ scalar; (* option #2 *)
+
+=> Vector.addScalar(vector1, vector2, scalar);
+
+
+(* Scalar Subtraction *)
+
+vector1 := vector2 - scalar; (* option #1 *)
+
+vector1 := vector2 :- scalar; (* option #2 *)
+
+=> VAR temp : Vector;
+   Vector.new(temp);
+   Vector.subScalar(vector1, vector2, scalar); vector1 := temp;
+
+NEW vector1 := vector2 - scalar; (* option #1 *)
+
+NEW vector1 := vector2 :- scalar; (* option #2 *)
+
+=> IF vector1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Vector.new(vector1); Vector.subScalar(vector1, vector2, scalar);
+
+COPY vector1 := vector2 - scalar; (* option #1 *)
+
+COPY vector1 := vector2 :- scalar; (* option #2 *)
+
+=> Vector.subScalar(vector1, vector2, scalar);
+
+
+(* Scalar Multiplication *)
+
+vector1 := vector2 * scalar; (* option #1 *)
+
+vector1 := vector2 :* scalar; (* option #2 *)
+
+=> VAR temp : Vector;
+   Vector.new(temp);
+   Vector.mulScalar(vector1, vector2, scalar); vector1 := temp;
+
+NEW vector1 := vector2 * scalar; (* option #1 *)
+
+NEW vector1 := vector2 :* scalar; (* option #2 *)
+
+=> IF vector1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Vector.new(vector1); Vector.mulScalar(vector1, vector2, scalar);
+
+COPY vector1 := vector2 * scalar; (* option #1 *)
+
+COPY vector1 := vector2 :* scalar; (* option #2 *)
+
+=> Vector.mulScalar(vector1, vector2, scalar);
+
+
+(* Scalar Division *)
+
+vector1 := vector2 / scalar; (* option #1 *)
+
+vector1 := vector2 :/ scalar;  (* option #2 *)
+
+=> VAR temp : Vector;
+   Vector.new(temp);
+   Vector.divScalar(vector1, vector2, scalar); vector1 := temp;
+
+NEW vector1 := vector2 / scalar; (* option #1 *)
+
+NEW vector1 := vector2 :/ scalar; (* option #2 *)
+
+=> IF vector1 # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   Vector.new(vector1); Vector.divScalar(vector1, vector2, scalar);
+
+COPY vector1 := vector2 / scalar; (* option #1 *)
+
+COPY vector1 := vector2 :/ scalar; (* option #2 *)
+
+=> Vector.divScalar(vector1, vector2, scalar);
 
 
 (* END OF FILE *)
