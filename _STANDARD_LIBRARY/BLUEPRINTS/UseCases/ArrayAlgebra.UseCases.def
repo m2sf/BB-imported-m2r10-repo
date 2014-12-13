@@ -2,7 +2,7 @@
 
 (* Array Algebra *)
 
-(* Exploration of possible use cases for array algebra,
+(* Exploration of possible use cases for component-wise array algebra,
    required bindings and resulting compile time transformations. *)
 
 (* Status: Dec 12, 2014 *)
@@ -17,6 +17,8 @@
 
 (* Sign Removal *)
 
+(* remove sign from all components *)
+
 array1 := ABS(array2);
 
 NEW array1 := ABS(array2);
@@ -25,6 +27,8 @@ COPY array1 := ABS(array2);
 
 
 (* Sign Reversal *)
+
+(* reverse sign of all components *)
 
 array1 := -array2;
 
@@ -37,6 +41,8 @@ COPY array1 := -array2;
 
 (* Addition *)
 
+(* add corresponding components *)
+
 array1 := array2 + array3;
 
 NEW array1 := array2 + array3;
@@ -45,6 +51,8 @@ COPY array1 := array2 + array3;
 
 
 (* Subtraction *)
+
+(* subtract corresponding components *)
 
 array1 := array2 - array3;
 
@@ -55,6 +63,10 @@ COPY array1 := array2 - array3;
 
 (* Multiplication *)
 
+(* multiply corresponding components *)
+
+(* usefulness in doubt, possibly omit *)
+
 array1 := array2 * array3;
 
 NEW array1 := array2 * array3;
@@ -63,6 +75,10 @@ COPY array1 := array2 * array3;
 
 
 (* Division *)
+
+(* divide corresponding components *)
+
+(* usefulness in doubt, possibly omit *)
 
 array1 := array2 / array3;
 
@@ -74,6 +90,8 @@ COPY array1 := array2 / array3;
 (* Scalar-Array Operations *)
 
 (* Addition *)
+
+(* add every component to scalar *)
 
 (* option #1 : overload + operator *)
 
@@ -115,6 +133,9 @@ COPY array1 := Array.sumWithScalarTerm(array2, scalar);
 
 
 (* Subtraction *)
+
+(* subtract every component from scalar,
+   subtract scalar from every component *)
 
 (* option #1 : overload - operator *)
 
@@ -163,6 +184,8 @@ COPY array1 := Array.diffWithScalarMinuend(scalar, array2);
 
 (* Multiplication *)
 
+(* multiply every component by scalar *)
+
 (* option #1 : overload + operator *)
 
 array1 := array2 * scalar;
@@ -203,6 +226,9 @@ COPY array1 := Array.prodWithScalarFactor(array2, scalar);
 
 
 (* Division *)
+
+(* divide every component by scalar,
+   divide scalar by every component *)
 
 (* option #1 : overload / operator *)
 
