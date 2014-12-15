@@ -7,7 +7,7 @@
    operations of dynamic array ADTs, required bindings and resulting
    compile time transformations. *)
 
-(* Status: Dec 10, 2014 *)
+(* Status: Dec 15, 2014 *)
 
 
 (* =======================
@@ -34,7 +34,11 @@ array := function(arrayExpression);
 
 (* without initialisation *)
 
+(* mutables only *)
+
 NEW array;
+
+NEW array OF size;
 
 (* allocate and initialise with values *)
 
@@ -242,69 +246,13 @@ REMOVE(target, 0, -1);
 
 (* Allocation *)
 
-(* binding #1 *)
-
-PROCEDURE [NEW] new ( VAR newArray : ADT; values : ARGLIST OF ValueType );
+PROCEDURE [NEW] new ( VAR newArray : ADT; initialSize : LONGCARD );
 
 (* supported use cases *)
 
 NEW array;
 
-NEW array := { val1, val2, val3, ... };
-
-
-(* binding #2 (a) : when not implementing concatenation and slicing ... *)
-
-PROCEDURE [NEW*] newWithArray ( VAR new : ADT; source : ADT );
-
-(* supported use case *)
-
-NEW array := source;
-
-
-(* binding #2 (b) : when implementing concatenation and slicing ... *)
-
-PROCEDURE [NEW*] newWithArrayOrSlice
-  ( VAR new : ADT; source : ADT; start, end : INTEGER );
-
-(* supported use cases *)
-
-NEW array := source;
-
-NEW array := source[n..m];
-
-
-(* binding #3 : when implementing concatenation and slicing ... *)
-
-PROCEDURE [NEW+] newWithArraysOrSlices
-  ( VAR new : ADT;
-    initWith : ARGLIST OF { array : ADT; start, end : INTEGER } );
-
-(* supported use cases *)
-
-NEW array := source1 +> source2 +> ... ;
-
-NEW array := source1[n..m] +> source2 +> ... ;
-
-NEW array := source1[n..m] +> source2[p..q] +> ... ;
-
-
-(* binding #4 : when implementing concatenation and slicing ... *)
-
-PROCEDURE [NEW++] newWithArrayExpression
-  ( VAR new : ADT;
-    initWith : ARGLIST OF
-      { array : ADT; start, end : INTEGER; values : ARRAY OF ValueType } );
-
-(* supported use cases *)
-
-NEW array := source +> { val1, val2, val3, ... } +> ... ;
-
-NEW array := { val1, val2, val3, ... } +> source +> ... ;
-
-NEW array := source[n..m] +> { val1, val2, val3, ... } +> ... ;
-
-NEW array := { val1, val2, val3, ... } +> source[n..m] +> ... ;
+NEW array OF size;
 
 
 (* Copying *)
@@ -313,7 +261,9 @@ NEW array := { val1, val2, val3, ... } +> source[n..m] +> ... ;
 
 PROCEDURE [COPY] copyValues ( VAR target : ADT; values : ARGLIST OF ValueType );
 
-(* supported use case *)
+(* supported use cases *)
+
+NEW target := { val1, val2, val3, ... };
 
 COPY target := { val1, val2, val3, ... };
 
@@ -322,7 +272,9 @@ COPY target := { val1, val2, val3, ... };
 
 PROCEDURE [COPY*] copyArray ( VAR target : ADT; source : ADT );
 
-(* supported use case *)
+(* supported use cases *)
+
+NEW target := source;
 
 COPY target := source;
 
@@ -334,7 +286,11 @@ PROCEDURE [COPY*] copyArrayOrSlice
 
 (* supported use cases *)
 
+NEW target := source;
+
 COPY target := source;
+
+NEW target := source[n..m];
 
 COPY target := source[n..m];
 
@@ -347,9 +303,15 @@ PROCEDURE [COPY+] copyArraysOrSlices
 
 (* supported use cases *)
 
+NEW target := source1 +> source2 +> ... ;
+
 COPY target := source1 +> source2 +> ... ;
 
+NEW target := source1[n..m] +> source2 +> ... ;
+
 COPY target := source1[n..m] +> source2 +> ... ;
+
+NEW target := source1[n..m] +> source2[p..q] +> ... ;
 
 COPY target := source1[n..m] +> source2[p..q] +> ... ;
 
@@ -363,11 +325,19 @@ PROCEDURE [COPY++] copyArrayExpression
 
 (* supported use cases *)
 
+NEW target := source +> { val1, val2, val3, ... } +> ... ;
+
 COPY target := source +> { val1, val2, val3, ... } +> ... ;
+
+NEW target := { val1, val2, val3, ... } +> source +> ... ;
 
 COPY target := { val1, val2, val3, ... } +> source +> ... ;
 
+NEW target := source[n..m] +> { val1, val2, val3, ... } +> ... ;
+
 COPY target := source[n..m] +> { val1, val2, val3, ... } +> ... ;
+
+NEW target := { val1, val2, val3, ... } +> source[n..m] +> ... ;
 
 COPY target := { val1, val2, val3, ... } +> source[n..m] +> ... ;
 
@@ -524,8 +494,6 @@ COPY target[n..m] := function(arrayExpression);
 
 PROCEDURE [ARRAY] convertBuiltinArray
   ( VAR array : ADT; CONST from : ARRAY OF ValueType );
-(* If array is NIL upon entry, a newly allocated instance will
-   be passed back. Otherwise, it will be destructively updated. *)
 
 (* supported use cases *)
 
@@ -539,8 +507,6 @@ COPY target := builtinArray;
 PROCEDURE [ARRAY] convertBuiltinArrayOrSlice
   ( VAR array : ADT;
     CONST from : ARRAY OF ValueType; start, end : INTEGER );
-(* If array is NIL upon entry, a newly allocated instance will
-   be passed back. Otherwise, it will be destructively updated. *)
 
 (* supported use cases *)
 
@@ -634,20 +600,26 @@ array := function(arrayExpression);
    array := function(temp); ADT.release(temp);
 
 
-(* Allocation / Non-destructive Copying *)
+(* Allocation *)
 
 (* without initialisation *)
 
 NEW array;
 
-=> ADT.new(array);
+=> ADT.new(array, 0);
+
+NEW array OF size;
+
+=> ADT.new(array, size);
 
 
 (* allocate and initialise with values *)
 
 NEW array := { val1, val2, val3, ... };
  
-=> ADT.new(array, val1, val2, val3, ...);
+=> IF array # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(array, valueCount);
+   ADT.copyValues(array, val1, val2, val3, ...);
 
 
 (* allocate and initialise with array *)
@@ -656,27 +628,38 @@ NEW array := source;
 
 (* if concatenation and slicing is not implemented ... *)
 
-=> ADT.newWithArray(array, source);
+=> IF array # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(array, COUNT(source)); ADT.copyArray(array, source);
 
 (* if concatenation and slicing is implemented ... *)
 
-=> ADT.newWithArrayOrSlice(array, source, 0, -1);
+=> IF array # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(array, COUNT(source));
+   ADT.copyArrayOrSlice(array, source, 0, -1);
 
 
 (* allocate and initialise with concatenation of arrays *)
 
 NEW array := source1 +> source2 +> ... ;
 
-=> ADT.newWithArraysOrSlices(
+=> IF array # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(array, COUNT(source1) + COUNT(source2) + ...);
+   ADT.copyArraysOrSlices(
     (* L-value *) array,
     (* R-value *) source1, 0, -1, source2, 0, -1, ...);
+
+
+PROCEDURE SLSIZE ( var : ADT; from, to : INTEGER ) : LONGCARD;
 
 
 (* allocate and initialise with concatenation of arrays and slices *)
 
 NEW array := source1[n..m] +> source2[p..q] +> source3 +> ... ;
 
-=> ADT.newWithArraysOrSlices(
+=> IF array # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   reqSize := MinReqSize(source1, n, m, source2, p, q, source3, 0, -1, ...);
+   ADT.new(array, reqSize);
+   ADT.copyArraysOrSlices(
     (* L-value *) array,
     (* R-value *) source1, n, m, source2, p, q, source3, 0, -1, ...);
 
@@ -685,7 +668,10 @@ NEW array := source1[n..m] +> source2[p..q] +> source3 +> ... ;
 
 NEW array := source1[n..m] +> source2 +> { val1, val2, val3, ... } +> ... ;
 
-=> ADT.newWithArrayExpression(
+=> IF array # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   reqSize := MinReqSize(source1, m, n, source2, 0, -1, ...) + valueCount;
+   ADT.new(array, reqSize);
+   ADT.newWithArrayExpression(
     (* L-value *) array,
     (* R-value *) source1, n, m, { },
                   source2, 0, -1, { val1, val2, val3, ... }, ... );
@@ -695,11 +681,16 @@ NEW array := source1[n..m] +> source2 +> { val1, val2, val3, ... } +> ... ;
 
 NEW array := function(arrayExpression);
 
-=> VAR temp : ADT;
+=> VAR temp, result : ADT;
+   IF array # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
    (* prepare argument *)
    temp := arrayExpression;
-   (* call function and create array with result *)
-   ADT.newWithArray(array, function(temp)); ADT.release(temp);
+   (* call function and release argument *)
+   result := function(temp); ADT.release(temp);
+   (* allocate new array *)
+   ADT.new(array, COUNT(result));
+   (* copy and release result *)
+   ADT.copyArray(array, result); ADT.release(result);
 
 
 (* Destructive Copying *)
@@ -920,11 +911,13 @@ NEW array := builtinArray;
 (* if concatenation and slicing is not implemented ... *)
 
 => IF array # NIL THEN RaiseRuntimeFault(allocTargetNotNil) END;
+   ADT.new(array, COUNT(builtinArray));
    ADT.convertBuiltinArray(array, builtinArray);
 
 (* if concatenation and slicing is implemented ... *)
 
 => IF array # NIL THEN RaiseRuntimeFault(allocTargetNotNil) END;
+   ADT.new(array, COUNT(builtinArray));
    ADT.convertBuiltinArrayOrSlice(array, builtinArray, 0, -1);
 
 
@@ -948,6 +941,8 @@ COPY target := builtinArray;
 NEW array := builtinArray[n..m];
 
 => IF array # NIL THEN RaiseRuntimeFault(allocTargetNotNil) END;
+   reqSize := MinReqSize(builtinArray, n, m);
+   ADT.new(array, reqSize);
    ADT.convertBuiltinArrayOrSlice(array, builtinArray, n, m);
 
 
