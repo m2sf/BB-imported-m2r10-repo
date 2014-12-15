@@ -6,7 +6,7 @@
    and removal operations of dynamic string ADTs, required bindings and
    resulting compile time transformations. *)
 
-(* Status: Dec 10, 2014 *)
+(* Status: Dec 15, 2014 *)
 
 
 (* =======================
@@ -29,11 +29,15 @@ string := source;
 string := function(stringExpression);
 
 
-(* Allocation / Non-destructive Copying *)
+(* Allocation *)
 
 (* without initialisation *)
 
+(* mutables only *)
+
 NEW string;
+
+NEW string OF size;
 
 (* allocate and initialise with string literal *)
 
@@ -264,90 +268,13 @@ REMOVE(target, 0, -1);
 
 (* Allocation *)
 
-(* binding #1 (a) : when not implementing concatenation and slicing ... *)
-
-PROCEDURE [NEW] new ( VAR newStr : ADT; CONST aoc : ARRAY OF CHAR );
+PROCEDURE [NEW] new ( VAR newStr : ADT; initialSize : LONGCARD );
 
 (* supported use cases *)
 
 NEW string;
 
-NEW string := "abc";
-
-NEW string := aoc;
-
-NEW string := { char1, char2, char3, ... };
-
-
-(* binding #1 (b) : when implementing concatenation and slicing ... *)
-
-PROCEDURE [NEW] new
-  ( VAR newStr : ADT; CONST aoc : ARRAY OF CHAR; aocStart, aocEnd : INTEGER );
-
-(* supported use cases *)
-
-NEW string;
-
-NEW string := "abc";
-
-NEW string := aoc;
-
-NEW string := aoc[n..m];
-
-NEW string := { char1, char2, char3, ... };
-
-
-(* binding #2 (a) : when not implementing concatenation and slicing ... *)
-
-PROCEDURE [NEW*] newWithString ( VAR new : ADT; source : ADT );
-
-(* supported use case *)
-
-NEW string := source;
-
-
-(* binding #2 (b) : when implementing concatenation and slicing ... *)
-
-PROCEDURE [NEW*] newWithStringOrSlice
-  ( VAR new : ADT; source : ADT; start, end : INTEGER );
-
-(* supported use cases *)
-
-NEW string := source;
-
-NEW string := source[n..m];
-
-
-(* binding #3 : when implementing concatenation and slicing ... *)
-
-PROCEDURE [NEW+] newWithStringsOrSlices
-  ( VAR new : ADT;
-    initWith : ARGLIST OF { string : ADT; start, end : INTEGER } );
-
-(* supported use cases *)
-
-NEW string := source1 + source2 + ... ;
-
-NEW string := source1[n..m] + source2 + ... ;
-
-NEW string := source1[n..m] + source2[p..q] + source3 ... ;
-
-
-(* binding #4 : when implementing concatenation and slicing ... *)
-
-PROCEDURE [NEW++] newWithStringExpression
-  ( VAR new : ADT;
-    initWith : ARGLIST OF
-      { string : ADT; strStart, strEnd : INTEGER;
-        CONST aoc : ARRAY OF CHAR; aocStart, aocEnd : INTEGER } );
-
-(* supported use cases *)
-
-NEW string := source + "abc" + aoc + ... ;
-
-NEW string := source1[n..m] + source2 + "abc" + aoc + ... ;
-
-NEW string := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
+NEW string OF size;
 
 
 (* Copying *)
@@ -358,9 +285,15 @@ PROCEDURE [COPY] copyAOC ( VAR target : ADT; CONST aoc : ARRAY OF CHAR );
 
 (* supported use cases *)
 
+NEW target := "abc";
+
 COPY target := "abc";
 
+NEW target := aoc;
+
 COPY target := aoc;
+
+NEW target := { char1, char2, char3, ... };
 
 COPY target := { char1, char2, char3, ... };
 
@@ -372,11 +305,19 @@ PROCEDURE [COPY] copyAOCorSlice
 
 (* supported use cases *)
 
+NEW target := "abc";
+
 COPY target := "abc";
+
+NEW target := aoc;
 
 COPY target := aoc;
 
+NEW target := aoc[n..m];
+
 COPY target := aoc[n..m];
+
+NEW target := { char1, char2, char3, ... };
 
 COPY target := { char1, char2, char3, ... };
 
@@ -385,7 +326,9 @@ COPY target := { char1, char2, char3, ... };
 
 PROCEDURE [COPY*] copyString ( VAR target : ADT; source : ADT );
 
-(* supported use case *)
+(* supported use cases *)
+
+NEW target := source;
 
 COPY target := source;
 
@@ -397,7 +340,11 @@ PROCEDURE [COPY*] copyStringOrSlice
 
 (* supported use cases *)
 
+NEW target := source;
+
 COPY target := source;
+
+NEW target := source[n..m];
 
 COPY target := source[n..m];
 
@@ -410,9 +357,15 @@ PROCEDURE [COPY+] copyStringsOrSlices
 
 (* supported use cases *)
 
+NEW target := source1 + source2 + ... ;
+
 COPY target := source1 + source2 + ... ;
 
+NEW target := source1[n..m] + source2 + ... ;
+
 COPY target := source1[n..m] + source2 + ... ;
+
+NEW target := source1[n..m] + source2[p..q] + source3 ... ;
 
 COPY target := source1[n..m] + source2[p..q] + source3 ... ;
 
@@ -427,9 +380,15 @@ PROCEDURE [COPY++] copyStringExpression
 
 (* supported use cases *)
 
+NEW target := source + "abc" + aoc + ... ;
+
 COPY target := source + "abc" + aoc + ... ;
 
+NEW target := source1[n..m] + source2 + "abc" + aoc + ... ;
+
 COPY target := source1[n..m] + source2 + "abc" + aoc + ... ;
+
+NEW target := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
 
 COPY target := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
 
@@ -657,13 +616,15 @@ string := function(stringExpression);
    string := function(temp); ADT.release(temp);
 
 
-(* Allocation / Non-destructive Copying *)
-
-(* without initialisation *)
+(* Allocation *)
 
 NEW string;
 
-=> ADT.new(string);
+=> ADT.new(string, 0);
+
+NEW string OF size;
+
+=> ADT.new(string, size);
 
 
 (* allocate and initialise with string literal *)
@@ -672,11 +633,15 @@ NEW string := "abc";
 
 (* if concatenation and slicing is not implemented ... *)
 
-=> ADT.new(string, "abc");
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(string, LENGTH("abc"));
+   ADT.copyAOC(string, "abc");
 
 (* if concatenation and slicing is implemented ... *)
 
-=> ADT.new(string, "abc", 0, -1);
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(string, LENGTH("abc"));
+   ADT.copyAOCOrSlice(string, "abc", 0, -1);
 
 
 (* allocate and initialise with ARRAY OF CHAR value *)
@@ -685,11 +650,15 @@ NEW string := aoc;
 
 (* if concatenation and slicing is not implemented ... *)
 
-=> ADT.new(string, aoc);
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(string, LENGTH(aoc));
+   ADT.copyAOC(string, aoc);
 
 (* if concatenation and slicing is implemented ... *)
 
-=> ADT.new(string, aoc, 0, -1);
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(string, LENGTH(aoc));
+   ADT.copyAOC(string, aoc, 0, -1);
 
 
 (* allocate and initialise with string *)
@@ -698,32 +667,42 @@ NEW string := source;
 
 (* if concatenation and slicing is not implemented ... *)
 
-=> ADT.newWithString(string, source);
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(string, LENGTH(source));
+   ADT.copyString(string, source);
 
 (* if concatenation and slicing is implemented ... *)
 
-=> ADT.newWithStringOrSlice(string, source, 0, -1);
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(string, LENGTH(source));
+   ADT.copyString(string, source, 0, -1);
 
 
 (* allocate and initialise with ARRAY OF CHAR slice *)
 
 NEW string := aoc[n..m];
 
-=> ADT.new(string, aoc, n, m);
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(string, MinReqSize(aoc, n, m));
+   ADT.copyString(string, aoc, n, m);
 
 
 (* allocate and initialise with string slice *)
 
 NEW string := source[n..m];
 
-=> ADT.newWithStringOrSlice(string, source, n, m);
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(string, MinReqSize(source, n, m));
+   ADT.copyString(string, source, n, m);
 
 
 (* allocate and initialise with concatenation of strings *)
 
 NEW string := source1 + source2 + ... ;
 
-=> ADT.newWithStringsOrSlices(
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   ADT.new(string, LENGTH(source1) + LENGTH(source2) + ...);
+   ADT.copyStringsOrSlices(
     (* L-value *) string,
     (* R-value *) source1, 0, -1, source2, 0, -1, ... );
 
@@ -731,7 +710,10 @@ NEW string := source1 + source2 + ... ;
 
 NEW string := source1[n..m] + source2[p..q] + source3 + ... ;
 
-=> ADT.newWithStringsOrSlices(
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   reqSize := MinReqSize(source1, n, m, source2, p, q, source3, 0, -1, ...);
+   ADT.new(string, reqSize);
+   ADT.copyStringsOrSlices(
     (* L-value *) string,
     (* R-value *) source1, n, m, source2, p, q, source3, 0, -1, ... );
 
@@ -741,7 +723,11 @@ NEW string := source1[n..m] + source2[p..q] + source3 + ... ;
 
 NEW string := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
 
-=> ADT.newWithStringExpression(
+=> IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
+   reqSize :=
+     MinReqSize(source1, n, m, source2, 0, -1, aoc, p, q, ...) + LENGTH("abc");
+   ADT.new(string, reqSize);
+   ADT.copyStringExpression(
     (* L-value *) string,
     (* R-value *) source1, n, m, "", 0, 0,
                   source2, 0, -1, "abc",
@@ -752,11 +738,16 @@ NEW string := source1[n..m] + source2 + "abc" + aoc[p..q] + ... ;
 
 NEW string := function(stringExpression);
 
-=> VAR temp : ADT;
+=> VAR temp, result : ADT;
+   IF string # NIL THEN RaiseRuntimeFault(formalNewParamNotNil) END;
    (* prepare argument *)
    temp := stringExpression;
-   (* call function and create string with result *)
-   ADT.newWithString(string, function(temp)); ADT.release(temp);
+   (* call function and release argument *)
+   result := function(temp); ADT.release(temp);
+   (* allocate new array *)
+   ADT.new(string, LENGTH(result));
+   (* copy and release result *)
+   ADT.copyString(string, result); ADT.release(result);
 
 
 (* Destructive Copying *)
