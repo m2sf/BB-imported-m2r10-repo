@@ -74,10 +74,10 @@ The developer of GNU Modula-2 has pledged to add support for Modula-2 R10 in GM2
 
 This project is a  *private*  and  *self-funded*  effort by the authors who are
 doing this work in their own *spare* *time*.  Further, the authors believe that
-quality design  and proper specification are prerequisites for a quality imple-
-mentation and cannot be rushed.  The finalisation  of the  manuscripts  for the
-book and library - currently estimated for Jan/Feb of 2015 - will allow shifting
-of focus to the compiler implementation,  but at present there is
+quality design  and proper specification are prerequisites for a quality
+implementation and cannot be rushed.  The finalisation  of the  manuscripts
+for the book and library - currently estimated for Jan/Feb of 2015 - will allow
+shifting of focus to the compiler implementation,  but at present there is
 *no fixed schedule* for the completion of the compiler.
 
 Please consider [making a donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QA4WRY9TW7GT4) to speed up the development work.
