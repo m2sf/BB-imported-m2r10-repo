@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 10, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 22, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -30,11 +30,11 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 50 reserved words, 25 identifiers, 23 pragma symbols
+// 49 reserved words, 25 identifiers, 23 pragma symbols
 
 tokens {
 	
-// *** Reserved Words, 50 tokens ***
+// *** Reserved Words, 49 tokens ***
 
     ALIAS          = 'ALIAS';
     AND            = 'AND';            /* also a RW within pragmas */
@@ -47,10 +47,8 @@ tokens {
     CONST          = 'CONST';
     COPY           = 'COPY';
     DEFINITION     = 'DEFINITION';
-    DESCENDING     = 'DESCENDING';
     DIV            = 'DIV';            /* also a RW within pragmas */
     DO             = 'DO';
-    DOT            = 'DOT';
     ELSE           = 'ELSE';           /* also a RW within pragma */
     ELSIF          = 'ELSIF';          /* also a RW within pragma */
     END            = 'END';
@@ -63,6 +61,7 @@ tokens {
     IMPORT         = 'IMPORT';
     IN             = 'IN';
     INDETERMINATE  = 'INDETERMINATE';
+    LITERAL        = 'LITERAL';
     LOOP           = 'LOOP';
     MOD            = 'MOD';            /* also a RW within pragmas */
     MODULE         = 'MODULE';
@@ -89,16 +88,16 @@ tokens {
 
 // *** Dual-Use RW-Identifiers, 2 tokens ***
 
-//  CAST and NIL are both identifiers and Reserved Words
-//  Ambiguity is resolvable using the Schroedinger's Token technique
+//  The following tokens are identifiers or RWs depending on context.
+//  The ambiguity is resolvable using the Schroedinger's Token technique.
 
     CAST           = 'CAST';           /* RW within formal parameter */
-    NIL            = 'NIL';            /* RW within blueprint */
+    NONE           = 'NONE';           /* RW within blueprint */
 
-// *** Bindable Identifiers, 23 tokens ***
+// *** Bindable Dual-Use RW-Identifiers, 23 tokens ***
 
-//  Bindable Identifiers are both Identifiers and Reserved Words
-//  Ambiguity is resolvable using the Schroedinger's Token technique
+//  The following tokens are identifiers or RWs depending on context.
+//  The ambiguity is resolvable using the Schroedinger's Token technique.
 
     TLIMIT         = 'TLIMIT';         /* RW within blueprint reqConst */
     TSIGNED        = 'TSIGNED';        /* RW within blueprint reqConst */
@@ -227,9 +226,14 @@ blueprintForTypeToExtend : blueprintIdent ;
 
 // production #5
 moduleTypeRequirement :
-    MODULE TYPE
-      ( '=' ( OPAQUE | RECORD | '*' )
-        ( ':=' protoLiteral ( '|' protoLiteral )* )? | ':' NIL )
+    MODULE TYPE '=' ( OPAQUE | RECORD | NONE )
+      ( ';' LITERAL '=' protoLiteral ( '|' protoLiteral )* )?
+    ;
+
+// production #5 (Possible Alternative)
+moduleTypeRequirement2 :
+    MODULE TYPE '=' ( OPAQUE | RECORD | NONE )
+      ( ';' '$' '=' protoLiteral ( '|' protoLiteral )* )?
     ;
 
 // fragment #5.1
@@ -265,13 +269,8 @@ constOrTypeOrProcRequirement :
 // production #8
 constRequirement :
     CONST (
-    ( '[' constBindableProperty ']' ( simpleConstRequirement | ':' NIL )? |
+    ( '[' ConstBindableIdent ']' ( simpleConstRequirement | '=' NONE )? |
       restrictedExport? simpleConstRequirement )
-    ;
-
-// fragment #8.1
-constBindableProperty :
-    DESCENDING | ConstBindableIdent
     ;
 
 // production #9
@@ -289,7 +288,7 @@ predefOrRefTypeIdent : Ident ;
 procedureRequirement :
     PROCEDURE (
     ( restrictedExport? procedureSignature ) |
-    ( '[' procBindableEntity ']' ( procedureSignature | ':' NIL )? ) )
+    ( '[' procBindableEntity ']' ( procedureSignature | '=' NONE )? ) )
     ;
 
 // alias #10.1
@@ -297,14 +296,14 @@ restrictedExport : '*' ;
 
 // fragment #10.2
 procBindableEntity :
-    '+' | '-' | '*' | '/' | '=' | '<' | '>' | '::' | ':=' |
-    ARRAY | RETAIN | RELEASE | IN | FOR | DIV | MOD | DOT |
+    '+' | '-' | '*' | '/' | '*.' | '=' | '<' | '>' | '::' | ':=' |
+    BACKSLASH | ARRAY | NEW | RETAIN | RELEASE | IN | FOR | DIV | MOD |
     procMultiBindableEntity | ProcBindableIdent
     ;
 
 // fragment #10.3
 procMultiBindableEntity :
-    ( '..' | NEW | COPY | ProcMultiBindableIdent ) bindingSelector?
+    ( '..' | COPY | ProcMultiBindableIdent ) bindingSelector?
     ;
 
 // fragment #10.4
@@ -568,7 +567,8 @@ statementSequence :
 
 // production #40
 assignmentOrProcedureCall :
-    NEW designator ( ':=' expression )? | COPY designator ':=' expression |
+    COPY designator ':=' expression |
+    NEW designator ( ( ':=' | OF ) expression )? |
     designator ( ':=' expression | incOrDecSuffix | actualParameters )?
     ;
 
@@ -620,13 +620,16 @@ loopStatement :
 
 // production #48
 forStatement :
-    FOR DESCENDING? controlVariable
+    FOR controlVariable iterationOrder?
     IN ( designator | range OF typeIdent )
     DO statementSequence END
     ;
 
 // alias #48.1
 controlVariable : Ident ;
+
+// fragment #48.2
+iterationOrder : '++' | '--' ;
 
 // production #49
 designator :
@@ -645,9 +648,10 @@ exprListOrSlice :
     expression ( ( ',' expression )+ | '..' expression? )?
     ;
 
+/* Operator Precedence Level 1 */
+
 // production #52
 expression :
-/* represents operator precedence level 1 */
     simpleExpression ( op1 simpleExpression )?
     ;
 
@@ -657,9 +661,10 @@ op1 :
     {} /* make ANTLRworks display separate branches */
     ;
 
+/* Operator Precedence Level 2 */
+
 // production #53
 simpleExpression :
-/* represents operator precedence level 2 */
     ( '+' | '-' {})? term ( op2 term )*
     ;
 
@@ -669,27 +674,30 @@ op2 :
     {} /* make ANTLRworks display separate branches */
 	;
 
+/* Operator Precedence Level 3 */
+
 // production #54
 term :
-/* represents operator precedence level 3 */
     factorOrNegation ( op3 factorOrNegation )*
     ;
 
 // fragment #54.1
 op3 :
-    '*' | '/' | BACKSLASH | DIV | MOD | AND | DOT
+    '*' | '/' | '*.' | BACKSLASH | DIV | MOD | AND
     {} /* make ANTLRworks display separate branches */
     ;
 
+/* Operator Precedence Level 4 */
+
 // production #55
 factorOrNegation :
-/* represents operator precedence level 4 */
     NOT? factor
     ;
 
+/* Operator Precedence Level 5 */
+
 // production #56
 factor :
-/* represents operator precedence level 5 */
     simpleFactor ( '::' typeIdent )?
     ;
 
@@ -1017,11 +1025,11 @@ inPragmaCompileTimeFunctionCall :
 // production #1
 ReservedWord :
     ALIAS | AND | ARGLIST | ARRAY | BEGIN | BLUEPRINT | BY | CASE | CONST |
-    DEFINITION | DESCENDING | DIV | DO | ELSE | ELSIF | END | EXIT | FOR |
-    FROM | GENLIB | IF | IMPLEMENTATION | IMPORT | IN | INDETERMINATE | LOOP |
-    MOD | MODULE | NOT | OF | OPAQUE | OR | POINTER | PROCEDURE | RECORD |
-    REFERENTIAL | REPEAT | RETURN | SET | THEN | TO | TYPE | UNTIL | VAR |
-    WHILE
+    COPY | DEFINITION | DIV | DO | ELSE | ELSIF | END | EXIT | FOR | FROM |
+    GENLIB | IF | IMPLEMENTATION | IMPORT | IN | INDETERMINATE | LITERAL |
+    LOOP | MOD | MODULE | NEW | NOT | OF | OPAQUE | OR | POINTER | PROCEDURE |
+    RECORD | REFERENTIAL | RELEASE | REPEAT | RETAIN | RETURN | SET | THEN |
+    TO | TYPE | UNTIL | VAR | WHILE
     ;
 
 // production #2
@@ -1043,7 +1051,7 @@ IdentTail :
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 ConstBindableIdent :  /* Ident */
-    NIL | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
+    NIL | TLIMIT | TNAITR | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
     {} /* make ANTLRworks display separate branches */
 	;
 
