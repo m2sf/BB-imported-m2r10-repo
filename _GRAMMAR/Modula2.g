@@ -30,7 +30,7 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 49 reserved words, 25 identifiers, 23 pragma symbols
+// 49 reserved words, 2 dual-use tokens, 25 identifiers, 23 pragma symbols
 
 tokens {
 	
@@ -94,11 +94,13 @@ tokens {
     CAST           = 'CAST';           /* RW within formal parameter */
     NONE           = 'NONE';           /* RW within blueprint */
 
-// *** Bindable Dual-Use RW-Identifiers, 23 tokens ***
+// *** Bindable Dual-Use RW-Identifiers, 25 tokens ***
 
 //  The following tokens are identifiers or RWs depending on context.
 //  The ambiguity is resolvable using the Schroedinger's Token technique.
 
+    TNIL           = 'TNIL';           /* RW within blueprint reqConst */
+    TBIDI          = 'TBIDI';          /* RW within blueprint reqConst */
     TLIMIT         = 'TLIMIT';         /* RW within blueprint reqConst */
     TSIGNED        = 'TSIGNED';        /* RW within blueprint reqConst */
     TBASE          = 'TBASE';          /* RW within blueprint reqConst */
@@ -1051,7 +1053,7 @@ IdentTail :
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 ConstBindableIdent :  /* Ident */
-    NIL | TLIMIT | TNAITR | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
+    TNIL | TBIDI | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
     {} /* make ANTLRworks display separate branches */
 	;
 
