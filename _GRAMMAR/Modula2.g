@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 22, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 25, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -30,11 +30,11 @@ options {
 // ---------------------------------------------------------------------------
 // T O K E N   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 49 reserved words, 2 dual-use tokens, 25 identifiers, 23 pragma symbols
+// 50 reserved words, 26 dual-use identifiers, 23 pragma symbols
 
 tokens {
 	
-// *** Reserved Words, 49 tokens ***
+// *** Reserved Words, 50 tokens ***
 
     ALIAS          = 'ALIAS';
     AND            = 'AND';            /* also a RW within pragmas */
@@ -66,6 +66,7 @@ tokens {
     MOD            = 'MOD';            /* also a RW within pragmas */
     MODULE         = 'MODULE';
     NEW            = 'NEW';
+    NONE           = 'NONE';
     NOT            = 'NOT';            /* also a RW within pragmas */
     OF             = 'OF';
     OPAQUE         = 'OPAQUE';
@@ -86,45 +87,45 @@ tokens {
     VAR            = 'VAR';
     WHILE          = 'WHILE';
 
-// *** Dual-Use RW-Identifiers, 2 tokens ***
+// *** Dual-Use Identifiers, 26 tokens ***
 
-//  The following tokens are identifiers or RWs depending on context.
+//  The following identifiers may be used as RWs depending on context.
 //  The ambiguity is resolvable using the Schroedinger's Token technique.
 
-    CAST           = 'CAST';           /* RW within formal parameter */
-    NONE           = 'NONE';           /* RW within blueprint */
+/* Identifier CAST is used like an RW within a formal parameter list */
 
-// *** Bindable Dual-Use RW-Identifiers, 25 tokens ***
+    CAST           = 'CAST';
 
-//  The following tokens are identifiers or RWs depending on context.
-//  The ambiguity is resolvable using the Schroedinger's Token technique.
+/* Identifiers that are used like RWs within bound constant declarations */
 
-    TNIL           = 'TNIL';           /* RW within blueprint reqConst */
-    TBIDI          = 'TBIDI';          /* RW within blueprint reqConst */
-    TLIMIT         = 'TLIMIT';         /* RW within blueprint reqConst */
-    TSIGNED        = 'TSIGNED';        /* RW within blueprint reqConst */
-    TBASE          = 'TBASE';          /* RW within blueprint reqConst */
-    TPRECISION     = 'TPRECISION';     /* RW within blueprint reqConst */
-    TMINEXP        = 'TMINEXP';        /* RW within blueprint reqConst */
-    TMAXEXP        = 'TMAXEXP';        /* RW within blueprint reqConst */
+    TNIL           = 'TNIL';
+    TBIDITR        = 'TBIDITR';
+    TLIMIT         = 'TLIMIT';
+    TSIGNED        = 'TSIGNED';
+    TBASE          = 'TBASE';
+    TPRECISION     = 'TPRECISION';
+    TMINEXP        = 'TMINEXP';
+    TMAXEXP        = 'TMAXEXP';
 
-    ABS            = 'ABS';            /* RW within procedure header */
-    NEG            = 'NEG';            /* RW within procedure header */
-    COUNT          = 'COUNT';          /* RW within procedure header */
-    LENGTH         = 'LENGTH';         /* RW within procedure header */
-    STORE          = 'STORE';          /* RW within procedure header */
-    RETRIEVE       = 'RETRIEVE';       /* RW within procedure header */
-    INSERT         = 'INSERT';         /* RW within procedure header */
-    REMOVE         = 'REMOVE';         /* RW within procedure header */
-    SUBSET         = 'SUBSET';         /* RW within procedure header */
-    READ           = 'READ';           /* RW within procedure header */
-    READNEW        = 'READNEW';        /* RW within procedure header */
-    WRITE          = 'WRITE';          /* RW within procedure header */
-    WRITEF         = 'WRITEF';         /* RW within procedure header */
-    TMAX           = 'TMAX';           /* RW within procedure header */
-    TMIN           = 'TMIN';           /* RW within procedure header */
-    SXF            = 'SXF';            /* RW within procedure header */
-    VAL            = 'VAL';            /* RW within procedure header */
+/* Identifiers that are used like RWs within bound procedure headers */
+
+    ABS            = 'ABS';
+    NEG            = 'NEG';
+    COUNT          = 'COUNT';
+    LENGTH         = 'LENGTH';
+    STORE          = 'STORE';
+    RETRIEVE       = 'RETRIEVE';
+    INSERT         = 'INSERT';
+    REMOVE         = 'REMOVE';
+    SUBSET         = 'SUBSET';
+    READ           = 'READ';
+    READNEW        = 'READNEW';
+    WRITE          = 'WRITE';
+    WRITEF         = 'WRITEF';
+    TMAX           = 'TMAX';
+    TMIN           = 'TMIN';
+    SXF            = 'SXF';
+    VAL            = 'VAL';
 
 // *** Reserved Words of the Pragma Language, 23 tokens ***
 
@@ -501,7 +502,7 @@ simpleFormalType :
 
 // production #32
 variadicFormalType :
-    ARGLIST numberOfArgumentsToPass? OF
+    ARGLIST ( '>'? numberOfArgumentsToPass )? OF
     ( attributedFormalType |
       '{' attributedFormalType ( ',' attributedFormalType )* '}' )
     ( '|' variadicTerminator )?
@@ -540,7 +541,7 @@ simpleFormalParams :
 
 // production #37
 variadicFormalParams :
-    ARGLIST numberOfArgumentsToPass? OF
+    ARGLIST ( '>'? numberOfArgumentsToPass )? OF
     ( simpleFormalType |
       '{' simpleFormalParams ( ';' simpleFormalParams )* '}' )
     ( '|' variadicTerminator )? ;    ;
@@ -711,18 +712,22 @@ simpleFactor :
 
 // production #58
 designatorOrFunctionCall :
-    designator actualParameters?
+    designator ( '(' actualParamList? ')' )?
     ;
 
 // production #59
-actualParameters :
-    '(' expressionList? ')'
+actualParamList :
+    actualParameter ( ',' actualParameter )*
     ;
 
-// production #60
-expressionList :
-    expression ( ',' expression )*
+// fragment #59.1
+actualParameter :
+    expression | omission
     ;
+
+// alias #59.2
+omission : '*' ;
+
 
 // *** Structured Values ***
 
@@ -1029,9 +1034,9 @@ ReservedWord :
     ALIAS | AND | ARGLIST | ARRAY | BEGIN | BLUEPRINT | BY | CASE | CONST |
     COPY | DEFINITION | DIV | DO | ELSE | ELSIF | END | EXIT | FOR | FROM |
     GENLIB | IF | IMPLEMENTATION | IMPORT | IN | INDETERMINATE | LITERAL |
-    LOOP | MOD | MODULE | NEW | NOT | OF | OPAQUE | OR | POINTER | PROCEDURE |
-    RECORD | REFERENTIAL | RELEASE | REPEAT | RETAIN | RETURN | SET | THEN |
-    TO | TYPE | UNTIL | VAR | WHILE
+    LOOP | MOD | MODULE | NEW | NONE | NOT | OF | OPAQUE | OR | POINTER |
+    PROCEDURE | RECORD | REFERENTIAL | RELEASE | REPEAT | RETAIN | RETURN |
+    SET | THEN | TO | TYPE | UNTIL | VAR | WHILE
     ;
 
 // production #2
@@ -1053,7 +1058,7 @@ IdentTail :
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 ConstBindableIdent :  /* Ident */
-    TNIL | TBIDI | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
+    TNIL | TBIDITR | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
     {} /* make ANTLRworks display separate branches */
 	;
 
