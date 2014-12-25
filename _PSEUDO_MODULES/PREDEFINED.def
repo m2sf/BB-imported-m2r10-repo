@@ -74,8 +74,8 @@ PROCEDURE STORE
 PROCEDURE INSERT
   ( VAR target : <Array>;
     index : <IndexType>; values : ARGLIST >0 OF <ValueType> );
-(* INSERT(array, index, v1, v2, v3, ...)
-   => insert values v1, v2, v3, ... into target array, starting at index. *)
+(* INSERT(array, index, val1, val2, val3, ...)
+   => insert values val1, val2, val3, ... at index into target array. *)
 
 PROCEDURE INSERT
   ( VAR target : <Set>;
