@@ -57,38 +57,64 @@ TYPE LONGREAL = <implementation or target dependent real number range>;
 (* Predefined proper procedures *)
 
 PROCEDURE STORE
-  ( VAR c : <Collection>; s : <SelectorType>; v : <ValueType> );
-(* STORE(c, s, v) => typeOf(c).addValueForKey(c, s, v) *)
+  ( VAR target : <Array>; index : <IndexType>; value : <ValueType> );
+(* STORE(array, index, value)
+   => store value at index in target array. *)
+
+PROCEDURE STORE
+  ( VAR target : <Set>; element : <ElementType> );
+(* STORE(set, elem)
+   => store elem in target set. *)
+
+PROCEDURE STORE
+  ( VAR target : <Dictionary>; key : <KeyType>; value : <ValueType> );
+(* STORE(dictionary, key, value)
+   => store value for key in target dictionary. *)
 
 PROCEDURE INSERT
   ( VAR target : <Array>;
-    index : <IndexType>; values : ARGLIST OF ValueType );
+    index : <IndexType>; values : ARGLIST >0 OF <ValueType> );
 (* INSERT(target, index, v1, v2, v3, ...)
    => insert values v1, v2, v3, ... into target array, starting at index. *)
 
 PROCEDURE INSERT
   ( VAR target : <Set>;
-    elements : ARGLIST OF ElementType );
-(* INSERT(target, elem1, elem2, elem3, ...)
+    elements : ARGLIST OF <ElementType> );
+(* INSERT(set, _)
+   => insert any available elements into target set.
+   
+   INSERT(set, elem1, elem2, elem3, ...)
    => insert elements elem1, elem2, elem3, ... into target set. *)
 
 PROCEDURE INSERT
   ( VAR target : <Dictionary>;
-    keysAndValues : ARGLIST >0 OF { key : KeyType; value : ValueType } );
-(* INSERT(target, key1, val1, key2, val2, key3, val3, ...)
+    keysAndValues : ARGLIST >0 OF { key : <KeyType>; value : <ValueType> } );
+(* INSERT(dictionary, key1, val1, key2, val2, key3, val3, ...)
    => insert key/value pairs
       key1, val1, key2, val2, key3, val3, ... into target dictionary. *)
 
-PROCEDURE REMOVE ( VAR target : <Array>; startIndex, endIndex : IndexType );
-(* REMOVE(array, start, end)
+PROCEDURE REMOVE
+  ( VAR target : <Array>; (*OPT*) startIndex, endIndex : <IndexType> );
+(* REMOVE(array, _)
+   => remove any values from target array.
+   
+   REMOVE(array, start, end)
    => remove values within index range [start .. end] from target array. *)
 
-PROCEDURE REMOVE ( VAR target : <Set>; elements : ARGLIST OF ElementType );
-(* REMOVE(set, elem1, elem2, elem3, ...)
+PROCEDURE REMOVE
+  ( VAR target : <Set>; elements : ARGLIST OF <ElementType> );
+(* REMOVE(set, _)
+   => remove any elements from target set.
+   
+   REMOVE(set, elem1, elem2, elem3, ...)
    => remove elements elem1, elem2, elem3, ... from target set. *)
 
-PROCEDURE REMOVE ( VAR target : <Dictionary>; keys : ARGLIST OF KeyType );
-(* REMOVE(dict, key1, key2, key3, ...)
+PROCEDURE REMOVE
+  ( VAR target : <Dictionary>; keys : ARGLIST OF <KeyType> );
+(* REMOVE(dict, _)
+   => remove any key/value pairs from target dictionary.
+   
+   REMOVE(dict, key1, key2, key3, ...)
    => remove key/value pairs with keys
       key1, key2, key3, ... from target dictionary. *)
 
@@ -122,10 +148,10 @@ PROCEDURE NEG ( x : <NumericType> ) : <OperandType>;
 PROCEDURE ODD ( x : <WholeNumberType> ) : BOOLEAN;
 (* Returns TRUE if z is odd, otherwise FALSE *)
 
-PROCEDURE PRED ( x : <OrdinalType>; (* OPT *) n : <UnsignedType> ) : <typeOf(x)>;
+PROCEDURE PRED ( x : <OrdinalType>; (*OPT*) n : <UnsignedType> ) : <typeOf(x)>;
 (* Returns n-th predecessor of x, or immediate predecessor if n is omitted *)
 
-PROCEDURE SUCC ( x : <OrdinalType>; (* OPT *) n : <UnsignedType> ) : <typeOf(x)>;
+PROCEDURE SUCC ( x : <OrdinalType>; (*OPT*) n : <UnsignedType> ) : <typeOf(x)>;
 (* Returns n-th successor of x, or immediate successor if n is omitted *)
 
 PROCEDURE ORD ( x : <OrdinalType> ) : <WholeNumberType>;
@@ -152,10 +178,10 @@ PROCEDURE RETRIEVE
   ( c : <CollectionType>; s : <ComponentType> ) : <ReturnType>;
 (* RETRIEVE(c, s) => typeOf(c, s) *)
 
-PROCEDURE MIN ( arglist : ARGLIST OF <T> ) : <T>;
+PROCEDURE MIN ( arglist : ARGLIST >0 OF <T> ) : <T>;
 (* Returns smallest value from arglist *)
 
-PROCEDURE MAX ( arglist : ARGLIST OF <T> ) : <T>;
+PROCEDURE MAX ( arglist : ARGLIST >0 OF <T> ) : <T>;
 (* Returns largest value from arglist *)
 
 PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T>;
