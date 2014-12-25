@@ -118,9 +118,13 @@ PROCEDURE REMOVE
    => remove key/value pairs with keys
       key1, key2, key3, ... from target dictionary. *)
 
-PROCEDURE SORT ( VAR result : <Array>; source : <Collection>; order : CHAR );
+PROCEDURE SORT
+  ( VAR result : <Array>; source : <Collection>; (*OPT*) order : CHAR );
 (* SORT(array, collection, "+")
-   => populate array with accessors of collection sorted by value, ascending *) 
+   => populate array with accessors of collection sorted by value, ascending
+   
+   SORT(array, collection, "-")
+   => populate array with accessors of collection sorted by value, descending *) 
 
 PROCEDURE READ ( f : File; VAR v : <AnyMutableType> );
 (* READ(f, v) => typeOf(v).Read(f, v) *)
