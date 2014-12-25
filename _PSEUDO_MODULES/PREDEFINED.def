@@ -10,7 +10,7 @@
 CONST NIL = <target dependent value>; (* usually 0 :: ADDRESS *)
 (* Invalid pointer value, compatible with all pointer types *)
 
-CONST  NULSTR = "";
+CONST NULSTR = "";
 (* Empty character array *)
 
 CONST TRUE = BOOLEAN.TRUE;
