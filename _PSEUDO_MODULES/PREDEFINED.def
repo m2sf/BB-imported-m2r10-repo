@@ -10,8 +10,8 @@
 CONST NIL = <target dependent value>; (* usually 0 :: ADDRESS *)
 (* Invalid pointer value, compatible with all pointer types *)
 
-CONST NONE = {};
-(* Empty structured literal  *)
+CONST  NULSTR = "";
+(* Empty character array *)
 
 CONST TRUE = BOOLEAN.TRUE;
 (* Boolean truth value 'true' *)
@@ -61,13 +61,36 @@ PROCEDURE STORE
 (* STORE(c, s, v) => typeOf(c).addValueForKey(c, s, v) *)
 
 PROCEDURE INSERT
-  ( VAR target : <Collection>; i : <IndexType>;
-   values : ARGLIST OF ValueType );
-(* INSERT(target, i, v1, v2, v3, ...)
-   => insert v1, v2, v3, ... into target, starting at index i. *)
+  ( VAR target : <Array>;
+    index : <IndexType>; values : ARGLIST OF ValueType );
+(* INSERT(target, index, v1, v2, v3, ...)
+   => insert values v1, v2, v3, ... into target array, starting at index. *)
 
-PROCEDURE REMOVE ( VAR c : <Collection>; s : <SelectorType> );
-(* REMOVE(c, s) => typeOf(c).removeValueForKey(c, s) *)
+PROCEDURE INSERT
+  ( VAR target : <Set>;
+    elements : ARGLIST OF ElementType );
+(* INSERT(target, elem1, elem2, elem3, ...)
+   => insert elements elem1, elem2, elem3, ... into target set. *)
+
+PROCEDURE INSERT
+  ( VAR target : <Dictionary>;
+    keysAndValues : ARGLIST OF { key : KeyType; value : ValueType } );
+(* INSERT(target, key1, val1, key2, val2, key3, val3, ...)
+   => insert key/value pairs
+      key1, val1, key2, val2, key3, val3, ... into target dictionary. *)
+
+PROCEDURE REMOVE ( VAR target : <Array>; startIndex, endIndex : IndexType );
+(* REMOVE(array, start, end)
+   => remove values within index range [start .. end] from target array. *)
+
+PROCEDURE REMOVE ( VAR target : <Set>; elements : ARGLIST OF ElementType );
+(* REMOVE(set, elem1, elem2, elem3, ...)
+   => remove elements elem1, elem2, elem3, ... from target set. *)
+
+PROCEDURE REMOVE ( VAR target : <Dictionary>; keys : ARGLIST OF KeyType );
+(* REMOVE(dict, key1, key2, key3, ...)
+   => remove key/value pairs with keys
+      key1, key2, key3, ... from target dictionary. *)
 
 PROCEDURE SORT ( VAR result : <Array>; source : <Collection>; order : CHAR );
 (* SORT(array, collection, "+")
