@@ -120,7 +120,10 @@ PROCEDURE REMOVE
 
 PROCEDURE SORT
   ( VAR result : <Array>; source : <Collection>; (*OPT*) order : CHAR );
-(* SORT(array, collection, "+")
+(* SORT(array, collection)
+   => SORT(array, collection, "+")
+   
+   SORT(array, collection, "+")
    => populate array with accessors of collection sorted by value, ascending
    
    SORT(array, collection, "-")
