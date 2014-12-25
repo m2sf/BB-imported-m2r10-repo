@@ -99,7 +99,7 @@ tokens {
 /* Identifiers that are used like RWs within bound constant declarations */
 
     TNIL           = 'TNIL';
-    TBIDITR        = 'TBIDITR';
+    TBIDI          = 'TBIDI';
     TLIMIT         = 'TLIMIT';
     TSIGNED        = 'TSIGNED';
     TBASE          = 'TBASE';
@@ -233,12 +233,6 @@ moduleTypeRequirement :
       ( ';' LITERAL '=' protoLiteral ( '|' protoLiteral )* )?
     ;
 
-// production #5 (Possible Alternative)
-moduleTypeRequirement2 :
-    MODULE TYPE '=' ( OPAQUE | RECORD | NONE )
-      ( ';' '$' '=' protoLiteral ( '|' protoLiteral )* )?
-    ;
-
 // fragment #5.1
 protoLiteral :
     simpleProtoLiteral | structuredProtoLiteral
@@ -250,7 +244,7 @@ simpleProtoLiteral : Ident;
 // production #6
 structuredProtoLiteral :
     '{' ( protoLiteralList |
-        ARGLIST itemCount? OF
+        ARGLIST ( '>'? itemCount )? OF
           ( '{' protoLiteralList '}' | simpleProtoLiteral ) | '*' ) '}'
     ;
 
@@ -1058,7 +1052,7 @@ IdentTail :
 // both an identifier and a reserved word
 // resolve using Schroedinger's Token
 ConstBindableIdent :  /* Ident */
-    TNIL | TBIDITR | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
+    TNIL | TBIDI | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
     {} /* make ANTLRworks display separate branches */
 	;
 
