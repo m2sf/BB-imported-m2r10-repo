@@ -74,7 +74,7 @@ PROCEDURE STORE
 PROCEDURE INSERT
   ( VAR target : <Array>;
     index : <IndexType>; values : ARGLIST >0 OF <ValueType> );
-(* INSERT(target, index, v1, v2, v3, ...)
+(* INSERT(array, index, v1, v2, v3, ...)
    => insert values v1, v2, v3, ... into target array, starting at index. *)
 
 PROCEDURE INSERT
@@ -114,7 +114,7 @@ PROCEDURE REMOVE
 (* REMOVE(dict, _)
    => remove any key/value pairs from target dictionary.
    
-   REMOVE(dict, key1, key2, key3, ...)
+   REMOVE(dictionary, key1, key2, key3, ...)
    => remove key/value pairs with keys
       key1, key2, key3, ... from target dictionary. *)
 
