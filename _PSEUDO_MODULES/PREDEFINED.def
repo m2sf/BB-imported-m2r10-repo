@@ -74,7 +74,7 @@ PROCEDURE INSERT
 
 PROCEDURE INSERT
   ( VAR target : <Dictionary>;
-    keysAndValues : ARGLIST OF { key : KeyType; value : ValueType } );
+    keysAndValues : ARGLIST >0 OF { key : KeyType; value : ValueType } );
 (* INSERT(target, key1, val1, key2, val2, key3, val3, ...)
    => insert key/value pairs
       key1, val1, key2, val2, key3, val3, ... into target dictionary. *)
@@ -106,7 +106,7 @@ PROCEDURE WRITE ( f : File; v : <AnyType> );
 (* WRITE(f, v) => typeOf(v).Write(f, v) *)
 
 PROCEDURE WRITEF
-  ( f : File; fmt : ARRAY OF CHAR; v : ARGLIST OF <AnyType> );
+  ( f : File; fmt : ARRAY OF CHAR; v : ARGLIST >0 OF <AnyType> );
 (* WRITEF(f, fmt, v1, v2, ...)
    => typeOf(v).WriteF(f, fmt, v1, v2, ...) *)
 
