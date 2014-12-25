@@ -137,8 +137,7 @@ PROCEDURE WRITE ( f : File; v : <AnyType> );
 
 PROCEDURE WRITEF
   ( f : File; fmt : ARRAY OF CHAR; v : ARGLIST >0 OF <AnyType> );
-(* WRITEF(f, fmt, v1, v2, ...)
-   => typeOf(v).WriteF(f, fmt, v1, v2, ...) *)
+(* WRITEF(f, fmt, v1, v2, ...) => typeOf(v).WriteF(f, fmt, v1, v2, ...) *)
 
 
 (* Predefined function procedures *)
@@ -178,9 +177,8 @@ PROCEDURE LENGTH
 PROCEDURE PTR ( variable : <AnyType>; T : <TypeIdentifier> ) : <T> ;
 (* Returns a pointer of type T, pointing to variable *)
 
-PROCEDURE RETRIEVE
-  ( c : <CollectionType>; s : <ComponentType> ) : <ReturnType>;
-(* RETRIEVE(c, s) => typeOf(c, s) *)
+PROCEDURE RETRIEVE ( c : <CollectionType>; s : <ComponentType> ) : <ReturnType>;
+(* RETRIEVE(c, s) => typeOf(c).retrieve(c, s) *)
 
 PROCEDURE MIN ( arglist : ARGLIST >0 OF <T> ) : <T>;
 (* Returns smallest value from arglist *)
