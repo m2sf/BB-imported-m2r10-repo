@@ -10,8 +10,8 @@
 CONST NIL = <target dependent value>; (* usually 0 :: ADDRESS *)
 (* Invalid pointer value, compatible with all pointer types. *)
 
-CONST NULSTR = "";
-(* Empty character array. *)
+CONST EMPTY = {} | "";
+(* Empty structured literal, compatible with all collection types. *)
 
 CONST TRUE = BOOLEAN.TRUE;
 (* Boolean truth value 'true'. *)
