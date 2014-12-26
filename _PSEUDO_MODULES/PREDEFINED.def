@@ -140,7 +140,7 @@ PROCEDURE WRITEF
 (* Predefined function procedures *)
 
 PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
-(* Returns sign reversed value of x if sign of x is positive. *)
+(* Returns sign reversed value of x if sign of x is negative. *)
 
 PROCEDURE NEG ( x : <NumericType> ) : <OperandType>;
 (* Returns sign reversed value of x. *)
