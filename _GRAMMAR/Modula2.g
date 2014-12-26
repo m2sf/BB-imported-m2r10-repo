@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 25, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 26, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -538,7 +538,8 @@ variadicFormalParams :
     ARGLIST ( '>'? numberOfArgumentsToPass )? OF
     ( simpleFormalType |
       '{' simpleFormalParams ( ';' simpleFormalParams )* '}' )
-    ( '|' variadicTerminator )? ;    ;
+    ( '|' variadicTerminator )?
+    ;
 
 // alias #38.1
 numberOfArgumentsToPass : constExpression ;
@@ -703,21 +704,13 @@ simpleFactor :
 
 // production #59
 actualParameters :
-    '(' actualParamList? ')'
+    '(' expressionList? ')'
     ;
 
 // production #60
-actualParamList :
-    actualParameter ( ',' actualParameter )*
+expressionList :
+    expression ( ',' expression )*
     ;
-
-// fragment #60.1
-actualParameter :
-    expression | omission
-    ;
-
-// alias #60.2
-omission : '_' ;
 
 
 // *** Structured Values ***
