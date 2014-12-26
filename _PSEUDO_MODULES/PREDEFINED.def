@@ -8,50 +8,50 @@
 (* Predefined constants *)
 
 CONST NIL = <target dependent value>; (* usually 0 :: ADDRESS *)
-(* Invalid pointer value, compatible with all pointer types *)
+(* Invalid pointer value, compatible with all pointer types. *)
 
 CONST NULSTR = "";
-(* Empty character array *)
+(* Empty character array. *)
 
 CONST TRUE = BOOLEAN.TRUE;
-(* Boolean truth value 'true' *)
+(* Boolean truth value 'true'. *)
 
 CONST FALSE = BOOLEAN.FALSE;
-(* Boolean truth value 'false' *)
+(* Boolean truth value 'false'. *)
 
 
 (* Predefined types *)
 
 TYPE BOOLEAN = ( FALSE, TRUE );
-(* Boolean type *)
+(* Boolean type. *)
 
 TYPE CHAR = 0u0 .. 0u7F ;
-(* Ordinal type with 7-bit character value set *)
+(* Ordinal type with 7-bit character value set. *)
 
 TYPE UNICHAR = <range of all UTF-32 code points>;
-(* Ordinal type with 4-octet character value set *)
+(* Ordinal type with 4-octet character value set. *)
 
 TYPE OCTET = 0 .. 255;
-(* 8-bit unsigned integer type *)
+(* 8-bit unsigned integer type. *)
 
 TYPE CARDINAL = 0 .. 2^(16*octets) - 1;
-(* 2*n bit unsigned integer type, n > 0 *)
+(* 2*n bit unsigned integer type, n > 0. *)
 
 TYPE LONGCARD = 0 .. 2^(16*octets) - 1;
 (* 2*n bit unsigned integer type, n > 0,
-   TSIZE(LONGCARD) >= TSIZE(CARDINAL) is always true *)
+   TSIZE(LONGCARD) >= TSIZE(CARDINAL) is always TRUE. *)
 
 TYPE INTEGER = -2^(8*TSIZE(CARDINAL) - 1) .. 2^(8*TSIZE(CARDINAL) - 1) - 1;
-(* Signed integer type of same size as CARDINAL *)
+(* Signed integer type of same size as CARDINAL. *)
 
 TYPE LONGINT = -2^(8*TSIZE(LONGCARD) - 1) .. 2^(8*TSIZE(LONGCARD) - 1) - 1;
-(* Signed integer type of same size as LONGCARD *)
+(* Signed integer type of same size as LONGCARD. *)
 
 TYPE REAL = <implementation or target dependent real number range>;
-(* Real number type, typically implemented as a floating point type *)
+(* Real number type, typically implemented as a floating point type. *)
 
 TYPE LONGREAL = <implementation or target dependent real number range>;
-(* Real number type with precision equal to or higher than REAL *)
+(* Real number type with precision equal to or higher than REAL. *)
 
 
 (* Predefined proper procedures *)
@@ -59,64 +59,52 @@ TYPE LONGREAL = <implementation or target dependent real number range>;
 PROCEDURE STORE
   ( VAR target : <Array>; index : <IndexType>; value : <ValueType> );
 (* STORE(array, index, value)
-   => store value at index in target array. *)
+   stores value at index in target array. *)
 
 PROCEDURE STORE
   ( VAR target : <Set>; element : <ElementType> );
 (* STORE(set, elem)
-   => store elem in target set. *)
+   stores elem in target set. *)
 
 PROCEDURE STORE
   ( VAR target : <Dictionary>; key : <KeyType>; value : <ValueType> );
 (* STORE(dictionary, key, value)
-   => store value for key in target dictionary. *)
+   stores value for key in target dictionary. *)
 
 PROCEDURE INSERT
   ( VAR target : <Array>;
     index : <IndexType>; values : ARGLIST >0 OF <ValueType> );
 (* INSERT(array, index, val1, val2, val3, ...)
-   => insert values val1, val2, val3, ... at index into target array. *)
+   inserts values val1, val2, val3, ... at index into target array. *)
 
 PROCEDURE INSERT
   ( VAR target : <Set>;
-    elements : ARGLIST OF <ElementType> );
-(* INSERT(set, _)
-   => insert any available elements into target set.
-   
-   INSERT(set, elem1, elem2, elem3, ...)
-   => insert elements elem1, elem2, elem3, ... into target set. *)
+    elements : ARGLIST >0 OF <ElementType> );
+(* INSERT(set, elem1, elem2, elem3, ...)
+   inserts elements elem1, elem2, elem3, ... into target set. *)
 
 PROCEDURE INSERT
   ( VAR target : <Dictionary>;
     keysAndValues : ARGLIST >0 OF { key : <KeyType>; value : <ValueType> } );
 (* INSERT(dictionary, key1, val1, key2, val2, key3, val3, ...)
-   => insert key/value pairs
-      key1, val1, key2, val2, key3, val3, ... into target dictionary. *)
+   inserts key/value pairs
+   key1, val1, key2, val2, key3, val3, ... into target dictionary. *)
 
 PROCEDURE REMOVE
-  ( VAR target : <Array>; (*OPT*) startIndex, endIndex : <IndexType> );
-(* REMOVE(array, _)
-   => remove any values from target array.
-   
-   REMOVE(array, start, end)
-   => remove values within index range [start .. end] from target array. *)
+  ( VAR target : <Array>; startIndex, endIndex : <IndexType> );
+(* REMOVE(array, start, end)
+   removes values within index range [start .. end] from target array. *)
 
 PROCEDURE REMOVE
-  ( VAR target : <Set>; elements : ARGLIST OF <ElementType> );
-(* REMOVE(set, _)
-   => remove any elements from target set.
-   
-   REMOVE(set, elem1, elem2, elem3, ...)
-   => remove elements elem1, elem2, elem3, ... from target set. *)
+  ( VAR target : <Set>; elements : ARGLIST >0 OF <ElementType> );
+(* REMOVE(set, elem1, elem2, elem3, ...)
+   removes elements elem1, elem2, elem3, ... from target set. *)
 
 PROCEDURE REMOVE
-  ( VAR target : <Dictionary>; keys : ARGLIST OF <KeyType> );
-(* REMOVE(dict, _)
-   => remove any key/value pairs from target dictionary.
-   
-   REMOVE(dictionary, key1, key2, key3, ...)
-   => remove key/value pairs with keys
-      key1, key2, key3, ... from target dictionary. *)
+  ( VAR target : <Dictionary>; keys : ARGLIST >0 OF <KeyType> );
+(* REMOVE(dictionary, key1, key2, key3, ...)
+   removes key/value pairs with keys
+   key1, key2, key3, ... from target dictionary. *)
 
 PROCEDURE SORT
   ( VAR result : <Array>; source : <Collection>; (*OPT*) order : CHAR );
@@ -124,82 +112,89 @@ PROCEDURE SORT
    => SORT(array, collection, "+")
    
    SORT(array, collection, "+")
-   => populate array with accessors of collection sorted by value, ascending
+   populates array with accessors of collection,
+   sorted by value, in ascending order.
    
    SORT(array, collection, "-")
-   => populate array with accessors of collection sorted by value, descending *) 
+   populates array with accessors of collection,
+   sorted by value in descending order. *) 
 
 PROCEDURE READ ( f : File; VAR v : <AnyMutableType> );
-(* READ(f, v) => typeOf(v).Read(f, v) *)
+(* READ(f, v)
+   => typeOf(v).Read(f, v). *)
 
 PROCEDURE READNEW ( f : File; NEW v : <AnyType> );
-(* READNEW(f, v) => typeOf(v).ReadNew(f, v) *)
+(* READNEW(f, v)
+   => typeOf(v).ReadNew(f, v). *)
 
 PROCEDURE WRITE ( f : File; v : <AnyType> );
-(* WRITE(f, v) => typeOf(v).Write(f, v) *)
+(* WRITE(f, v)
+   => typeOf(v).Write(f, v). *)
 
 PROCEDURE WRITEF
   ( f : File; fmt : ARRAY OF CHAR; v : ARGLIST >0 OF <AnyType> );
-(* WRITEF(f, fmt, v1, v2, ...) => typeOf(v).WriteF(f, fmt, v1, v2, ...) *)
+(* WRITEF(f, fmt, v1, v2, ...)
+   => typeOf(v).WriteF(f, fmt, v1, v2, ...). *)
 
 
 (* Predefined function procedures *)
 
 PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
-(* Returns sign removed value of x *)
+(* Returns sign reversed value of x if sign of x is positive. *)
 
 PROCEDURE NEG ( x : <NumericType> ) : <OperandType>;
-(* Returns sign reversed value of x *)
+(* Returns sign reversed value of x. *)
 
 PROCEDURE ODD ( x : <WholeNumberType> ) : BOOLEAN;
-(* Returns TRUE if z is odd, otherwise FALSE *)
+(* Returns TRUE if z is odd, otherwise FALSE. *)
 
 PROCEDURE PRED ( x : <OrdinalType>; (*OPT*) n : <UnsignedType> ) : <typeOf(x)>;
-(* Returns n-th predecessor of x, or immediate predecessor if n is omitted *)
+(* Returns n-th predecessor of x, or immediate predecessor if n is omitted. *)
 
 PROCEDURE SUCC ( x : <OrdinalType>; (*OPT*) n : <UnsignedType> ) : <typeOf(x)>;
-(* Returns n-th successor of x, or immediate successor if n is omitted *)
+(* Returns n-th successor of x, or immediate successor if n is omitted. *)
 
 PROCEDURE ORD ( x : <OrdinalType> ) : <WholeNumberType>;
-(* Returns ordinal value of x *)
+(* Returns ordinal value of x. *)
 
 PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType>; 
 (* Returns the character whose code point is x.
-   Return type is CHAR if x < 128, otherwise UNICHAR *)
+   Return type is CHAR if x < 128, otherwise UNICHAR. *)
 
 PROCEDURE SUBSET ( a, b : <SetOrCollectionType> ) : BOOLEAN ;
-(* Returns TRUE if b is a subset of a *)
+(* Returns TRUE if b is a subset of a, otherwise FALSE. *)
 
 PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD;
-(* Returns number of items stored in c *)
+(* Returns number of items stored in c. *)
 
 PROCEDURE LENGTH
   ( CONST s : <CharacterArrayOrStringADT> ) : [0..TMAX(INTEGER)] OF INTEGER;
 (* Returns the length of character string s. *)
 
 PROCEDURE PTR ( variable : <AnyType>; T : <TypeIdentifier> ) : <T> ;
-(* Returns a pointer of type T, pointing to variable *)
+(* Returns a pointer of type T, pointing to variable. *)
 
 PROCEDURE RETRIEVE ( c : <CollectionType>; s : <ComponentType> ) : <ReturnType>;
-(* RETRIEVE(c, s) => typeOf(c).retrieve(c, s) *)
+(* RETRIEVE(c, s)
+   => typeOf(c).retrieve(c, s) *)
 
 PROCEDURE MIN ( arglist : ARGLIST >0 OF <T> ) : <T>;
-(* Returns smallest value from arglist *)
+(* Returns smallest value from arglist. *)
 
 PROCEDURE MAX ( arglist : ARGLIST >0 OF <T> ) : <T>;
-(* Returns largest value from arglist *)
+(* Returns largest value from arglist. *)
 
 PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T>;
-(* Returns smallest legal value of type T *)
+(* Returns smallest legal value of type T. *)
 
 PROCEDURE TMAX ( T : <TypeIdentifier> ) : <T>;
-(* Returns largest legal value of type T *)
+(* Returns largest legal value of type T. *)
 
 PROCEDURE TLIMIT ( T : <SetOrCollectionTypeIdentifier> ) : LONGCARD;
-(* Returns capacity limit of a set, array or collection type *)
+(* Returns capacity limit of a set, array or collection type. *)
 
 PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
-(* Returns allocation size required for a variable of type T *)
+(* Returns allocation size required for a variable of type T. *)
 
 
 END PREDEFINED.
