@@ -134,11 +134,6 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
    all types are mutable.  An ADT that binds a constant of value FALSE to the
    assignment symbol is immutable. *)
 
-(* MACRO *) PROCEDURE IsOrderedType( <T> ) : BOOLEAN;
-(* Expands to TRUE if type T is an ordered type, otherwise FALSE.  By default
-   all ordinal types and all scalar types are ordered, other types are not.
-   An ADT that binds a constant of value TRUE to DESCENDING is ordered. *)
-
 (* MACRO *) PROCEDURE IsScalarType( <T> ) : BOOLEAN;
 (* Expands to TRUE if type T is a scalar type, otherwise FALSE.  By default
    all predefined numeric types are scalar, other types are not.  An ADT that
@@ -151,13 +146,27 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
    and all enumeration types are ordinal, other types are not.  A scalar ADT
    whose TMINEXPONENT and TMAXEXPONENT values are both zero is ordinal. *)
 
+(* MACRO *) PROCEDURE IsDynamicType( <T> ) : BOOLEAN;
+(* Expands to TRUE if type T is dynamically allocatable, otherwise FALSE. *)
+
 (* MACRO *) PROCEDURE IsRefCountedType( <T> ) : BOOLEAN;
 (* Expands to TRUE if type T is reference counted, otherwise FALSE.  No type
-   is reference counted by default.  Only ADTs that bind to both predefined
-   procedures RETAIN and RELEASE are reference counted. *)
+   is reference counted by default.  Only ADTs that bind to both RETAIN and
+   RELEASE are reference counted. *)
 
 (* MACRO *) PROCEDURE ConformsToBlueprint( <B>; <T> ) : BOOLEAN;
 (* Expands to TRUE if type T conforms to blueprint B, otherwise FALSE. *)
+
+(* Type Capability Tests *)
+
+(* MACRO *) PROCEDURE TNIL ( <T> ) : BOOLEAN;
+(* Expands to TRUE if type T supports NIL storage, otherwise FALSE. Type T
+   must be an opaque collection type whose components are pointer values.
+   A compile time error occurs if any other type is passed to TNIL. *)
+
+(* MACRO *) PROCEDURE TBIDI ( <T> ) : BOOLEAN;
+(* Expands to TRUE if type T supports bidirectional FOR loop iteration,
+   otherwise FALSE. A compile time error occurs if T is not iterable. *)
 
 
 (* Compile Time Arithmetic *)
