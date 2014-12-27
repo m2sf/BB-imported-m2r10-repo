@@ -9,86 +9,86 @@ DEFINITION MODULE COMPILER;
 
 (* Identity of the compiler *)
 
-CONST Name = <implementation defined 7-bit character string;
+CONST Name = <implementation defined, 7-bit character string;
 (* Denotes the short name of the compiler *)
 
-CONST FullName = <implementation defined 7-bit character string>;
+CONST FullName = <implementation defined, 7-bit character string>;
 (* Denotes the full name of the compiler *)
 
-CONST EditionName = <implementation defined 7-bit character string>;
+CONST EditionName = <implementation defined, 7-bit character string>;
 (* Denotes the name of the compiler edition *)
 
-CONST MajorVersion = <implementation defined whole number value>;
+CONST MajorVersion = <implementation defined, whole number value>;
 (* Denotes the major version number of the compiler *)
 
-CONST MinorVersion = <implementation defined whole number value>;
+CONST MinorVersion = <implementation defined, whole number value>;
 (* Denotes the minor version number of the compiler *)
 
-CONST SubMinorVersion = <implementation defined whole number value>;
+CONST SubMinorVersion = <implementation defined, whole number value>;
 (* Denotes the sub-minor version number of the compiler *)
 
-CONST ReleaseYear = <implementation defined whole number value>;
+CONST ReleaseYear = <implementation defined, whole number value>;
 (* Denotes the four-digit year of release of the compiler *)
 
-CONST ReleaseMonth = <implementation defined whole number value>;
+CONST ReleaseMonth = <implementation defined, whole number value>;
 (* Denotes the month of release of the compiler, range 1 to 12 *)
 
-CONST ReleaseDay = <implementation defined whole number value>;
+CONST ReleaseDay = <implementation defined, whole number value>;
 (* Denotes the day of release of the compiler, range 1 to 31 *)
 
 
 (* Availability of optional compiler capabilities *)
 
-CONST IsBootstrapSubset = <implementation defined boolean value>;
+CONST IsBootstrapSubset = <implementation defined, boolean value>;
 (* Denotes whether the compiler provides a language subset for bootstrap. *)
 
-CONST SupportsInlineCode = <implementation defined boolean value>;
+CONST SupportsInlineCode = <implementation defined, boolean value>;
 (* Denotes whether the compiler provides the optional CODE facility in
    pseudo-module ASSEMBLER. *)
 
-CONST SupportsInlineAssembly = <implementation defined boolean value>;
+CONST SupportsInlineAssembly = <implementation defined, boolean value>;
 (* Denotes whether the compiler provides the optional ASM facility in
    pseudo-module ASSEMBLER. *)
 
-CONST SupportsUTF8EncodedSource = <implementation defined boolean value>;
+CONST SupportsUTF8EncodedSource = <implementation defined, boolean value>;
 (* Denotes whether the compiler provides optional pragma ENCODING. *)
 
-CONST SupportsCFFI = <implementation defined boolean value>;
+CONST SupportsCFFI = <implementation defined, boolean value>;
 (* Denotes whether the compiler provides an FFI to C. *)
 
-CONST SupportsFortranFFI = <implementation defined boolean value>;
+CONST SupportsFortranFFI = <implementation defined, boolean value>;
 (* Denotes whether the compiler provides an FFI to Fortran. *)
 
-CONST SupportsAlignmentControl = <implementation defined boolean value>;
+CONST SupportsAlignmentControl = <implementation defined, boolean value>;
 (* Denotes whether the compiler provides optional pragma ALIGN. *)
 
-CONST SupportsBitPadding = <implementation defined boolean value>;
+CONST SupportsBitPadding = <implementation defined, boolean value>;
 (* Denotes whether the compiler provides optional pragma PADBITS. *)
 
-CONST SupportsAddressMapping = <implementation defined boolean value>;
+CONST SupportsAddressMapping = <implementation defined, boolean value>;
 (* Denotes whether the compiler provides optional pragma ADDR. *)
 
-CONST SupportsRegisterMapping = <implementation defined boolean value>;
+CONST SupportsRegisterMapping = <implementation defined, boolean value>;
 (* Denotes whether the compiler provides optional pragma REG. *)
 
-CONST SupportsPurityAttribute = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma PURITY. *)
+CONST SupportsPurityAttribute = <implementation defined, boolean value>;
+(* Denotes whether the compiler provides optional pragma, PURITY. *)
 
 CONST SupportsVolatileAttribute = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma VOLATILE. *)
+(* Denotes whether the compiler provides optional pragma, VOLATILE. *)
 
 CONST SupportsSingleAssignAttribute = <implementation defined boolean value>;
-(* Denotes whether the compiler provides optional pragma SINGLEASSIGN. *)
+(* Denotes whether the compiler provides optional pragma, SINGLEASSIGN. *)
 
 
 (* Information about the implementation model of REAL and LONGREAL *)
 
 TYPE IEEE754Support = ( None, Binary16, Binary32, Binary64, Binary128 );
 
-CONST ImplModelOfTypeReal = <implementation defined value>;
+CONST ImplModelOfTypeReal = <implementation defined, IEEE754Support value>;
 (* Denotes the compiler's implementation model of type REAL. *)
 
-CONST ImplModelOfTypeLongReal = <implementation defined value>;
+CONST ImplModelOfTypeLongReal = <implementation defined, IEEE754Support value>;
 (* Denotes the compiler's implementation model of type LONGREAL. *)
 
 
@@ -136,9 +136,8 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 
 (* MACRO *) PROCEDURE IsScalarType( <T> ) : BOOLEAN;
 (* Expands to TRUE if type T is a scalar type, otherwise FALSE.  By default
-   all predefined numeric types are scalar, other types are not.  An ADT that
-   binds to any of TSIGNED, TBASE, TPRECISION, TMINEXPONENT and TMAXEXPONENT
-   is scalar. *)
+   predefined numeric types are scalar, other types are not.  An ADT is scalar
+   if it binds to any of TBASE, TPRECISION, TMINEXPONENT or TMAXEXPONENT. *)
 
 (* MACRO *) PROCEDURE IsOrdinalType( <T> ) : BOOLEAN;
 (* Expands to TRUE if type T is an ordinal type, otherwise FALSE.  By default
