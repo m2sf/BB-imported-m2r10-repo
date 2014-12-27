@@ -162,20 +162,6 @@ CONST ImplModelOfTypeLongReal = <implementation defined value>;
 
 (* Compile Time Arithmetic *)
 
-(* Minimum of a list of constant expressions *)
-
-(* MACRO *) PROCEDURE MIN ( constant : VARIADIC OF <T> ) : <T>;
-(* Replaced by the smallest value of its variadic argument list,
-   all arguments must be of the same ordinal or scalar type. *)
-
-
-(* Maximum of a list of constant expressions *)
-
-(* MACRO *) PROCEDURE MAX ( constant : VARIADIC OF <T> ) : <T>;
-(* Replaced by the largest value of its variadic argument list,
-   all arguments must be of the same ordinal or scalar type. *)
-
-
 (* Ordinal storage capacity of a given number of bits *)
 
 (* MACRO *) PROCEDURE MaxOrd ( bits : <T> ) : <T>;
