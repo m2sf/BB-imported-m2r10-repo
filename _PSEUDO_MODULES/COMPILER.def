@@ -94,6 +94,10 @@ CONST ImplModelOfTypeLongReal = <implementation defined, IEEE754Support value>;
 
 (* Compile Time Macros *)
 
+(* Compilation Mode *)
+
+(* MACRO *) PROCEDURE DEBUG : BOOLEAN;
+(* Expands to TRUE when operating in debug mode, otherwise FALSE. *)
 
 (* Information about the compiling source *)
 
