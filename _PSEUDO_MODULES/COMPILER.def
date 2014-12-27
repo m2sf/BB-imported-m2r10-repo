@@ -207,7 +207,8 @@ TYPE UniqueTypeID = <implementation defined>;
 (* Indicating Unimplemented Code *)
 
 (* MACRO *) PROCEDURE TODO;
-(* Empty statement to indicate unimplemented code. *)
+(* Empty statement to indicate unimplemented code.  When compiling in debug
+   mode, the macro is automatically imported into every scope, otherwise not. *)
 
 
 END COMPILER.
