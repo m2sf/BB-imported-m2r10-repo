@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 26, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 28, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -244,24 +244,26 @@ simpleProtoLiteral : Ident;
 // production #6
 structuredProtoLiteral :
     '{' ( protoLiteralList |
-        ARGLIST ( '>'? itemCount )? OF
+        ARGLIST ( '>'? numberOfValues )? OF
           ( '{' protoLiteralList '}' | simpleProtoLiteral ) | '*' ) '}'
     ;
 
 // alias #6.1
 protoLiteralList : identList;
 
-// alias #6.2
-itemCount : constIdent;
-
-// alias #6.3
-constIdent : Ident ; /* only identifiers of constants */
+// fragment #6.2
+numberOfValues :
+    WholeNumber | ConstIdent
+    ;
 
 // production #7
 constOrTypeOrProcRequirement :
     ( NOT? boolConstIdent '->' )?
     ( constRequirement | procedureRequirement | TYPE Ident '=' procedureType )
     ;
+
+// alias #7.1
+boolConstIdent : ConstIdent ;
 
 // production #8
 constRequirement :
@@ -271,7 +273,7 @@ constRequirement :
     ;
 
 // production #9
-simpleConstReq :
+simpleConstRequirement :
     Ident ( '=' constExpression | ':' predefOrRefTypeIdent )
     ;
 
@@ -293,20 +295,24 @@ restrictedExport : '*' ;
 
 // fragment #10.2
 procBindableEntity :
-    '+' | '-' | '*' | '/' | '*.' | '=' | '<' | '>' | '::' | ':=' |
-    BACKSLASH | ARRAY | NEW | RETAIN | RELEASE | IN | FOR | DIV | MOD |
+    '+' | '-' | '*' | '/' | '*.' | BACKSLASH | '=' | '<' | '>' | '::' |
+    ARRAY | NEW | RETAIN | RELEASE | IN | FOR | DIV | MOD |
     procMultiBindableEntity | ProcBindableIdent
     ;
 
 // production #11
 procMultiBindableEntity :
-    ( '..' | COPY | ProcMultiBindableIdent ) bindingSelector?
+    ( '..' | COPY | INSERT ) multiBindingSelector? |
+    REMOVE dualBindingSelector?
     ;
 
 // fragment #11.1
-bindingSelector :
+multiBindingSelector :
     '*' | '+' | '++'
     ;
+
+// alias #11.2
+dualBindingSelector : '*' ;
 
 
 // *** Import Lists ***
@@ -502,6 +508,15 @@ variadicFormalType :
     ( '|' variadicTerminator )?
     ;
 
+// fragment #33.1
+numberOfArgumentsToPass :
+    WholeNumber | ConstIdent
+    ;
+
+// fragment #33.2
+variadicTerminator :
+    NumberLiteral | ConstIdent | '-1' | NIL
+    ;
 
 // *** Procedures ***
 
@@ -540,13 +555,6 @@ variadicFormalParams :
       '{' simpleFormalParams ( ';' simpleFormalParams )* '}' )
     ( '|' variadicTerminator )?
     ;
-
-// alias #38.1
-numberOfArgumentsToPass : constExpression ;
-
-// alias #38.2
-variadicTerminator : constExpression ;
-
 
 // *** Statements ***
 
@@ -698,7 +706,7 @@ factor :
 
 // production #58
 simpleFactor :
-    NumericLiteral | StringLiteral | structuredValue |
+    NumberLiteral | StringLiteral | structuredValue |
     '(' expression ')' | designator actualParameters?
     ;
 
@@ -872,7 +880,7 @@ codePointSample :
 quotedCharacterLiteral : StringLiteral ; /* single character only */
 
 // alias #9.2
-characterCodeLiteral : NumericLiteral ; /* unicode code points only */
+characterCodeLiteral : NumberLiteral ; /* unicode code points only */
 
 // production #10
 pragmaALIGN :
@@ -916,25 +924,25 @@ timestamp :
     ;
 
 // alias #15.3a
-year : wholeNumber ;
+year : WholeNumber ;
 
 // alias #15.3b
-month : wholeNumber ;
+month : WholeNumber ;
 
 // alias #15.3c
-day : wholeNumber ;
+day : WholeNumber ;
 
 // alias #15.3d
-hours : wholeNumber ;
+hours : WholeNumber ;
 
 // alias #15.3e
-minutes : wholeNumber ;
+minutes : WholeNumber ;
 
 // alias #15.3f
-seconds : wholeNumber ;
+seconds : WholeNumber ;
 
 // alias #15.4g
-timezone : wholeNumber ;
+timezone : WholeNumber ;
 
 // production #16
 pragmaADDR :
@@ -974,14 +982,20 @@ inPragmaSimpleExpression :
     ( '+' | '-' {})? inPragmaTerm ( addOp inPragmaTerm )*
     ;
 
+// fragment #21.1
+addOp :
+    '+' | '-' | OR
+    {} /* make ANTLRworks display separate branches */
+    ;
+
 // production #22
 inPragmaTerm :
 /* represents operator precedence level 3 */
-    inPragmaFactor ( inPragmaMulOp inPragmaFactor )*
+    inPragmaFactor ( mulOp inPragmaFactor )*
     ;
 
 // fragment #22.1
-inPragmaMulOp :
+mulOp :
     '*' | DIV | MOD | AND
     {} /* make ANTLRworks display separate branches */
     ;
@@ -994,13 +1008,10 @@ inPragmaFactor :
 
 // production #24
 inPragmaSimpleFactor :
-    wholeNumber |
+    WholeNumber |
     /* constQualident is covered by inPragmaCompileTimeFunctionCall */
     '(' inPragmaExpression ')' | inPragmaCompileTimeFunctionCall
     ;
-
-// alias #24.1
-wholeNumber : NumericLiteral ;
 
 // production #25
 inPragmaCompileTimeFunctionCall :
@@ -1011,7 +1022,7 @@ inPragmaCompileTimeFunctionCall :
 // ---------------------------------------------------------------------------
 // T E R M I N A L   S Y M B O L S
 // ---------------------------------------------------------------------------
-// 4 productions, 16 fragments, 1 alias
+// 4 productions
 
 // production #1
 ReservedWord :
@@ -1033,37 +1044,35 @@ IdentLeadChar :
     Letter | '_' | '$'
     ;
 
+/* An identifier must not be composed solely of special characters! */
+
 fragment /* #2.2 */
 IdentTail :
     ( IdentLeadChar | Digit )+
     ;
 
 // fragment #2.3
-// both an identifier and a reserved word
-// resolve using Schroedinger's Token
+// dual-use identifiers
+// resolve using Schroedinger's Token technique
 ConstBindableIdent :  /* Ident */
     TNIL | TBIDI | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
     {} /* make ANTLRworks display separate branches */
 	;
 
 // fragment #2.4
-// both an identifier and a reserved word
-// resolve using Schroedinger's Token
+// dual-use identifiers
+// resolve using Schroedinger's Token technique
 ProcBindableIdent : /* Ident */
-    ABS | NEG | COUNT | LENGTH | STORE | RETRIEVE | REMOVE | SUBSET |
+    ABS | NEG | COUNT | LENGTH | STORE | RETRIEVE | SUBSET |
     READ | READNEW | WRITE | WRITEF | TMIN | TMAX | SXF | VAL
     {} /* make ANTLRworks display separate branches */
     ;
 
-// fragment #2.5
-// both an identifier and a reserved word
-// resolve using Schroedinger's Token
-ProcMultiBindableIdent : /* Ident */
-    INSERT
-    ;
+// alias #2.5
+ConstIdent : Ident ;
 
 // production #3
-NumericLiteral :
+NumberLiteral :
     /* number literals starting with digit 0 ... */
     '0' (
         /* without prefix are real numbers */
@@ -1124,6 +1133,9 @@ Base2Digit :
 
 fragment /* #3.9 */
 DigitSep : SINGLE_QUOTE {} /* make ANTLRworks display name, not literal */ ;
+
+// alias #3.10
+WholeNumber : NumberLiteral ;
 
 // production #4
 StringLiteral :
