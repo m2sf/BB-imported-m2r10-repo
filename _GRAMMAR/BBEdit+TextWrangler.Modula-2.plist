@@ -20,8 +20,8 @@
 		<string>CASE</string>
 		<string>CAST</string>
 		<string>CONST</string>
+		<string>COPY</string>
 		<string>DEFINITION</string>
-		<string>DESCENDING</string>
 		<string>DIV</string>
 		<string>DO</string>
 		<string>ELSE</string>
@@ -36,9 +36,12 @@
 		<string>IMPORT</string>
 		<string>IN</string>
 		<string>INDETERMINATE</string>
+		<string>LITERAL</string>
 		<string>LOOP</string>
 		<string>MOD</string>
 		<string>MODULE</string>
+		<string>NEW</string>
+		<string>NONE</string>
 		<string>NOT</string>
 		<string>OF</string>
 		<string>OPAQUE</string>
@@ -47,7 +50,9 @@
 		<string>PROCEDURE</string>
 		<string>RECORD</string>
 		<string>REFERENTIAL</string>
+		<string>RELEASE</string>
 		<string>REPEAT</string>
+		<string>RETAIN</string>
 		<string>RETURN</string>
 		<string>SET</string>
 		<string>THEN</string>
@@ -60,6 +65,7 @@
 	<key>BBLMPredefinedNameList</key>
 	<array>
 		<string>NIL</string>
+		<string>EMPTY</string>
 		<string>TRUE</string>
 		<string>FALSE</string>
 		<string>BOOLEAN</string>
@@ -72,14 +78,12 @@
 		<string>LONGINT</string>
 		<string>REAL</string>
 		<string>LONGREAL</string>
-		<string>NEW</string>
-		<string>RETAIN</string>
-		<string>RELEASE</string>
-		<string>COPY</string>
 		<string>STORE</string>
+		<string>INSERT</string>
 		<string>REMOVE</string>
-		<string>CONCAT</string>
+		<string>SORT</string>
 		<string>READ</string>
+		<string>READNEW</string>
 		<string>WRITE</string>
 		<string>WRITEF</string>
 		<string>ABS</string>
@@ -89,12 +93,13 @@
 		<string>SUCC</string>
 		<string>ORD</string>
 		<string>CHR</string>
-		<string>DUP</string>
 		<string>COUNT</string>
 		<string>LENGTH</string>
 		<string>PTR</string>
 		<string>RETRIEVE</string>
 		<string>SUBSET</string>
+		<string>MIN</string>
+		<string>MAX</string>
 		<string>TMIN</string>
 		<string>TMAX</string>
 		<string>TSIZE</string>
@@ -176,9 +181,9 @@
 		<key>Prefix for Procedures</key>
 		<string>PROCEDURE</string>
 		<key>Terminator for Prototypes 1</key>
-		<string></string>
+		<string>;</string>
 		<key>Terminator for Prototypes 2</key>
-		<string></string>
+		<string>;</string>
 	</dict>
 </dict>
 </plist>
