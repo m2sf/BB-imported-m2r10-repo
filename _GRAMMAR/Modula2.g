@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 28, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 30, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -87,45 +87,56 @@ tokens {
     VAR            = 'VAR';
     WHILE          = 'WHILE';
 
-// *** Dual-Use Identifiers, 26 tokens ***
 
-//  The following identifiers may be used as RWs depending on context.
-//  The ambiguity is resolvable using the Schroedinger's Token technique.
+// *** Dual-Use Identifiers, 27 tokens ***
 
-/* Identifier CAST is used like an RW within a formal parameter list */
+//  Dual-Use identifiers may be used as RWs depending on context. The
+//  resulting ambiguity is resolvable using the Schroedinger's Token
+//  technique described in an article published in SP&E:
+//
+//    Schroedinger’s token
+//    John Aycock and Nigel R. Horspool
+//    Copyright (c) 2001, Wiley & Sons, Ltd.
+//    
+//  DOI: Softw. Pract. Exper. 2001; 31:803–814 (DOI: 10.1002/spe.390)
+//  URL: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.13.3178
 
-    CAST           = 'CAST';
+/* Identifiers that are used like RWs within formal parameter lists */
+
+    CAST           = 'CAST';           /* -> production #32 */
+    NIL            = 'NIL';            /* -> productions #33 and #38 */
 
 /* Identifiers that are used like RWs within bound constant declarations */
 
-    TNIL           = 'TNIL';
-    TBIDI          = 'TBIDI';
-    TLIMIT         = 'TLIMIT';
-    TSIGNED        = 'TSIGNED';
-    TBASE          = 'TBASE';
-    TPRECISION     = 'TPRECISION';
-    TMINEXP        = 'TMINEXP';
-    TMAXEXP        = 'TMAXEXP';
+    TNIL           = 'TNIL';           /* -> production #9 */
+    TBIDI          = 'TBIDI';          /* -> production #9 */
+    TLIMIT         = 'TLIMIT';         /* -> production #9 */
+    TSIGNED        = 'TSIGNED';        /* -> production #9 */
+    TBASE          = 'TBASE';          /* -> production #9 */
+    TPRECISION     = 'TPRECISION';     /* -> production #9 */
+    TMINEXP        = 'TMINEXP';        /* -> production #9 */
+    TMAXEXP        = 'TMAXEXP';        /* -> production #9 */
 
 /* Identifiers that are used like RWs within bound procedure headers */
 
-    ABS            = 'ABS';
-    NEG            = 'NEG';
-    COUNT          = 'COUNT';
-    LENGTH         = 'LENGTH';
-    STORE          = 'STORE';
-    RETRIEVE       = 'RETRIEVE';
-    INSERT         = 'INSERT';
-    REMOVE         = 'REMOVE';
-    SUBSET         = 'SUBSET';
-    READ           = 'READ';
-    READNEW        = 'READNEW';
-    WRITE          = 'WRITE';
-    WRITEF         = 'WRITEF';
-    TMAX           = 'TMAX';
-    TMIN           = 'TMIN';
-    SXF            = 'SXF';
-    VAL            = 'VAL';
+    ABS            = 'ABS';            /* -> production #11 */
+    NEG            = 'NEG';            /* -> production #11 */
+    COUNT          = 'COUNT';          /* -> production #11 */
+    LENGTH         = 'LENGTH';         /* -> production #11 */
+    STORE          = 'STORE';          /* -> production #11 */
+    RETRIEVE       = 'RETRIEVE';       /* -> production #11 */
+    INSERT         = 'INSERT';         /* -> production #11 */
+    REMOVE         = 'REMOVE';         /* -> production #11 */
+    SUBSET         = 'SUBSET';         /* -> production #11 */
+    READ           = 'READ';           /* -> production #11 */
+    READNEW        = 'READNEW';        /* -> production #11 */
+    WRITE          = 'WRITE';          /* -> production #11 */
+    WRITEF         = 'WRITEF';         /* -> production #11 */
+    TMAX           = 'TMAX';           /* -> production #11 */
+    TMIN           = 'TMIN';           /* -> production #11 */
+    SXF            = 'SXF';            /* -> production #11 */
+    VAL            = 'VAL';            /* -> production #11 */
+
 
 // *** Reserved Words of the Pragma Language, 23 tokens ***
 
@@ -155,16 +166,19 @@ tokens {
     FFI            = 'FFI';            /* RW within pragma only */
     FFIDENT        = 'FFIDENT';        /* RW within pragma only */
 
+
 // *** RWs for Optional Language Facilities, 2 tokens ***
 /*
     ASM            = 'ASM';
     REG            = 'REG';
 */
+
 // *** Special Characters, 3 tokens ***
 
     BACKSLASH      = '\\';  /*\*/      /* for readability */
     SINGLE_QUOTE   = '\'' ; /*'*/      /* for readability */
     DOUBLE_QUOTE   = '\"' ; /*"*/      /* for readability */
+
 
 // *** Ignore Characters, 3 tokens ***
 
@@ -238,81 +252,108 @@ protoLiteral :
     simpleProtoLiteral | structuredProtoLiteral
     ;
 
-// alias #5.2
-simpleProtoLiteral : Ident;
+// fragment #5.2
+simpleProtoLiteral : /* Ident */
+    CHAR | UNICHAR | INTEGER | REAL
+    {} /* make ANTLRworks display separate branches */
+    ;
 
 // production #6
 structuredProtoLiteral :
     '{' ( protoLiteralList |
-        ARGLIST ( '>'? numberOfValues )? OF
+        ARGLIST reqValueCount? OF
           ( '{' protoLiteralList '}' | simpleProtoLiteral ) | '*' ) '}'
     ;
 
 // alias #6.1
 protoLiteralList : identList;
 
-// fragment #6.2
-numberOfValues :
-    WholeNumber | ConstIdent
+// production #7
+reqValueCount :
+    atLeast? ( constIdent | wholeNumber )
     ;
 
-// production #7
+// alias #7.1
+atLeast : '>' ;
+
+// alias #7.2
+constIdent : Ident ;
+
+// alias #7.3
+wholeNumber : NumberLiteral ;
+
+// production #8
 constOrTypeOrProcRequirement :
     ( NOT? boolConstIdent '->' )?
     ( constRequirement | procedureRequirement | TYPE Ident '=' procedureType )
     ;
 
-// alias #7.1
-boolConstIdent : ConstIdent ;
+// alias #8.1
+boolConstIdent : Ident ;
 
-// production #8
+// production #9
 constRequirement :
     CONST (
-    ( '[' ConstBindableIdent ']' ( simpleConstRequirement | '=' NONE )? |
+    ( '[' constBindableIdent ']' ( simpleConstRequirement | '=' NONE )? |
       restrictedExport? simpleConstRequirement )
     ;
 
-// production #9
+// fragment #9.1
+constBindableIdent : /* Ident */
+    TNIL | TBIDI | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
+    ;
+
+// production #10
 simpleConstRequirement :
     Ident ( '=' constExpression | ':' predefOrRefTypeIdent )
     ;
 
-// alias #9.1
-constExpression : expression ; /* but no type identifiers */
+// alias #10.1
+constExpression : expression ; /* no type identifiers */
 
-// alias #9.2
+// alias #10.2
 predefOrRefTypeIdent : Ident ;
 
-// production #10
+// production #11
 procedureRequirement :
     PROCEDURE (
     ( restrictedExport? procedureSignature ) |
     ( '[' procBindableEntity ']' ( procedureSignature | '=' NONE )? ) )
     ;
 
-// alias #10.1
+// alias #11.1
 restrictedExport : '*' ;
 
-// fragment #10.2
+// fragment #11.2
 procBindableEntity :
+    procBindableOperator | procBindableRW | procBindableIdent
+    ;
+
+// fragment #11.3
+procBindableOperator :
     '+' | '-' | '*' | '/' | '*.' | BACKSLASH | '=' | '<' | '>' | '::' |
+    {} /* make ANTLRworks display separate branches */
+    '..' bindingSelector?
+    ;
+
+// fragment #11.4
+procBindableRW :
     ARRAY | NEW | RETAIN | RELEASE | IN | FOR | DIV | MOD |
-    procMultiBindableEntity | ProcBindableIdent
+    COPY bindingSelector?
     ;
 
-// production #11
-procMultiBindableEntity :
-    ( '..' | COPY | INSERT ) multiBindingSelector? |
-    REMOVE dualBindingSelector?
+// fragment #11.5
+procBindableIdent : /* Ident bindingSelector? */
+    ABS | NEG | COUNT | LENGTH | STORE | RETRIEVE | SUBSET |
+    READ | READNEW | WRITE | WRITEF | TMIN | TMAX | SXF | VAL |
+    {} /* make ANTLRworks display separate branches */
+    INSERT bindingSelector? | REMOVE bindingSelector?
     ;
 
-// fragment #11.1
-multiBindingSelector :
+// fragment #11.6
+bindingSelector :
     '*' | '+' | '++'
     ;
-
-// alias #11.2
-dualBindingSelector : '*' ;
 
 
 // *** Import Lists ***
@@ -502,21 +543,20 @@ simpleFormalType :
 
 // production #33
 variadicFormalType :
-    ARGLIST ( '>'? numberOfArgumentsToPass )? OF
+    ARGLIST numberOfArgumentsToPass? OF
     ( attributedFormalType |
       '{' attributedFormalType ( ',' attributedFormalType )* '}' )
     ( '|' variadicTerminator )?
     ;
 
-// fragment #33.1
-numberOfArgumentsToPass :
-    WholeNumber | ConstIdent
-    ;
+// alias #33.1
+numberOfArgumentsToPass : reqValueCount ;
 
 // fragment #33.2
 variadicTerminator :
-    NumberLiteral | ConstIdent | '-1' | NIL
+    constIdent | wholeNumber | '-1' | NIL
     ;
+
 
 // *** Procedures ***
 
@@ -530,6 +570,7 @@ procedureHeader :
 procedureSignature :
     Ident ( '(' formalParamList ')' )? returnedType?
     ;
+
 
 // *** Formal Parameters ***
 
@@ -550,11 +591,12 @@ simpleFormalParams :
 
 // production #38
 variadicFormalParams :
-    ARGLIST ( '>'? numberOfArgumentsToPass )? OF
+    ARGLIST numberOfArgumentsToPass? OF
     ( simpleFormalType |
       '{' simpleFormalParams ( ';' simpleFormalParams )* '}' )
     ( '|' variadicTerminator )?
     ;
+
 
 // *** Statements ***
 
@@ -644,6 +686,7 @@ designatorTail :
     ( ( '[' exprListOrSlice ']' | '^' ) ( '.' Ident )* )+
     ;
 
+
 // *** Expressions ***
 
 // production #52
@@ -732,6 +775,7 @@ structuredValue :
 valueComponent :
     expression ( ( BY | '..' {}) constExpression )?
     ;
+
 
 // *** Identifiers ***
 
@@ -900,7 +944,6 @@ pragmaPURITY :
 // production #13
 variableAttrPragma :
     SINGLEASSIGN | LOWLATENCY | VOLATILE
-    {} /* make ANTLRworks display separate branches */
     ;
 
 // production #14
@@ -924,25 +967,25 @@ timestamp :
     ;
 
 // alias #15.3a
-year : WholeNumber ;
+year : wholeNumber ;
 
 // alias #15.3b
-month : WholeNumber ;
+month : wholeNumber ;
 
 // alias #15.3c
-day : WholeNumber ;
+day : wholeNumber ;
 
 // alias #15.3d
-hours : WholeNumber ;
+hours : wholeNumber ;
 
 // alias #15.3e
-minutes : WholeNumber ;
+minutes : wholeNumber ;
 
 // alias #15.3f
-seconds : WholeNumber ;
+seconds : wholeNumber ;
 
 // alias #15.4g
-timezone : WholeNumber ;
+timezone : wholeNumber ;
 
 // production #16
 pragmaADDR :
@@ -1044,7 +1087,8 @@ IdentLeadChar :
     Letter | '_' | '$'
     ;
 
-/* An identifier must not be composed solely of special characters! */
+/* An identifier must not be composed solely of special characters!
+   A lexer error shall be emitted for any violation of this rule. */
 
 fragment /* #2.2 */
 IdentTail :
@@ -1056,20 +1100,15 @@ IdentTail :
 // resolve using Schroedinger's Token technique
 ConstBindableIdent :  /* Ident */
     TNIL | TBIDI | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
-    {} /* make ANTLRworks display separate branches */
 	;
 
 // fragment #2.4
 // dual-use identifiers
 // resolve using Schroedinger's Token technique
 ProcBindableIdent : /* Ident */
-    ABS | NEG | COUNT | LENGTH | STORE | RETRIEVE | SUBSET |
+    ABS | NEG | COUNT | LENGTH | STORE | RETRIEVE | INSERT | REMOVE | SUBSET |
     READ | READNEW | WRITE | WRITEF | TMIN | TMAX | SXF | VAL
-    {} /* make ANTLRworks display separate branches */
     ;
-
-// alias #2.5
-ConstIdent : Ident ;
 
 // production #3
 NumberLiteral :
@@ -1133,9 +1172,6 @@ Base2Digit :
 
 fragment /* #3.9 */
 DigitSep : SINGLE_QUOTE {} /* make ANTLRworks display name, not literal */ ;
-
-// alias #3.10
-WholeNumber : NumberLiteral ;
 
 // production #4
 StringLiteral :
