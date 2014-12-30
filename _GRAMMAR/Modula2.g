@@ -268,13 +268,13 @@ simpleProtoLiteral : /* Ident */
 
 // production #6
 structuredProtoLiteral :
-    '{' ( protoLiteralList |
+    '{' ( simpleProtoLiteralList |
         ARGLIST reqValueCount? OF
-          ( '{' protoLiteralList '}' | simpleProtoLiteral ) | '*' ) '}'
+          ( '{' simpleProtoLiteralList '}' | simpleProtoLiteral ) | '*' ) '}'
     ;
 
 // alias #6.1
-protoLiteralList : identList;
+simpleProtoLiteralList : identList;
 
 // production #7
 reqValueCount :
