@@ -88,7 +88,7 @@ tokens {
     WHILE          = 'WHILE';
 
 
-// *** Dual-Use Identifiers, 27 tokens ***
+// *** Dual-Use Identifiers, 31 tokens ***
 
 //  Dual-Use identifiers may be used as RWs depending on context. The
 //  resulting ambiguity is resolvable using the Schroedinger's Token
@@ -105,6 +105,14 @@ tokens {
 
     CAST           = 'CAST';           /* -> production #32 */
     NIL            = 'NIL';            /* -> productions #33 and #38 */
+
+/* Identifiers that are used like RWs within literal specification */
+
+    CHAR           = 'CHAR';           /* -> production #5 */
+    UNICHAR        = 'UNICHAR';        /* -> production #5 */
+    INTEGER        = 'INTEGER';        /* -> production #5 */
+    REAL           = 'REAL';           /* -> production #5 */
+
 
 /* Identifiers that are used like RWs within bound constant declarations */
 
