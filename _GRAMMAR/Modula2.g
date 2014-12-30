@@ -2,7 +2,7 @@
 
 grammar Modula2;
 
-/* M2R10 grammar in ANTLR EBNF notation -- status Dec 30, 2014 */
+/* M2R10 grammar in ANTLR EBNF notation -- status Dec 31, 2014 */
 
 
 // ---------------------------------------------------------------------------
@@ -278,11 +278,11 @@ protoLiteralList : identList;
 
 // production #7
 reqValueCount :
-    atLeast? ( constIdent | wholeNumber )
+    greaterThan? ( constIdent | wholeNumber )
     ;
 
 // alias #7.1
-atLeast : '>' ;
+greaterThan : '>' ;
 
 // alias #7.2
 constIdent : Ident ;
@@ -339,14 +339,15 @@ procBindableEntity :
 
 // fragment #11.3
 procBindableOperator :
-    '+' | '-' | '*' | '/' | '*.' | BACKSLASH | '=' | '<' | '>' | '::' |
+    '+' | '-' | '*' | '/' | BACKSLASH |
+    '*.' | '=' | '<' | '>' | '::' | DIV | MOD |
     {} /* make ANTLRworks display separate branches */
     '..' bindingSelector?
     ;
 
 // fragment #11.4
 procBindableRW :
-    ARRAY | NEW | RETAIN | RELEASE | IN | FOR | DIV | MOD |
+    ARRAY | NEW | RETAIN | RELEASE | IN | FOR |
     COPY bindingSelector?
     ;
 
@@ -1085,6 +1086,19 @@ ReservedWord :
     SET | THEN | TO | TYPE | UNTIL | VAR | WHILE
     ;
 
+// production #1.1
+// dual-use identifiers
+ConstBindableIdent :  /* Ident */
+    TNIL | TBIDI | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
+	;
+
+// production #1.2
+// dual-use identifiers
+ProcBindableIdent : /* Ident */
+    ABS | NEG | COUNT | LENGTH | STORE | RETRIEVE | INSERT | REMOVE |
+    SUBSET | READ | READNEW | WRITE | WRITEF | TMIN | TMAX | SXF | VAL
+    ;
+
 // production #2
 Ident :
     IdentLeadChar IdentTail?
@@ -1101,21 +1115,6 @@ IdentLeadChar :
 fragment /* #2.2 */
 IdentTail :
     ( IdentLeadChar | Digit )+
-    ;
-
-// fragment #2.3
-// dual-use identifiers
-// resolve using Schroedinger's Token technique
-ConstBindableIdent :  /* Ident */
-    TNIL | TBIDI | TLIMIT | TSIGNED | TBASE | TPRECISION | TMINEXP | TMAXEXP
-	;
-
-// fragment #2.4
-// dual-use identifiers
-// resolve using Schroedinger's Token technique
-ProcBindableIdent : /* Ident */
-    ABS | NEG | COUNT | LENGTH | STORE | RETRIEVE | INSERT | REMOVE | SUBSET |
-    READ | READNEW | WRITE | WRITEF | TMIN | TMAX | SXF | VAL
     ;
 
 // production #3
