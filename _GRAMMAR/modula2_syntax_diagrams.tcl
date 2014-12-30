@@ -237,13 +237,13 @@ lappend non_terminals structuredProtoLiteral {
   line LBRACE {
     or
       {line ARGLIST {optx reqValueCount} OF
-        {or {line LBRACE protoLiteralList RBRACE} simpleProtoLiteral *}}
-      protoLiteralList
+        {or {line LBRACE simpleProtoLiteralList RBRACE} simpleProtoLiteral *}}
+      simpleProtoLiteralList
   } RBRACE
 }
 
-# (6.1) Proto Literal List
-lappend non_terminals protoLiteralList {
+# (6.1) Simple Proto Literal List
+lappend non_terminals simpleProtoLiteralList {
   line identList 
 }
 
@@ -277,6 +277,25 @@ lappend non_terminals constOrTypeOrProcRequirement {
 lappend non_terminals boolConstIdent {
   line Ident 
 }
+
+## (8) Constant Or Type Or Procedure Requirement #2
+#lappend non_terminals constOrTypeOrProcRequirement2 {
+#  line {optx requirementCondition }
+#    {or constRequirement procedureRequirement {line TYPE = procedureType}}
+#}
+#
+## (8.1) Requirement Condition
+#lappend non_terminals requirementCondition {
+#  line {optx NOT} {
+#    or
+#      {line [ {
+#        or
+#          {loop simpleProtoLiteral |}
+#          bindableEntity
+#        } ] }
+#    boolConstIdent
+#  } ->
+#}
 
 # (9) Constant Requirement
 lappend non_terminals constRequirement {
@@ -627,7 +646,7 @@ lappend non_terminals variadicFormalParams {
 
 # (38.1) Variadic Terminator
 lappend non_terminals variadicTerminator {
-  or constIdent wholeNumber -1 /NIL
+  or -1 /NIL constIdent wholeNumber
 }
 
 # (39) Statement
