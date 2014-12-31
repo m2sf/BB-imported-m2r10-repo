@@ -88,7 +88,7 @@ tokens {
     WHILE          = 'WHILE';
 
 
-// *** Dual-Use Identifiers, 31 tokens ***
+// *** Dual-Use Identifiers, 32 tokens ***
 
 //  Dual-Use identifiers may be used as RWs depending on context. The
 //  resulting ambiguity is resolvable using the Schroedinger's Token
@@ -104,6 +104,7 @@ tokens {
 /* Identifiers that are used like RWs within formal parameter lists */
 
     CAST           = 'CAST';           /* -> production #32 */
+    ADDRESS        = 'ADDRESS';        /* -> production #32 */
     NIL            = 'NIL';            /* -> productions #33 and #38 */
 
 /* Identifiers that are used like RWs within literal specification */
@@ -547,8 +548,14 @@ attributedFormalType :
 
 // production #32
 simpleFormalType :
-    CAST? ( ARRAY OF )? typeIdent
+    ( ARRAY OF )? typeIdent | autoCastingFormalType
     ;
+
+// fragment #32.1
+// only available after import of CAST
+autoCastingFormalType :
+    CAST ( ADDRESS | ARRAY OF typeIdent )
+    :
 
 // production #33
 variadicFormalType :
