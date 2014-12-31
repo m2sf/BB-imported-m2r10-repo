@@ -369,8 +369,7 @@ lappend non_terminals procBindableIdent {
   or
     /ABS /NEG /COUNT /LENGTH /STORE /RETRIEVE /SUBSET
     /READ /READNEW /WRITE /WRITEF /TMIN /TMAX /SXF /VAL
-    {line /INSERT {optx bindingSelector}} 
-    {line /REMOVE {optx bindingSelector}} 
+    {line {or /INSERT /REMOVE} {optx bindingSelector}} 
 }
 
 # (11.6) Binding Selector
@@ -594,7 +593,14 @@ lappend non_terminals attributedFormalType {
 
 # (32) Simple Formal Type
 lappend non_terminals simpleFormalType {
-  line {optx /CAST} {optx ARRAY OF} typeIdent
+  or
+    {line {optx ARRAY OF} typeIdent}
+    castingFormalType
+}
+
+# (32.1) Casting Formal Type
+lappend non_terminals castingFormalType {
+  line /CAST {or /ADDRESS {line ARRAY OF typeIdent}}
 }
 
 # (33) Variadic Formal Type
@@ -674,8 +680,6 @@ lappend non_terminals statementSequence {
 # (41) Assignment Or Procedure Call
 lappend non_terminals assignmentOrProcedureCall {
   or
-    {line NEW designator {optx := expression}}
-    {line COPY designator := expression}
     {line designator {
       or
         {}
@@ -684,6 +688,8 @@ lappend non_terminals assignmentOrProcedureCall {
         {line actualParameters}
       }
     }
+    {line NEW designator {optx := expression}}
+    {line COPY designator := expression}
 }
 
 # (41.1) Increment Or Decrement Suffix
@@ -804,7 +810,7 @@ lappend non_terminals term {
 
 # (55.1) Multiply Operator
 lappend non_terminals mulOp {
-  line {or * / DIV MOD AND}
+  line {or * / BACKSLASH *. DIV MOD AND}
 }
 
 # (56) factorOrNegation
@@ -821,11 +827,11 @@ lappend non_terminals factor {
 lappend non_terminals simpleFactor {
   line {
     or
-      NumericLiteral
+      NumberLiteral
       StringLiteral
       structuredValue
       {line ( expression )}
-      line designator {optx actualParameters}
+      {line designator {optx actualParameters}}
     }
 }
 
