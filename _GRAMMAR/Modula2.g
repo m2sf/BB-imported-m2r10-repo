@@ -548,12 +548,12 @@ attributedFormalType :
 
 // production #32
 simpleFormalType :
-    ( ARRAY OF )? typeIdent | autoCastingFormalType
+    ( ARRAY OF )? typeIdent | castingFormalType
     ;
 
 // fragment #32.1
 // only available after import of CAST
-autoCastingFormalType :
+castingFormalType :
     CAST ( ADDRESS | ARRAY OF typeIdent )
     :
 
