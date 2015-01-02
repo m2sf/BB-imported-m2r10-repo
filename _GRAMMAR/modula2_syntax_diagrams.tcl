@@ -299,6 +299,25 @@ lappend non_terminals boolConstIdent {
   line Ident 
 }
 
+## (9) Constant Or Type Or Procedure Requirement #2
+#lappend non_terminals constOrTypeOrProcRequirement2 {
+#  line {optx requirementCondition }
+#    {or constRequirement procedureRequirement {line TYPE = procedureType}}
+#}
+#
+## (9.1) Requirement Condition
+#lappend non_terminals requirementCondition {
+#  line {optx NOT} {
+#    or
+#      {line [ {
+#        or
+#          {loop simpleProtoLiteral |}
+#          bindableEntity
+#        } ] }
+#    boolConstIdent
+#  } ->
+#}
+
 # (10) Constant Requirement
 lappend non_terminals constRequirement {
   line CONST {
@@ -560,7 +579,7 @@ lappend non_terminals enumTypeIdent {
 lappend non_terminals recordType {
   line RECORD
     {or
-      {line {loop fieldList ;} {opt indeterminateField}}
+      {line {loop fieldList ;} {optx indeterminateField}}
       {line ( recBaseType ) {loop fieldList ;}}
     }
   END
@@ -608,7 +627,7 @@ lappend non_terminals returnedType {
 
 # (31) Attributed Formal Type
 lappend non_terminals attributedFormalType {
-  line {or CONST VAR nil} simpleFormalType
+  line {or CONST VAR NEW nil} simpleFormalType
 }
 
 # (32) Simple Formal Type
@@ -649,7 +668,7 @@ lappend non_terminals formalParams {
 
 # (36) Simple Formal Parameters
 lappend non_terminals simpleFormalParams {
-  line {or CONST VAR nil} identList : simpleFormalType
+  line {or CONST VAR NEW nil} identList : simpleFormalType
 }
 
 # (37) Variadic Formal Parameters
@@ -702,10 +721,10 @@ lappend non_terminals updateOrProcCall {
   or
     {line designator {
       or
-        {}
         {line := expression}
         {line incOrDecSuffix}
         {line actualParameters}
+        nil
       }
     }
     {line COPY designator := expression}
