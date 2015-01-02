@@ -241,7 +241,7 @@ lappend non_terminals simpleProtoLiteral {
 }
 
 # (7) Structured Proto Literal
-lappend non_terminals structuredProtoLiteral2 {
+lappend non_terminals structuredProtoLiteral {
   line LBRACE {
     or
       {line ARGLIST {optx reqValueCount} OF {
@@ -251,21 +251,6 @@ lappend non_terminals structuredProtoLiteral2 {
         }
       {loop simpleProtoLiteral ,}
   } RBRACE
-}
-
-# (7) Structured Proto Literal
-lappend non_terminals structuredProtoLiteral {
-  line LBRACE {
-    or
-      {line ARGLIST {optx reqValueCount} OF
-        {or {line LBRACE simpleProtoLiteralList RBRACE} simpleProtoLiteral *}}
-      simpleProtoLiteralList
-  } RBRACE
-}
-
-# (7.1) Simple Proto Literal List
-lappend non_terminals simpleProtoLiteralList {
-  line identList 
 }
 
 # (8) Required Value Count
