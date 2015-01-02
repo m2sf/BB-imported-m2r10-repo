@@ -299,25 +299,6 @@ lappend non_terminals boolConstIdent {
   line Ident 
 }
 
-## (9) Constant Or Type Or Procedure Requirement #2
-#lappend non_terminals constOrTypeOrProcRequirement2 {
-#  line {optx requirementCondition }
-#    {or constRequirement procedureRequirement {line TYPE = procedureType}}
-#}
-#
-## (9.1) Requirement Condition
-#lappend non_terminals requirementCondition {
-#  line {optx NOT} {
-#    or
-#      {line [ {
-#        or
-#          {loop simpleProtoLiteral |}
-#          bindableEntity
-#        } ] }
-#    boolConstIdent
-#  } ->
-#}
-
 # (10) Constant Requirement
 lappend non_terminals constRequirement {
   line CONST {
