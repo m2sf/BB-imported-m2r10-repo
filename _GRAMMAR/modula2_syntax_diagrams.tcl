@@ -746,7 +746,7 @@ lappend non_terminals loopStatement {
 # (49) FOR Statement
 lappend non_terminals forStatement {
   stack
-    {line FOR controlVariable {optx incOrDecSuffix}}
+    {line FOR controlVariable {optx ascOrDescSuffix}}
     {line IN {or designator {line range OF typeIdent}}}
     {line DO statementSequence END}
 }
@@ -754,6 +754,11 @@ lappend non_terminals forStatement {
 # (49.1) Control Variable
 lappend non_terminals controlVariable {
   line Ident
+}
+
+# (49.2) Ascend Or Descend Suffix
+lappend non_terminals ascOrDescSuffix {
+  line incOrDecSuffix
 }
 
 # (50) Designator
