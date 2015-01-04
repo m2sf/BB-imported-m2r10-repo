@@ -7,11 +7,15 @@ its language report, reference compiler and standard library.
 
 Quick links:
 
-** o  Technical Specification **
+** o  Finalised Grammar (up-to-date) **
+
+https://bitbucket.org/trijezdci/m2r10/downloads/SyntaxDiagrams.pdf
+
+** o  Technical Specification (needs updating) **
 
 https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.2014-01-31.tracked.pdf
 
-** o  Source Tree **
+** o  Source Tree (needs updating) **
 
 https://bitbucket.org/trijezdci/m2r10/src
 
@@ -83,4 +87,4 @@ shifting of focus to the compiler implementation,  but at present there is
 Please consider [making a donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QA4WRY9TW7GT4) to speed up the development work.
 
 
-[Status: Dec 18, 2014]
+[Status: Dec 31, 2014]
