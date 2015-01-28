@@ -1,4 +1,4 @@
-(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Specialised Blueprint for Dynamically Allocatable Array ADTs *)
 
@@ -9,20 +9,16 @@ REFERENTIAL IndexType, ValueType, HandlerType, LoopBodyType;
 
 (* Required Module Type *)
 
-MODULE TYPE = OPAQUE := { ARGLIST OF ValueType };
-(* Array ADTs must be opaque,
-   array literals with a variable number of values are compatible. *)
+MODULE TYPE = OPAQUE;
+
+LITERAL = { ARGLIST OF ValueType };
+(* Array literals with a variable number of values are compatible. *)
 
 
 (* Required Constants *)
 
 
 (* Mutability *)
-
-CONST isMutable : BOOLEAN;
-(* Required constant to define whether the ADT should be mutable.
-   Its value may be TRUE or FALSE. *)
-
 
 (* Memory Management Model *)
 
@@ -31,19 +27,24 @@ CONST isRefCounted = TRUE;
    reference counted. Its value may be TRUE or FALSE. *)
 
 
-(* Orderedness *)
+(* Iteration Order *)
 
-CONST [DESCENDING] isOrdered = TRUE;
-(* Required constant to define whether conforming ADTs should be ordered.
-   Its value is always TRUE for Array ADTs. *)
+CONST [TBIDI] bidirectionalIteration = TRUE;
+(* Required constant to define whether conforming ADTs support bidirectional
+   FOR loop iteration. Its value is always TRUE for Array ADTs. *)
+
+(* An expression of the form TBIDI(ArrayADT))
+   is synthesised as ArrayADT.bidirectionalIteration. *)
 
 
 (* NIL Storage *)
 
-CONST [NIL] allowsNilStorage : BOOLEAN;
+CONST [TNIL] allowsNilStorage : BOOLEAN;
 (* Required constant to define whether NIL should be a storable value.
    Its value may be TRUE or FALSE. *)
 
+(* An expression of the form TNIL(ArrayADT))
+   is synthesised as ArrayADT.allowsNilStorage. *)
 
 (* Support for Invalid Accessor Retrieval Intercept *)
 
@@ -87,93 +88,94 @@ PROCEDURE isResizable ( array : ProtoArray ) : BOOLEAN;
 
 (* Memory Management *)
 
-(* Binding to Predefined Procedure NEW *)
+(* Binding to the NEW statement *)
 
-PROCEDURE [NEW] new
-  ( VAR array : ProtoArray; initWith : ARGLIST OF ValueType );
+PROCEDURE [NEW] newWithCapacity
+  ( NEW array : ProtoArray; capacity : LONGCARD );
+(* Required procedure to allocate a new array with a given
+   initial capacity. *)
+
+(* A statement of the form NEW array;
+   is synthesised as ArrayADT.newWithCapacity(array, 0);
+   
+   A statement of the form NEW array OF capacity;
+   is synthesised as ArrayADT.newWithCapacity(array, capacity); *)
+
+
+PROCEDURE [NEW+] newWithValues
+  ( NEW array : ProtoArray; initWith : ARGLIST OF ValueType );
 (* Required procedure to allocate a new array and initialise it
    with zero or more given values. *)
 
-(* A statement of the form NEW(array)
-   is synthesised as ArrayADT.new(array).
-   
-   A statement of the form NEW(array, val1, val2, val3, ...)
-   is synthesised as ArrayADT.new(array, val1, val2, val3, ...). *)
+(* A statement of the form NEW array := { val1, val2, val3, ... };
+   is synthesised as ArrayADT.newWithValues(array, val1, val2, val3, ... ); *)
 
 
-isMutable ->
-PROCEDURE newWithCapacity
-  ( VAR array : ProtoArray; capacity : LONGCARD );
-(* Procedure to allocate a new array with a given initial capacity.
-   The procedure is required when the ADT is mutable. *)
+PROCEDURE [NEW*] newWithCopy
+  ( NEW array : ProtoArray; source : ProtoArray ) : ProtoArray;
+(* Required function to return a newly allocated copy of an array. *)
+
+(* An expression of the form NEW array := source;
+   is synthesised as ArrayADT.newWithCopy(array, source); *)
 
 
-(* Binding to Predefined Procedure RETAIN *)
+PROCEDURE [NEW++]; (* TO DO *)
+
+
+(* Binding to the RETAIN statement *)
 
 isRefCounted ->
 PROCEDURE [RETAIN] retain ( array : ProtoArray );
 (* Procedure to retain an array and prevent its deallocation.
    The procedure is required when the ADT is reference counted. *)
 
-(* A statement of the form RETAIN(array)
-   is synthesised as ArrayADT.retain(array). *)
+(* A statement of the form RETAIN array;
+   is synthesised as ArrayADT.retain(array); *)
 
 
-(* Binding to Predefined Procedure RELEASE *)
+(* Binding to the RELEASE statement *)
 
 PROCEDURE [RELEASE] release ( array : ProtoArray );
 (* Required procedure to cancel an outstanding retain
    or deallocate an array if no retains are outstanding. *)
 
-(* A statement of the form RELEASE(array)
-   is synthesised as ArrayADT.release(array). *)
-
-
-(* Literal Assignment *)
-
-(* Binding to the := Operator *)
-
-isMutable ->
-PROCEDURE [:=] assignLiteral
-  ( array : ProtoArray; literal : ARGLIST OF ValueType );
-(* Procedure to destructively copy the contents of an array literal to an
-   array. The procedure is required when the ADT is mutable. *)
-
-(* A statement of the form array := { val1, val2, val3, ... }
-   is synthesised as ArrayADT.assignLiteral(array, val1, val2, val3, ...). *)
+(* A statement of the form RELEASE array;
+   is synthesised as ArrayADT.release(array); *)
 
 
 (* Copying *)
 
-(* Binding to Predefined Function DUP *)
+(* Binding to the COPY statement *)
 
-PROCEDURE [DUP] newWithCopy ( source : ProtoArray ) : ProtoArray;
-(* Required function to return a newly allocated copy of an array. *)
+PROCEDURE [COPY] copyValues
+  ( VAR array : ProtoArray;
+    values : ARGLIST OF ValueType ) : ProtoArray;
+(* Required procedure to destructively update an array from a
+   given value list. *)
 
-(* An expression of the form DUP(array)
-   is synthesised as ArrayADT.newWithCopy(array). *)
+(* An expression of the form COPY array := { val1, val2, val3, ... };
+   is synthesised as ArrayADT.copyValues(array, val1, val2, val3, ... ); *)
 
+PROCEDURE [COPY+]; (* TO DO *)
 
-(* Binding to Predefined Procedure COPY *)
+PROCEDURE [COPY*] copy
+  ( VAR array : ProtoArray; source : ProtoArray ) : ProtoArray;
+(* Required procedure to return a newly allocated copy of an array. *)
 
-isMutable ->
-PROCEDURE [COPY] copy ( source : ProtoArray; target : ProtoArray );
-(* Procedure to destructively copy the contents of one array to another.
-   The procedure is required when the ADT is mutable. *)
+(* An expression of the form COPY array := source;
+   is synthesised as ArrayADT.copy(array, source); *)
 
-(* A statement of the form COPY(array1, array2)
-   is synthesised as ArrayADT.copy(array1, array2). *)
+PROCEDURE [COPY++]; (* TO DO *)
 
 
 (* Value Storage *)
 
 (* Binding to Predefined Procedure STORE *)
 
-isMutable ->
 PROCEDURE [STORE] storeValue
  ( array : ProtoArray; index : IndexType; value : ValueType );
-(* Procedure to store a value at a given index in an array.
-   The procedure is required when the ADT is mutable. *)
+(* Required procedure to store a value at a given index in an
+   array. *)
 
 (* A statement of the form array[index] := value
    is equivalent to STORE(array, index, value) and
@@ -230,7 +232,6 @@ PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
 
 (* Binding to Predefined Procedure INSERT *)
 
-isMutable ->
 PROCEDURE [INSERT] insertValuesAtIndex
   ( targetArray : ProtoArray;
     index : IndexType;
@@ -244,7 +245,6 @@ PROCEDURE [INSERT] insertValuesAtIndex
      ArrayADT.insertValuesAtIndex(array, index, val1, val2, val3, ...). *)
 
 
-isMutable ->
 PROCEDURE insertArrayAtIndex
   ( targetArray : ProtoArray; index : IndexType; sourceArray : ProtoArray );
 (* Procedure to insert a source array into a target array at a given
@@ -255,7 +255,6 @@ PROCEDURE insertArrayAtIndex
 
 (* Binding to Predefined Procedure REMOVE *)
 
-isMutable ->
 PROCEDURE [REMOVE] removeValuesAtIndex
   ( array : ProtoArray; index : IndexType; valueCount : LONGCARD );
 (* Procedure to remove one or more values from an array at a given index.
@@ -324,13 +323,13 @@ PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
 (* Arithmetic operations +, -, *, and / are not meaningful for Array ADTs.
    Conforming blueprints may not require binding to these operations. *)
 
-PROCEDURE [+] : NIL; (* inhibited *)
+PROCEDURE [+] = NONE; (* inhibited *)
 
-PROCEDURE [-] : NIL; (* inhibited *)
+PROCEDURE [-] = NONE; (* inhibited *)
 
-PROCEDURE [*] : NIL; (* inhibited *)
+PROCEDURE [*] = NONE; (* inhibited *)
 
-PROCEDURE [/] : NIL; (* inhibited *)
+PROCEDURE [/] = NONE; (* inhibited *)
 
 
 (* Relational Operations *)
@@ -338,14 +337,14 @@ PROCEDURE [/] : NIL; (* inhibited *)
 (* Relational operations >, >=, < and <= are not meaningful for Array ADTs.
    Conforming blueprints may not require binding to these operations. *)
 
-PROCEDURE [<] : NIL; (* inhibited *)
+PROCEDURE [<] = NONE; (* inhibited *)
 
-PROCEDURE [>] : NIL; (* inhibited *)
+PROCEDURE [>] = NONE; (* inhibited *)
 
 (* The SUBSET operation is not meaningful for array ADTs.
    Conforming blueprints may not require binding to SUBSET. *)
 
-PROCEDURE [SUBSET] : NIL; (* inhibited *)
+PROCEDURE [SUBSET] = NONE; (* inhibited *)
 
 
 END ProtoArray.
