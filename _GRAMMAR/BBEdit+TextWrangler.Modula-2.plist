@@ -18,7 +18,6 @@
 		<string>BLUEPRINT</string>
 		<string>BY</string>
 		<string>CASE</string>
-		<string>CAST</string>
 		<string>CONST</string>
 		<string>COPY</string>
 		<string>DEFINITION</string>
@@ -104,6 +103,14 @@
 		<string>TMAX</string>
 		<string>TSIZE</string>
 		<string>TLIMIT</string>
+		<string>TNIL</string>
+		<string>TBIDI</string>
+		<string>TSIGNED</string>
+		<string>TBASE</string>
+		<string>TMINEXP</string>
+		<string>TMAXEXP</string>
+		<string>CAST</string>
+		<string>TODO</string>
 	</array>
 	<key>BBLMLanguageCode</key>
 	<string>M2</string>
