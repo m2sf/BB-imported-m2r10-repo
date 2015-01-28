@@ -284,6 +284,25 @@ lappend non_terminals boolConstIdent {
   line Ident 
 }
 
+## (8) Constant Or Type Or Procedure Requirement #2
+#lappend non_terminals constOrTypeOrProcRequirement2 {
+#  line {optx requirementCondition }
+#    {or constRequirement procedureRequirement {line TYPE = procedureType}}
+#}
+#
+## (8.1) Requirement Condition
+#lappend non_terminals requirementCondition {
+#  line {optx NOT} {
+#    or
+#      {line [ {
+#        or
+#          {loop simpleProtoLiteral |}
+#          bindableEntity
+#        } ] }
+#    boolConstIdent
+#  } ->
+#}
+
 # (9) Constant Requirement
 lappend non_terminals constRequirement {
   line CONST {
@@ -1002,7 +1021,7 @@ lappend non_terminals langExtn_programModule {
 
 # Architecture
 lappend non_terminals langExtn_arch {
-  Ident
+  line Ident
 }
 
 # Register Mapping Facility
@@ -1010,8 +1029,18 @@ lappend non_terminals langExtn_arch {
 # Replacement for #30
 lappend non_terminals langExtn_simpleFormalType {
   or
-    {line {optx ARRAY OF} typeIdent {optx regAttribute}}
-    castingFormalType
+    {line typeIdent {optx regAttribute}}
+    {line ARRAY OF typeIdent}
+    {line castingFormalType}
+}
+
+# Replacement for #30.1
+lappend non_terminals langExtn_castingFormalType {
+  line /CAST {
+    or
+      {line ARRAY OF /OCTET}
+      {line addressTypeIdent {optx regAttribute}}
+    }
 }
 
 # Register Mapping Attribute
@@ -1021,27 +1050,26 @@ lappend non_terminals langExtn_regAttribute {
 
 # Register Number
 lappend non_terminals langExtn_registerNumber {
-  constExpression
+  line constExpression
 }
 
 # Register Mnemonic
 lappend non_terminals langExtn_registerMnemonic {
-  qualident
+  line qualident
 }
 
 # Symbolic Assembly Inline Facility
 
-# Replacement for #42
+# Replacement for #36
 lappend non_terminals langExtn_statement {
   line {
     or
-      memMgtOperation
-      updateOrProcCall
+      assignmentOrProcedureCall
       ifStatement
       caseStatement
-      loopStatement
       whileStatement
       repeatStatement
+      loopStatement
       forStatement
       assemblyBlock
       {line RETURN {optx expression}}
@@ -1975,7 +2003,7 @@ lappend pragmas implDefinedPragmaSymbol {
   line Ident
 }
 
-# (4) Body Of Conditional Compilation Pragma
+# (3) Body Of Conditional Compilation Pragma
 lappend pragmas pragmaIF {
   or
     {line {or IF ELSIF} inPragmaExpression}
@@ -1983,143 +2011,143 @@ lappend pragmas pragmaIF {
     ENDIF
 }
 
-# (5) Body Of Procedure Declaration Attribute Pragma
+# (4) Body Of Procedure Declaration Attribute Pragma
 lappend pragmas procDeclAttrPragma {
   or INLINE NOINLINE NORETURN
 }
 
-# (6) Body Of Promise-To-Write Pragma
+# (5) Body Of Promise-To-Write Pragma
 lappend pragmas pragmaPTW {
   line PTW
 }
 
-# (7) Body Of Forward Declaration Pragma
+# (6) Body Of Forward Declaration Pragma
 lappend pragmas pragmaFORWARD {
   line FORWARD {or {line TYPE identList} procedureHeader}
 }
 
-# (8) Body Of Character Encoding Pragma
+# (7) Body Of Character Encoding Pragma
 lappend pragmas pragmaENCODING {
   line ENCODING = {or `ASCII `UTF8} {optx : codePointSampleList}
 }
 
-# (8.1) Code Point Sample List
+# (7.1) Code Point Sample List
 lappend pragmas codePointSampleList {
   loop {line quotedCharacter = CharCodeLiteral} ,
 }
 
-# (8.2) Quoted Character
+# (7.2) Quoted Character
 lappend pragmas quotedCharacter {
   line StringLiteral
 }
 
-# (8.3) Character Code Literal
+# (7.3) Character Code Literal
 lappend pragmas charCodeLiteral {
   line NumberLiteral
 }
 
-# (9) Body Of Memory Alignment Pragma
+# (8) Body Of Memory Alignment Pragma
 lappend pragmas pragmaALIGN {
   line ALIGN = inPragmaExpression
 }
 
-# (10) Body Of Bit Padding Pragma
+# (9) Body Of Bit Padding Pragma
 lappend pragmas pragmaPADBITS {
   line PADBITS = inPragmaExpression
 }
 
-# (11) Body Of Purity Attribute Pragma
+# (10) Body Of Purity Attribute Pragma
 lappend pragmas pragmaPURITY {
   line PURITY = inPragmaExpression
 }
 
-# (12) Body Of Variable Declaration Attribute Pragma
+# (11) Body Of Variable Declaration Attribute Pragma
 lappend pragmas variableAttrPragma {
   or SINGLEASSIGN LOWLATENCY VOLATILE
 }
 
-# (13) Body Of Deprecation Pragma
+# (12) Body Of Deprecation Pragma
 lappend pragmas pragmaDEPRECATED {
   line DEPRECATED
 }
 
-# (14) Body Of Generation Timestamp Pragma
+# (13) Body Of Generation Timestamp Pragma
 lappend pragmas pragmaGENERATED {
   line GENERATED FROM template , datestamp , timestamp
 }
 
-# (14.1) Date Stamp
+# (13.1) Date Stamp
 lappend pragmas datestamp {
   line year - month - day
 }
 
-# (14.2) Time Stamp
+# (13.2) Time Stamp
 lappend pragmas timestamp {
   line hours : minutes : seconds + timezone
 }
 
-# (14.3) year, month, day, hours, minutes, seconds, timezone
+# (13.3) year, month, day, hours, minutes, seconds, timezone
 lappend pragmas year_month_day_etc {
   line wholeNumber
 }
 
-# (15) Body Of Memory Mapping Pragma
+# (14) Body Of Memory Mapping Pragma
 lappend pragmas pragmaADDR {
   line ADDR = inPragmaExpression
 }
 
-# (16) Body Of Foreign Function Interface Pragma
+# (15) Body Of Foreign Function Interface Pragma
 lappend pragmas pragmaFFI {
   line FFI = {or `C `Fortran `CLR `JVM }
 }
 
-# (17) Body Of Foreign Function Identifier Mapping Pragma
+# (16) Body Of Foreign Function Identifier Mapping Pragma
 lappend pragmas pragmaFFIDENT {
   line FFIDENT = StringLiteral
 }
 
-# (18) Body of Implementation Defined Pragma
+# (17) Body of Implementation Defined Pragma
 lappend pragmas implDefinedPragma {
   line implDefinedPragmaSymbol {optx = inPragmaExpression}
     | messageMode
 }
 
-# (19) In-Pragma Expression
+# (18) In-Pragma Expression
 lappend pragmas inPragmaExpression {
   line inPragmaSimpleExpr {optx inPragmaOperL1 inPragmaSimpleExpr}
 }
 
-# (19.1) In-Pragma Level-1 Operator
+# (18.1) In-Pragma Level-1 Operator
 lappend pragmas inPragmaOperL1 {
   or = # < <= > >=
 }
 
-# (20) In-Pragma Simple Expression
+# (19) In-Pragma Simple Expression
 lappend pragmas inPragmaSimpleExpr {
   line {or + - nil} {loop inPragmaTerm inPragmaOperL2}
 }
 
-# (20.1) In-Pragma Level-2 Operator
+# (19.1) In-Pragma Level-2 Operator
 lappend pragmas inPragmaOperL2 {
   or + - OR
 }
 
-# (21) In-Pragma Term
+# (20) In-Pragma Term
 lappend pragmas inPragmaTerm {
   loop inPragmaFactorOrNegation inPragmaOperL3
 }
 
-# (21.1) In-Pragma Level-3 Operator
+# (20.1) In-Pragma Level-3 Operator
 lappend pragmas inPragmaOperL3 {
   or * DIV MOD AND
 }
 
-# (22) In-Pragma Factor Or Negation
+# (21) In-Pragma Factor Or Negation
 lappend pragmas inPragmaFactorOrNegation {
   line {optx NOT} inPragmaFactor
 }
 
-# (23) In-Pragma Factor
+# (22) In-Pragma Factor
 lappend pragmas inPragmaFactor {
   or
     wholeNumber
@@ -2128,7 +2156,7 @@ lappend pragmas inPragmaFactor {
     inPragmaCompileTimeFunctionCall
 }
 
-# (24) In-Pragma Compile Time Function Call
+# (23) In-Pragma Compile Time Function Call
 lappend pragmas inPragmaCompileTimeFunctionCall {
   line qualident ( {loop inPragmaExpression ,} ) 
 }
