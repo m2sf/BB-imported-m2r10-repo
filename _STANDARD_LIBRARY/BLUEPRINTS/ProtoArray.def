@@ -514,7 +514,9 @@ PROCEDURE [REMOVE] removeValue
 PROCEDURE [REMOVE*] removeAllValues ( array : ProtoArray );
 (* Required procedure to remove all values from an array. *)
 
-(* Supports use case:
+(* Supports use cases:
+   
+   REMOVE(array, 0, -1);
       
    COPY array := EMPTY; *)
 
