@@ -20,7 +20,7 @@ LITERAL = { ARGLIST OF ValueType };
 
 (* Memory Management Model *)
 
-CONST isRefCounted = TRUE;
+CONST isRefCounted : BOOLEAN;
 (* Required constant to define whether conforming ADTs should implement
    reference counting.  Its value may be TRUE or FALSE. *)
 
