@@ -482,6 +482,8 @@ PROCEDURE [REMOVE+] removeValuesInRange
       
    REMOVE(array, n, m);
    
+   further, if slicing is supported, the alternative syntax:
+   
    COPY array[n..m] := EMPTY; *)
 
 
