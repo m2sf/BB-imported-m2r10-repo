@@ -314,6 +314,80 @@ PROCEDURE [INSERT++] insertArrayExpression
    array : qualident; *)
 
 
+(* L-Value Slicing *)
+
+(* Binding to .. *)
+
+supportsConcatAndSlicing ->
+PROCEDURE [..] updateSliceWithValues
+  ( VAR target : ProtoArray; start, end : INTEGER; values : ARGLIST OF ValueType );
+(* Procedure to destructively update a slice of a target array from a given value
+   list.  Required when slicing is supported. *)
+
+(* Supports use case:
+   
+   COPY target[n..m] := { val1, val2, val3, ... }; *)
+
+
+supportsConcatAndSlicing ->
+PROCEDURE [..*] updateSliceWithArrayOrSlice
+  ( VAR target : ProtoArray; tgtStart, tgtEnd : INTEGER;
+        source : ProtoArray; srcStart, srcEnd : INTEGER );
+(* Procedure to destructively update a slice of a target array with the values
+   of a given source array or slice.  Required when slicing is supported. *)
+
+(* Supports use cases:
+   
+   COPY target[n..m] := source;
+   
+   COPY target[n..m] := source[p..q]; *)
+
+
+supportsConcatAndSlicing ->
+PROCEDURE [..+] updateSliceWithArraysOrSlices
+  ( VAR target : ProtoArray; tgtStart, tgtEnd : INTEGER;
+        source : ARGLIST OF { array : ProtoArray; start, end : INTEGER } );
+(* Procedure to destructively update a slice of a target array with a
+   concatenation of given source arrays and slices.  Required when
+   concatenation and slicing is supported. *)
+
+(* Supports use cases of the form:
+   
+   COPY target[n..m] := arrayConcatenation;
+   
+   where ...
+   
+   arrayConcatenation : term ( '+>' term )* ;
+   term : arraySlice | array ;
+   arraySlice : array '[' start '..' end ']' ;
+   start, end : integerExpression ;
+   array : qualident ; *)
+
+
+supportsConcatAndSlicing ->
+PROCEDURE [..++] updateSliceWithArrayExpression
+  ( VAR target : ProtoArray; tgtStart, tgtEnd : INTEGER;
+    source : ARGLIST OF
+      { array : ProtoArray; start, end : INTEGER;
+        values : ARRAY OF ValueType } );
+(* Procedure to destructively update a slice of a target array with a given
+   array expression evaluation.  Required when concatenation and slicing is
+   supported. *)
+
+(* Supports use cases of the form:
+   
+   COPY target[n..m] := arrayExpression;
+   
+   where ...
+   
+   arrayExpression : term ( '+>' term )* ;
+   term : valueList | arraySlice | array ;
+   valueList : '{' value ( ',' value )* '}' ;
+   arraySlice : array '[' start '..' end ']' ;
+   start, end : integerExpression ;
+   value : qualident | expression ;
+   array : qualident; *)
+
 
 (* Value Storage *)
 
