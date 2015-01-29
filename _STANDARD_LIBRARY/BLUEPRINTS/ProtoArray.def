@@ -389,6 +389,51 @@ PROCEDURE [..++] updateSliceWithArrayExpression
    array : qualident; *)
 
 
+(* Conversion of Built-in Arrays *)
+
+NOT supportsConcatAndSlicing ->
+PROCEDURE [ARRAY] convertBuiltinArray
+  ( VAR array : ProtoArray; CONST from : ARRAY OF ValueType );
+(* Procedure to destructively update a target array with the values of a
+   given static array with matching value type.  Required when slicing
+   is not supported. *)
+
+(* Supports use cases:
+   
+   COPY array := builtinArray;
+   
+   and in combination with binding to NEW:
+   
+   NEW target := builtinArray;
+   
+   where builtinArray is any array of a static array type constructed
+   using ARRAY OF type constructor with a matching value type. *)
+
+
+supportsConcatAndSlicing ->
+PROCEDURE [ARRAY] convertBuiltinArrayOrSlice
+  ( VAR array : ProtoArray;
+    CONST from : ARRAY OF ValueType; start, end : INTEGER );
+(* Procedure to destructively update a target array with the values of a
+   given static array or slice thereof with matching value type.  Required
+   when slicing is supported. *)
+
+(* Supports use cases:
+   
+   COPY target := builtinArray;
+   
+   COPY target := builtinArray[n..m];
+   
+   and in combination with binding to NEW:
+   
+   NEW target := builtinArray;
+   
+   NEW target := builtinArray[n..m];
+   
+   where builtinArray is any array of a static array type constructed
+   using ARRAY OF type constructor with a matching value type. *)
+
+
 (* Value Storage *)
 
 (* Binding to STORE *)
