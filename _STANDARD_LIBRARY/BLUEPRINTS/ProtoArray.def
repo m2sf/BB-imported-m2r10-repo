@@ -391,7 +391,7 @@ PROCEDURE [..++] updateSliceWithArrayExpression
 
 (* Value Storage *)
 
-(* Binding to Predefined Procedure STORE *)
+(* Binding to STORE *)
 
 PROCEDURE [STORE] storeValue
  ( array : ProtoArray; index : IndexType; value : ValueType );
@@ -405,7 +405,7 @@ PROCEDURE [STORE] storeValue
 
 (* Value Retrieval *)
 
-(* Binding to Predefined Function RETRIEVE *)
+(* Binding to RETRIEVE *)
 
 PROCEDURE [RETRIEVE] valueAtIndex
  ( array : ProtoArray; index : IndexType ) : ValueType;
@@ -449,49 +449,45 @@ PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
    The procedure is required when invAccessorRetrievalIntercept is TRUE. *)
 
 
-(* Value Insertion *)
-
-(* Binding to Predefined Procedure INSERT *)
-
-PROCEDURE [INSERT] insertValuesAtIndex
-  ( targetArray : ProtoArray;
-    index : IndexType;
-    values : ARGLIST OF ValueType );
-(* Procedure to insert a value list into a target array at a given index.
-   The procedure is required when the ADT is mutable. *)
-
-(* A statement of the form
-     INSERT(array, index, val1, val2, val3, ...)
-   is synthesised as
-     ArrayADT.insertValuesAtIndex(array, index, val1, val2, val3, ...). *)
-
-
-PROCEDURE insertArrayAtIndex
-  ( targetArray : ProtoArray; index : IndexType; sourceArray : ProtoArray );
-(* Procedure to insert a source array into a target array at a given
-   index. The procedure is required when the ADT is mutable. *)
-
-
 (* Value Removal *)
 
-(* Binding to Predefined Procedure REMOVE *)
+(* Binding to REMOVE *)
 
-PROCEDURE [REMOVE] removeValuesAtIndex
-  ( array : ProtoArray; index : IndexType; valueCount : LONGCARD );
-(* Procedure to remove one or more values from an array at a given index.
-   The procedure is required when the ADT is mutable. *)
+PROCEDURE [REMOVE] removeValue
+  ( array : ProtoArray; atIndex : IndexType );
+(* Required procedure to remove a value from an array at a given index. *)
 
-(* A statement of the form REMOVE(array, index, n);
-   is synthesised as ArrayADT.removeValuesAtIndex(array, index, n).
+(* Supports use case:
    
-   A statement of the form array[index] := NIL
-   is treated equivalent to REMOVE(array, index, 1)
-   if constant allowsNilStorage is TRUE. *)
+   REMOVE(array, n);
+   
+   further, if TNIL(ArrayADT) is FALSE, the alternative syntax:
+   
+   array[n] := NIL; *)
+
+
+PROCEDURE [REMOVE*] removeAllValues ( array : ProtoArray );
+(* Required procedure to remove all values from an array. *)
+
+(* Supports use case:
+      
+   COPY array := EMPTY; *)
+
+
+PROCEDURE [REMOVE+] removeValuesInRange
+  ( array : ProtoArray; start, end : IndexType );
+(* Required procedure to remove one or more values from an array. *)
+
+(* Supports use cases:
+      
+   REMOVE(array, n, m);
+   
+   COPY array[n..m] := EMPTY; *)
 
 
 (* Iteration *)
 
-(* Binding to FOR IN iterator *)
+(* Binding to FOR *)
 
 TYPE LoopBodyType = PROCEDURE ( VAR ProtoArray, CONST IndexType );
 (* Required procedure type to synthesise the body of a for loop. *)
