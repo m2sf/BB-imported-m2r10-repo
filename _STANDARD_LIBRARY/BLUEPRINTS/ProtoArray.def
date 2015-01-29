@@ -93,7 +93,7 @@ PROCEDURE isResizable ( array : ProtoArray ) : BOOLEAN;
 (* Binding to NEW *)
 
 PROCEDURE [NEW] new
-  ( VAR newArray : ProtoArray; initialCapacity : LONGCARD );
+  ( NEW newArray : ProtoArray; initialCapacity : LONGCARD );
 (* Required procedure to allocate a new array with a default or given initial
    capacity. *)
 
