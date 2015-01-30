@@ -106,6 +106,12 @@ PROCEDURE REMOVE
    removes key/value pairs with keys
    key1, key2, key3, ... from target dictionary. *)
 
+PROCEDURE SLICE
+  ( VAR target : <IndexedCollection>; tgtStart, tgtEnd : INTEGER;
+        source : <IndexedCollection>; srcStart, srcEnd ; INTEGER );
+(* Copies a slice of a source collection into a slice of a target collection.
+   The component types of target and source must match. *)
+
 PROCEDURE SORT
   ( VAR result : <Array>; source : <Collection>; (*OPT*) order : CHAR );
 (* SORT(array, collection)
@@ -118,6 +124,10 @@ PROCEDURE SORT
    SORT(array, collection, "-")
    populates array with accessors of collection,
    sorted by value in descending order. *) 
+
+PROCEDURE TODO;
+(* Empty statement to indicate unimplemented code.  Generates a compile time
+(* warning when compiling in DEBUG mode, otherwise a compile time error. *)
 
 PROCEDURE READ ( f : File; VAR v : <AnyMutableType> );
 (* READ(f, v)
