@@ -1,4 +1,4 @@
-(* M2 R10 Project, (c) 2014 B.Kowarsch & R.Sutcliffe, all rights reserved. *)
+(* M2 R10 Project, (c) 2014-15 B.Kowarsch & R.Sutcliffe, all rights reserved. *)
 
 (* Dynamic Array ADTs *)
 
@@ -7,7 +7,7 @@
    operations of dynamic array ADTs, required bindings and resulting
    compile time transformations. *)
 
-(* Status: Dec 15, 2014 *)
+(* Status: Jan 31, 2015 *)
 
 
 (* =======================
@@ -225,13 +225,18 @@ VAR builtinArray : <ARRAY any OF ValueType>;
 
 REMOVE(target, n);
 
+(* remove all values from array *)
+
+REMOVE(target, 0, -1);
+
+COPY target := EMPTY;
+
 (* remove values in index range *)
 
 REMOVE(target, n, m);
 
-(* remove all values *)
+COPY target[n..m] := EMPTY;
 
-REMOVE(target, 0, -1);
 
 
 (* =====================
@@ -259,7 +264,8 @@ NEW array OF size;
 
 (* binding #1 *)
 
-PROCEDURE [COPY] copyValues ( VAR target : ADT; values : ARGLIST OF ValueType );
+PROCEDURE [COPY|1] copyValues
+  ( VAR target : ADT; values : ARGLIST OF ValueType );
 
 (* supported use cases *)
 
@@ -270,7 +276,7 @@ COPY target := { val1, val2, val3, ... };
 
 (* binding #2 (a) : when not implementing concatenation and slicing ... *)
 
-PROCEDURE [COPY*] copyArray ( VAR target : ADT; source : ADT );
+PROCEDURE [COPY|2] copyArray ( VAR target : ADT; source : ADT );
 
 (* supported use cases *)
 
@@ -281,7 +287,7 @@ COPY target := source;
 
 (* binding #2 (b) : when implementing concatenation and slicing ... *)
 
-PROCEDURE [COPY*] copyArrayOrSlice
+PROCEDURE [COPY|2] copyArrayOrSlice
   ( VAR target : ADT; source : ADT; start, end : INTEGER );
 
 (* supported use cases *)
@@ -297,7 +303,7 @@ COPY target := source[n..m];
 
 (* binding #3 : when implementing concatenation and slicing ... *)
 
-PROCEDURE [COPY+] copyArraysOrSlices
+PROCEDURE [COPY|3] copyArraysOrSlices
   ( VAR target : ADT;
     source : ARGLIST OF { array : ADT; start, end : INTEGER } );
 
@@ -318,7 +324,7 @@ COPY target := source1[n..m] +> source2[p..q] +> ... ;
 
 (* binding #4 : when implementing concatenation and slicing ... *)
 
-PROCEDURE [COPY++] copyArrayExpression
+PROCEDURE [COPY|4] copyArrayExpression
   ( VAR target : ADT;
     source : ARGLIST OF
       { array : ADT; start, end : INTEGER; values : ARRAY OF ValueType } );
@@ -346,7 +352,7 @@ COPY target := { val1, val2, val3, ... } +> source[n..m] +> ... ;
 
 (* binding #1 *)
 
-PROCEDURE [INSERT] insertValues
+PROCEDURE [INSERT|1] insertValues
   ( VAR target : ADT; atIndex : INTEGER; values : ARGLIST OF ValueType );
 
 (* supported use cases *)
@@ -358,7 +364,7 @@ COPY target[n..] := { val1, val2, val3, ... };
 
 (* binding #2 (a) : when not implementing concatenation and slicing ... *)
 
-PROCEDURE [INSERT*] insertArray
+PROCEDURE [INSERT|2] insertArray
   ( VAR target : ADT; atIndex : INTEGER; source : ADT );
 
 (* supported use case *)
@@ -368,7 +374,7 @@ COPY target[n..] := source;
 
 (* binding #2 (b) : when implementing concatenation and slicing ... *)
 
-PROCEDURE [INSERT*] insertArrayOrSlice
+PROCEDURE [INSERT|2] insertArrayOrSlice
   ( VAR target : ADT; atIndex : INTEGER; source : ADT; start, end : INTEGER );
 
 (* supported use cases *)
@@ -380,7 +386,7 @@ COPY target[n..] := source[m..p];
 
 (* binding #3 : when implementing concatenation and slicing ... *)
 
-PROCEDURE [INSERT+] insertArraysOrSlices
+PROCEDURE [INSERT|3] insertArraysOrSlices
   ( VAR target : ADT; atIndex : INTEGER;
     source : ARGLIST OF { array : ADT; start, end : INTEGER } );
 
@@ -395,7 +401,7 @@ COPY target[n..] := source1[m..p] +> source2[q..r] +> ... ;
 
 (* binding #4 : when implementing concatenation and slicing ... *)
 
-PROCEDURE [INSERT++] insertArrayExpression
+PROCEDURE [INSERT|4] insertArrayExpression
   ( VAR target : ADT; atIndex : INTEGER;
     source : ARGLIST OF
       { array : ADT; start, end : INTEGER; values : ARRAY OF ValueType } );
@@ -415,7 +421,7 @@ COPY target[n..] := { val1, val2, val3, ... } +> source[m..p] +> ... ;
 
 (* binding #1 : when implementing concatenation and slicing ... *)
 
-PROCEDURE [..] updateSliceWithValues
+PROCEDURE [SLICE|1] updateSliceWithValues
   ( VAR target : ADT; start, end : INTEGER; values : ARGLIST OF ValueType );
 
 (* supported use case *)
@@ -425,7 +431,7 @@ COPY target[n..m] := { val1, val2, val3, ... };
 
 (* binding #2 : when implementing concatenation and slicing ... *)
 
-PROCEDURE [..*] updateSliceWithArrayOrSlice
+PROCEDURE [SLICE|2] updateSliceWithArrayOrSlice
   ( VAR target : ADT; tgtStart, tgtEnd : INTEGER;
         source : ADT; srcStart, srcEnd : INTEGER );
 
@@ -438,7 +444,7 @@ COPY target[n..m] := source[p..q];
 
 (* binding #3 : when implementing concatenation and slicing ... *)
 
-PROCEDURE [..+] updateSliceWithArraysOrSlices
+PROCEDURE [SLICE|3] updateSliceWithArraysOrSlices
   ( VAR target : ADT; tgtStart, tgtEnd : INTEGER;
         source : ARGLIST OF { array : ADT; start, end : INTEGER } );
 
@@ -453,7 +459,7 @@ COPY target[n..m] := source1[p..q] +> source2[r..s] +> ... ;
 
 (* binding #4 : when implementing concatenation and slicing ... *)
 
-PROCEDURE [..++] updateSliceWithArrayExpression
+PROCEDURE [SLICE|4] updateSliceWithArrayExpression
   ( VAR target : ADT; tgtStart, tgtEnd : INTEGER;
     source : ARGLIST OF
       { array : ADT; start, end : INTEGER; values : ARRAY OF ValueType } );
@@ -555,17 +561,44 @@ COPY target[n..m] := source +> builtinArray[p..q] +> ... ;
 
 (* Removal *)
 
-(* binding *)
+(* required binding #1 *)
 
-PROCEDURE [REMOVE] remove ( VAR target : ADT; fromIndex, toIndex : INTEGER );
+PROCEDURE [REMOVE|1] removeValue ( VAR target; atIndex : INTEGER );
 
-(* supported use cases *)
+(* supported use case *)
 
 REMOVE(target, n);
 
+(* alternative syntax when TNIL(ADT) is FALSE *)
+
+target[n] := NIL;
+
+
+(* required binding #2 *)
+
+PROCEDURE [REMOVE|2] removeValuesInRange
+  ( VAR target : ADT; fromIndex, toIndex : INTEGER );
+
+(* supported use cases *)
+
 REMOVE(target, n, m);
 
+(* alternative syntax when slicing is supported *)
+
+COPY target[n..m] := EMPTY;
+
+
+(* required binding #3 *)
+
+PROCEDURE [REMOVE|3] removeAllValues ( VAR target : ADT );
+
+(* supported use cases *)
+
 REMOVE(target, 0, -1);
+
+(* alternative syntax *)
+
+COPY target := EMPTY;
 
 
 (* ===================================
@@ -608,9 +641,9 @@ NEW array;
 
 => ADT.new(array, 0);
 
-NEW array OF size;
+NEW array OF capacity;
 
-=> ADT.new(array, size);
+=> ADT.new(array, capacity);
 
 
 (* allocate and initialise with values *)
@@ -1012,11 +1045,15 @@ COPY target[n..m] := source +> builtinArray[p..q] +> ... ;
 
 REMOVE(target, n);
 
-=> ADT.remove(target, n, n);
+=> ADT.removeValue(target, n, n);
 
 REMOVE(target, n, m);
 
-=> ADT.remove(target, n, m);
+=> ADT.removeValuesInRange(target, n, m);
+
+COPY target := EMPTY;
+
+=> ADT.removeAllValues(target);
 
 
 (* END OF FILE *)
