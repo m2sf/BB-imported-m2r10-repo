@@ -126,8 +126,8 @@ PROCEDURE SORT
    sorted by value in descending order. *) 
 
 PROCEDURE TODO;
-(* Empty statement to indicate unimplemented code.  Generates a compile time
-(* warning when compiling in DEBUG mode, otherwise a compile time error. *)
+(* Empty statement to indicate unimplemented code.  Causes a compile time
+   warning when compiling in DEBUG mode, otherwise a compile time error. *)
 
 PROCEDURE READ ( f : File; VAR v : <AnyMutableType> );
 (* READ(f, v)
