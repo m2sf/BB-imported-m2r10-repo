@@ -225,18 +225,17 @@ VAR builtinArray : <ARRAY any OF ValueType>;
 
 REMOVE(target, n);
 
-(* remove all values from array *)
-
-REMOVE(target, 0, -1);
-
-COPY target := EMPTY;
-
 (* remove values in index range *)
 
 REMOVE(target, n, m);
 
 COPY target[n..m] := EMPTY;
 
+(* remove all values from array *)
+
+REMOVE(target, 0, -1);
+
+COPY target := EMPTY;
 
 
 (* =====================
