@@ -501,7 +501,7 @@ PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
 
 (* Binding to REMOVE *)
 
-PROCEDURE [REMOVE] removeValue
+PROCEDURE [REMOVE|1] removeValue
   ( array : ProtoArray; atIndex : IndexType );
 (* Required procedure to remove a value from an array at a given index. *)
 
