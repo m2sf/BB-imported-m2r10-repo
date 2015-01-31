@@ -123,9 +123,9 @@ PROCEDURE [RETAIN] retain ( array : ProtoArray );
 (* Binding to RELEASE *)
 
 PROCEDURE [RELEASE] release ( array : ProtoArray );
-(* Required procedure to cancel an outstanding retain and ultimately deallocate an array
-   when no further retains are outstanding or immediately when reference counting is not
-   supported. *)
+(* Required procedure to cancel an outstanding retain and ultimately deallocate
+   an array when no further retains are outstanding, or immediately when
+   reference counting is not supported. *)
 
 (* Supports use case:
    
@@ -136,9 +136,10 @@ PROCEDURE [RELEASE] release ( array : ProtoArray );
 
 (* Binding to COPY *)
 
-PROCEDURE [COPY] copyValues
+PROCEDURE [COPY|1] copyValues
   ( VAR target : ProtoArray; values : ARGLIST OF ValueType );
-(* Required procedure to destructively update a target array from a given value list. *)
+(* Required procedure to destructively update a target array from a given
+   value list. *)
 
 (* Supports use cases of the form:
       
@@ -150,7 +151,7 @@ PROCEDURE [COPY] copyValues
 
 
 NOT supportsConcatAndSlicing ->
-PROCEDURE [COPY*] copyArray ( VAR target : ProtoArray; source : ProtoArray );
+PROCEDURE [COPY|2] copyArray ( VAR target : ProtoArray; source : ProtoArray );
 (* Procedure to destructively update a target array from a given source array.
    Required when slicing is not supported. *)
 
@@ -164,7 +165,7 @@ PROCEDURE [COPY*] copyArray ( VAR target : ProtoArray; source : ProtoArray );
 
 
 supportsConcatAndSlicing ->
-PROCEDURE [COPY*] copyArrayOrSlice
+PROCEDURE [COPY|2] copyArrayOrSlice
   ( VAR target : ProtoArray; source : ProtoArray; start, end : INTEGER );
 (* Procedure to destructively update a target array from a given source array
    or slice.  Required when slicing is supported. *)
@@ -183,11 +184,12 @@ PROCEDURE [COPY*] copyArrayOrSlice
 
 
 supportsConcatAndSlicing ->
-PROCEDURE [COPY+] copyArraysOrSlices
+PROCEDURE [COPY|3] copyArraysOrSlices
   ( VAR target : ProtoArray;
     source : ARGLIST OF { array : ProtoArray; start, end : INTEGER } );
-(* Procedure to destructively update a target array with a concatenation of given
-   source arrays and slices.  Required when concatenation and slicing is supported. *)
+(* Procedure to destructively update a target array with a concatenation of
+   given source arrays and slices.  Required when concatenation and slicing
+   is supported. *)
 
 (* Supports use cases of the form:
 
@@ -203,14 +205,14 @@ PROCEDURE [COPY+] copyArraysOrSlices
 
 
 supportsConcatAndSlicing ->
-PROCEDURE [COPY++] copyArrayExpression
+PROCEDURE [COPY|4] copyArrayExpression
   ( VAR target : ProtoArray;
     source : ARGLIST OF
       { array : ProtoArray;
         start, end : INTEGER;
         values : ARRAY OF ValueType } );
-(* Procedure to destructively update a target array with an array expression evaluation.
-   Required when concatenation and slicing is supported. *)
+(* Procedure to destructively update a target array with an array expression
+   evaluation. Required when concatenation and slicing is supported. *)
 
 (* Supports use cases of the form:
    
@@ -231,7 +233,7 @@ PROCEDURE [COPY++] copyArrayExpression
 
 (* Binding to INSERT *)
 
-PROCEDURE [INSERT] insertValues
+PROCEDURE [INSERT|1] insertValues
   ( VAR target : ProtoArray; atIndex : INTEGER; values : ARGLIST OF ValueType );
 (* Required procedure to insert values from a given value list at a given index
    into an array. *)
@@ -244,7 +246,7 @@ PROCEDURE [INSERT] insertValues
 
 
 NOT supportsConcatAndSlicing ->
-PROCEDURE [INSERT*] insertArray
+PROCEDURE [INSERT|2] insertArray
   ( VAR target : ProtoArray; atIndex : INTEGER; source : ProtoArray );
 (* Procedure to insert the values of a given source array at a given index
    into a target array.  Required when slicing is not supported. *)
@@ -255,7 +257,7 @@ PROCEDURE [INSERT*] insertArray
 
 
 supportsConcatAndSlicing ->
-PROCEDURE [INSERT*] insertArrayOrSlice
+PROCEDURE [INSERT|2] insertArrayOrSlice
   ( VAR target : ProtoArray; atIndex : INTEGER;
         source : ProtoArray; start, end : INTEGER );
 (* Procedure to insert the values of a given source array or slice at a given
@@ -269,7 +271,7 @@ PROCEDURE [INSERT*] insertArrayOrSlice
 
 
 supportsConcatAndSlicing ->
-PROCEDURE [INSERT+] insertArraysOrSlices
+PROCEDURE [INSERT|3] insertArraysOrSlices
   ( VAR target : ProtoArray; atIndex : INTEGER;
     source : ARGLIST OF { array : ProtoArray; start, end : INTEGER } );
 (* Procedure to insert a concatenation of given source arrays and slices
@@ -290,7 +292,7 @@ PROCEDURE [INSERT+] insertArraysOrSlices
 
 
 supportsConcatAndSlicing ->
-PROCEDURE [INSERT++] insertArrayExpression
+PROCEDURE [INSERT|4] insertArrayExpression
   ( VAR target : ProtoArray; atIndex : INTEGER;
     source : ARGLIST OF
       { array : ProtoArray; start, end : INTEGER;
@@ -319,10 +321,11 @@ PROCEDURE [INSERT++] insertArrayExpression
 (* Binding to .. *)
 
 supportsConcatAndSlicing ->
-PROCEDURE [..] updateSliceWithValues
-  ( VAR target : ProtoArray; start, end : INTEGER; values : ARGLIST OF ValueType );
-(* Procedure to destructively update a slice of a target array from a given value
-   list.  Required when slicing is supported. *)
+PROCEDURE [SLICE|1] updateSliceWithValues
+  ( VAR target : ProtoArray; start, end : INTEGER;
+    values : ARGLIST OF ValueType );
+(* Procedure to destructively update a slice of a target array from a given
+   value list.  Required when slicing is supported. *)
 
 (* Supports use case:
    
@@ -330,7 +333,7 @@ PROCEDURE [..] updateSliceWithValues
 
 
 supportsConcatAndSlicing ->
-PROCEDURE [..*] updateSliceWithArrayOrSlice
+PROCEDURE [SLICE|2] updateSliceWithArrayOrSlice
   ( VAR target : ProtoArray; tgtStart, tgtEnd : INTEGER;
         source : ProtoArray; srcStart, srcEnd : INTEGER );
 (* Procedure to destructively update a slice of a target array with the values
@@ -344,7 +347,7 @@ PROCEDURE [..*] updateSliceWithArrayOrSlice
 
 
 supportsConcatAndSlicing ->
-PROCEDURE [..+] updateSliceWithArraysOrSlices
+PROCEDURE [SLICE|3] updateSliceWithArraysOrSlices
   ( VAR target : ProtoArray; tgtStart, tgtEnd : INTEGER;
         source : ARGLIST OF { array : ProtoArray; start, end : INTEGER } );
 (* Procedure to destructively update a slice of a target array with a
@@ -365,7 +368,7 @@ PROCEDURE [..+] updateSliceWithArraysOrSlices
 
 
 supportsConcatAndSlicing ->
-PROCEDURE [..++] updateSliceWithArrayExpression
+PROCEDURE [SLICE|4] updateSliceWithArrayExpression
   ( VAR target : ProtoArray; tgtStart, tgtEnd : INTEGER;
     source : ARGLIST OF
       { array : ProtoArray; start, end : INTEGER;
@@ -394,9 +397,9 @@ PROCEDURE [..++] updateSliceWithArrayExpression
 NOT supportsConcatAndSlicing ->
 PROCEDURE [ARRAY] convertBuiltinArray
   ( VAR array : ProtoArray; CONST from : ARRAY OF ValueType );
-(* Procedure to destructively update a target array with the values of a
-   given static array with matching value type.  Required when slicing
-   is not supported. *)
+(* Procedure to destructively update a target array with the values of a given
+   static array with matching value type.  Required when slicing is not
+   supported. *)
 
 (* Supports use cases:
    
@@ -414,9 +417,9 @@ supportsConcatAndSlicing ->
 PROCEDURE [ARRAY] convertBuiltinArrayOrSlice
   ( VAR array : ProtoArray;
     CONST from : ARRAY OF ValueType; start, end : INTEGER );
-(* Procedure to destructively update a target array with the values of a
-   given static array or slice thereof with matching value type.  Required
-   when slicing is supported. *)
+(* Procedure to destructively update a target array with the values of a given
+   static array or slice thereof with matching value type.  Required when
+   slicing is supported. *)
 
 (* Supports use cases:
    
@@ -504,24 +507,10 @@ PROCEDURE [REMOVE] removeValue
 
 (* Supports use case:
    
-   REMOVE(array, n);
-   
-   further, if TNIL(ArrayADT) is FALSE, the alternative syntax:
-   
-   array[n] := NIL; *)
+   REMOVE(array, n); *)
 
 
-PROCEDURE [REMOVE*] removeAllValues ( array : ProtoArray );
-(* Required procedure to remove all values from an array. *)
-
-(* Supports use cases:
-   
-   REMOVE(array, 0, -1);
-      
-   COPY array := EMPTY; *)
-
-
-PROCEDURE [REMOVE+] removeValuesInRange
+PROCEDURE [REMOVE|2] removeValuesInRange
   ( array : ProtoArray; start, end : IndexType );
 (* Required procedure to remove one or more values from an array. *)
 
@@ -532,6 +521,16 @@ PROCEDURE [REMOVE+] removeValuesInRange
    further, if slicing is supported, the alternative syntax:
    
    COPY array[n..m] := EMPTY; *)
+
+
+PROCEDURE [REMOVE|3] removeAllValues ( array : ProtoArray );
+(* Required procedure to remove all values from an array. *)
+
+(* Supports use cases:
+   
+   REMOVE(array, 0, -1);
+      
+   COPY array := EMPTY; *)
 
 
 (* Iteration *)
