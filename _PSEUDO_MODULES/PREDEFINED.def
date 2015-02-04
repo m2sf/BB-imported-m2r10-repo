@@ -56,6 +56,13 @@ TYPE LONGREAL = <implementation or target dependent real number range>;
 
 (* Predefined proper procedures *)
 
+PROCEDURE ENLARGE
+  ( VAR target : <DynamicArray>;
+    atIndex, enlargeBy : LONGCARD; initWith : ValueType );
+(* Enlarges target by the number of components passed for enlargeBy.
+   Components will be added at index and initialised with initWith.
+   Components are appended if index equals COUNT(target). *)
+
 PROCEDURE STORE
   ( VAR target : <Array>; index : <IndexType>; value : <ValueType> );
 (* STORE(array, index, value)
@@ -124,10 +131,6 @@ PROCEDURE SORT
    SORT(array, collection, "-")
    populates array with accessors of collection,
    sorted by value in descending order. *) 
-
-PROCEDURE TODO;
-(* Empty statement to indicate unimplemented code.  Causes a compile time
-   warning when compiling in DEBUG mode, otherwise a compile time error. *)
 
 PROCEDURE READ ( f : File; VAR v : <AnyMutableType> );
 (* READ(f, v)
