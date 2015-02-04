@@ -192,6 +192,14 @@ CONST ImplModelOfTypeLongReal = <implementation defined, IEEE754Support value>;
    number given by its argument.  T is a predefined whole number type. *)
 
 
+(* Empty Operation *)
+
+PROCEDURE TODO;
+(* Empty statement to indicate unimplemented code.  Causes a compile time
+   warning when compiling in DEBUG mode, otherwise a compile time error.
+   Automatically imported into every context when in DEBUG mode. *)
+
+
 (* Unique ID of a type *)
 
 TYPE UniqueTypeID = <implementation defined>;
