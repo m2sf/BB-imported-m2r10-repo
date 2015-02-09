@@ -1,11 +1,11 @@
-(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* DOCUMENTATION *) DEFINITION MODULE PREDEFINED;
 
 (* Pseudo Module to Document Predefined Constants, Types and Macros *)
 
 
-(* Predefined constants *)
+(* Predefined constants (4) *)
 
 CONST NIL = <target dependent value>; (* usually 0 :: ADDRESS *)
 (* Invalid pointer value, compatible with all pointer types. *)
@@ -20,7 +20,7 @@ CONST FALSE = BOOLEAN.FALSE;
 (* Boolean truth value 'false'. *)
 
 
-(* Predefined types *)
+(* Predefined types (10) *)
 
 TYPE BOOLEAN = ( FALSE, TRUE );
 (* Boolean type. *)
@@ -54,14 +54,7 @@ TYPE LONGREAL = <implementation or target dependent real number range>;
 (* Real number type with precision equal to or higher than REAL. *)
 
 
-(* Predefined proper procedures *)
-
-PROCEDURE ENLARGE
-  ( VAR target : <DynamicArray>;
-    atIndex, enlargeBy : LONGCARD; initWith : ValueType );
-(* Enlarges target by the number of components passed for enlargeBy.
-   Components will be added at index and initialised with initWith.
-   Components are appended if index equals COUNT(target). *)
+(* Predefined proper procedures (8) *)
 
 PROCEDURE STORE
   ( VAR target : <Array>; index : <IndexType>; value : <ValueType> );
@@ -113,12 +106,6 @@ PROCEDURE REMOVE
    removes key/value pairs with keys
    key1, key2, key3, ... from target dictionary. *)
 
-PROCEDURE SLICE
-  ( VAR target : <IndexedCollection>; tgtStart, tgtEnd : INTEGER;
-        source : <IndexedCollection>; srcStart, srcEnd ; INTEGER );
-(* Copies a slice of a source collection into a slice of a target collection.
-   The component types of target and source must match. *)
-
 PROCEDURE SORT
   ( VAR result : <Array>; source : <Collection>; (*OPT*) order : CHAR );
 (* SORT(array, collection)
@@ -150,7 +137,7 @@ PROCEDURE WRITEF
    => typeOf(v).WriteF(f, fmt, v1, v2, ...). *)
 
 
-(* Predefined function procedures *)
+(* Predefined function procedures (18) *)
 
 PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
 (* Returns sign reversed value of x if sign of x is negative. *)
@@ -178,7 +165,10 @@ PROCEDURE SUBSET ( a, b : <SetOrCollectionType> ) : BOOLEAN ;
 (* Returns TRUE if b is a subset of a, otherwise FALSE. *)
 
 PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD;
-(* Returns number of items stored in c. *)
+(* Returns number of items stored in collection c. *)
+
+PROCEDURE COUNT ( d : <Dictionary>; k : <KeyType> ) : LONGCARD;
+(* Returns number of items stored for key k in dictionary d. *)
 
 PROCEDURE LENGTH
   ( CONST s : <CharacterArrayOrStringADT> ) : [0..TMAX(INTEGER)] OF INTEGER;
@@ -187,9 +177,11 @@ PROCEDURE LENGTH
 PROCEDURE PTR ( variable : <AnyType>; T : <TypeIdentifier> ) : <T> ;
 (* Returns a pointer of type T, pointing to variable. *)
 
-PROCEDURE RETRIEVE ( c : <CollectionType>; s : <ComponentType> ) : <ReturnType>;
-(* RETRIEVE(c, s)
-   => typeOf(c).retrieve(c, s) *)
+PROCEDURE RETRIEVE ( c : <CollectionType>; s : <AccessorType> ) : <ReturnType>;
+(* Returns the value stored for accessor s in collection c. *)
+
+PROCEDURE RETRIEVE ( d : <Dictionary>; k : <KeyType>; n : CARDINAL ) : <ReturnType>;
+(* Returns the n-th value stored for key k in dictionary d. *)
 
 PROCEDURE MIN ( arglist : ARGLIST >0 OF <T> ) : <T>;
 (* Returns smallest value from arglist. *)
