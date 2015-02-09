@@ -1,4 +1,4 @@
-(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE CONVERSION;
 
@@ -90,37 +90,9 @@ CONST MaxExpDigits = 63;
 CONST MaxSigDigits = 4000;
 
 
-(* Inspecting the number representation of numeric scalar types *)
-
-(* MACRO *) PROCEDURE TSIGNED ( <NumericScalarType> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument is signed, otherwise FALSE. *)
-
-(* MACRO *) PROCEDURE TBASE ( <NumericScalarType> ) : CARDINAL;
-(* An invocation of the macro is replaced by the radix of the type
-   passed as its argument. *)
-
-(* MACRO *) PROCEDURE TPRECISION ( <NumericScalarType> ) : CARDINAL;
-(* An invocation of the macro is replaced by the precision of the type
-   passed as its argument.  The precision is the number of digits of the
-   longest significand that can be encoded by the type.  The replacement
-   value always indicates the digits in the radix of the type. *)
-
-(* MACRO *) PROCEDURE TMINEXP ( <NumericScalarType> ) : INTEGER;
-(* An invocation of the macro is replaced by the smallest exponent that
-   can be encoded by the type.  The value is zero for ordinal types. *)
-
-(* MACRO *) PROCEDURE TMAXEXP ( <NumericScalarType> ) : CARDINAL;
-(* An invocation of the macro is replaced by the largest exponent that
-   can be encoded by the type.  The value is zero for ordinal types. *)
-
-(* Any invocation of the above macros with an argument that is not an
-   identifier of a numeric scalar type will cause a compile time error. *)
-
-
 (* Required size to hold value in SXF format *)
 
-(* MACRO *) PROCEDURE SXFSizeForType ( <NumericScalarType> ) : CARDINAL;
+(* MACRO *) PROCEDURE TSXFSIZE ( <NumericScalarType> ) : CARDINAL;
 (* Expands to a numeric value with the allocation size for an array of octets
    needed to store any value of the passed in type in scalar exchange format.
    A compile time error occurs if the type is not a numeric scalar type. *)
