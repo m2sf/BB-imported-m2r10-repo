@@ -1,18 +1,15 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE BCD [ProtoReal];
 
 (* Single Precision Binary Coded Decimals *) 
 
 
-FROM FileIO IMPORT File; (* required for IO *)
-
-
 (* BCD type *)
 
 TYPE
-    BCD = OPAQUE RECORD
-        value : ARRAY 8 OF OCTET; (* 64 bits *)
+    BCD = RECORD
+      * value : ARRAY 8 OF OCTET; (* 64 bits *)
     END; (* BCD *)
 
     (* 1-bit sign, 56-bit significand, signed 7-bit exponent *)
@@ -20,14 +17,18 @@ TYPE
 
 (* Bindings required by blueprint ProtoReal *)
 
+
 (* Constants *)
 
-CONST
-    isSigned = TRUE;
-    base = 10; (* decimal *)
-    precision = 14; (* base-10 digits *)
-    eMin = -64; (* smallest exponent *)
-    eMax = +63; (* largest exponent *)
+CONST [TSIGNED] isSigned = TRUE;
+
+CONST [TBASE] base = 10; (* decimal *)
+
+CONST [TPRECISION] precision = 14; (* base-10 digits *)
+
+CONST [TMINEXP] eMin = -64; (* smallest exponent *)
+
+CONST [TMAXEXP] eMax = +63; (* largest exponent *)
 
 
 (* Range *) 
@@ -115,31 +116,5 @@ PROCEDURE [>] isGreater ( a, b : BCD ) : BOOLEAN;
 (* Returns TRUE if BCD value a is greater than b, otherwise FALSE.
    This function is bound to operators > and <= for type BCD. *)
 
-
-(* IO operations *)
-
-PROCEDURE [READ] Read( infile : File; VAR b : BCD );
-(* Reads the textual representation of a BCD value from input stream infile
-   - any leading whitespace is skipped
-   - any remaining characters that are part of the numeral being read are
-     removed from infile
-   - the numeric value of the numeral string read is assigned to the variable
-     passed in for b
-   - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-     procedure is substituted for invocations of READ with a BCD argument. *)
-
-PROCEDURE [WRITE] Write( outfile : File; CONST b : BCD );
-(* Writes the textual representation of value b to output stream outfile. This
-   procedure is substituted for invocations of WRITE with a BCD argument. *)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF BCD );
-(* Writes a formatted textual representation of one or more BCD values to
-   output stream outfile. The output format is determined by fmtStr. This
-   procedure is substituted for invocations of WRITEF with one or more
-   BCD arguments. *)
 
 END BCD.
