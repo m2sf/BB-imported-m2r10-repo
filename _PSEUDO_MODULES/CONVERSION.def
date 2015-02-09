@@ -98,7 +98,7 @@ CONST MaxSigDigits = 4000;
    A compile time error occurs if the type is not a numeric scalar type. *)
 
 
-(* Conversion to SXF format *)
+(* Conversion to and from SXF format *)
 
 PROCEDURE SXF ( CONST value : <T>; VAR sxfValue : ARRAY OF OCTET );
 (* Converts a value of type T to a value in scalar exchange format.
