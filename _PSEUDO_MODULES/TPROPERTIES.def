@@ -27,6 +27,9 @@ DEFINITION MODULE TPROPERTIES;
 (* An invocation of the macro is replaced by TRUE if the type passed
    as its argument is a value-only storage type, otherwise FALSE. *)
 
+(* Any invocation of the above macros with an argument that is not an
+   identifier of a collection type will cause a compile time error. *)
+
 
 (* Numeric Properties *)
 
