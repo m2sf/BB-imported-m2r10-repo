@@ -1,4 +1,4 @@
-(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2014-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 BLUEPRINT ProtoIO [ProtoExtension] FOR ProtoRoot;
 
@@ -6,13 +6,16 @@ BLUEPRINT ProtoIO [ProtoExtension] FOR ProtoRoot;
 
 REFERENTIAL File;
 
-MODULE TYPE : NIL; (* inhibited *)
+MODULE TYPE = NONE; (* inhibited *)
 
 
 (* Required IO bindings *)
 
 PROCEDURE [READ] Read ( f : File; VAR value : ProtoRoot );
 (* Required binding to macro READ for values of the target type *)
+
+PROCEDURE [READNEW] ReadNew ( f : File; NEW value : ProtoRoot );
+(* Required binding to macro READNEW for values of the target type *)
 
 PROCEDURE [WRITE] Write ( f : File; value : ProtoRoot );
 (* Required binding to macro WRITE for values of the target type *)
