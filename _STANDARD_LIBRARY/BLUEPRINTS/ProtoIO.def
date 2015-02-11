@@ -14,8 +14,10 @@ MODULE TYPE = NONE; (* inhibited *)
 PROCEDURE [READ] Read ( f : File; VAR value : ProtoRoot );
 (* Required binding to macro READ for values of the target type *)
 
+isDynamic ->
 PROCEDURE [READNEW] ReadNew ( f : File; NEW value : ProtoRoot );
-(* Required binding to macro READNEW for values of the target type *)
+(* Binding to macro READNEW for values of the target type.
+   Required when the target type is dynamic. *)
 
 PROCEDURE [WRITE] Write ( f : File; value : ProtoRoot );
 (* Required binding to macro WRITE for values of the target type *)
