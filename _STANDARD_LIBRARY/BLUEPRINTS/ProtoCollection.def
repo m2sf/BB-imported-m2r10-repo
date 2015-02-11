@@ -28,14 +28,18 @@ CONST [NIL] allowsNilStorage : BOOLEAN;
 
 (* Orderedness *)
 
-CONST [DESCENDING] isOrdered : BOOLEAN;
-(* Required constant to define whether conforming ADTs should be ordered.
-   Its value may be TRUE or FALSE. *)
+CONST [TBDFOR] supportsBidirectionalForLoopIteration : BOOLEAN;
+(* Required constant to define whether conforming ADTs permit bidirectional
+   FOR loop iteration. Its value may be TRUE or FALSE. *)
 
 
 (* Memory Management Model *)
 
-CONST isRefCounted : BOOLEAN;
+CONST [TDYN] isDynamic : TRUE;
+(* Required constant to define whether conforming ADTs should be dynamic.
+   Its value is always TRUE for OPAQUE ADTs. *)
+
+CONST [TREFC] isRefCounted : BOOLEAN;
 (* Required constant to define whether conforming ADTs should be reference
    counted. Its value may be TRUE or FALSE. *)
 
