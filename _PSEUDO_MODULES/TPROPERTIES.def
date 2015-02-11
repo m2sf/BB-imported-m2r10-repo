@@ -5,6 +5,17 @@ DEFINITION MODULE TPROPERTIES;
 (* Macros to query low-level properties of collection and numeric Types *)
 
 
+(* General Properties *)
+
+(* MACRO *) PROCEDURE TDYN ( <Type> ) : BOOLEAN;
+(* An invocation of the macro is replaced by TRUE if the type passed
+   as its argument is dynamic, FALSE if it is static. *)
+
+(* MACRO *) PROCEDURE TREFC ( <Type> ) : BOOLEAN;
+(* An invocation of the macro is replaced by TRUE if the type passed
+   as its argument is reference counted, otherwise FALSE. *)
+
+
 (* Collection Properties *)
 
 (* MACRO *) PROCEDURE TNIL ( <CollectionType> ) : BOOLEAN;
