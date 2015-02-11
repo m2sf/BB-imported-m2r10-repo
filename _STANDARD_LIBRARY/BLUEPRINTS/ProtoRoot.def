@@ -1,9 +1,25 @@
-(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2014-15 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 BLUEPRINT ProtoRoot; (* Top-level blueprint for ADT libraries *)
 
 (* conforming libraries are required to provide an ADT *)
 
 MODULE TYPE = *;
+
+
+CONST [TDYN] isDynamic : BOOLEAN;
+
+isDynamic ->
+CONST [TREFC] isRefCounted : BOOLEAN;
+
+isDynamic ->
+PROCEDURE [NEW] new ( NEW target : ProtoRoot; initialCapacity : LONGCARD );
+
+isRefCounted ->
+PROCEDURE [RETAIN] retain ( VAR target : ProtoRoot );
+
+isDynamic ->
+PROCEDURE [RELEASE] release ( VAR target : ProtoRoot );
+
 
 END ProtoRoot.
