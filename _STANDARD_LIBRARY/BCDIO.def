@@ -1,13 +1,13 @@
 (* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BCDIO [ProtoStaticIO] FOR BCD;
+DEFINITION MODULE BCDIO [ProtoIO] FOR BCD;
 
 (* IO Extension Library for Type BCD *)
 
 FROM FileIO IMPORT File;
 
 
-(* Bindings required by blueprint ProtoStaticIO *)
+(* Bindings required for static ADTs by blueprint ProtoIO *)
 
 
 PROCEDURE [READ] Read( infile : File; VAR b : BCD );
