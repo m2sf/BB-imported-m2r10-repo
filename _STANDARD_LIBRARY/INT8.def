@@ -1,0 +1,134 @@
+(* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE INT8 [ProtoInteger];
+
+(* 8-bit Integer Numbers *) 
+
+
+(* INT8 type *)
+
+TYPE
+    INT8 = RECORD
+      * value : OCTET; (* 8 bits *)
+    END; (* INT8 *)
+
+
+(* Bindings required by blueprint ProtoInteger *)
+
+
+(* Constants *)
+
+CONST [TSIGNED] isSigned = TRUE;
+
+CONST [TBASE] base = 2; (* binary *)
+
+CONST [TPRECISION] precision = 7; (* base-2 digits *)
+
+CONST [TMINEXP] eMin = 0; (* smallest exponent *)
+
+CONST [TMAXEXP] eMax = 0; (* largest exponent *)
+
+
+(* Range *)
+
+(* TMIN(INT8) = -128 *)
+
+PROCEDURE [TMIN] minValue : INT8;
+(* returns the smallest possible value of type INT8.
+   This function is bound to predefined function TMIN for type INT8. *)
+
+(* TMAX(INT8) = 127 *)
+
+PROCEDURE [TMAX] maxValue : INT8;
+(* returns the largest possible value of type INT8.
+   This function is bound to predefined function TMAX for type INT8. *)
+
+
+(* Type conversions *)
+
+PROCEDURE [::] toOCT  ( n : INT8 ) : OCTET;
+(* Converts INT8 value n to an OCTET value and returns it. This
+   function is bound to the :: operator for INT8 to OCTET conversion. *)
+
+PROCEDURE [::] toCARD  ( n : INT8 ) : CARDINAL;
+(* Converts INT8 value n to a CARDINAL value and returns it. This
+   function is bound to the :: operator for INT8 to CARDINAL conversion. *)
+
+PROCEDURE [::] toINT ( n : INT8 ) : INTEGER; 
+(* Converts INT8 value n to an INTEGER value and returns it. This
+   function is bound to the :: operator for INT8 to INTEGER conversion. *)
+
+PROCEDURE [::] fromOCT  ( n : OCTET ) : INT8;
+(* Converts OCTET value n to an INT8 value and returns it. This function
+   is bound to the :: operator for OCTET to INT8 conversion. *)
+
+PROCEDURE [::] fromCARD  ( n : CARDINAL ) : INT8;
+(* Converts CARDINAL value n to an INT8 value and returns it. This function
+   is bound to the :: operator for CARDINAL to INT8 conversion. *)
+
+PROCEDURE [::] fromINT  ( n : INTEGER ) : INT8;
+(* Converts INTEGER value n to an INT8 value and returns it. This function
+   is bound to the :: operator for INTEGER to INT8 conversion. *)
+
+
+(* Scalar conversion primitives *)
+
+PROCEDURE [SXF] toSXF ( n : INT8; VAR s : ARRAY OF OCTET );
+(* Converts INT8 value n to a string in scalar exchange format.
+   This procedure is bound to built-in primitive SXF for type INT8. *)
+
+PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR n : INT8 );
+(* Converts a string in scalar exchange format to an INT8 value.
+   This procedure is bound to built-in primitive VAL for type INT8. *)
+
+
+(* Monadic arithmetic operations *) 
+
+PROCEDURE [ABS] abs ( n : INT8 ) : INT8;
+(* Returns the sign removed value of INT8 value n.
+   This function is bound to predefined function ABS for type INT8. *)
+
+PROCEDURE [+/-] neg ( n : INT8 ) : INT8;
+(* Returns the sign reversed value of INT8 value n.
+   This function is bound to the unary minus operator for type INT8. *)
+
+PROCEDURE [ODD] odd ( n : INT8 ) : BOOLEAN;
+(* Returns TRUE if INT8 value n is odd, otherwise FALSE.
+   This function is bound to pervasive function ODD for type INT8. *)
+
+
+(* Dyadic arithmetic operations *) 
+
+PROCEDURE [+] add ( n1, n2 : INT8 ) : INT8;
+(* Adds INT8 values n1 and n2 and returns the result.
+   This function is bound to the + operator for type INT8. *)
+
+PROCEDURE [-] sub ( n1, n2 : INT8 ) : INT8;
+(* Subtracts INT8 value n2 from n1 and returns the result.
+   This function is bound to the - operator for type INT8. *)
+
+PROCEDURE [*] multiply ( n1, n2 : INT8 ) : INT8;
+(* Multiplies INT8 values n1 and n2 and returns the result.
+   This function it bound to the * operator for type INT8. *)
+
+PROCEDURE [DIV] divide ( n1, n2 : INT8 ) : INT8;
+(* Divives INT8 value n1 by n2 and returns the result.
+   This function is bound to the DIV operator for type INT8. *)
+
+
+(* Relational operations *) 
+
+PROCEDURE [=] isEqual ( n1, n2 : INT8 ) : BOOLEAN;
+(* Returns TRUE if INT8 values n1 and n2 are equal, otherwise FALSE.
+   This function is bound to operators = and # for type INT8. *)
+
+PROCEDURE [<] isLess ( n1, n2 : INT8 ) : BOOLEAN;
+(* Returns TRUE if INT8 value n1 is less than n2, otherwise FALSE.
+   This function is bound to operators < and >= for type INT8. *)
+
+PROCEDURE [>] isGreater ( n1, n2 : INT8 ) : BOOLEAN;
+(* Returns TRUE if INT8 value n1 is greater than n2, otherwise FALSE.
+   This function is bound to operators > and <= for type INT8. *)
+
+
+END INT8. (* eight *)
