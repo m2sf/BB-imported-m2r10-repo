@@ -1,4 +1,4 @@
-(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Specialised Blueprint for Cardinal ADTs *)
 
@@ -7,13 +7,14 @@ BLUEPRINT ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* Required Module Type *)
 
-MODULE TYPE = RECORD := INTEGER;
-(* Cardinal ADTs must be records to be statically allocatable,
-   integer literals are compatible. *)
+MODULE TYPE = RECORD;
+(* Cardinal ADTs must be records to be statically allocatable. *)
+
+LITERAL = INTEGER;
+(* Integer literals are compatible. *)
 
 
 (* Required Constants *)
-
 
 CONST [TSIGNED] isSigned = FALSE;
 (* Cardinal ADTs are always signed. *)
@@ -30,12 +31,8 @@ CONST [TMINEXP] eMin = 0;
 CONST [TMAXEXP] eMax = 0;
 (* Cardinal ADTs always have an exponent of zero *)
 
-CONST * isWholeNumberADT = TRUE;
-(* Internal flag indicating that the ADT represents whole numbers. *)
-
 
 (* Required Procedures *)
-
 
 (* Introspection *)
 
@@ -92,12 +89,10 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
 
 (* Iteration *)
 
-(* Binding to FOR IN iterator *)
-
 (* Scalar ADTs may not bind any procedure to FOR.
    
-   Instead, iteration over scalar ADTs and subranges of Scalar ADTs is auto-
-   matically supported if and only if all of the following conditions are met:
+   Iteration over scalar ADTs and subranges of Scalar ADTs will be
+   synthesised if and only if all of the following conditions are met:
    
    (1) the ADT binds a constant value of zero to both TMINEXP and TMAXEXP,
    (2) the ADT provides bindings for TMIN and TMAX,
@@ -121,13 +116,13 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
      END;
    
    A statement of the form
-     FOR DESCENDING n IN CardinalADT DO ...
+     FOR n-- IN CardinalADT DO ...
    is equivalent to
-     FOR DESCENDING n IN [lower .. upper] OF CardinalADT DO ...
+     FOR n-- IN [lower .. upper] OF CardinalADT DO ...
    where lower = TMIN(CardinalADT) and upper = TMAX(CardinalADT).
 
    A statement of the form
-     FOR DESCENDING n IN [lower .. upper] OF CardinalADT DO statementSeq END
+     FOR n-- IN [lower .. upper] OF CardinalADT DO statementSeq END
    is synthesised as
      VAR n : CardinalADT;
      n := upper;
@@ -142,7 +137,7 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
 (* Binding to Predefined Function ABS *)
 
 PROCEDURE [ABS] abs ( n : ProtoCardinal ) : ProtoCardinal;
-(* Required function to return the absolute value of a cardinal. *)
+(* Required function to return the sign reversed value of a cardinal. *)
 
 (* An expression of the form ABS(n)
    is synthesised as CardinalADT.abs(n). *)
