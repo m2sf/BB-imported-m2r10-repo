@@ -37,13 +37,13 @@ CONST [TMAXEXP] eMax = +63; (* largest exponent *)
 
 PROCEDURE [TMIN] minValue : BCD;
 (* returns the smallest possible value of type BCD.
-   This function is bound to pervasive function TMAX for type BCD. *)
+   This function is bound to predefined function TMAX for type BCD. *)
 
 (* TMAX(BCD) = +9.999'999'999'999'9E+63 *)
 
 PROCEDURE [TMAX] maxValue : BCD;
 (* returns the largest possible value of type BCD.
-   This function is bound to pervasive function TMAX for type BCD. *)
+   This function is bound to predefined function TMAX for type BCD. *)
 
 
 (* Direct conversions to common types *)
