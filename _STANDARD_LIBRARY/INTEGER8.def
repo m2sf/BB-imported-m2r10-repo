@@ -1,0 +1,19 @@
+(* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE INTEGER8;
+
+(* INTEGER8 - Alias type for 8-bit signed integers *)
+
+<* IF TSIZE(INTEGER)*8 = 8 *>
+
+TYPE INTEGER8 = ALIAS OF INTEGER;
+
+<* ELSE *>
+
+IMPORT INT8;
+
+TYPE INTEGER8 = ALIAS OF INT8;
+
+<* ENDIF *>
+
+END INTEGER8.
