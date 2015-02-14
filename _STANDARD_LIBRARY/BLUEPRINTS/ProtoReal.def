@@ -1,4 +1,4 @@
-(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Specialised Blueprint for Real Number ADTs *)
 
@@ -7,9 +7,11 @@ BLUEPRINT ProtoReal [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* Required Module Type *)
 
-MODULE TYPE = RECORD := REAL;
-(* Real ADTs must be records to be statically allocatable,
-   real number literals are compatible. *)
+MODULE TYPE = RECORD;
+(* Real ADTs must be records to be statically allocatable. *)
+
+LITERAL = REAL;
+(* Real number literals are compatible. *)
 
 
 (* Required Constants *)
@@ -101,12 +103,11 @@ PROCEDURE [ABS] abs ( r : ProtoReal ) : ProtoReal;
    is synthesised as RealADT.abs(r). *)
 
 
-PROCEDURE [NEG] neg ( r : ProtoReal ) : BOOLEAN;
+PROCEDURE [+/-] neg ( r : ProtoReal ) : BOOLEAN;
 (* Required function to return the sign reversed value of a real number. *)
 
 (* An expression of the form -r
-   is equivalent to NEG(r)
-   and synthesised as RealADT.neg(r). *)
+   is synthesised as RealADT.neg(r). *)
 
 
 (* Binding to the + Operator *)
