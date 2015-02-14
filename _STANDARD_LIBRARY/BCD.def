@@ -37,7 +37,7 @@ CONST [TMAXEXP] eMax = +63; (* largest exponent *)
 
 PROCEDURE [TMIN] minValue : BCD;
 (* returns the smallest possible value of type BCD.
-   This function is bound to predefined function TMAX for type BCD. *)
+   This function is bound to predefined function TMIN for type BCD. *)
 
 (* TMAX(BCD) = +9.999'999'999'999'9E+63 *)
 
