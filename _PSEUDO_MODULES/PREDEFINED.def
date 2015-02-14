@@ -142,9 +142,6 @@ PROCEDURE WRITEF
 PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
 (* Returns sign reversed value of x if sign of x is negative. *)
 
-PROCEDURE NEG ( x : <NumericType> ) : <OperandType>;
-(* Returns sign reversed value of x. *)
-
 PROCEDURE ODD ( x : <WholeNumberType> ) : BOOLEAN;
 (* Returns TRUE if z is odd, otherwise FALSE. *)
 
@@ -160,6 +157,10 @@ PROCEDURE ORD ( x : <OrdinalType> ) : <WholeNumberType>;
 PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType>; 
 (* Returns the character whose code point is x.
    Return type is CHAR if x < 128, otherwise UNICHAR. *)
+
+PROCEDURE EXISTS
+  ( d : <Dictionary>; k : <KeyType>; v : <ValueType> ) : BOOLEAN;
+(* Returns TRUE if v is stored for k in dictionary d. *)
 
 PROCEDURE SUBSET ( a, b : <SetOrCollectionType> ) : BOOLEAN ;
 (* Returns TRUE if b is a subset of a, otherwise FALSE. *)
