@@ -1,4 +1,4 @@
-(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Specialised Blueprint for Integer ADTs *)
 
@@ -7,13 +7,14 @@ BLUEPRINT ProtoInteger [ProtoScalar]; (* conforms to ProtoScalar *)
 
 (* Required Module Type *)
 
-MODULE TYPE = RECORD := INTEGER;
-(* Integer ADTs must be records to be statically allocatable,
-   integer literals are compatible. *)
+MODULE TYPE = RECORD;
+(* Integer ADTs must be records to be statically allocatable. *)
+
+LITERAL = INTEGER;
+(* Integer literals are compatible. *)
 
 
 (* Required Constants *)
-
 
 CONST [TSIGNED] isSigned = FALSE;
 (* Integer ADTs are always signed. *)
@@ -30,12 +31,8 @@ CONST [TMINEXP] eMin = 0;
 CONST [TMAXEXP] eMax = 0;
 (* Integer ADTs always have an exponent of zero *)
 
-CONST * isWholeNumberADT = TRUE;
-(* Internal flag indicating that the ADT represents whole numbers. *)
-
 
 (* Required Procedures *)
-
 
 (* Introspection *)
 
@@ -92,12 +89,10 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoInteger );
 
 (* Iteration *)
 
-(* Binding to FOR IN iterator *)
-
 (* Scalar ADTs may not bind any procedure to FOR.
    
-   Instead, iteration over scalar ADTs and subranges of scalar ADTs is auto-
-   matically supported if and only if all of the following conditions are met:
+   Iteration over scalar ADTs and subranges of scalar ADTs will be
+   synthesised if and only if all of the following conditions are met:
    
    (1) the ADT binds a constant value of zero to both TMINEXP and TMAXEXP,
    (2) the ADT provides bindings for TMIN and TMAX,
@@ -121,13 +116,13 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoInteger );
      END;
    
    A statement of the form
-     FOR DESCENDING i IN IntegerADT DO ...
+     FOR i-- IN IntegerADT DO ...
    is equivalent to
-     FOR DESCENDING i IN [lower .. upper] OF IntegerADT DO ...
+     FOR i-- IN [lower .. upper] OF IntegerADT DO ...
    where lower = TMIN(IntegerADT) and upper = TMAX(IntegerADT).
 
    A statement of the form
-     FOR DESCENDING i IN [lower .. upper] OF IntegerADT DO statementSeq END
+     FOR i-- IN [lower .. upper] OF IntegerADT DO statementSeq END
    is synthesised as
      VAR i : IntegerADT;
      i := upper;
@@ -142,7 +137,7 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoInteger );
 (* Binding to Predefined Function ABS *)
 
 PROCEDURE [ABS] abs ( i : ProtoInteger ) : ProtoInteger;
-(* Required function to return the absolute value of an integer. *)
+(* Required function to return the sign removed value of an integer. *)
 
 (* An expression of the form ABS(i)
    is synthesised as IntegerADT.abs(i). *)
@@ -157,11 +152,12 @@ PROCEDURE [ODD] odd ( i : ProtoInteger ) : BOOLEAN;
    is synthesised as IntegerADT.odd(i). *)
 
 
-PROCEDURE [NEG] neg ( i : ProtoInteger ) : BOOLEAN;
+(* Binding to Unary Minus Operator *)
+
+PROCEDURE [+/-] neg ( i : ProtoInteger ) : BOOLEAN;
 (* Required function to return the sign reversed value of an integer. *)
 
 (* An expression of the form -i
-   is equivalent to NEG(i)
    and synthesised as IntegerADT.neg(i). *)
 
 
