@@ -1,14 +1,15 @@
-(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Blueprint for Complex Number ADTs *)
 
 BLUEPRINT ProtoComplex [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
 
 (* Complex Number ADTs must be transparent records,
-   have two fields compatible with real number literals,
-   structurally equivalent literals are compatible by default *)
+   have two fields compatible with real number literals. *)
 
-MODULE TYPE = RECORD := { REAL, REAL };
+MODULE TYPE = RECORD;
+
+LITERAL = { REAL, REAL };
 
 
 (* Bindings required for ProtoComplex ADTs *)
@@ -19,8 +20,8 @@ MODULE TYPE = RECORD := { REAL, REAL };
 
 (* Bindings to monadic operations *)
 
-PROCEDURE [NEG] neg ( z : ProtoComplex ) : ProtoComplex;
-(* procedure to bind to predefined function NEG for arguments of the ADT *)
+PROCEDURE [+/-] neg ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the sign reversed value of a complex number. *)
 
 
 (* Bindings to dyadic operations *)
