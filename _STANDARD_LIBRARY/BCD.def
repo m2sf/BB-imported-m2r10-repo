@@ -75,10 +75,10 @@ PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR a : BCD );
 (* Monadic arithmetic operations *) 
 
 PROCEDURE [ABS] abs ( a : BCD ) : BCD;
-(* Returns the absolute value of BCD value a.
-   This function is bound to pervasive function ABS for type BCD. *)
+(* Returns the sign removed value of BCD value a.
+   This function is bound to predefined function ABS for type BCD. *)
 
-PROCEDURE [NEG] neg ( a : BCD ) : BCD;
+PROCEDURE [+/-] neg ( a : BCD ) : BCD;
 (* Returns the sign reversed value of BCD value a.
    This function is bound to the unary minus operator for type BCD. *)
 
