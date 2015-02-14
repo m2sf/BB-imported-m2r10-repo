@@ -1,4 +1,4 @@
-(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* General Blueprint for Scalar ADTs *)
 
@@ -7,9 +7,11 @@ BLUEPRINT ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
 (* Required Module Type *)
 
-MODULE TYPE = RECORD := INTEGER | REAL;
-(* Scalar ADTs must be records to be statically allocatable,
-   integer or real number literals may be used. *)
+MODULE TYPE = RECORD;
+(* Scalar ADTs must be records to be statically allocatable. *)
+
+LITERAL := INTEGER | REAL;
+(* Integer or real number literals may be used. *)
 
 
 (* Required Constants *)
@@ -30,12 +32,8 @@ CONST [TMINEXP] eMin : INTEGER;
 CONST [TMAXEXP] eMax : INTEGER;
 (* Value of the ADT's largest exponent. *)
 
-CONST * isWholeNumberADT = (eMin=0 AND eMax=0);
-(* Internal flag to test whether the ADT represents whole numbers. *)
-
 
 (* Required Procedures *)
-
 
 (* Introspection *)
 
@@ -86,8 +84,6 @@ PROCEDURE [VAL];
 
 (* Iteration *)
 
-(* Binding to FOR IN iterator *)
-
 (* Scalar ADTs may not bind any procedure to FOR.
    
    Instead, iteration over scalar ADTs and subranges of Scalar ADTs is auto-
@@ -115,13 +111,13 @@ PROCEDURE [VAL];
      END;
    
    A statement of the form
-     FOR DESCENDING s IN ScalarADT DO ...
+     FOR s-- IN ScalarADT DO ...
    is equivalent to
-     FOR DESCENDING s IN [lower .. upper] OF ScalarADT DO ...
+     FOR s-- IN [lower .. upper] OF ScalarADT DO ...
    where lower = TMIN(ScalarADT) and upper = TMAX(ScalarADT).
 
    A statement of the form
-     FOR DESCENDING s IN [lower .. upper] OF ScalarADT DO statementSeq END
+     FOR s-- IN [lower .. upper] OF ScalarADT DO statementSeq END
    is synthesised as
      VAR s : ScalarADT;
      s := upper;
@@ -136,20 +132,20 @@ PROCEDURE [VAL];
 (* Binding to Predefined Function ABS *)
 
 PROCEDURE [ABS];
-(* Specialised blueprints must always require binding to TMAX. *)
+(* Specialised blueprints must always require binding to ABS. *)
 
 
 (* Binding to Predefined Function ODD *)
 
-isWholeNumberADT -> PROCEDURE [ODD];
+(eMin = 0) AND (eMax = 0) -> PROCEDURE [ODD];
 (* Specialised blueprints must require binding to ODD
    when the ADT represents whole numbers. *)
 
 
-(* Binding to Predefined Function NEG *)
+(* Binding to Unary Minus Operator *)
 
-isSigned -> PROCEDURE [NEG];
-(* Specialised blueprints must require binding to NEG
+isSigned -> PROCEDURE [+/-];
+(* Specialised blueprints must require binding to unary minus
    when the ADT is signed. *)
 
 
@@ -173,21 +169,21 @@ PROCEDURE [*];
 
 (* Binding to the / Operator *)
 
-NOT isWholeNumberADT -> PROCEDURE [/];
+(eMin # 0) OR (eMax # 0) -> PROCEDURE [/];
 (* Specialised blueprints must require binding to the / operator
    when the ADT does not represent whole numbers. *)
 
 
 (* Binding to the DIV Operator *)
 
-isWholeNumberADT -> PROCEDURE [DIV];
+(eMin = 0) AND (eMax = 0) -> PROCEDURE [DIV];
 (* Specialised blueprints must require binding to the DIV operator
    when the ADT represents whole numbers. *)
 
 
 (* Binding to the MOD Operator *)
 
-isWholeNumberADT -> PROCEDURE [MOD];
+(eMin = 0) AND (eMax = 0) -> PROCEDURE [MOD];
 (* Specialised blueprints must require binding to the MOD operator
    when the ADT represents whole numbers. *)
 
@@ -223,22 +219,22 @@ PROCEDURE [>];
 (* Conforming blueprints may not require bindings to any of
    ODD, DIV and MOD if the ADT does not represent whole numbers. *)
 
-NOT isWholeNumberADT -> PROCEDURE [ODD] : NIL; (* inhibited *)
+(eMin # 0) OR (eMax # 0) -> PROCEDURE [ODD] = NONE; (* inhibited *)
 
-NOT isWholeNumberADT -> PROCEDURE [DIV] : NIL; (* inhibited *)
+(eMin # 0) OR (eMax # 0) -> PROCEDURE [DIV] = NONE; (* inhibited *)
 
-NOT isWholeNumberADT -> PROCEDURE [MOD] : NIL; (* inhibited *)
+(eMin # 0) OR (eMax # 0) -> PROCEDURE [MOD] = NONE; (* inhibited *)
 
-(* Conforming blueprints may not require binding to NEG
+(* Conforming blueprints may not require binding to Unary Minus
    if the ADT is unsigned. *)
 
-NOT isSigned -> PROCEDURE [NEG] : NIL; (* inhibited *)
+NOT isSigned -> PROCEDURE [+/-] = NONE; (* inhibited *)
 
 
 (* Conforming blueprints may not require binding to the / operator
    if the ADT represents whole numbers. *)
 
-isWholeNumberADT -> PROCEDURE [/] : NIL; (* inhibited *)
+(eMin = 0) AND (eMax = 0) -> PROCEDURE [/] = NONE; (* inhibited *)
 
 
 END ProtoScalar.
