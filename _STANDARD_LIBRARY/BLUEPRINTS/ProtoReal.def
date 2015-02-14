@@ -16,7 +16,6 @@ LITERAL = REAL;
 
 (* Required Constants *)
 
-
 CONST [TSIGNED] isSigned = FALSE;
 (* Real ADTs are always signed. *)
 
@@ -31,9 +30,6 @@ CONST [TMINEXP] eMin : INTEGER;
 
 CONST [TMAXEXP] eMax : INTEGER;
 (* Value of the ADT's largest exponent. *)
-
-CONST * isWholeNumberADT = FALSE;
-(* Internal flag indicating that the ADT does not represent whole numbers. *)
 
 
 (* Required Procedures *)
@@ -97,11 +93,13 @@ PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoReal );
 (* Binding to Predefined Function ABS *)
 
 PROCEDURE [ABS] abs ( r : ProtoReal ) : ProtoReal;
-(* Required function to return the absolute value of a real number. *)
+(* Required function to return the sign removed value of a real number. *)
 
 (* An expression of the form ABS(r)
    is synthesised as RealADT.abs(r). *)
 
+
+(* Binding to Unary Minus *)
 
 PROCEDURE [+/-] neg ( r : ProtoReal ) : BOOLEAN;
 (* Required function to return the sign reversed value of a real number. *)
@@ -139,7 +137,7 @@ PROCEDURE [*] multiply ( r1, r2 : ProtoReal ) : ProtoReal;
 
 (* Binding to the / Operator *)
 
-PROCEDURE [DIV] divide ( r1, r2 : ProtoReal ) : ProtoReal;
+PROCEDURE [/] divide ( r1, r2 : ProtoReal ) : ProtoReal;
 (* Required function to return the quotient of two real numbers, using
    real number division. *)
 
