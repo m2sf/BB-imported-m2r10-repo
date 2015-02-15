@@ -10,7 +10,7 @@ BLUEPRINT ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 MODULE TYPE = RECORD;
 (* Scalar ADTs must be records to be statically allocatable. *)
 
-LITERAL := INTEGER | REAL;
+LITERAL = INTEGER | REAL;
 (* Integer or real number literals may be used. *)
 
 
