@@ -16,21 +16,20 @@ LITERAL := INTEGER | REAL;
 
 (* Required Constants *)
 
-
 CONST [TSIGNED] isSigned : BOOLEAN;
 (* Required constant to define whether the ADT is signed. *)
 
 CONST [TBASE] base : CARDINAL;
 (* Radix in which the ADT's values are encoded, 2 or 10. *)
 
-CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
-(* Maximum number of digits the ADT can encode. *)
+CONST [TPRECISION] precision : CARDINAL;
+(* Maximum number of digits the ADT can encode, 1 to 4000. *)
 
 CONST [TMINEXP] eMin : INTEGER;
-(* Value of the ADT's smallest exponent. *)
+(* Value of the ADT's smallest exponent, zero for whole number ADTs. *)
 
 CONST [TMAXEXP] eMax : INTEGER;
-(* Value of the ADT's largest exponent. *)
+(* Value of the ADT's largest exponent, zero for whole number ADTs. *)
 
 
 (* Required Procedures *)
@@ -137,16 +136,17 @@ PROCEDURE [ABS];
 
 (* Binding to Predefined Function ODD *)
 
-(eMin = 0) AND (eMax = 0) -> PROCEDURE [ODD];
-(* Specialised blueprints must require binding to ODD
-   when the ADT represents whole numbers. *)
+(* The ODD operation is not common to all scalars.
+   Specialised blueprints must require binding to ODD
+   if and only if constants eMin and eMax are both zero. *)
 
 
 (* Binding to Unary Minus Operator *)
 
 isSigned -> PROCEDURE [+/-];
+
 (* Specialised blueprints must require binding to unary minus
-   when the ADT is signed. *)
+   if the ADT is signed. *)
 
 
 (* Binding to the + Operator *)
@@ -169,23 +169,23 @@ PROCEDURE [*];
 
 (* Binding to the / Operator *)
 
-(eMin # 0) OR (eMax # 0) -> PROCEDURE [/];
-(* Specialised blueprints must require binding to the / operator
-   when the ADT does not represent whole numbers. *)
+(* Real number division is not common to all scalars.
+   Specialised blueprints must require binding to the / operator
+   if and only if constants eMin and eMax are not both zero. *)
 
 
 (* Binding to the DIV Operator *)
 
-(eMin = 0) AND (eMax = 0) -> PROCEDURE [DIV];
-(* Specialised blueprints must require binding to the DIV operator
-   when the ADT represents whole numbers. *)
+(* Integer division is not common to all scalars.
+   Specialised blueprints must require binding to the DIV operator
+   if and only if constants eMin and eMax are both zero. *)
 
 
 (* Binding to the MOD Operator *)
 
-(eMin = 0) AND (eMax = 0) -> PROCEDURE [MOD];
-(* Specialised blueprints must require binding to the MOD operator
-   when the ADT represents whole numbers. *)
+(* The MOD operation is not common to all scalars.
+   Specialised blueprints must require binding to the DIV operator
+   if and only if constants eMin and eMax are both zero. *)
 
 
 (* Relational Operations *)
@@ -214,27 +214,11 @@ PROCEDURE [>];
 (* The <= operation is synthesised as (NOT s1 > s2). *)
 
 
-(* Conditional Inhibited Bindings *)
-
-(* Conforming blueprints may not require bindings to any of
-   ODD, DIV and MOD if the ADT does not represent whole numbers. *)
-
-(eMin # 0) OR (eMax # 0) -> PROCEDURE [ODD] = NONE; (* inhibited *)
-
-(eMin # 0) OR (eMax # 0) -> PROCEDURE [DIV] = NONE; (* inhibited *)
-
-(eMin # 0) OR (eMax # 0) -> PROCEDURE [MOD] = NONE; (* inhibited *)
-
-(* Conforming blueprints may not require binding to Unary Minus
-   if the ADT is unsigned. *)
+(* Inhibited Bindings *)
 
 NOT isSigned -> PROCEDURE [+/-] = NONE; (* inhibited *)
-
-
-(* Conforming blueprints may not require binding to the / operator
-   if the ADT represents whole numbers. *)
-
-(eMin = 0) AND (eMax = 0) -> PROCEDURE [/] = NONE; (* inhibited *)
+(* Conforming blueprints may not require binding to Unary Minus
+   if the ADT is unsigned. *)
 
 
 END ProtoScalar.
