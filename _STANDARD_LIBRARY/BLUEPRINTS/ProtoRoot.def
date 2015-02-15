@@ -4,7 +4,7 @@ BLUEPRINT ProtoRoot; (* Top-level blueprint for ADT libraries *)
 
 (* conforming libraries are required to provide an ADT *)
 
-MODULE TYPE = *;
+MODULE TYPE = OPAQUE | RECORD;
 
 
 CONST [TDYN] isDynamic : BOOLEAN;
