@@ -22,8 +22,8 @@ CONST [TSIGNED] isSigned = FALSE;
 CONST [TBASE] base : CARDINAL;
 (* Radix in which the ADT's values are encoded, 2 or 10. *)
 
-CONST [TPRECISION] precision : [1..4000] OF CARDINAL;
-(* Maximum number of digits the ADT can encode. *)
+CONST [TPRECISION] precision : CARDINAL;
+(* Maximum number of digits the ADT can encode, 1 to 4000. *)
 
 CONST [TMINEXP] eMin : INTEGER;
 (* Value of the ADT's smallest exponent. *)
