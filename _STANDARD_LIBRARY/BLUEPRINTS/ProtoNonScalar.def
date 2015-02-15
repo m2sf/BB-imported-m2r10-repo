@@ -4,8 +4,6 @@
 
 BLUEPRINT ProtoNonScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 
-(* Non-Scalar numeric ADTs must be records to be statically allocatable,
-   structured literals constructed from scalar number literals may be used. *)
 
 MODULE TYPE = OPAQUE | RECORD;
 
