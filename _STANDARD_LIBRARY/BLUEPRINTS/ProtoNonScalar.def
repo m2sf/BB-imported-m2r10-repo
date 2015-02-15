@@ -1,4 +1,4 @@
-(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* General Blueprint for Non-Scalar Numeric ADTs *)
 
@@ -7,63 +7,62 @@ BLUEPRINT ProtoNonScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
 (* Non-Scalar numeric ADTs must be records to be statically allocatable,
    structured literals constructed from scalar number literals may be used. *)
 
-MODULE TYPE = RECORD := { ARGLIST OF * };
+MODULE TYPE = OPAQUE | RECORD;
 
 
 (* Bindings required for Non-Scalar Numeric ADTs *)
 
 (* The operations TMIN and TMAX are not meaningful for non-scalar types *)
 
-PROCEDURE [TMIN] : NIL; (* conforming blueprints may not require TMIN binding *)
+PROCEDURE [TMIN] = NONE;
+(* conforming blueprints may not require binding to TMIN. *)
 
-PROCEDURE [TMAX] : NIL; (* conforming blueprints may not require TMAX binding *)
+PROCEDURE [TMAX] = NONE;
+(* conforming blueprints may not require binding to TMAX. *)
 
 
 (* Bindings to monadic operations *)
 
-(* The NEG operation is not common to all non-scalar types,
+(* Unary Minus is not common to all non-scalar types,
    its binding may be required by more specialised blueprints. *)
 
 
 (* The operations ABS and ODD are not meaningful for non-scalar types *)
 
-PROCEDURE [ABS] : NIL; (* conforming blueprints may not require ABS binding *)
+PROCEDURE [ABS] = NONE;
+(* conforming blueprints may not require binding to ABS. *)
 
-PROCEDURE [ODD] : NIL; (* conforming blueprints may not require ODD binding *)
+PROCEDURE [ODD] = NONE;
+(* conforming blueprints may not require binding to ODD. *)
 
 
 (* Bindings to dyadic operations *)
 
 PROCEDURE [+] add ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
-(* procedure to bind to the + operator for operands of the non-scalar ADT *)
+(* Required procedure to bind to the + operator. *)
 
 PROCEDURE [-] subtract ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
-(* procedure to bind to the - operator for operands of the non-scalar ADT *)
+(* Required procedure to bind to the - operator. *)
 
 (* The operations * and / are not common to all non-scalar types,
    their bindings may be required by more specialised blueprints. *)
 
 
-(* The operations DIV and MOD are not meaningful for non-scalar types *)
-
-PROCEDURE [DIV] : NIL; (* conforming blueprints may not require DIV binding *)
-
-PROCEDURE [MOD] : NIL; (* conforming blueprints may not require MOD binding *)
-
-
 (* Bindings to relational operations *)
 
 PROCEDURE [=] isEqual ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
-(* procedure to bind to the = operator for operands of the non-scalar ADT *)
+(* Required procedure to bind to the = operator. *)
 
 (* The operation for the # operator is synthesized as NOT (op1 = op2) *)
 
 
 (* The operations < and > are not meaningful for non-scalar types *)
 
-PROCEDURE [<] : NIL; (* conforming blueprints may not require < binding *)
+PROCEDURE [<] = NONE;
+(* Conforming blueprints may not require binding to the < operator. *)
 
-PROCEDURE [>] : NIL; (* conforming blueprints may not require > binding *)
+PROCEDURE [>] = NONE;
+(* Conforming blueprints may not require binding to the > operator. *)
 
 
 END ProtoNonScalar.
