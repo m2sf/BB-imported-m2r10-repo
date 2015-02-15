@@ -14,6 +14,16 @@ LITERAL = { REAL, REAL };
 
 (* Bindings required for ProtoComplex ADTs *)
 
+(* Required Constants *)
+
+CONST [TSIGNED] isSigned = TRUE;
+(* Complex ADTs are always signed. *)
+
+
+(* Required Procedures *)
+
+(* Numeric Conversion *)
+
 (* Via-SXF conversion between structurally equivalent non-scalar numeric types
    is synthesised using SXF and VAL conversions on their scalar components *)
 
