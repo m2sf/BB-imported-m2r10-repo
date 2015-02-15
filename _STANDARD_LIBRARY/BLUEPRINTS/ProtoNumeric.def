@@ -1,15 +1,11 @@
-(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* General Blueprint for Scalar and Non-Scalar Numeric ADTs *)
 
 BLUEPRINT ProtoNumeric [ProtoRoot];
 
-(* Numeric ADTs must be records to be statically allocatable,
-   the following literals may be used:
-   o  integer or real number literals
-   o  structured literals constructed from real number literals *)
 
-MODULE TYPE = RECORD | OPAQUE RECORD := INTEGER | REAL | { REAL BY * };
+MODULE TYPE = OPAQUE | RECORD;
 
 
 (* Bindings required for numeric ADTs *)
