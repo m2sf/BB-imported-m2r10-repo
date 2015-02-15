@@ -16,7 +16,7 @@ LITERAL = INTEGER;
 
 (* Required Constants *)
 
-CONST [TSIGNED] isSigned = FALSE;
+CONST [TSIGNED] isSigned = TRUE;
 (* Integer ADTs are always signed. *)
 
 CONST [TBASE] base : CARDINAL;
