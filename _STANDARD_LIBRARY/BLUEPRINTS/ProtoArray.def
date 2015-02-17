@@ -17,25 +17,43 @@ LITERAL = { ARGLIST OF ValueType };
 
 (* Required Constants *)
 
-
 (* Memory Management Model *)
 
-CONST isRefCounted : BOOLEAN;
-(* Required constant to define whether conforming ADTs should implement
+CONST [TDYN] isDynamic = TRUE;
+(* Required constant to define whether conforming ADTs shall implement
+   dynamic memory management.  Its value is always TRUE for ProtoArray ADTs. *)
+
+(* This value may be queried by invoking TDYN(ArrayADT) *)
+
+
+CONST [TREFC] isRefCounted : BOOLEAN;
+(* Constant to define whether conforming dynamic ADTs shall implement
    reference counting.  Its value may be TRUE or FALSE. *)
 
+(* This value may be queried by invoking TREFC(ArrayADT) *)
 
-(* Concatenation and Slicing *)
 
-CONST supportsConcatAndSlicing : BOOLEAN;
-(* Required constant to define whether conforming ADTs should implement
-   concatenation and slicing.  Its value may be TRUE or FALSE. *)
+(* Capacity Limit *)
+
+CONST [TLIMIT] capacityLimit : LONGCARD;
+(* Required function to return the index/value pair limit of the ADT. *)
+
+(* This value may be queried by invoking TLIMIT(ArrayADT) *)
+
+
+(* Value Access Model *)
+
+CONST [TBYIDX] valueAccessByIndex = TRUE;
+(* Constant to indicate that conforming ADTs shall access values by index.
+   Its value is always TRUE for array ADTs. *)
+
+(* This value may be queried by invoking TBYIDX(ArrayADT) *)
 
 
 (* NIL Storage *)
 
 CONST [TNIL] supportsNilStorage : BOOLEAN;
-(* Required constant to define whether conforming ADTs should treat
+(* Constant to define whether or not conforming ADTs shall treat
 (* NIL as a storable value.  Its value may be TRUE or FALSE. *)
 
 (* This value may be queried by invoking TNIL(ArrayADT) *)
@@ -43,32 +61,23 @@ CONST [TNIL] supportsNilStorage : BOOLEAN;
 
 (* Iteration Order *)
 
-CONST [TBIDI] bidirectionalIteration = TRUE;
-(* Required constant to define whether conforming ADTs support bidirectional
-   FOR loop iteration.  Its value is always TRUE for Array ADTs. *)
+CONST [TBDFOR] bidirectionalIteration = TRUE;
+(* Constant to define whether conforming ADTs shall support descending
+   FOR loop iteration.  Its value is always TRUE for array ADTs. *)
 
-(* This value may be queried by invoking TBIDI(ArrayADT) *)
+(* This value may be queried by invoking TBDFOR(ArrayADT) *)
 
 
-(* Support for Invalid Accessor Retrieval Intercept *)
+(* Invalid Accessor Retrieval Intercept *)
 
 CONST * invAccessorRetrievalIntercept = TRUE;
 (* Required constant to define whether invalid accessor retrieval errors may
-   be intercepted by user defined handlers.  Always TRUE for Array ADTs. *)
+   be intercepted by user defined handlers.  Always TRUE for array ADTs. *)
 
 
 (* Required Procedures *)
 
-
 (* Introspection *)
-
-(* Binding to Predefined Function TLIMIT *)
-
-PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Required function to return the index/value pair limit of the ADT. *)
-
-(* Supports use case: TLIMIT(ArrayADT) *)
-
 
 (* Binding to Predefined Function COUNT *)
 
@@ -81,8 +90,6 @@ PROCEDURE [COUNT] count ( array : ProtoArray ) : LONGCARD;
 PROCEDURE capacity ( array : ProtoArray ) : LONGCARD;
 (* Required function to return the allocated capacity of an array. *)
 
-PROCEDURE entryLimit ( array : ProtoArray ) : LONGCARD;
-(* Required function to return the value limit of an array. *)
 
 PROCEDURE isResizable ( array : ProtoArray ) : BOOLEAN;
 (* Required function to return the resizable property of an array. *)
@@ -103,9 +110,9 @@ PROCEDURE [NEW] new
    
    NEW array OF capacity;
    
-   and in combination with binding to COPY:
+   and in combination with bindings to STORE and RETRIEVE:
    
-   NEW array := initValue; *)
+   NEW array := arrayExpression; *)
 
 
 (* Binding to RETAIN *)
@@ -132,323 +139,55 @@ PROCEDURE [RELEASE] release ( array : ProtoArray );
    RELEASE array; *)
 
 
-(* Copying *)
-
-(* Binding to COPY *)
-
-PROCEDURE [COPY|1] copyValues
-  ( VAR target : ProtoArray; values : ARGLIST OF ValueType );
-(* Required procedure to destructively update a target array from a given
-   value list. *)
-
-(* Supports use cases of the form:
-      
-   COPY array := { val1, val2, val3, ... };
-   
-   and in combination with binding to NEW:
-   
-   NEW array := { val1, val2, val3, ... }; *)
-
-
-NOT supportsConcatAndSlicing ->
-PROCEDURE [COPY|2] copyArray ( VAR target : ProtoArray; source : ProtoArray );
-(* Procedure to destructively update a target array from a given source array.
-   Required when slicing is not supported. *)
-
-(* Supports use cases:
-   
-   COPY target := source;
-   
-   and in combination with binding to NEW:
-   
-   NEW array := source; *)
-
-
-supportsConcatAndSlicing ->
-PROCEDURE [COPY|2] copyArrayOrSlice
-  ( VAR target : ProtoArray; source : ProtoArray; start, end : INTEGER );
-(* Procedure to destructively update a target array from a given source array
-   or slice.  Required when slicing is supported. *)
-
-(* Supports use cases:
-   
-   COPY target := source;
-   
-   COPY target := source[n..m];
-   
-   and in combination with binding to NEW:
-   
-   NEW array := source;
-   
-   NEW array := source[n..m]; *)
-
-
-supportsConcatAndSlicing ->
-PROCEDURE [COPY|3] copyArraysOrSlices
-  ( VAR target : ProtoArray;
-    source : ARGLIST OF { array : ProtoArray; start, end : INTEGER } );
-(* Procedure to destructively update a target array with a concatenation of
-   given source arrays and slices.  Required when concatenation and slicing
-   is supported. *)
-
-(* Supports use cases of the form:
-
-   COPY target := arrayConcatenation;
-   
-   where ...
-   
-   arrayConcatenation : term ( '+>' term )* ;
-   term : arraySlice | array ;
-   arraySlice : array '[' start '..' end ']' ;
-   start, end : integerExpression ;
-   array : qualident ; *)
-
-
-supportsConcatAndSlicing ->
-PROCEDURE [COPY|4] copyArrayExpression
-  ( VAR target : ProtoArray;
-    source : ARGLIST OF
-      { array : ProtoArray;
-        start, end : INTEGER;
-        values : ARRAY OF ValueType } );
-(* Procedure to destructively update a target array with an array expression
-   evaluation. Required when concatenation and slicing is supported. *)
-
-(* Supports use cases of the form:
-   
-   COPY target := arrayExpression;
-   
-   where ...
-   
-   arrayExpression : term ( '+>' term )* ;
-   term : valueList | arraySlice | array ;
-   valueList : '{' value ( ',' value )* '}' ;
-   arraySlice : array '[' start '..' end ']' ;
-   start, end : integerExpression ;
-   value : qualident | expression ;
-   array : qualident; *)
-
-
-(* Insertion *)
-
-(* Binding to INSERT *)
-
-PROCEDURE [INSERT|1] insertValues
-  ( VAR target : ProtoArray; atIndex : INTEGER; values : ARGLIST OF ValueType );
-(* Required procedure to insert values from a given value list at a given index
-   into an array. *)
-
-(* Supports use cases:
-
-   INSERT(target, n, val1, val2, val3, ...);
-   
-   COPY target[n..] := { val1, val2, val3, ... }; *)
-
-
-NOT supportsConcatAndSlicing ->
-PROCEDURE [INSERT|2] insertArray
-  ( VAR target : ProtoArray; atIndex : INTEGER; source : ProtoArray );
-(* Procedure to insert the values of a given source array at a given index
-   into a target array.  Required when slicing is not supported. *)
-
-(* Supports use case:
-
-   COPY target[n..] := source; *)
-
-
-supportsConcatAndSlicing ->
-PROCEDURE [INSERT|2] insertArrayOrSlice
-  ( VAR target : ProtoArray; atIndex : INTEGER;
-        source : ProtoArray; start, end : INTEGER );
-(* Procedure to insert the values of a given source array or slice at a given
-   index into a target array.  Required when slicing is supported. *)
-
-(* Supports use cases:
-
-   COPY target[n..] := source;
-
-   COPY target[n..] := source[m..p]; *)
-
-
-supportsConcatAndSlicing ->
-PROCEDURE [INSERT|3] insertArraysOrSlices
-  ( VAR target : ProtoArray; atIndex : INTEGER;
-    source : ARGLIST OF { array : ProtoArray; start, end : INTEGER } );
-(* Procedure to insert a concatenation of given source arrays and slices
-   at a given index into a target array.  Required when concatenation and
-   slicing is supported. *)
-
-(* Supports use cases of the form:
-
-   COPY target[n..] := arrayConcatenation;
-   
-   where ...
-   
-   arrayConcatenation : term ( '+>' term )* ;
-   term : arraySlice | array ;
-   arraySlice : array '[' start '..' end ']' ;
-   start, end : integerExpression ;
-   array : qualident ; *)
-
-
-supportsConcatAndSlicing ->
-PROCEDURE [INSERT|4] insertArrayExpression
-  ( VAR target : ProtoArray; atIndex : INTEGER;
-    source : ARGLIST OF
-      { array : ProtoArray; start, end : INTEGER;
-        values : ARRAY OF ValueType } );
-(* Procedure to insert the values of an array expression evaluation
-   at a given index into a target array.  Required when concatenation
-   and slicing is supported. *)
-
-(* Supports use cases of the form:
-   
-   COPY target[n..] := arrayExpression;
-   
-   where ...
-   
-   arrayExpression : term ( '+>' term )* ;
-   term : valueList | arraySlice | array ;
-   valueList : '{' value ( ',' value )* '}' ;
-   arraySlice : array '[' start '..' end ']' ;
-   start, end : integerExpression ;
-   value : qualident | expression ;
-   array : qualident; *)
-
-
-(* L-Value Slicing *)
-
-(* Binding to .. *)
-
-supportsConcatAndSlicing ->
-PROCEDURE [SLICE|1] updateSliceWithValues
-  ( VAR target : ProtoArray; start, end : INTEGER;
-    values : ARGLIST OF ValueType );
-(* Procedure to destructively update a slice of a target array from a given
-   value list.  Required when slicing is supported. *)
-
-(* Supports use case:
-   
-   COPY target[n..m] := { val1, val2, val3, ... }; *)
-
-
-supportsConcatAndSlicing ->
-PROCEDURE [SLICE|2] updateSliceWithArrayOrSlice
-  ( VAR target : ProtoArray; tgtStart, tgtEnd : INTEGER;
-        source : ProtoArray; srcStart, srcEnd : INTEGER );
-(* Procedure to destructively update a slice of a target array with the values
-   of a given source array or slice.  Required when slicing is supported. *)
-
-(* Supports use cases:
-   
-   COPY target[n..m] := source;
-   
-   COPY target[n..m] := source[p..q]; *)
-
-
-supportsConcatAndSlicing ->
-PROCEDURE [SLICE|3] updateSliceWithArraysOrSlices
-  ( VAR target : ProtoArray; tgtStart, tgtEnd : INTEGER;
-        source : ARGLIST OF { array : ProtoArray; start, end : INTEGER } );
-(* Procedure to destructively update a slice of a target array with a
-   concatenation of given source arrays and slices.  Required when
-   concatenation and slicing is supported. *)
-
-(* Supports use cases of the form:
-   
-   COPY target[n..m] := arrayConcatenation;
-   
-   where ...
-   
-   arrayConcatenation : term ( '+>' term )* ;
-   term : arraySlice | array ;
-   arraySlice : array '[' start '..' end ']' ;
-   start, end : integerExpression ;
-   array : qualident ; *)
-
-
-supportsConcatAndSlicing ->
-PROCEDURE [SLICE|4] updateSliceWithArrayExpression
-  ( VAR target : ProtoArray; tgtStart, tgtEnd : INTEGER;
-    source : ARGLIST OF
-      { array : ProtoArray; start, end : INTEGER;
-        values : ARRAY OF ValueType } );
-(* Procedure to destructively update a slice of a target array with a given
-   array expression evaluation.  Required when concatenation and slicing is
-   supported. *)
-
-(* Supports use cases of the form:
-   
-   COPY target[n..m] := arrayExpression;
-   
-   where ...
-   
-   arrayExpression : term ( '+>' term )* ;
-   term : valueList | arraySlice | array ;
-   valueList : '{' value ( ',' value )* '}' ;
-   arraySlice : array '[' start '..' end ']' ;
-   start, end : integerExpression ;
-   value : qualident | expression ;
-   array : qualident; *)
-
-
-(* Conversion of Built-in Arrays *)
-
-NOT supportsConcatAndSlicing ->
-PROCEDURE [ARRAY] convertBuiltinArray
-  ( VAR array : ProtoArray; CONST from : ARRAY OF ValueType );
-(* Procedure to destructively update a target array with the values of a given
-   static array with matching value type.  Required when slicing is not
-   supported. *)
-
-(* Supports use cases:
-   
-   COPY array := builtinArray;
-   
-   and in combination with binding to NEW:
-   
-   NEW target := builtinArray;
-   
-   where builtinArray is any array of a static array type constructed
-   using ARRAY OF type constructor with a matching value type. *)
-
-
-supportsConcatAndSlicing ->
-PROCEDURE [ARRAY] convertBuiltinArrayOrSlice
-  ( VAR array : ProtoArray;
-    CONST from : ARRAY OF ValueType; start, end : INTEGER );
-(* Procedure to destructively update a target array with the values of a given
-   static array or slice thereof with matching value type.  Required when
-   slicing is supported. *)
-
-(* Supports use cases:
-   
-   COPY target := builtinArray;
-   
-   COPY target := builtinArray[n..m];
-   
-   and in combination with binding to NEW:
-   
-   NEW target := builtinArray;
-   
-   NEW target := builtinArray[n..m];
-   
-   where builtinArray is any array of a static array type constructed
-   using ARRAY OF type constructor with a matching value type. *)
-
-
 (* Value Storage *)
 
 (* Binding to STORE *)
 
 PROCEDURE [STORE] storeValue
  ( array : ProtoArray; index : IndexType; value : ValueType );
-(* Required procedure to store a value at a given index in an
-   array. *)
+(* Required procedure to store a single value at a given index in a target
+   array or append it to the target array if the index equals COUNT(target). *)
 
-(* A statement of the form array[index] := value
-   is equivalent to STORE(array, index, value) and
-   is synthesised as ArrayADT.storeValue(array, index, value). *)
+(* Supports use cases:
+   
+   array[index] := value;
+   
+   COPY array[index] := value;
+   
+   STORE(array, index, value); *)
+
+
+PROCEDURE [STORE|#] storeValues
+  ( target : ProtoArray; fromIndex : IndexType; values : ARRAY OF ValueType );
+(* Procedure to store multiple values at a given start index in a target
+   array or append them if the start index equals COUNT(target). *)
+
+(* Supports use cases:
+   
+   COPY array := arrayExpression;
+   
+   and slice updates of the form
+   
+   COPY array[n..m] := arrayExpression;
+      
+   when COUNT(array[n..m]) <= COUNT(arrayExpression). *)
+
+
+PROCEDURE [STORE|*] fillWithValue
+  ( target : ProtoArray;
+    fromIndex : IndexType; valueCount : LONGCARD; fillValue : ValueType );
+(* Procedure to store a given number of fill values at a given start index in
+   a target array or append them if the start index equals COUNT(target). *)
+
+(* Supports use cases:
+   
+   COPY array := { fillValue BY valueCount };
+   
+   and slice updates of the form
+   
+   COPY array[n..m] := { fillValue BY valueCount };
+   
+   when COUNT(array[n..m]) <= COUNT(arrayExpression). *)
 
 
 (* Value Retrieval *)
@@ -459,9 +198,13 @@ PROCEDURE [RETRIEVE] valueAtIndex
  ( array : ProtoArray; index : IndexType ) : ValueType;
 (* Required function to return the value stored in an array at a given index. *)
 
-(* An expression of the form array[index]
-   is equivalent to RETRIEVE(array, index) and
-   is synthesised as ArrayADT.valueAtIndex(array, index). *)
+(* Supports use cases:
+   
+   array[index]
+   
+   RETRIEVE(array, index, value)
+   
+   within expressions. *)
 
 
 (* Index Out Of Range Retrieval Error Handling *)
@@ -497,40 +240,97 @@ PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
    The procedure is required when invAccessorRetrievalIntercept is TRUE. *)
 
 
+(* Value Insertion *)
+
+(* Binding to INSERT *)
+
+PROCEDURE [INSERT] insertValue
+  ( VAR target : ProtoArray; atIndex : IndexType; value : ValueType );
+(* Required procedure to insert a given value into a target array
+   at a given index. *)
+
+(* Supports use cases:
+   
+   array[index..] := value;
+   
+   COPY array[index..] := value;
+   
+   INSERT(array, index, value); *)
+
+
+PROCEDURE [INSERT|#] insertValues
+  ( VAR target : ProtoArray; atIndex : IndexType; values : ARRAY OF ValueType );
+(* Required procedure to insert one or more given values into a target array
+   at a given index. *)
+
+(* Supports use cases:
+   
+   COPY array[index..] := { val1, val2, val3, ... };
+   
+   INSERT(array, index, val1, val2, val3, ...);
+   
+   COPY array[index..] := arrayExpression; *)
+
+
+PROCEDURE [INSERT|*] insertAndFill
+  ( VAR target : ProtoArray;
+    atIndex : IndexType; valueCount : LONGCARD; fillValue : ValueType );
+(* Required procedure to insert a given number of given fill-values
+   into a target array at a given index. *)
+
+(* Supports use case:
+      
+   COPY array[index..] := { fillValue BY valueCount };
+   
+   and slice updates of the form
+   
+   COPY array[n..m] := { fillValue BY valueCount };
+   
+   when COUNT(array[n..m]) > COUNT(arrayExpression). *)
+
+
 (* Value Removal *)
 
 (* Binding to REMOVE *)
 
-PROCEDURE [REMOVE|1] removeValue
+PROCEDURE [REMOVE] removeValue
   ( array : ProtoArray; atIndex : IndexType );
 (* Required procedure to remove a value from an array at a given index. *)
 
 (* Supports use case:
    
-   REMOVE(array, n); *)
+   REMOVE(array, index); *)
 
 
-PROCEDURE [REMOVE|2] removeValuesInRange
-  ( array : ProtoArray; start, end : IndexType );
+PROCEDURE [REMOVE|#] removeValues
+  ( VAR target : ProtoArray; atIndex : IndexType; valueCount : LONGCARD );
 (* Required procedure to remove one or more values from an array. *)
 
 (* Supports use cases:
       
-   REMOVE(array, n, m);
-   
-   further, if slicing is supported, the alternative syntax:
+   REMOVE(array, index, valueCount);
    
    COPY array[n..m] := EMPTY; *)
 
 
-PROCEDURE [REMOVE|3] removeAllValues ( array : ProtoArray );
+PROCEDURE [REMOVE|*] removeAllValues ( array : ProtoArray );
 (* Required procedure to remove all values from an array. *)
 
 (* Supports use cases:
    
-   REMOVE(array, 0, -1);
+   REMOVE(array, 0, COUNT(array));
       
    COPY array := EMPTY; *)
+
+
+(* Copying *)
+
+(* Copying is synthesised from bindings to STORE and RETRIEVE. *)
+
+
+(* Concatenation *)
+
+(* Concatenation is synthesised from bindings to STORE and RETRIEVE. *)
 
 
 (* Iteration *)
@@ -541,25 +341,18 @@ TYPE LoopBodyType = PROCEDURE ( VAR ProtoArray, CONST IndexType );
 (* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
-  ( VAR array : ProtoArray; doStatements : LoopBodyType; ascending : BOOLEAN );
+  ( VAR array : ProtoArray; doStatements : LoopBodyType; order : CHAR );
 
-(* Required procedure to iterate over all index/value pairs of an array
-   in a given order and execute the passed in doStatements for each pair. *)
+(* Required procedure to iterate over all indices of an array in ascending "+"
+   or descending "-" order and execute body doStatements for each index. *)
+
+(* Supports use cases:
    
-(* A statement of the form
-     FOR index IN array DO statementSeq END
-   is synthesised in two steps.
+   FOR index IN array DO statementSequence END;
+
+   FOR index++ IN array DO statementSequence END;
    
-   The loop header is synthesised as
-     ArrayADT.forIterator(array, forLoopBody, TRUE);
-   
-   The loop body is synthesised as
-     PROCEDURE forLoopBody
-       ( VAR array : ArrayADT; CONST index : IndexType ) <*INLINE*>;
-     BEGIN statementSeq END forLoopBody;
-   
-   The loop header of a FOR DESCENDING statement is sythesised with
-   FALSE passed for parameter ascending in the call to forIterator. *)
+   FOR index-- IN array DO statementSequence END; *)
 
 
 (* Relational Operations *)
@@ -569,19 +362,16 @@ PROCEDURE [FOR] forIterator
 PROCEDURE [=] isEqual ( array1, array2 : ProtoArray ) : BOOLEAN;
 (* Required function to test the equivalence of two arrays. *)
 
-(* An expression of the form array1 = array2
-   is synthesised as ArrayADT.isEqual(array1, array2). *)
-
-(* The operation for the # operator
-   is synthesized as NOT (array1 = array2). *)
-
-
-(* Conditionally Inhibited Bindings *)
-
-(* None *)
+(* Supported use cases:
+   
+   array1 = array2
+   
+   array1 # array2
+   
+   within expressions. *)
 
 
-(* Unconditionally Inhibited Bindings *)
+(* Inhibited Bindings *)
 
 (* Arithmetic Operations *)
 
@@ -606,8 +396,8 @@ PROCEDURE [<] = NONE; (* inhibited *)
 
 PROCEDURE [>] = NONE; (* inhibited *)
 
-(* The SUBSET operation is not meaningful for array ADTs.
-   Conforming blueprints may not require binding to SUBSET. *)
+(* Set operations are not meaningful for array ADTs.  Conforming blueprints
+   may not require binding to these operations. *)
 
 PROCEDURE [SUBSET] = NONE; (* inhibited *)
 
