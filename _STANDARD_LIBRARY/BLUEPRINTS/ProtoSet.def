@@ -36,7 +36,7 @@ CONST [TREFC] isRefCounted : BOOLEAN;
 (* Capacity Limit *)
 
 CONST [TLIMIT] capacityLimit : LONGCARD;
-(* Required function to return the element (cardinality) limit of the ADT. *)
+(* Required constant to define the element (or cardinality) limit of the ADT. *)
 
 (* This value may be queried by invoking TLIMIT(SetADT) *)
 
