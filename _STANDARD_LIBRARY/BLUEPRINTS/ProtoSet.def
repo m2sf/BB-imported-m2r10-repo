@@ -1,85 +1,112 @@
-(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Blueprint for Dynamically Allocatable Set ADTs *)
+(* Specialised Blueprint for Dynamically Allocatable Array ADTs *)
 
 BLUEPRINT ProtoSet [ProtoCollection];
 
-REFERENTIAL ElementType, HandlerType, LoopBodyType;
+REFERENTIAL ElementType, CounterType, LoopBodyType;
 
 
 (* Required Module Type *)
 
-MODULE TYPE = OPAQUE := { ARGLIST OF ElementType };
-(* Dynamic Set ADTs must be opaque,
-   structured literals with a list of elements are compatible. *)
+MODULE TYPE = OPAQUE;
+
+LITERAL = { ARGLIST OF ElementType };
+(* Set literals with a variable number of elements are compatible. *)
 
 
 (* Required Constants *)
 
-
-(* Mutability *)
-
-CONST isMutable : BOOLEAN;
-(* Required constant to define whether the ADT should be mutable.
-   Its value may be TRUE or FALSE. *)
-
-
 (* Memory Management Model *)
 
-CONST isRefCounted = TRUE;
-(* Required constant to define whether conforming ADTs should be
-   reference counted. Its value is always TRUE for dynamic Set ADTs. *)
+CONST [TDYN] isDynamic = TRUE;
+(* Required constant to define whether conforming ADTs shall implement
+   dynamic memory management.  Its value is always TRUE for ProtoSet ADTs. *)
+
+(* This value may be queried by invoking TDYN(SetADT) *)
 
 
-(* Orderedness *)
+CONST [TREFC] isRefCounted : BOOLEAN;
+(* Constant to define whether conforming dynamic ADTs shall implement
+   reference counting.  Its value may be TRUE or FALSE. *)
 
-CONST [DESCENDING] isOrdered : BOOLEAN;
-(* Required constant to define whether conforming ADTs should be ordered.
-   Its value may be TRUE or FALSE. *)
+(* This value may be queried by invoking TREFC(SetADT) *)
+
+
+(* Capacity Limit *)
+
+CONST [TLIMIT] capacityLimit : LONGCARD;
+(* Required function to return the element (cardinality) limit of the ADT. *)
+
+(* This value may be queried by invoking TLIMIT(SetADT) *)
+
+
+(* Value Access Model *)
+
+CONST [TBYVAL] valueAccessByValue = TRUE;
+(* Constant to indicate that conforming ADTs shall access values by value.
+   Its value is always TRUE for set ADTs. *)
+
+(* This value may be queried by invoking TBYVAL(SetADT) *)
 
 
 (* NIL Storage *)
 
-CONST [NIL] allowsNilStorage = FALSE;
-(* Required constant to define whether NIL should be a storable value.
-   Its value is always FALSE for Set ADTs. *)
+CONST [TNIL] supportsNilStorage : BOOLEAN;
+(* Constant to define whether or not conforming ADTs shall treat
+(* NIL as a storable element.  Its value may be TRUE or FALSE. *)
+
+(* This value may be queried by invoking TNIL(SetADT) *)
 
 
-(* Support for Invalid Accessor Retrieval Intercept *)
+(* Iteration Order *)
 
-CONST * invAccessorRetrievalIntercept : BOOLEAN;
+CONST [TBDFOR] bidirectionalIteration = FALSE;
+(* Constant to define whether conforming ADTs shall support descending
+   FOR loop iteration.  Its value is always FALSE for ProtoSet ADTs. *)
+
+(* This value may be queried by invoking TBDFOR(SetADT) *)
+
+
+(* Maximum Multiplicity *)
+
+CONST maxMultiplicity = TMAX(CounterType);
+(* Required to define how many times any given element is permitted to be
+   stored in a set.  Its value is determined by the ADT's counter type. *)
+
+
+(* Optional Features *)
+
+(* Invalid Accessor Retrieval Intercept *)
+
+CONST * invAccessorRetrievalIntercept = FALSE;
 (* Required constant to define whether invalid accessor retrieval errors may
-   be intercepted by user defined handlers. Always FALSE for Set ADTs. *)
+   be intercepted by user defined handlers.  Always FALSE for set ADTs. *)
+
+
+(* Compiler Generated Set Operations *)
+
+CONST * synthesizeSetOperations : BOOLEAN;
+(* Required constant to define whether set operations shall be synthesised.
+   Its value may be TRUE or FALSE.  When this value is FALSE, conforming ADTs
+   must provide bindings for all set operations. *)
 
 
 (* Required Procedures *)
 
-
 (* Introspection *)
-
-(* Binding to Predefined Function TLIMIT *)
-
-PROCEDURE [TLIMIT] capacityLimit : LONGCARD;
-(* Required function to return the allocation capacity limit of the set ADT. *)
-
-(* An expression of the form TLIMIT(SetADT)
-   is synthesised as SetADT.capacityLimit(). *)
-
 
 (* Binding to Predefined Function COUNT *)
 
-PROCEDURE [COUNT] count ( set : ProtoSet ) : LONGCARD;
+PROCEDURE [COUNT] cardinality ( set : ProtoSet ) : LONGCARD;
 (* Required function to return the number of elements stored in a set. *)
 
-(* An expression of the form COUNT(set)
-   is synthesised as SetADT.count(set). *)
+(* Supports use case: COUNT(set)  *)
 
 
 PROCEDURE capacity ( set : ProtoSet ) : LONGCARD;
 (* Required function to return the allocated capacity of a set. *)
 
-PROCEDURE entryLimit ( set : ProtoSet ) : LONGCARD;
-(* Required function to return the element limit of a set. *)
 
 PROCEDURE isResizable ( set : ProtoSet ) : BOOLEAN;
 (* Required function to return the resizable property of a set. *)
@@ -87,225 +114,176 @@ PROCEDURE isResizable ( set : ProtoSet ) : BOOLEAN;
 
 (* Memory Management *)
 
-(* Binding to Predefined Procedure NEW *)
+(* Binding to NEW *)
 
 PROCEDURE [NEW] new
-  ( VAR set : ProtoSet; initWith : ARGLIST OF ElementType );
-(* Required procedure to allocate a new set and initialise it
-   with zero or more given elements. *)
+  ( NEW newSet : ProtoSet; initialCapacity : LONGCARD );
+(* Required procedure to allocate a new set with a default or given initial
+   capacity. *)
 
-(* A statement of the form NEW(set)
-   is synthesised as SetADT.new(set).
+(* Supports use cases:
    
-   A statement of the form NEW(set, elem1, elem2, elem3, ...)
-   is synthesised as SetADT.new(set, elem1, elem2, elem3, ...). *)
+   NEW set;
+   
+   NEW set OF capacity;
+   
+   and in combination with bindings to STORE and RETRIEVE:
+   
+   NEW set := setExpression; *)
 
 
-isMutable ->
-PROCEDURE newWithCapacity
-  ( VAR set : ProtoSet; capacity : LONGCARD );
-(* Procedure to allocate a new set with a given initial capacity.
-   The procedure is required when the ADT is mutable. *)
-
-
-(* Binding to Predefined Procedure RETAIN *)
+(* Binding to RETAIN *)
 
 isRefCounted ->
 PROCEDURE [RETAIN] retain ( set : ProtoSet );
 (* Procedure to retain a set and prevent its deallocation.
-   The procedure is required when the ADT is reference counted. *)
+   Required when reference counting is supported. *)
 
-(* A statement of the form RETAIN(set)
-   is synthesised as SetADT.retain(set). *)
+(* Supports use case:
+   
+   RETAIN set; *)
 
 
-(* Binding to Predefined Procedure RELEASE *)
+(* Binding to RELEASE *)
 
 PROCEDURE [RELEASE] release ( set : ProtoSet );
-(* Required procedure to cancel an outstanding retain
-   or deallocate a set if no retains are outstanding. *)
+(* Required procedure to cancel an outstanding retain and ultimately deallocate
+   a set when no further retains are outstanding, or immediately when
+   reference counting is not supported. *)
 
-(* A statement of the form RELEASE(set)
-   is synthesised as SetADT.release(set). *)
-
-
-(* Literal Assignment *)
-
-(* Binding to the := Operator *)
-
-isMutable ->
-PROCEDURE [:=] assignLiteral
-  ( set : ProtoSet; literal : ARGLIST OF ElementType );
-(* Procedure to destructively copy the contents of a set literal to a set.
-   The procedure is required when the ADT is mutable. *)
-
-(* A statement of the form set := { elem1, elem2, elem3, ... };
-   is synthesised as SetADT.assignLiteral(set, elem1, elem2, elem3, ...). *)
-
-
-(* Copying *)
-
-(* Binding to Predefined Function DUP *)
-
-PROCEDURE [DUP] newWithCopy ( source : ProtoSet ) : ProtoSet;
-(* Required function to return a newly allocated copy of a set. *)
-
-(* An expression of the form DUP(set)
-   is synthesised as SetADT.newWithCopy(set). *)
-
-
-(* Binding to Predefined Procedure COPY *)
-
-isMutable ->
-PROCEDURE [COPY] copy ( source : ProtoSet; target : ProtoSet );
-(* Procedure to destructively copy the contents of one set to another.
-   The procedure is required when the ADT is mutable. *)
-
-(* A statement of the form COPY(set1, set2)
-   is synthesised as SetADT.copy(set1, set2). *)
+(* Supports use case:
+   
+   RELEASE set; *)
 
 
 (* Value Storage *)
 
-(* Binding to Predefined Procedure STORE *)
+(* Binding to STORE *)
 
-isMutable ->
-PROCEDURE [STORE] storeElement
- ( set : ProtoSet; element : ElementType; membership : BOOLEAN );
-(* Procedure to store a membership value for an element in a set.
-   The procedure is required when the ADT is mutable. *)
+PROCEDURE [STORE] storeCounterForElement
+  ( VAR target : SetADT; element : ElementType; count : CounterType );
+(* Required to overwrite the multiplicity of a given element in a set. *)
 
-(* A statement of the form set[element] := TRUE
-   is equivalent to STORE(set, element, TRUE) and
-   is synthesised as SetADT.storeElement(set, element, TRUE).
+(* Supports use cases:
    
-   A statement of the form set[element] := FALSE
-   is equivalent to STORE(set, element, FALSE) and
-   is synthesised as SetADT.storeElement(set, element, FALSE). *)
+   set[element] := count;
+      
+   STORE(set, element, count); *)
+
+
+PROCEDURE [STORE|,] storeCounterForElements
+  ( VAR target : SetADT;
+    entries : ARGLIST >0 OF { element : ElementType; count : CounterType } );
+(* Required to overwrite the multiplicities of given elements in a set. *)
+
+(* Supports use cases:
+   
+   COPY set := { elem1, count1, elem2, count2, elem3, count3, ... }
+   
+   STORE(set, elem1, count1, elem2, count2, elem3, count3, ...); *)
 
 
 (* Value Retrieval *)
 
-(* Binding to Predefined Function RETRIEVE *)
+(* Binding to RETRIEVE *)
 
-PROCEDURE [RETRIEVE] isElement
-  ( set : ProtoSet; element : ElementType ) : BOOLEAN;
-(* Required function to return the membership value for an element in a set. *)
+PROCEDURE [RETRIEVE] counterForElement
+  ( VAR set : ProtoSet; element : ElementType ) : CounterType;
+(* Required to retrieve the multiplicity of a given element in a set. *)
 
-(* An expression of the form set[element]
-   is equivalent to RETRIEVE(set, element) and
-   is synthesised as SetADT.isElement(set, element). *)
+(* Supports use cases:
+   
+   set[element]
+   
+   RETRIEVE(set, element)
+   
+   within expressions. *)
+
+
+PROCEDURE [IN] isElement
+  ( VAR set : ProtSet; element : ElementType ) : BOOLEAN;
+(* Required to retrieve the membership status of a given element in a set. *)
+
+(* Supports use case:
+   
+   set IN element
+      
+   within expressions. *)
 
 
 (* Value Insertion *)
 
-(* Binding to Predefined Procedure INSERT *)
+(* Binding to INSERT *)
 
-PROCEDURE [INSERT] insertElements
-  ( set : ProtoSet; elementList : VARGLIST OF ElementType );
-(* Required procedure to insert one or more elements into a set. *)
+PROCEDURE [INSERT] insertElement
+  ( VAR target : ProtoSet; element : ElementType );
+(* Required to add a given element to a set or increment its counter. *)
 
-(* A statement of the form INSERT(set, elem1, elem2, elem3, ...)
-   is synthesised as SetADT.insertElements(set, elem1, elem2, elem3, ...). *)
+(* Supports use case:
+         
+   INSERT(set, element); *)
+
+
+PROCEDURE [INSERT|,] insertElements
+  ( VAR target : ProtoSet; elements : ARGLIST >0 OF ElementType );
+(* Required to add given elements to a set or increment their counters. *)
+
+(* Supports use case:
+   
+   INSERT(set, elem1, elem2, elem3, ...); *)
 
 
 (* Value Removal *)
 
-(* Binding to Predefined Procedure REMOVE *)
+(* Binding to REMOVE *)
 
-PROCEDURE [REMOVE] removeElements
-  ( set : ProtoSet; elementList : ARGLIST OF ElementType );
-(* Required procedure to remove one or more elements from a set. *)
+PROCEDURE [REMOVE] removeElement
+  ( VAR target : ProtoSet; element : ElementType );
+(* Required to remove a given element from a set or decrement its counter. *)
 
-(* A statement of the form REMOVE(set, elem1, elem2, elem3, ...)
-   is synthesised as SetADT.removeElements(set, elem1, elem2, elem3, ...).
+(* Supports use case:
+         
+   REMOVE(set, element); *)
+
+
+PROCEDURE [REMOVE|,] removeElements
+  ( VAR target : ProtoSet; elements : ARGLIST >0 OF ElementType );
+(* Required to remove given elements from a set or decrement their counters. *)
+
+(* Supports use case:
    
-   A statement of the form set[element] := NIL
-   is equivalent to REMOVE(set, element)
-   and is synthesised as SetADT.removeElements(set, element). *)
+   REMOVE(set, elem1, elem2, elem3, ...); *)
 
 
-(* Membership Test *)
+PROCEDURE [REMOVE|*] removeAllElements ( VAR ProtoSet : SetADT );
+(* Required procedure to remove all elements from a set. *)
 
-(* Binding to IN syntax *)
+(* Supports use case:
+   
+   COPY set := EMPTY; *)
 
-PROCEDURE [IN] in
-  ( set : ProtoSet; element : ElementType ) : BOOLEAN;
-(* Function to test whether a value is stored in a set. *)
 
-(* An expression of the form element IN set
-   is synthesised as SetADT.in(set, element). *)
+(* Copying *)
+
+(* Copying is synthesised from bindings to STORE and RETRIEVE. *)
 
 
 (* Iteration *)
 
-(* Binding to FOR IN iterator *)
+(* Binding to FOR *)
 
 TYPE LoopBodyType = PROCEDURE ( VAR ProtoSet, CONST ElementType );
 (* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
-  ( VAR set : ProtoSet; doStatements : LoopBodyType; ascending : BOOLEAN );
+  ( VAR set : ProtoSet; doStatements : LoopBodyType );
+
 (* Required procedure to iterate over all elements of a set
-   and execute the passed in doStatements for each element. *)
+   and execute body doStatements for each element. *)
+
+(* Supports use case:
    
-(* A statement of the form
-     FOR element IN set DO statementSeq END
-   is synthesised in two steps.
-   
-   The loop header is synthesised as
-     SetADT.forIterator(set, forLoopBody, TRUE);
-   
-   The loop body is synthesised as
-     PROCEDURE forLoopBody
-       ( VAR set : SetADT; CONST element : ElementType ) <*INLINE*>;
-     BEGIN statementSeq END forLoopBody; *)
-
-
-(* Set Operations *) 
-
-(* Binding to the + Operator *)
-
-isRefCounted ->
-PROCEDURE [+] union ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Function to return the union of two sets.
-   The function is required when the ADT is reference counted. *)
-
-(* An expression of the form set1 + set2
-   is synthesised as SetADT.union(set1, set2). *)
-
-
-(* Binding to the - Operator *)
-
-isRefCounted ->
-PROCEDURE [-] difference ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Function to return the set difference of two sets.
-   The function is required when the ADT is reference counted. *)
-
-(* An expression of the form set1 - set2
-   is synthesised as SetADT.difference(set1, set2). *)
-
-
-(* Binding to the * Operator *)
-
-isRefCounted ->
-PROCEDURE [*] intersection ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Function to return the intersection of two sets.
-   The function is required when the ADT is reference counted. *)
-
-(* An expression of the form set1 * set2
-   is synthesised as SetADT.intersection(set1, set2). *)
-
-
-(* Binding to the / Operator *)
-
-isRefCounted ->
-PROCEDURE [/] symmetricDiff ( set1, set2 : ProtoSet ) : ProtoSet;
-(* Functon to return the symmetric difference of two sets.
-   The function is required when the ADT is reference counted. *)
-
-(* An expression of the form set1 / set2
-   is synthesised as SetADT.symmetricDiff(set1, set2). *)
+   FOR element IN set DO statementSequence END; *)
 
 
 (* Relational Operations *)
@@ -313,31 +291,87 @@ PROCEDURE [/] symmetricDiff ( set1, set2 : ProtoSet ) : ProtoSet;
 (* Binding to the = and # Operators *)
 
 PROCEDURE [=] isEqual ( set1, set2 : ProtoSet ) : BOOLEAN;
-(* Required unction to test the equality of two sets. *)
+(* Required function to test the equivalence of two set. *)
 
-(* An expression of the form set1 = set2
-   is synthesised as SetADT.isEqual(set1, set2).
+(* Supported use cases:
    
-   An expression of the form set1 # set2
-   is synthesised as NOT SetADT.isEqual(set1, set2). *)
+   set1 = set2
+   
+   set1 # set2
+   
+   within expressions. *)
 
 
-(* Binding to Predefined Function SUBSET *)
+(* Binding to the >, >=, < and <= Operators *)
 
 PROCEDURE [SUBSET] isSubset ( set1, set2 : ProtoSet ) : BOOLEAN;
-(* Required function to test whether one set is a subset of another. *)
+(* Required function to test if a given first set is a subset of a second. *)
 
-(* An expression of the form set1 > set2
-   is synthesised as SetADT.isSubset(set2, set1).
+(* Supported use cases:
    
-   An expression of the form set1 >= set2 is synthesised as
-   (COUNT(set1) > COUNT(set2)) AND SetADT.isSubset(set2, set1).
+   set1 > set2
    
-   An expression of the form set1 < set2
-   is synthesised as SetADT.isSubset(set1, set2).
+   set1 >= set2
    
-   An expression of the form set1 <= set2 is synthesised as
-   (COUNT(set1) < COUNT(set2)) AND SetADT.isSubset(set1, set2). *)
+   set1 < set2
+   
+   set1 <= set2
+   
+   within expressions. *)
+
+
+(* Set Operations *)
+
+(* Binding to the + Operator *)
+
+NOT synthesizeSetOperations ->
+PROCEDURE [+] union ( NEW target : ProtoSet; op1, op2 : ProtoSet );
+(* Procedure to calculate the union of two sets. *)
+
+(* Supported use case:
+   
+   set1 + set2
+      
+   within expressions. *)
+
+
+(* Binding to the - Operator *)
+
+NOT synthesizeSetOperations ->
+PROCEDURE [-] complement ( NEW target : ProtoSet; op1, op2 : ProtoSet );
+(* Procedure to calculate the relative complement of two sets. *)
+
+(* Supported use case:
+   
+   set1 - set2
+      
+   within expressions. *)
+
+
+(* Binding to the * Operator *)
+
+NOT synthesizeSetOperations ->
+PROCEDURE [*] intersection ( NEW target : ProtoSet; op1, op2 : ProtoSet );
+(* Procedure to calculate the intersection of two sets. *)
+
+(* Supported use case:
+   
+   set1 * set2
+      
+   within expressions. *)
+
+
+(* Binding to the +\ Operator *)
+
+NOT synthesizeSetOperations ->
+PROCEDURE [+\] symDiff ( NEW target : ProtoSet; op1, op2 : ProtoSet );
+(* Procedure to calculate the symmetric difference of two sets. *)
+
+(* Supported use case:
+   
+   set1 +\ set2
+      
+   within expressions. *)
 
 
 END ProtoSet.
