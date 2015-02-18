@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE ADDRESSIO [ProtoIO] FOR ADDRESS;
+DEFINITION MODULE AddressIO [ProtoIO] FOR ADDRESS;
 
 (* IO Extension Library for Type ADDRESS *)
 
@@ -42,4 +42,4 @@ PROCEDURE [WRITE] WriteF
    ADDRESS arguments. *)
 
 
-END ADDRESSIO.
+END AddressIO.
