@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGREALIO [ProtoIO] FOR LONGREAL;
+DEFINITION MODULE LongRealIO [ProtoIO] FOR LONGREAL;
 
 (* IO Extension Library for Type LONGREAL *)
 
@@ -73,4 +73,4 @@ PROCEDURE [WRITEF] WriteF
    LONGREAL arguments. *)
 
 
-END REALIO.
+END LongRealIO.
