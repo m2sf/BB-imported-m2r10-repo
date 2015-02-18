@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INTEGERIO [ProtoIO] FOR INTEGER;
+DEFINITION MODULE IntegerIO [ProtoIO] FOR INTEGER;
 
 (* IO Extension Library for Type INTEGER *)
 
@@ -46,4 +46,4 @@ PROCEDURE [WRITEF] WriteF
    INTEGER arguments. *)
 
 
-END INTEGERIO.
+END IntegerIO.
