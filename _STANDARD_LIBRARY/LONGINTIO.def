@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGINTIO [ProtoInteger] FOR LONGINT;
+DEFINITION MODULE LONGINTIO [ProtoIO] FOR LONGINT;
 
 (* IO Extension Library for Type LONGINT *)
 
@@ -39,7 +39,7 @@ PROCEDURE [WRITE] Write ( outfile : File; i : LONGINT );
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF LONGINT );
+    items        : ARGLIST OF LONGINT );
 (* Writes a formatted textual representation of one or more LONGINT values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
