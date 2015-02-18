@@ -1,6 +1,6 @@
 (* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGBCDIO [ProtoIO] FOR LONGBCD;
+DEFINITION MODULE LongBCDIO [ProtoIO] FOR LONGBCD;
 
 (* IO Extension Library for Type LONGBCD *)
 
@@ -35,4 +35,4 @@ PROCEDURE [WRITEF] WriteF
    LONGBCD arguments. *)
 
 
-END LONGBCDIO.
+END LongBCDIO.
