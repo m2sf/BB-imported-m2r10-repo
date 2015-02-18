@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BOOLEANIO [ProtoIO] FOR BOOLEAN;
+DEFINITION MODULE BooleanIO [ProtoIO] FOR BOOLEAN;
 
 (* IO Extension Library for Type BOOLEAN *)
 
@@ -34,4 +34,4 @@ PROCEDURE [WRITEF] WriteF
    procedure is substituted for invocations of WRITEF with one or more
    BOOLEAN arguments. *)
 
-END BOOLEANIO.
+END BooleanIO.
