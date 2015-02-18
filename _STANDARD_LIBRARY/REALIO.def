@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE REALIO [ProtoReal] FOR REAL;
+DEFINITION MODULE REALIO [ProtoIO] FOR REAL;
 
 (* IO Extension Library for Type REAL *)
 
