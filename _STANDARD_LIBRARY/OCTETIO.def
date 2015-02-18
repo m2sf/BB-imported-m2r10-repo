@@ -1,18 +1,19 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE OCTET;
+DEFINITION MODULE OCTETIO [ProtoIO] FOR OCTET;
 
-(* I/O Module for Type OCTET *)
+(* IO Extension Library for Type OCTET *)
 
 FROM FileIO IMPORT File;
 
 (* EBNF of the textual representation of OCTET values:
     octetValue : simpleFormat |
-        cBase16Format | m2Base2Format | m2Base16Format ;
+        base16Format | base2Format | rawBase16Format | rawBase2Format ;
     simpleFormat : base16Digit base16Digit ;
-    cBase16Format : "0x" simpleFormat ;
-    m2Base16Format : "0" simpleFormat "H" ;
-    m2Base2Format : bit bit bit bit bit bit bit bit "B" ;
+    base16Format : "0x" simpleFormat ;
+    base2Format : "0b" rawBase2Format ;
+    rawBase16Format : "0" simpleFormat ;
+    rawBase2Format : bit bit bit bit bit bit bit bit ;
     base16Digit : "0" .. "9" | "A" .. "F" ;
     bit : "0" | "1" ; *)
 
@@ -24,19 +25,20 @@ PROCEDURE [READ] Read ( infile : File; VAR n : OCTET );
    - the textual representation of the value read is assigned to n
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with an OCTET argument. *)
+   procedure is substituted for invocations of READ with an OCTET argument.*)
 
 PROCEDURE [WRITE] Write ( outfile : File; n : OCTET );
-(* Writes the value of OCTET n in simple format to stream outfile. This
-   procedure is substituted for invocations of WRITE with an OCTET argument.*)
+(* Writes the value of OCTET n in simple format to stream outfile. This pro-
+   cedure is substituted for invocations of WRITE with an OCTET argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF OCTET );
+    items        : ARGLIST OF OCTET );
 (* Writes a formatted textual representation of one or more OCTET values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    OCTET arguments. *)
 
-END OCTET.
+
+END OCTETIO.
