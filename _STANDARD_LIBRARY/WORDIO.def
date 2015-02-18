@@ -1,14 +1,12 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE WORD;
+DEFINITION MODULE WORDIO [ProtoIO] FOR WORD;
 
-(* I/O Module for Type WORD *)
+(* IO Extension Library for Type WORD *)
 
-FROM UNSAFE IMPORT WORD;
 FROM FileIO IMPORT File;
 
 (* EBNF of the textual representation of WORD values:
-
     wordValue :
        digitGroup digitGroup ( groupSeparator? digitGroup digitGroup )* ;
     digitGroup : base16Digit base16Digit ;
@@ -37,10 +35,10 @@ PROCEDURE [WRITE] Write ( outfile : File; w : WORD );
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF WORD );
+    items        : ARGLIST OF WORD );
 (* Writes a formatted textual representation of one or more WORD values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    WORD arguments. *)
 
-END WORD.
+END WORDIO.
