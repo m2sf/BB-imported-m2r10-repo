@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGINTIO [ProtoIO] FOR LONGINT;
+DEFINITION MODULE LongIntIO [ProtoIO] FOR LONGINT;
 
 (* IO Extension Library for Type LONGINT *)
 
@@ -46,4 +46,4 @@ PROCEDURE [WRITEF] WriteF
    LONGINT arguments. *)
 
 
-END LONGINTIO.
+END LongIntIO.
