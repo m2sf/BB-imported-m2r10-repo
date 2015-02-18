@@ -335,15 +335,15 @@ PROCEDURE [+] union ( NEW target : ProtoSet; op1, op2 : ProtoSet );
    within expressions. *)
 
 
-(* Binding to the - Operator *)
+(* Binding to the \ Operator *)
 
 NOT synthesizeSetOperations ->
-PROCEDURE [-] complement ( NEW target : ProtoSet; op1, op2 : ProtoSet );
+PROCEDURE [\] complement ( NEW target : ProtoSet; op1, op2 : ProtoSet );
 (* Procedure to calculate the relative complement of two sets. *)
 
 (* Supported use case:
    
-   set1 - set2
+   set1 \ set2
       
    within expressions. *)
 
@@ -361,15 +361,15 @@ PROCEDURE [*] intersection ( NEW target : ProtoSet; op1, op2 : ProtoSet );
    within expressions. *)
 
 
-(* Binding to the +\ Operator *)
+(* Binding to the / Operator *)
 
 NOT synthesizeSetOperations ->
-PROCEDURE [+\] symDiff ( NEW target : ProtoSet; op1, op2 : ProtoSet );
+PROCEDURE [/] symDiff ( NEW target : ProtoSet; op1, op2 : ProtoSet );
 (* Procedure to calculate the symmetric difference of two sets. *)
 
 (* Supported use case:
    
-   set1 +\ set2
+   set1 / set2
       
    within expressions. *)
 
