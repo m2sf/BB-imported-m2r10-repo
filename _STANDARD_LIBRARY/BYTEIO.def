@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BYTEIO [ProtoIO] FOR BYTE;
+DEFINITION MODULE ByteIO [ProtoIO] FOR BYTE;
 
 (* IO Extension Library for Type BYTE *)
 
@@ -41,4 +41,4 @@ PROCEDURE [WRITEF] WriteF
    BYTE arguments. *)
 
 
-END BYTE.
+END ByteIO.
