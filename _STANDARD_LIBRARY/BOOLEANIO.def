@@ -1,8 +1,8 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE BOOLEAN;
+DEFINITION MODULE BOOLEANIO [ProtoIO] FOR BOOLEAN;
 
-(* I/O Module for Type BOOLEAN *)
+(* IO Extension Library for Type BOOLEAN *)
 
 FROM FileIO IMPORT File;
 
@@ -28,10 +28,10 @@ PROCEDURE [WRITE] Write ( outfile : File; b : BOOLEAN );
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF BOOLEAN );
+    items        : ARGLIST OF BOOLEAN );
 (* Writes a formatted textual representation of one or more BOOLEAN values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    BOOLEAN arguments. *)
 
-END BOOLEAN.
+END BOOLEANIO.
