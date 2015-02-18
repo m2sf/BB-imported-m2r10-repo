@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INTEGERIO [ProtoInteger] FOR INTEGER;
+DEFINITION MODULE INTEGERIO [ProtoIO] FOR INTEGER;
 
 (* IO Extension Library for Type INTEGER *)
 
@@ -39,7 +39,7 @@ PROCEDURE [WRITE] Write ( outfile : File; i : INTEGER );
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF INTEGER );
+    items        : ARGLIST OF INTEGER );
 (* Writes a formatted textual representation of one or more INTEGER values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
