@@ -60,7 +60,7 @@ PROCEDURE [READ] Read( infile : File; VAR r : LONGREAL );
      procedure is substituted for invocations of READ with a LONGREAL argument. *)
 
 PROCEDURE [WRITE] Write( outfile : File; CONST r : LONGREAL );
-(* Writes the textual representation of value b to output stream outfile. This
+(* Writes the textual representation of value r to output stream outfile. This
    procedure is substituted for invocations of WRITE with a LONGREAL argument. *)
 
 PROCEDURE [WRITEF] WriteF
