@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGCARDIO [ProtoIO] FOR LONGCARD;
+DEFINITION MODULE LongCardIO [ProtoIO] FOR LONGCARD;
 
 (* IO Extension Library for Type LONGCARD *)
 
@@ -46,4 +46,4 @@ PROCEDURE [WRITEF] WriteF
    LONGCARD arguments. *)
 
 
-END LONGCARDIO.
+END LongCardIO.
