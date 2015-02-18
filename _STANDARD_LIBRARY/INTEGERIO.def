@@ -1,47 +1,49 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE INTEGER;
+DEFINITION MODULE INTEGERIO [ProtoInteger] FOR INTEGER;
 
-(* I/O Module for Type INTEGER *)
+(* IO Extension Library for Type INTEGER *)
 
 FROM FileIO IMPORT File;
 
 (* EBNF of the textual representation of INTEGER values:
-    cardinalValue : simpleFormat |
-        cBase16Format | m2Base16Format | universalFormat ;
+    integerValue : simpleFormat |
+        base16Format | rawBase16Format | universalFormat ;
     simpleFormat : decimalDigit+ ;
-    cBase16Format : "0x" base16Digit+ ;
-    m2Base16Format : "0" base16Digit+ "H" ;
+    base16Format : "0x" base16Digit+ ;
+    rawBase16Format : "0" base16Digit+ ;
     universalFormat :  sign? fillChar* numeral ;
     sign : "+" | "-" ;
     fillChar : " " | "*" | "0" ;
     numeral : leadDigitGroup ( separator? digitGroup )* ;
-    separator : " " | "." | "," ;
+    separator : " " | "'" | "." | "," ;
     leadDigitGroup : decimalDigit decimalDigit? decimalDigit? ;
     digitGroup : decimalDigit decimalDigit decimalDigit ;
     decimalDigit  : "0" .. "9" ;
     base16Digit : decimalDigit | "A" .. "F" ; *)
 
-PROCEDURE Read ( infile : File; VAR n : INTEGER );
+PROCEDURE [READ] Read ( infile : File; VAR i : INTEGER );
 (* Reads the textual representation of an INTEGER value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
      removed from infile
-   - the textual representation of the value read is assigned to n
+   - the textual representation of the value read is assigned to i
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an INTEGER argument.*)
 
-PROCEDURE Write ( outfile : File; n : INTEGER );
-(* Writes the value of INTEGER n in simple format to stream outfile. This pro-
+PROCEDURE [WRITE] Write ( outfile : File; i : INTEGER );
+(* Writes the value of INTEGER i in simple format to stream outfile. This pro-
    cedure is substituted for invocations of WRITE with an INTEGER argument. *)
 
-PROCEDURE WriteF ( outfile      : File;
-                   CONST fmtStr : ARRAY OF CHAR;
-                   items        : VARIADIC OF INTEGER );
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF INTEGER );
 (* Writes a formatted textual representation of one or more INTEGER values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    INTEGER arguments. *)
 
-END INTEGER.
+
+END INTEGERIO.
