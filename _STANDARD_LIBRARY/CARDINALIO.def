@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CARDINALIO [ProtoCardinal] FOR CARDINAL;
+DEFINITION MODULE CARDINALIO [ProtoIO] FOR CARDINAL;
 
 (* IO Extension Library for Type CARDINAL *)
 
