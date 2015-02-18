@@ -1,8 +1,8 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE REAL;
+DEFINITION MODULE REALIO [ProtoReal] FOR REAL;
 
-(* I/O Module for Type REAL *)
+(* IO Extension Library for Type REAL *)
 
 FROM FileIO IMPORT File;
 
@@ -44,27 +44,33 @@ FROM FileIO IMPORT File;
     decimalPoint and separator must never both use the same symbol
     the value represented by engExponent must always be divisible by three. *)
 
-PROCEDURE [READ] Read ( infile : File; VAR r : REAL );
-(* Reads the textual representation of a REAL value from stream infile
+
+(* Bindings required for static ADTs by blueprint ProtoIO *)
+
+
+PROCEDURE [READ] Read( infile : File; VAR b : REAL );
+(* Reads the textual representation of a REAL value from input stream infile
    - any leading whitespace is skipped
-   - any remaining characters that are part of the value being read are
+   - any remaining characters that are part of the numeral being read are
      removed from infile
-   - the textual representation of the value read is assigned to r
+   - the numeric value of the numeral string read is assigned to the variable
+     passed in for b
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with a REAL argument. *)
+     procedure is substituted for invocations of READ with a REAL argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : File; r : REAL );
-(* Writes the value of REAL r in simple format to stream outfile. This
-   procedure is substituted for invocations of WRITE with a REAL argument.*)
+PROCEDURE [WRITE] Write( outfile : File; CONST b : REAL );
+(* Writes the textual representation of value b to output stream outfile. This
+   procedure is substituted for invocations of WRITE with a REAL argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF REAL );
+    items        : ARGLIST OF REAL );
 (* Writes a formatted textual representation of one or more REAL values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    REAL arguments. *)
 
-END REAL.
+
+END REALIO.
