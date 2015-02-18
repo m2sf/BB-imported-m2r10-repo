@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE WORDIO [ProtoIO] FOR WORD;
+DEFINITION MODULE WordIO [ProtoIO] FOR WORD;
 
 (* IO Extension Library for Type WORD *)
 
@@ -41,4 +41,4 @@ PROCEDURE [WRITEF] WriteF
    procedure is substituted for invocations of WRITEF with one or more
    WORD arguments. *)
 
-END WORDIO.
+END WordIO.
