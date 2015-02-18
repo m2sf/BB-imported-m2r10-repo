@@ -8,7 +8,7 @@ DEFINITION MODULE LONGBCD [ProtoReal];
 (* LONGBCD type *)
 
 TYPE
-    LONGBCD = OPAQUE RECORD
+    LONGBCD = RECORD
       * value : ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* LONGBCD *)
 
