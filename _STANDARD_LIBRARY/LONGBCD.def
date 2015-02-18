@@ -5,14 +5,11 @@ DEFINITION MODULE LONGBCD [ProtoReal];
 (* Double Precision Binary Coded Decimals *) 
 
 
-FROM FileIO IMPORT File; (* required for IO *)
-
-
 (* LONGBCD type *)
 
 TYPE
     LONGBCD = OPAQUE RECORD
-        value : ARRAY 16 OF OCTET; (* 128 bits *)
+      * value : ARRAY 16 OF OCTET; (* 128 bits *)
     END; (* LONGBCD *)
 
     (* 1-bit sign, 116-bit significand, signed 11-bit exponent *)
@@ -20,14 +17,18 @@ TYPE
 
 (* Bindings required by blueprint ProtoReal *)
 
+
 (* Constants *)
 
-CONST
-    isSigned = TRUE;
-    base = 10; (* decimal *)
-    precision = 29; (* base-10 digits *)
-    eMin = -1024; (* smallest exponent *)
-    eMax = +1023; (* largest exponent *)
+CONST [TSIGNED] isSigned = TRUE;
+
+CONST [TBASE] base = 10; (* decimal *)
+
+CONST [TPRECISION] precision = 29; (* base-10 digits *)
+
+CONST [TMINEXP] eMin = -1024; (* smallest exponent *)
+
+CONST [TMAXEXP] eMax = +1023; (* largest exponent *)
 
 
 (* Range *) 
@@ -74,10 +75,10 @@ PROCEDURE [VAL] fromSXF ( CONST s : ARRAY OF OCTET; VAR a : LONGBCD );
 (* Monadic arithmetic operations *) 
 
 PROCEDURE [ABS] abs ( a : BCD ) : BCD;
-(* Returns the absolute value of BCD value a.
+(* Returns the sign removed value of BCD value a.
    This function is bound to pervasive function ABS for type LONGBCD. *)
 
-PROCEDURE [NEG] neg ( a : LONGBCD ) : LONGBCD;
+PROCEDURE [+/-] neg ( a : LONGBCD ) : LONGBCD;
 (* Returns the sign reversed value of LONGBCD value a.
    This function is bound to the unary minus operator for type LONGBCD. *)
 
@@ -115,31 +116,5 @@ PROCEDURE [>] isGreater ( a, b : LONGBCD ) : BOOLEAN;
 (* Returns TRUE if LONGBCD value a is greater than b, otherwise FALSE.
    This function is bound to operators > and <= for type LONGBCD. *)
 
-
-(* IO operations *)
-
-PROCEDURE [READ] Read( infile : File; VAR b : LONGBCD );
-(* Reads the textual representation of a LONGBCD value from input stream infile
-   - any leading whitespace is skipped
-   - any remaining characters that are part of the numeral being read are
-     removed from infile
-   - the numeric value of the numeral string read is assigned to the variable
-     passed in for b
-   - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-     procedure is substituted for invocations of READ with a LONGBCD argument. *)
-
-PROCEDURE [WRITE] Write( outfile : File; CONST b : LONGBCD );
-(* Writes the textual representation of value b to output stream outfile. This
-   procedure is substituted for invocations of WRITE with a LONGBCD argument. *)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF LONGBCD );
-(* Writes a formatted textual representation of one or more LONGBCD values to
-   output stream outfile. The output format is determined by fmtStr. This
-   procedure is substituted for invocations of WRITEF with one or more
-   LONGBCD arguments. *)
 
 END LONGBCD.
