@@ -1,10 +1,16 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CHAR;
+DEFINITION MODULE CHARIO [ProtoIO] FOR CHAR;
 
-(* I/O Module for Type CHAR *)
+(* IO Extension Library for Type CHAR *)
 
 FROM FileIO IMPORT File;
+
+(* EBNF of the textual representation of CHAR values:
+    charValue : textFormat | numericFormat ;
+    textFormat : letter | digit | nonAlphaChar ;
+    numericFormat : "0u" base16Digit base16Digit ;
+    base16Digit : "0" .. "9" | "A" .. "F" ; *)
 
 PROCEDURE [READ] Read ( infile : File; VAR ch : CHAR );
 (* Reads a CHAR value from stream infile
@@ -22,10 +28,10 @@ PROCEDURE [WRITE] Write ( outfile : File; ch : CHAR );
 PROCEDURE [WRITEF] WriteF
   ( outfile      : File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF CHAR );
+    items        : ARGLIST OF CHAR );
 (* Writes a formatted textual representation of one or more CHAR values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    CHAR arguments. *)
 
-END CHAR.
+END CHARIO.
