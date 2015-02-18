@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE OCTETIO [ProtoIO] FOR OCTET;
+DEFINITION MODULE OctetIO [ProtoIO] FOR OCTET;
 
 (* IO Extension Library for Type OCTET *)
 
@@ -41,4 +41,4 @@ PROCEDURE [WRITEF] WriteF
    OCTET arguments. *)
 
 
-END OCTETIO.
+END OctetIO.
