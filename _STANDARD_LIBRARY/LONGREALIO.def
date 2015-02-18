@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LONGREALIO [ProtoReal] FOR LONGREAL;
+DEFINITION MODULE LONGREALIO [ProtoIO] FOR LONGREAL;
 
 (* IO Extension Library for Type LONGREAL *)
 
