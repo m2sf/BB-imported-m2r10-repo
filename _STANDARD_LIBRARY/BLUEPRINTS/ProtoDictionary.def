@@ -184,7 +184,7 @@ PROCEDURE [STORE] storeValueForKey
 NOT uniqueKeys ->
 PROCEDURE [STORE|#] storeNthValueForKey
   ( VAR target : ProtoDictionary;
-    key : KeyType; index : CARDINAL; value : ValueType );
+    key : KeyType; index : LONGCARD; value : ValueType );
 (* Procedure to overwrite the n-th value of a given key in a dictionary.
    This procedure is required when keys are not unique. *)
 
@@ -226,7 +226,7 @@ PROCEDURE [RETRIEVE] valueForKey
 
 NOT uniqueKeys ->
 PROCEDURE [RETRIEVE|#] nthValueForKey
-  ( dict : ProtoDictionary; key : KeyType; index : CARDINAL;
+  ( dict : ProtoDictionary; key : KeyType; index : LONGCARD;
     VAR value : ValueType );
 (* Procedure to retrieve the n-th value of a given key in a dictionary.
    This procedure is required when keys are not unique. *)
@@ -298,14 +298,24 @@ PROCEDURE [REMOVE] removeKey
    REMOVE(dict, key); *)
 
 
+NOT uniqueKeys ->
+PROCEDURE [REMOVE|#] removeNthValueForKey
+  ( VAR target : ProtoDictionary; key : KeyType; index : LONGCARD );
+(* Procedure to remove the n-th value stored for key from a dictionary.
+   This procedure is required when keys are not unique. *)
+
+(* Supports use case:
+         
+   REMOVE(dict, key, index); *)
+
+
 PROCEDURE [REMOVE|,] removeKeys
-  ( VAR target : ProtoDictionary;
-    entries : ARGLIST >0 OF { key : KeyType; value : ValueType } );
+  ( VAR target : ProtoDictionary; keys : ARGLIST >0 OF KeyType );
 (* Required to remove given keys and their values from a dictionary. *)
 
 (* Supports use case:
    
-   REMOVE(dict, key1, val1, key2, val2, key3, val3, ...); *)
+   REMOVE(dict, key1, key2, key3, ...); *)
 
 
 PROCEDURE [REMOVE|*] removeAllKeys ( VAR dict : ProtoDictionary );
