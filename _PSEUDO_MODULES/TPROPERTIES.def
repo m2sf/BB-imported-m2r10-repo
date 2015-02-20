@@ -2,7 +2,7 @@
 
 DEFINITION MODULE TPROPERTIES;
 
-(* Macros to query low-level properties of collection and numeric Types *)
+(* Macros to query lower level properties of types *)
 
 
 (* General Properties *)
@@ -14,6 +14,10 @@ DEFINITION MODULE TPROPERTIES;
 (* MACRO *) PROCEDURE TREFC ( <Type> ) : BOOLEAN;
 (* An invocation of the macro is replaced by TRUE if the type passed
    as its argument is reference counted, otherwise FALSE. *)
+
+(* MACRO *) PROCEDURE TCOMP ( <Type> ) : BOOLEAN;
+(* An invocation of the macro is replaced by TRUE if the type passed
+   as its argument is computational, otherwise FALSE. *)
 
 
 (* Collection Properties *)
@@ -46,6 +50,10 @@ DEFINITION MODULE TPROPERTIES;
 
 (* Inspecting the number representation of numeric scalar types *)
 
+(* MACRO *) PROCEDURE TNUM ( <NumericScalarType> ) : BOOLEAN;
+(* An invocation of the macro is replaced by TRUE if the type passed
+   as its argument is numeric, otherwise FALSE. *)
+
 (* MACRO *) PROCEDURE TSIGNED ( <NumericScalarType> ) : BOOLEAN;
 (* An invocation of the macro is replaced by TRUE if the type passed
    as its argument is signed, otherwise FALSE. *)
@@ -69,7 +77,7 @@ DEFINITION MODULE TPROPERTIES;
    can be encoded by the type.  The value is zero for ordinal types. *)
 
 (* Any invocation of the above macros with an argument that is not an
-   identifier of a numeric scalar type will cause a compile time error. *)
+   identifier of a numeric type will cause a compile time error. *)
 
 
 END TPROPERTIES.
