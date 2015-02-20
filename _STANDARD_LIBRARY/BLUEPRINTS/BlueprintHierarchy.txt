@@ -1,25 +1,29 @@
-Numeric Blueprints     Collection Blueprints              Extension Blueprints
+Computational Blueprints   Collection Blueprints         Extension Blueprints
 
-  ProtoRoot              ProtoRoot                          ProtoExtension
-  |                      |                                  |
-  ProtoNumeric           +--ProtoStaticCollection           +--ProtoIO
-  |                      |  |                               |
-  +--ProtoScalar         |  +--ProtoStaticSet               +--ProtoArrayIO
-  |  |                   |  |                               |
-  |  +--ProtoReal        |  +--ProtoStaticArray             +--ProtoCardMath
-  |  |                   |  |                               |
-  |  +--ProtoInteger     |  +--ProtoStaticString            +--ProtoIntMath
-  |  |                   |                                  |
-  |  +--ProtoCardinal    +--ProtoCollection (dynamic)       +--ProtoRealMath
-  |                         |                               |
-  +--ProtoNonScalar         +--ProtoSet (dynamic)           +--ProtoTupleMath
-     |                      |                               |
-     +--ProtoTuple          +--ProtoCountedSet (dynamic)    +--ProtoVectorMath
-     |                      |                               |
-     +--ProtoVector         +--ProtoArray (dynamic)         +--ProtoComplexMath
-     |                      |                               |
-     +--ProtoComplex        +--ProtoString (dynamic)        +--ProtoSetMath
-     |                      |
-     +--ProtoDateTime       +--ProtoDictionary (dynamic)
-
-[Status: Nov 7, 2014]
+ ProtoRoot                  ProtoRoot                     ProtoExtension
+ |                          |                             |
+ ProtoComputational         ProtoCollection               +--ProtoIO
+ |                          |                             |
+ +--ProtoNumeric            +--ProtoStaticCollection      +--ProtoRealMath
+ |  |                       |  |                          |
+ |  +--ProtoScalar          |  +--ProtoStaticSet          +--ProtoIntMath
+ |  |  |                    |  |                          |
+ |  |  +--ProtoReal         |  +--ProtoStaticArray        +--ProtoCardMath
+ |  |  |                    |  |                          |
+ |  |  +--ProtoInteger      |  +--ProtoStaticString       +--ProtoComplexMath
+ |  |  |                    |                             |
+ |  |  +--ProtoCardinal     +--ProtoSet (dynamic)         +--ProtoTupleMath
+ |  |                       |                             |
+ |  +--ProtoNonScalar       +--ProtoFuzzySet (dynamic)    +--ProtoVectorMath
+ |     |                    |                             |
+ |     +--ProtoComplex      +--ProtoArray (dynamic)       +--ProtoArrrayMath
+ |                          |                             |
+ +--ProtoTuple              +--ProtoString (dynamic)      +--ProtoDateTimeMath
+ |                          |
+ +--ProtoVector             +--ProtoDictionary (dynamic)
+ |
+ +--ProtoCompArray
+ |
+ +--ProtoDateTime
+ 
+ [Status: Feb 20, 2015]
