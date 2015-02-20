@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Feb 18, 2015
+# Syntax diagram generator for Modula-2 (R10), status Feb 20, 2015
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -306,12 +306,12 @@ lappend non_terminals collectionPropertyIdent {
 
 # (9.3) Numeric Property Identifier
 lappend non_terminals numericPropertyIdent {
-  or /TSIGNED /TBASE /TPRECISION /TMINEXP /TMAXEXP
+  or /TNUM /TSIGNED /TBASE /TPRECISION /TMINEXP /TMAXEXP
 }
 
 # (9.4) General Property Identifier
 lappend non_terminals generalPropertyIdent {
-  or /TDYN /TREFC
+  or /TDYN /TREFC /TCOMP
 }
 
 # (9.5) Restricted Export
@@ -1410,84 +1410,84 @@ lappend res_idents LENGTH {
   line /LENGTH
 }
 
-# (2.10) NEG
-lappend res_idents NEG {
-  line /NEG
-}
-
-# (2.11) NIL
+# (2.10) NIL
 lappend res_idents /NIL {
   line /NIL
 }
 
-# (2.12) OCTET
+# (2.11) OCTET
 lappend res_idents /OCTET {
   line /OCTET
 }
 
-# (2.13) READ
+# (2.12) READ
 lappend res_idents /READ {
   line /READ
 }
 
-# (2.14) READNEW
+# (2.13) READNEW
 lappend res_idents READNEW {
   line /READNEW
 }
 
-# (2.15) REAL
+# (2.14) REAL
 lappend res_idents REAL {
   line /REAL
 }
 
-# (2.16) REMOVE
+# (2.15) REMOVE
 lappend res_idents REMOVE {
   line /REMOVE
 }
 
-# (2.17) RETRIEVE
+# (2.16) RETRIEVE
 lappend res_idents RETRIEVE {
   line /RETRIEVE
 }
 
-# (2.18) STORE
+# (2.17) STORE
 lappend res_idents STORE {
   line /STORE
 }
 
-# (2.19) SUBSET
+# (2.18) SUBSET
 lappend res_idents SUBSET {
   line /SUBSET
 }
 
-# (2.20) SXF
+# (2.19) SXF
 lappend res_idents SXF {
   line /SXF
 }
 
-# (2.21) TBASE
+# (2.20) TBASE
 lappend res_idents TBASE {
   line /TBASE
 }
 
-# (2.22) TBDFOR
+# (2.21) TBDFOR
 lappend res_idents TBDFOR {
   line /TBDFOR
 }
 
-# (2.23) TBYIDX
+# (2.22) TBYIDX
 lappend res_idents TBYIDX {
   line /TBYIDX
 }
 
-# (2.24) TBYKEY
+# (2.23) TBYKEY
 lappend res_idents TBYKEY {
   line /TBYKEY
 }
 
-# (2.25) TBYVAL
+# (2.24) TBYVAL
 lappend res_idents TBYVAL {
   line /TBYVAL
+}
+
+# (2.25) TCOMP
+lappend res_idents TCOMP {
+  line /TCOMP
 }
 
 # (2.26) TDYN
@@ -1525,42 +1525,47 @@ lappend res_idents TNIL {
   line /TNIL
 }
 
-# (2.33) TPRECISION
+# (2.33) TNUM
+lappend res_idents TNUM {
+  line /TNUM
+}
+
+# (2.34) TPRECISION
 lappend res_idents TPRECISION {
   line /TPRECISION
 }
 
-# (2.34) TREFC
+# (2.35) TREFC
 lappend res_idents TREFC {
   line /TREFC
 }
 
-# (2.35) TSIGNED
+# (2.36) TSIGNED
 lappend res_idents TSIGNED {
   line /TSIGNED
 }
 
-# (2.36) UNICHAR
+# (2.37) UNICHAR
 lappend res_idents UNICHAR {
   line /UNICHAR
 }
 
-# (2.37) UNSAFE
+# (2.38) UNSAFE
 lappend res_idents UNSAFE {
   line /UNSAFE
 }
 
-# (2.38) VAL
+# (2.39) VAL
 lappend res_idents VAL {
   line /VAL
 }
 
-# (2.39) WRITE
+# (2.40) WRITE
 lappend res_idents WRITE {
   line /WRITE
 }
 
-# (2.40) WRITEF
+# (2.41) WRITEF
 lappend res_idents WRITEF {
   line /WRITEF
 }
