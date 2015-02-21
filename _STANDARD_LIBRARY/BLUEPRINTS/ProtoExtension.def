@@ -1,9 +1,10 @@
-(* (C) 2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2014-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BLUEPRINT ProtoExtension; (* Top-level blueprint for extension libraries *)
+BLUEPRINT ProtoExtension;
 
-(* conforming libraries MUST NOT provide their own ADT *)
+(* Top-level blueprint for extension libraries *)
 
-MODULE TYPE : NIL; (* inhibited *)
+MODULE TYPE = NONE; (* inhibited *)
+(* Conforming libraries MUST NOT provide their own ADT *)
 
 END ProtoExtension.
