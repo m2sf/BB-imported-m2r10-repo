@@ -1,14 +1,14 @@
 (* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Blueprint for Scalar ADTs *)
+BLUEPRINT ProtoScalar [ProtoNumeric];
 
-BLUEPRINT ProtoScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
+(* General Blueprint for Scalar ADTs *)
 
 
 (* Required Module Type *)
 
 MODULE TYPE = RECORD;
-(* Scalar ADTs must be records to be statically allocatable. *)
+(* Scalar ADTs must be statically allocatable. *)
 
 LITERAL = INTEGER | REAL;
 (* Integer or real number literals may be used. *)
@@ -16,8 +16,25 @@ LITERAL = INTEGER | REAL;
 
 (* Required Constants *)
 
+(* Classification *)
+
+CONST [TCOMP] isComputational = TRUE;
+(* Scalar ADTs are always computational. *)
+
+CONST [TNUM] isNumeric = TRUE;
+(* Scalar ADTs are always numeric. *)
+
+CONST isScalar = TRUE;
+(* Sclalar ADTs are always scalar. *)
+
+CONST isOrdinal : BOOLEAN;
+(* Scalar ADTs must define whether they are ordinal or not. *)
+
+
+(* Scalar Properties *)
+
 CONST [TSIGNED] isSigned : BOOLEAN;
-(* Required constant to define whether the ADT is signed. *)
+(* Scalar ADTs must define whether they are signed or unsigned. *)
 
 CONST [TBASE] base : CARDINAL;
 (* Radix in which the ADT's values are encoded, 2 or 10. *)
@@ -25,200 +42,124 @@ CONST [TBASE] base : CARDINAL;
 CONST [TPRECISION] precision : CARDINAL;
 (* Maximum number of digits the ADT can encode, 1 to 4000. *)
 
-CONST [TMINEXP] eMin : INTEGER;
-(* Value of the ADT's smallest exponent, zero for whole number ADTs. *)
+isOrdinal ->
+CONST [TMINEXP] eMin = 0;
+(* Ordinal Scalar ADTs must define eMin with a value of zero. *)
 
-CONST [TMAXEXP] eMax : INTEGER;
-(* Value of the ADT's largest exponent, zero for whole number ADTs. *)
+NOT isOrdinal ->
+CONST [TMINEXP] eMin : INTEGER;
+(* Value of non-ordinal scalar ADT's smallest exponent. *)
+
+isOrdinal ->
+CONST [TMAXEXP] eMax = 0;
+(* Ordinal Scalar ADTs must define eMax with a value of zero. *)
+
+NOT isOrdinal ->
+CONST [TMAXEXP] eMin : INTEGER;
+(* Value of non-ordinal scalar ADT's largest exponent. *)
+
+
+(* Memory Management *)
+
+CONST [TDYN] isDynamic = FALSE;
+(* Scalar ADTs are always statically allocated. *)
 
 
 (* Required Procedures *)
 
 (* Introspection *)
 
-(* Binding to Predefined Function TMIN *)
-
 PROCEDURE [TMIN];
-(* Specialised blueprints must always require binding to TMIN. *)
-
-
-(* Binding to Predefined Function TMAX *)
+(* All scalar ADTs must provide a binding to TMIN. *)
 
 PROCEDURE [TMAX];
-(* Specialised blueprints must always require binding to TMAX. *)
+(* All scalar ADTs must provide a binding to TMAX. *)
 
 
 (* Numeric Conversion *)
 
-(* Binding to scalar conversion primitives SXF and VAL *)
-
 PROCEDURE [SXF];
-(* Specialised blueprints must always require binding to SXF. *)
+(* All scalar ADTs must provide a binding to SXF. *)
 
 PROCEDURE [VAL];
-(* Specialised blueprints must always require binding to VAL. *)
-
-(* Conversion between any two scalar ADTs can be synthesised utilising the
-   ADTs' conversion procedures bound to SXF and VAL.
-   
-   A conversion expression of the form
-     intValue :: CardinalADT
-   is synthesised as
-     IntegerADT.toSXF(intValue, temp);
-     CardinalADT.fromSXF(temp, result);
-   when no direct conversion is implemented. *)
+(* All scalar ADTs must provide a binding to VAL. *)
 
 
-(* Literal Assignment *)
+(* Sign Removal *)
 
-(* Numeric literals are converted to scalar exchange format at compile time.
-   Assignments of numeric literals to numeric ADTs are then synthesised
-   utilising an ADT's conversion procedure bound to VAL.
-   
-   An assignment of the form
-     scalar := 123;
-   is synthesised as
-     ScalarADT.fromSXF(sxfCompiletimeValue, scalar); *)
+PROCEDURE [ABS];
+(* All scalar ADTs must provide a binding to ABS. *)
 
 
-(* Iteration *)
+(* Sign Reversal *)
 
-(* Scalar ADTs may not bind any procedure to FOR.
-   
-   Instead, iteration over scalar ADTs and subranges of Scalar ADTs is auto-
-   matically supported if and only if all of the following conditions are met:
-   
-   (1) the ADT binds a constant value of zero to both TMINEXP and TMAXEXP,
-   (2) the ADT provides bindings for TMIN and TMAX,
-   (3) the ADT provides bindings for + and -,
-   (4) the ADT provides bindings for < and >.
-   
-   A statement of the form
-     FOR s IN ScalarADT DO ...
-   is equivalent to
-     FOR s IN [lower .. upper] OF ScalarADT DO ...
-   where lower = TMIN(ScalarADT) and upper = TMAX(ScalarADT).
-     
-   A statement of the form
-     FOR s IN [lower .. upper] OF ScalarADT DO statementSeq END
-   is synthesised as
-     VAR s : ScalarADT;
-     s := lower;
-     LOOP
-       statementSeq;
-       IF s < upper THEN s++ ELSE EXIT END
-     END;
-   
-   A statement of the form
-     FOR s-- IN ScalarADT DO ...
-   is equivalent to
-     FOR s-- IN [lower .. upper] OF ScalarADT DO ...
-   where lower = TMIN(ScalarADT) and upper = TMAX(ScalarADT).
+isSigned -> PROCEDURE [+/-];
+(* Signed scalar ADTs must provide a binding to unary minus. *)
 
-   A statement of the form
-     FOR s-- IN [lower .. upper] OF ScalarADT DO statementSeq END
-   is synthesised as
-     VAR s : ScalarADT;
-     s := upper;
-     LOOP
-       statementSeq;
-       IF s > lower THEN s-- ELSE EXIT END
-     END; *)
+
+(* Odd/Even Test *)
+
+isOrdinal -> PROCEDURE [ODD];
+(* Ordinal scalar ADTs must provide a binding to ODD. *)
 
 
 (* Arithmetic Operations *)
 
-(* Binding to Predefined Function ABS *)
-
-PROCEDURE [ABS];
-(* Specialised blueprints must always require binding to ABS. *)
-
-
-(* Binding to Predefined Function ODD *)
-
-(* The ODD operation is not common to all scalars.
-   Specialised blueprints must require binding to ODD
-   if and only if constants eMin and eMax are both zero. *)
-
-
-(* Binding to Unary Minus Operator *)
-
-isSigned -> PROCEDURE [+/-];
-
-(* Specialised blueprints must require binding to unary minus
-   if the ADT is signed. *)
-
-
-(* Binding to the + Operator *)
-
 PROCEDURE [+];
-(* Specialised blueprints must always require binding to the + operator. *)
-
-
-(* Binding to the - Operator *)
+(* All scalar ADTs must provide a binding for addition. *)
 
 PROCEDURE [-];
-(* Specialised blueprints must always require binding to the - operator. *)
-
-
-(* Binding to the * Operator *)
+(* All scalar ADTs must provide a binding for subtraction. *)
 
 PROCEDURE [*];
-(* Specialised blueprints must always require binding to the * operator. *)
+(* All scalar ADTs must provide a binding for multiplication. *)
 
+NOT isOrdinal -> PROCEDURE [/];
+(* Non-Ordinal scalar ADTs must provide a binding for division. *)
 
-(* Binding to the / Operator *)
+isOrdinal -> PROCEDURE [DIV];
+(* Ordinal scalar ADTs must provide a binding for integer division. *)
 
-(* Real number division is not common to all scalars.
-   Specialised blueprints must require binding to the / operator
-   if and only if constants eMin and eMax are not both zero. *)
-
-
-(* Binding to the DIV Operator *)
-
-(* Integer division is not common to all scalars.
-   Specialised blueprints must require binding to the DIV operator
-   if and only if constants eMin and eMax are both zero. *)
-
-
-(* Binding to the MOD Operator *)
-
-(* The MOD operation is not common to all scalars.
-   Specialised blueprints must require binding to the DIV operator
-   if and only if constants eMin and eMax are both zero. *)
+isOrdinal -> PROCEDURE [MOD];
+(* Ordinal scalar ADTs must provide a binding to the modulus operation. *)
 
 
 (* Relational Operations *)
 
-(* Binding to Operators = and # *)
-
 PROCEDURE [=];
-(* Specialised blueprints must always require binding to the = operator. *)
+(* All scalar ADTs must provide a binding for the equality test. *)
 
-(* The # operation is synthesised as (NOT s1 = s2). *)
+(* The # operation is synthesised from this binding. *)
 
-
-(* Binding to Operators < and >= *)
 
 PROCEDURE [<];
-(* Specialised blueprints must always require binding to the = operator. *)
+(* All scalar ADTs must provide a binding for the less-than test. *)
 
-(* The >= operation is synthesised as (NOT s1 < s2). *)
+(* The >= operation is synthesised from this binding. *)
 
-
-(* Binding to Operators > and <= *)
 
 PROCEDURE [>];
-(* Specialised blueprints must always require binding to the = operator. *)
+(* All scalar ADTs must provide a binding for the greater-than test. *)
 
-(* The <= operation is synthesised as (NOT s1 > s2). *)
+(* The <= operation is synthesised from this binding. *)
 
 
 (* Inhibited Bindings *)
 
 NOT isSigned -> PROCEDURE [+/-] = NONE; (* inhibited *)
-(* Conforming blueprints may not require binding to Unary Minus
-   if the ADT is unsigned. *)
+(* Unsigned scalar ADTs may not be required to bind to unary minus. *)
+
+NOT isOrdinal -> PROCEDURE [ODD] = NONE; (* inhibited *)
+(* Non-Ordinal scalar ADTs may not be required to bind to DIV. *)
+
+isOrdinal -> PROCEDURE [/] = NONE; (* inhibited *)
+(* Ordinal scalar ADTs may not be required to bind to division. *)
+
+NOT isOrdinal -> PROCEDURE [DIV] = NONE; (* inhibited *)
+(* Non-Ordinal scalar ADTs may not be required to bind to DIV. *)
+
+NOT isOrdinal -> PROCEDURE [MOD] = NONE; (* inhibited *)
+(* Non-Ordinal scalar ADTs may not be required to bind to MOD. *)
 
 
 END ProtoScalar.
