@@ -79,7 +79,7 @@ PROCEDURE [*];
 (* All numeric ADTs shall be required to bind to * (multiplication). *)
 
 NOT isScalar -> PROCEDURE [/];
-(* Non-Scalar numeric ADTs shall be required to bind to * (multiplication). *)
+(* Non-Scalar numeric ADTs shall be required to bind to / (division). *)
 
 
 (* Relational Operations *)
