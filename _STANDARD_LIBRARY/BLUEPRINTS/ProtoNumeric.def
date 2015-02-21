@@ -69,14 +69,17 @@ isScalar -> PROCEDURE [ABS];
 
 (* Arithmetic Operations *)
 
-isScalar -> PROCEDURE [+];
-(* Scalar numeric ADTs shall be required to bind to + (addition). *)
+PROCEDURE [+];
+(* All numeric ADTs shall be required to bind to + (addition). *)
 
-isScalar -> PROCEDURE [-];
-(* Scalar numeric ADTs shall be required to bind to + (subtraction). *)
+PROCEDURE [-];
+(* All numeric ADTs shall be required to bind to + (subtraction). *)
 
-isScalar -> PROCEDURE [*];
-(* Scalar numeric ADTs shall be required to bind to * (multiplication). *)
+PROCEDURE [*];
+(* All numeric ADTs shall be required to bind to * (multiplication). *)
+
+NOT isScalar -> PROCEDURE [/];
+(* Non-Scalar numeric ADTs shall be required to bind to * (multiplication). *)
 
 
 (* Relational Operations *)
