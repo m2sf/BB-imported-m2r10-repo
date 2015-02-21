@@ -1,0 +1,90 @@
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BLUEPRINT ProtoComputational [ProtoRoot];
+
+(* General Blueprint for Computational ADTs *)
+
+
+(* Required Module Type *)
+
+MODULE TYPE = OPAQUE | RECORD;
+(* Computational ADTs may be statically or dynamically allocatable. *)
+
+
+(* Required Constants *)
+
+(* Classification *)
+
+CONST [TCOMP] isComputational = TRUE;
+(* Computational ADTs are always computational. *)
+
+CONST [TNUM] isNumeric : BOOLEAN;
+(* Computational ADTs shall define whether they are numeric or not. *)
+
+
+(* Memory Management *)
+
+CONST [TDYN] isDynamic : BOOLEAN;
+(* Computational ADTs shall define whether they are dynamically allocatable. *)
+
+isDynamic ->
+CONST [TREFC] isRefCounted : BOOLEAN;
+(* Dynamic ADTs shall define whether they are reference counted. *)
+
+
+(* Required Procedures *)
+
+(* Memory Management *)
+
+isDynamic -> PROCEDURE [NEW];
+
+isRefCounted -> PROCEDURE [RETAIN];
+
+isDynamic -> PROCEDURE [RELEASE];
+
+
+(* Arithmetic Operations *)
+
+PROCEDURE [+];
+(* All computational ADTs shall be required to bind to + (addition). *)
+
+PROCEDURE [-];
+(* All computational ADTs shall be required to bind to + (subtraction). *)
+
+isNumeric -> PROCEDURE [*];
+(* Numeric ADTs shall be required to bind to * (multiplication). *)
+
+
+(* Relational Operations *)
+
+PROCEDURE [=];
+(* All computational ADTs shall be required to bind to = (equality). *)
+
+(* The operation for # is synthesised from this binding. *)
+
+
+(* Inhibited Bindings *)
+
+NOT isNumeric -> PROCEDURE [TMIN] = NONE; (* inhibited *)
+(* Non-Numeric ADTs may not be required to bind to TMIN. *)
+
+NOT isNumeric -> PROCEDURE [TMAX] = NONE; (* inhibited *)
+(* Non-Numeric ADTs may not be required to bind to TMAX. *)
+
+NOT isNumeric -> PROCEDURE [SXF] = NONE; (* inhibited *)
+(* Non-Numeric ADTs may not be required to bind to SXF. *)
+
+NOT isNumeric -> PROCEDURE [VAL] = NONE; (* inhibited *)
+(* Non-Numeric ADTs may not be required to bind to VAL. *)
+
+NOT isNumeric -> PROCEDURE [ODD] = NONE; (* inhibited *)
+(* Non-Numeric ADTs may not be required to bind to ODD. *)
+
+NOT isNumeric -> PROCEDURE [<] = NONE; (* inhibited *)
+(* Non-Numeric ADTs may not be required to bind to < (less-than). *)
+
+NOT isNumeric -> PROCEDURE [>] = NONE; (* inhibited *)
+(* Non-Numeric ADTs may not be required to bind to > (greater-than). *)
+
+
+END ProtoComputational.
