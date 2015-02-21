@@ -44,19 +44,19 @@ CONST [TPRECISION] precision : CARDINAL; (* 1 to 4000 *)
 
 isCountable ->
 CONST [TMINEXP] eMin = 0;
-(* Countable Scalar ADTs shall define eMin with a value of zero. *)
+(* Countable scalar ADTs shall define eMin with a value of zero. *)
 
 NOT isCountable ->
 CONST [TMINEXP] eMin : INTEGER;
-(* Uncountable Scalar ADTs shall define the smallest encodable exponent. *)
+(* Uncountable scalar ADTs shall define the smallest encodable exponent. *)
 
 isCountable ->
 CONST [TMAXEXP] eMax = 0;
-(* Countable Scalar ADTs shall define eMax with a value of zero. *)
+(* Countable scalar ADTs shall define eMax with a value of zero. *)
 
 NOT isCountable ->
 CONST [TMAXEXP] eMin : INTEGER;
-(* Uncountable Scalar ADTs shall define the largest encodable exponent. *)
+(* Uncountable scalar ADTs shall define the largest encodable exponent. *)
 
 
 (* Memory Management *)
@@ -119,7 +119,7 @@ PROCEDURE [+];
 (* All scalar ADTs shall be required to bind to + (addition). *)
 
 PROCEDURE [-];
-(* All scalar ADTs shall be required to bind to + (subtraction). *)
+(* All scalar ADTs shall be required to bind to - (subtraction). *)
 
 PROCEDURE [*];
 (* All scalar ADTs shall be required to bind to * (multiplication). *)
@@ -160,7 +160,7 @@ NOT isSigned -> PROCEDURE [+/-] = NONE; (* inhibited *)
 (* Unsigned scalar ADTs may not be required to bind to unary minus. *)
 
 NOT isCountable -> PROCEDURE [ODD] = NONE; (* inhibited *)
-(* Uncountable scalar ADTs may not be required to bind to DIV. *)
+(* Uncountable scalar ADTs may not be required to bind to ODD. *)
 
 isCountable -> PROCEDURE [/] = NONE; (* inhibited *)
 (* Countable scalar ADTs may not be required to bind to / (division). *)
