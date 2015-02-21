@@ -1,66 +1,98 @@
 (* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Blueprint for Non-Scalar Numeric ADTs *)
+BLUEPRINT ProtoNonScalar [ProtoNumeric];
 
-BLUEPRINT ProtoNonScalar [ProtoNumeric]; (* conforms to ProtoNumeric *)
-
-
-MODULE TYPE = OPAQUE | RECORD;
+(* General Blueprint for Non-Scalar ADTs *)
 
 
-(* Bindings required for Non-Scalar Numeric ADTs *)
+(* Required Module Type *)
 
-(* The operations TMIN and TMAX are not meaningful for non-scalar types *)
-
-PROCEDURE [TMIN] = NONE;
-(* conforming blueprints may not require binding to TMIN. *)
-
-PROCEDURE [TMAX] = NONE;
-(* conforming blueprints may not require binding to TMAX. *)
+MODULE TYPE = RECORD;
+(* All non-scalar ADTs shall be statically allocatable. *)
 
 
-(* Bindings to monadic operations *)
+(* Required Constants *)
 
-(* Unary Minus is not common to all non-scalar types,
-   its binding may be required by more specialised blueprints. *)
+(* Classification *)
 
+CONST [TCOMP] isComputational = TRUE;
+(* Non-Scalar ADTs are always computational. *)
 
-(* The operations ABS and ODD are not meaningful for non-scalar types *)
+CONST [TNUM] isNumeric = TRUE;
+(* Non-Scalar ADTs are always numeric. *)
 
-PROCEDURE [ABS] = NONE;
-(* conforming blueprints may not require binding to ABS. *)
-
-PROCEDURE [ODD] = NONE;
-(* conforming blueprints may not require binding to ODD. *)
-
-
-(* Bindings to dyadic operations *)
-
-PROCEDURE [+] add ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
-(* Required procedure to bind to the + operator. *)
-
-PROCEDURE [-] subtract ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
-(* Required procedure to bind to the - operator. *)
-
-(* The operations * and / are not common to all non-scalar types,
-   their bindings may be required by more specialised blueprints. *)
+CONST isScalar = FALSE;
+(* Non-Scalar ADTs are never scalar. *)
 
 
-(* Bindings to relational operations *)
+(* Memory Management *)
 
-PROCEDURE [=] isEqual ( op1, op2 : ProtoNonScalar ) : ProtoNonScalar;
-(* Required procedure to bind to the = operator. *)
-
-(* The operation for the # operator is synthesized as NOT (op1 = op2) *)
+CONST [TDYN] isDynamic = FALSE;
+(* Non-Scalar ADTs are always statically allocated. *)
 
 
-(* The operations < and > are not meaningful for non-scalar types *)
+(* Required Procedures *)
 
-PROCEDURE [<] = NONE;
-(* Conforming blueprints may not require binding to the < operator. *)
+(* Sign Operations *)
 
-PROCEDURE [>] = NONE;
-(* Conforming blueprints may not require binding to the > operator. *)
+PROCEDURE [ABS];
+(* All non-scalar ADTs shall be required to bind to ABS. *)
+
+PROCEDURE [+/-];
+(* All non-scalar ADTs shall be required to bind to Unary Minus. *)
+
+
+(* Arithmetic Operations *)
+
+PROCEDURE [+];
+(* All non-scalar ADTs shall be required to bind to + (addition). *)
+
+PROCEDURE [-];
+(* All non-scalar ADTs shall be required to bind to + (subtraction). *)
+
+PROCEDURE [*];
+(* All non-scalar ADTs shall be required to bind to * (multiplication). *)
+
+PROCEDURE [/];
+(* All non-scalar ADTs shall be required to bind to / (division). *)
+
+
+(* Relational Operations *)
+
+PROCEDURE [=];
+(* All non-scalar ADTs shall be required to bind to = (equality). *)
+
+(* The operation for # is synthesised from this binding. *)
+
+
+(* Inhibited Bindings *)
+
+PROCEDURE [TMIN] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to TMIN. *)
+
+PROCEDURE [TMAX] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to TMAX. *)
+
+PROCEDURE [SXF] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to SXF. *)
+
+PROCEDURE [VAL] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to VAL. *)
+
+PROCEDURE [ODD] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to ODD. *)
+
+PROCEDURE [DIV] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to DIV. *)
+
+PROCEDURE [MOD] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to MOD. *)
+
+PROCEDURE [<] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to < (less-than). *)
+
+PROCEDURE [>] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to > (greater-than). *)
 
 
 END ProtoNonScalar.
