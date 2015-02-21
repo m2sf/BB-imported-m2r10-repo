@@ -8,7 +8,7 @@ BLUEPRINT ProtoScalar [ProtoNumeric];
 (* Required Module Type *)
 
 MODULE TYPE = RECORD;
-(* Scalar ADTs must be statically allocatable. *)
+(* All scalar ADTs shall be statically allocatable. *)
 
 LITERAL = INTEGER | REAL;
 (* Integer or real number literals may be used. *)
@@ -28,35 +28,35 @@ CONST isScalar = TRUE;
 (* Sclalar ADTs are always scalar. *)
 
 CONST isOrdinal : BOOLEAN;
-(* Scalar ADTs must define whether they are ordinal or not. *)
+(* Scalar ADTs shall define whether they are ordinal or not. *)
 
 
 (* Scalar Properties *)
 
 CONST [TSIGNED] isSigned : BOOLEAN;
-(* Scalar ADTs must define whether they are signed or unsigned. *)
+(* Scalar ADTs shall define whether they are signed or unsigned. *)
 
-CONST [TBASE] base : CARDINAL;
-(* Radix in which the ADT's values are encoded, 2 or 10. *)
+CONST [TBASE] base : CARDINAL; (* either 2 or 10. *)
+(* Scalar ADTs shall define the radix in which values are encoded. *) 
 
-CONST [TPRECISION] precision : CARDINAL;
-(* Maximum number of digits the ADT can encode, 1 to 4000. *)
+CONST [TPRECISION] precision : CARDINAL; (* 1 to 4000 *)
+(* Scalar ADTs shall define the maximum number of encodable digits. *)
 
 isOrdinal ->
 CONST [TMINEXP] eMin = 0;
-(* Ordinal Scalar ADTs must define eMin with a value of zero. *)
+(* Ordinal Scalar ADTs shall define eMin with a value of zero. *)
 
 NOT isOrdinal ->
 CONST [TMINEXP] eMin : INTEGER;
-(* Value of non-ordinal scalar ADT's smallest exponent. *)
+(* Non-Ordinal Scalar ADTs shall define the smallest encodable exponent. *)
 
 isOrdinal ->
 CONST [TMAXEXP] eMax = 0;
-(* Ordinal Scalar ADTs must define eMax with a value of zero. *)
+(* Ordinal Scalar ADTs shall define eMax with a value of zero. *)
 
 NOT isOrdinal ->
 CONST [TMAXEXP] eMin : INTEGER;
-(* Value of non-ordinal scalar ADT's largest exponent. *)
+(* Non-Ordinal Scalar ADTs shall define the largest encodable exponent. *)
 
 
 (* Memory Management *)
@@ -69,79 +69,89 @@ CONST [TDYN] isDynamic = FALSE;
 
 (* Introspection *)
 
+(* Smallest Value *)
+
 PROCEDURE [TMIN];
-(* All scalar ADTs must provide a binding to TMIN. *)
+(* All scalar ADTs shall be required to bind to TMIN. *)
+
+
+(* Largest Value *)
 
 PROCEDURE [TMAX];
-(* All scalar ADTs must provide a binding to TMAX. *)
+(* All scalar ADTs shall be required to bind to TMAX. *)
 
 
 (* Numeric Conversion *)
 
+(* Conversion to Scalar Exchange Format *)
+
 PROCEDURE [SXF];
-(* All scalar ADTs must provide a binding to SXF. *)
+(* All scalar ADTs shall be required to bind to SXF. *)
+
+
+(* Conversion from Scalar Exchange Format *)
 
 PROCEDURE [VAL];
-(* All scalar ADTs must provide a binding to VAL. *)
+(* All scalar ADTs shall be required to bind to VAL. *)
 
 
 (* Sign Removal *)
 
 PROCEDURE [ABS];
-(* All scalar ADTs must provide a binding to ABS. *)
+(* All scalar ADTs shall be required to bind to ABS. *)
 
 
 (* Sign Reversal *)
 
 isSigned -> PROCEDURE [+/-];
-(* Signed scalar ADTs must provide a binding to unary minus. *)
+(* Signed scalar ADTs shall be required to bind to Unary Minus. *)
 
 
 (* Odd/Even Test *)
 
 isOrdinal -> PROCEDURE [ODD];
-(* Ordinal scalar ADTs must provide a binding to ODD. *)
+(* Ordinal scalar ADTs shall be required to bind to ODD. *)
 
 
 (* Arithmetic Operations *)
 
 PROCEDURE [+];
-(* All scalar ADTs must provide a binding for addition. *)
+(* All scalar ADTs shall be required to bind to + (addition). *)
 
 PROCEDURE [-];
-(* All scalar ADTs must provide a binding for subtraction. *)
+(* All scalar ADTs shall be required to bind to + (subtraction). *)
 
 PROCEDURE [*];
-(* All scalar ADTs must provide a binding for multiplication. *)
+(* All scalar ADTs shall be required to bind to * (multiplication). *)
 
 NOT isOrdinal -> PROCEDURE [/];
-(* Non-Ordinal scalar ADTs must provide a binding for division. *)
+(* Non-Ordinal scalar ADTs shall be required to bind to / (division). *)
 
 isOrdinal -> PROCEDURE [DIV];
-(* Ordinal scalar ADTs must provide a binding for integer division. *)
+(* Ordinal scalar ADTs shall be required to bind to DIV. *)
 
 isOrdinal -> PROCEDURE [MOD];
-(* Ordinal scalar ADTs must provide a binding to the modulus operation. *)
+(* Ordinal scalar ADTs shall be required to bind to MOD. *)
 
 
 (* Relational Operations *)
 
 PROCEDURE [=];
-(* All scalar ADTs must provide a binding for the equality test. *)
+(* All scalar ADTs shall be required to bind to = (equality). *)
 
-(* The # operation is synthesised from this binding. *)
+(* The operation for # is synthesised from this binding. *)
 
 
 PROCEDURE [<];
-(* All scalar ADTs must provide a binding for the less-than test. *)
+(* All scalar ADTs shall be required to bind to < (less-than). *)
 
-(* The >= operation is synthesised from this binding. *)
+(* The operation for >= is synthesised from this binding. *)
 
 
 PROCEDURE [>];
-(* All scalar ADTs must provide a binding for the greater-than test. *)
+(* All scalar ADTs shall be required to bind to > (greater-than). *)
 
-(* The <= operation is synthesised from this binding. *)
+(* The operation for <= is synthesised from this binding. *)
 
 
 (* Inhibited Bindings *)
@@ -153,7 +163,7 @@ NOT isOrdinal -> PROCEDURE [ODD] = NONE; (* inhibited *)
 (* Non-Ordinal scalar ADTs may not be required to bind to DIV. *)
 
 isOrdinal -> PROCEDURE [/] = NONE; (* inhibited *)
-(* Ordinal scalar ADTs may not be required to bind to division. *)
+(* Ordinal scalar ADTs may not be required to bind to / (division). *)
 
 NOT isOrdinal -> PROCEDURE [DIV] = NONE; (* inhibited *)
 (* Non-Ordinal scalar ADTs may not be required to bind to DIV. *)
