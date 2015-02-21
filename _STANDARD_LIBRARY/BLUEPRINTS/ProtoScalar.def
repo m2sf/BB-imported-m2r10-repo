@@ -27,8 +27,8 @@ CONST [TNUM] isNumeric = TRUE;
 CONST isScalar = TRUE;
 (* Sclalar ADTs are always scalar. *)
 
-CONST isOrdinal : BOOLEAN;
-(* Scalar ADTs shall define whether they are ordinal or not. *)
+CONST isCountable : BOOLEAN;
+(* Scalar ADTs shall define whether they are countable or not. *)
 
 
 (* Scalar Properties *)
@@ -42,21 +42,21 @@ CONST [TBASE] base : CARDINAL; (* either 2 or 10. *)
 CONST [TPRECISION] precision : CARDINAL; (* 1 to 4000 *)
 (* Scalar ADTs shall define the maximum number of encodable digits. *)
 
-isOrdinal ->
+isCountable ->
 CONST [TMINEXP] eMin = 0;
-(* Ordinal Scalar ADTs shall define eMin with a value of zero. *)
+(* Countable Scalar ADTs shall define eMin with a value of zero. *)
 
-NOT isOrdinal ->
+NOT isCountable ->
 CONST [TMINEXP] eMin : INTEGER;
-(* Non-Ordinal Scalar ADTs shall define the smallest encodable exponent. *)
+(* Uncountable Scalar ADTs shall define the smallest encodable exponent. *)
 
-isOrdinal ->
+isCountable ->
 CONST [TMAXEXP] eMax = 0;
-(* Ordinal Scalar ADTs shall define eMax with a value of zero. *)
+(* Countable Scalar ADTs shall define eMax with a value of zero. *)
 
-NOT isOrdinal ->
+NOT isCountable ->
 CONST [TMAXEXP] eMin : INTEGER;
-(* Non-Ordinal Scalar ADTs shall define the largest encodable exponent. *)
+(* Uncountable Scalar ADTs shall define the largest encodable exponent. *)
 
 
 (* Memory Management *)
@@ -109,8 +109,8 @@ isSigned -> PROCEDURE [+/-];
 
 (* Odd/Even Test *)
 
-isOrdinal -> PROCEDURE [ODD];
-(* Ordinal scalar ADTs shall be required to bind to ODD. *)
+isCountable -> PROCEDURE [ODD];
+(* Countable scalar ADTs shall be required to bind to ODD. *)
 
 
 (* Arithmetic Operations *)
@@ -124,14 +124,14 @@ PROCEDURE [-];
 PROCEDURE [*];
 (* All scalar ADTs shall be required to bind to * (multiplication). *)
 
-NOT isOrdinal -> PROCEDURE [/];
-(* Non-Ordinal scalar ADTs shall be required to bind to / (division). *)
+NOT isCountable -> PROCEDURE [/];
+(* Uncountable scalar ADTs shall be required to bind to / (division). *)
 
-isOrdinal -> PROCEDURE [DIV];
-(* Ordinal scalar ADTs shall be required to bind to DIV. *)
+isCountable -> PROCEDURE [DIV];
+(* Countable scalar ADTs shall be required to bind to DIV. *)
 
-isOrdinal -> PROCEDURE [MOD];
-(* Ordinal scalar ADTs shall be required to bind to MOD. *)
+isCountable -> PROCEDURE [MOD];
+(* Countable scalar ADTs shall be required to bind to MOD. *)
 
 
 (* Relational Operations *)
@@ -159,17 +159,17 @@ PROCEDURE [>];
 NOT isSigned -> PROCEDURE [+/-] = NONE; (* inhibited *)
 (* Unsigned scalar ADTs may not be required to bind to unary minus. *)
 
-NOT isOrdinal -> PROCEDURE [ODD] = NONE; (* inhibited *)
-(* Non-Ordinal scalar ADTs may not be required to bind to DIV. *)
+NOT isCountable -> PROCEDURE [ODD] = NONE; (* inhibited *)
+(* Uncountable scalar ADTs may not be required to bind to DIV. *)
 
-isOrdinal -> PROCEDURE [/] = NONE; (* inhibited *)
-(* Ordinal scalar ADTs may not be required to bind to / (division). *)
+isCountable -> PROCEDURE [/] = NONE; (* inhibited *)
+(* Countable scalar ADTs may not be required to bind to / (division). *)
 
-NOT isOrdinal -> PROCEDURE [DIV] = NONE; (* inhibited *)
-(* Non-Ordinal scalar ADTs may not be required to bind to DIV. *)
+NOT isCountable -> PROCEDURE [DIV] = NONE; (* inhibited *)
+(* Uncountable scalar ADTs may not be required to bind to DIV. *)
 
-NOT isOrdinal -> PROCEDURE [MOD] = NONE; (* inhibited *)
-(* Non-Ordinal scalar ADTs may not be required to bind to MOD. *)
+NOT isCountable -> PROCEDURE [MOD] = NONE; (* inhibited *)
+(* Uncountable scalar ADTs may not be required to bind to MOD. *)
 
 
 END ProtoScalar.
