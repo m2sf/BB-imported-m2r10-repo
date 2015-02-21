@@ -108,6 +108,15 @@ NOT isScalar -> PROCEDURE [SXF] = NONE; (* inhibited *)
 NOT isScalar -> PROCEDURE [VAL] = NONE; (* inhibited *)
 (* Non-Scalar ADTs may not be required to bind to VAL. *)
 
+NOT isScalar -> PROCEDURE [ODD] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to ODD. *)
+
+NOT isScalar -> PROCEDURE [DIV] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to DIV. *)
+
+NOT isScalar -> PROCEDURE [MOD] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to MOD. *)
+
 NOT isScalar -> PROCEDURE [<] = NONE; (* inhibited *)
 (* Non-Scalar ADTs may not be required to bind to < (less-than). *)
 
