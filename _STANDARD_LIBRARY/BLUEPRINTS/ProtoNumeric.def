@@ -1,26 +1,71 @@
 (* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* General Blueprint for Scalar and Non-Scalar Numeric ADTs *)
-
 BLUEPRINT ProtoNumeric [ProtoRoot];
 
+(* General Blueprint for Numeric ADTs *)
 
-MODULE TYPE = OPAQUE | RECORD;
+
+(* Module Type *)
+
+MODULE TYPE = RECORD;
 
 
-(* Bindings required for numeric ADTs *)
+(* Required Constants *)
+
+CONST [TNUM] isNumeric = TRUE;
+(* Required constant to define an ADT to be numeric.
+   Always TRUE for ProtoNumeric ADTs. *)
+
+CONST isScalar : BOOLEAN;
+(* Required constant to define whether conforming ADTs are scalar.
+   Its value may be TRUE or FALSE. *)
+
+CONST [TDYN] isDynamic = FALSE;
+(* Required constant to define whether conforming ADTs are dynamic.
+   Always FALSE for ProtoNumeric ADTs. *)
+
+
+(* Required Procedures *)
+
+(* Introspection *)
 
 (* The operations TMIN and TMAX are meaningful only for scalar types,
    their bindings may be required by more specialised blueprints. *)
 
+isScalar -> PROCEDURE [TMIN];
+
+isScalar -> PROCEDURE [TMAX];
+
+
+(* Conversion *)
+
 (* The operations SXF and VAL are meaningful only for scalar types
    their bindings may be required by more specialised blueprints. *)
 
-(* The operations ABS, NEG and ODD are not common to all numeric types,
+isScalar -> PROCEDURE [SXF];
+
+isScalar -> PROCEDURE [VAL];
+
+
+(* Sign Operations *)
+
+(* ABS and Unary Minus are not common to all numeric types,
    their bindings may be required by more specialised blueprints. *)
 
+isScalar -> PROCEDURE [ABS];
 
-(* Bindings to dyadic operations *)
+(* Unary Minus is meaningful only for signed scalars. *)
+
+
+(* Odd/Even Test *)
+
+(* The oeration ODD is meaningful only to scalar types,
+   its binding may be required by more specialised blueprints. *)
+
+isScalar -> PROCEDURE [ODD];
+
+
+(* Arithmetic Operations *)
 
 PROCEDURE [+] add ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
 (* function to bind to the + operator for operands of the ADT *)
@@ -28,19 +73,53 @@ PROCEDURE [+] add ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
 PROCEDURE [-] subtract ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
 (* function to bind to the - operator for operands of the ADT *)
 
-(* The operations *, /, DIV and MOD are not common to all numeric types,
-   their bindings may be required by more specialised blueprints. *)
+isScalar ->
+PROCEDURE [*] multiply ( op1, op2 : ProtoNumeric ) : ProtoNumeric;
+
+(* Division / is meaningful only for real number scalars. *)
+
+(* DIV and MOD are meaningful only for whole number scalars. *)
 
 
-(* Bindings to relational operations *)
+(* Relational Operations *)
 
 PROCEDURE [=] isEqual ( op1, op2 : ProtoNumeric ) : BOOLEAN;
-(* function to bind to the = operator for operands of the numeric ADT *)
+(* Required function to test whether two operands are equal. *)
 
-(* The operation for the # operator is synthesized as NOT (op1 = op2) *)
+(* The operation for the # operator is synthesized. *)
 
-(* The operations < and > are meaningful only for scalar types,
-   their bindings may be required by more specialised blueprints. *)
+
+isScalar ->
+PROCEDURE [<] isLess ( op1, op2 : ProtoNumeric ) : BOOLEAN;
+(* Function to test whether a first operand is less than a second.
+   Required when the ADT is a scalar. *)
+
+(* The operation for the >= operator is synthesized. *)
+
+
+isScalar ->
+PROCEDURE [>] isGreater ( op1, op2 : ProtoNumeric ) : BOOLEAN;
+(* Function to test whether a first operand is greater than a second.
+   Required when the ADT is a scalar. *)
+
+(* The operation for the <= operator is synthesized. *)
+
+
+(* Inhibited Bindings *)
+
+NOT isScalar -> PROCEDURE [TMIN] = NONE; (* inhibited *)
+
+NOT isScalar -> PROCEDURE [TMAX] = NONE; (* inhibited *)
+
+NOT isScalar -> PROCEDURE [SXF] = NONE; (* inhibited *)
+
+NOT isScalar -> PROCEDURE [VAL] = NONE; (* inhibited *)
+
+NOT isScalar -> PROCEDURE [ODD] = NONE; (* inhibited *)
+
+NOT isScalar -> PROCEDURE [<] = NONE; (* inhibited *)
+
+NOT isScalar -> PROCEDURE [>] = NONE; (* inhibited *)
 
 
 END ProtoNumeric.
