@@ -40,8 +40,8 @@ ODD         | reqd     | reqd    | inhb  | inhb    | inhb   | inhb  | inhb
 ------------+----------+---------+-------+---------+--------+-------+----------
 +           | reqd     | reqd    | reqd  | reqd    | reqd   | reqd  | reqd
 -           | reqd     | reqd    | reqd  | reqd    | reqd   | reqd  | reqd
-*           | reqd     | reqd    | reqd  | reqd    | reqd   | reqd  | reqd
-/           | inhb     | inhb    | reqd  | reqd    | reqd   | inhb  | reqd
+*           | reqd     | reqd    | reqd  | reqd    | opt    | ???   | reqd
+/           | inhb     | inhb    | reqd  | reqd    | inhb   | ???   | reqd
 DIV         | reqd     | reqd    | inhb  | inhb    | inhb   | inhb  | inhb
 MOD         | reqd     | reqd    | inhb  | inhb    | inhb   | inhb  | inhb
 ------------+----------+---------+-------+---------+--------+-------+----------
@@ -52,4 +52,4 @@ MOD         | reqd     | reqd    | inhb  | inhb    | inhb   | inhb  | inhb
 <           | reqd     | reqd    | reqd  | inhb    | inhb   | inhb  | inhb
 ------------+----------+---------+-------+---------+--------+-------+----------
 
-reqd = required   inhb = inhibited   n/a = not applicable   ??? = to be defined
+reqd = required   inhb = inhibited   opt = optional   n/a = not applicable
