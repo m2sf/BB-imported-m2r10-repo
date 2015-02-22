@@ -47,7 +47,7 @@ isScalar -> PROCEDURE [TMAX];
 (* Scalar numeric ADTs shall be required to bind to TMAX. *)
 
 
-(* Numeric Conversion *)
+(* Scalar Conversion *)
 
 (* Conversion to Scalar Exchange Format *)
 
@@ -110,6 +110,9 @@ NOT isScalar -> PROCEDURE [SXF] = NONE; (* inhibited *)
 
 NOT isScalar -> PROCEDURE [VAL] = NONE; (* inhibited *)
 (* Non-Scalar ADTs may not be required to bind to VAL. *)
+
+NOT isScalar -> PROCEDURE [ABS] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to ABS. *)
 
 NOT isScalar -> PROCEDURE [ODD] = NONE; (* inhibited *)
 (* Non-Scalar ADTs may not be required to bind to ODD. *)
