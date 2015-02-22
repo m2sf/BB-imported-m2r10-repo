@@ -1,186 +1,147 @@
 (* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Blueprint for Real Number ADTs *)
+BLUEPRINT ProtoReal [ProtoScalar];
 
-BLUEPRINT ProtoReal [ProtoScalar]; (* conforms to ProtoScalar *)
+(* Specialized Blueprint for Real Number ADTs *)
 
 
 (* Required Module Type *)
 
 MODULE TYPE = RECORD;
-(* Real ADTs must be records to be statically allocatable. *)
+(* Real number ADTs shall be statically allocatable. *)
 
 LITERAL = REAL;
-(* Real number literals are compatible. *)
+(* Real number literals shall be compatible. *)
 
 
 (* Required Constants *)
 
+(* Classification *)
+
+CONST [TCOMP] isComputational = TRUE;
+(* Real number ADTs are always computational. *)
+
+CONST [TNUM] isNumeric = TRUE;
+(* Real number ADTs are always numeric. *)
+
+CONST isScalar = TRUE;
+(* Real number ADTs are always scalar. *)
+
+CONST isCountable = FALSE;
+(* Real number ADTs are always uncountable. *)
+
+
+(* Scalar Properties *)
+
 CONST [TSIGNED] isSigned = TRUE;
-(* Real ADTs are always signed. *)
+(* Real number ADTs are always signed. *)
 
-CONST [TBASE] base : CARDINAL;
-(* Radix in which the ADT's values are encoded, 2 or 10. *)
+CONST [TBASE] base : CARDINAL; (* either 2 or 10 *)
+(* Real number shall define the radix in which values are encoded. *)
 
-CONST [TPRECISION] precision : CARDINAL;
-(* Maximum number of digits the ADT can encode, 1 to 4000. *)
+CONST [TPRECISION] precision : CARDINAL; (* 1 to 4000 *)
+(* Real number ADTs shall define the maximum number of encodable digits. *)
 
 CONST [TMINEXP] eMin : INTEGER;
-(* Value of the ADT's smallest exponent. *)
+(* Real number ADTs shall define the smallest encodable exponent. *)
 
 CONST [TMAXEXP] eMax : INTEGER;
-(* Value of the ADT's largest exponent. *)
+(* Real number ADTs shall define the largest encodable exponent. *)
+
+
+(* Memory Management *)
+
+CONST [TDYN] isDynamic = FALSE;
+(* Real number ADTs are always statically allocated. *)
 
 
 (* Required Procedures *)
 
-
 (* Introspection *)
 
-(* Binding to Predefined Function TMIN *)
+(* Smallest Value *)
 
 PROCEDURE [TMIN] minValue : ProtoReal;
-(* Required function to return the minimal value the ADT can encode. *)
-
-(* An expression of the form TMIN(RealADT)
-   is synthesised as RealADT.minValue(). *)
+(* Integer ADTs are required to bind to TMIN. *)
 
 
-(* Binding to Predefined Function TMAX *)
+(* Largest Value *)
 
 PROCEDURE [TMAX] maxValue : ProtoReal;
-(* Required function to return the maximal value the ADT can encode. *)
-
-(* An expression of the form TMAX(RealADT)
-   is synthesised as RealADT.maxValue(). *)
+(* Integer ADTs are required to bind to TMIN. *)
 
 
 (* Numeric Conversion *)
 
-(* Binding to scalar conversion primitives SXF and VAL *)
+(* Conversion to Scalar Exchange Format *)
 
 PROCEDURE [SXF] toSXF ( value : ProtoReal; VAR sxf : ARRAY OF OCTET );
-(* Required procedure to convert a real value to scalar exchange format. *)
+(* Required procedure to convert a real number to scalar exchange format. *)
+
+
+(* Conversion from Scalar Exchange Format *)
 
 PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoReal );
-(* Required procedure to convert from scalar exchange format to the ADT. *)
-
-(* Conversion between any two scalar ADTs can be synthesised utilising the
-   ADTs' conversion procedures bound to SXF and VAL.
-   
-   A conversion expression of the form
-     intValue :: CardinalADT
-   is synthesised as
-     IntegerADT.toSXF(intValue, temp);
-     CardinalADT.fromSXF(temp, result);
-   when no direct conversion is implemented. *)
+(* Required procedure to convert from scalar exchange format to real. *)
 
 
-(* Literal Assignment *)
+(* Absolute Value *)
 
-(* Numeric literals are converted to scalar exchange format at compile time.
-   Assignments of numeric literals to numeric ADTs are then synthesised
-   utilising an ADT's conversion procedure bound to VAL.
-   
-   An assignment of the form
-     r := 1.23;
-   is synthesised as
-     RealADT.fromSXF(sxfCompiletimeValue, r); *)
+PROCEDURE [ABS] abs ( r : ProtoReal ) : ProtoReal;
+(* Required function to return the absolute value of a real number. *)
+
+
+(* Sign Reversal *)
+
+PROCEDURE [+/-] neg ( r : ProtoReal ) : ProtoReal;
+(* Required function to return the sign reversed value of a real number. *)
 
 
 (* Arithmetic Operations *)
 
-(* Binding to Predefined Function ABS *)
-
-PROCEDURE [ABS] abs ( r : ProtoReal ) : ProtoReal;
-(* Required function to return the sign removed value of a real number. *)
-
-(* An expression of the form ABS(r)
-   is synthesised as RealADT.abs(r). *)
-
-
-(* Binding to Unary Minus *)
-
-PROCEDURE [+/-] neg ( r : ProtoReal ) : BOOLEAN;
-(* Required function to return the sign reversed value of a real number. *)
-
-(* An expression of the form -r
-   is synthesised as RealADT.neg(r). *)
-
-
-(* Binding to the + Operator *)
-
 PROCEDURE [+] add ( r1, r2 : ProtoReal ) : ProtoReal;
 (* Required function to return the sum of two real numbers. *)
-
-(* An expression of the form r1 + r2
-   is synthesised as RealADT.add(r1, r2). *)
-
-
-(* Binding to the - Operator *)
 
 PROCEDURE [-] subtract ( r1, r2 : ProtoReal ) : ProtoReal;
 (* Required function to return the difference of two real numbers. *)
 
-(* An expression of the form r1 - r2
-   is synthesised as RealADT.subtract(i, j). *)
-
-
-(* Binding to the * Operator *)
-
 PROCEDURE [*] multiply ( r1, r2 : ProtoReal ) : ProtoReal;
 (* Required function to return the product of two real numbers. *)
 
-(* An expression of the form r1 * r2
-   is synthesised as RealADT.multiply(r1, r2). *)
-
-
-(* Binding to the / Operator *)
-
 PROCEDURE [/] divide ( r1, r2 : ProtoReal ) : ProtoReal;
-(* Required function to return the quotient of two real numbers, using
-   real number division. *)
-
-(* An expression of the form r1 / r2
-   is synthesised as RealADT.divide(r1, r2). *)
+(* Required function to return the quotient of two real numbers. *)
 
 
 (* Relational Operations *)
 
-(* Binding to Operators = and # *)
-
 PROCEDURE [=] isEqual ( r1, r2 : ProtoReal ) : BOOLEAN;
-(* Required function to test the equivalence of two real numbers. *)
+(* Required function to test the equality of two real numbers. *)
 
-(* An expression of the form r1 = r2
-   is synthesised as RealADT.isEqual(r1, r2).
-   
-   An expression of the form r1 # r2
-   is synthesised as (NOT RealADT.isEqual(r1, r2)). *)
+(* The operation for # is synthesised from this binding. *)
 
-
-(* Binding to Operators < and >= *)
 
 PROCEDURE [<] isLess ( r1, r2 : ProtoReal ) : BOOLEAN;
 (* Required function to test if one real number is less than another. *)
 
-(* An expression of the form r1 < r2
-   is synthesised as RealADT.isLess(r1, r2).
-   
-   An expression of the form r1 >= r2
-   is synthesised as (NOT RealADT.isLess(r1, r2)). *)
+(* The operation for >= is synthesised from this binding. *)
 
-
-(* Binding to Operators > and <= *)
 
 PROCEDURE [>] isGreater ( r1, r2 : ProtoReal ) : BOOLEAN;
 (* Required function to test if one real number is greater than another. *)
 
-(* An expression of the form r1 > r2
-   is synthesised as RealADT.isGreater(r1, r2).
-   
-   An expression of the form r1 <= r2
-   is synthesised as (NOT RealADT.isGreater(r1, r2)). *)
+(* The operation for <= is synthesised from this binding. *)
+
+
+(* Inhibited Bindings *)
+
+PROCEDURE [ODD] = NONE; (* inhibited *)
+(* Real number ADTs may not be required to bind to ODD. *)
+
+PROCEDURE [DIV] = NONE; (* inhibited *)
+(* Real number ADTs may not be required to bind to DIV. *)
+
+PROCEDURE [MOD] = NONE; (* inhibited *)
+(* Real number ADTs may not be required to bind to MOD. *)
 
 
 END ProtoReal.
