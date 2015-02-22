@@ -1,60 +1,101 @@
-(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Blueprint for Complex Number ADTs *)
+BLUEPRINT ProtoComplex [ProtoNonScalar];
 
-BLUEPRINT ProtoComplex [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
+(* Specialized Blueprint for Complex Number ADTs *)
 
-(* Complex Number ADTs must be transparent records,
-   have two fields compatible with real number literals. *)
+
+(* Required Module Type *)
 
 MODULE TYPE = RECORD;
+(* All complex number ADTs shall be statically allocatable. *)
 
 LITERAL = { REAL, REAL };
+(* Structured literals with two real values shall be compatible. *)
 
-
-(* Bindings required for ProtoComplex ADTs *)
 
 (* Required Constants *)
 
-CONST [TSIGNED] isSigned = TRUE;
-(* Complex ADTs are always signed. *)
+(* Classification *)
+
+CONST [TCOMP] isComputational = TRUE;
+(* Complex number ADTs are always computational. *)
+
+CONST [TNUM] isNumeric = TRUE;
+(* Complex number ADTs are always numeric. *)
+
+CONST isScalar = FALSE;
+(* Complex number ADTs are never scalar. *)
+
+
+(* Memory Management *)
+
+CONST [TDYN] isDynamic = FALSE;
+(* Complex number ADTs are always statically allocated. *)
 
 
 (* Required Procedures *)
 
-(* Numeric Conversion *)
+(* Sign Operations *)
 
-(* Via-SXF conversion between structurally equivalent non-scalar numeric types
-   is synthesised using SXF and VAL conversions on their scalar components *)
-
-
-(* Bindings to monadic operations *)
+PROCEDURE [ABS] abs ( z : ProtoComplex ) : ProtoComplex;
+(* Required function to return the sign removed value of a complex number. *)
 
 PROCEDURE [+/-] neg ( z : ProtoComplex ) : ProtoComplex;
 (* Required function to return the sign reversed value of a complex number. *)
 
 
-(* Bindings to dyadic operations *)
+(* Arithmetic Operations *)
 
-PROCEDURE [+] plus ( z1, z2 : ProtoComplex ) : ProtoComplex;
-(* procedure to bind to the + operator for operands of the ADT *)
+PROCEDURE [+] add ( z1, z2 : ProtoComplex ) : ProtoComplex;
+(* Required function to return the sum of two complex numbers. *)
 
-PROCEDURE [-] minus ( z1, z2 : ProtoComplex ) : ProtoComplex;
-(* procedure to bind to the - operator for operands of the ADT *)
+PROCEDURE [-] subtract ( z1, z2 : ProtoComplex ) : ProtoComplex;
+(* Required function to return the difference of two complex numbers. *)
 
 PROCEDURE [*] multiply ( z1, z2 : ProtoComplex ) : ProtoComplex;
-(* procedure to bind to the * operator for operands of the ADT *)
+(* Required function to return the product of two complex numbers. *)
 
 PROCEDURE [/] divide ( z1, z2 : ProtoComplex ) : ProtoComplex;
-(* procedure to bind to the / operator for operands of the ADT *)
+(* Required function to return the quotient of two complex numbers. *)
 
 
-(* Bindings to relational operations *)
+(* Relational Operations *)
 
 PROCEDURE [=] isEqual ( z1, z2 : ProtoComplex ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the ADT *)
+(* Required function to test the equality of two complex numbers. *)
 
-(* The operation for the # operator is synthesized as NOT (z1 = z2) *)
+(* The operation for # is synthesised from this binding. *)
+
+
+(* Inhibited Bindings *)
+
+PROCEDURE [TMIN] = NONE; (* inhibited *)
+(* Complex number ADTs may not be required to bind to TMIN. *)
+
+PROCEDURE [TMAX] = NONE; (* inhibited *)
+(* Complex number ADTs may not be required to bind to TMAX. *)
+
+PROCEDURE [SXF] = NONE; (* inhibited *)
+(* Complex number ADTs may not be required to bind to SXF. *)
+
+PROCEDURE [VAL] = NONE; (* inhibited *)
+(* Complex number ADTs may not be required to bind to VAL. *)
+
+PROCEDURE [ODD] = NONE; (* inhibited *)
+(* Complex number ADTs may not be required to bind to ODD. *)
+
+PROCEDURE [DIV] = NONE; (* inhibited *)
+(* Complex number ADTs may not be required to bind to DIV. *)
+
+PROCEDURE [MOD] = NONE; (* inhibited *)
+(* Complex number ADTs may not be required to bind to MOD. *)
+
+PROCEDURE [<] = NONE; (* inhibited *)
+(* Complex number ADTs may not be required to bind to < (less-than). *)
+
+PROCEDURE [>] = NONE; (* inhibited *)
+(* Complex number ADTs may not be required to bind to > (greater-than). *)
 
 
 END ProtoComplex.
