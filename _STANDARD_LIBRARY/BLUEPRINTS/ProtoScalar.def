@@ -81,7 +81,7 @@ PROCEDURE [TMAX];
 (* All scalar ADTs shall be required to bind to TMAX. *)
 
 
-(* Numeric Conversion *)
+(* Scalar Conversion *)
 
 (* Conversion to Scalar Exchange Format *)
 
@@ -95,7 +95,7 @@ PROCEDURE [VAL];
 (* All scalar ADTs shall be required to bind to VAL. *)
 
 
-(* Sign Removal *)
+(* Absolute Value *)
 
 PROCEDURE [ABS];
 (* All scalar ADTs shall be required to bind to ABS. *)
