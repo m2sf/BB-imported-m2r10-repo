@@ -4,10 +4,10 @@ Properties and Bindings of Computational ADTs
             | Proto    | Proto   | Proto | Proto   | Proto | Proto  | Proto
             | Cardinal | Integer | Real  | Complex | Tuple | Vector | CompArray
 ------------+----------+---------+-------+---------+-------+--------+----------
-isDynamic   | FALSE    | FALSE   | FALSE | FALSE   | TRUE  | TRUE   | TRUE
-------------+----------+---------+-------+---------+-------+--------+----------
 isCompu-    |          |         |       |         |       |        |
 tational    | TRUE     | TRUE    | TRUE  | TRUE    | TRUE  | TRUE   | TRUE
+------------+----------+---------+-------+---------+-------+--------+----------
+isDynamic   | FALSE    | FALSE   | FALSE | FALSE   | TRUE  | TRUE   | TRUE
 ------------+----------+---------+-------+---------+-------+--------+----------
 isNumeric   | TRUE     | TRUE    | TRUE  | TRUE    | FALSE | FALSE  | FALSE
 ------------+----------+---------+-------+---------+-------+--------+----------
@@ -17,8 +17,8 @@ isCountable | TRUE     | TRUE    | FALSE | FALSE   | n/a   | n/a    | n/a
 ------------+----------+---------+-------+---------+-------+--------+----------
 isSigned    | FALSE    | TRUE    | FALSE | n/a     | n/a   | n/a    | n/a
 ------------+----------+---------+-------+---------+-------+--------+----------
-TDYN        | reqd     | reqd    | reqd  | reqd    | reqd  | reqd   | reqd
 TCOMP       | reqd     | reqd    | reqd  | reqd    | reqd  | reqd   | reqd
+TDYN        | reqd     | reqd    | reqd  | reqd    | reqd  | reqd   | reqd
 TNUM        | reqd     | reqd    | reqd  | reqd    | reqd  | reqd   | reqd
 ------------+----------+---------+-------+---------+-------+--------+----------
 TSIGNED     | reqd     | reqd    | reqd  | inhb    | inhb  | inhb   | inhb
