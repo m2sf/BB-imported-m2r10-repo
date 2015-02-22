@@ -33,10 +33,7 @@ CONST [TDYN] isDynamic = FALSE;
 
 (* Required Procedures *)
 
-(* Sign Operations *)
-
-PROCEDURE [ABS];
-(* All non-scalar ADTs shall be required to bind to ABS. *)
+(* Sign Reversal *)
 
 PROCEDURE [+/-];
 (* All non-scalar ADTs shall be required to bind to Unary Minus. *)
@@ -78,6 +75,9 @@ PROCEDURE [SXF] = NONE; (* inhibited *)
 
 PROCEDURE [VAL] = NONE; (* inhibited *)
 (* Non-Scalar ADTs may not be required to bind to VAL. *)
+
+PROCEDURE [ABS] = NONE; (* inhibited *)
+(* Non-Scalar ADTs may not be required to bind to ABS. *)
 
 PROCEDURE [ODD] = NONE; (* inhibited *)
 (* Non-Scalar ADTs may not be required to bind to ODD. *)
