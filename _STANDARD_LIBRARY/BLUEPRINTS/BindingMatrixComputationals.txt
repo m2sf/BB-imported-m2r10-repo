@@ -33,7 +33,7 @@ TMAX        | reqd     | reqd    | reqd  | inhb    | inhb  | inhb   | inhb
 SXF         | reqd     | reqd    | reqd  | inhb    | inhb  | inhb   | inhb
 VAL         | reqd     | reqd    | reqd  | inhb    | inhb  | inhb   | inhb
 ------------+----------+---------+-------+---------+-------+--------+----------
-ABS         | reqd     | reqd    | reqd  | inhb    | inhb  | inhb   | ???
+ABS         | reqd     | reqd    | reqd  | inhb    | ???   | inhb   | ???
 +/-         | inhb     | reqd    | reqd  | reqd    | ???   | reqd   | ???
 ------------+----------+---------+-------+---------+-------+--------+----------
 ODD         | reqd     | reqd    | inhb  | inhb    | inhb  | inhb   | inhb
