@@ -36,10 +36,7 @@ CONST [TDYN] isDynamic = FALSE;
 
 (* Required Procedures *)
 
-(* Sign Operations *)
-
-PROCEDURE [ABS] abs ( z : ProtoComplex ) : ProtoComplex;
-(* Required function to return the sign removed value of a complex number. *)
+(* Sign Reversal *)
 
 PROCEDURE [+/-] neg ( z : ProtoComplex ) : ProtoComplex;
 (* Required function to return the sign reversed value of a complex number. *)
@@ -81,6 +78,9 @@ PROCEDURE [SXF] = NONE; (* inhibited *)
 
 PROCEDURE [VAL] = NONE; (* inhibited *)
 (* Complex number ADTs may not be required to bind to VAL. *)
+
+PROCEDURE [ABS] = NONE; (* inhibited *)
+(* Complex number ADTs may not be required to bind to ABS. *)
 
 PROCEDURE [ODD] = NONE; (* inhibited *)
 (* Complex number ADTs may not be required to bind to ODD. *)
