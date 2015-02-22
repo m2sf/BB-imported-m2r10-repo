@@ -1,245 +1,145 @@
 (* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Blueprint for Cardinal ADTs *)
+BLUEPRINT ProtoCardinal [ProtoScalar];
 
-BLUEPRINT ProtoCardinal [ProtoScalar]; (* conforms to ProtoScalar *)
+(* Specialized Blueprint for Cardinal ADTs *)
 
 
 (* Required Module Type *)
 
 MODULE TYPE = RECORD;
-(* Cardinal ADTs must be records to be statically allocatable. *)
+(* Cardinal ADTs shall be statically allocatable. *)
 
 LITERAL = INTEGER;
-(* Integer literals are compatible. *)
+(* Integer literals shall be compatible. *)
 
 
 (* Required Constants *)
 
+(* Classification *)
+
+CONST [TCOMP] isComputational = TRUE;
+(* Cardinal ADTs are always computational. *)
+
+CONST [TNUM] isNumeric = TRUE;
+(* Cardinal ADTs are always numeric. *)
+
+CONST isScalar = TRUE;
+(* Cardinal ADTs are always scalar. *)
+
+CONST isCountable = TRUE;
+(* Cardinal ADTs are always countable. *)
+
+
+(* Scalar Properties *)
+
 CONST [TSIGNED] isSigned = FALSE;
-(* Cardinal ADTs are always signed. *)
+(* Cardinal ADTs are always unsigned. *)
 
-CONST [TBASE] base : CARDINAL;
-(* Radix in which the ADT's values are encoded, 2 or 10. *)
+CONST [TBASE] base = 2;
+(* Cardinal ADTs are always encoded in radix 2. *)
 
-CONST [TPRECISION] precision : CARDINAL;
-(* Maximum number of digits the ADT can encode, 1 to 4000. *)
+CONST [TPRECISION] precision : CARDINAL; (* 1 to 4000 *)
+(* Cardinal ADTs shall define the maximum number of encodable digits. *)
 
 CONST [TMINEXP] eMin = 0;
-(* Cardinal ADTs always have an exponent of zero *)
+(* Cardinal ADTs shall define eMin with a value of zero. *)
 
 CONST [TMAXEXP] eMax = 0;
-(* Cardinal ADTs always have an exponent of zero *)
+(* Cardinal ADTs shall define eMax with a value of zero. *)
+
+
+(* Memory Management *)
+
+CONST [TDYN] isDynamic = FALSE;
+(* Cardinal ADTs are always statically allocated. *)
 
 
 (* Required Procedures *)
 
 (* Introspection *)
 
-(* Binding to Predefined Function TMIN *)
+(* Smallest Value *)
 
 PROCEDURE [TMIN] minValue : ProtoCardinal;
-(* Required function to return the minimal value the ADT can encode. *)
-
-(* An expression of the form TMIN(CardinalADT)
-   is synthesised as CardinalADT.minValue(). *)
+(* Cardinal ADTs are required to bind to TMIN. *)
 
 
-(* Binding to Predefined Function TMAX *)
+(* Largest Value *)
 
 PROCEDURE [TMAX] maxValue : ProtoCardinal;
-(* Required function to return the maximal value the ADT can encode. *)
-
-(* An expression of the form TMAX(CardinalADT)
-   is synthesised as CardinalADT.maxValue(). *)
+(* Cardinal ADTs are required to bind to TMIN. *)
 
 
 (* Numeric Conversion *)
 
-(* Binding to scalar conversion primitives SXF and VAL *)
+(* Conversion to Scalar Exchange Format *)
 
 PROCEDURE [SXF] toSXF ( value : ProtoCardinal; VAR sxf : ARRAY OF OCTET );
-(* Required procedure to convert a cardinal value to scalar exchange format. *)
+(* Required procedure to convert a cardinal to scalar exchange format. *)
+
+
+(* Conversion from Scalar Exchange Format *)
 
 PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
-(* Required procedure to convert from scalar exchange format to the ADT. *)
-
-(* Conversion between any two scalar ADTs can be synthesised utilising the
-   ADTs' conversion procedures bound to SXF and VAL.
-   
-   A conversion expression of the form
-     intValue :: CardinalADT
-   is synthesised as
-     IntegerADT.toSXF(intValue, temp);
-     CardinalADT.fromSXF(temp, result);
-   when no direct conversion is implemented. *)
+(* Required procedure to convert from scalar exchange format to a cardinal. *)
 
 
-(* Literal Assignment *)
+(* Absolute Value *)
 
-(* Numeric literals are converted to scalar exchange format at compile time.
-   Assignments of numeric literals to numeric ADTs are then synthesised
-   utilising an ADT's conversion procedure bound to VAL.
-   
-   An assignment of the form
-     n := 123;
-   is synthesised as
-     CardinalADT.fromSXF(sxfCompiletimeValue, n); *)
+PROCEDURE [ABS] abs ( n : ProtoCardinal ) : ProtoCardinal;
+(* Required function to return the absolute value of a cardinal. *)
 
 
-(* Iteration *)
+(* Odd/Even Test *)
 
-(* Scalar ADTs may not bind any procedure to FOR.
-   
-   Iteration over scalar ADTs and subranges of Scalar ADTs will be
-   synthesised if and only if all of the following conditions are met:
-   
-   (1) the ADT binds a constant value of zero to both TMINEXP and TMAXEXP,
-   (2) the ADT provides bindings for TMIN and TMAX,
-   (3) the ADT provides bindings for + and -,
-   (4) the ADT provides bindings for < and >.
-   
-   A statement of the form
-     FOR n IN CardinalADT DO ...
-   is equivalent to
-     FOR n IN [lower .. upper] OF CardinalADT DO ...
-   where lower = TMIN(CardinalADT) and upper = TMAX(CardinalADT).
-     
-   A statement of the form
-     FOR n IN [lower .. upper] OF CardinalADT DO statementSeq END
-   is synthesised as
-     VAR n : CardinalADT;
-     n := lower;
-     LOOP
-       statementSeq;
-       IF n < upper THEN n++ ELSE EXIT END
-     END;
-   
-   A statement of the form
-     FOR n-- IN CardinalADT DO ...
-   is equivalent to
-     FOR n-- IN [lower .. upper] OF CardinalADT DO ...
-   where lower = TMIN(CardinalADT) and upper = TMAX(CardinalADT).
-
-   A statement of the form
-     FOR n-- IN [lower .. upper] OF CardinalADT DO statementSeq END
-   is synthesised as
-     VAR n : CardinalADT;
-     n := upper;
-     LOOP
-       statementSeq;
-       IF n > lower THEN n-- ELSE EXIT END
-     END; *)
+PROCEDURE [ODD] odd ( n : ProtoCardinal ) : ProtoCardinal;
+(* Required function to test whether a cardinal is odd or even. *)
 
 
 (* Arithmetic Operations *)
 
-(* Binding to Predefined Function ABS *)
-
-PROCEDURE [ABS] abs ( n : ProtoCardinal ) : ProtoCardinal;
-(* Required function to return the sign reversed value of a cardinal. *)
-
-(* An expression of the form ABS(n)
-   is synthesised as CardinalADT.abs(n). *)
-
-
-(* Binding to Predefined Function ODD *)
-
-PROCEDURE [ODD] odd ( n : ProtoCardinal ) : BOOLEAN;
-(* Required function to test whether a cardinal is even or odd. *)
-
-(* An expression of the form ODD(n)
-   is synthesised as CardinalADT.odd(n). *)
-
-
-(* Binding to the + Operator *)
-
 PROCEDURE [+] add ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the sum of two cardinals. *)
-
-(* An expression of the form n + m
-   is synthesised as CardinalADT.add(n, m).
-   
-   A statement of the form n++
-   is synthesised as CardinalADT.add(n, 1 :: CardinalADT). *)
-
-
-(* Binding to the - Operator *)
 
 PROCEDURE [-] subtract ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the difference of two cardinals. *)
 
-(* An expression of the form n - m
-   is synthesised as CardinalADT.subtract(n, m).
-   
-   A statement of the form n--
-   is synthesised as CardinalADT.subtract(n, 1 :: CardinalADT). *)
-
-
-(* Binding to the * Operator *)
-
 PROCEDURE [*] multiply ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the product of two cardinals. *)
 
-(* An expression of the form n * m
-   is synthesised as CardinalADT.multiply(n, m). *)
-
-
-(* Binding to the DIV Operator *)
-
 PROCEDURE [DIV] divide ( n, m : ProtoCardinal ) : ProtoCardinal;
-(* Required function to return the quotient of two cardinals, using
-   integer division. *)
-
-(* An expression of the form n DIV m
-   is synthesised as CardinalADT.divide(n, m). *)
-
-
-(* Binding to the MOD Operator *)
+(* Required function to return the quotient of two cardinals,
+   using Euclidean integer division. *)
 
 PROCEDURE [MOD] modulus ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Function to return the modulus of two cardinals. *)
 
-(* An expression of the form n MOD m
-   is synthesised as CardinalADT.modulus(n, m). *)
-
 
 (* Relational Operations *)
 
-(* Binding to Operators = and # *)
-
 PROCEDURE [=] isEqual ( n, m : ProtoCardinal ) : BOOLEAN;
-(* Required function to test the equivalence of two cardinals. *)
+(* Required function to test the equality of two cardinals. *)
 
-(* An expression of the form n = m
-   is synthesised as CardinalADT.isEqual(n, m).
-   
-   An expression of the form n # m
-   is synthesised as (NOT CardinalADT.isEqual(n, m)). *)
+(* The operation for # is synthesised from this binding. *)
 
-
-(* Binding to Operators < and >= *)
 
 PROCEDURE [<] isLess ( n, m : ProtoCardinal ) : BOOLEAN;
 (* Required function to test if one cardinal is less than another. *)
 
-(* An expression of the form n < m
-   is synthesised as CardinalADT.isLess(n, m).
-   
-   An expression of the form n >= m
-   is synthesised as (NOT CardinalADT.isLess(n, m)). *)
+(* The operation for >= is synthesised from this binding. *)
 
-
-(* Binding to Operators > and <= *)
 
 PROCEDURE [>] isGreater ( n, m : ProtoCardinal ) : BOOLEAN;
 (* Required function to test if one cardinal is greater than another. *)
 
-(* An expression of the form n > m
-   is synthesised as CardinalADT.isGreater(n, m).
-   
-   An expression of the form n <= m
-   is synthesised as (NOT CardinalADT.isGreater(n, m)). *)
+(* The operation for <= is synthesised from this binding. *)
+
+
+(* Inhibited Bindings *)
+
+PROCEDURE [/] = NONE; (* inhibited *)
+(* Cardinal ADTs may not be required to bind to / (division). *)
 
 
 END ProtoCardinal.
