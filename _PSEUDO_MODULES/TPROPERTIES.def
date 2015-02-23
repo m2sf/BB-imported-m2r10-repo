@@ -19,16 +19,16 @@ DEFINITION MODULE TPROPERTIES;
 (* An invocation of the macro is replaced by TRUE if the type passed
    as its argument is computational, otherwise FALSE. *)
 
+(* MACRO *) PROCEDURE TBDFOR ( <CollectionType> ) : BOOLEAN;
+(* An invocation of the macro is replaced by TRUE if the type passed as
+   its argument supports bidirectional FOR loop iteration, otherwise FALSE. *)
+
 
 (* Collection Properties *)
 
 (* MACRO *) PROCEDURE TNIL ( <CollectionType> ) : BOOLEAN;
 (* An invocation of the macro is replaced by TRUE if the type passed
    as its argument supports storage of NIL as a value, otherwise FALSE. *)
-
-(* MACRO *) PROCEDURE TBDFOR ( <CollectionType> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed as
-   its argument supports bidirectional FOR loop iteration, otherwise FALSE. *)
 
 (* MACRO *) PROCEDURE TBYIDX ( <CollectionType> ) : BOOLEAN;
 (* An invocation of the macro is replaced by TRUE if the type passed
@@ -41,6 +41,11 @@ DEFINITION MODULE TPROPERTIES;
 (* MACRO *) PROCEDURE TBYVAL ( <CollectionType> ) : BOOLEAN;
 (* An invocation of the macro is replaced by TRUE if the type passed
    as its argument is a value-only storage type, otherwise FALSE. *)
+
+(* MACRO *) PROCEDURE TRIGID ( <CollectionType> ) : BOOLEAN;
+(* An invocation of the macro is replaced by TRUE if the type passed
+   as its argument does not support append, insert and remove operations,
+   otherwise FALSE. *)
 
 (* Any invocation of the above macros with an argument that is not an
    identifier of a collection type will cause a compile time error. *)
