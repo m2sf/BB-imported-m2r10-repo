@@ -41,7 +41,7 @@ CONST [TREFC] isRefCounted : BOOLEAN;
 (* Capacity Limit *)
 
 CONST [TLIMIT] capacityLimit : LONGCARD;
-(* Vector ADTs shall define their component limit. *)
+(* Vector ADTs shall define their maximum allocation limit. *)
 
 
 (* Value Access Model *)
