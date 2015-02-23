@@ -88,7 +88,7 @@ PROCEDURE [RELEASE] release ( VAR vector : ProtoVector );
 (* Binding to STORE *)
 
 PROCEDURE [STORE] storeValue
- ( vector : ProtoVector; index : IndexType; value : ComponentType );
+  ( vector : ProtoVector; index : IndexType; value : ComponentType );
 (* Required procedure to overwrite a vector component at a given index. *)
 
 
@@ -97,7 +97,7 @@ PROCEDURE [STORE] storeValue
 (* Binding to RETRIEVE *)
 
 PROCEDURE [RETRIEVE] valueAtIndex
- ( vector : ProtoVector; index : IndexType ) : ComponentType;
+  ( vector : ProtoVector; index : IndexType ) : ComponentType;
 (* Required function to return the vector component at a given index. *)
 
 
@@ -117,7 +117,7 @@ PROCEDURE [FOR] forIterator
 
 (* Sign Reversal *)
 
-PROCEDURE [+/-] unaryMinus ( VAR result : ProtoVector; v : ProtoVector );
+PROCEDURE [+/-] unaryMinus ( VAR result : ProtoVector; vector : ProtoVector );
 (* Required procedure to return the additive inverse of a vector (-v). *)
 
 
@@ -141,19 +141,19 @@ PROCEDURE [*.] dot ( v1, v2 : ProtoVector ) : ComponentType;
 (* Vector-Scalar Arithmetic *)
 
 PROCEDURE addScalar
-  ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
+  ( VAR result : ProtoVector; vector : ProtoVector; scalar : ComponentType );
 (* Required procedure to add a scalar to each vector component. *)
 
 PROCEDURE subScalar
-  ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
+  ( VAR result : ProtoVector; vector : ProtoVector; scalar : ComponentType );
 (* Required procedure to subtract a scalar from each vector component. *)
 
 PROCEDURE mulByScalar
-  ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
+  ( VAR result : ProtoVector; vector : ProtoVector; scalar : ComponentType );
 (* Required procedure to multiply each vector component by a scalar. *)
 
 PROCEDURE divByScalar
-  ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
+  ( VAR result : ProtoVector; vector : ProtoVector; scalar : ComponentType );
 (* Required procedure to divide each vector component by a scalar. *)
 
 
