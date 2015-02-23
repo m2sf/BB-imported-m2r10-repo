@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Feb 20, 2015
+# Syntax diagram generator for Modula-2 (R10), status Feb 23, 2015
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -301,7 +301,7 @@ lappend non_terminals propertyToBindTo {
 
 # (9.2) Collection Property Identifier
 lappend non_terminals collectionPropertyIdent {
-  or /TNIL /TBDFOR /TLIMIT /TBYIDX /TBYKEY /TBYVAL
+  or /TNIL /TLIMIT /TBYIDX /TBYKEY /TBYVAL /TRIGID
 }
 
 # (9.3) Numeric Property Identifier
@@ -311,7 +311,7 @@ lappend non_terminals numericPropertyIdent {
 
 # (9.4) General Property Identifier
 lappend non_terminals generalPropertyIdent {
-  or /TDYN /TREFC /TCOMP
+  or /TDYN /TREFC /TCOMP /TBDFOR
 }
 
 # (9.5) Restricted Export
@@ -1540,32 +1540,37 @@ lappend res_idents TREFC {
   line /TREFC
 }
 
-# (2.36) TSIGNED
+# (2.36) TRIGID
+lappend res_idents TRIGID {
+  line /TRIGID
+}
+
+# (2.37) TSIGNED
 lappend res_idents TSIGNED {
   line /TSIGNED
 }
 
-# (2.37) UNICHAR
+# (2.38) UNICHAR
 lappend res_idents UNICHAR {
   line /UNICHAR
 }
 
-# (2.38) UNSAFE
+# (2.39) UNSAFE
 lappend res_idents UNSAFE {
   line /UNSAFE
 }
 
-# (2.39) VAL
+# (2.40) VAL
 lappend res_idents VAL {
   line /VAL
 }
 
-# (2.40) WRITE
+# (2.41) WRITE
 lappend res_idents WRITE {
   line /WRITE
 }
 
-# (2.41) WRITEF
+# (2.42) WRITEF
 lappend res_idents WRITEF {
   line /WRITEF
 }
