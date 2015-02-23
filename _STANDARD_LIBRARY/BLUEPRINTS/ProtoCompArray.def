@@ -1,0 +1,210 @@
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BLUEPRINT ProtoCompArray [ProtoComputational];
+
+(* Specialised Blueprint for Computational Array ADTs *)
+
+
+REFERENTIAL IndexType, ComponentType;
+
+
+(* Required Module Type *)
+
+MODULE TYPE = OPAQUE;
+(* Computational array ADTs shall be dynamically allocatable. *)
+
+LITERAL = { ARGLIST >0 OF ComponentType };
+(* Structured literals of non-empty component lists shall be compatible. *)
+
+
+(* Required Constants *)
+
+(* Classification *)
+
+CONST [TCOMP] isComputational = TRUE;
+(* Computational array ADTs are always computational. *)
+
+CONST [TNUM] isNumeric = FALSE;
+(* Computational array ADTs are always non-numeric. *)
+
+
+(* Memory Management Model *)
+
+CONST [TDYN] isDynamic = TRUE;
+(* Computational array ADTs are dynamically allocatable. *)
+
+isDynamic ->
+CONST [TREFC] isRefCounted : BOOLEAN;
+(* Computational array ADTs shall define whether they are reference counted. *)
+
+
+(* Capacity Limit *)
+
+CONST [TLIMIT] capacityLimit : LONGCARD;
+(* Computational array ADTs shall define their maximum allocation limit. *)
+
+
+(* Value Access Model *)
+
+CONST [TBYIDX] valueAccessByIndex = TRUE;
+(* Computational array ADTs access components by index. *)
+
+CONST [TRIGID] isRigid = TRUE;
+(* Computational array ADTs do not support resize, append, insert
+   nor remove operations. *)
+
+
+(* Iteration Order *)
+
+CONST [TBDFOR] bidirectionalIteration = TRUE;
+(* Computational array ADTs always support bidirectional FOR loop iteration. *)
+
+
+(* Required Procedures *)
+
+(* Introspection *)
+
+PROCEDURE [COUNT] count ( array : ProtoCompArray ) : LONGCARD;
+(* Required function to return the component count of an array. *)
+
+
+(* Memory Management *)
+
+PROCEDURE [NEW] new ( NEW array : ProtoCompArray; count : LONGCARD );
+(* Required procedure to allocate and return a new array. *)
+
+isRefCounted ->
+PROCEDURE [RETAIN] retain ( array : ProtoCompArray );
+(* Procedure to retain an array and prevent its deallocation.
+   Required when reference counting is supported. *)
+
+PROCEDURE [RELEASE] release ( VAR array : ProtoCompArray );
+(* Required procedure to cancel an outstanding retain and ultimately deallocate
+   an array when no further retains are outstanding, or immediately when
+   reference counting is not supported. *)
+
+
+(* Value Storage *)
+
+(* Binding to STORE *)
+
+PROCEDURE [STORE] storeValue
+  ( array : ProtoCompArray; index : IndexType; value : ComponentType );
+(* Required procedure to overwrite an array component at a given index. *)
+
+
+(* Value Retrieval *)
+
+(* Binding to RETRIEVE *)
+
+PROCEDURE [RETRIEVE] valueAtIndex
+  ( array : ProtoCompArray; index : IndexType ) : ComponentType;
+(* Required function to return the array component at a given index. *)
+
+
+(* Iteration *)
+
+(* Binding to FOR *)
+
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoCompArray, CONST IndexType );
+(* Required procedure type to synthesise the body of a for loop. *)
+
+PROCEDURE [FOR] forIterator
+  ( VAR array : ProtoCompArray; doStatements : LoopBodyType; order : CHAR );
+
+(* Required procedure to iterate over all indices of an array in ascending "+"
+   or descending "-" order and execute body doStatements for each index. *)
+
+
+(* Absolute Value *)
+PROCEDURE [ABS] abs ( VAR result : ProtoCompArray; array : ProtoCompArray );
+(* Required procedure for component wise absolute value calculation. *)
+
+
+(* Sign Reversal *)
+
+PROCEDURE [+/-] unaryMinus
+  ( VAR result : ProtoCompArray; array : ProtoCompArray );
+(* Required procedure for component wise sign reversal. *)
+
+
+(* Arithmetic Operations *)
+
+(* Array-Array Arithmetic *)
+
+PROCEDURE [+] add
+  ( VAR result : ProtoCompArray; a1, a2 : ProtoCompArray );
+(* Required procedure for component wise addition (a1 + a2). *)
+
+PROCEDURE [-] subtract
+  ( VAR result : ProtoCompArray; a1, a2 : ProtoCompArray );
+(* Required procedure for component wise subtraction (a1 - a2). *)
+
+PROCEDURE [*] multiply
+  ( VAR result : ProtoCompArray; a1, a2 : ProtoCompArray );
+(* Required procedure for component wise multiplication (a1 * a2). *)
+
+PROCEDURE [/] divide
+  ( VAR result : ProtoCompArray; a1, a2 : ProtoCompArray );
+(* Required procedure for component wise division (a1 / a2). *)
+
+
+(* Array-Scalar Arithmetic *)
+
+PROCEDURE addScalar
+  ( VAR result : ProtoCompArray;
+    array : ProtoCompArray; scalar : ComponentType );
+(* Required procedure to add a scalar to each array component. *)
+
+PROCEDURE subScalar
+  ( VAR result : ProtoCompArray;
+    array : ProtoCompArray; scalar : ComponentType );
+(* Required procedure to subtract a scalar from each array component. *)
+
+PROCEDURE mulByScalar
+  ( VAR result : ProtoCompArray;
+    array : ProtoCompArray; scalar : ComponentType );
+(* Required procedure to multiply each array component by a scalar. *)
+
+PROCEDURE divByScalar
+  ( VAR result : ProtoCompArray;
+    array : ProtoCompArray; scalar : ComponentType );
+(* Required procedure to divide each array component by a scalar. *)
+
+
+(* Relational Operations *)
+
+PROCEDURE [=] isEqual ( a1, a2 : ProtoCompArray ) : BOOLEAN;
+(* Required function to test the equality of two array. *)
+
+(* The operation for # is synthesised from this binding. *)
+
+
+(* Inhibited Bindings *)
+
+PROCEDURE [TMIN] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to TMIN. *)
+
+PROCEDURE [TMAX] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to TMAX. *)
+
+PROCEDURE [SXF] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to SXF. *)
+
+PROCEDURE [VAL] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to VAL. *)
+
+PROCEDURE [ODD] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to ODD. *)
+
+PROCEDURE [*.] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to *. (dot product). *)
+
+PROCEDURE [<] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to < (less-than). *)
+
+PROCEDURE [>] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to > (greater-than). *)
+
+
+END ProtoCompArray.
