@@ -41,7 +41,7 @@ CONST [TREFC] isRefCounted : BOOLEAN;
 (* Capacity Limit *)
 
 CONST [TLIMIT] capacityLimit : LONGCARD;
-(* Vector ADTs shall define their maximum allocation limit. *)
+(* Vector ADTs shall define their component limit. *)
 
 
 (* Value Access Model *)
@@ -74,7 +74,7 @@ PROCEDURE [NEW] new ( NEW vector : ProtoVector; dim : LONGCARD );
 
 isRefCounted ->
 PROCEDURE [RETAIN] retain ( vector : ProtoVector );
-(* Procedure to retain an array and prevent its deallocation.
+(* Procedure to retain a vector and prevent its deallocation.
    Required when reference counting is supported. *)
 
 PROCEDURE [RELEASE] release ( VAR vector : ProtoVector );
@@ -117,8 +117,8 @@ PROCEDURE [FOR] forIterator
 
 (* Sign Reversal *)
 
-PROCEDURE [+/-] unaryMinus ( NEW result : ProtoVector; v : ProtoVector );
-(* Required procedure to return the sign reversed value of a vector. *)
+PROCEDURE [+/-] unaryMinus ( VAR result : ProtoVector; v : ProtoVector );
+(* Required procedure to return the additive inverse of a vector (-v). *)
 
 
 (* Arithmetic Operations *)
@@ -126,35 +126,35 @@ PROCEDURE [+/-] unaryMinus ( NEW result : ProtoVector; v : ProtoVector );
 (* Vector-Vector Arithmetic *)
 
 PROCEDURE [+] add ( VAR result : ProtoVector; v1, v2 : ProtoVector );
-(* Required procedure to return the sum of two vectors. *)
+(* Required procedure to add two vectors (v1 + v2). *)
 
 PROCEDURE [-] subtract ( VAR result : ProtoVector; v1, v2 : ProtoVector );
-(* Required procedure to return the difference of two vectors. *)
+(* Required procedure to subtract one vector from another (v1 - v2). *)
 
 PROCEDURE [*] cross ( VAR result : ProtoVector; v1, v2 : ProtoVector );
-(* Required procedure to return the cross product of two vectors. *)
+(* Required procedure to return the cross product of two vectors (v1 * v2). *)
 
 PROCEDURE [*.] dot ( v1, v2 : ProtoVector ) : ComponentType;
-(* Required procedure to return the dot product of two vectors. *)
+(* Required procedure to return the dot product of two vectors (v1 *. v2). *)
 
 
 (* Vector-Scalar Arithmetic *)
 
 PROCEDURE addScalar
   ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
-(* Required procedure to return the sum of a vector and a scalar. *)
+(* Required procedure to add a scalar to each vector component. *)
 
 PROCEDURE subScalar
   ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
-(* Required procedure to return the difference of a vector and a scalar. *)
+(* Required procedure to subtract a scalar from each vector component. *)
 
-PROCEDURE mulScalar
+PROCEDURE mulByScalar
   ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
-(* Required procedure to return the product of a vector and a scalar. *)
+(* Required procedure to multiply each vector component by a scalar. *)
 
-PROCEDURE divScalar
+PROCEDURE divByScalar
   ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
-(* Required procedure to return the quotient of a vector and a scalar. *)
+(* Required procedure to divide each vector component by a scalar. *)
 
 
 (* Relational Operations *)
