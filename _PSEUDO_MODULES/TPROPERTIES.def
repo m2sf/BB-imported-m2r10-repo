@@ -19,7 +19,7 @@ DEFINITION MODULE TPROPERTIES;
 (* An invocation of the macro is replaced by TRUE if the type passed
    as its argument is computational, otherwise FALSE. *)
 
-(* MACRO *) PROCEDURE TBDFOR ( <CollectionType> ) : BOOLEAN;
+(* MACRO *) PROCEDURE TBDFOR ( <Type> ) : BOOLEAN;
 (* An invocation of the macro is replaced by TRUE if the type passed as
    its argument supports bidirectional FOR loop iteration, otherwise FALSE. *)
 
@@ -42,7 +42,7 @@ DEFINITION MODULE TPROPERTIES;
 (* An invocation of the macro is replaced by TRUE if the type passed
    as its argument is a value-only storage type, otherwise FALSE. *)
 
-(* MACRO *) PROCEDURE TRIGID ( <CollectionType> ) : BOOLEAN;
+(* MACRO *) PROCEDURE TRIGID ( <IndexedCollectionType> ) : BOOLEAN;
 (* An invocation of the macro is replaced by TRUE if the type passed
    as its argument does not support append, insert and remove operations,
    otherwise FALSE. *)
@@ -53,11 +53,11 @@ DEFINITION MODULE TPROPERTIES;
 
 (* Numeric Properties *)
 
-(* Inspecting the number representation of numeric scalar types *)
-
-(* MACRO *) PROCEDURE TNUM ( <NumericScalarType> ) : BOOLEAN;
+(* MACRO *) PROCEDURE TNUM ( <Type> ) : BOOLEAN;
 (* An invocation of the macro is replaced by TRUE if the type passed
    as its argument is numeric, otherwise FALSE. *)
+
+(* Inspecting the number representation of scalar types *)
 
 (* MACRO *) PROCEDURE TSIGNED ( <NumericScalarType> ) : BOOLEAN;
 (* An invocation of the macro is replaced by TRUE if the type passed
@@ -81,8 +81,8 @@ DEFINITION MODULE TPROPERTIES;
 (* An invocation of the macro is replaced by the largest exponent that
    can be encoded by the type.  The value is zero for ordinal types. *)
 
-(* Any invocation of the above macros with an argument that is not an
-   identifier of a numeric type will cause a compile time error. *)
+(* Any invocation of scalar property macros with an argument that is not an
+   identifier of a numeric scalar type will cause a compile time error. *)
 
 
 END TPROPERTIES.
