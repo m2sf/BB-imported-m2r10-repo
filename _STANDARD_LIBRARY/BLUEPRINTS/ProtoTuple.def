@@ -1,38 +1,198 @@
-(* (C) 2012-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Blueprint for Numeric Tuple ADTs *)
+BLUEPRINT ProtoTuple [ProtoComputational];
 
-BLUEPRINT ProtoTuple [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
-
-(* Tuple ADTs must be transparent records,
-   structurally equivalent literals are compatible by default *)
-
-MODULE TYPE = RECORD;
+(* Specialised Blueprint for Tuple ADTs *)
 
 
-(* Bindings required for ProtoTuple ADTs *)
-
-(* Via-SXF conversion between structurally equivalent non-scalar numeric types
-   is synthesised using SXF and VAL conversions on their scalar components *)
+REFERENTIAL IndexType, ComponentType;
 
 
-(* Bindings to monadic operations *)
+(* Required Module Type *)
 
-PROCEDURE [NEG] neg ( t : ProtoTuple ) : ProtoTuple;
-(* procedure to bind to pervasive function NEG for arguments of the ADT *)
+MODULE TYPE = OPAQUE;
+(* Tuple ADTs shall be dynamically allocatable. *)
 
-
-(* Bindings to dyadic operations *)
-
-(* none *)
+LITERAL = { ARGLIST >0 OF ComponentType };
+(* Structured literals of non-empty component lists shall be compatible. *)
 
 
-(* Bindings to relational operations *)
+(* Required Constants *)
+
+(* Classification *)
+
+CONST [TCOMP] isComputational = TRUE;
+(* Tuple ADTs are always computational. *)
+
+CONST [TNUM] isNumeric = FALSE;
+(* Tuple ADTs are always non-numeric. *)
+
+
+(* Memory Management Model *)
+
+CONST [TDYN] isDynamic = TRUE;
+(* Tuple ADTs are dynamically allocatable. *)
+
+isDynamic ->
+CONST [TREFC] isRefCounted : BOOLEAN;
+(* Tuple ADTs shall define whether they are reference counted. *)
+
+
+(* Capacity Limit *)
+
+CONST [TLIMIT] capacityLimit : LONGCARD;
+(* Tuple ADTs shall define their maximum allocation limit. *)
+
+
+(* Value Access Model *)
+
+CONST [TBYIDX] valueAccessByIndex = TRUE;
+(* Tuple ADTs access components by index. *)
+
+CONST [TRIGID] isRigid = TRUE;
+(* Tuple ADTs do not support resize, append, insert nor remove operations. *)
+
+
+(* Iteration Order *)
+
+CONST [TBDFOR] bidirectionalIteration = TRUE;
+(* Tuple ADTs always support bidirectional FOR loop iteration. *)
+
+
+(* Required Procedures *)
+
+(* Introspection *)
+
+PROCEDURE [COUNT] count ( tuple : ProtoTuple ) : LONGCARD;
+(* Required function to return the dimension of a tuple. *)
+
+
+(* Memory Management *)
+
+PROCEDURE [NEW] new ( NEW tuple : ProtoTuple; dim : LONGCARD );
+(* Required procedure to allocate and return a new tuple. *)
+
+isRefCounted ->
+PROCEDURE [RETAIN] retain ( tuple : ProtoTuple );
+(* Procedure to retain a tuple and prevent its deallocation.
+   Required when reference counting is supported. *)
+
+PROCEDURE [RELEASE] release ( VAR tuple : ProtoTuple );
+(* Required procedure to cancel an outstanding retain and ultimately deallocate
+   a tuple when no further retains are outstanding, or immediately when
+   reference counting is not supported. *)
+
+
+(* Value Storage *)
+
+(* Binding to STORE *)
+
+PROCEDURE [STORE] storeValue
+ ( tuple : ProtoTuple; index : IndexType; value : ComponentType );
+(* Required procedure to overwrite a tuple component at a given index. *)
+
+
+(* Value Retrieval *)
+
+(* Binding to RETRIEVE *)
+
+PROCEDURE [RETRIEVE] valueAtIndex
+ ( tuple : ProtoTuple; index : IndexType ) : ComponentType;
+(* Required function to return the tuple component at a given index. *)
+
+
+(* Iteration *)
+
+(* Binding to FOR *)
+
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoTuple, CONST IndexType );
+(* Required procedure type to synthesise the body of a for loop. *)
+
+PROCEDURE [FOR] forIterator
+  ( VAR tuple : ProtoTuple; doStatements : LoopBodyType; order : CHAR );
+
+(* Required procedure to iterate over all indices of a tuple in ascending "+"
+   or descending "-" order and execute body doStatements for each index. *)
+
+
+(* Sign Reversal *)
+
+PROCEDURE [+/-] unaryMinus ( VAR result : ProtoTuple; tuple : ProtoTuple );
+(* Required procedure to return the additive inverse of a tuple (-t). *)
+
+
+(* Arithmetic Operations *)
+
+(* Tuple-Tuple Arithmetic *)
+
+PROCEDURE [+] add ( VAR result : ProtoTuple; t1, t2 : ProtoTuple );
+(* Required procedure to add two tuples (t1 + t2). *)
+
+PROCEDURE [-] subtract ( VAR result : ProtoTuple; t1, t2 : ProtoTuple );
+(* Required procedure to subtract one tuple from another (t1 - t2). *)
+
+
+(* Tuple-Scalar Arithmetic *)
+
+PROCEDURE addScalar
+  ( VAR result : ProtoTuple; tuple : ProtoTuple; scalar : ComponentType );
+(* Required procedure to add a scalar to each tuple component. *)
+
+PROCEDURE subScalar
+  ( VAR result : ProtoTuple; tuple : ProtoTuple; scalar : ComponentType );
+(* Required procedure to subtract a scalar from each tuple component. *)
+
+PROCEDURE mulByScalar
+  ( VAR result : ProtoTuple; tuple : ProtoTuple; scalar : ComponentType );
+(* Required procedure to multiply each tuple component by a scalar. *)
+
+PROCEDURE divByScalar
+  ( VAR result : ProtoTuple; tuple : ProtoTuple; scalar : ComponentType );
+(* Required procedure to divide each tuple component by a scalar. *)
+
+
+(* Relational Operations *)
 
 PROCEDURE [=] isEqual ( t1, t2 : ProtoTuple ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the ADT *)
+(* Required function to test the equality of two tuples. *)
 
-(* The operation for the # operator is synthesized as NOT (v1 = v2) *)
+(* The operation for # is synthesised from this binding. *)
+
+
+(* Inhibited Bindings *)
+
+PROCEDURE [TMIN] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to TMIN. *)
+
+PROCEDURE [TMAX] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to TMAX. *)
+
+PROCEDURE [SXF] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to SXF. *)
+
+PROCEDURE [VAL] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to VAL. *)
+
+PROCEDURE [ABS] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to ABS. *)
+
+PROCEDURE [ODD] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to ODD. *)
+
+PROCEDURE [*] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to * (multiplication). *)
+
+PROCEDURE [*.] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to *. (dot product). *)
+
+PROCEDURE [/] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to / (division). *)
+
+PROCEDURE [<] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to < (less-than). *)
+
+PROCEDURE [>] = NONE; (* inhibited *)
+(* Tuple ADTs may not be required to bind to > (greater-than). *)
 
 
 END ProtoTuple.
