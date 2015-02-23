@@ -17,6 +17,8 @@ isCountable | TRUE     | TRUE    | FALSE | FALSE   | n/a    | n/a   | n/a
 ------------+----------+---------+-------+---------+--------+-------+----------
 isSigned    | FALSE    | TRUE    | FALSE | n/a     | n/a    | n/a   | n/a
 ------------+----------+---------+-------+---------+--------+-------+----------
+isRigid     | n/a      | n/a     | n/a   | n/a     | TRUE   | TRUE  | TRUE
+------------+----------+---------+-------+---------+--------+-------+----------
 TCOMP       | reqd     | reqd    | reqd  | reqd    | reqd   | reqd  | reqd
 TDYN        | reqd     | reqd    | reqd  | reqd    | reqd   | reqd  | reqd
 TNUM        | reqd     | reqd    | reqd  | reqd    | reqd   | reqd  | reqd
