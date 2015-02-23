@@ -1,43 +1,198 @@
-(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Blueprint for Numeric Vector ADTs *)
+BLUEPRINT ProtoVector [ProtoComputational];
 
-BLUEPRINT ProtoVector [ProtoNonScalar]; (* conforms to ProtoNonScalar *)
-
-(* Numeric Vector ADTs must be transparent records,
-   structurally equivalent literals are compatible by default *)
-
-MODULE TYPE = RECORD;
+(* Specialised Blueprint for Vector ADTs *)
 
 
-(* Bindings required for ProtoVector ADTs *)
-
-(* Via-SXF conversion between structurally equivalent non-scalar numeric types
-   is synthesised using SXF and VAL conversions on their scalar components *)
+REFERENTIAL IndexType, ComponentType;
 
 
-(* Bindings to monadic operations *)
+(* Required Module Type *)
+
+MODULE TYPE = OPAQUE;
+(* Vector ADTs shall be dynamically allocatable. *)
+
+LITERAL = { ARGLIST >0 OF ComponentType };
+(* Structured literals of non-empty component lists shall be compatible. *)
 
 
-PROCEDURE [NEG] neg ( v : ProtoVector ) : ProtoVector;
-(* procedure to bind to pervasive function NEG for arguments of the ADT *)
+(* Required Constants *)
+
+(* Classification *)
+
+CONST [TCOMP] isComputational = TRUE;
+(* Vector ADTs are always computational. *)
+
+CONST [TNUM] isNumeric = FALSE;
+(* Vector ADTs are always non-numeric. *)
 
 
-(* Bindings to dyadic operations *)
+(* Memory Management Model *)
 
-PROCEDURE [+] plus ( v1, v2 : ProtoVector ) : ProtoVector;
-(* procedure to bind to the + operator for operands of the ADT *)
+CONST [TDYN] isDynamic = TRUE;
+(* Vector ADTs are dynamically allocatable. *)
 
-PROCEDURE [-] minus ( v1, v2 : ProtoVector ) : ProtoVector;
-(* procedure to bind to the - operator for operands of the ADT *)
+isDynamic ->
+CONST [TREFC] isRefCounted : BOOLEAN;
+(* Vector ADTs shall define whether they are reference counted. *)
 
 
-(* Bindings to relational operations *)
+(* Capacity Limit *)
+
+CONST [TLIMIT] capacityLimit : LONGCARD;
+(* Vector ADTs shall define their maximum allocation limit. *)
+
+
+(* Value Access Model *)
+
+CONST [TBYIDX] valueAccessByIndex = TRUE;
+(* Vector ADTs access components by index. *)
+
+CONST [TRIGID] isRigid = TRUE;
+(* Vector ADTs do not support resize, append, insert nor remove operations. *)
+
+
+(* Iteration Order *)
+
+CONST [TBDFOR] bidirectionalIteration = TRUE;
+(* Vector ADTs always support bidirectional FOR loop iteration. *)
+
+
+(* Required Procedures *)
+
+(* Introspection *)
+
+PROCEDURE [COUNT] count ( vector : ProtoVector ) : LONGCARD;
+(* Required function to return the dimension of a vector. *)
+
+
+(* Memory Management *)
+
+PROCEDURE [NEW] new ( NEW vector : ProtoVector; dim : LONGCARD );
+(* Required procedure to allocate and return a new vector. *)
+
+isRefCounted ->
+PROCEDURE [RETAIN] retain ( vector : ProtoVector );
+(* Procedure to retain an array and prevent its deallocation.
+   Required when reference counting is supported. *)
+
+PROCEDURE [RELEASE] release ( VAR vector : ProtoVector );
+(* Required procedure to cancel an outstanding retain and ultimately deallocate
+   a vector when no further retains are outstanding, or immediately when
+   reference counting is not supported. *)
+
+
+(* Value Storage *)
+
+(* Binding to STORE *)
+
+PROCEDURE [STORE] storeValue
+ ( vector : ProtoVector; index : IndexType; value : ComponentType );
+(* Required procedure to overwrite a vector component at a given index. *)
+
+
+(* Value Retrieval *)
+
+(* Binding to RETRIEVE *)
+
+PROCEDURE [RETRIEVE] valueAtIndex
+ ( vector : ProtoVector; index : IndexType ) : ComponentType;
+(* Required function to return the vector component at a given index. *)
+
+
+(* Iteration *)
+
+(* Binding to FOR *)
+
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoVector, CONST IndexType );
+(* Required procedure type to synthesise the body of a for loop. *)
+
+PROCEDURE [FOR] forIterator
+  ( VAR vector : ProtoVector; doStatements : LoopBodyType; order : CHAR );
+
+(* Required procedure to iterate over all indices of a vector in ascending "+"
+   or descending "-" order and execute body doStatements for each index. *)
+
+
+(* Sign Reversal *)
+
+PROCEDURE [+/-] unaryMinus ( NEW result : ProtoVector; v : ProtoVector );
+(* Required procedure to return the sign reversed value of a vector. *)
+
+
+(* Arithmetic Operations *)
+
+(* Vector-Vector Arithmetic *)
+
+PROCEDURE [+] add ( VAR result : ProtoVector; v1, v2 : ProtoVector );
+(* Required procedure to return the sum of two vectors. *)
+
+PROCEDURE [-] subtract ( VAR result : ProtoVector; v1, v2 : ProtoVector );
+(* Required procedure to return the difference of two vectors. *)
+
+PROCEDURE [*] cross ( VAR result : ProtoVector; v1, v2 : ProtoVector );
+(* Required procedure to return the cross product of two vectors. *)
+
+PROCEDURE [*.] dot ( v1, v2 : ProtoVector ) : ComponentType;
+(* Required procedure to return the dot product of two vectors. *)
+
+
+(* Vector-Scalar Arithmetic *)
+
+PROCEDURE addScalar
+  ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
+(* Required procedure to return the sum of a vector and a scalar. *)
+
+PROCEDURE subScalar
+  ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
+(* Required procedure to return the difference of a vector and a scalar. *)
+
+PROCEDURE mulScalar
+  ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
+(* Required procedure to return the product of a vector and a scalar. *)
+
+PROCEDURE divScalar
+  ( VAR result : ProtoVector; v : ProtoVector; scalar : ComponentType );
+(* Required procedure to return the quotient of a vector and a scalar. *)
+
+
+(* Relational Operations *)
 
 PROCEDURE [=] isEqual ( v1, v2 : ProtoVector ) : BOOLEAN;
-(* procedure to bind to the = operator for operands of the ADT *)
+(* Required function to test the equality of two vectors. *)
 
-(* The operation for the # operator is synthesized as NOT (v1 = v2) *)
+(* The operation for # is synthesised from this binding. *)
+
+
+(* Inhibited Bindings *)
+
+PROCEDURE [TMIN] = NONE; (* inhibited *)
+(* Vector ADTs may not be required to bind to TMIN. *)
+
+PROCEDURE [TMAX] = NONE; (* inhibited *)
+(* Vector ADTs may not be required to bind to TMAX. *)
+
+PROCEDURE [SXF] = NONE; (* inhibited *)
+(* Vector ADTs may not be required to bind to SXF. *)
+
+PROCEDURE [VAL] = NONE; (* inhibited *)
+(* Vector ADTs may not be required to bind to VAL. *)
+
+PROCEDURE [ABS] = NONE; (* inhibited *)
+(* Vector ADTs may not be required to bind to ABS. *)
+
+PROCEDURE [ODD] = NONE; (* inhibited *)
+(* Vector ADTs may not be required to bind to ODD. *)
+
+PROCEDURE [/] = NONE; (* inhibited *)
+(* Vector ADTs may not be required to bind to / (division). *)
+
+PROCEDURE [<] = NONE; (* inhibited *)
+(* Vector ADTs may not be required to bind to < (less-than). *)
+
+PROCEDURE [>] = NONE; (* inhibited *)
+(* Vector ADTs may not be required to bind to > (greater-than). *)
 
 
 END ProtoVector.
