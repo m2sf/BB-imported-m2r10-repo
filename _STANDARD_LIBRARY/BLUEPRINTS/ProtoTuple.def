@@ -88,7 +88,7 @@ PROCEDURE [RELEASE] release ( VAR tuple : ProtoTuple );
 (* Binding to STORE *)
 
 PROCEDURE [STORE] storeValue
- ( tuple : ProtoTuple; index : IndexType; value : ComponentType );
+  ( tuple : ProtoTuple; index : IndexType; value : ComponentType );
 (* Required procedure to overwrite a tuple component at a given index. *)
 
 
@@ -97,7 +97,7 @@ PROCEDURE [STORE] storeValue
 (* Binding to RETRIEVE *)
 
 PROCEDURE [RETRIEVE] valueAtIndex
- ( tuple : ProtoTuple; index : IndexType ) : ComponentType;
+  ( tuple : ProtoTuple; index : IndexType ) : ComponentType;
 (* Required function to return the tuple component at a given index. *)
 
 
