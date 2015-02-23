@@ -20,9 +20,22 @@ TYPE
 
 (* Constants *)
 
+(* Classification *)
+
+CONST [TCOMP] isComputational = TRUE;
+
+CONST [TNUM] isNumeric = TRUE;
+
+CONST isScalar = TRUE;
+
+CONST isCountable = FALSE;
+
+
+(* Scalar Properties *)
+
 CONST [TSIGNED] isSigned = TRUE;
 
-CONST [TBASE] base = 10; (* decimal *)
+CONST [TBASE] base = 10; (* decimal encoding *)
 
 CONST [TPRECISION] precision = 29; (* base-10 digits *)
 
