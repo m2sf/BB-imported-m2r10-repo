@@ -17,7 +17,7 @@ TYPE PROPERTY =
 (* Replaced by TRUE if type T has property p, otherwise FALSE. *)
 
 
-(* Memory Management Properties *)
+(* Querying Memory Management Properties *)
 
 (* MACRO *) PROCEDURE TDYN ( T : <TypeIdent> ) : BOOLEAN;
 (* Replaced by TRUE if type T uses dynamic allocation, otherwise FALSE. *)
@@ -26,7 +26,7 @@ TYPE PROPERTY =
 (* Replaced by TRUE if type T is reference counted, otherwise FALSE. *)
 
 
-(* Collection Properties *)
+(* Querying Collection Properties *)
 
 (* MACRO *) PROCEDURE TNIL ( <CollectionType> ) : BOOLEAN;
 (* Replaced by TRUE if type T supports storage of NIL as a value,
@@ -38,7 +38,7 @@ TYPE PROPERTY =
    identifier of a collection type will cause a compile time error. *)
 
 
-(* Scalar Properties *)
+(* Querying Scalar Properties *)
 
 (* MACRO *) PROCEDURE TBASE ( T : <ScalarType> ) : CARDINAL;
 (* Replaced by the radix of type T. *)
