@@ -22,13 +22,13 @@ TYPE PROPERTY =
 (* MACRO *) PROCEDURE TDYN ( T : <TypeIdent> ) : BOOLEAN;
 (* Replaced by TRUE if type T uses dynamic allocation, otherwise FALSE. *)
 
-(* MACRO *) PROCEDURE TREFC ( <Type> ) : BOOLEAN;
+(* MACRO *) PROCEDURE TREFC ( T : <TypeIdent> ) : BOOLEAN;
 (* Replaced by TRUE if type T is reference counted, otherwise FALSE. *)
 
 
 (* Querying Collection Properties *)
 
-(* MACRO *) PROCEDURE TNIL ( <CollectionType> ) : BOOLEAN;
+(* MACRO *) PROCEDURE TNIL ( T : <CollectionTypeIdent> ) : BOOLEAN;
 (* Replaced by TRUE if type T supports storage of NIL as a value,
    otherwise FALSE. *)
 
@@ -40,21 +40,21 @@ TYPE PROPERTY =
 
 (* Querying Scalar Properties *)
 
-(* MACRO *) PROCEDURE TBASE ( T : <ScalarType> ) : CARDINAL;
+(* MACRO *) PROCEDURE TBASE ( T : <ScalarTypeIdent> ) : CARDINAL;
 (* Replaced by the radix of type T. *)
 
-(* MACRO *) PROCEDURE TPRECISION ( T : <ScalarType> ) : CARDINAL;
+(* MACRO *) PROCEDURE TPRECISION ( T : <ScalarTypeIdent> ) : CARDINAL;
 (* Replaced by the precision of type T.*)
 
 (* The precision of a scalar is the number of digits of the longest
    significand that can be encoded by the type.  The replacement
    value always indicates the digits for the radix of the type. *)
 
-(* MACRO *) PROCEDURE TMINEXP ( T : <ScalarType> ) : INTEGER;
+(* MACRO *) PROCEDURE TMINEXP ( T : <ScalarTypeIdent> ) : INTEGER;
 (* Replaced by the smallest exponent that can be encoded by type T.
    The value is zero for countable types. *)
 
-(* MACRO *) PROCEDURE TMAXEXP ( <ScalarType> ) : CARDINAL;
+(* MACRO *) PROCEDURE TMAXEXP ( T : <ScalarTypeIdent> ) : CARDINAL;
 (* Replaced by the largest exponent that can be encoded by type T.
    The value is zero for countable types. *)
 
