@@ -2,8 +2,6 @@
 
 DEFINITION MODULE TPROPERTIES;
 
-(* Macros to query lower level properties of types *)
-
 (* Classification *)
 
 TYPE TPROPERTIES = SET OF PROPERTY;
