@@ -4,85 +4,64 @@ DEFINITION MODULE TPROPERTIES;
 
 (* Macros to query lower level properties of types *)
 
+(* Classification *)
 
-(* General Properties *)
+TYPE TPROPERTIES = SET OF PROPERTY;
 
-(* MACRO *) PROCEDURE TDYN ( <Type> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument is dynamic, FALSE if it is static. *)
+TYPE PROPERTY =
+  ( isComputational, isNumber, isScalar, isCountable, isSigned,
+    isCollection, isIndexed, isRigid, isSet, isMultiSet, isDict, isMultiDict );
+
+
+(* Querying Classification Properties *)
+
+(*MACRO*) PROCEDURE TPROPERTY ( T : <TypeIdent>; p : PROPERTY ) : BOOLEAN;
+(* Replaced by TRUE if type T has property p, otherwise FALSE. *)
+
+
+(* Memory Management Properties *)
+
+(* MACRO *) PROCEDURE TDYN ( T : <TypeIdent> ) : BOOLEAN;
+(* Replaced by TRUE if type T uses dynamic allocation, otherwise FALSE. *)
 
 (* MACRO *) PROCEDURE TREFC ( <Type> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument is reference counted, otherwise FALSE. *)
-
-(* MACRO *) PROCEDURE TCOMP ( <Type> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument is computational, otherwise FALSE. *)
-
-(* MACRO *) PROCEDURE TBDFOR ( <Type> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed as
-   its argument supports bidirectional FOR loop iteration, otherwise FALSE. *)
+(* Replaced by TRUE if type T is reference counted, otherwise FALSE. *)
 
 
 (* Collection Properties *)
 
 (* MACRO *) PROCEDURE TNIL ( <CollectionType> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument supports storage of NIL as a value, otherwise FALSE. *)
-
-(* MACRO *) PROCEDURE TBYIDX ( <CollectionType> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument is an indexed collection type, otherwise FALSE. *)
-
-(* MACRO *) PROCEDURE TBYKEY ( <CollectionType> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument is a key/value storage type, otherwise FALSE. *)
-
-(* MACRO *) PROCEDURE TBYVAL ( <CollectionType> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument is a value-only storage type, otherwise FALSE. *)
-
-(* MACRO *) PROCEDURE TRIGID ( <IndexedCollectionType> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument does not support append, insert and remove operations,
+(* Replaced by TRUE if type T supports storage of NIL as a value,
    otherwise FALSE. *)
 
-(* Any invocation of the above macros with an argument that is not an
+(* For macro TLIMIT, see documentation module PREDEFINED.def *)
+
+(* Any invocation of the above macro with an argument that is not an
    identifier of a collection type will cause a compile time error. *)
 
 
-(* Numeric Properties *)
+(* Scalar Properties *)
 
-(* MACRO *) PROCEDURE TNUM ( <Type> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument is numeric, otherwise FALSE. *)
+(* MACRO *) PROCEDURE TBASE ( T : <ScalarType> ) : CARDINAL;
+(* Replaced by the radix of type T. *)
 
-(* Inspecting the number representation of scalar types *)
+(* MACRO *) PROCEDURE TPRECISION ( T : <ScalarType> ) : CARDINAL;
+(* Replaced by the precision of type T.*)
 
-(* MACRO *) PROCEDURE TSIGNED ( <NumericScalarType> ) : BOOLEAN;
-(* An invocation of the macro is replaced by TRUE if the type passed
-   as its argument is signed, otherwise FALSE. *)
+(* The precision of a scalar is the number of digits of the longest
+   significand that can be encoded by the type.  The replacement
+   value always indicates the digits for the radix of the type. *)
 
-(* MACRO *) PROCEDURE TBASE ( <NumericScalarType> ) : CARDINAL;
-(* An invocation of the macro is replaced by the radix of the type
-   passed as its argument. *)
+(* MACRO *) PROCEDURE TMINEXP ( T : <ScalarType> ) : INTEGER;
+(* Replaced by the smallest exponent that can be encoded by type T.
+   The value is zero for countable types. *)
 
-(* MACRO *) PROCEDURE TPRECISION ( <NumericScalarType> ) : CARDINAL;
-(* An invocation of the macro is replaced by the precision of the type
-   passed as its argument.  The precision is the number of digits of the
-   longest significand that can be encoded by the type.  The replacement
-   value always indicates the digits in the radix of the type. *)
+(* MACRO *) PROCEDURE TMAXEXP ( <ScalarType> ) : CARDINAL;
+(* Replaced by the largest exponent that can be encoded by type T.
+   The value is zero for countable types. *)
 
-(* MACRO *) PROCEDURE TMINEXP ( <NumericScalarType> ) : INTEGER;
-(* An invocation of the macro is replaced by the smallest exponent that
-   can be encoded by the type.  The value is zero for ordinal types. *)
-
-(* MACRO *) PROCEDURE TMAXEXP ( <NumericScalarType> ) : CARDINAL;
-(* An invocation of the macro is replaced by the largest exponent that
-   can be encoded by the type.  The value is zero for ordinal types. *)
-
-(* Any invocation of scalar property macros with an argument that is not an
-   identifier of a numeric scalar type will cause a compile time error. *)
+(* Any invocation of scalar property macros with an argument that is
+   not an identifier of a scalar type will cause a compile time error. *)
 
 
 END TPROPERTIES.
