@@ -10,31 +10,16 @@ BLUEPRINT ProtoScalar [ProtoNumeric];
 MODULE TYPE = RECORD;
 (* All scalar ADTs shall be statically allocatable. *)
 
-LITERAL = INTEGER | REAL;
-(* Integer or real number literals may be used. *)
+TPROPERTIES = isComputational, isNumber, isScalar | isCountable , isSigned;
+(* Sclalar ADTs are always scalar, possibly countable and possibly signed. *)
+
+TLITERAL = wholeNumberLiteral | realNumberLiteral;
+(* Scalar ADTs are either compatible with whole or real number literals. *)
 
 
 (* Required Constants *)
 
-(* Classification *)
-
-CONST [TCOMP] isComputational = TRUE;
-(* Scalar ADTs are always computational. *)
-
-CONST [TNUM] isNumeric = TRUE;
-(* Scalar ADTs are always numeric. *)
-
-CONST isScalar = TRUE;
-(* Sclalar ADTs are always scalar. *)
-
-CONST isCountable : BOOLEAN;
-(* Scalar ADTs shall define whether they are countable or not. *)
-
-
 (* Scalar Properties *)
-
-CONST [TSIGNED] isSigned : BOOLEAN;
-(* Scalar ADTs shall define whether they are signed or unsigned. *)
 
 CONST [TBASE] base : CARDINAL; (* either 2 or 10. *)
 (* Scalar ADTs shall define the radix in which values are encoded. *) 
