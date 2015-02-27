@@ -4,8 +4,6 @@ DEFINITION MODULE TPROPERTIES;
 
 (* Classification *)
 
-TYPE TPROPERTIES = SET OF PROPERTY;
-
 TYPE PROPERTY =
   ( isComputational, isNumber, isScalar, isCountable, isSigned,
     isCollection, isIndexed, isRigid, isSet, isMultiSet, isDict, isMultiDict );
@@ -57,6 +55,8 @@ TYPE PROPERTY =
 (* MACRO *) PROCEDURE TMAXEXP ( T : <ScalarTypeIdent> ) : CARDINAL;
 (* Replaced by the largest exponent that can be encoded by type T.
    The value is zero for countable types. *)
+
+(* For macros TMIN and TMAX, see documentation module PREDEFINED.def *)
 
 (* Any invocation of scalar property macros with an argument that is
    not an identifier of a scalar type will cause a compile time error. *)
