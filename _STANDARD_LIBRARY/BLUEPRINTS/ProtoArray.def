@@ -11,8 +11,11 @@ REFERENTIAL IndexType, ValueType, HandlerType, LoopBodyType;
 
 MODULE TYPE = OPAQUE;
 
-LITERAL = { ARGLIST OF ValueType };
-(* Array literals with a variable number of values are compatible. *)
+TPROPERTIES = isCollection, isIndexed;
+(* Array ADTs are indexed collections. *)
+
+TLITERAL = { ARGLIST OF ValueType };
+(* Array literals with a variable number of values shall be compatible. *)
 
 
 (* Required Constants *)
@@ -41,15 +44,6 @@ CONST [TLIMIT] capacityLimit : LONGCARD;
 (* This value may be queried by invoking TLIMIT(ArrayADT) *)
 
 
-(* Value Access Model *)
-
-CONST [TBYIDX] valueAccessByIndex = TRUE;
-(* Constant to indicate that conforming ADTs shall access values by index.
-   Its value is always TRUE for array ADTs. *)
-
-(* This value may be queried by invoking TBYIDX(ArrayADT) *)
-
-
 (* NIL Storage *)
 
 CONST [TNIL] supportsNilStorage : BOOLEAN;
@@ -61,11 +55,9 @@ CONST [TNIL] supportsNilStorage : BOOLEAN;
 
 (* Iteration Order *)
 
-CONST [TBDFOR] bidirectionalIteration = TRUE;
+CONST * bidirectionalForLoop = TRUE;
 (* Constant to define whether conforming ADTs shall support descending
-   FOR loop iteration.  Its value is always TRUE for array ADTs. *)
-
-(* This value may be queried by invoking TBDFOR(ArrayADT) *)
+   FOR loop iteration.  This value is always TRUE for array ADTs. *)
 
 
 (* Invalid Accessor Retrieval Intercept *)
@@ -323,16 +315,6 @@ PROCEDURE [REMOVE|*] removeAllValues ( array : ProtoArray );
    COPY array := EMPTY; *)
 
 
-(* Copying *)
-
-(* Copying is synthesised from bindings to STORE and RETRIEVE. *)
-
-
-(* Concatenation *)
-
-(* Concatenation is synthesised from bindings to STORE and RETRIEVE. *)
-
-
 (* Iteration *)
 
 (* Binding to FOR *)
@@ -396,10 +378,15 @@ PROCEDURE [<] = NONE; (* inhibited *)
 
 PROCEDURE [>] = NONE; (* inhibited *)
 
+
+(* Set Operations *)
+
 (* Set operations are not meaningful for array ADTs.  Conforming blueprints
    may not require binding to these operations. *)
 
 PROCEDURE [SUBSET] = NONE; (* inhibited *)
+
+PROCEDURE [\] = NONE; (* inhibited *)
 
 
 END ProtoArray.
