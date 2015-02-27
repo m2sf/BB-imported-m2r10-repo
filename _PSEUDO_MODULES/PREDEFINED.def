@@ -5,7 +5,7 @@
 (* Pseudo Module to Document Predefined Constants, Types and Macros *)
 
 
-(* Predefined constants (4) *)
+(* Predefined Constants (4) *)
 
 CONST NIL = <target dependent value>; (* usually 0 :: ADDRESS *)
 (* Invalid pointer value, compatible with all pointer types. *)
@@ -20,7 +20,7 @@ CONST FALSE = BOOLEAN.FALSE;
 (* Boolean truth value 'false'. *)
 
 
-(* Predefined types (10) *)
+(* Predefined Types (10) *)
 
 TYPE BOOLEAN = ( FALSE, TRUE );
 (* Boolean type. *)
@@ -54,7 +54,7 @@ TYPE LONGREAL = <implementation or target dependent real number range>;
 (* Real number type with precision equal to or higher than REAL. *)
 
 
-(* Predefined proper procedures (8) *)
+(* Predefined Proper Procedures (8) *)
 
 PROCEDURE STORE
   ( VAR target : <Array>; index : <IndexType>; value : <ValueType> );
@@ -78,8 +78,7 @@ PROCEDURE INSERT
    inserts values val1, val2, val3, ... at index into target array. *)
 
 PROCEDURE INSERT
-  ( VAR target : <Set>;
-    elements : ARGLIST >0 OF <ElementType> );
+  ( VAR target : <Set>; elements : ARGLIST >0 OF <ElementType> );
 (* INSERT(set, elem1, elem2, elem3, ...)
    inserts elements elem1, elem2, elem3, ... into target set. *)
 
@@ -109,7 +108,7 @@ PROCEDURE REMOVE
 PROCEDURE SORT
   ( VAR result : <Array>; source : <Collection>; (*OPT*) order : CHAR );
 (* SORT(array, collection)
-   => SORT(array, collection, "+")
+   => SORT(array, collection, order)
    
    SORT(array, collection, "+")
    populates array with accessors of collection,
@@ -137,7 +136,7 @@ PROCEDURE WRITEF
    => typeOf(v).WriteF(f, fmt, v1, v2, ...). *)
 
 
-(* Predefined function procedures (18) *)
+(* Predefined Function Procedures (14) *)
 
 PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
 (* Returns sign reversed value of x if sign of x is negative. *)
@@ -185,22 +184,25 @@ PROCEDURE RETRIEVE ( d : <Dictionary>; k : <KeyType>; n : CARDINAL ) : <ReturnTy
 (* Returns the n-th value stored for key k in dictionary d. *)
 
 PROCEDURE MIN ( arglist : ARGLIST >0 OF <T> ) : <T>;
-(* Returns smallest value from arglist. *)
+(* Returns smallest value from arglist. T must be scalar or ordinal. *)
 
 PROCEDURE MAX ( arglist : ARGLIST >0 OF <T> ) : <T>;
-(* Returns largest value from arglist. *)
+(* Returns largest value from arglist. T must be scalar or ordinal. *)
 
-PROCEDURE TMIN ( T : <TypeIdentifier> ) : <T>;
-(* Returns smallest legal value of type T. *)
 
-PROCEDURE TMAX ( T : <TypeIdentifier> ) : <T>;
-(* Returns largest legal value of type T. *)
+(* Compile-Time Macros (4) *)
 
-PROCEDURE TLIMIT ( T : <SetOrCollectionTypeIdentifier> ) : LONGCARD;
-(* Returns capacity limit of a set, array or collection type. *)
+(* MACRO *) PROCEDURE TMIN ( T : <ScalarOrOrdinalTypeIdentifier> ) : <T>;
+(* Replaced by smallest legal value of scalar or ordinal type T. *)
 
-PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
-(* Returns allocation size required for a variable of type T. *)
+(* MACRO *) PROCEDURE TMAX ( T : <ScalarOrOrdinalTypeIdentifier> ) : <T>;
+(* Replaced by largest legal value of scalar or ordinal type T. *)
+
+(* MACRO *) PROCEDURE TLIMIT ( T : <CollectionTypeIdentifier> ) : LONGCARD;
+(* Replaced by capacity limit of collection type T. *)
+
+(* MACRO *) PROCEDURE TSIZE ( T : <TypeIdentifier> ) : LONGCARD;
+(* Replaced by allocation size required for a variable of type T. *)
 
 
 END PREDEFINED.
