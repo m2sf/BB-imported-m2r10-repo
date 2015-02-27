@@ -1,6 +1,6 @@
 (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Specialised Blueprint for Dynamically Allocatable Array ADTs *)
+(* Specialised Blueprint for Dynamically Allocatable Set ADTs *)
 
 BLUEPRINT ProtoSet [ProtoCollection];
 
@@ -11,8 +11,10 @@ REFERENTIAL ElementType, CounterType, LoopBodyType;
 
 MODULE TYPE = OPAQUE;
 
-LITERAL = { ARGLIST OF ElementType };
-(* Set literals with a variable number of elements are compatible. *)
+TPROPERTIES = isCollection, isSet;
+
+TLITERAL = { ARGLIST OF ElementType };
+(* Set literals with a variable number of elements shall be compatible. *)
 
 
 (* Required Constants *)
@@ -41,15 +43,6 @@ CONST [TLIMIT] capacityLimit : LONGCARD;
 (* This value may be queried by invoking TLIMIT(SetADT) *)
 
 
-(* Value Access Model *)
-
-CONST [TBYVAL] valueAccessByValue = TRUE;
-(* Constant to indicate that conforming ADTs shall access values by value.
-   Its value is always TRUE for set ADTs. *)
-
-(* This value may be queried by invoking TBYVAL(SetADT) *)
-
-
 (* NIL Storage *)
 
 CONST [TNIL] supportsNilStorage : BOOLEAN;
@@ -59,20 +52,18 @@ CONST [TNIL] supportsNilStorage : BOOLEAN;
 (* This value may be queried by invoking TNIL(SetADT) *)
 
 
-(* Iteration Order *)
-
-CONST [TBDFOR] bidirectionalIteration = FALSE;
-(* Constant to define whether conforming ADTs shall support descending
-   FOR loop iteration.  Its value is always FALSE for ProtoSet ADTs. *)
-
-(* This value may be queried by invoking TBDFOR(SetADT) *)
-
-
 (* Maximum Multiplicity *)
 
-CONST maxMultiplicity = TMAX(CounterType);
+CONST maxMultiplicity = 1;
 (* Required to define how many times any given element is permitted to be
-   stored in a set.  Its value is determined by the ADT's counter type. *)
+   stored in a set.  Its value is always one for ProtoSet ADTs. *)
+
+
+(* Iteration Order *)
+
+CONST * bidirectionalIteration = FALSE;
+(* Constant to define whether conforming ADTs shall support descending
+   FOR loop iteration.  Its value is always FALSE for ProtoSet ADTs. *)
 
 
 (* Optional Features *)
@@ -261,11 +252,6 @@ PROCEDURE [REMOVE|*] removeAllElements ( VAR ProtoSet : SetADT );
 (* Supports use case:
    
    COPY set := EMPTY; *)
-
-
-(* Copying *)
-
-(* Copying is synthesised from bindings to STORE and RETRIEVE. *)
 
 
 (* Iteration *)
