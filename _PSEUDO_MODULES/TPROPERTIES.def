@@ -27,6 +27,13 @@ TYPE LITERAL =
 (* Replaced by TRUE if literal L is compatible with type T, otherwise FALSE. *)
 
 
+(* Querying Built-in Status *)
+
+(* MACRO *) PROCEDURE TBUILTIN ( T : <TypeIdent> ) : BOOLEAN;
+(* Replaced by TRUE if type T is a built-in type
+   or an alias or a subrange of a built-in type, otherwise FALSE. *)
+
+
 (* Querying Memory Management Properties *)
 
 (* MACRO *) PROCEDURE TDYN ( T : <TypeIdent> ) : BOOLEAN;
