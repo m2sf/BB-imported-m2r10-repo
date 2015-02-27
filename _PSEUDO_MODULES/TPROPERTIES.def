@@ -8,11 +8,23 @@ TYPE PROPERTY =
   ( isComputational, isNumber, isScalar, isCountable, isSigned,
     isCollection, isIndexed, isRigid, isSet, isMultiSet, isDict, isMultiDict );
 
+(* Literal Compatibility *)
+
+TYPE LITERAL =
+  ( charLiteral, unicharLiteral, stringLiteral, unistringLiteral,
+    wholeNumberLiteral, realNumberLiteral );
+
 
 (* Querying Classification Properties *)
 
 (* MACRO *) PROCEDURE TPROPERTY ( T : <TypeIdent>; p : PROPERTY ) : BOOLEAN;
 (* Replaced by TRUE if type T has property p, otherwise FALSE. *)
+
+
+(* Querying Literal Compatibility *)
+
+(* MACRO *) PROCEDURE TLITERAL ( T : <TypeIdent>; L : LITERAL ) : BOOLEAN;
+(* Replaced by TRUE if literal L is compatible with type T, otherwise FALSE. *)
 
 
 (* Querying Memory Management Properties *)
