@@ -10,7 +10,7 @@ BLUEPRINT ProtoScalar [ProtoNumeric];
 MODULE TYPE = RECORD;
 (* All scalar ADTs shall be statically allocatable. *)
 
-TPROPERTIES = isComputational, isNumber, isScalar | isCountable , isSigned;
+TPROPERTIES = isComputational, isNumber, isScalar | isCountable, isSigned;
 (* Sclalar ADTs are scalar. Countability and signedness to be determined. *)
 
 TLITERAL = wholeNumberLiteral | realNumberLiteral;
