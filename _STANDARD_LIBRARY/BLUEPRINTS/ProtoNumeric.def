@@ -10,7 +10,8 @@ BLUEPRINT ProtoNumeric [ProtoComputational];
 MODULE TYPE = RECORD;
 (* All numeric ADTs shall be statically allocatable. *)
 
-TPROPERTIES = isComputational, isNumber | isScalar;
+TPROPERTIES = isComputational, isNumber | isScalar?;
+(* Numeric ADTs may be scalars or non-scalars. *)
 
 
 (* Required Constants *)
