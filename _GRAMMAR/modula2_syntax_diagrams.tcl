@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Feb 23, 2015
+# Syntax diagram generator for Modula-2 (R10), status Feb 28, 2015
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -92,10 +92,13 @@ wm withdraw .
 #
 # Rendering of terminals, non-terminals and tokens
 #
-#   names starting with a lowercase letter are rendered as non-terminals
-#   names starting with a uppercase letter are rendered as terminals
-#   names preceded by a / are rendered as tokens with / stripped off
-#   any other characters or character sequences are rendered as tokens
+#   Symbols are rendered according to their category:
+#   (1) reserved words, names in all uppercase letters
+#   (2) reserved identifier, names in all uppercase letters preceded by /
+#   (3) other terminals, mixed case names with a leading uppercase letter
+#   (4) non-terminals, mixed case names with a leading lowercase letter
+#   (5) single letter tokens, a single letter preceded by ?
+#   (6) special symbol tokens, any other characters or character sequences
 #
 # Special names for tokens that TCL cannot handle verbatim
 #
@@ -107,10 +110,11 @@ wm withdraw .
 #
 # Rendering parameters
 #
-#   LWIDTH - line width
-#   TERMFONT - font/size/style used to render terminals
-#   NONTERMFONT - font/size/style used to render non-terminals
-#   TOKENFONT - font/size/style used to render tokens
+#   RES_WORD_FONT - font/size/style used to render reserved words
+#   RES_IDENT_FONT - font/size/style used to render reserved identifiers
+#   TERM_FONT - font/size/style used to render any other terminals
+#   NON_TERM_FONT - font/size/style used to render non-terminals
+#   TOKEN_FONT - font/size/style used to render tokens
 #   RADIUS - turn radius for arcs
 #   HSEP - horizontal separation
 #   VSEP - vertical separation
@@ -160,7 +164,7 @@ lappend non_terminals compilationUnit {
 # (2) Program or Implementation Module
 lappend non_terminals programModule {
   line MODULE moduleIdent ;
-  {loop nil {nil importList nil}} block moduleIdent .
+  {loop nil {nil importList ;}} block moduleIdent .
 }
 
 # (2.1) Module Identifier
@@ -168,12 +172,17 @@ lappend non_terminals moduleIdent {
   line Ident
 }
 
+# (2.2) Import List
+lappend non_terminals importList {
+  or libGenDirective importDirective
+}
+
 # (3) Definition Module
 lappend non_terminals definitionModule {
   stack
     {line DEFINITION MODULE moduleIdent}
     {line {optx [ blueprintToObey ]} {optx FOR typeToExtend} ;}
-    {line {loop nil {nil importList nil}} {loop nil {nil definition nil}}
+    {line {loop nil {nil importList ;}} {loop nil {nil definition nil}}
       END moduleIdent .}
 }
 
@@ -200,7 +209,8 @@ lappend non_terminals blueprint {
     {line
       {optx [ blueprintToRefine ]} {optx FOR blueprintForTypeToExtend} ;}
     {line
-      {optx REFERENTIAL identList ;} moduleTypeSpec ;}
+      {optx REFERENTIAL identList ;}
+      MODULE TYPE = {or moduleTypeSpec NONE} ;}
     {line
       {loop nil {nil requirement ;}}
       END blueprintIdent .}
@@ -216,36 +226,52 @@ lappend non_terminals blueprintForTypeToExtend {
   line blueprintIdent
 }
 
-# (5) Module Type Specification
+# (5) Identifier List
+lappend non_terminals identList {
+  loop Ident ,
+}
+
+# (6) Module Type Specification
 lappend non_terminals moduleTypeSpec {
-  line MODULE TYPE = {
-    or
-      {line {or OPAQUE RECORD} {optx ; literalSpec}}
-      NONE
-    }
+  line {or OPAQUE RECORD} {optx ; propertySpec} {optx ; literalSpec}
 }
 
-# (6) Literal Specification
+# (7) Property Specification
+lappend non_terminals propertySpec {
+  line /TPROPERTIES = determinedProperties {optx | propertiesToDetermine}
+}
+
+# (7.1) Determined Properties
+lappend non_terminals determinedProperties {
+  line identList 
+}
+
+# (7.2) Properties To Determine
+lappend non_terminals propertiesToDetermine {
+  line identList 
+}
+
+# (8) Literal Specification
 lappend non_terminals literalSpec {
-  line LITERAL = {loop protoLiteral |} 
+  line /TLITERAL = {loop protoLiteral |} 
 }
 
-# (6.1) Proto Literal
+# (8.1) Proto Literal
 lappend non_terminals protoLiteral {
   or simpleProtoLiteral structuredProtoLiteral 
 }
 
-# (6.2) Simple Proto Literal
+# (8.2) Simple Proto Literal
 lappend non_terminals simpleProtoLiteral {
-  or /CHAR /UNICHAR /INTEGER /REAL referentialIdent
+  line literalOrReferential
 }
 
-# (6.3) Referential Identifier
-lappend non_terminals referentialIdent {
+# (8.3) Literal Or Referential Identifier
+lappend non_terminals literalOrReferential {
   line Ident 
 }
 
-# (7) Structured Proto Literal
+# (9) Structured Proto Literal
 lappend non_terminals structuredProtoLiteral {
   line LBRACE {
     or
@@ -258,68 +284,83 @@ lappend non_terminals structuredProtoLiteral {
   } RBRACE
 }
 
-# (7.1) Required Value Count
+# (9.1) Required Value Count
 lappend non_terminals reqValueCount {
   line {optx greaterThan} wholeNumber
 }
 
-# (7.2) Greater Than
+# (9.2) Greater Than
 lappend non_terminals greaterThan {
   line > 
 }
 
-# (7.3) Whole Number
+# (9.3) Whole Number
 lappend non_terminals wholeNumber {
   line NumberLiteral 
 }
 
-# (8) Requirement
+# (10) Requirement
 lappend non_terminals requirement {
   line {optx condition ->}
   {or constRequirement procedureRequirement {line TYPE = procedureType}}
 }
 
-# (8.1) Condition
+# (10.1) Condition
 lappend non_terminals condition {
   line {optx NOT} boolConstIdent 
 }
 
-# (9) Constant Requirement
+# (10.2) Boolean Constant Identifier
+lappend non_terminals boolConstIdent {
+  line Ident 
+}
+
+# (11) Constant Requirement
 lappend non_terminals constRequirement {
   line CONST {
     or
       {line [ propertyToBindTo ]
         {or simpleConstRequirement {line = NONE} nil}}
-      {line {optx restrictedExport} simpleConstRequirement}
+      {line {optx constAttribute} simpleConstRequirement}
     }
 }
 
-# (9.1) Property To Bind To
+# (11.1) Property To Bind To
 lappend non_terminals propertyToBindTo {
-  or collectionPropertyIdent numericPropertyIdent generalPropertyIdent
+  or memMgtProperty scalarProperty collectionProperty
 }
 
-# (9.2) Collection Property Identifier
-lappend non_terminals collectionPropertyIdent {
-  or /TNIL /TLIMIT /TBYIDX /TBYKEY /TBYVAL /TRIGID
+# (11.2) Memory Management Property
+lappend non_terminals memMgtProperty {
+  or /TDYN /TREFC
 }
 
-# (9.3) Numeric Property Identifier
-lappend non_terminals numericPropertyIdent {
-  or /TNUM /TSIGNED /TBASE /TPRECISION /TMINEXP /TMAXEXP
+# (11.3) Scalar Property
+lappend non_terminals scalarProperty {
+  or /TBASE /TPRECISION /TMINEXP /TMAXEXP
 }
 
-# (9.4) General Property Identifier
-lappend non_terminals generalPropertyIdent {
-  or /TDYN /TREFC /TCOMP /TBDFOR
+# (11.4) Collection Property
+lappend non_terminals collectionProperty {
+  or /TNIL /TLIMIT
 }
 
-# (9.5) Restricted Export
+# (11.5) Constant Attribute
+lappend non_terminals constAttribute {
+  or ancillaryConstant restrictedExport
+}
+
+# (11.6) Ancillary Constant
+lappend non_terminals ancillaryConstant {
+  line ~
+}
+
+# (11.7) Restricted Export
 lappend non_terminals restrictedExport {
   line *
 }
 
-# (10) Simple Constant Requirement
+# (12) Simple Constant Requirement
 lappend non_terminals simpleConstRequirement {
   line Ident {
     or
@@ -328,12 +369,17 @@ lappend non_terminals simpleConstRequirement {
     }
 }
 
-# (10.1) Predefined Or Referential Type Identifier
+# (12.1) Constant Expression
+lappend non_terminals constExpression {
+  line expression
+}
+
+# (12.2) Predefined Or Referential Type Identifier
 lappend non_terminals predefOrRefTypeIdent {
   line Ident
 }
 
-# (11) Procedure Requirement
+# (13) Procedure Requirement
 lappend non_terminals procedureRequirement {
   line PROCEDURE {
     or
@@ -342,120 +388,125 @@ lappend non_terminals procedureRequirement {
     }
 }
 
-# (11.1) Entity To Bind To
+# (13.1) Entity To Bind To
 lappend non_terminals entityToBindTo {
   or bindableResWord bindableOperator bindableMacro
 }
 
-# (11.2) Bindable Reserved Word
+# (13.2) Bindable Reserved Word
 lappend non_terminals bindableResWord {
   or
     NEW RETAIN RELEASE COPY FOR
 }
 
-# (11.3) Bindable Operator
+# (13.3) Bindable Operator
 lappend non_terminals bindableOperator {
   or
     + - * / BACKSLASH = < > *. :: IN DIV MOD unaryMinus
 }
 
-# (11.4) Unary Minus
+# (13.4) Unary Minus
 lappend non_terminals unaryMinus {
   line + / -
 }
 
-# (11.5) Bindable Macro
+# (13.5) Bindable Macro
 lappend non_terminals bindableMacro {
   or
     /ABS /LENGTH /EXISTS /SUBSET /READ /READNEW /WRITE /WRITEF
     /TMIN /TMAX /SXF /VAL multiBindableMacro1 multiBindableMacro2
 }
 
-# (11.6) Multi-Bindable Macro 1
+# (13.6) Multi-Bindable Macro 1
 lappend non_terminals multiBindableMacro1 {
   line {or /COUNT /RETRIEVE} {optx bindingDifferentiator1}
 }
 
-# (11.7) Multi-Bindable Macro 2
-lappend non_terminals multiBindableMacro2 {
-  line {or /STORE /INSERT /REMOVE} {optx bindingDifferentiator2}
-}
-
-# (11.8) Binding Differentiator 1
+# (13.7) Binding Differentiator 1
 lappend non_terminals bindingDifferentiator1 {
   line | #
 }
 
-# (11.9) Binding Differentiator 2
+# (13.8) Multi-Bindable Macro 2
+lappend non_terminals multiBindableMacro2 {
+  line {or /STORE /INSERT /REMOVE} {optx bindingDifferentiator2}
+}
+
+# (13.9) Binding Differentiator 2
 lappend non_terminals bindingDifferentiator2 {
   line | {or , # *}
 }
 
-# (12) Import List
-lappend non_terminals importList {
-  line {or libGenDirective importDirective} ;
-}
-
-# (13) Library Generation Directive
+# (14) Library Generation Directive
 lappend non_terminals libGenDirective {
   line GENLIB libIdent FROM template
   FOR {loop {line placeholder = replacement} ;} END
 }
 
-# (13.1) Library Identifier
+# (14.1) Library Identifier
 lappend non_terminals libIdent {
   line Ident
 }
 
-# (13.2) Template
+# (14.2) Template
 lappend non_terminals template {
   line Ident
 }
 
-# (13.3) Placeholder
+# (14.3) Placeholder
 lappend non_terminals placeholder {
   line Ident
 }
 
-# (13.4) Replacement
+# (14.4) Replacement
 lappend non_terminals replacement {
   or NumberLiteral StringLiteral ChevronText
 }
 
-# (14) Import Directive
+# (15) Import Directive
 lappend non_terminals importDirective {
   or
     {line IMPORT modulesToImport}
-    {line FROM moduleOrEnumIdent IMPORT {or identsToImport *}}
+    {line FROM moduleOrEnumIdent IMPORT {or identifiersToImport importAll}}
 }
 
-# (14.1) Modules To Import
+# (15.1) Modules To Import
 lappend non_terminals modulesToImport {
-  line identsToImport
+  line identifiersToImport
 }
 
-# (14.2) Identifiers To Import
-lappend non_terminals identsToImport {
-  loop {line Ident {optx reExport}} ,
-}
-
-# (14.3) Re-Export
-lappend non_terminals reExport {
-  line +
-}
-
-# (14.4) Module Or Enumeration Identifier
+# (15.2) Module Or Enumeration Identifier
 lappend non_terminals moduleOrEnumIdent {
   line Ident
 }
 
-# (15) Block
+# (15.3) Identifiers To Import
+lappend non_terminals identifiersToImport {
+  loop {line Ident {optx reExport}} ,
+}
+
+# (14.4) Re-Export
+lappend non_terminals reExport {
+  line +
+}
+
+# (15.5) Import All
+lappend non_terminals importAll {
+  line *
+}
+
+# (16) Block
 lappend non_terminals block {
   line {loop nil {nil declaration nil}}
   {optx BEGIN statementSequence} END
 }
 
-# (16) Definition
+# (17) Statement Sequence
+lappend non_terminals statementSequence {
+  loop statement ;
+}
+
+# (18) Definition
 lappend non_terminals definition {
   line {
     or
@@ -466,28 +517,18 @@ lappend non_terminals definition {
   }
 }
 
-# (17) Const Definition
+# (19) Const Definition
 lappend non_terminals constDefinition {
   line {or {line [ propertyToBindTo ]} restrictedExport nil}
     Ident = constExpression
 }
 
-# (17.1) Constant Expression
-lappend non_terminals constExpression {
-  line expression
-}
-
-# (18) Variable Declaration
+# (20) Variable Declaration
 lappend non_terminals variableDeclaration {
   line identList : {optx range OF} typeIdent
 }
 
-# (19) Identifier List
-lappend non_terminals identList {
-  loop Ident ,
-}
-
-# (20) Declaration
+# (21) Declaration
 lappend non_terminals declaration {
   line {
     or
@@ -498,7 +539,7 @@ lappend non_terminals declaration {
   }
 }
 
-# (21) Type
+# (22) Type
 lappend non_terminals type {
   line {
     or
@@ -513,7 +554,12 @@ lappend non_terminals type {
   }
 }
 
-# (21.1) Derived Sub-Type
+# (22.1) Type Identifier
+lappend non_terminals typeIdent {
+  line qualident
+}
+
+# (22.2) Derived Sub-Type
 lappend non_terminals derivedSubType {
   or
     {line ALIAS OF typeIdent}
@@ -521,67 +567,62 @@ lappend non_terminals derivedSubType {
     {line CONST dynamicTypeIdent}
 }
 
-# (21.2) Type Identifier
-lappend non_terminals typeIdent {
-  line qualident
-}
-
-# (21.3) Ordinal Or Scalar Type
+# (22.3) Ordinal Or Scalar Type
 lappend non_terminals ordinalOrScalarType {
   line typeIdent
 }
 
-# (21.4) Dynamic Type Identifier
+# (22.4) Dynamic Type Identifier
 lappend non_terminals dynamicTypeIdent {
   line typeIdent
 }
 
-# (22) Range
+# (23) Range
 lappend non_terminals range {
   line [ {optx greaterThan} constExpression .. {optx lessThan} constExpression ]
 }
 
-# (22.1) Greater Than
+# (23.1) Greater Than
 lappend non_terminals greatherThan {
   line >
 }
 
-# (22.2) Less Than
+# (23.2) Less Than
 lappend non_terminals lessThan {
   line <
 }
 
-# (23) Enumeration Type
+# (24) Enumeration Type
 lappend non_terminals enumType {
   line ( {optx + enumTypeToExtend ,} identList )
 }
 
-# (23.1) Enumeration Type To Extend
+# (24.1) Enumeration Type To Extend
 lappend non_terminals enumTypeToExtend {
   line enumTypeIdent
 }
 
-# (23.2) Enumeration Type Identifier
+# (24.2) Enumeration Type Identifier
 lappend non_terminals enumTypeIdent {
   line typeIdent
 }
 
-# (24) Set Type
+# (25) Set Type
 lappend non_terminals setType {
   line SET OF enumTypeIdent
 }
 
-# (25) Array Type
+# (26) Array Type
 lappend non_terminals arrayType {
   line ARRAY {loop componentCount ,} OF typeIdent
 }
 
-# (25.1) Component Count
+# (26.1) Component Count
 lappend non_terminals componentCount {
   line constExpression
 }
 
-# (26) Record Type
+# (27) Record Type
 lappend non_terminals recordType {
   line RECORD
     {or
@@ -591,100 +632,95 @@ lappend non_terminals recordType {
   END
 }
 
-# (26.1) Record Type To Extend
+# (27.1) Record Type To Extend
 lappend non_terminals recTypeToExtend {
   line typeIdent
 }
 
-# (26.2) Field List
+# (27.2) Field List
 lappend non_terminals fieldList {
   line {optx restrictedExport} variableDeclaration
 }
 
-# (27) Indeterminate Field Declaration
+# (28) Indeterminate Field Declaration
 lappend non_terminals indeterminateField {
   line INDETERMINATE Ident : ARRAY discriminantFieldIdent OF typeIdent
 }
 
-# (27.1) Discriminant Field Identifier
+# (28.1) Discriminant Field Identifier
 lappend non_terminals discriminantFieldIdent {
   line Ident
 }
 
-# (28) Pointer Type
+# (29) Pointer Type
 lappend non_terminals pointerType {
   line POINTER TO {optx CONST} typeIdent
 }
 
-# (29) Procedure Type
+# (30) Procedure Type
 lappend non_terminals procedureType {
   line PROCEDURE {optx ( {loop formalType ,} )} {optx : returnedType}
 }
 
-# (29.1) Formal Type
+# (30.1) Formal Type
 lappend non_terminals formalType {
   or simpleFormalType attributedFormalType variadicFormalType
 }
 
-# (29.2) Returned Type
+# (30.2) Returned Type
 lappend non_terminals returnedType {
   line typeIdent
 }
 
-## (30) Simple Formal Type
-#lappend non_terminals simpleFormalType {
-#  line {optx /CAST} {optx ARRAY OF} typeIdent
-#}
-
-# (30) Simple Formal Type
+# (31) Simple Formal Type
 lappend non_terminals simpleFormalType {
   or
     {line {optx ARRAY OF} typeIdent}
     castingFormalType
 }
 
-# (30.1) Casting Formal Type
+# (31.1) Casting Formal Type
 lappend non_terminals castingFormalType {
   line /CAST {or {line ARRAY OF /OCTET} addressTypeIdent}
 }
 
-# (30.2) Address Type Identifier
+# (31.2) Address Type Identifier
 lappend non_terminals addressTypeIdent {
-  or /ADDRESS /UNSAFE.ADDRESS
+  or /ADDRESS {line /UNSAFE . /ADDRESS}
 }
 
-# (31) Attributed Formal Type
+# (32) Attributed Formal Type
 lappend non_terminals attributedFormalType {
   line {or CONST VAR NEW} {or simpleFormalType simpleVariadicFormalType}
 }
 
-# (32) Simple Variadic Formal Type
+# (33) Simple Variadic Formal Type
 lappend non_terminals simpleVariadicFormalType {
   line ARGLIST {optx numOfArgsToPass} OF
     simpleFormalType {optx {line | arglistTerminator}}
 }
 
-# (32.1) Number Of Arguments To Pass
+# (33.1) Number Of Arguments To Pass
 lappend non_terminals numOfArgsToPass {
   line {optx greaterThan} constExpression
 }
 
-# (32.2) Variadic List Terminator
+# (33.2) Variadic List Terminator
 lappend non_terminals arglistTerminator {
   or /NIL minusOne wholeNumber constQualident
 }
 
-# (32.3) Minus One
+# (33.3) Minus One (Negative One)
 lappend non_terminals minusOne {
   line - 1
 }
 
-# (32.4) Constant Qualified Identifier
+# (33.4) Constant Qualified Identifier
 lappend non_terminals constQualident {
   line qualident
 }
 
-# (33) Variadic Formal Type
+# (34) Variadic Formal Type
 lappend non_terminals variadicFormalType {
   stack
     {line ARGLIST {optx numOfArgsToPass} OF}
@@ -695,36 +731,36 @@ lappend non_terminals variadicFormalType {
     } {optx | arglistTerminator}}
 }
 
-# (34) Non-Variadic Formal Type
+# (35) Non-Variadic Formal Type
 lappend non_terminals nonVariadicFormalType {
   line {or CONST VAR NEW nil} simpleFormalType
 }
 
-# (35) Procedure Header
+# (36) Procedure Header
 lappend non_terminals procedureHeader {
   line PROCEDURE {or {line [ entityToBindTo ]} restrictedExport nil}
   procedureSignature
 }
 
-# (36) Procedure Signature
+# (37) Procedure Signature
 lappend non_terminals procedureSignature {
   line Ident {optx ( {loop formalParams ;} )} {optx : returnedType}
 }
 
-# (37) Formal Parameters
+# (38) Formal Parameters
 lappend non_terminals formalParams {
   or
     {line identList : {or simpleFormalType variadicFormalParams}}
     attributedFormalParams
 }
 
-# (38) Attributed Formal Parameters
+# (39) Attributed Formal Parameters
 lappend non_terminals attributedFormalParams {
   line {or CONST VAR NEW} identList :
     {or simpleFormalType simpleVariadicFormalType}
 }
 
-# (39) Variadic Formal Parameters
+# (40) Variadic Formal Parameters
 lappend non_terminals variadicFormalParams {
   stack
     {line ARGLIST {optx numOfArgsToPass} OF}
@@ -735,17 +771,17 @@ lappend non_terminals variadicFormalParams {
     } {optx {line | arglistTerminator}}}
 }
 
-# (40) Non-Variadic Formal Parameters
+# (41) Non-Variadic Formal Parameters
 lappend non_terminals nonVariadicFormalParams {
   line {or CONST VAR NEW nil} identList : simpleFormalType
 }
 
-# (41) Qualified Identifier
+# (42) Qualified Identifier
 lappend non_terminals qualident {
   loop Ident .
 }
 
-# (42) Statement
+# (43) Statement
 lappend non_terminals statement {
   line {
     or
@@ -760,11 +796,6 @@ lappend non_terminals statement {
       {line RETURN {optx expression}}
       EXIT
   }
-}
-
-# (43) Statement Sequence
-lappend non_terminals statementSequence {
-  loop statement ;
 }
 
 # (44) Memory Management Operation
@@ -863,14 +894,14 @@ lappend non_terminals controlVariable {
   line Ident
 }
 
-# (53.2) Ordinal Type
-lappend non_terminals ordialType {
-  line typeIdent
-}
-
-# (53.3) Ascend Or Descend
+# (53.2) Ascend Or Descend
 lappend non_terminals ascendOrDescend {
   line incOrDecSuffix
+}
+
+# (53.3) Ordinal Type
+lappend non_terminals ordialType {
+  line typeIdent
 }
 
 # (54) Designator
@@ -986,38 +1017,19 @@ lappend non_terminals expressionList {
   loop expression ,
 }
 
-# (65) Blueprint Expression
-lappend non_terminals blueprintExpression {
-  line blueprintTerm {optx {or AND OR} blueprintTerm}
-}
-
-# (66) Blueprint Term
-lappend non_terminals blueprintTerm {
-  line {optx NOT} {
-    or
-      {line ( constIdent {or = OCTOTHORPE} {or constIdent wholeNumber} ) }
-      constIdent
-    }
-}
-
-# (66.1) Constant Identifier
-lappend non_terminals constIdent {
-  line Ident
-}
-
-# (67) Structured Value
+# (65) Structured Value
 lappend non_terminals structuredValue {
   line LBRACE {loop valueComponent ,} RBRACE
 }
 
-# (68) Value Component
+# (66) Value Component
 lappend non_terminals valueComponent {
   or
     {line constExpression {optx {or BY ..} constExpression}}
     {line runtimeExpression}
 }
 
-# (68.1) Runtime Expression
+# (66.1) Runtime Expression
 lappend non_terminals runtimeExpression {
   line expression
 }
@@ -1032,7 +1044,7 @@ lappend non_terminals runtimeExpression {
 # Replacement for #2
 lappend non_terminals langExtn_programModule {
   line MODULE moduleIdent {optx ( arch ) } ;
-  {loop nil {nil importList nil}} block moduleIdent .
+  {loop nil {nil importList ;}} block moduleIdent .
 }
 
 # Architecture
@@ -1042,7 +1054,7 @@ lappend non_terminals langExtn_arch {
 
 # Register Mapping Facility
 
-# Replacement for #30
+# Replacement for #31
 lappend non_terminals langExtn_simpleFormalType {
   or
     {line typeIdent {optx regAttribute}}
@@ -1050,7 +1062,7 @@ lappend non_terminals langExtn_simpleFormalType {
     {line castingFormalType}
 }
 
-# Replacement for #30.1
+# Replacement for #31.1
 lappend non_terminals langExtn_castingFormalType {
   line /CAST {
     or
@@ -1076,7 +1088,7 @@ lappend non_terminals langExtn_registerMnemonic {
 
 # Symbolic Assembly Inline Facility
 
-# Replacement for #36
+# Replacement for #43
 lappend non_terminals langExtn_statement {
   line {
     or
@@ -1235,127 +1247,122 @@ lappend res_words INDETERMINATE {
   line INDETERMINATE
 }
 
-# (1.26) LITERAL
-lappend res_words LITERAL {
-  line LITERAL
-}
-
-# (1.27) LOOP
+# (1.26) LOOP
 lappend res_words LOOP {
   line LOOP
 }
 
-# (1.28) MOD
+# (1.27) MOD
 lappend res_words MOD {
   line MOD
 }
 
-# (1.29) MODULE
+# (1.28) MODULE
 lappend res_words MODULE {
   line MODULE
 }
 
-# (1.30) NEW
+# (1.29) NEW
 lappend res_words NEW {
   line NEW
 }
 
-# (1.31) NONE
+# (1.30) NONE
 lappend res_words NONE {
   line NONE
 }
 
-# (1.32) NOT
+# (1.31) NOT
 lappend res_words NOT {
   line NOT
 }
 
-# (1.33) OF
+# (1.32) OF
 lappend res_words OF {
   line OF
 }
 
-# (1.34) OPAQUE
+# (1.33) OPAQUE
 lappend res_words OPAQUE {
   line OPAQUE
 }
 
-# (1.35) OR
+# (1.34) OR
 lappend res_words OR {
   line OR
 }
 
-# (1.36) POINTER
+# (1.35) POINTER
 lappend res_words POINTER {
   line POINTER
 }
 
-# (1.37) PROCEDURE
+# (1.36) PROCEDURE
 lappend res_words PROCEDURE {
   line PROCEDURE
 }
 
-# (1.38) RECORD
+# (1.37) RECORD
 lappend res_words RECORD {
   line RECORD
 }
 
-# (1.39) REFERENTIAL
+# (1.38) REFERENTIAL
 lappend res_words REFERENTIAL {
   line REFERENTIAL
 }
 
-# (1.40) RELEASE
+# (1.39) RELEASE
 lappend res_words RELEASE {
   line RELEASE
 }
 
-# (1.41) REPEAT
+# (1.40) REPEAT
 lappend res_words REPEAT {
   line REPEAT
 }
 
-# (1.42) RETAIN
+# (1.41) RETAIN
 lappend res_words RETAIN {
   line RETAIN
 }
 
-# (1.43) RETURN
+# (1.42) RETURN
 lappend res_words RETURN {
   line RETURN
 }
 
-# (1.44) SET
+# (1.43) SET
 lappend res_words SET {
   line SET
 }
 
-# (1.45) THEN
+# (1.44) THEN
 lappend res_words THEN {
   line THEN
 }
 
-# (1.46) TO
+# (1.45) TO
 lappend res_words TO {
   line TO
 }
 
-# (1.47) TYPE
+# (1.46) TYPE
 lappend res_words TYPE {
   line TYPE
 }
 
-# (1.48) UNTIL
+# (1.47) UNTIL
 lappend res_words UNTIL {
   line UNTIL
 }
 
-# (1.49) VAR
+# (1.48) VAR
 lappend res_words VAR {
   line VAR
 }
 
-# (1.50) WHILE
+# (1.49) WHILE
 lappend res_words WHILE {
   line WHILE
 }
@@ -1380,197 +1387,147 @@ lappend res_idents CAST {
   line /CAST
 }
 
-# (2.4) CHAR
-lappend res_idents CHAR {
-  line /CHAR
-}
-
-# (2.5) COUNT
+# (2.4) COUNT
 lappend res_idents COUNT {
   line /COUNT
 }
 
-# (2.6) EXISTS
+# (2.5) EXISTS
 lappend res_idents EXISTS {
   line /EXISTS
 }
 
-# (2.7) INSERT
+# (2.6) INSERT
 lappend res_idents INSERT {
   line /INSERT
 }
 
-# (2.8) INTEGER
-lappend res_idents INTEGER {
-  line /INTEGER
-}
-
-# (2.9) LENGTH
+# (2.7) LENGTH
 lappend res_idents LENGTH {
   line /LENGTH
 }
 
-# (2.10) NIL
+# (2.8) NIL
 lappend res_idents /NIL {
   line /NIL
 }
 
-# (2.11) OCTET
+# (2.9) OCTET
 lappend res_idents /OCTET {
   line /OCTET
 }
 
-# (2.12) READ
+# (2.10) READ
 lappend res_idents /READ {
   line /READ
 }
 
-# (2.13) READNEW
+# (2.11) READNEW
 lappend res_idents READNEW {
   line /READNEW
 }
 
-# (2.14) REAL
-lappend res_idents REAL {
-  line /REAL
-}
-
-# (2.15) REMOVE
+# (2.12) REMOVE
 lappend res_idents REMOVE {
   line /REMOVE
 }
 
-# (2.16) RETRIEVE
+# (2.13) RETRIEVE
 lappend res_idents RETRIEVE {
   line /RETRIEVE
 }
 
-# (2.17) STORE
+# (2.14) STORE
 lappend res_idents STORE {
   line /STORE
 }
 
-# (2.18) SUBSET
+# (2.15) SUBSET
 lappend res_idents SUBSET {
   line /SUBSET
 }
 
-# (2.19) SXF
+# (2.16) SXF
 lappend res_idents SXF {
   line /SXF
 }
 
-# (2.20) TBASE
+# (2.17) TBASE
 lappend res_idents TBASE {
   line /TBASE
 }
 
-# (2.21) TBDFOR
-lappend res_idents TBDFOR {
-  line /TBDFOR
-}
-
-# (2.22) TBYIDX
-lappend res_idents TBYIDX {
-  line /TBYIDX
-}
-
-# (2.23) TBYKEY
-lappend res_idents TBYKEY {
-  line /TBYKEY
-}
-
-# (2.24) TBYVAL
-lappend res_idents TBYVAL {
-  line /TBYVAL
-}
-
-# (2.25) TCOMP
-lappend res_idents TCOMP {
-  line /TCOMP
-}
-
-# (2.26) TDYN
+# (2.18) TDYN
 lappend res_idents TDYN {
   line /TDYN
 }
 
-# (2.27) TLIMIT
+# (2.19) TLIMIT
 lappend res_idents TLIMIT {
   line /TLIMIT
 }
 
-# (2.28) TMAX
+# (2.20) TLITERAL
+lappend res_idents TLITERAL {
+  line /TLITERAL
+}
+
+# (2.21) TMAX
 lappend res_idents TMAX {
   line /TMAX
 }
 
-# (2.29) TMAXEXP
+# (2.22) TMAXEXP
 lappend res_idents TMAXEXP {
   line /TMAXEXP
 }
 
-# (2.30) TMIN
+# (2.23) TMIN
 lappend res_idents TMIN {
   line /TMIN
 }
 
-# (2.31) TMINEXP
+# (2.24) TMINEXP
 lappend res_idents TMINEXP {
   line /TMINEXP
 }
 
-# (2.32) TNIL
+# (2.25) TNIL
 lappend res_idents TNIL {
   line /TNIL
 }
 
-# (2.33) TNUM
-lappend res_idents TNUM {
-  line /TNUM
-}
-
-# (2.34) TPRECISION
+# (2.26) TPRECISION
 lappend res_idents TPRECISION {
   line /TPRECISION
 }
 
-# (2.35) TREFC
+# (2.27) TPROPERTIES
+lappend res_idents TPROPERTIES {
+  line /TPROPERTIES
+}
+
+# (2.28) TREFC
 lappend res_idents TREFC {
   line /TREFC
 }
 
-# (2.36) TRIGID
-lappend res_idents TRIGID {
-  line /TRIGID
-}
-
-# (2.37) TSIGNED
-lappend res_idents TSIGNED {
-  line /TSIGNED
-}
-
-# (2.38) UNICHAR
-lappend res_idents UNICHAR {
-  line /UNICHAR
-}
-
-# (2.39) UNSAFE
+# (2.29) UNSAFE
 lappend res_idents UNSAFE {
   line /UNSAFE
 }
 
-# (2.40) VAL
+# (2.30) VAL
 lappend res_idents VAL {
   line /VAL
 }
 
-# (2.41) WRITE
+# (2.31) WRITE
 lappend res_idents WRITE {
   line /WRITE
 }
 
-# (2.42) WRITEF
+# (2.32) WRITEF
 lappend res_idents WRITEF {
   line /WRITEF
 }
@@ -1701,6 +1658,11 @@ lappend res_symbols RightBrace {
   line RBRACE
 }
 
+# (3.24) Tilde
+lappend res_symbols Tilde {
+  line ~
+}
+
 # (3.25) Open Comment
 lappend res_symbols OpenComment {
   line (*
@@ -1821,9 +1783,9 @@ lappend terminals NumberLiteral {
     {line 0 {
       or
         RealNumberTail
-        {line /b Base2DigitSeq}
-        {line /x Base16DigitSeq}
-        {line /u Base16DigitSeq}
+        {line b Base2DigitSeq}
+        {line x Base16DigitSeq}
+        {line u Base16DigitSeq}
         nil
       }}
     {line 1..9 {optx DecimalNumberTail}}
@@ -1843,7 +1805,7 @@ lappend terminals DecimalNumberTail {
 
 # (5.2) Real Number Tail
 lappend terminals RealNumberTail {
-  line . DigitSeq {optx /e {or + - nil} DigitSeq }
+  line . DigitSeq {optx e {or + - nil} DigitSeq }
 }
 
 # (5.3) Digit Sequence
@@ -1883,7 +1845,7 @@ lappend terminals Digit {
 
 # (5.7) Base-16 Digit
 lappend terminals Base16Digit {
-  or Digit /A /B /C /D /E /F
+  or Digit A B C D E F
 }
 
 # (5.8) Base-2 Digit
@@ -1919,7 +1881,7 @@ lappend terminals QuotableCharacter {
 
 # (6.4) Letter
 lappend terminals Letter {
-  or /A..Z /a..z 
+  or A..Z a..z 
 }
 
 # (6.5) Space
@@ -1942,7 +1904,7 @@ lappend terminals NonAlphaNumQuotable3 {
 
 # (6.7) Escaped Character
 lappend terminals EscapedCharacter {
-  line BACKSLASH {or /n /t BACKSLASH}
+  line BACKSLASH {or n t BACKSLASH}
 }
 
 # ---------------------------------
@@ -2409,18 +2371,19 @@ pack $b -side top -fill x -expand 0 -pady {0 14}
 # L a y o u t - P a r a m e t e r s
 # ---------------------------------------------------------------------------
 #
-set TERMFONT {Helvetica 12 bold}  ;# default terminal font
-set NONTERMFONT {Helvetica 12}    ;# default non-terminal font
-set TOKENFONT {Monaco 12 bold}    ;# default token font
-set STRINGFONT {Courier 12 bold}  ;# default string font
-set RADIUS 9                      ;# default turn radius
-set HSEP 15                       ;# horizontal separation
-set VSEP 7                        ;# vertical separation
-set LWIDTH 3                      ;# line width
-set DPI 96                        ;# dots per inch for gif
+set RES_WORD_FONT {Helvetica 12 bold};           # reserved word font
+set RES_IDENT_FONT {Helvetica 12 bold italic};   # reserved identifier font
+set TERM_FONT {Helvetica 12 bold};               # font for other terminals
+set NON_TERM_FONT {Helvetica 12};                # non-terminal font
+set TOKEN_FONT {Monaco 12 bold};                 # special symbol token font
+set STRING_FONT {Courier 12 bold};               # quoted string font
+set RADIUS 9;                                    # default turn radius
+set HSEP 15;                                     # horizontal separation
+set VSEP 7;                                      # vertical separation
+set LWIDTH 3;                                    # line width
+set DPI 96;                                      # dots per inch for GIFs
 
-
-set tagcnt 0 ;# tag counter - don't modify this
+set tagcnt 0; # tag counter - don't modify this
 
 
 # ---------------------------------------------------------------------------
@@ -2511,71 +2474,78 @@ proc draw_bubble {txt} {
     .c create oval 0 -3 6 3 -width $LWIDTH -tags $tag
     return [list $tag 6 0]
   }
-# check for special symbols
+# special name replacements
   set isQuotedString 0
   if {$txt=="SPACE"} {
     set label "' '"
-  } elseif {$txt=="OCTOTHORPE"} {
-    set label "\#"
-  } elseif {$txt=="BSLASH" || $txt=="BACKSLASH"} {
+  } elseif {$txt=="BACKSLASH"} {
     set label "\\"
-  } elseif {$txt=="SQUOTE" || $txt=="SINGLE_QUOTE"} {
+  } elseif {$txt=="SINGLE_QUOTE"} {
     set label "\'"
-  } elseif {$txt=="WIDE_SINGLE_QUOTE"} {
-    set label " \' "
-  } elseif {$txt=="DQUOTE" || $txt=="DOUBLE_QUOTE"} {
+  } elseif {$txt=="DOUBLE_QUOTE"} {
     set label "\""
   } elseif {$txt=="LBRACE" || $txt=="LEFT_BRACE"} {
     set label "\{"
   } elseif {$txt=="RBRACE" || $txt=="RIGHT_BRACE"} {
     set label "\}"
-  } elseif {$txt=="`ASCII"} {
-    set label "\"ASCII\""
-    set isQuotedString 1
-  } elseif {$txt=="`UTF8"} {
-    set label "\"UTF8\""
-    set isQuotedString 1
-  } elseif {$txt=="`C"} {
-    set label "\"C\""
-    set isQuotedString 1
-  } elseif {$txt=="`Fortran"} {
-    set label "\"Fortran\""
-    set isQuotedString 1
-  } elseif {$txt=="`CLR"} {
-    set label "\"CLR\""
-    set isQuotedString 1
-  } elseif {$txt=="`JVM"} {
-    set label "\"JVM\""
-    set isQuotedString 1
   } else {
     set label $txt
   }
 # initialise symbol flags
+  set isReservedIdent 0
   set isNonTerminal 0
   set isTerminal 0
   set isToken 0
 # determine type of symbol
-  if {[regexp {^[A-Z]} $label]} {
+  if {[regexp {^[A-Z][A-Z]+$} $label]} {
+    # reserved word
     set isTerminal 1
-    set font $::TERMFONT
+    set isReservedWord 1
+    set font $::RES_WORD_FONT
     set label " $label "
     set baseline [expr {$LWIDTH/2}]
-  } elseif {[regexp {^[a-z]} $label]} {
+  } elseif {[regexp {^/[A-Z][A-Z]+$} $label]} {
+    set label [string range $label 1 end]
+    # reserved identifier
+    set isTerminal 1
+    set isReservedIdent 1
+    set font $::RES_IDENT_FONT
+    set label " $label "
+    set baseline [expr {$LWIDTH/2}]
+  } elseif {[regexp {^[A-Z][a-z0-9][a-zA-Z0-9]*$} $label]} {
+    # other terminal
+    set isTerminal 1
+    set font $::TERM_FONT
+    set label " $label "
+    set baseline [expr {$LWIDTH/2}]
+  } elseif {[regexp {^[a-z][a-zA-Z0-9]+$} $label]} {
+    # non-terminal
     set isNonTerminal 1
-    set font $::NONTERMFONT
+    set font $::NON_TERM_FONT
     set label "  $label  "
     set baseline 0
- } else {
+ } elseif {[regexp {^`[a-zA-Z0-9]+$} $label]} {
+    # quoted string literal
+    set label [string range $label 1 end]
     set isToken 1
-    if {$isQuotedString} {
-      set font $::STRINGFONT
-    } else {
-      set font $::TOKENFONT
-    }
+    set font $::STRING_FONT
+    set label " \"$label\" "
     set baseline [expr {$LWIDTH/2}]
-    if {[regexp {^/[a-zA-Z]} $label]} {
-      set label [string range $label 1 end]
-    }
+ } elseif {[regexp {^[a-zA-Z]$} $label]} {
+    # single letter token
+    set isToken 1
+    set font $::TOKEN_FONT
+    set baseline [expr {$LWIDTH/2}]
+ } elseif {[regexp {^[a-zA-Z0-9]\.\.[a-zA-Z0-9]$} $label]} {
+    # letter or digit range
+    set isToken 1
+    set font $::TOKEN_FONT
+    set baseline [expr {$LWIDTH/2}]
+ } else {
+    # anything else is a token
+    set isToken 1
+    set font $::TOKEN_FONT
+    set baseline [expr {$LWIDTH/2}]
   }
   set id1 [.c create text 0 $baseline -anchor c -text $label -font $font -tags $tag]
 # lassign [.c bbox $id1] x0 y0 x1 y1 # to do: replace all foreach with lassign
@@ -2584,6 +2554,11 @@ proc draw_bubble {txt} {
   if {$label in {( ) [ ] \{ \} _ }} { .c move $id1 0 -1 }
 # move the asterisk down by one pixel
   if {$label=="*"} { .c move $id1 0 1 }
+# move reserved identifiers left by one pixel (assuming italic font)
+  if {$isReservedIdent} { .c move $id1 -1 0 }
+# move label left by one pixel if font is italic
+  set slantAttr [font actual $font -slant]
+  if {$slantAttr eq "italic"} { .c move $id1 -1 0 }
   set h [expr {$y1-$y0+$LWIDTH}]
   set rad [expr {($h+1)/2}]
   if {$isNonTerminal} {
