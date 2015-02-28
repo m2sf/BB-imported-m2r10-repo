@@ -2554,8 +2554,6 @@ proc draw_bubble {txt} {
   if {$label in {( ) [ ] \{ \} _ }} { .c move $id1 0 -1 }
 # move the asterisk down by one pixel
   if {$label=="*"} { .c move $id1 0 1 }
-# move reserved identifiers left by one pixel (assuming italic font)
-  if {$isReservedIdent} { .c move $id1 -1 0 }
 # move label left by one pixel if font is italic
   set slantAttr [font actual $font -slant]
   if {$slantAttr eq "italic"} { .c move $id1 -1 0 }
