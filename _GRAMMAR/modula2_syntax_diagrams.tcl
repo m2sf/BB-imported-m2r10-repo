@@ -97,7 +97,7 @@ wm withdraw .
 #   (2) reserved identifier, names in all uppercase letters preceded by /
 #   (3) other terminals, mixed case names with a leading uppercase letter
 #   (4) non-terminals, mixed case names with a leading lowercase letter
-#   (5) single letter tokens, a single letter preceded by ?
+#   (5) single letter tokens, a single letter or a range eg. a..z / A..Z
 #   (6) special symbol tokens, any other characters or character sequences
 #
 # Special names for tokens that TCL cannot handle verbatim
