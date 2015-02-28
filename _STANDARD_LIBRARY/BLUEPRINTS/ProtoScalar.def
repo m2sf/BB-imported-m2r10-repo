@@ -11,7 +11,7 @@ MODULE TYPE = RECORD;
 (* All scalar ADTs shall be statically allocatable. *)
 
 TPROPERTIES = isComputational, isNumber, isScalar | isCountable , isSigned;
-(* Sclalar ADTs are always scalar, possibly countable and possibly signed. *)
+(* Sclalar ADTs are scalar. Countability and signedness to be determined. *)
 
 TLITERAL = wholeNumberLiteral | realNumberLiteral;
 (* Scalar ADTs are either compatible with whole or real number literals. *)
