@@ -645,9 +645,11 @@ class Modula2Lexer(RegexLexer):
         # Identity Operator
           (r'==', Operator),
         # Postfix Increment Mutator
-          (r'\++', Operator),
+          (r'\+\+', Operator),
         # Postfix Decrement Mutator
           (r'--', Operator),
+        # Undetermined Property Prefix
+          (r'\?', Operator),
         #
         # Operators Unique To ObjM2
         #
