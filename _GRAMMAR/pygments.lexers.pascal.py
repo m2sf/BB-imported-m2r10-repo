@@ -841,11 +841,10 @@ class Modula2Lexer(RegexLexer):
     
     # Modula-2 R10 Additional Pseudo-Module Builtins Dataset
     m2r10_additional_pseudo_builtins = (
-        # 23 aditional pseudo builtins
-        'UNSAFE', 'ADDRESS', 'BYTE', 'CAST', 'ADR', 'INC', 'DEC', 'HALT',
-        'CONVERSION', 'SXF', 'VAL', 'TPROPERTIES', 'LITERALS', 'TPROPERTY',
-        'TLITERAL', 'TBUILTIN', 'TDYN', 'TREFC', 'TNIL', 'TBASE', 'TPRECISION',
-        'TMAXEXP', 'TMINEXP', 
+        # 20 aditional pseudo builtins
+        'UNSAFE', 'CAST', 'INC', 'DEC', 'HALT', 'CONVERSION', 'SXF', 'VAL',
+        'TPROPERTIES', 'LITERALS', 'TPROPERTY', 'TLITERAL', 'TBUILTIN', 'TDYN',
+        'TREFC', 'TNIL', 'TBASE', 'TPRECISION', 'TMAXEXP', 'TMINEXP', 
     )
     
     # Objective Modula-2 Extensions
