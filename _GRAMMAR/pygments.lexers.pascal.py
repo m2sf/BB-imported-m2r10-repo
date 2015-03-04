@@ -514,27 +514,27 @@ class Modula2Lexer(RegexLexer):
     fallback mode, recognising the *combined* reserved words and builtins of
     the PIM, ISO and R10 dialects.
     
-    To select a specific dialect one of several dialect options may be passed
-    or embedded into a source file.
+    To select a specific dialect a dialect option may be passed
+    or a dialect tag may be embedded into a source file.
     
     Dialect Options:
     
     `m2pim`
-        Select PIM Modula-2 dialect (default: False).
+        Select PIM Modula-2 dialect.
     `m2iso`
-        Select ISO Modula-2 dialect (default: False).
+        Select ISO Modula-2 dialect.
     `m2r10`
-        Select Modula-2 R10 dialect (default: False).
+        Select Modula-2 R10 dialect.
     `objm2`
-        Select Objective Modula-2 dialect (default: False).
+        Select Objective Modula-2 dialect.
     `m2iso+aglet`
-        Select Aglet Modula-2 extended ISO dialect (default: False).
+        Select Aglet Modula-2 extended ISO dialect.
     `m2pim+gm2`
-        Select GNU Modula-2 extended PIM dialect (default: False).
+        Select GNU Modula-2 extended PIM dialect.
     `m2iso+p1`
-        Select p1 Modula-2 extended ISO dialect (default: False).
+        Select p1 Modula-2 extended ISO dialect.
     `m2iso+xds`
-        Select XDS Modula-2 extended ISO dialect (default: False).
+        Select XDS Modula-2 extended ISO dialect.
 
     Passing a Dialect Option via Unix Commandline Interface
     
