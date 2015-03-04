@@ -17,7 +17,6 @@ from pygments.util import get_bool_opt, get_list_opt
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
     Number, Punctuation, Error
 from pygments.scanner import Scanner
-from pygments.filters import KeywordCaseFilter
 
 __all__ = ['DelphiLexer', 'Modula2Lexer', 'AdaLexer']
 
@@ -608,21 +607,21 @@ class Modula2Lexer(RegexLexer):
         ],
         'dialecttags': [
         # PIM Dialect Tag
-         (r'\(\*!m2pim\*\)', Comment.Preproc), 
+         (r'\(\*!m2pim\*\)', Comment.Special), 
         # ISO Dialect Tag
-         (r'\(\*!m2iso\*\)', Comment.Preproc), 
+         (r'\(\*!m2iso\*\)', Comment.Special), 
         # M2R10 Dialect Tag
-         (r'\(\*!m2r10\*\)', Comment.Preproc), 
+         (r'\(\*!m2r10\*\)', Comment.Special), 
         # ObjM2 Dialect Tag
-         (r'\(\*!objm2\*\)', Comment.Preproc), 
+         (r'\(\*!objm2\*\)', Comment.Special), 
         # Aglet Extensions Dialect Tag
-         (r'\(\*!m2iso\+aglet\*\)', Comment.Preproc), 
+         (r'\(\*!m2iso\+aglet\*\)', Comment.Special), 
         # GNU Extensions Dialect Tag
-         (r'\(\*!m2pim\+gm2\*\)', Comment.Preproc), 
+         (r'\(\*!m2pim\+gm2\*\)', Comment.Special), 
         # p1 Extensions Dialect Tag
-         (r'\(\*!m2iso\+p1\*\)', Comment.Preproc), 
+         (r'\(\*!m2iso\+p1\*\)', Comment.Special), 
         # XDS Extensions Dialect Tag
-         (r'\(\*!m2iso\+xds\*\)', Comment.Preproc), 
+         (r'\(\*!m2iso\+xds\*\)', Comment.Special), 
         ],
         'identifiers': [
             (r'([a-zA-Z_$][\w$]*)', Name),
@@ -714,7 +713,7 @@ class Modula2Lexer(RegexLexer):
           (r'\+\+', Operator),
         # Postfix Decrement Mutator
           (r'--', Operator),
-        # Undetermined Property Prefix
+        # Undetermined Property Suffix
           (r'\?', Operator),
         #
         # Operators Unique To ObjM2
@@ -758,148 +757,319 @@ class Modula2Lexer(RegexLexer):
     }
 
     # Common Reserved Words Dataset
-    common_reserved_words = [
+    common_reserved_words = (
         # 37 common reserved words
         'AND', 'ARRAY', 'BEGIN', 'BY', 'CASE', 'CONST', 'DEFINITION', 'DIV',
         'DO', 'ELSE', 'ELSIF', 'END', 'EXIT', 'FOR', 'FROM', 'IF',
         'IMPLEMENTATION', 'IMPORT', 'IN', 'LOOP', 'MOD', 'MODULE', 'NOT',
         'OF', 'OR', 'POINTER', 'PROCEDURE', 'RECORD', 'REPEAT', 'RETURN',
         'SET', 'THEN', 'TO', 'TYPE', 'UNTIL', 'VAR', 'WHILE',
-    ]
+    )
 
     # Common Builtins Dataset
-    common_builtins = [
-        # 17 common builtins
+    common_builtins = (
+        # 16 common builtins
         'ABS', 'BOOLEAN', 'CARDINAL', 'CHAR', 'CHR', 'FALSE', 'INTEGER',
         'LONGINT', 'LONGREAL', 'MAX', 'MIN', 'NIL', 'ODD', 'ORD', 'REAL', 
-        'TRUE', 'VAL',
-    ]
+        'TRUE',
+    )
+    
+    # Common Pseudo-Module Builtins Dataset
+    common_pseudo_builtins = (
+        # 4 common pseudo builtins
+        'ADDRESS', 'BYTE', 'WORD', 'ADR'
+    )
     
     # PIM Modula-2 Additional Reserved Words Dataset
-    pim_additional_reserved_words = [
+    pim_additional_reserved_words = (
         # 3 additional reserved words
         'EXPORT', 'QUALIFIED', 'WITH',
-    ]
+    )
     
     # PIM Modula-2 Additional Builtins Dataset
-    pim_additional_builtins = [
-        # 15 additional builtins
+    pim_additional_builtins = (
+        # 16 additional builtins
         'BITSET', 'CAP', 'DEC', 'DISPOSE', 'EXCL', 'FLOAT', 'HALT', 'HIGH',
-        'INC', 'INCL', 'NEW', 'NIL', 'PROC', 'SIZE', 'TRUNC',
-    ]
+        'INC', 'INCL', 'NEW', 'NIL', 'PROC', 'SIZE', 'TRUNC', 'VAL',
+    )
+    
+    # PIM Modula-2 Additional Pseudo-Module Builtins Dataset
+    pim_additional_pseudo_builtins = (
+        # 5 aditional pseudo builtins
+        'SYSTEM', 'PROCESS', 'TSIZE', 'NEWPROCESS', 'TRANSFER',
+    )
     
     # ISO Modula-2 Additional Reserved Words Dataset
-    iso_additional_reserved_words = [
+    iso_additional_reserved_words = (
         # 20 additional reserved words
         'ABSTRACT', 'AS', 'CLASS', 'EXCEPT', 'EXPORT', 'FINALLY', 'FORWARD',
         'GUARD', 'INHERIT', 'OVERRIDE', 'PACKEDSET', 'QUALIFIED', 'READONLY',
         'REM', 'RETRY', 'REVEAL', 'TRACED', 'UNSAFEGUARDED', 'WITH',
-    ]
+    )
     
     # ISO Modula-2 Additional Builtins Dataset
-    iso_additional_builtins = [
-        # 30 additional builtins
+    iso_additional_builtins = (
+        # 31 additional builtins
         'CREATE', 'BITSET', 'CAP', 'CMPLX', 'COMPLEX', 'DEC', 'DESTROY',
         'DISPOSE', 'EMPTY', 'EXCL', 'FLOAT', 'HALT', 'HIGH', 'IM', 'INC',
         'INCL', 'INT', 'INTERRUPTIBLE', 'ISMEMBER', 'LENGTH', 'LFLOAT',
         'LONGCOMPLEX', 'NEW', 'PROC', 'PROTECTION', 'RE', 'SELF', 'SIZE',
-        'TRUNC', 'UNINTERRUBTIBLE',
-    ]
+        'TRUNC', 'UNINTERRUBTIBLE', 'VAL',
+    )
+
+    # ISO Modula-2 Additional Pseudo-Module Builtins Dataset
+    iso_additional_pseudo_builtins = (
+        # 4 aditional pseudo builtins
+        'SYSTEM', 'CAST', 'LOC', 'TSIZE', # TO BE COMPLETED
+    )
     
     # Modula-2 R10 reserved words in addition to the common set
-    m2r10_additional_reserved_words = [
+    m2r10_additional_reserved_words = (
         # 12 additional reserved words
         'ALIAS', 'ARGLIST', 'BLUEPRINT', 'COPY', 'GENLIB', 'INDETERMINATE',
         'NEW', 'NONE', 'OPAQUE', 'REFERENTIAL', 'RELEASE', 'RETAIN',
-    ]
+    )
 
     # Modula-2 R10 builtins in addition to the common set
-    m2r10_additional_builtins = [
-        # 41 additional builtins
-        'ADDRESS', 'BYTE', 'CAST', 'CARDINAL', 'COUNT', 'EMPTY', 'EXISTS',
-        'INSERT', 'LENGTH', 'LONGCARD', 'OCTET', 'PTR', 'PRED', 'READ',
-        'READNEW', 'REMOVE', 'RETRIEVE', 'SORT', 'STORE', 'SUBSET', 'SUCC',
-        'SXF', 'TBASE', 'TBUILTIN', 'TDYN', 'TLIMIT', 'TLITERAL', 'TMAX',
-        'TMAXEXP', 'TMIN', 'TMINEXP', 'TNIL', 'TPRECISION', 'TPROPERTIES',
-        'TREFC', 'TRUE', 'TSIZE', 'UNICHAR', 'UNSAFE', 'WRITE', 'WRITEF',
-    ]
+    m2r10_additional_builtins = (
+        # 26 additional builtins
+        'CARDINAL', 'COUNT', 'EMPTY', 'EXISTS', 'INSERT', 'LENGTH', 'LONGCARD',
+        'OCTET', 'PTR', 'PRED', 'READ', 'READNEW', 'REMOVE', 'RETRIEVE', 'SORT',
+        'STORE', 'SUBSET', 'SUCC', 'TLIMIT', 'TMAX', 'TMIN', 'TRUE', 'TSIZE',
+        'UNICHAR', 'WRITE', 'WRITEF',
+    )
+    
+    # Modula-2 R10 Additional Pseudo-Module Builtins Dataset
+    m2r10_additional_pseudo_builtins = (
+        # 23 aditional pseudo builtins
+        'UNSAFE', 'ADDRESS', 'BYTE', 'CAST', 'ADR', 'INC', 'DEC', 'HALT',
+        'CONVERSION', 'SXF', 'VAL', 'TPROPERTIES', 'LITERALS', 'TPROPERTY',
+        'TLITERAL', 'TBUILTIN', 'TDYN', 'TREFC', 'TNIL', 'TBASE', 'TPRECISION',
+        'TMAXEXP', 'TMINEXP', 
+    )
     
     # Objective Modula-2 Extensions
     # reserved words in addition to Modula-2 R10
-    objm2_additional_reserved_words = [
+    objm2_additional_reserved_words = (
         # 16 additional reserved words
         'BYCOPY', 'BYREF', 'CLASS', 'CONTINUE', 'CRITICAL', 'INOUT', 'METHOD',
         'ON', 'OPTIONAL', 'OUT', 'PRIVATE', 'PROTECTED', 'PROTOCOL', 'PUBLIC',
         'SUPER', 'TRY',
-    ]
+    )
 
     # Objective Modula-2 Extensions
     # builtins in addition to Modula-2 R10
-    objm2_additional_builtins = [
+    objm2_additional_builtins = (
         # 3 additional builtins
         'OBJECT', 'NO', 'YES',
-    ]
+    )
+
+    # Objective Modula-2 Extensions
+    # pseudo-module builtins in addition to Modula-2 R10
+    objm2_additional_pseudo_builtins = (
+        # None
+    )
 
     # Aglet Extensions
     # reserved words in addition to ISO Modula-2
-    aglet_additional_reserved_words = [
+    aglet_additional_reserved_words = (
         # No additional reserved words
-    ]
+    )
 
     # Aglet Extensions
     # builtins in addition to ISO Modula-2
-    aglet_additional_builtins = [
+    aglet_additional_builtins = (
         # 9 additional builtins
         'BITSET8', 'BITSET16', 'BITSET32', 'CARDINAL8', 'CARDINAL16',
         'CARDINAL32', 'INTEGER8', 'INTEGER16', 'INTEGER32',
-    ]
+    )
+
+    # Aglet Modula-2 Extensions
+    # pseudo-module builtins in addition to ISO Modula-2
+    aglet_additional_pseudo_builtins = (
+        # None
+    )
 
     # GNU Extensions
     # reserved words in addition to PIM Modula-2
-    gm2_additional_reserved_words = [
+    gm2_additional_reserved_words = (
         # 10 additional reserved words
         'ASM', '__ATTRIBUTE__', '__BUILTIN__', '__COLUMN__', '__DATE__',
         '__FILE__', '__FUNCTION__', '__LINE__', '__MODULE__', 'VOLATILE',
-    ]
+    )
 
     # GNU Extensions
     # builtins in addition to PIM Modula-2
-    gm2_additional_builtins = [
+    gm2_additional_builtins = (
         # 21 additional builtins
         'BITSET8', 'BITSET16', 'BITSET32', 'CARDINAL8', 'CARDINAL16',
         'CARDINAL32', 'CARDINAL64', 'COMPLEX32', 'COMPLEX64', 'COMPLEX96',
         'COMPLEX128', 'INTEGER8', 'INTEGER16', 'INTEGER32', 'INTEGER64',
         'REAL8', 'REAL16', 'REAL32', 'REAL96', 'REAL128', 'THROW',
-    ]
+    )
+
+    # GNU Extensions
+    # pseudo-module builtins in addition to PIM Modula-2
+    gm2_additional_pseudo_builtins = (
+        # None
+    )
 
     # p1 Extensions
     # reserved words in addition to ISO Modula-2
-    p1_additional_reserved_words = [
+    p1_additional_reserved_words = (
         # No additional reserved words
-    ]
+    )
 
     # p1 Extensions
     # builtins in addition to ISO Modula-2
-    p1_additional_builtins = [
+    p1_additional_builtins = (
         # 3 additional builtins
         'BCD', 'LONGBCD', 'EMPTY',
-    ]
+    )
+
+    # p1 Modula-2 Extensions
+    # pseudo-module builtins in addition to ISO Modula-2
+    p1_additional_pseudo_builtins = (
+        # None
+    )
 
     # XDS Extensions
     # reserved words in addition to ISO Modula-2
-    xds_additional_reserved_words = [
+    xds_additional_reserved_words = (
         # 1 additional reserved word
         'SEQ',
-    ]
+    )
 
     # XDS Extensions
     # builtins in addition to ISO Modula-2
-    xds_additional_builtins = [
+    xds_additional_builtins = (
         # 18 additional builtins
         'ASH', 'ASSERT', 'BOOL8', 'BOOL16', 'BOOL32', 'CARD8', 'CARD16',
         'CARD32', 'DIFFADR_TYPE', 'ENTIER', 'INDEX', 'INT8', 'INT16',
         'INT32', 'LEN', 'LONGCARD', 'SHORTCARD', 'SHORTINT',
-    ]
+    )
+    
+    # XDS Modula-2 Extensions
+    # pseudo-module builtins in addition to ISO Modula-2
+    xds_additional_pseudo_builtins = (
+        # None
+    )
+
+    # PIM Modula-2 Standard Library Modules Dataset
+    pim_stdlib_module_identifiers = (
+        'Terminal', 'FileSystem', 'InOut', 'RealInOut', 'MathLib0', 'Storage',
+    )
+
+    # PIM Modula-2 Standard Library Types Dataset
+    pim_stdlib_type_identifiers = (
+        'Flag', 'FlagSet', 'Response', 'Command', 'Lock', 'Permission',
+        'MediumType', 'File', 'FileProc', 'DirectoryProc', 'FileCommand',
+        'DirectoryCommand',
+    )
+
+    # PIM Modula-2 Standard Library Procedures Dataset
+    pim_stdlib_proc_identifiers = (
+        'Read', 'BusyRead', 'ReadAgain', 'Write', 'WriteString', 'WriteLn',
+        'Create', 'Lookup', 'Close', 'Delete', 'Rename', 'SetRead', 'SetWrite',
+        'SetModify', 'SetOpen', 'Doio', 'SetPos', 'GetPos', 'Length', 'Reset',
+        'Again', 'ReadWord', 'WriteWord', 'ReadChar', 'WriteChar',
+        'CreateMedium', 'DeleteMedium', 'AssignName', 'DeassignName',
+        'ReadMedium', 'LookupMedium', 'OpenInput', 'OpenOutput', 'CloseInput',
+        'CloseOutput', 'ReadString', 'ReadInt', 'ReadCard', 'ReadWrd',
+        'WriteInt', 'WriteCard', 'WriteOct', 'WriteHex', 'WriteWrd',
+        'ReadReal', 'WriteReal', 'WriteFixPt', 'WriteRealOct', 'sqrt', 'exp',
+        'ln', 'sin', 'cos', 'arctan', 'entier','ALLOCATE', 'DEALLOCATE',   
+    )
+
+    # PIM Modula-2 Standard Library Variables Dataset
+    pim_stdlib_var_identifiers = (
+        'Done', 'termCH', 'in', 'out'
+    )
+
+    # PIM Modula-2 Standard Library Constants Dataset
+    pim_stdlib_const_identifiers = (
+        'EOL',
+    )
+    
+    # ISO Modula-2 Standard Library Modules Dataset
+    iso_stdlib_module_identifiers = (
+        # TO DO
+    )
+    
+    # ISO Modula-2 Standard Library Types Dataset
+    iso_stdlib_type_identifiers = (
+        # TO DO
+    )
+    
+    # ISO Modula-2 Standard Library Procedures Dataset
+    iso_stdlib_proc_identifiers = (
+        # TO DO
+    )
+    
+    # ISO Modula-2 Standard Library Variables Dataset
+    iso_stdlib_var_identifiers = (
+        # TO DO
+    )
+    
+    # ISO Modula-2 Standard Library Constants Dataset
+    iso_stdlib_const_identifiers = (
+        # TO DO
+    )
+    
+    # Modula-2 R10 Standard Library ADTs Dataset
+    m2r10_stdlib_adt_identifiers = (
+        'BCD', 'LONGBCD', 'BITSET', 'SHORTBITSET', 'LONGBITSET',
+        'LONGLONGBITSET', 'COMPLEX', 'LONGCOMPLEX', 'SHORTCARD', 'LONGLONGCARD',
+        'SHORTINT', 'LONGLONGINT', 'POSINT', 'SHORTPOSINT', 'LONGPOSINT',
+        'LONGLONGPOSINT', 'BITSET8', 'BITSET16', 'BITSET32', 'BITSET64',
+        'BITSET128', 'BS8', 'BS16', 'BS32', 'BS64', 'BS128', 'CARDINAL8',
+        'CARDINAL16', 'CARDINAL32', 'CARDINAL64', 'CARDINAL128', 'CARD8',
+        'CARD16', 'CARD32', 'CARD64', 'CARD128', 'INTEGER8', 'INTEGER16',
+        'INTEGER32', 'INTEGER64', 'INTEGER128', 'INT8', 'INT16', 'INT32',
+        'INT64', 'INT128', 'STRING', 'UNISTRING',
+    )
+
+    # Modula-2 R10 Standard Library Blueprints Dataset
+    m2r10_stdlib_blueprint_identifiers = (
+        'ProtoRoot', 'ProtoComputational', 'ProtoNumeric', 'ProtoScalar',
+        'ProtoNonScalar', 'ProtoCardinal', 'ProtoInteger', 'ProtoReal',
+        'ProtoComplex', 'ProtoVector', 'ProtoTuple', 'ProtoCompArray',
+        'ProtoCollection', 'ProtoStaticArray', 'ProtoStaticSet',
+        'ProtoStaticString', 'ProtoArray', 'ProtoString', 'ProtoSet',
+        'ProtoMultiSet', 'ProtoDictionary', 'ProtoMultiDict', 'ProtoExtension',
+        'ProtoIO', 'ProtoCardMath', 'ProtoIntMath', 'ProtoRealMath',
+    )
+
+    # Modula-2 R10 Standard Library Modules Dataset
+    m2r10_stdlib_module_identifiers = (
+        'ASCII', 'BooleanIO', 'CharIO', 'UnicharIO', 'OctetIO',
+        'CardinalIO', 'LongCardIO', 'IntegerIO', 'LongIntIO', 'RealIO',
+        'LongRealIO', 'BCDIO', 'LongBCDIO', 'CardMath', 'LongCardMath',
+        'IntMath', 'LongIntMath', 'RealMath', 'LongRealMath', 'BCDMath',
+        'LongBCDMath', 'FileIO', 'FileSystem', 'Storage', 'IOSupport',       
+   )
+
+    # Modula-2 R10 Standard Library Types Dataset
+    m2r10_stdlib_type_identifiers = (
+        'File', 'Status', 
+        # TO BE COMPLETED
+    )
+    
+    # Modula-2 R10 Standard Library Procedures Dataset
+    m2r10_stdlib_proc_identifiers = (
+        'ALLOCATE', 'DEALLOCATE', 'SIZE', 
+        # TO BE COMPLETED
+    )
+    
+    # Modula-2 R10 Standard Library Variables Dataset
+    m2r10_stdlib_var_identifiers = (
+        'stdIn', 'stdOut', 'stdErr',
+    )
+
+    # Modula-2 R10 Standard Library Constants Dataset
+    m2r10_stdlib_const_identifiers = (
+        'pi', 'tau', 
+    )
     
     # Dialect modes
     dialects = (
@@ -911,131 +1081,480 @@ class Modula2Lexer(RegexLexer):
     # Reserved Words Database
     reserved_words_db = {
         # Reserved words for unknown dialect
-        'unknown' : [
+        'unknown' : (
             common_reserved_words,
             pim_additional_reserved_words,
             iso_additional_reserved_words,
             m2r10_additional_reserved_words,
-        ],
+        ),
 
         # Reserved words for PIM Modula-2
-        'm2pim' : [
+        'm2pim' : (
             common_reserved_words,
             pim_additional_reserved_words,
-        ],
+        ),
 
         # Reserved words for Modula-2 R10
-        'm2iso' : [
+        'm2iso' : (
             common_reserved_words,
             iso_additional_reserved_words,
-        ],
+        ),
 
         # Reserved words for ISO Modula-2
-        'm2r10' : [
+        'm2r10' : (
             common_reserved_words,
             m2r10_additional_reserved_words,
-        ],
+        ),
 
         # Reserved words for Objective Modula-2
-        'objm2' : [
+        'objm2' : (
             common_reserved_words,
             m2r10_additional_reserved_words,
             objm2_additional_reserved_words,
-        ],
+        ),
 
         # Reserved words for Aglet Modula-2 Extensions
-        'm2iso+aglet' : [
+        'm2iso+aglet' : (
             common_reserved_words,
             iso_additional_reserved_words,
             aglet_additional_reserved_words,
-        ],
+        ),
 
         # Reserved words for GNU Modula-2 Extensions
-        'm2pim+gm2' : [
+        'm2pim+gm2' : (
             common_reserved_words,
             pim_additional_reserved_words,
             gm2_additional_reserved_words,
-        ],
+        ),
 
         # Reserved words for p1 Modula-2 Extensions
-        'm2iso+p1' : [
+        'm2iso+p1' : (
             common_reserved_words,
             iso_additional_reserved_words,
             p1_additional_reserved_words,
-        ],
+        ),
 
         # Reserved words for XDS Modula-2 Extensions
-        'm2iso+xds' : [
+        'm2iso+xds' : (
             common_reserved_words,
             iso_additional_reserved_words,
             xds_additional_reserved_words,
-        ],
+        ),
     }
 
     # Builtins Database
     builtins_db = {
         # Builtins for unknown dialect
-        'unknown' : [
+        'unknown' : (
             common_builtins,
             pim_additional_builtins,
             iso_additional_builtins,
             m2r10_additional_builtins,
-        ],
+        ),
 
         # Builtins for PIM Modula-2
-        'm2pim' : [
+        'm2pim' : (
             common_builtins,
             pim_additional_builtins,
-        ],
+        ),
 
         # Builtins for ISO Modula-2
-        'm2iso' : [
+        'm2iso' : (
             common_builtins,
             iso_additional_builtins,
-        ],
+        ),
 
         # Builtins for ISO Modula-2
-        'm2r10' : [
+        'm2r10' : (
             common_builtins,
             m2r10_additional_builtins,
-        ],
+        ),
 
         # Builtins for Objective Modula-2
-        'objm2' : [
+        'objm2' : (
             common_builtins,
             m2r10_additional_builtins,
             objm2_additional_builtins,
-        ],
+        ),
 
         # Builtins for Aglet Modula-2 Extensions
-        'm2iso+aglet' : [
+        'm2iso+aglet' : (
             common_builtins,
             iso_additional_builtins,
             aglet_additional_builtins,
-        ],
+        ),
 
         # Builtins for GNU Modula-2 Extensions
-        'm2pim+gm2' : [
+        'm2pim+gm2' : (
             common_builtins,
             pim_additional_builtins,
             gm2_additional_builtins,
-        ],
+        ),
 
         # Builtins for p1 Modula-2 Extensions
-        'm2iso+p1' : [
+        'm2iso+p1' : (
             common_builtins,
             iso_additional_builtins,
             p1_additional_builtins,
-        ],
+        ),
 
         # Builtins for XDS Modula-2 Extensions
-        'm2iso+xds' : [
+        'm2iso+xds' : (
             common_builtins,
             iso_additional_builtins,
             xds_additional_builtins,
-        ],
+        ),
     }
     
+    # Pseudo-Module Builtins Database
+    pseudo_builtins_db = {
+        # Builtins for unknown dialect
+        'unknown' : (
+            common_pseudo_builtins,
+            pim_additional_pseudo_builtins,
+            iso_additional_pseudo_builtins,
+            m2r10_additional_pseudo_builtins,
+        ),
+
+        # Builtins for PIM Modula-2
+        'm2pim' : (
+            common_pseudo_builtins,
+            pim_additional_pseudo_builtins,
+        ),
+
+        # Builtins for ISO Modula-2
+        'm2iso' : (
+            common_pseudo_builtins,
+            iso_additional_pseudo_builtins,
+        ),
+
+        # Builtins for ISO Modula-2
+        'm2r10' : (
+            common_pseudo_builtins,
+            m2r10_additional_pseudo_builtins,
+        ),
+
+        # Builtins for Objective Modula-2
+        'objm2' : (
+            common_pseudo_builtins,
+            m2r10_additional_pseudo_builtins,
+            objm2_additional_pseudo_builtins,
+        ),
+
+        # Builtins for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_pseudo_builtins,
+            iso_additional_pseudo_builtins,
+            aglet_additional_pseudo_builtins,
+        ),
+
+        # Builtins for GNU Modula-2 Extensions
+        'm2pim+gm2' : (
+            common_pseudo_builtins,
+            pim_additional_pseudo_builtins,
+            gm2_additional_pseudo_builtins,
+        ),
+
+        # Builtins for p1 Modula-2 Extensions
+        'm2iso+p1' : (
+            common_pseudo_builtins,
+            iso_additional_pseudo_builtins,
+            p1_additional_pseudo_builtins,
+        ),
+
+        # Builtins for XDS Modula-2 Extensions
+        'm2iso+xds' : (
+            common_pseudo_builtins,
+            iso_additional_pseudo_builtins,
+            xds_additional_pseudo_builtins,
+        ),
+    }
+    
+    # Standard Library ADTs Database
+    stdlib_adts_db = {
+        # Empty entry for unknown dialect
+        'unknown' : (
+            # LEAVE THIS EMPTY
+        ),
+        # Standard Library ADTs for PIM Modula-2
+        'm2pim' : (
+            # No first class library types
+        ),
+
+        # Standard Library ADTs for ISO Modula-2
+        'm2iso' : (
+            # No first class library types
+        ),
+
+        # Standard Library ADTs for Modula-2 R10
+        'm2r10' : (
+            m2r10_stdlib_adt_identifiers,
+        ),
+
+        # Standard Library ADTs for Objective Modula-2
+        'objm2' : (
+            m2r10_stdlib_adt_identifiers,
+        ),
+        
+        # Standard Library ADTs for Aglet Modula-2
+        'm2iso+aglet' : (
+            # No first class library types
+        ),
+        
+        # Standard Library ADTs for GNU Modula-2
+        'm2pim+gm2' : (
+            # No first class library types
+        ),
+        
+        # Standard Library ADTs for p1 Modula-2
+        'm2iso+p1' : (
+            # No first class library types
+        ),
+        
+        # Standard Library ADTs for XDS Modula-2
+        'm2iso+xds' : (
+            # No first class library types
+        ),
+    }
+     
+    # Standard Library Modules Database
+    stdlib_modules_db = {
+        # Empty entry for unknown dialect
+        'unknown' : (
+            # LEAVE THIS EMPTY
+        ),
+        # Standard Library Modules for PIM Modula-2
+        'm2pim' : (
+            pim_stdlib_module_identifiers,
+        ),
+
+        # Standard Library Modules for ISO Modula-2
+        'm2iso' : (
+            iso_stdlib_module_identifiers,
+        ),
+
+        # Standard Library Modules for Modula-2 R10
+        'm2r10' : (
+            m2r10_stdlib_blueprint_identifiers,
+            m2r10_stdlib_module_identifiers,
+            m2r10_stdlib_adt_identifiers,
+        ),
+
+        # Standard Library Modules for Objective Modula-2
+        'objm2' : (
+            m2r10_stdlib_blueprint_identifiers,
+            m2r10_stdlib_module_identifiers,
+        ),
+        
+        # Standard Library Modules for Aglet Modula-2
+        'm2iso+aglet' : (
+            iso_stdlib_module_identifiers,
+        ),
+        
+        # Standard Library Modules for GNU Modula-2
+        'm2pim+gm2' : (
+            pim_stdlib_module_identifiers,
+        ),
+        
+        # Standard Library Modules for p1 Modula-2
+        'm2iso+p1' : (
+            iso_stdlib_module_identifiers,
+        ),
+        
+        # Standard Library Modules for XDS Modula-2
+        'm2iso+xds' : (
+            iso_stdlib_module_identifiers,
+        ),
+    }
+     
+    # Standard Library Types Database
+    stdlib_types_db = {
+        # Empty entry for unknown dialect
+        'unknown' : (
+            # LEAVE THIS EMPTY
+        ),
+        # Standard Library Types for PIM Modula-2
+        'm2pim' : (
+            pim_stdlib_type_identifiers,
+        ),
+
+        # Standard Library Types for ISO Modula-2
+        'm2iso' : (
+            iso_stdlib_type_identifiers,
+        ),
+
+        # Standard Library Types for Modula-2 R10
+        'm2r10' : (
+            m2r10_stdlib_type_identifiers,
+        ),
+
+        # Standard Library Types for Objective Modula-2
+        'objm2' : (
+            m2r10_stdlib_type_identifiers,
+        ),
+        
+        # Standard Library Types for Aglet Modula-2
+        'm2iso+aglet' : (
+            iso_stdlib_type_identifiers,
+        ),
+        
+        # Standard Library Types for GNU Modula-2
+        'm2pim+gm2' : (
+            pim_stdlib_type_identifiers,
+        ),
+        
+        # Standard Library Types for p1 Modula-2
+        'm2iso+p1' : (
+            iso_stdlib_type_identifiers,
+        ),
+        
+        # Standard Library Types for XDS Modula-2
+        'm2iso+xds' : (
+            iso_stdlib_type_identifiers,
+        ),
+    }
+
+    # Standard Library Procedures Database
+    stdlib_procedures_db = {
+        # Empty entry for unknown dialect
+        'unknown' : (
+            # LEAVE THIS EMPTY
+        ),
+        # Standard Library Procedures for PIM Modula-2
+        'm2pim' : (
+            pim_stdlib_proc_identifiers,
+        ),
+
+        # Standard Library Procedures for ISO Modula-2
+        'm2iso' : (
+            iso_stdlib_proc_identifiers,
+        ),
+
+        # Standard Library Procedures for Modula-2 R10
+        'm2r10' : (
+            m2r10_stdlib_proc_identifiers,
+        ),
+
+        # Standard Library Procedures for Objective Modula-2
+        'objm2' : (
+            m2r10_stdlib_proc_identifiers,
+        ),
+        
+        # Standard Library Procedures for Aglet Modula-2
+        'm2iso+aglet' : (
+            iso_stdlib_proc_identifiers,
+        ),
+        
+        # Standard Library Procedures for GNU Modula-2
+        'm2pim+gm2' : (
+            pim_stdlib_proc_identifiers,
+        ),
+        
+        # Standard Library Procedures for p1 Modula-2
+        'm2iso+p1' : (
+            iso_stdlib_proc_identifiers,
+        ),
+        
+        # Standard Library Procedures for XDS Modula-2
+        'm2iso+xds' : (
+            iso_stdlib_proc_identifiers,
+        ),
+    }
+   
+    # Standard Library Variables Database
+    stdlib_variables_db = {
+        # Empty entry for unknown dialect
+        'unknown' : (
+            # LEAVE THIS EMPTY
+        ),
+        # Standard Library Variables for PIM Modula-2
+        'm2pim' : (
+            pim_stdlib_var_identifiers,
+        ),
+
+        # Standard Library Variables for ISO Modula-2
+        'm2iso' : (
+            iso_stdlib_var_identifiers,
+        ),
+
+        # Standard Library Variables for Modula-2 R10
+        'm2r10' : (
+            m2r10_stdlib_var_identifiers,
+        ),
+
+        # Standard Library Variables for Objective Modula-2
+        'objm2' : (
+            m2r10_stdlib_var_identifiers,
+        ),
+        
+        # Standard Library Variables for Aglet Modula-2
+        'm2iso+aglet' : (
+            iso_stdlib_var_identifiers,
+        ),
+        
+        # Standard Library Variables for GNU Modula-2
+        'm2pim+gm2' : (
+            pim_stdlib_var_identifiers,
+        ),
+        
+        # Standard Library Variables for p1 Modula-2
+        'm2iso+p1' : (
+            iso_stdlib_var_identifiers,
+        ),
+        
+        # Standard Library Variables for XDS Modula-2
+        'm2iso+xds' : (
+            iso_stdlib_var_identifiers,
+        ),
+    }
+   
+    # Standard Library Constants Database
+    stdlib_constants_db = {
+        # Empty entry for unknown dialect
+        'unknown' : (
+            # LEAVE THIS EMPTY
+        ),
+        # Standard Library Constants for PIM Modula-2
+        'm2pim' : (
+            pim_stdlib_const_identifiers,
+        ),
+
+        # Standard Library Constants for ISO Modula-2
+        'm2iso' : (
+            iso_stdlib_const_identifiers,
+        ),
+
+        # Standard Library Constants for Modula-2 R10
+        'm2r10' : (
+            m2r10_stdlib_const_identifiers,
+        ),
+
+        # Standard Library Constants for Objective Modula-2
+        'objm2' : (
+            m2r10_stdlib_const_identifiers,
+        ),
+        
+        # Standard Library Constants for Aglet Modula-2
+        'm2iso+aglet' : (
+            iso_stdlib_const_identifiers,
+        ),
+        
+        # Standard Library Constants for GNU Modula-2
+        'm2pim+gm2' : (
+            pim_stdlib_const_identifiers,
+        ),
+        
+        # Standard Library Constants for p1 Modula-2
+        'm2iso+p1' : (
+            iso_stdlib_const_identifiers,
+        ),
+        
+        # Standard Library Constants for XDS Modula-2
+        'm2iso+xds' : (
+            iso_stdlib_const_identifiers,
+        ),
+    }
+   
     # initialise a lexer instance
     def __init__(self, **options):
         #
@@ -1045,41 +1564,15 @@ class Modula2Lexer(RegexLexer):
         #
         # check dialect options and set dialect
         #
-        # PIM Modula-2
-        if get_bool_opt(options, 'm2pim', False):
-            self.set_dialect('m2pim')
-        #
-        # ISO Modula-2
-        elif get_bool_opt(options, 'm2iso', False):
-            self.set_dialect('m2iso')
-        #
-        # Modula-2 R10
-        elif get_bool_opt(options, 'm2r10', False):
-            self.set_dialect('m2r10')
-        #
-        # Objective Modula-2
-        elif get_bool_opt(options, 'objm2', False):
-            self.set_dialect('m2r10')
-        #
-        # Aglet Extensions to ISO
-        elif get_bool_opt(options, 'm2iso+aglet', False):
-            self.set_dialect('m2iso+aglet')
-        #
-        # GNU Extensions to PIM
-        elif get_bool_opt(options, 'm2pim+gm2', False):
-            self.set_dialect('m2pim+gm2')
-        #
-        # p1 Extensions to ISO
-        elif get_bool_opt(options, 'm2iso+p1', False):
-            self.set_dialect('m2iso+p1')
-        #
-        # XDS Extensions to ISO
-        elif get_bool_opt(options, 'm2iso+xds', False):
-            self.set_dialect('m2iso+xds')
+        for opt in self.dialects[1:-1]:
+            if get_bool_opt(options, opt, False):
+                # valid option found
+                self.set_dialect(opt)
         #
         # Fallback Mode (DEFAULT)
         else:
-            self.set_dialect(UNKNOWN)
+              # no valid option found
+              self.set_dialect(UNKNOWN)
         #
         self.dialect_set_by_tag = False
         #
@@ -1120,14 +1613,74 @@ class Modula2Lexer(RegexLexer):
         for list in self.builtins_db[dialect]:
             builtins_set.update(set(list).difference(reswords_set))
         #
+        # compose pseudo-builtins set
+        pseudo_builtins_set = set()
+        # add each list of builtins for this dialect excluding reserved words
+        for list in self.pseudo_builtins_db[dialect]:
+            pseudo_builtins_set.update(set(list).difference(reswords_set))
+        #
+        # compose ADTs set
+        adts_set = set()
+        # add each list of ADTs for this dialect excluding reserved words
+        for list in self.stdlib_adts_db[dialect]:
+            adts_set.update(set(list).difference(reswords_set))
+        #
+        # compose modules set
+        modules_set = set()
+        # add each list of builtins for this dialect excluding builtins
+        for list in self.stdlib_modules_db[dialect]:
+            modules_set.update(set(list).difference(builtins_set))
+        #
+        # compose types set
+        types_set = set()
+        # add each list of types for this dialect excluding builtins
+        for list in self.stdlib_types_db[dialect]:
+            types_set.update(set(list).difference(builtins_set))
+        #
+        # compose procedures set
+        procedures_set = set()
+        # add each list of procedures for this dialect excluding builtins
+        for list in self.stdlib_procedures_db[dialect]:
+            procedures_set.update(set(list).difference(builtins_set))
+        #
+        # compose variables set
+        variables_set = set()
+        # add each list of variables for this dialect excluding builtins
+        for list in self.stdlib_variables_db[dialect]:
+            variables_set.update(set(list).difference(builtins_set))
+        #
+        # compose constants set
+        constants_set = set()
+        # add each list of constants for this dialect excluding builtins
+        for list in self.stdlib_constants_db[dialect]:
+            constants_set.update(set(list).difference(builtins_set))
+        #
         # update lexer state
         self.dialect = dialect
         self.reserved_words = reswords_set
         self.builtins = builtins_set    
+        self.pseudo_builtins = pseudo_builtins_set    
+        self.adts = adts_set    
+        self.modules = modules_set    
+        self.types = types_set    
+        self.procedures = procedures_set    
+        self.variables = variables_set    
+        self.constants = constants_set    
         #
         #if __debug__:
-        #    print 'exiting set_dialect with self.dialect: ', self.dialect
-    
+        #    print 'exiting set_dialect'
+        #    print ' self.dialect: ', self.dialect
+        #    print ' self.reserved_words: ', self.reserved_words
+        #    print ' self.builtins: ', self.builtins
+        #    print ' self.pseudo_builtins: ', self.pseudo_builtins
+        #    print ' self.adts: ', self.adts
+        #    print ' self.modules: ', self.modules
+        #    print ' self.types: ', self.types
+        #    print ' self.procedures: ', self.procedures
+        #    print ' self.variables: ', self.variables
+        #    print ' self.types: ', self.types
+        #    print ' self.constants: ', self.constants
+
     # Extracts a dialect name from a dialect tag comment string  and checks
     # the extracted name against known dialects.  If a match is found,  the
     # matching name is returned, otherwise dialect id 'unknown' is returned
@@ -1183,7 +1736,7 @@ class Modula2Lexer(RegexLexer):
         for index, token, value in RegexLexer.get_tokens_unprocessed(self, text):
             #
             # check for dialect tag if dialect has not been set by tag
-            if not self.dialect_set_by_tag and token == Comment.Preproc:
+            if not self.dialect_set_by_tag and token == Comment.Special:
                 indicated_dialect = self.get_dialect_from_dialect_tag(value)
                 if indicated_dialect != UNKNOWN:
                     # token is a dialect indicator
@@ -1191,7 +1744,7 @@ class Modula2Lexer(RegexLexer):
                     self.set_dialect(indicated_dialect)
                     self.dialect_set_by_tag = True
             #
-            # check for reserved words and predefined identifiers
+            # check for reserved words, predefined and stdlib identifiers
             if token is Name:
                 if value in self.reserved_words:
                     token = Keyword.Reserved
@@ -1202,6 +1755,32 @@ class Modula2Lexer(RegexLexer):
                     token = Name.Builtin
                     if self.lowercase_presentation:
                         value = value.lower()
+                #
+                elif value in self.pseudo_builtins:
+                    token = Name.Builtin.Pseudo
+                    if self.lowercase_presentation:
+                        value = value.lower()
+                #
+                elif value in self.adts:
+                    token = Name.Builtin.Pseudo
+                    if self.lowercase_presentation:
+                        value = value.lower()
+                #
+                elif value in self.modules:
+                    token = Name.Namespace
+                #
+                elif value in self.types:
+                    token = Name.Class
+                #
+                elif value in self.procedures:
+                    token = Name.Function
+                #
+                elif value in self.variables:
+                    token = Name.Variable
+                #
+                elif value in self.constants:
+                    token = Name.Constant
+                    
             # return result
             yield index, token, value
 
