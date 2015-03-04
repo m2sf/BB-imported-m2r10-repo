@@ -17,6 +17,7 @@ from pygments.util import get_bool_opt, get_list_opt
 from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
     Number, Punctuation, Error
 from pygments.scanner import Scanner
+from pygments.filters import KeywordCaseFilter
 
 __all__ = ['DelphiLexer', 'Modula2Lexer', 'AdaLexer']
 
@@ -505,32 +506,91 @@ class DelphiLexer(Lexer):
             yield scanner.start_pos, token, scanner.match or ''
 
 
+# Multi-Dialect Modula-2 Lexer
 class Modula2Lexer(RegexLexer):
     """
     For `Modula-2 <http://www.modula2.org/>`_ source code.
     
-    By default, the Modula-2 lexer recognises the combined reserved words and
-    builtins of the PIM, ISO and M2R10 dialects.  To limit the lexer to a
-    specific dialect, one the following options must be set to True:
-
-    `pim` or `m2pim`
+    The Modula-2 lexer supports several dialects.  By default, it operates in
+    fallback mode, recognising the *combined* reserved words and builtins of
+    the PIM, ISO and R10 dialects.
+    
+    To select a specific dialect one of several dialect options may be passed
+    or embedded into a source file.
+    
+    Dialect Options:
+    
+    `m2pim`
         Select PIM Modula-2 dialect (default: False).
-    `iso` or `m2iso`
+    `m2iso`
         Select ISO Modula-2 dialect (default: False).
-    `r10` or `m2r10`
+    `m2r10`
         Select Modula-2 R10 dialect (default: False).
     `objm2`
         Select Objective Modula-2 dialect (default: False).
-    
-    An additional option is available when PIM is selected:
-    
-    `gm2ext`
-        Also highlight GNU extensions to PIM (default: False).
+    `m2iso+aglet`
+        Select Aglet Modula-2 extended ISO dialect (default: False).
+    `m2pim+gm2`
+        Select GNU Modula-2 extended PIM dialect (default: False).
+    `m2iso+p1`
+        Select p1 Modula-2 extended ISO dialect (default: False).
+    `m2iso+xds`
+        Select XDS Modula-2 extended ISO dialect (default: False).
 
+    Passing a Dialect Option via Unix Commandline Interface
+    
     The example below shows how to invoke the lexer from a Unix command line
     to render a Modula-2 source file to HTML output, using the ISO dialect:
     
-    $ ./pygmentize -O full,iso=True -f html -o /path/to/output /path/to/input
+    `$ pygmentize -O full,m2iso=True -f html -o /path/to/output /path/to/input`
+
+    
+    Embedding a Dialect Option:
+    
+    A dialect option may be embedded in a source file in form of a dialect
+    tag, a specially formatted comment that specifies a dialect option.
+    
+    Dialect Tag EBNF:
+        
+    dialectTag :
+        OpeningCommentDelim Prefix dialectOption ClosingCommentDelim ;
+    
+    dialectOption :
+        'm2pim' | 'm2iso' | 'm2r10' | 'objm2' |
+        'm2iso+aglet' | 'm2pim+gm2' | 'm2iso+p1' | 'm2iso+xds' ;
+
+    Prefix : '!' ;
+
+    OpeningCommentDelim : '(*' ;
+
+    ClosingCommentDelim : '*)' ;
+    
+    No whitespace is permitted between the tokens of a dialect tag.
+    
+    In the event that a source file contains multiple dialect tags, the first
+    tag that contains a valid dialect option will be recognised and any
+    subsequent tags will be ignored.  Ideally, a dialect tag is placed
+    at the beginning of a source file.
+    
+    An embedded dialect tag overrides a dialect option set via command line.
+
+    The example below shows how to embed a dialect tag for the ISO dialect:
+    
+    `(*!m2iso*) (* Copyright (C) 2015, The Flintstones Inc. *)
+    DEFINITION MODULE Jurassic;
+    ...`
+    
+    
+    Algol Presentation Style Option:
+    
+    The Modula-2 lexer supports Algol presentation style.  In this style
+    reserved words are rendered lowercase boldface and builtins are
+    rendered lowercase boldface italic.
+    
+    The example below shows how to invoke the lexer from a Unix command line
+    to render a Modula-2 source file in Algol presentation style:
+    
+    `$ pygmentize -O full,style=algol -f html -o /path/to/output /path/to/input`
     
     .. versionadded:: 1.3
     """
@@ -540,23 +600,29 @@ class Modula2Lexer(RegexLexer):
     mimetypes = ['text/x-modula2']
 
     flags = re.MULTILINE | re.DOTALL
-
+    
     tokens = {
-        'magicbang': [
-        # PIM Dialect Indicator
-         (r'\(\*!m2pim\*\)', Comment.Preproc), 
-        # ISO Dialect Indicator
-         (r'\(\*!m2iso\*\)', Comment.Preproc), 
-        # M2R10 Dialect Indicator
-         (r'\(\*!m2r10\*\)', Comment.Preproc), 
-        # ObjM2 Dialect Indicator
-         (r'\(\*!objm2\*\)', Comment.Preproc), 
-        # GNU Extensions Dialect Indicator
-         (r'\(\*!gm2ext\*\)', Comment.Preproc), 
-        ],
         'whitespace': [
          (r'\n+', Text),  # blank lines
          (r'\s+', Text),  # whitespace
+        ],
+        'dialecttags': [
+        # PIM Dialect Tag
+         (r'\(\*!m2pim\*\)', Comment.Preproc), 
+        # ISO Dialect Tag
+         (r'\(\*!m2iso\*\)', Comment.Preproc), 
+        # M2R10 Dialect Tag
+         (r'\(\*!m2r10\*\)', Comment.Preproc), 
+        # ObjM2 Dialect Tag
+         (r'\(\*!objm2\*\)', Comment.Preproc), 
+        # Aglet Extensions Dialect Tag
+         (r'\(\*!m2iso\+aglet\*\)', Comment.Preproc), 
+        # GNU Extensions Dialect Tag
+         (r'\(\*!m2pim\+gm2\*\)', Comment.Preproc), 
+        # p1 Extensions Dialect Tag
+         (r'\(\*!m2iso\+p1\*\)', Comment.Preproc), 
+        # XDS Extensions Dialect Tag
+         (r'\(\*!m2iso\+xds\*\)', Comment.Preproc), 
         ],
         'identifiers': [
             (r'([a-zA-Z_$][\w$]*)', Name),
@@ -680,7 +746,7 @@ class Modula2Lexer(RegexLexer):
         ],
         'root': [
             include('whitespace'),
-            include('magicbang'),
+            include('dialecttags'),
             include('comments'),
             include('pragmas'),
             include('identifiers'),
@@ -691,169 +757,451 @@ class Modula2Lexer(RegexLexer):
         ]
     }
 
-    fallback_mode_reserved_words = [
-        # 58 reserved words from PIM, ISO and R10
-        'ALIAS', 'AND', 'ARGLIST', 'ARRAY', 'BEGIN', 'BLUEPRINT', 'BY', 'CASE',
-        'CONST', 'COPY', 'DEFINITION', 'DIV', 'DO', 'ELSE', 'ELSIF', 'END',
-        'EXCEPT', 'EXIT', 'EXPORT', 'FINALLY', 'FOR', 'FORWARD', 'FROM',
-        'GENLIB', 'IF', 'IMPLEMENTATION', 'IMPORT', 'IN', 'INDETERMINATE',
-        'LOOP', 'MOD', 'MODULE', 'NEW', 'NONE', 'NOT', 'OF', 'OR', 'OPAQUE',
-        'PACKEDSET', 'POINTER', 'PROCEDURE', 'QUALIFIED', 'RECORD',
-        'REFERENTIAL', 'RELEASE', 'REM', 'REPEAT', 'RETAIN', 'RETRY', 'RETURN',
-        'SET', 'THEN', 'TO', 'TYPE', 'UNTIL', 'VAR', 'WHILE', 'WITH',
-    ]
-
-    fallback_mode_highlight_identifiers = [
-        # 79 builtins from PIM, ISO and R10
-        'ABS', 'ADDRESS', 'BITSET', 'BOOLEAN', 'BYTE', 'CAP', 'CARDINAL',
-        'CAST', 'CHAR', 'CHR', 'CMPLX', 'COMPLEX', 'COUNT', 'DEC', 'DISPOSE',
-        'EMPTY', 'EXCL', 'EXISTS', 'FALSE', 'FLOAT', 'HALT', 'HIGH', 'IM',
-        'INC', 'INCL', 'INSERT', 'INT', 'INTEGER', 'INTERRUPTIBLE', 'LENGTH',
-        'LFLOAT', 'LONGCARD', 'LONGCOMPLEX', 'LONGINT', 'LONGREAL', 'MAX',
-        'MIN', 'NIL', 'OCTET', 'ODD', 'ORD', 'PROC', 'PROTECTION', 'PRED',
-        'PTR', 'RE', 'READ', 'READNEW', 'REAL', 'REMOVE', 'RETRIEVE', 'SIZE',
-        'SORT', 'STORE', 'SUBSET', 'SUCC', 'SXF', 'TBASE', 'TBUILTIN', 'TDYN',
-        'TLIMIT', 'TLITERAL', 'TMAX', 'TMAXEXP', 'TMIN', 'TMINEXP', 'TNIL',
-        'TPRECISION', 'TPROPERTIES', 'TREFC', 'TRUE', 'TRUNC', 'TSIZE',
-        'UNICHAR', 'UNINTERRUPTIBLE', 'UNSAFE', 'VAL', 'WRITE', 'WRITEF',
-    ]
-
-    pim_reserved_words = [
-        # 40 reserved words
-        'AND', 'ARRAY', 'BEGIN', 'BY', 'CASE', 'CONST', 'DEFINITION',
-        'DIV', 'DO', 'ELSE', 'ELSIF', 'END', 'EXIT', 'EXPORT', 'FOR',
-        'FROM', 'IF', 'IMPLEMENTATION', 'IMPORT', 'IN', 'LOOP', 'MOD',
-        'MODULE', 'NOT', 'OF', 'OR', 'POINTER', 'PROCEDURE', 'QUALIFIED',
-        'RECORD', 'REPEAT', 'RETURN', 'SET', 'THEN', 'TO', 'TYPE',
-        'UNTIL', 'VAR', 'WHILE', 'WITH',
-    ]
-
-    pim_standard_identifiers = [
-        # 31 pervasives
-        'ABS', 'BITSET', 'BOOLEAN', 'CAP', 'CARDINAL', 'CHAR', 'CHR', 'DEC',
-        'DISPOSE', 'EXCL', 'FALSE', 'FLOAT', 'HALT', 'HIGH', 'INC', 'INCL',
-        'INTEGER', 'LONGINT', 'LONGREAL', 'MAX', 'MIN', 'NEW', 'NIL', 'ODD',
-        'ORD', 'PROC', 'REAL', 'SIZE', 'TRUE', 'TRUNC', 'VAL',
-    ]
-
-    iso_reserved_words = [
-        # 46 reserved words
+    # Common Reserved Words Dataset
+    common_reserved_words = [
+        # 37 common reserved words
         'AND', 'ARRAY', 'BEGIN', 'BY', 'CASE', 'CONST', 'DEFINITION', 'DIV',
-        'DO', 'ELSE', 'ELSIF', 'END', 'EXCEPT', 'EXIT', 'EXPORT', 'FINALLY',
-        'FOR', 'FORWARD', 'FROM', 'IF', 'IMPLEMENTATION', 'IMPORT', 'IN',
-        'LOOP', 'MOD', 'MODULE', 'NOT', 'OF', 'OR', 'PACKEDSET', 'POINTER',
-        'PROCEDURE', 'QUALIFIED', 'RECORD', 'REPEAT', 'REM', 'RETRY',
-        'RETURN', 'SET', 'THEN', 'TO', 'TYPE', 'UNTIL', 'VAR', 'WHILE',
-        'WITH',
+        'DO', 'ELSE', 'ELSIF', 'END', 'EXIT', 'FOR', 'FROM', 'IF',
+        'IMPLEMENTATION', 'IMPORT', 'IN', 'LOOP', 'MOD', 'MODULE', 'NOT',
+        'OF', 'OR', 'POINTER', 'PROCEDURE', 'RECORD', 'REPEAT', 'RETURN',
+        'SET', 'THEN', 'TO', 'TYPE', 'UNTIL', 'VAR', 'WHILE',
     ]
 
-    iso_pervasives = [
-        # 42 pervasives
-        'ABS', 'BITSET', 'BOOLEAN', 'CAP', 'CARDINAL', 'CHAR', 'CHR', 'CMPLX',
-        'COMPLEX', 'DEC', 'DISPOSE', 'EXCL', 'FALSE', 'FLOAT', 'HALT', 'HIGH',
-        'IM', 'INC', 'INCL', 'INT', 'INTEGER', 'INTERRUPTIBLE', 'LENGTH',
-        'LFLOAT', 'LONGCOMPLEX', 'LONGINT', 'LONGREAL', 'MAX', 'MIN', 'NEW',
-        'NIL', 'ODD', 'ORD', 'PROC', 'PROTECTION', 'RE', 'REAL', 'SIZE',
-        'TRUE', 'TRUNC', 'UNINTERRUBTIBLE', 'VAL',
+    # Common Builtins Dataset
+    common_builtins = [
+        # 17 common builtins
+        'ABS', 'BOOLEAN', 'CARDINAL', 'CHAR', 'CHR', 'FALSE', 'INTEGER',
+        'LONGINT', 'LONGREAL', 'MAX', 'MIN', 'NIL', 'ODD', 'ORD', 'REAL', 
+        'TRUE', 'VAL',
+    ]
+    
+    # PIM Modula-2 Additional Reserved Words Dataset
+    pim_additional_reserved_words = [
+        # 3 additional reserved words
+        'EXPORT', 'QUALIFIED', 'WITH',
+    ]
+    
+    # PIM Modula-2 Additional Builtins Dataset
+    pim_additional_builtins = [
+        # 15 additional builtins
+        'BITSET', 'CAP', 'DEC', 'DISPOSE', 'EXCL', 'FLOAT', 'HALT', 'HIGH',
+        'INC', 'INCL', 'NEW', 'NIL', 'PROC', 'SIZE', 'TRUNC',
+    ]
+    
+    # ISO Modula-2 Additional Reserved Words Dataset
+    iso_additional_reserved_words = [
+        # 20 additional reserved words
+        'ABSTRACT', 'AS', 'CLASS', 'EXCEPT', 'EXPORT', 'FINALLY', 'FORWARD',
+        'GUARD', 'INHERIT', 'OVERRIDE', 'PACKEDSET', 'QUALIFIED', 'READONLY',
+        'REM', 'RETRY', 'REVEAL', 'TRACED', 'UNSAFEGUARDED', 'WITH',
+    ]
+    
+    # ISO Modula-2 Additional Builtins Dataset
+    iso_additional_builtins = [
+        # 30 additional builtins
+        'CREATE', 'BITSET', 'CAP', 'CMPLX', 'COMPLEX', 'DEC', 'DESTROY',
+        'DISPOSE', 'EMPTY', 'EXCL', 'FLOAT', 'HALT', 'HIGH', 'IM', 'INC',
+        'INCL', 'INT', 'INTERRUPTIBLE', 'ISMEMBER', 'LENGTH', 'LFLOAT',
+        'LONGCOMPLEX', 'NEW', 'PROC', 'PROTECTION', 'RE', 'SELF', 'SIZE',
+        'TRUNC', 'UNINTERRUBTIBLE',
+    ]
+    
+    # Modula-2 R10 reserved words in addition to the common set
+    m2r10_additional_reserved_words = [
+        # 12 additional reserved words
+        'ALIAS', 'ARGLIST', 'BLUEPRINT', 'COPY', 'GENLIB', 'INDETERMINATE',
+        'NEW', 'NONE', 'OPAQUE', 'REFERENTIAL', 'RELEASE', 'RETAIN',
     ]
 
-    m2r10_reserved_words = [
-        # 49 reserved words
-        'ALIAS', 'AND', 'ARGLIST', 'ARRAY', 'BEGIN', 'BLUEPRINT', 'BY', 'CASE',
-        'CONST', 'COPY', 'DEFINITION', 'DIV', 'DO', 'ELSE', 'ELSIF', 'END',
-        'EXIT', 'FOR', 'FROM', 'GENLIB', 'IF', 'IMPLEMENTATION', 'IMPORT',
-        'IN', 'INDETERMINATE', 'LOOP', 'MOD', 'MODULE', 'NEW', 'NONE', 'NOT',
-        'OF', 'OPAQUE', 'OR', 'POINTER', 'PROCEDURE', 'RECORD', 'REFERENTIAL',
-        'RELEASE', 'REPEAT', 'RETAIN', 'RETURN', 'SET', 'THEN', 'TO', 'TYPE',
-        'UNTIL', 'VAR', 'WHILE',
+    # Modula-2 R10 builtins in addition to the common set
+    m2r10_additional_builtins = [
+        # 41 additional builtins
+        'ADDRESS', 'BYTE', 'CAST', 'CARDINAL', 'COUNT', 'EMPTY', 'EXISTS',
+        'INSERT', 'LENGTH', 'LONGCARD', 'OCTET', 'PTR', 'PRED', 'READ',
+        'READNEW', 'REMOVE', 'RETRIEVE', 'SORT', 'STORE', 'SUBSET', 'SUCC',
+        'SXF', 'TBASE', 'TBUILTIN', 'TDYN', 'TLIMIT', 'TLITERAL', 'TMAX',
+        'TMAXEXP', 'TMIN', 'TMINEXP', 'TNIL', 'TPRECISION', 'TPROPERTIES',
+        'TREFC', 'TRUE', 'TSIZE', 'UNICHAR', 'UNSAFE', 'WRITE', 'WRITEF',
     ]
-
-    m2r10_reserved_identifiers = [
-        # 56 reserved identifiers
-        'ABS', 'ADDRESS', 'BOOLEAN', 'BYTE', 'CAST', 'CARDINAL', 'CHAR', 'CHR',
-        'COUNT', 'EMPTY', 'EXISTS', 'FALSE', 'INSERT', 'INTEGER', 'LENGTH',
-        'LONGCARD', 'LONGINT', 'LONGREAL', 'MAX', 'MIN', 'NIL', 'OCTET', 'ODD',
-        'ORD', 'PTR', 'PRED', 'READ', 'READNEW', 'REAL', 'REMOVE', 'RETRIEVE',
-        'SORT', 'STORE', 'SUBSET', 'SUCC', 'SXF', 'TBASE', 'TBUILTIN', 'TDYN',
-        'TLIMIT', 'TLITERAL', 'TMAX', 'TMAXEXP', 'TMIN', 'TMINEXP', 'TNIL',
-        'TPRECISION', 'TPROPERTIES', 'TREFC', 'TRUE', 'TSIZE', 'UNICHAR',
-        'UNSAFE', 'VAL', 'WRITE', 'WRITEF',
-    ]
-
-    objm2_reserved_words = [
-        # OO extensions to Modula-2 R10, 16 reserved words
+    
+    # Objective Modula-2 Extensions
+    # reserved words in addition to Modula-2 R10
+    objm2_additional_reserved_words = [
+        # 16 additional reserved words
         'BYCOPY', 'BYREF', 'CLASS', 'CONTINUE', 'CRITICAL', 'INOUT', 'METHOD',
         'ON', 'OPTIONAL', 'OUT', 'PRIVATE', 'PROTECTED', 'PROTOCOL', 'PUBLIC',
         'SUPER', 'TRY',
     ]
 
-    objm2_reserved_identifiers = [
-        # OO extensions to Modula-2 R10, 3 reserved identifiers
+    # Objective Modula-2 Extensions
+    # builtins in addition to Modula-2 R10
+    objm2_additional_builtins = [
+        # 3 additional builtins
         'OBJECT', 'NO', 'YES',
     ]
 
-    gnu_reserved_words = [
-        # GNU extensions to PIM, 10 reserved words
+    # Aglet Extensions
+    # reserved words in addition to ISO Modula-2
+    aglet_additional_reserved_words = [
+        # No additional reserved words
+    ]
+
+    # Aglet Extensions
+    # builtins in addition to ISO Modula-2
+    aglet_additional_builtins = [
+        # 9 additional builtins
+        'BITSET8', 'BITSET16', 'BITSET32', 'CARDINAL8', 'CARDINAL16',
+        'CARDINAL32', 'INTEGER8', 'INTEGER16', 'INTEGER32',
+    ]
+
+    # GNU Extensions
+    # reserved words in addition to PIM Modula-2
+    gm2_additional_reserved_words = [
+        # 10 additional reserved words
         'ASM', '__ATTRIBUTE__', '__BUILTIN__', '__COLUMN__', '__DATE__',
         '__FILE__', '__FUNCTION__', '__LINE__', '__MODULE__', 'VOLATILE',
     ]
 
-    gnu_builtin_identifiers = [
-        # GNU extensions to PIM, 21 identifiers
+    # GNU Extensions
+    # builtins in addition to PIM Modula-2
+    gm2_additional_builtins = [
+        # 21 additional builtins
         'BITSET8', 'BITSET16', 'BITSET32', 'CARDINAL8', 'CARDINAL16',
         'CARDINAL32', 'CARDINAL64', 'COMPLEX32', 'COMPLEX64', 'COMPLEX96',
         'COMPLEX128', 'INTEGER8', 'INTEGER16', 'INTEGER32', 'INTEGER64',
         'REAL8', 'REAL16', 'REAL32', 'REAL96', 'REAL128', 'THROW',
     ]
 
+    # p1 Extensions
+    # reserved words in addition to ISO Modula-2
+    p1_additional_reserved_words = [
+        # No additional reserved words
+    ]
+
+    # p1 Extensions
+    # builtins in addition to ISO Modula-2
+    p1_additional_builtins = [
+        # 3 additional builtins
+        'BCD', 'LONGBCD', 'EMPTY',
+    ]
+
+    # XDS Extensions
+    # reserved words in addition to ISO Modula-2
+    xds_additional_reserved_words = [
+        # 1 additional reserved word
+        'SEQ',
+    ]
+
+    # XDS Extensions
+    # builtins in addition to ISO Modula-2
+    xds_additional_builtins = [
+        # 18 additional builtins
+        'ASH', 'ASSERT', 'BOOL8', 'BOOL16', 'BOOL32', 'CARD8', 'CARD16',
+        'CARD32', 'DIFFADR_TYPE', 'ENTIER', 'INDEX', 'INT8', 'INT16',
+        'INT32', 'LEN', 'LONGCARD', 'SHORTCARD', 'SHORTINT',
+    ]
+    
+    # Dialect modes
+    dialects = (
+        'unknown',
+        'm2pim', 'm2iso', 'm2r10', 'objm2',
+        'm2iso+aglet', 'm2pim+gm2', 'm2iso+p1', 'm2iso+xds',
+    )
+        
+    # Reserved Words Database
+    reserved_words_db = {
+        # Reserved words for unknown dialect
+        'unknown' : [
+            common_reserved_words,
+            pim_additional_reserved_words,
+            iso_additional_reserved_words,
+            m2r10_additional_reserved_words,
+        ],
+
+        # Reserved words for PIM Modula-2
+        'm2pim' : [
+            common_reserved_words,
+            pim_additional_reserved_words,
+        ],
+
+        # Reserved words for Modula-2 R10
+        'm2iso' : [
+            common_reserved_words,
+            iso_additional_reserved_words,
+        ],
+
+        # Reserved words for ISO Modula-2
+        'm2r10' : [
+            common_reserved_words,
+            m2r10_additional_reserved_words,
+        ],
+
+        # Reserved words for Objective Modula-2
+        'objm2' : [
+            common_reserved_words,
+            m2r10_additional_reserved_words,
+            objm2_additional_reserved_words,
+        ],
+
+        # Reserved words for Aglet Modula-2 Extensions
+        'm2iso+aglet' : [
+            common_reserved_words,
+            iso_additional_reserved_words,
+            aglet_additional_reserved_words,
+        ],
+
+        # Reserved words for GNU Modula-2 Extensions
+        'm2pim+gm2' : [
+            common_reserved_words,
+            pim_additional_reserved_words,
+            gm2_additional_reserved_words,
+        ],
+
+        # Reserved words for p1 Modula-2 Extensions
+        'm2iso+p1' : [
+            common_reserved_words,
+            iso_additional_reserved_words,
+            p1_additional_reserved_words,
+        ],
+
+        # Reserved words for XDS Modula-2 Extensions
+        'm2iso+xds' : [
+            common_reserved_words,
+            iso_additional_reserved_words,
+            xds_additional_reserved_words,
+        ],
+    }
+
+    # Builtins Database
+    builtins_db = {
+        # Builtins for unknown dialect
+        'unknown' : [
+            common_builtins,
+            pim_additional_builtins,
+            iso_additional_builtins,
+            m2r10_additional_builtins,
+        ],
+
+        # Builtins for PIM Modula-2
+        'm2pim' : [
+            common_builtins,
+            pim_additional_builtins,
+        ],
+
+        # Builtins for ISO Modula-2
+        'm2iso' : [
+            common_builtins,
+            iso_additional_builtins,
+        ],
+
+        # Builtins for ISO Modula-2
+        'm2r10' : [
+            common_builtins,
+            m2r10_additional_builtins,
+        ],
+
+        # Builtins for Objective Modula-2
+        'objm2' : [
+            common_builtins,
+            m2r10_additional_builtins,
+            objm2_additional_builtins,
+        ],
+
+        # Builtins for Aglet Modula-2 Extensions
+        'm2iso+aglet' : [
+            common_builtins,
+            iso_additional_builtins,
+            aglet_additional_builtins,
+        ],
+
+        # Builtins for GNU Modula-2 Extensions
+        'm2pim+gm2' : [
+            common_builtins,
+            pim_additional_builtins,
+            gm2_additional_builtins,
+        ],
+
+        # Builtins for p1 Modula-2 Extensions
+        'm2iso+p1' : [
+            common_builtins,
+            iso_additional_builtins,
+            p1_additional_builtins,
+        ],
+
+        # Builtins for XDS Modula-2 Extensions
+        'm2iso+xds' : [
+            common_builtins,
+            iso_additional_builtins,
+            xds_additional_builtins,
+        ],
+    }
+    
+    # initialise a lexer instance
     def __init__(self, **options):
-        self.reserved_words = set()
-        self.builtins = set()
-
+        #
+        # Alias for unknown dialect
+        global UNKNOWN
+        UNKNOWN = self.dialects[0]
+        #
+        # check dialect options and set dialect
+        #
         # PIM Modula-2
-        if get_bool_opt(options, 'pim', False) or \
-             get_bool_opt(options, 'm2pim', False):
-            self.reserved_words.update(self.pim_reserved_words)
-            self.builtins.update(self.pim_standard_identifiers)
-            if get_bool_opt(options, 'gm2ext', False):
-                self.reserved_words.update(self.pim_reserved_words)
-                self.reserved_words.update(self.gnu_reserved_words)
-                self.builtins.update(self.pim_standard_identifiers)
-                self.builtins.update(self.gnu_builtin_identifiers)
-
+        if get_bool_opt(options, 'm2pim', False):
+            self.set_dialect('m2pim')
+        #
         # ISO Modula-2
-        elif get_bool_opt(options, 'iso', False) or \
-             get_bool_opt(options, 'm2iso', False):
-            self.reserved_words.update(self.iso_reserved_words)
-            self.builtins.update(self.iso_pervasives)
-
+        elif get_bool_opt(options, 'm2iso', False):
+            self.set_dialect('m2iso')
+        #
         # Modula-2 R10
-        elif get_bool_opt(options, 'r10', False) or \
-             get_bool_opt(options, 'm2r10', False):
-            self.reserved_words.update(self.m2r10_reserved_words)
-            self.builtins.update(self.m2r10_reserved_identifiers)
-
+        elif get_bool_opt(options, 'm2r10', False):
+            self.set_dialect('m2r10')
+        #
         # Objective Modula-2
         elif get_bool_opt(options, 'objm2', False):
-            self.reserved_words.update(self.m2r10_reserved_words)
-            self.reserved_words.update(self.objm2_reserved_words)
-            self.builtins.update(self.m2r10_reserved_identifiers)
-            self.builtins.update(self.objm2_reserved_identifiers)
+            self.set_dialect('m2r10')
+        #
+        # Aglet Extensions to ISO
+        elif get_bool_opt(options, 'm2iso+aglet', False):
+            self.set_dialect('m2iso+aglet')
+        #
+        # GNU Extensions to PIM
+        elif get_bool_opt(options, 'm2pim+gm2', False):
+            self.set_dialect('m2pim+gm2')
+        #
+        # p1 Extensions to ISO
+        elif get_bool_opt(options, 'm2iso+p1', False):
+            self.set_dialect('m2iso+p1')
+        #
+        # XDS Extensions to ISO
+        elif get_bool_opt(options, 'm2iso+xds', False):
+            self.set_dialect('m2iso+xds')
+        #
         # Fallback Mode (DEFAULT)
         else:
-            self.reserved_words.update(self.fallback_mode_reserved_words)
-            self.builtins.update(self.fallback_mode_highlight_identifiers)
-        # initialise
+            self.set_dialect(UNKNOWN)
+        #
+        self.dialect_set_by_tag = False
+        #
+        # check style options
+        #
+        styles = get_list_opt(options, 'style', [])
+        #
+        # use lowercase mode for algol style
+        if 'algol' in styles:
+            self.lowercase_presentation = True
+        else:
+            self.lowercase_presentation = False
+        #
+        # call superclass initialiser
         RegexLexer.__init__(self, **options)
-
+    
+    # Set lexer to a specified dialect
+    def set_dialect(self, dialect_id):
+        #
+        #if __debug__:
+        #    print 'entered set_dialect with arg: ', dialect_id
+        #
+        # check dialect name against known dialects
+        if dialect_id not in self.dialects:
+            dialect = UNKNOWN # default
+        else:
+            dialect = dialect_id
+        #
+        # compose reserved words set
+        reswords_set = set()
+        # add each list of reserved words for this dialect
+        for list in self.reserved_words_db[dialect]:
+            reswords_set.update(set(list))
+        #
+        # compose builtins set
+        builtins_set = set()
+        # add each list of builtins for this dialect excluding reserved words
+        for list in self.builtins_db[dialect]:
+            builtins_set.update(set(list).difference(reswords_set))
+        #
+        # update lexer state
+        self.dialect = dialect
+        self.reserved_words = reswords_set
+        self.builtins = builtins_set    
+        #
+        #if __debug__:
+        #    print 'exiting set_dialect with self.dialect: ', self.dialect
+    
+    # Extracts a dialect name from a dialect tag comment string  and checks
+    # the extracted name against known dialects.  If a match is found,  the
+    # matching name is returned, otherwise dialect id 'unknown' is returned
+    def get_dialect_from_dialect_tag(self, dialect_tag):
+        #
+        #if __debug__:
+        #    print 'entered get_dialect_from_dialect_tag with arg: ', dialect_tag
+        #
+        # constants
+        left_tag_delim = '(*!'
+        right_tag_delim = '*)'
+        left_tag_delim_len = len(left_tag_delim)
+        right_tag_delim_len = len(right_tag_delim)
+        indicator_start = left_tag_delim_len
+        indicator_end = -(right_tag_delim_len)
+        #
+        # check comment string for dialect indicator
+        if len(dialect_tag) > (left_tag_delim_len + right_tag_delim_len) \
+          and dialect_tag.startswith(left_tag_delim) \
+          and dialect_tag.endswith(right_tag_delim):
+            #
+            #if __debug__:
+            #    print 'dialect tag found'
+            #
+            # extract dialect indicator
+            indicator = dialect_tag[indicator_start:indicator_end]
+            #
+            #if __debug__:
+            #    print 'extracted: ', indicator
+            #
+            # check against known dialects
+            for index in range(1, len(self.dialects)):
+                #
+                #if __debug__:
+                #    print 'dialects[', index, ']: ', self.dialects[index]
+                #
+                if indicator == self.dialects[index]:
+                    #
+                    #if __debug__:
+                    #    print 'matching dialect found'
+                    #
+                    # indicator matches known dialect
+                    return indicator
+            else:
+                # indicator does not match any dialect
+                return UNKNOWN # default
+        else:
+            # invalid indicator string
+            return UNKNOWN # default
+    
+    # intercept the token stream, modify token attributes and return them
     def get_tokens_unprocessed(self, text):
         for index, token, value in RegexLexer.get_tokens_unprocessed(self, text):
+            #
+            # check for dialect tag if dialect has not been set by tag
+            if not self.dialect_set_by_tag and token == Comment.Preproc:
+                indicated_dialect = self.get_dialect_from_dialect_tag(value)
+                if indicated_dialect != UNKNOWN:
+                    # token is a dialect indicator
+                    # reset reserved words and builtins
+                    self.set_dialect(indicated_dialect)
+                    self.dialect_set_by_tag = True
+            #
             # check for reserved words and predefined identifiers
             if token is Name:
                 if value in self.reserved_words:
                     token = Keyword.Reserved
+                    if self.lowercase_presentation:
+                        value = value.lower()
+                #
                 elif value in self.builtins:
                     token = Name.Builtin
+                    if self.lowercase_presentation:
+                        value = value.lower()
             # return result
             yield index, token, value
 
