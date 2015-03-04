@@ -541,7 +541,7 @@ class Modula2Lexer(RegexLexer):
     The example below shows how to invoke the lexer from a Unix command line
     to render a Modula-2 source file to HTML output, using the ISO dialect:
     
-    `$ pygmentize -O full,m2iso=True -f html -o /path/to/output /path/to/input`
+    `$ pygmentize -O full,dialect=m2iso -f html -o /path/to/output /path/to/input`
 
     
     Embedding a Dialect Option:
@@ -590,6 +590,23 @@ class Modula2Lexer(RegexLexer):
     to render a Modula-2 source file in Algol presentation style:
     
     `$ pygmentize -O full,style=algol -f html -o /path/to/output /path/to/input`
+    
+    
+    ADT Presentation Option:
+    
+    When this option is turned on, standard library ADT identifiers are rendered
+    as builtins.  This is useful for dialects that support ADTs as first class
+    objects and therefore provide types that would otherwise be built-in as
+    ADTs within the standard library.
+    
+    `treat_stdlib_adts_as_builtins` (default: On)
+    
+    The example below shows how to invoke the lexer from a Unix command line
+    rendering standard library ADT identifiers as ordinary library types:
+    
+    `$ pygmentize -O full,dialect=m2r10,treat_stdlib_adts_as_builtins=Off
+     -f html -o /path/to/output /path/to/input`
+    
     
     .. versionadded:: 1.3
     """
@@ -664,18 +681,22 @@ class Modula2Lexer(RegexLexer):
             (r'"(\\\\|\\"|[^"])*"', String),  # double quoted string
         ],
         'operators': [
+        # Dot Product Operator
+          (r'\*\.', Operator),
+        # Identity Operator
+          (r'==', Operator),
         #
         # Operators Common To PIM, ISO, M2R10 and ObjM2
         #
         # Arithmetic Operators
           (r'[+-]', Operator),
           (r'[*/]', Operator),
-        # Relational Operators
-          (r'[=#<>]', Operator),
         # Less-Or-Equal, Subset
           (r'<=', Operator),
         # Greater-Or-Equal, Superset
           (r'>=', Operator),
+        # Relational Operators
+          (r'[=#<>]', Operator),
         # Assignment Symbol
           (r':=', Operator),
         # Range Symbol
@@ -707,8 +728,6 @@ class Modula2Lexer(RegexLexer):
           (r'\\', Operator),
         # Type Conversion Operator
           (r'::', Operator),
-        # Identity Operator
-          (r'==', Operator),
         # Postfix Increment Mutator
           (r'\+\+', Operator),
         # Postfix Decrement Mutator
@@ -1561,16 +1580,19 @@ class Modula2Lexer(RegexLexer):
         global UNKNOWN
         UNKNOWN = self.dialects[0]
         #
-        # check dialect options and set dialect
+        # check dialect options
         #
-        for opt in self.dialects[1:-1]:
-            if get_bool_opt(options, opt, False):
-                # valid option found
-                self.set_dialect(opt)
+        dialects = get_list_opt(options, 'dialect', [])
+        #
+        for dialect_option in dialects:
+            if dialect_option in self.dialects[1:-1]:
+                # valid dialect option found
+                self.set_dialect(dialect_option)
+                break
         #
         # Fallback Mode (DEFAULT)
         else:
-              # no valid option found
+              # no valid dialect option
               self.set_dialect(UNKNOWN)
         #
         self.dialect_set_by_tag = False
@@ -1579,11 +1601,16 @@ class Modula2Lexer(RegexLexer):
         #
         styles = get_list_opt(options, 'style', [])
         #
-        # use lowercase mode for algol style
+        # use lowercase mode for Algol style
         if 'algol' in styles:
-            self.lowercase_presentation = True
+            self.algol_lowercase_presentation = True
         else:
-            self.lowercase_presentation = False
+            self.algol_lowercase_presentation = False
+        #
+        # Check option flags 
+        #
+        self.treat_stdlib_adts_as_builtins = \
+          get_bool_opt(options, 'treat_stdlib_adts_as_builtins', True)
         #
         # call superclass initialiser
         RegexLexer.__init__(self, **options)
@@ -1747,23 +1774,26 @@ class Modula2Lexer(RegexLexer):
             if token is Name:
                 if value in self.reserved_words:
                     token = Keyword.Reserved
-                    if self.lowercase_presentation:
+                    if self.algol_lowercase_presentation:
                         value = value.lower()
                 #
                 elif value in self.builtins:
                     token = Name.Builtin
-                    if self.lowercase_presentation:
+                    if self.algol_lowercase_presentation:
                         value = value.lower()
                 #
                 elif value in self.pseudo_builtins:
                     token = Name.Builtin.Pseudo
-                    if self.lowercase_presentation:
+                    if self.algol_lowercase_presentation:
                         value = value.lower()
                 #
                 elif value in self.adts:
-                    token = Name.Builtin.Pseudo
-                    if self.lowercase_presentation:
-                        value = value.lower()
+                    if not self.treat_stdlib_adts_as_builtins:
+                        token = Name.Namespace
+                    else:
+                        token = Name.Builtin.Pseudo
+                        if self.algol_lowercase_presentation:
+                            value = value.lower()
                 #
                 elif value in self.modules:
                     token = Name.Namespace
@@ -1779,6 +1809,15 @@ class Modula2Lexer(RegexLexer):
                 #
                 elif value in self.constants:
                     token = Name.Constant
+            elif self.algol_lowercase_presentation and token == Operator:
+                if value == '<=':
+                    value = u'≤'
+                elif value == '>=':
+                    value = u'≥'
+                elif value == '==':
+                    value = u'≡'
+                elif value == '*.':
+                    value = u'•'
                     
             # return result
             yield index, token, value
