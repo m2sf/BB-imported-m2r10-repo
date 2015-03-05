@@ -510,9 +510,9 @@ class Modula2Lexer(RegexLexer):
     """
     For `Modula-2 <http://www.modula2.org/>`_ source code.
     
-    The Modula-2 lexer supports several dialects.  By default, it operates in
+    The Modula-2 lexer supports several dialects. By default, it operates in
     fallback mode, recognising the *combined* reserved words and builtins of
-    the PIM, ISO and R10 dialects.
+    the PIM, ISO and R10 dialects without differentiating library identifiers.
     
     To select a specific dialect a dialect option may be passed
     or a dialect tag may be embedded into a source file.
@@ -553,7 +553,7 @@ class Modula2Lexer(RegexLexer):
     `$ pygmentize -O full,dialect=m2iso -f html -o /path/to/output /path/to/input`
         Use ISO dialect to render input to HTML output
     `$ pygmentize -O full,dialect=m2iso+p1 -f rtf -o /path/to/output /path/to/input`
-        Use ISO dialect with p1 extension to render input to RTF output
+        Use ISO dialect with p1 extensions to render input to RTF output
 
     
     Embedding a Dialect Option within a source file
