@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Feb 28, 2015
+# Syntax diagram generator for Modula-2 (R10), status Mar 1, 2015
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -248,8 +248,13 @@ lappend non_terminals determinedProperties {
 
 # (7.2) Properties To Determine
 lappend non_terminals propertiesToDetermine {
-  line identList 
+  loop {line Ident ?} ,
 }
+
+## (7.2) Properties To Determine
+#lappend non_terminals propertiesToDetermine {
+#  line identList 
+#}
 
 # (8) Literal Specification
 lappend non_terminals literalSpec {
@@ -1663,82 +1668,87 @@ lappend res_symbols Tilde {
   line ~
 }
 
-# (3.25) Open Comment
+# (3.25) Question Mark
+lappend res_symbols QuestionMark {
+  line ?
+}
+
+# (3.26) Open Comment
 lappend res_symbols OpenComment {
   line (*
 }
 
-# (3.26) Close Comment
+# (3.27) Close Comment
 lappend res_symbols CloseComment {
   line *)
 }
 
-# (3.27) Dot Product
+# (3.28) Dot Product
 lappend res_symbols DotProduct {
   line *.
 }
 
-# (3.28) Close Pragma
+# (3.29) Close Pragma
 lappend res_symbols ClosePragma {
   line *>
 }
 
-# (3.29) Double Plus
+# (3.30) Double Plus
 lappend res_symbols DoublePlus {
   line ++
 }
 
-# (3.30) Array Concat
+# (3.31) Array Concat
 lappend res_symbols ArrayConcat {
   line +>
 }
 
-# (3.31) Double Minus
+# (3.32) Double Minus
 lappend res_symbols DoubleMinus {
   line --
 }
 
-# (3.32) Right Arrow
+# (3.33) Right Arrow
 lappend res_symbols RightArrow {
   line ->
 }
 
-# (3.33) Double Dot
+# (3.34) Double Dot
 lappend res_symbols DoubleDot {
   line ..
 }
 
-# (3.34) Double Slash
+# (3.35) Double Slash
 lappend res_symbols DoubleSlash {
   line //
 }
 
-# (3.35) Double Colon
+# (3.36) Double Colon
 lappend res_symbols DoubleColon {
   line ::
 }
 
-# (3.36) Assign
+# (3.37) Assign
 lappend res_symbols Assign {
   line :=
 }
 
-# (3.37) Identity
+# (3.38) Identity
 lappend res_symbols Identity {
   line ==
 }
 
-# (3.38) Less Or Equal
+# (3.39) Less Or Equal
 lappend res_symbols LessOrEqual {
   line <=
 }
 
-# (3.39) Open Pragma
+# (3.40) Open Pragma
 lappend res_symbols OpenPragma {
   line <*
 }
 
-# (3.40) Greater Or Equal
+# (3.41) Greater Or Equal
 lappend res_symbols GreaterOrEqual {
   line >=
 }
