@@ -792,7 +792,9 @@ class Modula2Lexer(RegexLexer):
             include('punctuation'),
         ]
     }
-
+    
+#  C o m m o n   D a t a s e t s
+    
     # Common Reserved Words Dataset
     common_reserved_words = (
         # 37 common reserved words
@@ -817,6 +819,8 @@ class Modula2Lexer(RegexLexer):
         'ADDRESS', 'BYTE', 'WORD', 'ADR'
     )
     
+#  P I M   M o d u l a - 2   D a t a s e t s
+
     # PIM Modula-2 Additional Reserved Words Dataset
     pim_additional_reserved_words = (
         # 3 additional reserved words
@@ -832,33 +836,59 @@ class Modula2Lexer(RegexLexer):
     
     # PIM Modula-2 Additional Pseudo-Module Builtins Dataset
     pim_additional_pseudo_builtins = (
-        # 5 aditional pseudo builtins
+        # 5 additional pseudo builtins
         'SYSTEM', 'PROCESS', 'TSIZE', 'NEWPROCESS', 'TRANSFER',
     )
     
+#  I S O   M o d u l a - 2   D a t a s e t s
+    
     # ISO Modula-2 Additional Reserved Words Dataset
     iso_additional_reserved_words = (
-        # 20 additional reserved words
-        'ABSTRACT', 'AS', 'CLASS', 'EXCEPT', 'EXPORT', 'FINALLY', 'FORWARD',
-        'GUARD', 'INHERIT', 'OVERRIDE', 'PACKEDSET', 'QUALIFIED', 'READONLY',
-        'REM', 'RETRY', 'REVEAL', 'TRACED', 'UNSAFEGUARDED', 'WITH',
+        # 9 additional reserved words (ISO 10514-1)
+        'EXCEPT', 'EXPORT', 'FINALLY', 'FORWARD', 'PACKEDSET', 'QUALIFIED',
+        'REM', 'RETRY', 'WITH',
+        # 10 additional reserved words (ISO 10514-2 & ISO 10514-3)
+        'ABSTRACT', 'AS', 'CLASS', 'GUARD', 'INHERIT', 'OVERRIDE', 'READONLY',
+        'REVEAL', 'TRACED', 'UNSAFEGUARDED',
     )
     
     # ISO Modula-2 Additional Builtins Dataset
     iso_additional_builtins = (
-        # 31 additional builtins
-        'CREATE', 'BITSET', 'CAP', 'CMPLX', 'COMPLEX', 'DEC', 'DESTROY',
-        'DISPOSE', 'EMPTY', 'EXCL', 'FLOAT', 'HALT', 'HIGH', 'IM', 'INC',
-        'INCL', 'INT', 'INTERRUPTIBLE', 'ISMEMBER', 'LENGTH', 'LFLOAT',
-        'LONGCOMPLEX', 'NEW', 'PROC', 'PROTECTION', 'RE', 'SELF', 'SIZE',
+        # 26 additional builtins (ISO 10514-1)
+        'BITSET', 'CAP', 'CMPLX', 'COMPLEX', 'DEC', 'DISPOSE', 'EXCL', 'FLOAT',
+        'HALT', 'HIGH', 'IM', 'INC', 'INCL', 'INT', 'INTERRUPTIBLE',  'LENGTH',
+        'LFLOAT', 'LONGCOMPLEX', 'NEW', 'PROC', 'PROTECTION', 'RE', 'SIZE',
         'TRUNC', 'UNINTERRUBTIBLE', 'VAL',
+        # 5 additional builtins (ISO 10514-2 & ISO 10514-3)
+        'CREATE', 'DESTROY', 'EMPTY', 'ISMEMBER', 'SELF', 
     )
 
     # ISO Modula-2 Additional Pseudo-Module Builtins Dataset
     iso_additional_pseudo_builtins = (
-        # 4 aditional pseudo builtins
-        'SYSTEM', 'CAST', 'LOC', 'TSIZE', # TO BE COMPLETED
+        # 14 additional builtins (SYSTEM)
+        'SYSTEM', 'BITSPERLOC', 'LOCSPERBYTE', 'LOCSPERWORD', 'LOC',
+        'ADDADR', 'SUBADR', 'DIFADR', 'MAKEADR', 'ADR',
+        'ROTATE', 'SHIFT', 'CAST', 'TSIZE',
+        # 13 additional builtins (COROUTINES)
+        'COROUTINES', 'ATTACH', 'COROUTINE', 'CURRENT', 'DETACH', 'HANDLER',
+        'INTERRUPTSOURCE', 'IOTRANSFER', 'IsATTACHED', 'LISTEN',
+        'NEWCOROUTINE', 'PROT', 'TRANSFER',  
+        # 9 additional builtins (EXCEPTIONS)
+        'EXCEPTIONS', 'AllocateSource', 'CurrentNumber', 'ExceptionNumber',
+        'ExceptionSource', 'GetMessage', 'IsCurrentSource',
+        'IsExceptionalExecution', 'RAISE',
+        # 3 additional builtins (TERMINATION)
+        'TERMINATION', 'IsTerminating', 'HasHalted',
+        # 4 additional builtins (M2EXCEPTION)
+        'M2EXCEPTION', 'M2Exceptions', 'M2Exception', 'IsM2Exception',
+        'indexException', 'rangeException', 'caseSelectException',
+        'invalidLocation', 'functionException', 'wholeValueException',
+        'wholeDivException', 'realValueException', 'realDivException',
+        'complexValueException', 'complexDivException', 'protException',
+        'sysException', 'coException', 'exException',
     )
+    
+#  M o d u l a - 2   R 1 0   D a t a s e t s
     
     # Modula-2 R10 reserved words in addition to the common set
     m2r10_additional_reserved_words = (
@@ -884,6 +914,8 @@ class Modula2Lexer(RegexLexer):
         'TREFC', 'TNIL', 'TBASE', 'TPRECISION', 'TMAXEXP', 'TMINEXP', 
     )
     
+#  O b j e c t i v e   M o d u l a - 2   D a t a s e t s
+    
     # Objective Modula-2 Extensions
     # reserved words in addition to Modula-2 R10
     objm2_additional_reserved_words = (
@@ -906,10 +938,12 @@ class Modula2Lexer(RegexLexer):
         # None
     )
 
+#  A g l e t   M o d u l a - 2   D a t a s e t s
+    
     # Aglet Extensions
     # reserved words in addition to ISO Modula-2
     aglet_additional_reserved_words = (
-        # No additional reserved words
+        # None
     )
 
     # Aglet Extensions
@@ -926,6 +960,8 @@ class Modula2Lexer(RegexLexer):
         # None
     )
 
+#  G N U   M o d u l a - 2   D a t a s e t s
+    
     # GNU Extensions
     # reserved words in addition to PIM Modula-2
     gm2_additional_reserved_words = (
@@ -950,25 +986,29 @@ class Modula2Lexer(RegexLexer):
         # None
     )
 
+#  p 1   M o d u l a - 2   D a t a s e t s
+    
     # p1 Extensions
     # reserved words in addition to ISO Modula-2
     p1_additional_reserved_words = (
-        # No additional reserved words
+        # None
     )
 
     # p1 Extensions
     # builtins in addition to ISO Modula-2
     p1_additional_builtins = (
-        # 3 additional builtins
-        'BCD', 'LONGBCD', 'EMPTY',
+        # None
     )
 
     # p1 Modula-2 Extensions
     # pseudo-module builtins in addition to ISO Modula-2
     p1_additional_pseudo_builtins = (
-        # None
+        # 1 additional builtin
+        'BCD',
     )
 
+#  X D S   M o d u l a - 2   D a t a s e t s
+    
     # XDS Extensions
     # reserved words in addition to ISO Modula-2
     xds_additional_reserved_words = (
@@ -979,18 +1019,25 @@ class Modula2Lexer(RegexLexer):
     # XDS Extensions
     # builtins in addition to ISO Modula-2
     xds_additional_builtins = (
-        # 18 additional builtins
-        'ASH', 'ASSERT', 'BOOL8', 'BOOL16', 'BOOL32', 'CARD8', 'CARD16',
-        'CARD32', 'DIFFADR_TYPE', 'ENTIER', 'INDEX', 'INT8', 'INT16',
-        'INT32', 'LEN', 'LONGCARD', 'SHORTCARD', 'SHORTINT',
+        # 9 additional builtins
+        'ASH', 'ASSERT', 'DIFFADR_TYPE', 'ENTIER', 'INDEX', 'LEN',
+        'LONGCARD', 'SHORTCARD', 'SHORTINT',
     )
     
     # XDS Modula-2 Extensions
     # pseudo-module builtins in addition to ISO Modula-2
     xds_additional_pseudo_builtins = (
-        # None
+        # 22 additional builtins (SYSTEM)
+        'SYSTEM', 'PROCESS', 'NEWPROCESS', 'BOOL8', 'BOOL16', 'BOOL32',
+        'CARD8', 'CARD16', 'CARD32', 'INT8', 'INT16', 'INT32', 'REF',
+        'MOVE', 'FILL', 'GET', 'PUT', 'CC',
+        'int', 'unsigned', 'size_t', 'void'
+        # 3 additional builtins (COMPILER)
+        'COMPILER', 'OPTION', 'EQUATION'
     )
 
+#  P I M   S t a n d a r d   L i b r a r y   D a t a s e t s
+    
     # PIM Modula-2 Standard Library Modules Dataset
     pim_stdlib_module_identifiers = (
         'Terminal', 'FileSystem', 'InOut', 'RealInOut', 'MathLib0', 'Storage',
@@ -1027,6 +1074,8 @@ class Modula2Lexer(RegexLexer):
         'EOL',
     )
     
+#  I S O   S t a n d a r d   L i b r a r y   D a t a s e t s
+    
     # ISO Modula-2 Standard Library Modules Dataset
     iso_stdlib_module_identifiers = (
         # TO DO
@@ -1051,6 +1100,8 @@ class Modula2Lexer(RegexLexer):
     iso_stdlib_const_identifiers = (
         # TO DO
     )
+    
+#  M 2   R 1 0   S t a n d a r d   L i b r a r y   D a t a s e t s
     
     # Modula-2 R10 Standard Library ADTs Dataset
     m2r10_stdlib_adt_identifiers = (
@@ -1107,13 +1158,18 @@ class Modula2Lexer(RegexLexer):
         'pi', 'tau', 
     )
     
+#  D i a l e c t s
+    
+    
     # Dialect modes
     dialects = (
         'unknown',
         'm2pim', 'm2iso', 'm2r10', 'objm2',
         'm2iso+aglet', 'm2pim+gm2', 'm2iso+p1', 'm2iso+xds',
     )
-        
+    
+#   D a t a b a s e s
+    
     # Reserved Words Database
     reserved_words_db = {
         # Reserved words for unknown dialect
@@ -1590,7 +1646,9 @@ class Modula2Lexer(RegexLexer):
             iso_stdlib_const_identifiers,
         ),
     }
-   
+    
+#   M e t h o d s
+    
     # initialise a lexer instance
     def __init__(self, **options):
         #
