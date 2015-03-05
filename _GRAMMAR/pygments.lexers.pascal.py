@@ -527,24 +527,36 @@ class Modula2Lexer(RegexLexer):
         Select Modula-2 R10 dialect.
     `objm2`
         Select Objective Modula-2 dialect.
-    `m2iso+aglet`
-        Select Aglet Modula-2 extended ISO dialect.
-    `m2pim+gm2`
-        Select GNU Modula-2 extended PIM dialect.
-    `m2iso+p1`
-        Select p1 Modula-2 extended ISO dialect.
-    `m2iso+xds`
-        Select XDS Modula-2 extended ISO dialect.
+    
+    The PIM and ISO dialect options may be qualified with a language extension.
+    
+    Language Extensions:
+
+    `+aglet`
+        Select Aglet Modula-2 extensions, available with m2iso.
+    `+gm2`
+        Select GNU Modula-2 extensions, available with m2pim.
+    `+p1`
+        Select p1 Modula-2 extensions, available with m2iso.
+    `+xds`
+        Select XDS Modula-2 extensions, available with m2iso.
+
 
     Passing a Dialect Option via Unix Commandline Interface
     
-    The example below shows how to invoke the lexer from a Unix command line
-    to render a Modula-2 source file to HTML output, using the ISO dialect:
+    Dialect options may be passed to the lexer using the `dialect` key.
+    Only one such option should be passed. If multiple dialect options are
+    passed, the first valid option is used, any subsequent options are ignored.
     
+    Examples:
+        
     `$ pygmentize -O full,dialect=m2iso -f html -o /path/to/output /path/to/input`
+        Use ISO dialect to render input to HTML output
+    `$ pygmentize -O full,dialect=m2iso+p1 -f rtf -o /path/to/output /path/to/input`
+        Use ISO dialect with p1 extension to render input to RTF output
 
     
-    Embedding a Dialect Option:
+    Embedding a Dialect Option within a source file
     
     A dialect option may be embedded in a source file in form of a dialect
     tag, a specially formatted comment that specifies a dialect option.
@@ -572,24 +584,26 @@ class Modula2Lexer(RegexLexer):
     at the beginning of a source file.
     
     An embedded dialect tag overrides a dialect option set via command line.
-
-    The example below shows how to embed a dialect tag for the ISO dialect:
     
-    `(*!m2iso*) (* Copyright (C) 2015, The Flintstones Inc. *)
-    DEFINITION MODULE Jurassic;
-    ...`
+    Examples:
+        
+    `(*!m2r10*) DEFINITION MODULE Foobar; ...`
+        Use Modula2 R10 dialect to render this source file.
+    `(*!m2pim+gm2*) DEFINITION MODULE Bazbam; ...`
+        Use PIM dialect with GNU extensions to render this source file.
     
     
-    Algol Presentation Style Option:
+    Algol Presentation Mode Option:
     
-    The Modula-2 lexer supports Algol presentation style.  In this style
-    reserved words are rendered lowercase boldface and builtins are
-    rendered lowercase boldface italic.
+    In Algol presentation mode, reserved words are rendered lowercase boldface
+    and builtins are rendered lowercase boldface italic.
     
-    The example below shows how to invoke the lexer from a Unix command line
-    to render a Modula-2 source file in Algol presentation style:
+    This mode is activated by passing a style option with value `algol`. 
     
-    `$ pygmentize -O full,style=algol -f html -o /path/to/output /path/to/input`
+    Example:
+    
+    `$ pygmentize -O full,style=algol -f latex -o /path/to/output /path/to/input`
+        Render input file in Algol presentation mode to LaTeX output.
     
     
     ADT Presentation Option:
@@ -601,12 +615,10 @@ class Modula2Lexer(RegexLexer):
     
     `treat_stdlib_adts_as_builtins` (default: On)
     
-    The example below shows how to invoke the lexer from a Unix command line
-    rendering standard library ADT identifiers as ordinary library types:
+    Example:
     
-    `$ pygmentize -O full,dialect=m2r10,treat_stdlib_adts_as_builtins=Off
-     -f html -o /path/to/output /path/to/input`
-    
+    `$ pygmentize -O full,dialect=m2r10,treat_stdlib_adts_as_builtins=Off ...`
+        Render standard library ADTs as ordinary library types.   
     
     .. versionadded:: 1.3
     """
