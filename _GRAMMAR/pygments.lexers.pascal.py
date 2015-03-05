@@ -514,7 +514,7 @@ class Modula2Lexer(RegexLexer):
     fallback mode, recognising the *combined* reserved words and builtins of
     the PIM, ISO and R10 dialects, not differentiating library identifiers.
     
-    To select a specific dialect a dialect option may be passed
+    To select a specific dialect, a dialect option may be passed
     or a dialect tag may be embedded into a source file.
     
     Dialect Options:
@@ -579,8 +579,8 @@ class Modula2Lexer(RegexLexer):
     No whitespace is permitted between the tokens of a dialect tag.
     
     In the event that a source file contains multiple dialect tags, the first
-    tag that contains a valid dialect option will be recognised and any
-    subsequent tags will be ignored.  Ideally, a dialect tag is placed
+    tag that contains a valid dialect option will be use and any subsequent
+    dialect tags will be ignored.  Ideally, a dialect tag should be placed
     at the beginning of a source file.
     
     An embedded dialect tag overrides a dialect option set via command line.
@@ -609,11 +609,17 @@ class Modula2Lexer(RegexLexer):
     ADT Presentation Option:
     
     When this option is turned on, standard library ADT identifiers are rendered
-    as builtins.  This is useful for dialects that support ADTs as first class
-    objects and therefore provide types that would otherwise be built-in as
-    ADTs within the standard library.
+    as builtins, when it is turned off, they are rendered as ordinary library
+    identifiers.
     
     `treat_stdlib_adts_as_builtins` (default: On)
+
+    The option is useful for dialects that support ADTs as first class objects
+    and therefore provide ADTs in the standard library that would otherwise be
+    built-in types.
+    
+    At present, only Modula-2 R10 supports library ADTs as first class objects
+    and therefore, no ADT identifiers are defined for any other dialects.
     
     Example:
     
