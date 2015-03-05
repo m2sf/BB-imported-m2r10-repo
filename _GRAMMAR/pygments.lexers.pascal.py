@@ -579,7 +579,7 @@ class Modula2Lexer(RegexLexer):
     No whitespace is permitted between the tokens of a dialect tag.
     
     In the event that a source file contains multiple dialect tags, the first
-    tag that contains a valid dialect option will be use and any subsequent
+    tag that contains a valid dialect option will be used and any subsequent
     dialect tags will be ignored.  Ideally, a dialect tag should be placed
     at the beginning of a source file.
     
