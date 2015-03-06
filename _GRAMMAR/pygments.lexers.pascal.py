@@ -593,9 +593,9 @@ class Modula2Lexer(RegexLexer):
         Use PIM dialect with GNU extensions to render this source file.
     
     
-    Algol Presentation Mode Option:
+    Algol Publication Mode:
     
-    In Algol presentation mode, reserved words are rendered lowercase boldface
+    In Algol publication mode, reserved words are rendered lowercase boldface
     and builtins are rendered lowercase boldface italic.
     
     This mode is activated by passing a style option with value `algol`. 
@@ -606,17 +606,19 @@ class Modula2Lexer(RegexLexer):
         Render input file in Algol presentation mode to LaTeX output.
     
     
-    ADT Presentation Option:
+    Rendering Mode of First Class ADT Identifiers:
+    
+    The rendering of standard library first class ADT identifiers is controlled
+    by option flag "treat_stdlib_adts_as_builtins".
     
     When this option is turned on, standard library ADT identifiers are rendered
-    as builtins, when it is turned off, they are rendered as ordinary library
+    as builtins. When it is turned off, they are rendered as ordinary library
     identifiers.
     
     `treat_stdlib_adts_as_builtins` (default: On)
 
     The option is useful for dialects that support ADTs as first class objects
-    and therefore provide ADTs in the standard library that would otherwise be
-    built-in types.
+    and provide ADTs in the standard library that would otherwise be built-in.
     
     At present, only Modula-2 R10 supports library ADTs as first class objects
     and therefore, no ADT identifiers are defined for any other dialects.
