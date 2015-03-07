@@ -2,8 +2,9 @@
 
 (* Notes:
    (1) Without dialect option nor embedded dialect tag, the lexer operates in
-       fallback mode, recognising the combined reserved words and builtins of
-       PIM Modula-2, ISO Modula-2 and Modula-2 R10.
+       fallback mode, recognising the *combined* literals, punctuation symbols
+       and operators of all supported dialects, and the *combined* reserved
+       words and builtins of PIM Modula-2, ISO Modula-2 and Modula-2 R10.
    (1) If multiple embedded dialect tags are present, the lexer will use the
        first valid tag and ignore any subsequent dialect tags in the file.
    (2) An embedded dialect tag overrides any command line dialect option. *)
