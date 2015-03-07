@@ -25,8 +25,10 @@ class Modula2Lexer(RegexLexer):
     For `Modula-2 <http://www.modula2.org/>`_ source code.
     
     The Modula-2 lexer supports several dialects. By default, it operates in
-    fallback mode, recognising the *combined* reserved words and builtins of
-    the PIM, ISO and R10 dialects, not differentiating library identifiers.
+    fallback mode, recognising the *combined* literals, punctuation symbols
+    and operators of all supported dialects, and the *combined* reserved words
+    and builtins of of PIM Modula-2, ISO Modula-2 and Modula-2 R10, while not
+    differentiating between library defined identifiers.
     
     To select a specific dialect, a dialect option may be passed
     or a dialect tag may be embedded into a source file.
