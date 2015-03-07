@@ -24,10 +24,10 @@ class Modula2Lexer(RegexLexer):
     """
     For `Modula-2 <http://www.modula2.org/>`_ source code.
     
-    The Modula-2 lexer supports several dialects. By default, it operates in
+    The Modula-2 lexer supports several dialects.  By default, it operates in
     fallback mode, recognising the *combined* literals, punctuation symbols
     and operators of all supported dialects, and the *combined* reserved words
-    and builtins of of PIM Modula-2, ISO Modula-2 and Modula-2 R10, while not
+    and builtins of PIM Modula-2, ISO Modula-2 and Modula-2 R10, while not
     differentiating between library defined identifiers.
     
     To select a specific dialect, a dialect option may be passed
@@ -138,7 +138,7 @@ class Modula2Lexer(RegexLexer):
     by option flag "treat_stdlib_adts_as_builtins".
     
     When this option is turned on, standard library ADT identifiers are rendered
-    as builtins. When it is turned off, they are rendered as ordinary library
+    as builtins.  When it is turned off, they are rendered as ordinary library
     identifiers.
     
     `treat_stdlib_adts_as_builtins` (default: On)
