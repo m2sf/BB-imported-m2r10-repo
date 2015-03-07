@@ -62,4 +62,4 @@ class Algol_NuStyle(Style):
         Error:                     "border:#FF0000"
     }
 
-# end of algol_ny.py
+# end of algol_nu.py
