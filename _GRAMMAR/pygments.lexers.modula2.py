@@ -156,6 +156,8 @@ class Modula2Lexer(RegexLexer):
     
     .. versionadded:: 1.3
     """
+#  M e t a d a t a
+
     name = 'Modula-2'
     aliases = ['modula2', 'm2']
     filenames = ['*.def', '*.mod']
@@ -163,6 +165,15 @@ class Modula2Lexer(RegexLexer):
 
     flags = re.MULTILINE | re.DOTALL
     
+#  T o k e n s   F o r   A l l   D i a l e c t s
+
+#  This lexer recognises lexemes for all supported dialects and tokenises them.
+#  Tokens that are not supported for the targeted dialect are then marked as
+#  error tokens after the initial tokenisation. This has the advantage that
+#  additional dialects can be more easily added. Furthermore, unrecognised
+#  lexemes are marked in the output as errors in their entirety, not simply
+#  the first one or two unrecognised characters.
+
     tokens = {
         'whitespace': [
             (r'\n+', Text),  # blank lines
@@ -170,21 +181,21 @@ class Modula2Lexer(RegexLexer):
         ],
         'dialecttags': [
             # PIM Dialect Tag
-            (r'\(\*!m2pim\*\)', Comment.Special), 
+            (r'\(\*!m2pim\*\)', Comment.Special.DialectTag), 
             # ISO Dialect Tag
-            (r'\(\*!m2iso\*\)', Comment.Special), 
+            (r'\(\*!m2iso\*\)', Comment.Special.DialectTag), 
             # M2R10 Dialect Tag
-            (r'\(\*!m2r10\*\)', Comment.Special), 
+            (r'\(\*!m2r10\*\)', Comment.Special.DialectTag), 
             # ObjM2 Dialect Tag
-            (r'\(\*!objm2\*\)', Comment.Special), 
+            (r'\(\*!objm2\*\)', Comment.Special.DialectTag), 
             # Aglet Extensions Dialect Tag
-            (r'\(\*!m2iso\+aglet\*\)', Comment.Special), 
+            (r'\(\*!m2iso\+aglet\*\)', Comment.Special.DialectTag), 
             # GNU Extensions Dialect Tag
-            (r'\(\*!m2pim\+gm2\*\)', Comment.Special), 
+            (r'\(\*!m2pim\+gm2\*\)', Comment.Special.DialectTag), 
             # p1 Extensions Dialect Tag
-            (r'\(\*!m2iso\+p1\*\)', Comment.Special), 
+            (r'\(\*!m2iso\+p1\*\)', Comment.Special.DialectTag), 
             # XDS Extensions Dialect Tag
-            (r'\(\*!m2iso\+xds\*\)', Comment.Special), 
+            (r'\(\*!m2iso\+xds\*\)', Comment.Special.DialectTag), 
         ],
         'identifiers': [
             (r'([a-zA-Z_$][\w$]*)', Name),
@@ -192,41 +203,106 @@ class Modula2Lexer(RegexLexer):
         'prefixed_number_literals': [
             #
             # Base-2, whole number
-            (r'0b[01]+(\'[01]+)*', Number.Bin),
+            (r'0b[01]+(\'[01]+)*', Number.Bin.Prefixed),
             #
             # Base-16, whole number
-            (r'0[ux][0-9A-F]+(\'[0-9A-F]+)*', Number.Hex),
+            (r'0[ux][0-9A-F]+(\'[0-9A-F]+)*', Number.Hex.Prefixed),
         ],
-        'plain_number_literals': [
+        'non_affixed_number_literals': [
             #
             # Base-10, real number with exponent
+            (r'[0-9]+' # integral part \
+             r'\.[0-9]+' # fractional part \
+             r'E[+-]?[0-9]+', # exponent \
+             Number.Float.NonAffixed.Unformatted.Exponent.UpperE),
+            # Base-10, same as above with lowercase e
+            (r'[0-9]+' # integral part \
+             r'\.[0-9]+' # fractional part \
+             r'e[+-]?[0-9]+', # exponent \
+             Number.Float.NonAffixed.Unformatted.Exponent.LowerE),
+            # Same as above, with digit separators
             (r'[0-9]+(\'[0-9]+)*' # integral part \
              r'\.[0-9]+(\'[0-9]+)*' # fractional part \
-             r'[eE][+-]?[0-9]+(\'[0-9]+)*', # exponent \
-             Number.Float),
+             r'e[+-]?[0-9]+(\'[0-9]+)*', # exponent \
+             Number.Float.NonAffixed.DigitGrouped),
             #
             # Base-10, real number without exponent
+            (r'[0-9]+' # integral part \
+             r'\.[0-9]+', # fractional part \
+             Number.Float.NonAffixed.Unformatted.NoExponent),
+            # same as above, with digit separators
             (r'[0-9]+(\'[0-9]+)*' # integral part \
              r'\.[0-9]+(\'[0-9]+)*', # fractional part \
-             Number.Float),
+             Number.Float.NonAffixed.DigitGrouped),
             #
             # Base-10, whole number
-            (r'[0-9]+(\'[0-9]+)*', Number.Integer),
+            (r'[0-9]+(\'[0-9]+)+', Number.Integer.NonAffixed.DigitGrouped),
+            # Same as above, without digit separators
+            (r'[0-9]+', Number.Integer.NonAffixed.Unformatted),
         ],
         'suffixed_number_literals': [
             #            
             # Base-8, whole number
-            (r'[0-7]+B', Number.Oct),
+            (r'[0-7]+B', Number.Oct.Suffixed),
             #
             # Base-8, character code
-            (r'[0-7]+C', Number.Oct),
+            (r'[0-7]+C', Number.Oct.Suffixed),
             #
             # Base-16, number
-            (r'[0-9A-F]+H', Number.Hex),
+            (r'[0-9A-F]+H', Number.Hex.Suffixed),
+            #
+            # Base-10, p1 BCD real number
+            (r'[0-9]+\.[0-9]+([eE][+-]?[0-9]+)*\$', Number.Float.DollarSuffixed),
         ],
         'string_literals': [
             (r"'(\\\\|\\'|[^'])*'", String),  # single quoted string
             (r'"(\\\\|\\"|[^"])*"', String),  # double quoted string
+        ],
+        'digraph_punctuation': [
+            # Assignment Symbol
+            (r':=', Punctuation),
+            # Range Constructor
+            (r'\.\.', Punctuation),
+            # Postfix Increment Mutator
+            (r'\+\+', Punctuation), # M2R10 + ObjM2
+            # Postfix Decrement Mutator
+            (r'--', Punctuation), # M2R10 + ObjM2
+            # Opening Chevron Bracket
+            (r'<<', Punctuation), # M2R10 + ISO
+            # Closing Chevron Bracket
+            (r'>>', Punctuation), # M2R10 + ISO
+            # Blueprint Punctuation
+            (r'->', Punctuation), # M2R10 + ISO
+            # Placeholder Delimiter in Template
+            (r'##', Punctuation), # M2R10 + ObjM2
+        ],
+        'unigraph_punctuation': [
+            # Common Punctuation
+            (r'[\(\)\[\]{},.:;\|]', Punctuation),
+            # Case Label Separator Synonym
+            (r'!', Punctuation), # ISO
+            # Blueprint Punctuation
+            (r'\?', Punctuation), # M2R10 + ObjM2
+            # Re-Export Suffix +
+            (r'\+(?=([,;]))', Punctuation),
+            (r'\+(?= ;)', Punctuation),
+            # Import Wildcard *
+            (r'\*(?=;)', Punctuation),
+            (r'\*(?= ;)', Punctuation),
+            # Ancillary Constant Prefix
+            (r'~(?=([ ]*[a-zA-Z_\$][a-zA-Z0-9_\$]*[ ]*=))', Punctuation),
+            # Binding Differentiator *
+            (r'\*(?=\])', Punctuation),
+            (r'\*(?= \])', Punctuation),
+            # Binding Differentiator #
+            (r'(?<=\|)#', Punctuation),
+            # Ancillary Constant Prefix
+            (r'(?<=CONST)~', Punctuation),
+            (r'(?<=CONST )~', Punctuation),
+            # Individual Tokens Within Sequence "[+/-]" are Punctuation
+            (r'\+(?=/-)', Punctuation),
+            (r'/(?=-])', Punctuation),
+            (r'-(?=])', Punctuation),
         ],
         'digraph_operators': [
             # Dot Product Operator
@@ -243,17 +319,11 @@ class Modula2Lexer(RegexLexer):
             (r'==', Operator), # M2R10 + ObjM2
             # Type Conversion Operator
             (r'::', Operator), # M2R10 + ObjM2
-            # Assignment Symbol
-            (r':=', Operator),
-            # Postfix Increment Mutator
-            (r'\+\+', Operator), # M2R10 + ObjM2
-            # Postfix Decrement Mutator
-            (r'--', Operator), # M2R10 + ObjM2
         ],
         'unigraph_operators': [
             # Arithmetic Operators
-            (r'[+-]', Operator),
-            (r'[*/]', Operator),
+            (r'[+-/]', Operator),
+            (r'\*', Operator),
             # ISO 80000-2 compliant Set Difference Operator
             (r'\\', Operator), # M2R10 + ObjM2 
             # Relational Operators
@@ -269,53 +339,61 @@ class Modula2Lexer(RegexLexer):
             # Smalltalk Message Prefix
             (r'`', Operator), # ObjM2
         ],
-        'digraph_punctuation': [
-            # Range Constructor
-            (r'\.\.', Punctuation),
-            # Opening Chevron Bracket
-            (r'<<', Punctuation), # M2R10 + ISO
-            # Closing Chevron Bracket
-            (r'>>', Punctuation), # M2R10 + ISO
-            # Blueprint Punctuation
-            (r'->', Punctuation), # M2R10 + ISO
-            # Distinguish |# and # in M2 R10
-            (r'\|#', Punctuation),
-            # Distinguish ## and # in M2 R10
-            (r'##', Punctuation),
-            # Distinguish |* and * in M2 R10
-            (r'\|\*', Punctuation),
-        ],
-        'unigraph_punctuation': [
-            # Common Punctuation
-            (r'[\(\)\[\]{},.:;\|]', Punctuation),
-            # Case Label Separator Synonym
-            (r'!', Punctuation), # ISO
-            # Blueprint Punctuation
-            (r'\?', Punctuation), # M2R10 + ObjM2
+        'special_comments': [
+            # Copyright Comment
+            (r'\(\* Copyright .*?\*\)', Comment.Special.Copyright),
+            (r'\(\* \([cC]\) *[12][0-9]{3} .*?\*\)', Comment.Special.Copyright),
+            # Title Comment
+            (r'\(\*# .*? #\*\)', Comment.Special.Title),
+            # Headline H1 Comment
+            (r'\(\*= .*? =\*\)', Comment.Special.Headline.One),
+            # Headline H2 Comment
+            (r'\(\*- .*? -\*\)', Comment.Special.Headline.Two),
+            # Headline H3 Comment
+            (r'\(\*_ .*? _\*\)', Comment.Special.Headline.Three),
+            # HeaderDoc Comment
+            (r'\(\*! .*?\*\)', Comment.Special.HeaderDoc),
+            # Doxygen Comment
+            (r'^//[/!].*?\n', Comment.Single.Doxygen),
         ],
         'comments': [
-            # Single Line Comment
-            (r'^//.*?\n', Comment.Single), # M2R10 + ObjM2
-            # Block Comment
-            (r'\(\*([^$].*?)\*\)', Comment.Multiline),
-            # Template Block Comment
-            (r'/\*(.*?)\*/', Comment.Multiline), # M2R10 + ObjM2
+            # Pascal Style Block Comment
+            (r'\(\*([^$].*?)\*\)', Comment.Multiline.PascalStyle),
+            # C Style Block Comment
+            (r'/\*(.*?)\*/', Comment.Multiline.CStyle),
+            # BCPL Style Single Line Comment
+            # only at start of line
+            (r'^//.*?\n', Comment.Single.BcplStyle),
+            # Ada Style Single Line Comment
+            # only at start of line or after semicolon
+            (r'^--.*?\n', Comment.Single.AdaStyle),
+            (r'(?<=;)--.*?\n', Comment.Single.AdaStyle),
+            (r'(?<=; )--.*?\n', Comment.Single.AdaStyle),
+            (r'(?<=;\t)--.*?\n', Comment.Single.AdaStyle),
+            (r'(?<=;\t\t)--.*?\n', Comment.Single.AdaStyle),
+            (r'(?<=;\t\t\t)--.*?\n', Comment.Single.AdaStyle),
+            (r'(?<=;\t\t\t\t)--.*?\n', Comment.Single.AdaStyle),
         ],
         'pragmas': [
             # ISO Style Pragmas
-            (r'<\*.*?\*>', Comment.Preproc), # ISO, M2R10 + ObjM2
+            (r'<\*.*?\*>', Comment.Preproc.IsoStyle),
             # Pascal Style Pragmas
-            (r'\(\*\$.*?\*\)', Comment.Preproc), # PIM
+            (r'\(\*\$.*?\*\)', Comment.Preproc.PascalStyle),
         ],
         'root': [
+            # * * * The order of inclusion is semantically significant * * *
+            # In general, the order should be from longer to shorter matches.
+            # That is to say, of two possible matches with common start
+            # symbols, the longer of the two should be tried first.
             include('whitespace'),
             include('dialecttags'),
             include('pragmas'),
+            include('special_comments'),
             include('comments'),
             include('identifiers'),
-            include('suffixed_number_literals'), # PIM + ISO
-            include('prefixed_number_literals'), # M2R10 + ObjM2
-            include('plain_number_literals'),
+            include('suffixed_number_literals'),
+            include('prefixed_number_literals'),
+            include('non_affixed_number_literals'),
             include('string_literals'),
             include('digraph_punctuation'),
             include('digraph_operators'),
@@ -325,6 +403,33 @@ class Modula2Lexer(RegexLexer):
     }
     
 #  C o m m o n   D a t a s e t s
+    
+    # Common Punctuation Dataset
+    common_punctuation = (
+        ',', '.', ':', ';', '|', '..', ':=', '(', ')', '[', ']', '{', '}',
+    )
+
+    # Common Operators Dataset
+    common_operators = (
+        '+', '-', '*', '/', '=', '#', '<', '>', '<=', '>=', '^',
+    )
+
+    # Common Comments and Pragmas Dataset
+    common_comments_and_pragmas = (
+        Comment.Multiline.PascalStyle,
+        Comment.Special.DialectTag,
+        Comment.Special.Copyright,
+        Comment.Special.Title,
+        Comment.Special.Headline,
+        Comment.Special.HeaderDoc,
+    )
+    
+    # Common Literals Dataset
+    common_literals = (
+        Number.Integer.NonAffixed.Unformatted,
+        Number.Float.NonAffixed.Unformatted.NoExponent,
+        Number.Float.NonAffixed.Unformatted.Exponent.LowerE,
+    )
     
     # Common Reserved Words Dataset
     common_reserved_words = (
@@ -352,26 +457,41 @@ class Modula2Lexer(RegexLexer):
     
 #  P I M   M o d u l a - 2   D a t a s e t s
 
-    # Lexemes to Mark as Error Tokens for PIM Modula-2
-    pim_lexemes_to_reject = (
-        '!', '`', '@', '$', '%', '?', '\\', '==', '++', '--', '::', '*.',
-        '+>', '->', '<<', '>>', '|#', '##',
+    # PIM Modula-2 punctuation in addition to the common set
+    pim_additional_punctuation = (
+        # None
+    )
+
+    # PIM Modula-2 operators in addition to the common set
+    pim_additional_operators = (
+        '&', '~', '<>',
     )
     
-    # PIM Modula-2 Additional Reserved Words Dataset
+    # PIM Modula-2 literals in addition to the common set
+    pim_additional_literals = (
+        Number.Oct.Suffixed, Number.Hex.Suffixed,
+        Number.Float.NonAffixed.Unformatted.Exponent.UpperE,
+    )
+    
+    # PIM Modula-2 comments and pragmas in addition to the common set
+    pim_additional_comments_and_pragmas = (
+        Comment.Preproc.PascalStyle,
+    )
+    
+    # PIM Modula-2 reserved words in addition to the common set
     pim_additional_reserved_words = (
         # 3 additional reserved words
         'EXPORT', 'QUALIFIED', 'WITH',
     )
     
-    # PIM Modula-2 Additional Builtins Dataset
+    # PIM Modula-2 builtins in addition to the common set
     pim_additional_builtins = (
         # 16 additional builtins
         'BITSET', 'CAP', 'DEC', 'DISPOSE', 'EXCL', 'FLOAT', 'HALT', 'HIGH',
         'INC', 'INCL', 'NEW', 'NIL', 'PROC', 'SIZE', 'TRUNC', 'VAL',
     )
     
-    # PIM Modula-2 Additional Pseudo-Module Builtins Dataset
+    # PIM Modula-2 pseudo-builtins in addition to the common set
     pim_additional_pseudo_builtins = (
         # 5 additional pseudo builtins
         'SYSTEM', 'PROCESS', 'TSIZE', 'NEWPROCESS', 'TRANSFER',
@@ -379,13 +499,28 @@ class Modula2Lexer(RegexLexer):
     
 #  I S O   M o d u l a - 2   D a t a s e t s
     
-    # Lexemes to Mark as Error Tokens for ISO Modula-2
-    iso_lexemes_to_reject = (
-        '`', '$', '%', '?', '\\', '==', '++', '--', '::', '*.', '+>', '->',
-        '<<', '>>', '|#', '##',
+    # ISO Modula-2 punctuation in addition to the common set
+    iso_additional_punctuation = (
+        '!'
+    )
+
+    # ISO Modula-2 operators in addition to the common set
+    iso_additional_operators = (
+        '&', '~', '@', '<>',
     )
     
-    # ISO Modula-2 Additional Reserved Words Dataset
+    # ISO Modula-2 literals in addition to the common set
+    iso_additional_literals = (
+        Number.Oct.Suffixed, Number.Hex.Suffixed,
+        Number.Float.NonAffixed.Unformatted.Exponent.UpperE,
+    )
+    
+    # ISO Modula-2 comments and pragmas in addition to the common set
+    iso_additional_comments_and_pragmas = (
+        Comment.Preproc.IsoStyle,
+    )
+    
+    # ISO Modula-2 reserved words in addition to the common set
     iso_additional_reserved_words = (
         # 9 additional reserved words (ISO 10514-1)
         'EXCEPT', 'EXPORT', 'FINALLY', 'FORWARD', 'PACKEDSET', 'QUALIFIED',
@@ -395,7 +530,7 @@ class Modula2Lexer(RegexLexer):
         'REVEAL', 'TRACED', 'UNSAFEGUARDED',
     )
     
-    # ISO Modula-2 Additional Builtins Dataset
+    # ISO Modula-2 builtins in addition to the common set
     iso_additional_builtins = (
         # 26 additional builtins (ISO 10514-1)
         'BITSET', 'CAP', 'CMPLX', 'COMPLEX', 'DEC', 'DISPOSE', 'EXCL', 'FLOAT',
@@ -406,7 +541,7 @@ class Modula2Lexer(RegexLexer):
         'CREATE', 'DESTROY', 'EMPTY', 'ISMEMBER', 'SELF', 
     )
 
-    # ISO Modula-2 Additional Pseudo-Module Builtins Dataset
+    # ISO Modula-2 pseudo-builtins in addition to the common set
     iso_additional_pseudo_builtins = (
         # 14 additional builtins (SYSTEM)
         'SYSTEM', 'BITSPERLOC', 'LOCSPERBYTE', 'LOCSPERWORD', 'LOC',
@@ -433,9 +568,33 @@ class Modula2Lexer(RegexLexer):
     
 #  M o d u l a - 2   R 1 0   D a t a s e t s
     
-    # Lexemes to Mark as Error Tokens for Modula-2 R10
-    m2r10_lexemes_to_reject = (
-        '!', '`', '@', '$', '%', '&', '<>',
+    # Modula-2 R10 punctuation in addition to the common set
+    m2r10_additional_punctuation = (
+        # definition and implementation
+        '+', '*',  '++', '--', '<<', '>>',
+        # blueprints
+        '-', '/', '#', '?', '~', '->',
+        # templates
+        '##',
+    )
+
+    # Modula-2 R10 operators in addition to the common set
+    m2r10_additional_operators = (
+        '\\', '*.',  '+>', '==', '::',
+    )
+
+    # Modula-2 R10 literals in addition to the common set
+    m2r10_additional_literals = (
+        Number.Bin.Prefixed, Number.Hex.Prefixed,
+        Number.Integer.NonAffixed,
+        Number.Float.NonAffixed.DigitGrouped,
+    )
+    
+    # Modula-2 R10 comments and pragmas in addition to the common set
+    m2r10_additional_comments_and_pragmas = (
+        Comment.Single.BcplStyle, Comment.Single.Doxygen,
+        Comment.Multiline.CStyle,
+        Comment.Preproc.IsoStyle,
     )
     
     # Modula-2 R10 reserved words in addition to the common set
@@ -456,7 +615,7 @@ class Modula2Lexer(RegexLexer):
         'UNICHAR', 'WRITE', 'WRITEF',
     )
     
-    # Modula-2 R10 Additional Pseudo-Module Builtins Dataset
+    # Modula-2 R10 pseudo-builtins in addition to the common set
     m2r10_additional_pseudo_builtins = (
         # 13 additional builtins (TPROPERTIES)
         'TPROPERTIES', 'PROPERTY', 'LITERAL', 'TPROPERTY', 'TLITERAL',
@@ -482,13 +641,27 @@ class Modula2Lexer(RegexLexer):
     
 #  O b j e c t i v e   M o d u l a - 2   D a t a s e t s
     
-    # Lexemes to Mark as Error Tokens for Objective Modula-2
-    objm2_lexemes_to_reject = (
-        '!', '$', '%', '&', '<>',
+    # ObjM2 punctuation in addition to Modula-2 R10
+    objm2_additional_punctuation = (
+        # None
+    )
+
+    # ObjM2 operators in addition to Modula-2 R10
+    objm2_additional_operators = (
+        '`', '@',
+    )
+
+    # ObjM2 literals in addition to Modula-2 R10
+    objm2_additional_literals = (
+        # None
     )
     
-    # Objective Modula-2 Extensions
-    # reserved words in addition to Modula-2 R10
+    # ObjM2 comments and pragmas in addition to Modula-2 R10
+    objm2_additional_comments_and_pragmas = (
+        # None
+    )
+    
+    # ObjM2 reserved words in addition to Modula-2 R10
     objm2_additional_reserved_words = (
         # 16 additional reserved words
         'BYCOPY', 'BYREF', 'CLASS', 'CONTINUE', 'CRITICAL', 'INOUT', 'METHOD',
@@ -496,53 +669,86 @@ class Modula2Lexer(RegexLexer):
         'SUPER', 'TRY',
     )
 
-    # Objective Modula-2 Extensions
-    # builtins in addition to Modula-2 R10
+    # ObjM2 builtins in addition to Modula-2 R10
     objm2_additional_builtins = (
         # 3 additional builtins
         'OBJECT', 'NO', 'YES',
     )
 
-    # Objective Modula-2 Extensions
-    # pseudo-module builtins in addition to Modula-2 R10
+    # ObjM2 pseudo-module builtins in addition to Modula-2 R10
     objm2_additional_pseudo_builtins = (
         # None
     )
 
 #  A g l e t   M o d u l a - 2   D a t a s e t s
     
-    # Aglet Extensions
-    # reserved words in addition to ISO Modula-2
+    # Aglet punctuation in addition to ISO Modula-2
+    aglet_additional_punctuation = (
+        # None
+    )
+
+    # Aglet operators in addition to ISO Modula-2
+    aglet_additional_operators = (
+        # None
+    )
+
+    # Aglet literals in addition to ISO Modula-2
+    aglet_additional_literals = (
+        # None
+    )
+    
+    # Aglet comments and pragmas in addition to ISO Modula-2
+    aglet_additional_comments_and_pragmas = (
+        # None
+    )
+    
+    # Aglet reserved words in addition to ISO Modula-2
     aglet_additional_reserved_words = (
         # None
     )
 
-    # Aglet Extensions
-    # builtins in addition to ISO Modula-2
+    # Aglet builtins in addition to ISO Modula-2
     aglet_additional_builtins = (
         # 9 additional builtins
         'BITSET8', 'BITSET16', 'BITSET32', 'CARDINAL8', 'CARDINAL16',
         'CARDINAL32', 'INTEGER8', 'INTEGER16', 'INTEGER32',
     )
 
-    # Aglet Modula-2 Extensions
-    # pseudo-module builtins in addition to ISO Modula-2
+    # Aglet pseudo-module builtins in addition to ISO Modula-2
     aglet_additional_pseudo_builtins = (
         # None
     )
 
 #  G N U   M o d u l a - 2   D a t a s e t s
     
-    # GNU Extensions
-    # reserved words in addition to PIM Modula-2
+    # GM2 punctuation in addition to PIM Modula-2
+    gm2_additional_punctuation = (
+        # None
+    )
+
+    # GM2 operators in addition to PIM Modula-2
+    gm2_additional_operators = (
+        # None
+    )
+
+    # GM2 literals in addition to PIM Modula-2
+    gm2_additional_literals = (
+        # None
+    )
+    
+    # GM2 comments and pragmas in addition to PIM Modula-2
+    gm2_additional_comments_and_pragmas = (
+        # None
+    )
+    
+    # GM2 reserved words in addition to PIM Modula-2
     gm2_additional_reserved_words = (
         # 10 additional reserved words
         'ASM', '__ATTRIBUTE__', '__BUILTIN__', '__COLUMN__', '__DATE__',
         '__FILE__', '__FUNCTION__', '__LINE__', '__MODULE__', 'VOLATILE',
     )
 
-    # GNU Extensions
-    # builtins in addition to PIM Modula-2
+    # GM2 builtins in addition to PIM Modula-2
     gm2_additional_builtins = (
         # 21 additional builtins
         'BITSET8', 'BITSET16', 'BITSET32', 'CARDINAL8', 'CARDINAL16',
@@ -551,28 +757,44 @@ class Modula2Lexer(RegexLexer):
         'REAL8', 'REAL16', 'REAL32', 'REAL96', 'REAL128', 'THROW',
     )
 
-    # GNU Extensions
-    # pseudo-module builtins in addition to PIM Modula-2
+    # GM2 pseudo-module builtins in addition to PIM Modula-2
     gm2_additional_pseudo_builtins = (
         # None
     )
 
 #  p 1   M o d u l a - 2   D a t a s e t s
     
-    # p1 Extensions
-    # reserved words in addition to ISO Modula-2
+    # p1 punctuation in addition to ISO Modula-2
+    p1_additional_punctuation = (
+        # None
+    )
+
+    # p1 operators in addition to ISO Modula-2
+    p1_additional_operators = (
+        # None
+    )
+
+    # p1 literals in addition to ISO Modula-2
+    p1_additional_literals = (
+        Number.Float.DollarSuffixed,
+    )
+    
+    # p1 comments and pragmas in addition to ISO Modula-2
+    p1_additional_comments_and_pragmas = (
+        # None
+    )
+    
+    # p1 reserved words in addition to ISO Modula-2
     p1_additional_reserved_words = (
         # None
     )
 
-    # p1 Extensions
-    # builtins in addition to ISO Modula-2
+    # p1 builtins in addition to ISO Modula-2
     p1_additional_builtins = (
         # None
     )
 
-    # p1 Modula-2 Extensions
-    # pseudo-module builtins in addition to ISO Modula-2
+    # p1 pseudo-module builtins in addition to ISO Modula-2
     p1_additional_pseudo_builtins = (
         # 1 additional builtin
         'BCD',
@@ -580,30 +802,47 @@ class Modula2Lexer(RegexLexer):
 
 #  X D S   M o d u l a - 2   D a t a s e t s
     
-    # XDS Extensions
-    # reserved words in addition to ISO Modula-2
+    # XDS punctuation in addition to ISO Modula-2
+    xds_additional_punctuation = (
+        # None
+    )
+
+    # XDS operators in addition to ISO Modula-2
+    xds_additional_operators = (
+        # None
+    )
+
+    # XDS literals in addition to ISO Modula-2
+    xds_additional_literals = (
+        # None
+    )
+    
+    # XDS comments and pragmas in addition to ISO Modula-2
+    xds_additional_comments_and_pragmas = (
+        Comment.Single.AdaStyle,
+    )
+    
+    # XDS reserved words in addition to ISO Modula-2
     xds_additional_reserved_words = (
         # 1 additional reserved word
         'SEQ',
     )
 
-    # XDS Extensions
-    # builtins in addition to ISO Modula-2
+    # XDS builtins in addition to ISO Modula-2
     xds_additional_builtins = (
         # 9 additional builtins
         'ASH', 'ASSERT', 'DIFFADR_TYPE', 'ENTIER', 'INDEX', 'LEN',
         'LONGCARD', 'SHORTCARD', 'SHORTINT',
     )
     
-    # XDS Modula-2 Extensions
-    # pseudo-module builtins in addition to ISO Modula-2
+    # XDS pseudo-module builtins in addition to ISO Modula-2
     xds_additional_pseudo_builtins = (
         # 22 additional builtins (SYSTEM)
         'PROCESS', 'NEWPROCESS', 'BOOL8', 'BOOL16', 'BOOL32', 'CARD8',
         'CARD16', 'CARD32', 'INT8', 'INT16', 'INT32', 'REF', 'MOVE',
-        'FILL', 'GET', 'PUT', 'CC', 'int', 'unsigned', 'size_t', 'void'
+        'FILL', 'GET', 'PUT', 'CC', 'int', 'unsigned', 'size_t', 'void',
         # 3 additional builtins (COMPILER)
-        'COMPILER', 'OPTION', 'EQUATION'
+        'COMPILER', 'OPTION', 'EQUATION',
     )
 
 #  P I M   S t a n d a r d   L i b r a r y   D a t a s e t s
@@ -704,8 +943,8 @@ class Modula2Lexer(RegexLexer):
         'LongRealIO', 'BCDIO', 'LongBCDIO', 'CardMath', 'LongCardMath',
         'IntMath', 'LongIntMath', 'RealMath', 'LongRealMath', 'BCDMath',
         'LongBCDMath', 'FileIO', 'FileSystem', 'Storage', 'IOSupport',       
-   )
-
+    )
+    
     # Modula-2 R10 Standard Library Types Dataset
     m2r10_stdlib_type_identifiers = (
         'File', 'Status', 
@@ -730,7 +969,6 @@ class Modula2Lexer(RegexLexer):
     
 #  D i a l e c t s
     
-    
     # Dialect modes
     dialects = (
         'unknown',
@@ -740,46 +978,262 @@ class Modula2Lexer(RegexLexer):
     
 #   D a t a b a s e s
     
-    # Lexemes to Mark as Errors Database
-    lexemes_to_reject_db = {
-        # Lexemes to reject for unknown dialect
+    # Punctuation Database
+    punctuation_db = {
+        # Punctuation for unknown dialect
         'unknown' : (
-            # LEAVE THIS EMPTY
+            common_punctuation,
+            pim_additional_punctuation,
+            iso_additional_punctuation,
+            m2r10_additional_punctuation,
         ),
-        # Lexemes to reject for PIM Modula-2
+
+        # Punctuation for PIM Modula-2
         'm2pim' : (
-            pim_lexemes_to_reject,
+            common_punctuation,
+            pim_additional_punctuation,
         ),
-        # Lexemes to reject for ISO Modula-2
+
+        # Punctuation for ISO Modula-2
         'm2iso' : (
-            iso_lexemes_to_reject,
+            common_punctuation,
+            iso_additional_punctuation,
         ),
-        # Lexemes to reject for Modula-2 R10
+
+        # Punctuation for Modula-2 R10
         'm2r10' : (
-            m2r10_lexemes_to_reject,
+            common_punctuation,
+            m2r10_additional_punctuation,
         ),
-        # Lexemes to reject for Objective Modula-2
+
+        # Punctuation for Objective Modula-2
         'objm2' : (
-            objm2_lexemes_to_reject,
+            common_punctuation,
+            m2r10_additional_punctuation,
+            objm2_additional_punctuation,
         ),
-        # Lexemes to reject for Aglet Modula-2
+
+        # Punctuation for Aglet Modula-2 Extensions
         'm2iso+aglet' : (
-            iso_lexemes_to_reject,
+            common_punctuation,
+            iso_additional_punctuation,
+            aglet_additional_punctuation,
         ),
-        # Lexemes to reject for GNU Modula-2
+
+        # Punctuation for GNU Modula-2 Extensions
         'm2pim+gm2' : (
-            pim_lexemes_to_reject,
+            common_punctuation,
+            pim_additional_punctuation,
+            gm2_additional_punctuation,
         ),
-        # Lexemes to reject for p1 Modula-2
+
+        # Punctuation for p1 Modula-2 Extensions
         'm2iso+p1' : (
-            iso_lexemes_to_reject,
+            common_punctuation,
+            iso_additional_punctuation,
+            p1_additional_punctuation,
         ),
-        # Lexemes to reject for XDS Modula-2
+
+        # Punctuation for XDS Modula-2 Extensions
         'm2iso+xds' : (
-            iso_lexemes_to_reject,
+            common_punctuation,
+            iso_additional_punctuation,
+            xds_additional_punctuation,
         ),
     }
+    
+    # Operators Database
+    operators_db = {
+        # Operators for unknown dialect
+        'unknown' : (
+            common_operators,
+            pim_additional_operators,
+            iso_additional_operators,
+            m2r10_additional_operators,
+        ),
 
+        # Operators for PIM Modula-2
+        'm2pim' : (
+            common_operators,
+            pim_additional_operators,
+        ),
+
+        # Operators for ISO Modula-2
+        'm2iso' : (
+            common_operators,
+            iso_additional_operators,
+        ),
+
+        # Operators for Modula-2 R10
+        'm2r10' : (
+            common_operators,
+            m2r10_additional_operators,
+        ),
+
+        # Operators for Objective Modula-2
+        'objm2' : (
+            common_operators,
+            m2r10_additional_operators,
+            objm2_additional_operators,
+        ),
+
+        # Operators for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_operators,
+            iso_additional_operators,
+            aglet_additional_operators,
+        ),
+
+        # Operators for GNU Modula-2 Extensions
+        'm2pim+gm2' : (
+            common_operators,
+            pim_additional_operators,
+            gm2_additional_operators,
+        ),
+
+        # Operators for p1 Modula-2 Extensions
+        'm2iso+p1' : (
+            common_operators,
+            iso_additional_operators,
+            p1_additional_operators,
+        ),
+
+        # Operators for XDS Modula-2 Extensions
+        'm2iso+xds' : (
+            common_operators,
+            iso_additional_operators,
+            xds_additional_operators,
+        ),
+    }
+    
+    # Literals Database
+    literals_db = {
+        # Literals for unknown dialect
+        'unknown' : (
+            common_literals,
+            pim_additional_literals,
+            iso_additional_literals,
+            m2r10_additional_literals,
+        ),
+
+        # Literals for PIM Modula-2
+        'm2pim' : (
+            common_literals,
+            pim_additional_literals,
+        ),
+
+        # Literals for ISO Modula-2
+        'm2iso' : (
+            common_literals,
+            iso_additional_literals,
+        ),
+
+        # Literals for Modula-2 R10
+        'm2r10' : (
+            common_literals,
+            m2r10_additional_literals,
+        ),
+
+        # Literals for Objective Modula-2
+        'objm2' : (
+            common_literals,
+            m2r10_additional_literals,
+            objm2_additional_literals,
+        ),
+
+        # Literals for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_literals,
+            iso_additional_literals,
+            aglet_additional_literals,
+        ),
+
+        # Literals for GNU Modula-2 Extensions
+        'm2pim+gm2' : (
+            common_literals,
+            pim_additional_literals,
+            gm2_additional_literals,
+        ),
+
+        # Literals for p1 Modula-2 Extensions
+        'm2iso+p1' : (
+            common_literals,
+            iso_additional_literals,
+            p1_additional_literals,
+        ),
+
+        # Literals for XDS Modula-2 Extensions
+        'm2iso+xds' : (
+            common_literals,
+            iso_additional_literals,
+            xds_additional_literals,
+        ),
+    }
+    
+    # Comments and Pragmas Database
+    comments_and_pragmas_db = {
+        # Comments and Pragmas for unknown dialect
+        'unknown' : (
+            common_comments_and_pragmas,
+            pim_additional_comments_and_pragmas,
+            iso_additional_comments_and_pragmas,
+            m2r10_additional_comments_and_pragmas,
+        ),
+
+        # Comments and Pragmas for PIM Modula-2
+        'm2pim' : (
+            common_comments_and_pragmas,
+            pim_additional_comments_and_pragmas,
+        ),
+
+        # Comments and Pragmas for ISO Modula-2
+        'm2iso' : (
+            common_comments_and_pragmas,
+            iso_additional_comments_and_pragmas,
+        ),
+
+        # Comments and Pragmas for Modula-2 R10
+        'm2r10' : (
+            common_comments_and_pragmas,
+            m2r10_additional_comments_and_pragmas,
+        ),
+
+        # Comments and Pragmas for Objective Modula-2
+        'objm2' : (
+            common_comments_and_pragmas,
+            m2r10_additional_comments_and_pragmas,
+            objm2_additional_comments_and_pragmas,
+        ),
+
+        # Comments and Pragmas for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_comments_and_pragmas,
+            iso_additional_comments_and_pragmas,
+            aglet_additional_comments_and_pragmas,
+        ),
+
+        # Comments and Pragmas for GNU Modula-2 Extensions
+        'm2pim+gm2' : (
+            common_comments_and_pragmas,
+            pim_additional_comments_and_pragmas,
+            gm2_additional_comments_and_pragmas,
+        ),
+
+        # Comments and Pragmas for p1 Modula-2 Extensions
+        'm2iso+p1' : (
+            common_comments_and_pragmas,
+            iso_additional_comments_and_pragmas,
+            p1_additional_comments_and_pragmas,
+        ),
+
+        # Comments and Pragmas for XDS Modula-2 Extensions
+        'm2iso+xds' : (
+            common_comments_and_pragmas,
+            iso_additional_comments_and_pragmas,
+            xds_additional_comments_and_pragmas,
+        ),
+    }
+    
     # Reserved Words Database
     reserved_words_db = {
         # Reserved words for unknown dialect
@@ -796,13 +1250,13 @@ class Modula2Lexer(RegexLexer):
             pim_additional_reserved_words,
         ),
 
-        # Reserved words for Modula-2 R10
+        # Reserved words for ISO Modula-2
         'm2iso' : (
             common_reserved_words,
             iso_additional_reserved_words,
         ),
 
-        # Reserved words for ISO Modula-2
+        # Reserved words for Modula-2 R10
         'm2r10' : (
             common_reserved_words,
             m2r10_additional_reserved_words,
@@ -866,7 +1320,7 @@ class Modula2Lexer(RegexLexer):
             iso_additional_builtins,
         ),
 
-        # Builtins for ISO Modula-2
+        # Builtins for Modula-2 R10
         'm2r10' : (
             common_builtins,
             m2r10_additional_builtins,
@@ -1271,7 +1725,7 @@ class Modula2Lexer(RegexLexer):
         dialects = get_list_opt(options, 'dialect', [])
         #
         for dialect_option in dialects:
-            if dialect_option in self.dialects[1:-1]:
+            if dialect_option in self.dialects[1:len(self.dialects)]:
                 # valid dialect option found
                 self.set_dialect(dialect_option)
                 break
@@ -1313,11 +1767,29 @@ class Modula2Lexer(RegexLexer):
         else:
             dialect = dialect_id
         #
-        # compose lexemes to reject set
-        lexemes_to_reject_set = set()
-        # add each list of reject lexemes for this dialect
-        for list in self.lexemes_to_reject_db[dialect]:
-            lexemes_to_reject_set.update(set(list))
+        # compose punctuation set
+        punctuation_set = set()
+        # add each list of punctuation symbols for this dialect
+        for list in self.punctuation_db[dialect]:
+            punctuation_set.update(set(list))
+        #
+        # compose operators set
+        operators_set = set()
+        # add each list of operators for this dialect
+        for list in self.operators_db[dialect]:
+            operators_set.update(set(list))
+        #
+        # compose literals set
+        literals_set = set()
+        # add each list of literals for this dialect
+        for list in self.literals_db[dialect]:
+            literals_set.update(set(list))
+        #
+        # compose comments and pragmas set
+        comments_and_pragmas_set = set()
+        # add each list of comments and pragmas for this dialect
+        for list in self.comments_and_pragmas_db[dialect]:
+            comments_and_pragmas_set.update(set(list))
         #
         # compose reserved words set
         reswords_set = set()
@@ -1375,7 +1847,10 @@ class Modula2Lexer(RegexLexer):
         #
         # update lexer state
         self.dialect = dialect
-        self.lexemes_to_reject = lexemes_to_reject_set
+        self.punctuation = punctuation_set
+        self.operators = operators_set
+        self.literals = literals_set
+        self.comments_and_pragmas = comments_and_pragmas_set
         self.reserved_words = reswords_set
         self.builtins = builtins_set    
         self.pseudo_builtins = pseudo_builtins_set    
@@ -1384,12 +1859,15 @@ class Modula2Lexer(RegexLexer):
         self.types = types_set    
         self.procedures = procedures_set    
         self.variables = variables_set    
-        self.constants = constants_set    
+        self.constants = constants_set
         #
         #if __debug__:
         #    print 'exiting set_dialect'
         #    print ' self.dialect: ', self.dialect
-        #    print ' self.lexemes_to_reject: ', self.lexemes_to_reject
+        #    print ' self.punctuation: ', self.punctuation
+        #    print ' self.operators: ', self.operators
+        #    print ' self.literals: ', self.literals
+        #    print ' self.comments_and_pragmas: ', self.comments_and_pragmas
         #    print ' self.reserved_words: ', self.reserved_words
         #    print ' self.builtins: ', self.builtins
         #    print ' self.pseudo_builtins: ', self.pseudo_builtins
@@ -1456,16 +1934,69 @@ class Modula2Lexer(RegexLexer):
         for index, token, value in RegexLexer.get_tokens_unprocessed(self, text):
             #
             # check for dialect tag if dialect has not been set by tag
-            if not self.dialect_set_by_tag and token == Comment.Special:
+            if not self.dialect_set_by_tag and token in Comment.Special.DialectTag:
+                # print "dialect tag found", value, token
                 indicated_dialect = self.get_dialect_from_dialect_tag(value)
                 if indicated_dialect != UNKNOWN:
                     # token is a dialect indicator
-                    # reset reserved words and builtins
+                    # reset lexer to use indicated dialect
                     self.set_dialect(indicated_dialect)
                     self.dialect_set_by_tag = True
             #
+            # check punctuation, mark unsupported punctuation as errors
+            if token is Punctuation:
+                #print "lexeme = ", value, " : token = ", token
+                if value not in self.punctuation:
+                    token = Error
+            #
+            # check operators, mark unsupported operators as errors and
+            # substitute operator lexemes in algol publication mode
+            elif token is Operator:
+                #print "lexeme = ", value, " : token = ", token
+                if value not in self.operators:
+                    token = Error
+                if self.algol_publication_mode:
+                    if value == '#':
+                        value = u'≠'
+                    elif value == '<=':
+                        value = u'≤'
+                    elif value == '>=':
+                        value = u'≥'
+                    elif value == '==':
+                        value = u'≡'
+                    elif value == '*.':
+                        value = u'•'
+                    elif value == '~':
+                        value = u'¬'
+            #
+            elif token in Number:
+                #
+                if self.algol_publication_mode:
+                    #print "lexeme = ", value, " : token = ", token
+                    if token in Number.Oct:
+                        value = value.replace('B', u'₈', 1)
+                    elif token in Number.Hex:
+                        value = value.replace('H', u'₁₆', 1)
+                    elif token in Number.Float:
+                        value = value.replace('E', u'₁₀', 1)
+                #
+                for list in self.literals:
+                    if token in list:
+                        # token found in list of supported literals
+                        break
+                else:
+                    # token not found in list of supported literals
+                    token = Error
+                #
+                # formatters appear to be broken for custom tokens,
+                # for now, restore tokens to their nearest builtin values
+                if token in Number.Float:
+                    token = Number.Float
+                elif token in Number:
+                    token = Number.Integer
+            #
             # check for reserved words, predefined and stdlib identifiers
-            if token is Name:
+            elif token is Name:
                 if value in self.reserved_words:
                     token = Keyword.Reserved
                     if self.algol_publication_mode:
@@ -1504,61 +2035,45 @@ class Modula2Lexer(RegexLexer):
                 elif value in self.constants:
                     token = Name.Constant
             #
-            elif token in Number:
-                #
-                # mark prefix number literals as error for PIM and ISO dialects
-                if self.dialect not in (UNKNOWN, 'm2r10', 'objm2'):
-                    if "'" in value or value[0:2] in ('0b', '0x', '0u'):
-                        token = Error
-                #
-                elif self.dialect in ('m2r10', 'objm2'):
-                    # mark base-8 number literals as errors for M2 R10 and ObjM2
-                    if token is Number.Oct:
-                        token = Error
-                    # mark suffix base-16 literals as errors for M2 R10 and ObjM2
-                    elif token is Number.Hex and 'H' in value:
-                        token = Error
-                    # mark real numbers with E as errors for M2 R10 and ObjM2
-                    elif token is Number.Float and 'E' in value:
-                        token = Error
-            #
             elif token in Comment:
+                #print "lexeme = ", value[0:15], "... : token = ", token
                 #
-                # mark single line comment as error for PIM and ISO dialects
-                if token is Comment.Single:
-                    if self.dialect not in [UNKNOWN, 'm2r10', 'objm2']:
+                for list in self.comments_and_pragmas:
+                    if token in list:
+                        # token found in list of supported comments and pragmas
+                        break
+                else:
+                    # token not found in list of supported comments and pragmas
+                    if token is Comment.Preproc.PascalStyle:
+                        token = Comment.Multiline.PascalStyle
+                    else:
                         token = Error
                 #
-                if token is Comment.Preproc:
-                    # mark ISO pragma as error for PIM dialects
-                    if value.startswith('<*') and \
-                       self.dialect.startswith('m2pim'):
-                        token = Error
-                    # mark PIM pragma as comment for other dialects
-                    elif value.startswith('(*$') and \
-                       self.dialect != UNKNOWN and \
-                       not self.dialect.startswith('m2pim'):
-                        token = Comment.Multiline 
+                # replace special comment delimiters with plain delimiters
+                if token in Comment.Special.Title:
+                    value = value.replace('(*#', '(*', 1)
+                    value = value.replace('#*)', '*)', 1)
+                if token in Comment.Special.Headline.One:
+                    value = value.replace('(*=', '(*', 1)
+                    value = value.replace('=*)', '*)', 1)
+                if token in Comment.Special.Headline.Two:
+                    value = value.replace('(*-', '(*', 1)
+                    value = value.replace('-*)', '*)', 1)
+                if token in Comment.Special.Headline.Three:
+                    value = value.replace('(*_', '(*', 1)
+                    value = value.replace('_*)', '*)', 1)
+
+                # formatters appear to be broken for custom tokens,
+                # for now, restore tokens to their nearest builtin values
+                if token in Comment.Single:
+                    token = Comment.Single
+                elif token in Comment.Multiline:
+                    token = Comment.Multiline
+                elif token in Comment.Preproc:
+                    token = Comment.Preproc
+                elif token in Comment.Special:
+                    token = Comment.Special
             #
-            else: # token is neither Name nor Comment
-                #
-                # mark lexemes matching the dialect's error token set as errors
-                if value in self.lexemes_to_reject:
-                    token = Error
-                #
-                # substitute lexemes when in Algol mode
-                if self.algol_publication_mode:
-                    if value == '#':
-                        value = u'≠'
-                    elif value == '<=':
-                        value = u'≤'
-                    elif value == '>=':
-                        value = u'≥'
-                    elif value == '==':
-                        value = u'≡'
-                    elif value == '*.':
-                        value = u'•'
-                
             # return result
             yield index, token, value
 
