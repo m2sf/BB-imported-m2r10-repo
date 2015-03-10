@@ -48,12 +48,16 @@ class Modula2Lexer(RegexLexer):
     
     Language Extensions:
 
-    `+aglet`
-        Select Aglet Modula-2 extensions, available with m2iso.
     `+gm2`
         Select GNU Modula-2 extensions, available with m2pim.
+    `+mocka`
+        Select MOCKA extensions, available with m2pim.
+    `+aglet`
+        Select Aglet Modula-2 extensions, available with m2iso.
     `+p1`
         Select p1 Modula-2 extensions, available with m2iso.
+    `+sbu`
+        Select Stony Brook Modula-2 extensions, available with m2iso.
     `+xds`
         Select XDS Modula-2 extensions, available with m2iso.
 
@@ -83,8 +87,8 @@ class Modula2Lexer(RegexLexer):
         OpeningCommentDelim Prefix dialectOption ClosingCommentDelim ;
     
     dialectOption :
-        'm2pim' | 'm2iso' | 'm2r10' | 'objm2' |
-        'm2iso+aglet' | 'm2pim+gm2' | 'm2iso+p1' | 'm2iso+xds' ;
+        'm2pim' | 'm2iso' | 'm2r10' | 'objm2' | 'm2pim+gm2' | 'm2pim+mocka' |
+        'm2iso+aglet' | 'm2iso+p1' | 'm2iso+sbu' | 'm2iso+xds' ;
 
     Prefix : '!' ;
 
@@ -188,14 +192,20 @@ class Modula2Lexer(RegexLexer):
             (r'\(\*!m2r10\*\)', Comment.Special.DialectTag), 
             # ObjM2 Dialect Tag
             (r'\(\*!objm2\*\)', Comment.Special.DialectTag), 
-            # Aglet Extensions Dialect Tag
-            (r'\(\*!m2iso\+aglet\*\)', Comment.Special.DialectTag), 
             # GNU Extensions Dialect Tag
             (r'\(\*!m2pim\+gm2\*\)', Comment.Special.DialectTag), 
+            # MOCKA Extensions Dialect Tag
+            (r'\(\*!m2pim\+mocka\*\)', Comment.Special.DialectTag), 
+            # Aglet Extensions Dialect Tag
+            (r'\(\*!m2iso\+aglet\*\)', Comment.Special.DialectTag), 
             # p1 Extensions Dialect Tag
             (r'\(\*!m2iso\+p1\*\)', Comment.Special.DialectTag), 
+            # Stony Brook Extensions Dialect Tag
+            (r'\(\*!m2iso\+sbu\*\)', Comment.Special.DialectTag), 
             # XDS Extensions Dialect Tag
             (r'\(\*!m2iso\+xds\*\)', Comment.Special.DialectTag), 
+            # Insert Dialect Into Comment
+            (r'\(\*\?.*?\?\*\)', Comment.Special.DialectMacro),
         ],
         'identifiers': [
             (r'([a-zA-Z_$][\w$]*)', Name),
@@ -379,6 +389,8 @@ class Modula2Lexer(RegexLexer):
             (r'<\*.*?\*>', Comment.Preproc.IsoStyle),
             # Pascal Style Pragmas
             (r'\(\*\$.*?\*\)', Comment.Preproc.PascalStyle),
+            # Stony Brook Conditional Compilation Pragmas
+            (r'%(IF|THEN|ELSIF|ELSE|END|NOT|AND|OR)', Comment.Preproc.StonyBrook),
         ],
         'root': [
             # * * * The order of inclusion is semantically significant * * *
@@ -418,6 +430,7 @@ class Modula2Lexer(RegexLexer):
     common_comments_and_pragmas = (
         Comment.Multiline.PascalStyle,
         Comment.Special.DialectTag,
+        Comment.Special.DialectMacro,
         Comment.Special.Copyright,
         Comment.Special.Title,
         Comment.Special.Headline,
@@ -451,8 +464,8 @@ class Modula2Lexer(RegexLexer):
     
     # Common Pseudo-Module Builtins Dataset
     common_pseudo_builtins = (
-        # 4 common pseudo builtins
-        'ADDRESS', 'BYTE', 'WORD', 'ADR'
+        # 3 common pseudo builtins
+        'ADDRESS', 'WORD', 'ADR'
     )
     
 #  P I M   M o d u l a - 2   D a t a s e t s
@@ -493,8 +506,8 @@ class Modula2Lexer(RegexLexer):
     
     # PIM Modula-2 pseudo-builtins in addition to the common set
     pim_additional_pseudo_builtins = (
-        # 5 additional pseudo builtins
-        'SYSTEM', 'PROCESS', 'TSIZE', 'NEWPROCESS', 'TRANSFER',
+        # 6 additional pseudo builtins
+        'SYSTEM', 'PROCESS', 'TSIZE', 'NEWPROCESS', 'IOTRANSFER', 'TRANSFER',
     )
     
 #  I S O   M o d u l a - 2   D a t a s e t s
@@ -543,8 +556,8 @@ class Modula2Lexer(RegexLexer):
 
     # ISO Modula-2 pseudo-builtins in addition to the common set
     iso_additional_pseudo_builtins = (
-        # 14 additional builtins (SYSTEM)
-        'SYSTEM', 'BITSPERLOC', 'LOCSPERBYTE', 'LOCSPERWORD', 'LOC',
+        # 15 additional builtins (SYSTEM)
+        'SYSTEM', 'BITSPERLOC', 'BYTE', 'LOCSPERBYTE', 'LOCSPERWORD', 'LOC',
         'ADDADR', 'SUBADR', 'DIFADR', 'MAKEADR', 'ADR',
         'ROTATE', 'SHIFT', 'CAST', 'TSIZE',
         # 13 additional builtins (COROUTINES)
@@ -624,9 +637,9 @@ class Modula2Lexer(RegexLexer):
         # 4 additional builtins (CONVERSION)
         'CONVERSION', 'TSXFSIZE', 'SXF', 'VAL',
         # 35 additional builtins (UNSAFE)
-        'UNSAFE', 'CAST', 'INTRINSIC', 'AVAIL', 'ADD', 'SUB', 'ADDC', 'SUBC',
-        'FETCHADD', 'FETCHSUB', 'SHL', 'SHR', 'ASHR', 'ROTL', 'ROTR', 'ROTLC',
-        'ROTRC', 'BWNOT', 'BWAND', 'BWOR', 'BWXOR', 'BWNAND', 'BWNOR',
+        'UNSAFE', 'BYTE', 'CAST', 'INTRINSIC', 'AVAIL', 'ADD', 'SUB', 'ADDC',
+        'SUBC', 'FETCHADD', 'FETCHSUB', 'SHL', 'SHR', 'ASHR', 'ROTL', 'ROTR',
+        'ROTLC', 'ROTRC', 'BWNOT', 'BWAND', 'BWOR', 'BWXOR', 'BWNAND', 'BWNOR',
         'SETBIT', 'TESTBIT', 'LSBIT', 'MSBIT', 'CSBITS', 'BAIL', 'HALT',
         'TODO', 'FFI', 'ADDR', 'VARGLIST', 'VARGC',
         # 11 additional builtins (ATOMIC)
@@ -680,45 +693,6 @@ class Modula2Lexer(RegexLexer):
         # None
     )
 
-#  A g l e t   M o d u l a - 2   D a t a s e t s
-    
-    # Aglet punctuation in addition to ISO Modula-2
-    aglet_additional_punctuation = (
-        # None
-    )
-
-    # Aglet operators in addition to ISO Modula-2
-    aglet_additional_operators = (
-        # None
-    )
-
-    # Aglet literals in addition to ISO Modula-2
-    aglet_additional_literals = (
-        # None
-    )
-    
-    # Aglet comments and pragmas in addition to ISO Modula-2
-    aglet_additional_comments_and_pragmas = (
-        # None
-    )
-    
-    # Aglet reserved words in addition to ISO Modula-2
-    aglet_additional_reserved_words = (
-        # None
-    )
-
-    # Aglet builtins in addition to ISO Modula-2
-    aglet_additional_builtins = (
-        # 9 additional builtins
-        'BITSET8', 'BITSET16', 'BITSET32', 'CARDINAL8', 'CARDINAL16',
-        'CARDINAL32', 'INTEGER8', 'INTEGER16', 'INTEGER32',
-    )
-
-    # Aglet pseudo-module builtins in addition to ISO Modula-2
-    aglet_additional_pseudo_builtins = (
-        # None
-    )
-
 #  G N U   M o d u l a - 2   D a t a s e t s
     
     # GM2 punctuation in addition to PIM Modula-2
@@ -759,6 +733,86 @@ class Modula2Lexer(RegexLexer):
 
     # GM2 pseudo-module builtins in addition to PIM Modula-2
     gm2_additional_pseudo_builtins = (
+        # 1 additional pseudo-builtin
+        'BYTE', 
+    )
+    
+#  M O C K A   M o d u l a - 2   D a t a s e t s
+    
+    # MOCKA punctuation in addition to PIM Modula-2
+    mocka_additional_punctuation = (
+        # None
+    )
+
+    # MOCKA operators in addition to PIM Modula-2
+    mocka_additional_operators = (
+        # None
+    )
+
+    # MOCKA literals in addition to PIM Modula-2
+    mocka_additional_literals = (
+        # None
+    )
+    
+    # MOCKA comments and pragmas in addition to PIM Modula-2
+    mocka_additional_comments_and_pragmas = (
+        # None
+    )
+    
+    # MOCKA reserved words in addition to PIM Modula-2
+    mocka_additional_reserved_words = (
+        # 1 additional reserved word
+        'FOREIGN',
+    )
+
+    # MOCKA builtins in addition to PIM Modula-2
+    mocka_additional_builtins = (
+        # 21 additional builtins
+        'LONGCARD', 'SHORTCARD', 'SHORTINT',
+    )
+
+    # MOCKA pseudo-module builtins in addition to PIM Modula-2
+    mocka_additional_pseudo_builtins = (
+        # 1 additional pseudo-builtin
+        'BYTE', 
+    )
+    
+#  A g l e t   M o d u l a - 2   D a t a s e t s
+    
+    # Aglet punctuation in addition to ISO Modula-2
+    aglet_additional_punctuation = (
+        # None
+    )
+
+    # Aglet operators in addition to ISO Modula-2
+    aglet_additional_operators = (
+        # None
+    )
+
+    # Aglet literals in addition to ISO Modula-2
+    aglet_additional_literals = (
+        # None
+    )
+    
+    # Aglet comments and pragmas in addition to ISO Modula-2
+    aglet_additional_comments_and_pragmas = (
+        # None
+    )
+    
+    # Aglet reserved words in addition to ISO Modula-2
+    aglet_additional_reserved_words = (
+        # None
+    )
+
+    # Aglet builtins in addition to ISO Modula-2
+    aglet_additional_builtins = (
+        # 9 additional builtins
+        'BITSET8', 'BITSET16', 'BITSET32', 'CARDINAL8', 'CARDINAL16',
+        'CARDINAL32', 'INTEGER8', 'INTEGER16', 'INTEGER32',
+    )
+
+    # Aglet pseudo-module builtins in addition to ISO Modula-2
+    aglet_additional_pseudo_builtins = (
         # None
     )
 
@@ -799,7 +853,58 @@ class Modula2Lexer(RegexLexer):
         # 1 additional builtin
         'BCD',
     )
+    
+#  S t o n y   B r o o k   M o d u l a - 2   D a t a s e t s
+    
+    # Stony Brook punctuation in addition to ISO Modula-2
+    sbu_additional_punctuation = (
+        '*',
+    )
 
+    # Stony Brook operators in addition to ISO Modula-2
+    sbu_additional_operators = (
+        # None
+    )
+
+    # Stony Brook literals in addition to ISO Modula-2
+    sbu_additional_literals = (
+        # None
+    )
+    
+    # Stony Brook comments and pragmas in addition to ISO Modula-2
+    sbu_additional_comments_and_pragmas = (
+        Comment.Preproc.StonyBrook,
+    )
+    
+    # Stony Brook reserved words in addition to ISO Modula-2
+    sbu_additional_reserved_words = (
+        'BIG', 'BITFIELDS', 'BREAK', 'CONTINUE', 'EXCEPT', 'FUNC', 'INOUT',
+        'OUT', 'MACRO', 'SMALL',
+    )
+
+    # Stony Brook builtins in addition to ISO Modula-2
+    sbu_additional_builtins = (
+        # 30 additional builtins
+        'ACHAR', 'BAND', 'BNOT', 'BOOL8', 'BOOL16', 'BOOL32', 'BOR', 'BYTEBOOL',
+        'CARDINAL8', 'CARDINAL16', 'CARDINAL32', 'CARDINAL64', 'DWORDBOOL',
+        'INTEGER8', 'INTEGER16', 'INTEGER32', 'INTEGER64', 'LONGCARD',
+        'NILPROC', 'ROL', 'ROR', 'SHL', 'SHORTCARD', 'SHORTINT', 'SHR',
+        'UCHAR', 'WORDBOOL'
+    )
+    
+    # Stony Brook pseudo-module builtins in addition to ISO Modula-2
+    sbu_additional_pseudo_builtins = (
+        # 33 additional builtins (SYSTEM)
+        'CPUCOUNT', 'EXITCODE', 'BuildNumber', 'DebuggerPresent', 'OFFS',
+        'UNREFERENCED_PARAMETER', 'SOURCEFILE', 'SOURCELINE', 'ASSERT',
+        'ISASSERT', 'EXCEPTADDR', 'EXCEPT_INFO', 'SetUnhandledExceptionProc',
+        'AttachDebugger', 'AttachDebuggerOpt', 'DoNotAttach', 'AttachExternal',
+        'AttachAll', 'OutputDebugMessage', 'EnableCallTrace', 'OutputCallTrace',
+        'TrapAccessViolations', 'VA_START', 'VA_ARG', 'CLONE', 'FIXME',
+        'SWAPENDIAN', 'BIGENDIAN', 'LITTLEENDIAN', 'ATOMIC_CMPXCHG',
+        'ATOMIC_XCHG', 'ATOMIC_ADD', 'MEMORY_FENCE',
+    )
+    
 #  X D S   M o d u l a - 2   D a t a s e t s
     
     # XDS punctuation in addition to ISO Modula-2
@@ -972,12 +1077,27 @@ class Modula2Lexer(RegexLexer):
     # Dialect modes
     dialects = (
         'unknown',
-        'm2pim', 'm2iso', 'm2r10', 'objm2',
-        'm2iso+aglet', 'm2pim+gm2', 'm2iso+p1', 'm2iso+xds',
+        'm2pim', 'm2iso', 'm2r10', 'objm2', 'm2pim+gm2', 'm2pim+mocka',
+        'm2iso+aglet', 'm2iso+p1', 'm2iso+sbu', 'm2iso+xds',
     )
     
 #   D a t a b a s e s
     
+    # Human Readable Dialect Name Database
+    dialect_str = {
+        'unknown' : 'unknown',
+        'm2pim' : 'PIM Modula-2',
+        'm2iso' : 'ISO Modula-2',
+        'm2r10' : 'Modula-2 R10',
+        'objm2' : 'Objective Modula-2',
+        'm2pim+gm2' : 'GNU Extensions to PIM Modula-2',
+        'm2pim+mocka' : 'MOCKA Extensions to PIM Modula-2',
+        'm2iso+aglet' : 'Aglet Extensions to ISO Modula-2',
+        'm2iso+p1' : 'p1 Extensions to ISO Modula-2',
+        'm2iso+sbu' : 'Stony Brook Extensions to ISO Modula-2',
+        'm2iso+xds' : 'XDS Extensions to ISO Modula-2',
+    }
+        
     # Punctuation Database
     punctuation_db = {
         # Punctuation for unknown dialect
@@ -1013,18 +1133,25 @@ class Modula2Lexer(RegexLexer):
             objm2_additional_punctuation,
         ),
 
-        # Punctuation for Aglet Modula-2 Extensions
-        'm2iso+aglet' : (
-            common_punctuation,
-            iso_additional_punctuation,
-            aglet_additional_punctuation,
-        ),
-
         # Punctuation for GNU Modula-2 Extensions
         'm2pim+gm2' : (
             common_punctuation,
             pim_additional_punctuation,
             gm2_additional_punctuation,
+        ),
+
+        # Punctuation for MOCKA Modula-2 Extensions
+        'm2pim+mocka' : (
+            common_punctuation,
+            pim_additional_punctuation,
+            mocka_additional_punctuation,
+        ),
+
+        # Punctuation for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_punctuation,
+            iso_additional_punctuation,
+            aglet_additional_punctuation,
         ),
 
         # Punctuation for p1 Modula-2 Extensions
@@ -1034,6 +1161,13 @@ class Modula2Lexer(RegexLexer):
             p1_additional_punctuation,
         ),
 
+        # Punctuation for Stony Brook Modula-2 Extensions
+        'm2iso+sbu' : (
+            common_punctuation,
+            iso_additional_punctuation,
+            sbu_additional_punctuation,
+        ),
+        
         # Punctuation for XDS Modula-2 Extensions
         'm2iso+xds' : (
             common_punctuation,
@@ -1077,13 +1211,6 @@ class Modula2Lexer(RegexLexer):
             objm2_additional_operators,
         ),
 
-        # Operators for Aglet Modula-2 Extensions
-        'm2iso+aglet' : (
-            common_operators,
-            iso_additional_operators,
-            aglet_additional_operators,
-        ),
-
         # Operators for GNU Modula-2 Extensions
         'm2pim+gm2' : (
             common_operators,
@@ -1091,11 +1218,32 @@ class Modula2Lexer(RegexLexer):
             gm2_additional_operators,
         ),
 
+        # Operators for MOCKA Modula-2 Extensions
+        'm2pim+mocka' : (
+            common_operators,
+            pim_additional_operators,
+            mocka_additional_operators,
+        ),
+
+        # Operators for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_operators,
+            iso_additional_operators,
+            aglet_additional_operators,
+        ),
+
         # Operators for p1 Modula-2 Extensions
         'm2iso+p1' : (
             common_operators,
             iso_additional_operators,
             p1_additional_operators,
+        ),
+
+        # Operators for Stony Brook Modula-2 Extensions
+        'm2iso+sbu' : (
+            common_operators,
+            iso_additional_operators,
+            sbu_additional_operators,
         ),
 
         # Operators for XDS Modula-2 Extensions
@@ -1141,13 +1289,6 @@ class Modula2Lexer(RegexLexer):
             objm2_additional_literals,
         ),
 
-        # Literals for Aglet Modula-2 Extensions
-        'm2iso+aglet' : (
-            common_literals,
-            iso_additional_literals,
-            aglet_additional_literals,
-        ),
-
         # Literals for GNU Modula-2 Extensions
         'm2pim+gm2' : (
             common_literals,
@@ -1155,11 +1296,32 @@ class Modula2Lexer(RegexLexer):
             gm2_additional_literals,
         ),
 
+        # Literals for MOCKA Modula-2 Extensions
+        'm2pim+mocka' : (
+            common_literals,
+            pim_additional_literals,
+            mocka_additional_literals,
+        ),
+
+        # Literals for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_literals,
+            iso_additional_literals,
+            aglet_additional_literals,
+        ),
+
         # Literals for p1 Modula-2 Extensions
         'm2iso+p1' : (
             common_literals,
             iso_additional_literals,
             p1_additional_literals,
+        ),
+
+        # Literals for Stony Brook Modula-2 Extensions
+        'm2iso+sbu' : (
+            common_literals,
+            iso_additional_literals,
+            sbu_additional_literals,
         ),
 
         # Literals for XDS Modula-2 Extensions
@@ -1205,13 +1367,6 @@ class Modula2Lexer(RegexLexer):
             objm2_additional_comments_and_pragmas,
         ),
 
-        # Comments and Pragmas for Aglet Modula-2 Extensions
-        'm2iso+aglet' : (
-            common_comments_and_pragmas,
-            iso_additional_comments_and_pragmas,
-            aglet_additional_comments_and_pragmas,
-        ),
-
         # Comments and Pragmas for GNU Modula-2 Extensions
         'm2pim+gm2' : (
             common_comments_and_pragmas,
@@ -1219,11 +1374,32 @@ class Modula2Lexer(RegexLexer):
             gm2_additional_comments_and_pragmas,
         ),
 
+        # Comments and Pragmas for MOCKA Modula-2 Extensions
+        'm2pim+mocka' : (
+            common_comments_and_pragmas,
+            pim_additional_comments_and_pragmas,
+            mocka_additional_comments_and_pragmas,
+        ),
+
+        # Comments and Pragmas for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_comments_and_pragmas,
+            iso_additional_comments_and_pragmas,
+            aglet_additional_comments_and_pragmas,
+        ),
+
         # Comments and Pragmas for p1 Modula-2 Extensions
         'm2iso+p1' : (
             common_comments_and_pragmas,
             iso_additional_comments_and_pragmas,
             p1_additional_comments_and_pragmas,
+        ),
+
+        # Comments and Pragmas for Stony Brook Modula-2 Extensions
+        'm2iso+sbu' : (
+            common_comments_and_pragmas,
+            iso_additional_comments_and_pragmas,
+            sbu_additional_comments_and_pragmas,
         ),
 
         # Comments and Pragmas for XDS Modula-2 Extensions
@@ -1269,13 +1445,6 @@ class Modula2Lexer(RegexLexer):
             objm2_additional_reserved_words,
         ),
 
-        # Reserved words for Aglet Modula-2 Extensions
-        'm2iso+aglet' : (
-            common_reserved_words,
-            iso_additional_reserved_words,
-            aglet_additional_reserved_words,
-        ),
-
         # Reserved words for GNU Modula-2 Extensions
         'm2pim+gm2' : (
             common_reserved_words,
@@ -1283,11 +1452,32 @@ class Modula2Lexer(RegexLexer):
             gm2_additional_reserved_words,
         ),
 
+        # Reserved words for MOCKA Modula-2 Extensions
+        'm2pim+mocka' : (
+            common_reserved_words,
+            pim_additional_reserved_words,
+            mocka_additional_reserved_words,
+        ),
+
+        # Reserved words for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_reserved_words,
+            iso_additional_reserved_words,
+            aglet_additional_reserved_words,
+        ),
+
         # Reserved words for p1 Modula-2 Extensions
         'm2iso+p1' : (
             common_reserved_words,
             iso_additional_reserved_words,
             p1_additional_reserved_words,
+        ),
+
+        # Reserved words for Stony Brook Modula-2 Extensions
+        'm2iso+sbu' : (
+            common_reserved_words,
+            iso_additional_reserved_words,
+            sbu_additional_reserved_words,
         ),
 
         # Reserved words for XDS Modula-2 Extensions
@@ -1333,13 +1523,6 @@ class Modula2Lexer(RegexLexer):
             objm2_additional_builtins,
         ),
 
-        # Builtins for Aglet Modula-2 Extensions
-        'm2iso+aglet' : (
-            common_builtins,
-            iso_additional_builtins,
-            aglet_additional_builtins,
-        ),
-
         # Builtins for GNU Modula-2 Extensions
         'm2pim+gm2' : (
             common_builtins,
@@ -1347,11 +1530,32 @@ class Modula2Lexer(RegexLexer):
             gm2_additional_builtins,
         ),
 
+        # Builtins for MOCKA Modula-2 Extensions
+        'm2pim+mocka' : (
+            common_builtins,
+            pim_additional_builtins,
+            mocka_additional_builtins,
+        ),
+
+        # Builtins for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_builtins,
+            iso_additional_builtins,
+            aglet_additional_builtins,
+        ),
+
         # Builtins for p1 Modula-2 Extensions
         'm2iso+p1' : (
             common_builtins,
             iso_additional_builtins,
             p1_additional_builtins,
+        ),
+
+        # Builtins for Stony Brook Modula-2 Extensions
+        'm2iso+sbu' : (
+            common_builtins,
+            iso_additional_builtins,
+            sbu_additional_builtins,
         ),
 
         # Builtins for XDS Modula-2 Extensions
@@ -1397,13 +1601,6 @@ class Modula2Lexer(RegexLexer):
             objm2_additional_pseudo_builtins,
         ),
 
-        # Builtins for Aglet Modula-2 Extensions
-        'm2iso+aglet' : (
-            common_pseudo_builtins,
-            iso_additional_pseudo_builtins,
-            aglet_additional_pseudo_builtins,
-        ),
-
         # Builtins for GNU Modula-2 Extensions
         'm2pim+gm2' : (
             common_pseudo_builtins,
@@ -1411,11 +1608,32 @@ class Modula2Lexer(RegexLexer):
             gm2_additional_pseudo_builtins,
         ),
 
+        # Builtins for MOCKA Modula-2 Extensions
+        'm2pim+mocka' : (
+            common_pseudo_builtins,
+            pim_additional_pseudo_builtins,
+            mocka_additional_pseudo_builtins,
+        ),
+
+        # Builtins for Aglet Modula-2 Extensions
+        'm2iso+aglet' : (
+            common_pseudo_builtins,
+            iso_additional_pseudo_builtins,
+            aglet_additional_pseudo_builtins,
+        ),
+
         # Builtins for p1 Modula-2 Extensions
         'm2iso+p1' : (
             common_pseudo_builtins,
             iso_additional_pseudo_builtins,
             p1_additional_pseudo_builtins,
+        ),
+
+        # Builtins for Stony Brook Modula-2 Extensions
+        'm2iso+sbu' : (
+            common_pseudo_builtins,
+            iso_additional_pseudo_builtins,
+            sbu_additional_pseudo_builtins,
         ),
 
         # Builtins for XDS Modula-2 Extensions
@@ -1452,18 +1670,28 @@ class Modula2Lexer(RegexLexer):
             m2r10_stdlib_adt_identifiers,
         ),
         
-        # Standard Library ADTs for Aglet Modula-2
-        'm2iso+aglet' : (
-            # No first class library types
-        ),
-        
         # Standard Library ADTs for GNU Modula-2
         'm2pim+gm2' : (
             # No first class library types
         ),
         
+        # Standard Library ADTs for MOCKA Modula-2
+        'm2pim+mocka' : (
+            # No first class library types
+        ),
+        
+        # Standard Library ADTs for Aglet Modula-2
+        'm2iso+aglet' : (
+            # No first class library types
+        ),
+        
         # Standard Library ADTs for p1 Modula-2
         'm2iso+p1' : (
+            # No first class library types
+        ),
+        
+        # Standard Library ADTs for Stony Brook Modula-2
+        'm2iso+sbu' : (
             # No first class library types
         ),
         
@@ -1502,18 +1730,28 @@ class Modula2Lexer(RegexLexer):
             m2r10_stdlib_module_identifiers,
         ),
         
-        # Standard Library Modules for Aglet Modula-2
-        'm2iso+aglet' : (
-            iso_stdlib_module_identifiers,
-        ),
-        
         # Standard Library Modules for GNU Modula-2
         'm2pim+gm2' : (
             pim_stdlib_module_identifiers,
         ),
         
+        # Standard Library Modules for MOCKA Modula-2
+        'm2pim+mocka' : (
+            pim_stdlib_module_identifiers,
+        ),
+        
+        # Standard Library Modules for Aglet Modula-2
+        'm2iso+aglet' : (
+            iso_stdlib_module_identifiers,
+        ),
+        
         # Standard Library Modules for p1 Modula-2
         'm2iso+p1' : (
+            iso_stdlib_module_identifiers,
+        ),
+        
+        # Standard Library Modules for Stony Brook Modula-2
+        'm2iso+sbu' : (
             iso_stdlib_module_identifiers,
         ),
         
@@ -1549,18 +1787,28 @@ class Modula2Lexer(RegexLexer):
             m2r10_stdlib_type_identifiers,
         ),
         
-        # Standard Library Types for Aglet Modula-2
-        'm2iso+aglet' : (
-            iso_stdlib_type_identifiers,
-        ),
-        
         # Standard Library Types for GNU Modula-2
         'm2pim+gm2' : (
             pim_stdlib_type_identifiers,
         ),
         
+        # Standard Library Types for MOCKA Modula-2
+        'm2pim+mocka' : (
+            pim_stdlib_type_identifiers,
+        ),
+        
+        # Standard Library Types for Aglet Modula-2
+        'm2iso+aglet' : (
+            iso_stdlib_type_identifiers,
+        ),
+        
         # Standard Library Types for p1 Modula-2
         'm2iso+p1' : (
+            iso_stdlib_type_identifiers,
+        ),
+        
+        # Standard Library Types for Stony Brook Modula-2
+        'm2iso+sbu' : (
             iso_stdlib_type_identifiers,
         ),
         
@@ -1596,18 +1844,28 @@ class Modula2Lexer(RegexLexer):
             m2r10_stdlib_proc_identifiers,
         ),
         
-        # Standard Library Procedures for Aglet Modula-2
-        'm2iso+aglet' : (
-            iso_stdlib_proc_identifiers,
-        ),
-        
         # Standard Library Procedures for GNU Modula-2
         'm2pim+gm2' : (
             pim_stdlib_proc_identifiers,
         ),
         
+        # Standard Library Procedures for MOCKA Modula-2
+        'm2pim+mocka' : (
+            pim_stdlib_proc_identifiers,
+        ),
+        
+        # Standard Library Procedures for Aglet Modula-2
+        'm2iso+aglet' : (
+            iso_stdlib_proc_identifiers,
+        ),
+        
         # Standard Library Procedures for p1 Modula-2
         'm2iso+p1' : (
+            iso_stdlib_proc_identifiers,
+        ),
+        
+        # Standard Library Procedures for Stony Brook Modula-2
+        'm2iso+sbu' : (
             iso_stdlib_proc_identifiers,
         ),
         
@@ -1643,18 +1901,28 @@ class Modula2Lexer(RegexLexer):
             m2r10_stdlib_var_identifiers,
         ),
         
-        # Standard Library Variables for Aglet Modula-2
-        'm2iso+aglet' : (
-            iso_stdlib_var_identifiers,
-        ),
-        
         # Standard Library Variables for GNU Modula-2
         'm2pim+gm2' : (
             pim_stdlib_var_identifiers,
         ),
         
+        # Standard Library Variables for MOCKA Modula-2
+        'm2pim+mocka' : (
+            pim_stdlib_var_identifiers,
+        ),
+        
+        # Standard Library Variables for Aglet Modula-2
+        'm2iso+aglet' : (
+            iso_stdlib_var_identifiers,
+        ),
+        
         # Standard Library Variables for p1 Modula-2
         'm2iso+p1' : (
+            iso_stdlib_var_identifiers,
+        ),
+        
+        # Standard Library Variables for Stony Brook Modula-2
+        'm2iso+sbu' : (
             iso_stdlib_var_identifiers,
         ),
         
@@ -1690,18 +1958,28 @@ class Modula2Lexer(RegexLexer):
             m2r10_stdlib_const_identifiers,
         ),
         
-        # Standard Library Constants for Aglet Modula-2
-        'm2iso+aglet' : (
-            iso_stdlib_const_identifiers,
-        ),
-        
         # Standard Library Constants for GNU Modula-2
         'm2pim+gm2' : (
             pim_stdlib_const_identifiers,
         ),
         
+        # Standard Library Constants for MOCKA Modula-2
+        'm2pim+mocka' : (
+            pim_stdlib_const_identifiers,
+        ),
+        
+        # Standard Library Constants for Aglet Modula-2
+        'm2iso+aglet' : (
+            iso_stdlib_const_identifiers,
+        ),
+        
         # Standard Library Constants for p1 Modula-2
         'm2iso+p1' : (
+            iso_stdlib_const_identifiers,
+        ),
+        
+        # Standard Library Constants for Stony Brook Modula-2
+        'm2iso+sbu' : (
             iso_stdlib_const_identifiers,
         ),
         
@@ -1758,8 +2036,7 @@ class Modula2Lexer(RegexLexer):
     # Set lexer to a specified dialect
     def set_dialect(self, dialect_id):
         #
-        #if __debug__:
-        #    print 'entered set_dialect with arg: ', dialect_id
+        #print 'entered set_dialect with arg: ', dialect_id
         #
         # check dialect name against known dialects
         if dialect_id not in self.dialects:
@@ -1878,14 +2155,17 @@ class Modula2Lexer(RegexLexer):
         #    print ' self.variables: ', self.variables
         #    print ' self.types: ', self.types
         #    print ' self.constants: ', self.constants
-
+    
+    # return human readable name for dialect
+    def get_dialect_str(self):
+        return self.dialect_str[self.dialect]
+    
     # Extracts a dialect name from a dialect tag comment string  and checks
     # the extracted name against known dialects.  If a match is found,  the
     # matching name is returned, otherwise dialect id 'unknown' is returned
     def get_dialect_from_dialect_tag(self, dialect_tag):
         #
-        #if __debug__:
-        #    print 'entered get_dialect_from_dialect_tag with arg: ', dialect_tag
+        #print 'entered get_dialect_from_dialect_tag with arg: ', dialect_tag
         #
         # constants
         left_tag_delim = '(*!'
@@ -1900,25 +2180,19 @@ class Modula2Lexer(RegexLexer):
           and dialect_tag.startswith(left_tag_delim) \
           and dialect_tag.endswith(right_tag_delim):
             #
-            #if __debug__:
-            #    print 'dialect tag found'
+            #print 'dialect tag found'
             #
             # extract dialect indicator
             indicator = dialect_tag[indicator_start:indicator_end]
             #
-            #if __debug__:
-            #    print 'extracted: ', indicator
+            #print 'extracted: ', indicator
             #
             # check against known dialects
             for index in range(1, len(self.dialects)):
-                #
-                #if __debug__:
-                #    print 'dialects[', index, ']: ', self.dialects[index]
+                #print 'dialects[', index, ']: ', self.dialects[index]
                 #
                 if indicator == self.dialects[index]:
-                    #
-                    #if __debug__:
-                    #    print 'matching dialect found'
+                    #print 'matching dialect found'
                     #
                     # indicator matches known dialect
                     return indicator
@@ -2000,17 +2274,20 @@ class Modula2Lexer(RegexLexer):
                 if value in self.reserved_words:
                     token = Keyword.Reserved
                     if self.algol_publication_mode:
-                        value = value.lower()
+                        if value.isalnum() and value.isupper():
+                            value = value.lower()
                 #
                 elif value in self.builtins:
                     token = Name.Builtin
                     if self.algol_publication_mode:
-                        value = value.lower()
+                        if value.isalnum() and value.isupper():
+                            value = value.lower()
                 #
                 elif value in self.pseudo_builtins:
                     token = Name.Builtin.Pseudo
                     if self.algol_publication_mode:
-                        value = value.lower()
+                        if value.isupper():
+                            value = value.lower()
                 #
                 elif value in self.adts:
                     if not self.treat_stdlib_adts_as_builtins:
@@ -2018,7 +2295,8 @@ class Modula2Lexer(RegexLexer):
                     else:
                         token = Name.Builtin.Pseudo
                         if self.algol_publication_mode:
-                            value = value.lower()
+                            if value.isalnum() and value.isupper():
+                                value = value.lower()
                 #
                 elif value in self.modules:
                     token = Name.Namespace
@@ -2048,6 +2326,14 @@ class Modula2Lexer(RegexLexer):
                         token = Comment.Multiline.PascalStyle
                     else:
                         token = Error
+                #
+                # expand dialect comment macro
+                if token is Comment.Special.DialectMacro:
+                    value = value.replace('%dialect%', self.get_dialect_str(), 1)
+                    value = value.replace('%algol-mode%', \
+                      str(self.algol_publication_mode), 1)
+                    value = value.replace('(*?', '(*', 1)
+                    value = value.replace('?*)', '*)', 1)
                 #
                 # replace special comment delimiters with plain delimiters
                 if token in Comment.Special.Title:
