@@ -1,4 +1,4 @@
-(*# Test Cases for Modula-2 Lexer #*)
+(*# Test Cases for the (Pygments) Modula-2 Lexer #*)
 
 (* Notes:
    (1) Without dialect option nor embedded dialect tag, the lexer operates in
@@ -17,23 +17,36 @@
    for Modula-2 R10 : pygmentize -O full,dialect=m2r10 ...
    for Objective Modula-2 : pygmentize -O full,dialect=objm2 ... *)
 
-(* for Aglet extensions : pygmentize -O full,dialect=m2iso+aglet ...
-   for GNU extensions : pygmentize -O full,dialect=m2pim+gm2 ...
+(* for GNU extensions : pygmentize -O full,dialect=m2pim+gm2 ...
+   for MOCKA extensions : pygmentize -O full,dialect=m2pim+mocka ...
+   for Aglet extensions : pygmentize -O full,dialect=m2iso+aglet ...
    for p1 extensions : pygmentize -O full,dialect=m2iso+p1 ...
+   for Stony Brook extensions : pygmentize -O full,dialect=m2iso+sbu ...
    for XDS extensions : pygmentize -O full,dialect=m2iso+xds ... *)
+
+(* For further details visit the Pygments website at http://pygments.org *)
 
 
 (*= Testing embedded dialect tags =*)
 
-(* !m2pim*) (* <-- remove whitespace before ! for PIM Modula-2 *)
-(* !m2iso*) (* <-- remove whitespace before ! for ISO Modula-2 *)
-(* !m2r10*) (* <-- remove whitespace before ! for Modula-2 R10 *)
-(* !objm2*) (* <-- remove whitespace before ! for Objective Modula-2 *)
+(* !m2pim*) (* <- remove whitespace before ! for PIM Modula-2 *)
+(* !m2iso*) (* <- remove whitespace before ! for ISO Modula-2 *)
+(* !m2r10*) (* <- remove whitespace before ! for Modula-2 R10 *)
+(* !objm2*) (* <- remove whitespace before ! for Objective Modula-2 *)
 
-(* !m2iso+aglet*) (* <-- remove whitespace before ! for Aglet extensions *)
-(* !m2pim+gm2*)   (* <-- remove whitespace before ! for GNU extensions *)
-(* !m2iso+p1*)    (* <-- remove whitespace before ! for p1 extensions *)
-(* !m2iso+xds*)   (* <-- remove whitespace before ! for XDS extensions *)
+(* !m2pim+gm2*)   (* <- remove whitespace before ! for GNU extensions *)
+(* !m2pim+mocka*) (* <- remove whitespace before ! for MOCKA extensions *)
+(* !m2iso+aglet*) (* <- remove whitespace before ! for Aglet extensions *)
+(* !m2iso+p1*)    (* <- remove whitespace before ! for p1 extensions *)
+(* !m2iso+sbu*)   (* <- remove whitespace before ! for Stony Brook extensions *)
+(* !m2iso+xds*)   (* <- remove whitespace before ! for XDS extensions *)
+
+
+(*= Test Report =*)
+
+(*? Selected Dialect: %dialect% ?*)
+
+(*? Algol Publication Mode: %algol-mode% ?*)
 
 
 (*= Dialect Indicating Names =*)
@@ -48,11 +61,15 @@ ARGLIST (* M2 R10 and ObjM2 *)
 
 BYCOPY (* ObjM2 only *)
 
-BITSET8 (* Aglet, GNU and M2 R10 *)
-
 __FILE__ (* GNU only *)
 
+FOREIGN (* MOCKA only *)
+
+BITSET8 (* Aglet, GNU and M2 R10 *)
+
 BCD (* p1 and M2 R10 *)
+
+FUNC (* Stony Brook only *)
 
 SEQ (* XDS only *)
 
@@ -192,7 +209,7 @@ string := "It is eight O'clock.";
 (* ! *) CASE foo OF 0 : bar ! 1 : baz ! 2 : bam END;
 
 
-(*- Ascend/Descend and Increment/Decrement -*)
+(*- Ascend/Descend and Increment/Decrement Suffix -*)
 
 (* supported by M2 R10 + ObjM2 *)
 
@@ -205,11 +222,11 @@ string := "It is eight O'clock.";
 
 (*- Wildcard Import -*)
 
-(* supported by M2 R10, ObjM2 and p1 *)
+(* supported by M2 R10, ObjM2, p1 and Stony Brook *)
 
 (* rendered as error if unsupported *)
 
-FROM ASSEMBLER IMPORT *; (* M2 R10 *)
+FROM ASSEMBLER IMPORT *;
 
 
 (*- Import to Re-Export -*)
@@ -218,7 +235,7 @@ FROM ASSEMBLER IMPORT *; (* M2 R10 *)
 
 (* rendered as error if unsupported *)
 
-IMPORT Foo+, Bar+; (* M2 R10 *)
+IMPORT Foo+, Bar+;
 
 
 (*- Generic Parameter Delimiters -*)
@@ -228,6 +245,40 @@ IMPORT Foo+, Bar+; (* M2 R10 *)
 (* rendered as errors if unsupported *)
 
 (* << >> *) GENLIB Foo FROM Template FOR Bar = <<ARRAY OF CHAR>> END;
+
+
+(*- Blueprint Punctuation -*)
+
+(* supported by M2 R10 + ObjM2 *)
+
+(* rendered as errors if unsupported *)
+
+(* Undetermined Type Property Suffix ? *)
+
+TPROPERTIES = isCollection, isIndexed | isRigid?;
+
+(* Ancillary Blueprint Constant Prefix ~ *)
+
+CONST ~ isFoobar = Foo AND Bar;
+
+(* Blueprint Requirement Implication -> *)
+
+isFoobar ->
+PROCEDURE [ABS] abs ( i : ProtoInteger ) : ProtoInteger;
+
+(* Unary Minus Binding symbol *)
+
+PROCEDURE [+/-] unaryMinus ( i : ProtoInteger ) : ProtoInteger;
+
+(* Binding Selector # *)
+
+PROCEDURE [STORE|#] storeValues ...;
+
+(* Binding Selector * *)
+
+PROCEDURE [REMOVE|*] removeAllValues;
+  ( target : ProtoArray; fromIndex : IndexType; values : ARRAY OF ValueType );
+
 
 
 (*= Non-Alphabetic Operator Tests =*)
@@ -368,6 +419,12 @@ foo := bar(baz); -- Bamboo
 
 <*INLINE*>  (* dialects other than PIM *)
 
+(*- Stony Brook pragma -*)
+
+(* rendered as pragma if supported, as error if unsupported *)
+
+%IF foo %THEN bar %ELSE baz %END
+
 
 (*= Substitution Tests When in Algol Mode =*)
 
@@ -387,8 +444,6 @@ base16 := 0FF00000000000000H;
 (*- Exponent Indicator Substitution -*)
 
 (* the uppercase E exponent indicator is replaced with subscript 10 *)
-
-(* Exponent E *)
 
 r := 1.2345678E9;
 
@@ -495,11 +550,29 @@ ASM __ATTRIBUTE__ __BUILTIN__ __COLUMN__ __DATE__ __FILE__ __FUNCTION__
 __LINE__ __MODULE__ VOLATILE
 
 
+(*- Additional Reserved Words for MOCKA Extensions to PIM -*)
+
+(* recognised by MOCKA *)
+
+(* rendered as keyword if recognised, as identifier if not recognised *)
+
+FOREIGN
+
+
+(*- Additional Reserved Words for Stony Brook Extensions to ISO -*)
+
+(* recognised by Stony Brook *)
+
+(* rendered as keyword if recognised, as identifier if not recognised *)
+
+BIG BITFIELDS BREAK CONTINUE EXCEPT FUNC INOUT OUT MACRO SMALL
+
+
 (*- Additional Reserved Words for XDS Extensions to ISO -*)
 
 (* recognised by XDS *)
 
-(* rendered as keywords if recognised, as identifiers if not recognised *)
+(* rendered as keyword if recognised, as identifier if not recognised *)
 
 SEQ
 
@@ -519,7 +592,7 @@ MAX MIN NIL ODD ORD REAL TRUE
 
 (* pseudo-builtins *)
 
-ADDRESS BYTE WORD ADR
+ADDRESS WORD ADR
 
 
 (*- Additional Builtins for PIM -*)
@@ -560,7 +633,7 @@ CREATE DESTROY EMPTY ISMEMBER SELF
 
 (* SYSTEM pseudo-module *)
 
-SYSTEM BITSPERLOC LOCSPERBYTE LOCSPERWORD LOC ADDADR SUBADR DIFADR MAKEADR
+SYSTEM BITSPERLOC BYTE LOCSPERBYTE LOCSPERWORD LOC ADDADR SUBADR DIFADR MAKEADR
 ADR ROTATE SHIFT CAST TSIZE
 
 (* COROUTINES pseudo-module *)
@@ -608,10 +681,10 @@ TBASE TPRECISION TMAXEXP TMINEXP
 
 CONVERSION TSXFSIZE SXF VAL
 
-(* UNSAFE builtin-module*)
+(* UNSAFE builtin-module *)
 
-UNSAFE CAST INTRINSIC AVAIL ADD SUB ADDC SUBC FETCHADD FETCHSUB SHL SHR ASHR
-ROTL ROTR ROTLC ROTRC BWNOT BWAND BWOR BWXOR BWNAND BWNOR SETBIT TESTBIT
+UNSAFE CAST BYTE INTRINSIC AVAIL ADD SUB ADDC SUBC FETCHADD FETCHSUB SHL SHR
+ASHR ROTL ROTR ROTLC ROTRC BWNOT BWAND BWOR BWXOR BWNAND BWNOR SETBIT TESTBIT
 LSBIT MSBIT CSBITS BAIL HALT TODO FFI ADDR VARGLIST VARGC
 
 (* ATOMIC builtin-module *)
@@ -651,6 +724,42 @@ INTEGER128 INT8 INT16 INT32 INT64 INT128 STRING UNISTRING
 OBJECT NO YES
 
 
+(*- Additional Builtins for GNU Extensions to PIM -*)
+
+(* recognised by GM2 *)
+
+(* rendered as builtins if recognised, as identifiers if not recognised *)
+
+(* proper builtins *)
+
+BITSET8 BITSET16 BITSET32 CARDINAL8 CARDINAL16 CARDINAL32 CARDINAL64 COMPLEX32
+COMPLEX64 COMPLEX96 COMPLEX128 INTEGER8 INTEGER16 INTEGER32 INTEGER64 REAL8
+REAL16 REAL32 REAL96 REAL128 THROW
+
+(* pseudo-builtins *)
+
+(* SYSTEM pseudo-module *)
+
+BYTE
+
+
+(*- Additional Builtins for MOCKA Extensions to PIM -*)
+
+(* recognised by MOCKA *)
+
+(* rendered as builtins if recognised, as identifiers if not recognised *)
+
+(* proper builtins *)
+
+LONGCARD SHORTCARD SHORTINT
+
+(* pseudo-builtins *)
+
+(* SYSTEM pseudo-module *)
+
+BYTE
+
+
 (*- Additional Builtins for Aglet Extensions to ISO -*)
 
 (* recognised by Aglet *)
@@ -659,17 +768,6 @@ OBJECT NO YES
 
 BITSET8 BITSET16 BITSET32 CARDINAL8 CARDINAL16 CARDINAL32 INTEGER8 INTEGER16
 INTEGER32
-
-
-(*- Additional Builtins for GNU Extensions to PIM -*)
-
-(* recognised by GM2 *)
-
-(* rendered as builtins if recognised, as identifiers if not recognised *)
-
-BITSET8 BITSET16 BITSET32 CARDINAL8 CARDINAL16 CARDINAL32 CARDINAL64 COMPLEX32
-COMPLEX64 COMPLEX96 COMPLEX128 INTEGER8 INTEGER16 INTEGER32 INTEGER64 REAL8
-REAL16 REAL32 REAL96 REAL128 THROW
 
 
 (*- Additional Builtins for p1 Extensions to ISO -*)
@@ -683,6 +781,28 @@ REAL16 REAL32 REAL96 REAL128 THROW
 (* SYSTEM pseudo-module *)
 
 BCD
+
+
+(*- Additional Builtins for Stony Brook Extensions to ISO -*)
+
+(* recognised by Stony Brook *)
+
+(* rendered as builtins if recognised, as identifiers if not recognised *)
+
+(* proper builtins *)
+
+ACHAR BAND BNOT BOOL8 BOOL16 BOOL32 BOR BYTEBOOL CARDINAL8 CARDINAL16
+CARDINAL32 CARDINAL64 DWORDBOOL INTEGER8 INTEGER16 INTEGER32 INTEGER64
+LONGCARD NILPROC ROL ROR SHL SHORTCARD SHORTINT SHR UCHAR WORDBOOL
+
+(* pseudo-builtins *)
+
+CPUCOUNT EXITCODE BuildNumber DebuggerPresent OFFS UNREFERENCED_PARAMETER
+SOURCEFILE SOURCELINE ASSERT ISASSERT EXCEPTADDR EXCEPT_INFO
+SetUnhandledExceptionProc AttachDebugger AttachDebuggerOpt DoNotAttach
+AttachExternal AttachAll OutputDebugMessage EnableCallTrace OutputCallTrace
+TrapAccessViolations VA_START VA_ARG CLONE FIXME SWAPENDIAN BIGENDIAN
+LITTLEENDIAN ATOMIC_CMPXCHG ATOMIC_XCHG ATOMIC_ADD MEMORY_FENCE
 
 
 (*- Additional Builtins for XDS Extensions to ISO -*)
