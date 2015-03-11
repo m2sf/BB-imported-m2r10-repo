@@ -228,7 +228,8 @@ class Modula2Lexer(RegexLexer):
             
             # PIM M2 names, without $, % or _
             (r'[a-zA-Z][a-zA-Z0-9]*', Name.Alphanum),
-			# M2 R10 Template Engine placeholders
+            
+            # M2 R10 Template Engine placeholders
             (r'##[a-zA-Z][a-zA-Z0-9]*##', Name.Placeholder),
         ],
         'prefixed_number_literals': [
