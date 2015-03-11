@@ -12,66 +12,64 @@
 
 (*= Testing command line dialect option =*)
 
-(* for PIM Modula-2 : pygmentize -O full,dialect=m2pim ...
-   for ISO Modula-2 : pygmentize -O full,dialect=m2iso ...
-   for Modula-2 R10 : pygmentize -O full,dialect=m2r10 ...
-   for Objective Modula-2 : pygmentize -O full,dialect=objm2 ... *)
+(* to select a dialect via command line, a dialect option may be passed:
 
-(* for GNU extensions : pygmentize -O full,dialect=m2pim+gm2 ...
-   for MOCKA extensions : pygmentize -O full,dialect=m2pim+mocka ...
-   for Aglet extensions : pygmentize -O full,dialect=m2iso+aglet ...
-   for p1 extensions : pygmentize -O full,dialect=m2iso+p1 ...
-   for Stony Brook extensions : pygmentize -O full,dialect=m2iso+sbu ...
-   for XDS extensions : pygmentize -O full,dialect=m2iso+xds ... *)
-
-(* For further details visit the Pygments website at http://pygments.org *)
+    $ pygmentize -O full,dialect=specifier ...
+    
+    where specifier is defined by the EBNF below:
+        
+    specifier :
+      baseDialect ( "+" languageExtension )? ;
+    
+    baseDialect :
+      m2pim | m2iso | m2r10 | objm2 ;
+    
+    languageExtension : 
+      gm2 | mocka | aglet | p1 | sbu | xds ;
+    
+    whereby valid extensions for m2pim are gm2 and mocka,
+    and valid extensions for m2iso are gm2, aglet, p1, sbu and xds.
+    
+    Example: $ pygmentize -O full,dialect=m2iso+gm2 -f html -o outfile infile *)
 
 
 (*= Testing embedded dialect tags =*)
 
-(* !m2pim*) (* <- remove whitespace before ! for PIM Modula-2 *)
-(* !m2iso*) (* <- remove whitespace before ! for ISO Modula-2 *)
-(* !m2r10*) (* <- remove whitespace before ! for Modula-2 R10 *)
-(* !objm2*) (* <- remove whitespace before ! for Objective Modula-2 *)
+(* to activate a dialect tag, remove whitespace before the exclamation mark *)
 
-(* !m2pim+gm2*)   (* <- remove whitespace before ! for GNU extensions *)
-(* !m2pim+mocka*) (* <- remove whitespace before ! for MOCKA extensions *)
-(* !m2iso+aglet*) (* <- remove whitespace before ! for Aglet extensions *)
-(* !m2iso+p1*)    (* <- remove whitespace before ! for p1 extensions *)
-(* !m2iso+sbu*)   (* <- remove whitespace before ! for Stony Brook extensions *)
-(* !m2iso+xds*)   (* <- remove whitespace before ! for XDS extensions *)
+(* !m2pim*)       (* for PIM Modula-2 *)
+(* !m2iso*)       (* for ISO Modula-2 *)
+(* !m2r10*)       (* for Modula-2 R10 *)
+(* !objm2*)       (* for Objective Modula-2 *)
+(* !m2pim+gm2*)   (* for PIM Modula-2 with GNU extensions *)
+(* !m2pim+mocka*) (* for PIM Modula-2 with MOCKA extensions *)
+(* !m2iso+aglet*) (* for ISO Modula-2 with Aglet extensions *)
+(* !m2iso+gm2*)   (* for ISO Modula-2 with GNU extensions *)
+(* !m2iso+p1*)    (* for ISO Modula-2 with p1 extensions *)
+(* !m2iso+sbu*)   (* for ISO Modula-2 with Stony Brook extensions *)
+(* !m2iso+xds*)   (* for ISO Modula-2 with XDS extensions *)
 
 
 (*= Test Report =*)
 
-(*? Selected Dialect: %dialect% ?*)
+(*? Selected Dialect: ~dialect~ ?*)
 
-(*? Algol Publication Mode: %algol-mode% ?*)
+(*? Rendered in Algol Publication Mode: ~algol-mode~ ?*)
 
 
-(*= Dialect Indicating Names =*)
+(*= At a Glance =*)
 
 (* highlighted if recognised *)
 
-EXPORT (* PIM and ISO *)
+EXPORT (* PIM and ISO *)                PACKEDSET (* ISO *)
 
-PACKEDSET (* ISO only *)
+ARGLIST (* M2 R10 and ObjM2 *)          BYCOPY (* ObjM2 only *)
 
-ARGLIST (* M2 R10 and ObjM2 *)
+__FILE__ (* GNU only *)                 FOREIGN (* MOCKA only *)
 
-BYCOPY (* ObjM2 only *)
+BITSET8 (* Aglet, GNU and M2 R10 *)     BCD (* p1 and M2 R10 *)
 
-__FILE__ (* GNU only *)
-
-FOREIGN (* MOCKA only *)
-
-BITSET8 (* Aglet, GNU and M2 R10 *)
-
-BCD (* p1 and M2 R10 *)
-
-FUNC (* Stony Brook only *)
-
-SEQ (* XDS only *)
+FUNC (* Stony Brook only *)             SEQ (* XDS only *)
 
 
 (*= Literal Tests =*)
@@ -126,9 +124,7 @@ base16 := 0xFF00; base16:= 0xFF00'0000'0000'0000;
 
 (* rendered as number literals if supported, as errors if unsupported *)
 
-(* B *) base8 := 377B;
-
-(* H *) base16 := 0FF00000000000000H;
+(* B *) base8 := 377B;   (* H *) base16 := 0FF00000000000000H;
 
 
 (* suffixed, real numbers, supported by p1 *)
@@ -183,7 +179,7 @@ string := "It is eight O'clock.";
 
 (* , *) foo, bar, baz;
 
-(* ; *) foo; bar; bar;
+(* ; *) foo; bar; baz;
 
 (* : *) VAR i : INTEGER;
 
@@ -278,7 +274,6 @@ PROCEDURE [STORE|#] storeValues ...;
 
 PROCEDURE [REMOVE|*] removeAllValues;
   ( target : ProtoArray; fromIndex : IndexType; values : ARRAY OF ValueType );
-
 
 
 (*= Non-Alphabetic Operator Tests =*)
@@ -387,22 +382,53 @@ PROCEDURE [REMOVE|*] removeAllValues;
 
 (* rendered as comment if supported, as error if unsupported *)
 
--- Ada Style Comment
+(* at start of line *)
+
+-- Bamboo
+
+(* not at start of line *)
 
 foo := bar(baz); -- Bamboo
 
 
 (*- BCPL Style Comment -*)
 
-(* supported by Modula-2 R10 *)
+(* permitted by M2 R10 specification as a compiler option for Doxygen support *)
 
 (* rendered as comment if supported, as error if unsupported *)
 
-// BCPL Style Comment
+(* at start of line *)
+
+// Bamboo
 
 /// Doxygen tag
 
 //! Qt Style Doxygen tag
+
+(* not at start of line *)
+
+(* not permitted by any dialect *)
+
+foo := bar(baz); // Bamboo
+
+
+(*- Fortran Style Comment -*)
+
+(* permitted by M2 R10 specification as a compiler option for Doxygen support *)
+
+(* rendered as comment if supported, as error if unsupported *)
+
+(* at start of line *)
+
+! Bamboo
+
+!< Start of Doxygen tag
+!!
+!> End of Doxygen tag
+
+(* not at start of line *)
+
+foo := bar(baz); ! Bamboo
 
 
 (*= Pragma Delimiter Tests =*)
@@ -413,11 +439,13 @@ foo := bar(baz); -- Bamboo
    
 (*$INLINE*) (* PIM *)
 
+
 (*- ISO style pragma -*)
 
 (* rendered as pragma if supported, as error if unsupported *)
 
 <*INLINE*>  (* dialects other than PIM *)
+
 
 (*- Stony Brook pragma -*)
 
@@ -475,6 +503,69 @@ dotProduct := v1 *. v2;
 (* NOT operator synonym ~ *)
 
 not := ~ a;
+
+
+(*= Identifier Tests =*)
+
+(*- Alpha-Numeric Identifiers -*)
+
+(* recognised by all dialects *)
+
+(* rendered as identifiers if recognised, as errors if not recognised *)
+
+lowercase123 camelCase123 TitleCase123 UPPERCASE123 
+
+
+(*- Alpha-Numeric Identifiers with Lowline -*)
+
+(* recognised by all ISO dialects, M2 R10 and ObjM2 *)
+
+(* rendered as identifiers if recognised, as errors if not recognised *)
+
+_lowercase123 _camelCase123 _TitleCase123 _UPPERCASE123 
+
+lowercase_123 camelCase_123 TitleCase_123 UPPERCASE_123 
+
+lowercase123_ camelCase123_ TitleCase123_ UPPERCASE123_ 
+
+
+(*- POSIX Identifiers -*)
+
+(* recognised by M2 R10, ObjM2, p1 and GM2 *)
+
+(* rendered as identifiers if recognised, as errors if not recognised *)
+
+$lowercase_123 $camelCase_123 $TitleCase_123 $UPPERCASE_123 
+
+lowercase_$123 camelCase_$123 TitleCase_$123 UPPERCASE_$123 
+
+lowercase_123$ camelCase_123$ TitleCase_123$ UPPERCASE_123$
+
+
+(*- OpenVMS Identifiers -*)
+
+(* permitted implementation option for M2 R10 and ObjM2 *)
+
+(* rendered as identifiers if recognised, as errors if not recognised *)
+
+%lowercase_$123 %camelCase_$123 %TitleCase_$123 %UPPERCASE_$123 
+
+lowercase_$%123 camelCase_$%123 TitleCase_$%123 UPPERCASE_$%123 
+
+lowercase_$123% camelCase_$123% TitleCase_$123% UPPERCASE_$123%
+
+
+(*- M2 R10 Template Engine Placeholders -*)
+
+(* supported by M2 R10 and ObjM2 *)
+
+(* rendered as placeholder if supported, as error if unsupported *)
+
+DEFINITION MODULE ##CustomInteger## [ProtoInteger];
+
+TYPE ##CustomInteger## = RECORD
+  * hidden : ARRAY ##BitwidthInOctets## OF OCTET
+END;
 
 
 (*= Reserved Words Tests =*)
@@ -540,7 +631,7 @@ BYCOPY BYREF CLASS CONTINUE CRITICAL INOUT METHOD ON OPTIONAL OUT PRIVATE
 PROTECTED PROTOCOL PUBLIC SUPER TRY
 
 
-(*- Additional Reserved Words for GNU Extensions to PIM -*)
+(*- Additional Reserved Words for GNU Extensions to PIM and ISO -*)
 
 (* recognised by GM2 *)
 
@@ -724,7 +815,7 @@ INTEGER128 INT8 INT16 INT32 INT64 INT128 STRING UNISTRING
 OBJECT NO YES
 
 
-(*- Additional Builtins for GNU Extensions to PIM -*)
+(*- Additional Builtins for GNU Extensions to PIM and ISO -*)
 
 (* recognised by GM2 *)
 
