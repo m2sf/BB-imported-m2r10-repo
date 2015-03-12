@@ -2554,13 +2554,6 @@ class Modula2Lexer(RegexLexer):
                 else:
                     # token not found in list of supported literals
                     token = Error
-                #
-                # formatters appear to be broken for custom tokens,
-                # for now, restore tokens to their nearest builtin values
-                if token in Number.Float:
-                    token = Number.Float
-                elif token in Number:
-                    token = Number.Integer
             #
             # check for reserved words, predefined and stdlib identifiers
             elif token in Name:
@@ -2650,17 +2643,6 @@ class Modula2Lexer(RegexLexer):
                 if token in Comment.Special.Headline.Three:
                     value = value.replace('(*_', '(*', 1)
                     value = value.replace('_*)', '*)', 1)
-
-                # formatters appear to be broken for custom tokens,
-                # for now, restore tokens to their nearest builtin values
-                if token in Comment.Single:
-                    token = Comment.Single
-                elif token in Comment.Multiline:
-                    token = Comment.Multiline
-                elif token in Comment.Preproc:
-                    token = Comment.Preproc
-                elif token in Comment.Special:
-                    token = Comment.Special
             #
             # return result
             yield index, token, value
