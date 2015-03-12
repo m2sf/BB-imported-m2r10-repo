@@ -31,7 +31,7 @@
 """
 
 from pygments.style import Style
-from pygments.token import Keyword, Name, Comment, String, Error, Operator
+from pygments.token import Keyword, Name, Number, Comment, String, Error, Operator
 
 
 class AlgolStyle(Style):
@@ -47,6 +47,7 @@ class AlgolStyle(Style):
         Keyword:                   "underline bold",
         Keyword.Declaration:       "italic",
 
+        Name.Placeholder:          "bg:#e0e0e0",
         Name.Builtin:              "bold italic",
         Name.Builtin.Pseudo:       "bold italic",
         Name.Namespace:            "bold italic #666",
@@ -59,7 +60,5 @@ class AlgolStyle(Style):
 
         String:                    "italic #666",
 
-        Error:                     "border:#FF0000"
+        Error:                     "bold #F00" # "border:#FF0000"
     }
-
-# end of algol.py
