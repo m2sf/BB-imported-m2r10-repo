@@ -54,6 +54,8 @@ class Modula2Lexer(RegexLexer):
         Select MOCKA extensions, available with m2pim only.
     `+aglet`
         Select Aglet Modula-2 extensions, available with m2iso only.
+    `+gpm`
+        Select Gardens Point Modula-2 extensions, available with m2iso.
     `+p1`
         Select p1 Modula-2 extensions, available with m2iso only.
     `+sbu`
@@ -87,8 +89,12 @@ class Modula2Lexer(RegexLexer):
         OpeningCommentDelim Prefix dialectOption ClosingCommentDelim ;
     
     dialectOption :
-        'm2pim' | 'm2iso' | 'm2r10' | 'objm2' | 'm2pim+gm2' | 'm2pim+mocka' |
-        'm2iso+aglet' | 'm2iso+p1' | 'm2iso+gm2' |'m2iso+sbu' | 'm2iso+xds' ;
+        baseDialect ( '+' languageExtension )? '
+    
+    baseDialect : 'm2pim' | 'm2iso' | 'm2r10' | 'objm2' ;
+    
+    languageExtension :
+        'gm2' | 'mocka' | 'aglet' | 'gpm' | 'p1' |'sbu' | 'xds' ;
 
     Prefix : '!' ;
 
@@ -201,6 +207,8 @@ class Modula2Lexer(RegexLexer):
             (r'\(\*!m2iso\+aglet\*\)', Comment.Special.DialectTag), 
             # ISO + GNU Extensions Dialect Tag
             (r'\(\*!m2iso\+gm2\*\)', Comment.Special.DialectTag), 
+            # ISO + Gardens Point Extensions Dialect Tag
+            (r'\(\*!m2pim\+gpm\*\)', Comment.Special.DialectTag), 
             # ISO + p1 Extensions Dialect Tag
             (r'\(\*!m2iso\+p1\*\)', Comment.Special.DialectTag), 
             # ISO + Stony Brook Extensions Dialect Tag
@@ -221,12 +229,18 @@ class Modula2Lexer(RegexLexer):
             # POSIX names, with middle or trailing $
             (r'[$_a-zA-Z][$_a-zA-Z0-9]*[$][$_a-zA-Z0-9]*', Name.Posix),
             
-            # ISO M2 names, with leading _
+            # Alpha-Numeric names, with leading _
             (r'_[_a-zA-Z0-9]*', Name.AlphanumAndLowline),
-            # ISO M2 names, with middle or trailing _
-            (r'[_a-zA-Z][_a-zA-Z0-9]*_[_a-zA-Z0-9]*', Name.AlphanumAndLowline),
             
-            # PIM M2 names, without $, % or _
+            # Alpha-Numeric names, with non-consecutive middle _
+            (r'[a-zA-Z][a-zA-Z0-9]*' # leader \
+             r'(_[a-zA-Z0-9]+)+', Name.AlphanumAndMiddleLowline),
+            
+            # Alpha-Numeric names, with middle or trailing _
+            (r'[_a-zA-Z][_a-zA-Z0-9]*' # leader \
+             r'_[_a-zA-Z0-9]*', Name.AlphanumAndLowline),
+            
+            # Alpha-Numeric names, without $, % or _
             (r'[a-zA-Z][a-zA-Z0-9]*', Name.Alphanum),
             
             # M2 R10 Template Engine placeholders
@@ -245,11 +259,13 @@ class Modula2Lexer(RegexLexer):
              r'\.[0-9]+' # fractional part \
              r'E[+-]?[0-9]+', # exponent \
              Number.Float.NonAffixed.Unformatted.Exponent.UpperE),
+            
             # Base-10, same as above with lowercase e
             (r'[0-9]+' # integral part \
              r'\.[0-9]+' # fractional part \
              r'e[+-]?[0-9]+', # exponent \
              Number.Float.NonAffixed.Unformatted.Exponent.LowerE),
+            
             # Same as above, with digit separators
             (r'[0-9]+(\'[0-9]+)*' # integral part \
              r'\.[0-9]+(\'[0-9]+)*' # fractional part \
@@ -260,6 +276,7 @@ class Modula2Lexer(RegexLexer):
             (r'[0-9]+' # integral part \
              r'\.[0-9]+', # fractional part \
              Number.Float.NonAffixed.Unformatted.NoExponent),
+            
             # same as above, with digit separators
             (r'[0-9]+(\'[0-9]+)*' # integral part \
              r'\.[0-9]+(\'[0-9]+)*', # fractional part \
@@ -284,8 +301,8 @@ class Modula2Lexer(RegexLexer):
             (r'[0-9]+\.[0-9]+([eE][+-]?[0-9]+)*\$', Number.Float.DollarSuffixed),
         ],
         'string_literals': [
-            (r"'(\\\\|\\'|[^'])*'", String),  # single quoted string
-            (r'"(\\\\|\\"|[^"])*"', String),  # double quoted string
+            (r"'[^']*'", String),  # single quoted string
+            (r'"[^"]*"', String),  # double quoted string
         ],
         'digraph_punctuation': [
             # Assignment Symbol
@@ -611,7 +628,7 @@ class Modula2Lexer(RegexLexer):
     
     # ISO Modula-2 name recognition in addition to the common set
     iso_additional_name_recognition = (
-        Name.AlphanumAndLowline,
+        Name.AlphanumAndLowline, Name.AlphanumAndMiddleLowline,
     )
     
     # ISO Modula-2 reserved words in addition to the common set
@@ -692,7 +709,8 @@ class Modula2Lexer(RegexLexer):
     
     # Modula-2 R10 name recognition in addition to the common set
     m2r10_additional_name_recognition = (
-        Name.AlphanumAndLowline, Name.Posix, Name.VMS, Name.Placeholder,
+        Name.AlphanumAndLowline, Name.AlphanumAndMiddleLowline,
+        Name.Posix, Name.VMS, Name.Placeholder,
     )
     
     # Modula-2 R10 reserved words in addition to the common set
@@ -831,7 +849,7 @@ class Modula2Lexer(RegexLexer):
         # 1 additional pseudo-builtin
         'BYTE', 
     )
-    
+        
 #  M O C K A   M o d u l a - 2   D a t a s e t s
     
     # MOCKA punctuation in addition to PIM Modula-2
@@ -920,7 +938,53 @@ class Modula2Lexer(RegexLexer):
     aglet_additional_pseudo_builtins = (
         # None
     )
+	
+#  G a r d e n s   P o i n t   M o d u l a - 2   D a t a s e t s
+    
+    # GPM punctuation in addition to ISO Modula-2
+    gpm_additional_punctuation = (
+        # None
+    )
 
+    # GPM operators in addition to ISO Modula-2
+    gpm_additional_operators = (
+        # None
+    )
+
+    # GPM literals in addition to ISO Modula-2
+    gpm_additional_literals = (
+        # None
+    )
+    
+    # GPM comments and pragmas in addition to ISO Modula-2
+    gpm_additional_comments_and_pragmas = (
+        # None
+    )
+    
+    # GPM name recognition in addition to *Common Set*
+    gpm_additional_name_recognition = (
+        # GPM does not permit leading or trailing or consecutive lowlines
+        Name.AlphanumAndMiddleLowline,
+    )
+    
+    # GPM reserved words in addition to ISO Modula-2
+    gpm_additional_reserved_words = (
+        # 1 additional reserved word
+        'FOREIGN',
+    )
+
+    # GPM builtins in addition to ISO Modula-2
+    gpm_additional_builtins = (
+        # 3 additional builtins
+        'ABORT', 'SFLOAT', 'SHORTREAL',
+    )
+
+    # GPM pseudo-module builtins in addition to ISO Modula-2
+    gpm_additional_pseudo_builtins = (
+        # 4 additional builtins
+        'BIN', 'BYTE', 'NEWPROCESS', 'SAL',
+    )
+    
 #  p 1   M o d u l a - 2   D a t a s e t s
     
     # p1 punctuation in addition to ISO Modula-2
@@ -1198,7 +1262,8 @@ class Modula2Lexer(RegexLexer):
     dialects = (
         'unknown',
         'm2pim', 'm2iso', 'm2r10', 'objm2', 'm2pim+gm2', 'm2pim+mocka',
-        'm2iso+aglet', 'm2iso+gm2', 'm2iso+p1', 'm2iso+sbu', 'm2iso+xds',
+        'm2iso+aglet', 'm2iso+gm2', 'm2iso+gpm', 'm2iso+p1', 'm2iso+sbu',
+        'm2iso+xds',
     )
     
 #   D a t a b a s e s
@@ -1214,6 +1279,7 @@ class Modula2Lexer(RegexLexer):
         'm2pim+mocka' : 'PIM Modula-2 with MOCKA Extensions',
         'm2iso+aglet' : 'ISO Modula-2 with Aglet Extensions',
         'm2iso+gm2' : 'ISO Modula-2 with GNU Extensions',
+        'm2iso+gpm' : 'ISO Modula-2 with Gardens Point Extensions',
         'm2iso+p1' : 'ISO Modula-2 with p1 Extensions',
         'm2iso+sbu' : 'ISO Modula-2 with Stony Brook Extensions',
         'm2iso+xds' : 'ISO Modula-2 with XDS Extensions',
@@ -1280,6 +1346,13 @@ class Modula2Lexer(RegexLexer):
             common_punctuation,
             iso_additional_punctuation,
             gm2_additional_punctuation,
+        ),
+
+        # Punctuation for Gardens Point Modula-2 Extensions to ISO
+        'm2iso+gpm' : (
+            common_punctuation,
+            iso_additional_punctuation,
+            gpm_additional_punctuation,
         ),
 
         # Punctuation for p1 Modula-2 Extensions to ISO
@@ -1367,6 +1440,13 @@ class Modula2Lexer(RegexLexer):
             gm2_additional_operators,
         ),
 
+        # Operators for Gardens Point Modula-2 Extensions to ISO
+        'm2iso+gpm' : (
+            common_operators,
+            iso_additional_operators,
+            gpm_additional_operators,
+        ),
+
         # Operators for p1 Modula-2 Extensions to ISO
         'm2iso+p1' : (
             common_operators,
@@ -1450,6 +1530,13 @@ class Modula2Lexer(RegexLexer):
             common_literals,
             iso_additional_literals,
             gm2_additional_literals,
+        ),
+
+        # Literals for Gardens Point Modula-2 Extensions to ISO
+        'm2iso+gpm' : (
+            common_literals,
+            iso_additional_literals,
+            gpm_additional_literals,
         ),
 
         # Literals for p1 Modula-2 Extensions to ISO
@@ -1537,6 +1624,13 @@ class Modula2Lexer(RegexLexer):
             gm2_additional_comments_and_pragmas,
         ),
 
+        # Comments and Pragmas for Gardens Point Modula-2 Extensions to ISO
+        'm2iso+gpm' : (
+            common_comments_and_pragmas,
+            iso_additional_comments_and_pragmas,
+            gpm_additional_comments_and_pragmas,
+        ),
+
         # Comments and Pragmas for p1 Modula-2 Extensions to ISO
         'm2iso+p1' : (
             common_comments_and_pragmas,
@@ -1620,6 +1714,13 @@ class Modula2Lexer(RegexLexer):
             common_name_recognition,
             iso_additional_name_recognition,
             gm2_additional_name_recognition,
+        ),
+
+        # Name Recognition for Gardens Point Modula-2 Extensions to ISO
+        'm2iso+gpm' : (
+            # GPM only permits a subset of ISO names
+            common_name_recognition,
+            gpm_additional_name_recognition,
         ),
 
         # Name Recognition for p1 Modula-2 Extensions to ISO
@@ -1707,6 +1808,13 @@ class Modula2Lexer(RegexLexer):
             gm2_additional_reserved_words,
         ),
 
+        # Reserved words for Gardens Point Modula-2 Extensions to ISO
+        'm2iso+gpm' : (
+            common_reserved_words,
+            iso_additional_reserved_words,
+            gpm_additional_reserved_words,
+        ),
+
         # Reserved words for p1 Modula-2 Extensions to ISO
         'm2iso+p1' : (
             common_reserved_words,
@@ -1790,6 +1898,13 @@ class Modula2Lexer(RegexLexer):
             common_builtins,
             iso_additional_builtins,
             gm2_additional_builtins,
+        ),
+
+        # Builtins for Gardens Point Modula-2 Extensions to ISO
+        'm2iso+gpm' : (
+            common_builtins,
+            iso_additional_builtins,
+            gpm_additional_builtins,
         ),
 
         # Builtins for p1 Modula-2 Extensions to ISO
@@ -1877,6 +1992,13 @@ class Modula2Lexer(RegexLexer):
             gm2_additional_pseudo_builtins,
         ),
 
+        # Builtins for Gardens Point Modula-2 Extensions to ISO
+        'm2iso+gpm' : (
+            common_pseudo_builtins,
+            iso_additional_pseudo_builtins,
+            gpm_additional_pseudo_builtins,
+        ),
+
         # Builtins for p1 Modula-2 Extensions to ISO
         'm2iso+p1' : (
             common_pseudo_builtins,
@@ -1945,6 +2067,11 @@ class Modula2Lexer(RegexLexer):
             # No first class library types
         ),
         
+        # Standard Library ADTs for Gardens Point Modula-2
+        'm2iso+gpm' : (
+            # No first class library types
+        ),
+        
         # Standard Library ADTs for p1 Modula-2
         'm2iso+p1' : (
             # No first class library types
@@ -2010,6 +2137,11 @@ class Modula2Lexer(RegexLexer):
             iso_stdlib_module_identifiers,
         ),
         
+        # Standard Library Modules for Gardens Point Modula-2
+        'm2iso+gpm' : (
+            iso_stdlib_module_identifiers,
+        ),
+        
         # Standard Library Modules for p1 Modula-2
         'm2iso+p1' : (
             iso_stdlib_module_identifiers,
@@ -2069,6 +2201,11 @@ class Modula2Lexer(RegexLexer):
         
         # Standard Library Types for GNU Modula-2 (ISO)
         'm2iso+gm2' : (
+            iso_stdlib_type_identifiers,
+        ),
+        
+        # Standard Library Types for Gardens Point Modula-2
+        'm2iso+gpm' : (
             iso_stdlib_type_identifiers,
         ),
         
@@ -2134,6 +2271,11 @@ class Modula2Lexer(RegexLexer):
             iso_stdlib_proc_identifiers,
         ),
         
+        # Standard Library Procedures for Gardens Point Modula-2
+        'm2iso+gpm' : (
+            iso_stdlib_proc_identifiers,
+        ),
+        
         # Standard Library Procedures for p1 Modula-2
         'm2iso+p1' : (
             iso_stdlib_proc_identifiers,
@@ -2196,6 +2338,11 @@ class Modula2Lexer(RegexLexer):
             iso_stdlib_var_identifiers,
         ),
         
+        # Standard Library Variables for Gardens Point Modula-2
+        'm2iso+gpm' : (
+            iso_stdlib_var_identifiers,
+        ),
+        
         # Standard Library Variables for p1 Modula-2
         'm2iso+p1' : (
             iso_stdlib_var_identifiers,
@@ -2255,6 +2402,11 @@ class Modula2Lexer(RegexLexer):
         
         # Standard Library Constants for GNU Modula-2 (ISO)
         'm2iso+gm2' : (
+            iso_stdlib_const_identifiers,
+        ),
+        
+        # Standard Library Constants for Gardens Point Modula-2
+        'm2iso+gpm' : (
             iso_stdlib_const_identifiers,
         ),
         
@@ -2554,6 +2706,13 @@ class Modula2Lexer(RegexLexer):
                 else:
                     # token not found in list of supported literals
                     token = Error
+                #
+                # formatters appear to be broken for custom tokens,
+                # for now, restore tokens to their nearest builtin values
+                if token in Number.Float:
+                    token = Number.Float
+                elif token in Number:
+                    token = Number.Integer
             #
             # check for reserved words, predefined and stdlib identifiers
             elif token in Name:
@@ -2643,6 +2802,17 @@ class Modula2Lexer(RegexLexer):
                 if token in Comment.Special.Headline.Three:
                     value = value.replace('(*_', '(*', 1)
                     value = value.replace('_*)', '*)', 1)
+
+                # formatters appear to be broken for custom tokens,
+                # for now, restore tokens to their nearest builtin values
+                if token in Comment.Single:
+                    token = Comment.Single
+                elif token in Comment.Multiline:
+                    token = Comment.Multiline
+                elif token in Comment.Preproc:
+                    token = Comment.Preproc
+                elif token in Comment.Special:
+                    token = Comment.Special
             #
             # return result
             yield index, token, value
