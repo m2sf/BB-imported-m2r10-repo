@@ -25,7 +25,7 @@
       m2pim | m2iso | m2r10 | objm2 ;
     
     languageExtension : 
-      gm2 | mocka | aglet | p1 | sbu | xds ;
+      gm2 | mocka | aglet | gpm | p1 | sbu | xds ;
     
     whereby valid extensions for m2pim are gm2 and mocka,
     and valid extensions for m2iso are gm2, aglet, p1, sbu and xds.
@@ -45,6 +45,7 @@
 (* !m2pim+mocka*) (* for PIM Modula-2 with MOCKA extensions *)
 (* !m2iso+aglet*) (* for ISO Modula-2 with Aglet extensions *)
 (* !m2iso+gm2*)   (* for ISO Modula-2 with GNU extensions *)
+(* !m2iso+gpm*)   (* for ISO Modula-2 with Gardens Point extensions *)
 (* !m2iso+p1*)    (* for ISO Modula-2 with p1 extensions *)
 (* !m2iso+sbu*)   (* for ISO Modula-2 with Stony Brook extensions *)
 (* !m2iso+xds*)   (* for ISO Modula-2 with XDS extensions *)
@@ -65,7 +66,7 @@ EXPORT (* PIM and ISO *)                PACKEDSET (* ISO *)
 
 ARGLIST (* M2 R10 and ObjM2 *)          BYCOPY (* ObjM2 only *)
 
-__FILE__ (* GNU only *)                 FOREIGN (* MOCKA only *)
+__FILE__ (* GNU only *)                 FOREIGN (* MOCKA and GPM *)
 
 BITSET8 (* Aglet, GNU and M2 R10 *)     BCD (* p1 and M2 R10 *)
 
@@ -650,6 +651,15 @@ __LINE__ __MODULE__ VOLATILE
 FOREIGN
 
 
+(*- Additional Reserved Words for Gardens Point Extensions to ISO -*)
+
+(* recognised by Gardens Point *)
+
+(* rendered as keyword if recognised, as identifier if not recognised *)
+
+FOREIGN
+
+
 (*- Additional Reserved Words for Stony Brook Extensions to ISO -*)
 
 (* recognised by Stony Brook *)
@@ -859,6 +869,23 @@ BYTE
 
 BITSET8 BITSET16 BITSET32 CARDINAL8 CARDINAL16 CARDINAL32 INTEGER8 INTEGER16
 INTEGER32
+
+
+(*- Additional Builtins for Gardens Point Extensions to ISO -*)
+
+(* recognised by Gardens Point *)
+
+(* rendered as builtins if recognised, as identifiers if not recognised *)
+
+(* proper builtins *)
+
+ABORT SFLOAT SHORTREAL
+
+(* pseudo-builtins *)
+
+(* SYSTEM pseudo-module *)
+
+BIN BYTE NEWPROCESS SAL
 
 
 (*- Additional Builtins for p1 Extensions to ISO -*)
