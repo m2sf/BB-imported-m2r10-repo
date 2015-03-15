@@ -26,8 +26,8 @@ moduleIdent --> [ident].
 
 importList --> [libGenDirective].
 importList --> [libGenDirective, [';'], importList].
-importList --> [ImportDirective].
-importList --> [ImportDirective, [';'], importList].
+importList --> [importDirective].
+importList --> [importDirective, [';'], importList].
 
 
 %% (3) Definition Module
