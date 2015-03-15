@@ -19,7 +19,7 @@ programModule -->
 
 %% (2.1) Module Identifier
 
-moduleIdent --> [ident].
+moduleIdent --> ident.
 
 %% (2.2) Import List
 
