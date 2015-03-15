@@ -423,7 +423,7 @@ placeholder --> [ident].
 
 replacement --> [numberLiteral].
 replacement --> [stringLiteral].
-replacement --> [ChevronText].
+replacement --> [chevronText].
 
 
 %% (15) Import Directive
