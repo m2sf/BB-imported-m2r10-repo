@@ -125,12 +125,12 @@ blueprintHeader --> [
 blueprintHeader --> [
   ['BLUEPRINT'], blueprintIdent,
   ['['], blueprintToRefine, [']'], [';'],
-  ['FOR'], blueprintForTypeToExtend [';'],
+  ['FOR'], blueprintForTypeToExtend, [';']
 ].
 
 blueprintHeader --> [
   ['BLUEPRINT'], blueprintIdent,
-  ['FOR'], blueprintForTypeToExtend [';'],
+  ['FOR'], blueprintForTypeToExtend, [';']
 ].
 
 %% (4.1) Blueprint To Refine
@@ -175,7 +175,7 @@ determinedProperties --> [identList].
 %% (7.2) Properties To Determine
 
 propertiesToDetermine --> [ident, ['?']].
-propertiesToDetermine --> [ident, ['?'] [','], propertiesToDetermine].
+propertiesToDetermine --> [ident, ['?'], [','], propertiesToDetermine].
 
 
 %% (8) Literal Specification
@@ -207,7 +207,7 @@ structuredProtoLiteral --> [['{'], simpleProtoLiteralList, ['}']].
 splArglistHead --> [['ARGLIST'], ['OF']].
 splArglistHead --> [['ARGLIST'], reqValueCount, ['OF']].
 
-splArglistTail --> [['{'], simpleProtoLiteralList ['}']].
+splArglistTail --> [['{'], simpleProtoLiteralList, ['}']].
 splArglistTail --> [simpleProtoLiteral].
 
 %% (9.1) Required Value Count
@@ -385,7 +385,7 @@ bindingDifferentiator1 --> [['|'], ['#']].
 %% (13.8) Multi-Bindable Macro 1
 
 multiBindableMacro2 --> [multiBindableMacro2Head].
-multiBindableMacro1 --> [multiBindableMacro2Head, bindingDifferentiator2].
+multiBindableMacro2 --> [multiBindableMacro2Head, bindingDifferentiator2].
 
 multiBindableMacro2Head --> ['STORE'].
 multiBindableMacro2Head --> ['INSERT'].
@@ -472,7 +472,7 @@ declarationList --> [declaration, declarationList].
 %% (17) Statement Sequence
 
 statementSequence --> [statement].
-statementSequence --> [statement, [';'] statementSequence].
+statementSequence --> [statement, [';'], statementSequence].
 
 
 %% (18) Definition
@@ -592,7 +592,7 @@ enumTypeIdent --> [typeIdent].
 
 %% (25) Set Type
 
-enumType --> [['SET'], ['OF'], enumTypeIdent].
+setType --> [['SET'], ['OF'], enumTypeIdent].
 
 
 %% (26) Array Type
@@ -826,7 +826,7 @@ variadicFormalParams --> [
   variadicFormalParamsHead, variadicFormalParamsMiddle
 ].
 
-variadicFormalParamsHead --> [['ARGLIST',] ['OF']].
+variadicFormalParamsHead --> [['ARGLIST'], ['OF']].
 variadicFormalParamsHead --> [['ARGLIST'], numOfArgsToPass, ['OF']].
 
 variadicFormalParamsMiddle --> [simpleFormalType].
@@ -973,7 +973,7 @@ repeatStatement --> [
 
 %% (53) FOR Statement
 
-forStatement --> [forStatementHeader, ['DO'] statementSequence, ['END']].
+forStatement --> [forStatementHeader, ['DO'], statementSequence, ['END']].
 
 forStatementHeader --> [forStatementHeaderHead, forStatementHeaderTail].
 
@@ -1079,13 +1079,13 @@ term --> [factorOrNegation, operL3, term].
 
 %% (59.1) Level-3 Operator
 
-operL2 --> ['*'].
-operL2 --> ['/'].
-operL2 --> ['DIV'].
-operL2 --> ['MOD'].
-operL2 --> ['AND'].
-operL2 --> [setDiffOp].
-operL2 --> [dotProductOp].
+operL3 --> ['*'].
+operL3 --> ['/'].
+operL3 --> ['DIV'].
+operL3 --> ['MOD'].
+operL3 --> ['AND'].
+operL3 --> [setDiffOp].
+operL3 --> [dotProductOp].
 
 %% (59.2) Set Difference Operator
 
@@ -1156,7 +1156,7 @@ runtimeExpression --> [expression].
 ident --> [identHead, identTail].
 
 identHead --> [letter].
-identHead --> foreignIdentCharSequence, letterOrDigitSequence].
+identHead --> [foreignIdentCharSequence, letterOrDigitSequence].
 
 foreignIdentCharSequence --> [foreignIdentChar].
 foreignIdentCharSequence --> [foreignIdentChar, foreignIdentCharSequence].
@@ -1176,13 +1176,13 @@ letterOrDigit --> [digit].
 
 %% Number Literal
 
-numberLiteral --> [digitZero]
-numberLiteral --> [digitZero, realNumberTail]
-numberLiteral --> [digitZero, ['b'], base2DigitSeq]
-numberLiteral --> [digitZero, ['x'], base16DigitSeq]
-numberLiteral --> [digitZero, ['u'], base16DigitSeq]
-numberLiteral --> [digitOneToNine]
-numberLiteral --> [digitOneToNine, decimalNumberTail]
+numberLiteral --> [digitZero].
+numberLiteral --> [digitZero, realNumberTail].
+numberLiteral --> [digitZero, ['b'], base2DigitSeq].
+numberLiteral --> [digitZero, ['x'], base16DigitSeq].
+numberLiteral --> [digitZero, ['u'], base16DigitSeq].
+numberLiteral --> [digitOneToNine].
+numberLiteral --> [digitOneToNine, decimalNumberTail].
 
 digitZero --> ['0'].
 digitOneToNine --> ['1'].
@@ -1405,7 +1405,7 @@ chevronQuotedChar --> [singleQuote].
 chevronQuotedChar --> [doubleQuote].
 chevronQuotedChar --> [quotableCharacter].
 
-% Character Synonyms
+%% Character Synonyms
 
 backslash --> ['\\'].
 singleQuote --> ['\''].
