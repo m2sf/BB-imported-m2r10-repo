@@ -1177,7 +1177,7 @@ letterOrDigit --> [digit].
 %% Number Literal
 
 numberLiteral --> [digitZero]
-numberLiteral --> [digitZero, RealNumberTail]
+numberLiteral --> [digitZero, realNumberTail]
 numberLiteral --> [digitZero, ['b'], base2DigitSeq]
 numberLiteral --> [digitZero, ['x'], base16DigitSeq]
 numberLiteral --> [digitZero, ['u'], base16DigitSeq]
@@ -1405,11 +1405,11 @@ chevronQuotedChar --> [singleQuote].
 chevronQuotedChar --> [doubleQuote].
 chevronQuotedChar --> [quotableCharacter].
 
-% Synonyms For Escaped Characters
+% Character Synonyms
 
 backslash --> ['\\'].
 singleQuote --> ['\''].
-doubleQuote --> ['\"'].
+doubleQuote --> ['"'].
 
 
 %% end of grammar
