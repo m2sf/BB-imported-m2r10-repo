@@ -27,9 +27,9 @@ compilationUnit --> blueprint.
 
 production(programModule).
 
-programModule --> ['MODULE'], moduleIdent, [';'], block, moduleIdent, ['.'].
 programModule -->
-  ['MODULE'], moduleIdent, [';'], importList, [';'], block, moduleIdent, ['.'].
+  ['MODULE'], moduleIdent, semicolon,
+  (importList, semicolon ; []), block, moduleIdent, dot.
 
 %% (2.1) Module Identifier
 
@@ -41,46 +41,24 @@ moduleIdent --> ident.
 
 fragment(importList).
 
-importList --> libGenDirective.
-importList --> libGenDirective, [';'], importList.
-importList --> importDirective.
-importList --> importDirective, [';'], importList.
+importList --> importListItem.
+importList --> importListItem, semicolon, importList.
+
+fragment(importListItem).
+
+importListItem --> (libGenDirective ; importDirective).
 
 
 %% (3) Definition Module
 
 production(definitionModule).
 
-definitionModule --> definitionModuleHeader, ['END'], moduleIdent, ['.'].
-
-definitionModule -->  
-  definitionModuleHeader,
-  importList, ['END'], moduleIdent, ['.'].
-
-definitionModule -->  
-  definitionModuleHeader,
-  definition, ['END'], moduleIdent, ['.'].
-
-definitionModule -->  
-  definitionModuleHeader,
-  importList, definition, ['END'], moduleIdent, ['.'].
-
-fragment(definitionModuleHeader).
-
-definitionModuleHeader -->  ['DEFINITION'], ['MODULE'], moduleIdent.
-
-definitionModuleHeader -->  
+definitionModule -->
   ['DEFINITION'], ['MODULE'], moduleIdent,
-  ['['], blueprintToObey, [']'].
-
-definitionModuleHeader -->  
-  ['DEFINITION'], ['MODULE'], moduleIdent,
-  ['FOR'], typeToExtend, [';'].
-
-definitionModuleHeader -->  
-  ['DEFINITION'], ['MODULE'], moduleIdent,
-  ['['], blueprintToObey, [']'], ['FOR'], typeToExtend, [';'].
-
+  (lBracket, blueprintToObey, rBracket ; []),
+  (['FOR'], typeToExtend, semicolon ; []),
+  (importList, semicolon ; []), (definition ; []),
+  ['END'], moduleIdent, dot.
 
 %% (3.1) Blueprint To Obey
 
@@ -106,209 +84,161 @@ typeToExtend --> ident.
 production(blueprint).
 
 blueprint -->  
-  blueprintHeader,
-  ['MODULE'], ['TYPE'], ['='], moduleTypeSpecOrNone, [';'],
-  ['END'], ['.'].
-
-blueprint -->  
-  blueprintHeader,
-  ['MODULE'], ['TYPE'], ['='], moduleTypeSpecOrNone, [';'],
-  requirementList, ['END'], ['.'].
-
-blueprint -->  
-  blueprintHeader,
-  referentials, ['MODULE'], ['TYPE'], ['='], moduleTypeSpecOrNone, [';'],
-  ['END'], ['.'].
-
-blueprint -->  
-  blueprintHeader,
-  referentials, ['MODULE'], ['TYPE'], ['='], moduleTypeSpecOrNone, [';'],
-  requirementList, ['END'], ['.'].
-
-fragment(moduleTypeSpecOrNone).
-
-moduleTypeSpecOrNone --> moduleTypeSpec.
-moduleTypeSpecOrNone --> ['NONE'].
-
-%% Blueprint Header 
-
-fragment(blueprintHeader).
-
-blueprintHeader --> ['BLUEPRINT'], blueprintIdent, [';'].
-
-blueprintHeader -->  
   ['BLUEPRINT'], blueprintIdent,
-  ['['], blueprintToRefine, [']'], [';'].
+  (lBracket, blueprintToRefine, rBracket, semicolon ; []),
+  (['FOR'], blueprintForTypeToExtend, semicolon ; []),
+  (['REFERENTIAL'], identList, semicolon ; []),
+  ['MODULE'], ['TYPE'], equal, (moduleTypeSpec ; ['NONE']),
+  (requirementList ; []), ['END'], dot. 
 
-blueprintHeader -->  
-  ['BLUEPRINT'], blueprintIdent,
-  ['['], blueprintToRefine, [']'], [';'],
-  ['FOR'], blueprintForTypeToExtend, [';'].
+fragment(requirementList).
 
-blueprintHeader -->  
-  ['BLUEPRINT'], blueprintIdent,
-  ['FOR'], blueprintForTypeToExtend, [';'].
+requirementList --> requirement, semicolon.
+requirementList --> requirement, requirementList, semicolon.
 
 %% (4.1) Blueprint To Refine
 
 alias(blueprintToRefine).
 
-blueprintToRefine -->  blueprintIdent.
+blueprintToRefine --> blueprintIdent.
 
 %% (4.2) Blueprint For Type To Extend
 
 alias(blueprintForTypeToExtend).
 
-blueprintForTypeToExtend -->  ident.
+blueprintForTypeToExtend --> ident.
 
 
 %% (5) Identifier List
 
 production(identList).
 
-identList -->  ident.
-identList -->  ident, [','], identList.
+identList --> ident.
+identList --> ident, comma, identList.
 
 
 %% (6) Module Type Specification
 
 production(moduleTypeSpec).
 
-moduleTypeSpec -->  moduleTypeSpecHeader.
-moduleTypeSpec -->  moduleTypeSpecHeader, moduleTypeSpecTail.
-
-fragment(moduleTypeSpecHeader).
-
-moduleTypeSpecHeader --> ['OPAQUE'].
-moduleTypeSpecHeader --> ['RECORD'].
-
-fragment(moduleTypeSpecTail).
-
-moduleTypeSpecTail -->  [';'], propertySpec.
-moduleTypeSpecTail -->  [';'], literalSpec.
-moduleTypeSpecTail -->  [';'], propertySpec, [';'], literalSpec.
+moduleTypeSpec -->
+  (['OPAQUE'] ; ['RECORD']),
+  (semicolon, propertySpec ; []), (semicolon, literalSpec ; []).
 
 
 %% (7) Property Specification
 
 production(propertySpec).
 
-propertySpec -->  ['TPROPERTIES'], ['='], propertySpecTail.
+propertySpec --> ['TPROPERTIES'], equal, propertySpecTail.
 
 fragment(propertySpecTail).
 
-propertySpecTail -->  determinedProperties.
-propertySpecTail -->  determinedProperties, ['|'], propertiesToDetermine.
+propertySpecTail --> determinedProperties.
+propertySpecTail --> determinedProperties, verticalBar, propertiesToDetermine.
 
 %% (7.1) Determined Properties
 
 alias(determinedProperties).
 
-determinedProperties -->  identList.
+determinedProperties --> identList.
 
 %% (7.2) Properties To Determine
 
 fragment(propertiesToDetermine).
 
-propertiesToDetermine -->  ident, ['?'].
-propertiesToDetermine -->  ident, ['?'], [','], propertiesToDetermine.
+propertiesToDetermine --> ident, questionMark.
+propertiesToDetermine --> ident, questionMark, comma, propertiesToDetermine.
 
 
 %% (8) Literal Specification
 
 production(literalSpec).
 
-literalSpec -->  ['TLITERAL'], ['='], protoLiteralList.
+literalSpec --> ['TLITERAL'], equal, protoLiteralList.
 
 fragment(protoLiteralList).
 
-protoLiteralList -->  protoLiteral.
-protoLiteralList -->  protoLiteral, ['|'], protoLiteralList.
+protoLiteralList --> protoLiteral.
+protoLiteralList --> protoLiteral, verticalBar, protoLiteralList.
 
 %% (8.1) Proto Literal
 
 fragment(protoLiteral).
 
-protoLiteral -->  simpleProtoLiteral.
-protoLiteral -->  structuredProtoLiteral.
+protoLiteral --> simpleProtoLiteral.
+protoLiteral --> structuredProtoLiteral.
 
 %% (8.2) Simple Proto Literal
 
 fragment(simpleProtoLiteral).
 
-simpleProtoLiteral -->  literalOrReferential.
+simpleProtoLiteral --> literalOrReferential.
 
 %% (8.3) Literal Identifier Or Referential Identifier
 
 alias(literalOrReferential).
 
-literalOrReferential -->  ident.
+literalOrReferential --> ident.
 
 
 %% (9) Structured Proto Literal
 
 production(structuredProtoLiteral).
 
-structuredProtoLiteral -->  ['{'], splArglistHead, splArglistTail, ['}'].
-structuredProtoLiteral -->  ['{'], simpleProtoLiteralList, ['}'].
+structuredProtoLiteral -->
+  lBrace, (variadicProtoLiteralList ; simpleProtoLiteralList), rBrace.
 
-fragment(splArglistHead).
+fragment(variadicProtoLiteralList).
 
-splArglistHead -->  ['ARGLIST'], ['OF'].
-splArglistHead -->  ['ARGLIST'], reqValueCount, ['OF'].
+variadicProtoLiteralList -->
+  ['ARGLIST'], (reqValueCount ; []), ['OF'],
+  (lBrace, simpleProtoLiteralList, rBrace ; simpleProtoLiteral).
 
-splArglistTail -->  ['{'], simpleProtoLiteralList, ['}'].
-splArglistTail -->  simpleProtoLiteral.
+fragment(simpleProtoLiteralList).
+
+simpleProtoLiteralList --> simpleProtoLiteral.
+simpleProtoLiteralList --> simpleProtoLiteral, comma, simpleProtoLiteralList.
 
 %% (9.1) Required Value Count
 
 fragment(reqValueCount).
 
-reqValueCount -->  wholeNumber.
-reqValueCount -->  greaterThan, wholeNumber.
+reqValueCount --> wholeNumber.
+reqValueCount --> greaterThan, wholeNumber.
 
 %% (9.2) Greater Than
 
 alias(greaterThan).
 
-greaterThan -->  ['>'].
+greaterThan --> greater.
 
 %% (9.3) Whole Number
 
 alias(wholeNumber).
 
-wholeNumber -->  numberLiteral.
+wholeNumber --> numberLiteral.
 
 
 %% (10) Requirement
 
 production(requirement).
 
-requirement -->  conditionalRequirement.
-requirement -->  unconditionalRequirement.
-
-fragment(conditionalRequirement).
-
-conditionalRequirement -->  condition, ['->'], unconditionalRequirement.
-
-fragment(unconditionalRequirement).
-
-unconditionalRequirement -->  constRequirement.
-unconditionalRequirement -->  procedureRequirement.
-unconditionalRequirement -->  ['TYPE'], ['='], procedureType.
+requirement -->
+  (condition, minusArrow ; []),
+  (constRequirement ; procedureRequirement ; ['TYPE'], equal, procedureType).
 
 %% (10.1) Condition
 
 fragment(condition).
 
-condition -->  boolConstIdent.
-condition -->  ['NOT'], boolConstIdent.
+condition --> (['NOT']; []), boolConstIdent.
 
-%% (10.1) Condition
+%% (10.1) Boolean Constant Identifier
 
 alias(boolConstIdent).
 
-boolConstIdent -->  ident.
+boolConstIdent --> ident.
 
 
 %% (11) Constant Requirement
@@ -319,16 +249,12 @@ constRequirement --> ['CONST'], constRequirementTail.
 
 fragment(constRequirementTail).
 
-constRequirementTail -->  constBindingHead, simpleConstRequirement.
-constRequirementTail -->  constBindingHead, ['='], ['NONE'].
-constRequirementTail -->  constBindingHead.
+constRequirementTail -->
+  lBracket, propertyToBindTo, rBracket,
+  (simpleConstRequirement ; equal, ['NONE'] ; []).
 
-constRequirementTail -->  simpleConstRequirement.
-constRequirementTail -->  constAttribute, simpleConstRequirement.
-
-fragment(constBindingHead).
-
-constBindingHead -->  ['['], propertyToBindTo, [']'].
+constRequirementTail --> 
+  (constAttribute ; []), simpleConstRequirement.
 
 %% (11.1) Property To Bind To
 
@@ -372,33 +298,33 @@ constAttribute -->  restrictedExport.
 
 fragment(ancillaryConstant).
 
-alias --> ['-'].
+alias --> minus.
 
 %% (11.6) Restricted Export
 
 alias(restrictedExport).
 
-restrictedExport --> ['*'].
+restrictedExport --> asterisk.
 
 
 %% (12) Simple Constant Requirement
 
 production(simpleConstRequirement).
 
-simpleConstRequirement -->  ident, '=', constExpression.
-simpleConstRequirement -->  ident, ':', predefOrRefTypeIdent.
+simpleConstRequirement -->
+  ident, (equal, constExpression ; colon, predefOrRefTypeIdent).
 
 %% (12.1) Constant Expression
 
 alias(constExpression).
 
-constExpression -->  expression.
+constExpression --> expression.
 
 %% (12.2) Predefined Or Referential Type Identifier
 
 alias(predefOrRefTypeIdent).
 
-predefOrRefTypeIdent -->  ident.
+predefOrRefTypeIdent --> ident.
 
 
 %% (13) Procedure Requirement
@@ -409,13 +335,12 @@ procedureRequirement --> ['PROCEDURE'], procedureRequirementTail.
 
 fragment(procedureRequirementTail).
 
-procedureRequirementTail -->  procBindingHead, procedureSignature.
-procedureRequirementTail -->  procBindingHead, ['='], ['NONE'].
-procedureRequirementTail -->  procBindingHead.
+procedureRequirementTail -->
+  lBracket, entityToBindTo, rBracket,
+  (procedureSignature ; equal, ['NONE'] ; []).
 
-fragment(procBindingHead).
-
-procBindingHead -->  ['['], entityToBindTo, [']'].
+procedureRequirementTail -->
+  (restrictedExport ; []), procedureSignature.
 
 %% (13.1) Entity To Bind To
 
@@ -439,16 +364,16 @@ bindableResWord --> ['FOR'].
 
 fragment(bindableOperator).
 
-bindableOperator --> ['+'].
-bindableOperator --> ['-'].
-bindableOperator --> ['*'].
-bindableOperator --> ['/'].
+bindableOperator --> plus.
+bindableOperator --> minus.
+bindableOperator --> asterisk.
+bindableOperator --> slash.
 bindableOperator --> backslash.
-bindableOperator --> ['='].
-bindableOperator --> ['<'].
-bindableOperator --> ['>'].
-bindableOperator --> ['*.'].
-bindableOperator --> ['::'].
+bindableOperator --> equal.
+bindableOperator --> less.
+bindableOperator --> greater.
+bindableOperator --> starDot.
+bindableOperator --> colonColon.
 bindableOperator --> ['IN'].
 bindableOperator --> ['DIV'].
 bindableOperator --> ['MOD'].
@@ -458,7 +383,7 @@ bindableOperator --> unaryMinus.
 
 fragment(unaryMinus).
 
-unaryMinus --> ['+'], ['/'], ['-'].
+unaryMinus --> plus, slash, minus.
 
 %% (13.5) Bindable Macro
 
@@ -483,40 +408,27 @@ bindableMacro --> multiBindableMacro2.
 
 fragment(multiBindableMacro1).
 
-multiBindableMacro1 --> multiBindableMacro1Head.
-multiBindableMacro1 --> multiBindableMacro1Head, bindingDifferentiator1.
-
-fragment(multiBindableMacro1Head).
-
-multiBindableMacro1Head --> ['COUNT'].
-multiBindableMacro1Head --> ['RETRIEVE'].
+multiBindableMacro1 -->
+  (['COUNT'] ; ['RETRIEVE']), (bindingDifferentiator1 ; []).
 
 %% (13.7) Binding Differentiatior 1
 
 fragment(bindingDifferentiator1).
 
-bindingDifferentiator1 --> ['|'], ['#'].
+bindingDifferentiator1 --> verticalBar, octothorpe.
 
-%% (13.8) Multi-Bindable Macro 1
+%% (13.8) Multi-Bindable Macro 2
 
 fragment(multiBindableMacro2).
 
-multiBindableMacro2 --> multiBindableMacro2Head.
-multiBindableMacro2 --> multiBindableMacro2Head, bindingDifferentiator2.
-
-fragment(multiBindableMacro2Head).
-
-multiBindableMacro2Head --> ['STORE'].
-multiBindableMacro2Head --> ['INSERT'].
-multiBindableMacro2Head --> ['REMOVE'].
+multiBindableMacro2 -->
+  (['STORE'] ; ['INSERT'] ; ['REMOVE']), (bindingDifferentiator2 ; []).
 
 %% (13.9) Binding Differentiatior 2
 
 fragment(bindingDifferentiator2).
 
-bindingDifferentiator2 --> ['|'], [','].
-bindingDifferentiator2 --> ['|'], ['#'].
-bindingDifferentiator2 --> ['|'], ['*'].
+bindingDifferentiator2 --> verticalBar, (comma ; octothorpe ; asterisk).
 
 
 %% (14) Library Generation Directive
@@ -528,8 +440,8 @@ libGenDirective -->
 
 fragment(templateParams).
 
-templateParams --> placeholder, ['='], replacement.
-templateParams --> placeholder, ['='], replacement, [';'], templateParams.
+templateParams --> placeholder, equal, replacement.
+templateParams --> placeholder, equal, replacement, semicolon, templateParams.
 
 %% (14.1) Library Identifier
 
@@ -562,13 +474,18 @@ replacement --> chevronText.
 
 production(importDirective).
 
-importDirective --> ['IMPORT'], modulesToImport.
-importDirective --> unqualifiedImportHead, identifiersToImport.
-importDirective --> unqualifiedImportHead, importAll.
+importDirective -->
+  (qualifiedImport ; unqualifiedImport).
 
-fragment(unqualifiedImportHead).
+fragment(qualifiedImport).
 
-unqualifiedImportHead --> ['FROM'], modulesOrEnumIdent, ['IMPORT'].
+qualifiedImport -->
+  ['IMPORT'], modulesToImport.
+
+fragment(unqualifiedImport).
+
+unqualifiedImport -->
+  ['FROM'], modulesOrEnumIdent, ['IMPORT'], (identifiersToImport ; importAll).
 
 %% (15.1) Modules To Import
 
@@ -588,32 +505,28 @@ fragment(identifiersToImport).
 
 identifiersToImport --> ident.
 identifiersToImport --> ident, reExport.
-identifiersToImport --> ident, reExport, [','], identifiersToImport.
+identifiersToImport --> ident, reExport, comma, identifiersToImport.
 
 %% (15.4) Re-Export
 
 alias(reExport).
 
-reExport --> ['+'].
+reExport --> plus.
 
 %% (15.5) Re-Export
 
 alias(importAll).
 
-importAll --> ['*'].
+importAll --> asterisk.
 
 
 %% (16) Block
 
 production(block).
 
-block --> declarationList, blockTail.
-block --> blockTail.
-
-fragment(blockTail).
-
-blockTail --> ['BEGIN'], statementSequence, ['END'].
-blockTail --> ['END'].
+block -->
+  (declarationList ; []),
+  (['BEGIN'], statementSequence, ['END'] ; []), ['END'].
 
 fragment(declarationList).
 
@@ -626,7 +539,7 @@ declarationList --> declaration, declarationList.
 production(statementSequence).
 
 statementSequence --> statement.
-statementSequence --> statement, [';'], statementSequence.
+statementSequence --> statement, semicolon, statementSequence.
 
 
 %% (18) Definition
@@ -636,51 +549,43 @@ production(definition).
 definition --> ['CONST'], constDefinitionList.
 definition --> ['TYPE'], typeDefinitionList.
 definition --> ['VAR'], varDeclarationList.
-definition --> procedureHeader, [';'].
+definition --> procedureHeader, semicolon.
 
 fragment(constDefinitionList).
 
-constDefinitionList --> constDefinition, [';'].
-constDefinitionList --> constDefinition, [';'], constDefinitionList.
+constDefinitionList --> constDefinition, semicolon.
+constDefinitionList --> constDefinition, semicolon, constDefinitionList.
 
 fragment(typeDefinitionList).
 
-typeDefinitionList --> typeDefinition, [';'].
-typeDefinitionList --> typeDefinition, [';'], typeDefinitionList.
+typeDefinitionList --> typeDefinition, semicolon.
+typeDefinitionList --> typeDefinition, semicolon, typeDefinitionList.
 
 fragment(varDeclarationList).
 
-varDeclarationList --> variableDeclaration, [';'].
-varDeclarationList --> variableDeclaration, [';'], varDeclarationList.
+varDeclarationList --> variableDeclaration, semicolon.
+varDeclarationList --> variableDeclaration, semicolon, varDeclarationList.
 
 
 %% (19) Constant Definition
 
 production(constDefinition).
 
-constDefinition --> constDefinitionHead, constDeclaration.
-constDefinition --> constDeclaration.
-
-fragment(constDefinitionHead).
-
-constDefinitionHead --> constBindingHead.
-constDefinitionHead --> restrictedExport.
+constDefinition -->
+  (lBracket, propertyToBindTo, rBracket ; restrictedExport ; []),
+  constDeclaration.
 
 fragment(constDeclaration).
 
-constDeclaration --> ident, ['='], constExpression.
+constDeclaration --> ident, equal, constExpression.
 
 
 %% (20) Variable Declaration
 
 production(variableDeclaration).
 
-variableDeclaration --> identList, [':'], variableDeclarationTail.
-
-fragment(variableDeclarationTail).
-
-variableDeclarationTail --> range, ['OF'], typeIdent.
-variableDeclarationTail --> typeIdent.
+variableDeclaration -->
+  identList, colon, (range, ['OF'] ; []), typeIdent.
 
 
 %% (21) Declaration
@@ -690,21 +595,21 @@ production(declaration).
 declaration --> ['CONST'], constDeclarationList.
 declaration --> ['TYPE'], typeDeclarationList.
 declaration --> ['VAR'], varDeclarationList.
-declaration --> procedureHeader, [';'], block, ident, [';'].
+declaration --> procedureHeader, semicolon, block, ident, semicolon.
 
 fragment(constDeclarationList).
 
-constDeclarationList --> constDeclaration, [';'].
-constDeclarationList --> constDeclaration, [';'], constDeclarationList.
+constDeclarationList --> constDeclaration, semicolon.
+constDeclarationList --> constDeclaration, semicolon, constDeclarationList.
 
 fragment(typeDeclarationList).
 
-typeDeclarationList --> typeDeclaration, [';'].
-typeDeclarationList --> typeDeclaration, [';'], typeDeclarationList.
+typeDeclarationList --> typeDeclaration, semicolon.
+typeDeclarationList --> typeDeclaration, semicolon, typeDeclarationList.
 
 fragment(typeDeclaration).
 
-typeDeclaration --> ident, ['='], type, [';'].
+typeDeclaration --> ident, equal, type, semicolon.
 
 
 %% (22) Type
@@ -751,17 +656,9 @@ dynamicTypeIdent --> typeIdent.
 
 production(range).
 
-range --> rangeHead, ['..'], rangeTail.
-
-fragment(rangeHead).
-
-rangeHead --> ['['], greaterThan, constExpression.
-rangeHead --> ['['], constExpression.
-
-fragment(rangeTail).
-
-rangeTail --> lessThan, constExpression, ['['].
-rangeTail --> constExpression, ['['].
+range -->
+  lBracket, (greaterThan ; []), constExpression,
+  dotDot, (lessThan ; []), constExpression, rBracket.
 
 %% (23.1) Greater Than
 
@@ -771,15 +668,14 @@ rangeTail --> constExpression, ['['].
 
 alias(lessThan).
 
-lessThan --> ['<'].
+lessThan --> less.
 
 
 %% (24) Enumeration Type
 
 production(enumType).
 
-enumType --> ['('], identList, [')'].
-enumType --> ['('], ['+'], enumTypeToExtend, identList, [')'].
+enumType --> lParen, (plus, enumTypeToExtend ; []), identList, rParen.
 
 %% (24.1) Enumeration Type To Extend
 
@@ -805,13 +701,12 @@ setType --> ['SET'], ['OF'], enumTypeIdent.
 
 production(arrayType).
 
-arrayType --> ['ARRAY'], ['OF'], typeIdent.
-arrayType --> ['ARRAY'], componentCountList, ['OF'], typeIdent.
+arrayType --> ['ARRAY'], (componentCountList ; []), ['OF'], typeIdent.
 
 fragment(componentCountList).
 
 componentCountList --> componentCount.
-componentCountList --> componentCount, [','], componentCountList.
+componentCountList --> componentCount, comma, componentCountList.
 
 %% (26.1) Component Count
 
@@ -824,18 +719,15 @@ componentCount --> constExpression.
 
 production(recordType).
 
-recordType --> ['RECORD'], recordTypeBody, ['END'].
-
-fragment(recordTypeBody).
-
-recordTypeBody --> fieldListSequence.
-recordTypeBody --> fieldListSequence, indeterminateField.
-recordTypeBody --> ['('], recTypeToExtend, [')'], fieldListSequence.
+recordType -->
+  ['RECORD'], fieldListSequence, (indeterminateField ; []), ['END'].
+recordType -->
+  ['RECORD'], lParen, recTypeToExtend, rParen, fieldListSequence, ['END'].
 
 fragment(fieldListSequence).
 
 fieldListSequence --> fieldList.
-fieldListSequence --> fieldList, [';'], fieldListSequence.
+fieldListSequence --> fieldList, semicolon, fieldListSequence.
 
 %% (27.1) Record Type To Extend
 
@@ -847,8 +739,7 @@ recTypeToExtend --> typeIdent.
 
 fragment(fieldList).
 
-fieldList --> restrictedExport, variableDeclaration.
-fieldList --> variableDeclaration.
+fieldList --> (restrictedExport ; []), variableDeclaration.
 
 
 %% (28) Indeterminate Field
@@ -856,7 +747,7 @@ fieldList --> variableDeclaration.
 production(indeterminateField).
 
 indeterminateField --> 
-  ['INDETERMINATE'], ident, [':'],
+  ['INDETERMINATE'], ident, colon,
   ['ARRAY'], discriminantFieldIdent, ['OF'], typeIdent.
 
 %% (28.1) Discriminant Field Identifier
@@ -870,39 +761,22 @@ discriminantFieldIdent --> ident.
 
 production(pointerType).
 
-pointerType --> ['POINTER'], ['TO'], pointerTypeTail.
-
-fragment(pointerTypeTail).
-
-pointerTypeTail --> typeIdent.
-pointerTypeTail --> ['CONST'], typeIdent.
+pointerType -->
+  ['POINTER'], ['TO'], (['CONST'] ; []), typeIdent.
 
 
 %% (30) Procedure Type
 
 production(procedureType).
 
-procedureType --> procedureTypeHead, procedureTypeMiddle, procedureTypeTail.
-procedureType --> procedureTypeHead, procedureTypeMiddle.
-procedureType --> procedureTypeHead, procedureTypeTail.
-procedureType --> procedureTypeHead.
-
-alias(procedureTypeHead).
-
-procedureTypeHead --> ['PROCEDURE'].
-
-fragment(procedureTypeMiddle).
-
-procedureTypeMiddle --> ['('], formalTypeList, [')'].
+procedureType -->
+  ['PROCEDURE'],
+  (lParen, formalTypeList, rParen ; []), (colon, returnedType ; []).
 
 fragment(formalTypeList).
 
 formalTypeList --> formalType.
-formalTypeList --> formalType, [','], formalTypeList.
-
-fragment(procedureTypeTail).
-
-procedureTypeTail --> [':'], returnedType.
+formalTypeList --> formalType, comma, formalTypeList.
 
 %% (30.1) Formal Type
 
@@ -923,62 +797,47 @@ returnedType --> typeIdent.
 
 production(simpleFormalType).
 
-simpleFormalType --> typeIdent.
-simpleFormalType --> ['ARRAY'], ['OF'], typeIdent.
+simpleFormalType --> (['ARRAY'], ['OF'] ; []), typeIdent.
 simpleFormalType --> castingFormalType.
 
 %% (31.1) Casting Formal Type
 
 fragment(castingFormalType).
 
-castingFormalType --> ['CAST'], ['ARRAY'], ['OF'], ['OCTET'].
-castingFormalType --> ['CAST'], addressTypeIdent.
+castingFormalType -->
+  ['CAST'],
+  (['ARRAY'], ['OF'], ['OCTET'] ; addressTypeIdent).
 
 %% (31.2) Address Type Identifier
 
 fragment(addressTypeIdent).
 
-addressTypeIdent --> ['ADDRESS'].
-addressTypeIdent --> ['UNSAFE'], ['.'], ['ADDRESS'].
+addressTypeIdent -->
+  (['ADDRESS'] ; ['UNSAFE'], ['.'], ['ADDRESS']).
 
 
 %% (32) Attributed Formal Type
 
 production(attributedFormalType).
 
-attributedFormalType --> attributedFormalTypeHead, simpleFormalType.
-attributedFormalType --> attributedFormalTypeHead, simpleVariadicFormalType.
-
-fragment(attributedFormalTypeHead).
-
-attributedFormalTypeHead --> ['CONST'].
-attributedFormalTypeHead --> ['VAR'].
-attributedFormalTypeHead --> ['NEW'].
+attributedFormalType -->
+  (['CONST'] ; ['VAR'] ;['NEW']),
+  (simpleFormalType, simpleVariadicFormalType).
 
 
 %% (33) Simple Variadic Formal Type
 
 production(simpleVariadicFormalType).
 
-simpleVariadicFormalType --> 
-  simpleVariadicFormalTypeHead, simpleVariadicFormalTypeTail.
-
-fragment(simpleVariadicFormalTypeHead).
-
-simpleVariadicFormalTypeHead --> ['ARGLIST'], ['OF'].
-simpleVariadicFormalTypeHead --> ['ARGLIST'], numOfArgsToPass, ['OF'].
-
-fragment(simpleVariadicFormalTypeTail).
-
-simpleVariadicFormalTypeTail --> simpleFormalType.
-simpleVariadicFormalTypeTail --> simpleFormalType, ['|'], arglistTerminator.
-
+simpleVariadicFormalType -->
+  ['ARGLIST'], (numOfArgsToPass ; []), ['OF'],
+  simpleFormalType, (verticalBar, arglistTerminator ; []).
+  
 %% (33.1) Number Of Arguments To Pass
 
 fragment(numOfArgsToPass).
 
-numOfArgsToPass --> constExpression.
-numOfArgsToPass --> greaterThan, constExpression.
+numOfArgsToPass --> (greaterThan ; []), constExpression.
 
 %% (33.2) Variadic Argument List Terminator
 
@@ -993,7 +852,7 @@ arglistTerminator --> constQualident.
 
 fragment(minusOne).
 
-minusOne --> ['-'], ['1'].
+minusOne --> minus, digitOne.
 
 %% (33.4) Constant Qualified Identifier
 
@@ -1007,92 +866,49 @@ constQualident --> qualident.
 production(variadicFormalType).
 
 variadicFormalType --> 
-  variadicFormalTypeHead, variadicFormalTypeMiddle, variadicFormalTypeTail.
-variadicFormalType --> 
-  variadicFormalTypeHead, variadicFormalTypeMiddle.
-
-fragment(variadicFormalTypeHead).
-
-variadicFormalTypeHead --> ['ARGLIST'], ['OF'].
-variadicFormalTypeHead --> ['ARGLIST'], numOfArgsToPass, ['OF'].
-
-fragment(variadicFormalTypeMiddle).
-
-variadicFormalTypeMiddle --> simpleFormalType.
-variadicFormalTypeMiddle --> ['{'], nonVariadicFormalTypeList, ['}'].
-
-fragment(variadicFormalTypeTail).
-
-variadicFormalTypeTail --> ['|'], arglistTerminator.
-
-fragment(nonVariadicFormalTypeList).
-
-nonVariadicFormalTypeList --> nonVariadicFormalType.
-nonVariadicFormalTypeList --> 
-  nonVariadicFormalType, [';'], nonVariadicFormalTypeList.
+  ['ARGLIST'], (numOfArgsToPass ; []), ['OF'],
+  (lBrace, nonVariadicFormalTypeList, rBrace ; simpleFormalType),
+  (verticalBar, arglistTerminator ; []).
 
 
 %% (35) Non-Variadic Formal Type
 
 production(nonVariadicFormalType).
 
-nonVariadicFormalType --> simpleFormalType.
-nonVariadicFormalType --> nonVariadicFormalTypeHead, simpleFormalType.
-
-fragment(nonVariadicFormalTypeHead).
-
-nonVariadicFormalTypeHead --> ['CONST'].
-nonVariadicFormalTypeHead --> ['VAR'].
-nonVariadicFormalTypeHead --> ['NEW'].
+nonVariadicFormalType -->
+  (['CONST'] ; ['VAR'] ; ['NEW'] ; []), simpleFormalType.
 
 
 %% (36) Procedure Header
 
 production(procedureHeader).
 
-procedureHeader --> ['PROCEDURE'], procedureSignature.
-procedureHeader --> ['PROCEDURE'], procedureHeaderMiddle, procedureSignature.
-
-fragment(procedureHeaderMiddle).
-
-procedureHeaderMiddle --> ['['], entityToBindTo, [']'].
-procedureHeaderMiddle --> restrictedExport.
+procedureHeader -->
+  ['PROCEDURE'], (lBracket, entityToBindTo, rBracket ; restrictedExport ; []),
+  procedureSignature.
 
 
 %% (37) Procedure Signature
 
 production(procedureSignature).
 
-procedureSignature --> ident.
-procedureSignature --> ident, procedureSignatureMiddle.
-procedureSignature --> 
-  ident, procedureSignatureMiddle, procedureSignatureTail.
-
-fragment(procedureSignatureMiddle).
-
-procedureSignatureMiddle --> ['('], formalParamsList, [')'].
-
-fragment(procedureSignatureTail).
-
-procedureSignatureTail --> [':'], returnedType.
+procedureSignature -->
+  ident, (lParen, formalParamsList, rParen ; []), (colon, returnedType ; []). 
 
 fragment(formalParamsList).
 
 formalParamsList --> formalParams.
-formalParamsList --> formalParams, [';'], formalParamsList.
+formalParamsList --> formalParams, semicolon, formalParamsList.
 
 
 %% (38) Formal Parameters
 
 production(formalParams).
 
-formalParams --> formalParamsIdentList, simpleFormalType.
-formalParams --> formalParamsIdentList, variadicFormalParams.
+formalParams -->
+  identList, colon, (simpleFormalType ; variadicFormalParams).
+  
 formalParams --> attributedFormalParams.
-
-fragment(formalParamsIdentList).
-
-formalParamsIdentList --> identList, [':'].
 
 
 %% (39) Attributed Formal Parameters
@@ -1100,15 +916,8 @@ formalParamsIdentList --> identList, [':'].
 production(attributedFormalParams).
 
 attributedFormalParams --> 
-  attributedFormalParamsHead, formalParamsIdentList, simpleFormalType.
-attributedFormalParams --> 
-  attributedFormalParamsHead, formalParamsIdentList, simpleVariadicFormalType.
-
-fragment(attributedFormalParamsHead).
-
-attributedFormalParamsHead --> ['CONST'].
-attributedFormalParamsHead --> ['VAR'].
-attributedFormalParamsHead --> ['NEW'].
+  (['CONST'], ['VAR'], ['NEW']),
+  identList, colon, (simpleFormalType ; simpleVariadicFormalType).
 
 
 %% (40) Variadic Formal Parameters
@@ -1116,29 +925,16 @@ attributedFormalParamsHead --> ['NEW'].
 production(variadicFormalParams).
 
 variadicFormalParams --> 
-  variadicFormalParamsHead, variadicFormalParamsMiddle, variadicFormalParamsTail.
-variadicFormalParams --> 
-  variadicFormalParamsHead, variadicFormalParamsMiddle.
-
-fragment(variadicFormalParamsHead).
-
-variadicFormalParamsHead --> ['ARGLIST'], ['OF'].
-variadicFormalParamsHead --> ['ARGLIST'], numOfArgsToPass, ['OF'].
-
-fragment(variadicFormalParamsMiddle).
-
-variadicFormalParamsMiddle --> simpleFormalType.
-variadicFormalParamsMiddle --> ['{'], nonVariadicFormalParamsList, ['}'].
-
-fragment(variadicFormalParamsTail).
-
-variadicFormalParamsTail --> ['|'], arglistTerminator.
+  ['ARGLIST'], (numOfArgsToPass ; []), ['OF'],
+  (lBrace, nonVariadicFormalParamsList, rBrace ; simpleFormalType),
+  (verticalBar, arglistTerminator ; []).
 
 fragment(nonVariadicFormalParamsList).
 
-nonVariadicFormalParamsList --> nonVariadicFormalParams.
+nonVariadicFormalParamsList -->
+  nonVariadicFormalParams.
 nonVariadicFormalParamsList --> 
-  nonVariadicFormalParams, [';'], nonVariadicFormalParamsList.
+  nonVariadicFormalParams, semicolon, nonVariadicFormalParamsList.
 
 
 %% (41) Non-Variadic Formal Parameters
@@ -1146,15 +942,7 @@ nonVariadicFormalParamsList -->
 production(nonVariadicFormalParams).
 
 nonVariadicFormalParams --> 
-  nonVariadicFormalParamsHead, formalParamsIdentList, simpleFormalType.
-nonVariadicFormalParams --> 
-  formalParamsIdentList, simpleFormalType.
-
-fragment(nonVariadicFormalParamsHead).
-
-nonVariadicFormalParamsHead --> ['CONST'].
-nonVariadicFormalParamsHead --> ['VAR'].
-nonVariadicFormalParamsHead --> ['NEW'].
+  (['CONST'], ['VAR'], ['NEW'] ; []), identList, colon, simpleFormalType.
 
 
 %% (42) Qualified Identifier
@@ -1162,7 +950,7 @@ nonVariadicFormalParamsHead --> ['NEW'].
 production(qualident).
 
 qualident --> ident.
-qualident --> ident, ['.'], qualident.
+qualident --> ident, dot, qualident.
 
 
 %% (43) Statement
@@ -1177,8 +965,7 @@ statement --> loopStatement.
 statement --> whileStatement.
 statement --> repeatStatement.
 statement --> forStatement.
-statement --> ['RETURN'].
-statement --> ['RETURN'], expression.
+statement --> ['RETURN'], (expression ; []).
 statement --> ['EXIT'].
 
 
@@ -1186,16 +973,10 @@ statement --> ['EXIT'].
 
 production(memMgtOperation).
 
-memMgtOperation --> newStatementHead.
-memMgtOperation --> newStatementHead, ['OF'], initSize.
-memMgtOperation --> newStatementHead, [':='], initValue.
-
-memMgtOperation --> ['RETAIN'], designator.
-memMgtOperation --> ['RELEASE'], designator.
-
-fragment(newStatementHead).
-
-newStatementHead --> ['NEW'], designator.
+memMgtOperation -->
+  ['NEW'], designator, (['OF'], initSize ; assign, initValue).
+memMgtOperation -->
+  (['RETAIN'] ; ['RELEASE']), designator.
 
 %% (44.1) Initial Size
 
@@ -1214,45 +995,36 @@ initValue --> expression.
 
 production(updateOrProcCall).
 
-updateOrProcCall --> designator, [':='], expression.
-updateOrProcCall --> designator, incOrDecSuffix.
-updateOrProcCall --> designator, actualParameters.
-updateOrProcCall --> designator.
-updateOrProcCall --> ['COPY'], designator, [':='], expression.
+updateOrProcCall -->
+  designator, (assign, expression ; incOrDecSuffix ; actualParameters ; []).
+updateOrProcCall -->
+  ['COPY'], designator, assign, expression.
 
 %% (45.1) Increment Or Decrement Suffix
 
 fragment(incOrDecSuffix).
 
-incOrDecSuffix --> ['++'].
-incOrDecSuffix --> ['--'].
+incOrDecSuffix --> plusPlus.
+incOrDecSuffix --> minusMinus.
 
 
 %% (46) IF statement
 
 production(ifStatement).
 
-ifStatement --> ifBranch, ['END'].
-ifStatement --> ifBranch, elseBranch, ['END'].
-ifStatement --> ifBranch, elsifBranchList, ['END'].
-ifStatement --> ifBranch, elsifBranchList, elseBranch, ['END'].
-
-fragment(ifBranch).
-
-ifBranch --> ['IF'], boolExpression, ['THEN'], statementSequence.
-
-fragment(elsifBranch).
-
-elsifBranch --> ['ELSIF'], boolExpression, ['THEN'], statementSequence.
+ifStatement -->
+  ['IF'], boolExpression, ['THEN'], statementSequence,
+  (elsifBranchList ; []), (['ELSE'], statementSequence ; []), ['END'].
 
 fragment(elsifBranchList).
 
 elsifBranchList --> elsifBranch.
 elsifBranchList --> elsifBranch, elsifBranchList.
 
-fragment(elseBranch).
+fragment(elsifBranch).
 
-elseBranch --> ['ELSE'], statementSequence.
+elsifBranch --> ['ELSIF'], boolExpression, ['THEN'], statementSequence.
+
 
 %% (46.1) Boolean Expression
 
@@ -1265,37 +1037,33 @@ boolExpression --> expression.
 
 production(caseStatement).
 
-caseStatement --> caseStatementHead, caseList, ['END'].
-caseStatement --> caseStatementHead, caseList, elseBranch, ['END'].
-
-fragment(caseStatementHead).
-
-caseStatementHead --> ['CASE'], expression, ['OF'].
+caseStatement -->
+  ['CASE'], expression, ['OF'], caseList,
+  (['ELSE'], statementSequence ; []), ['END'].
 
 fragment(caseList).
 
-caseList --> ['|'], case.
-caseList --> ['|'], case, caseList.
+caseList --> verticalBar, case.
+caseList --> verticalBar, case, caseList.
 
 
 %% (48) Case
 
 production(case).
 
-case --> caseLabelList, [':'], statementSequence.
+case --> caseLabelList, colon, statementSequence.
 
 fragment(caseLabelList).
 
 caseLabelList --> caseLabels.
-caseLabelList --> caseLabels, [','], caseLabelList.
+caseLabelList --> caseLabels, comma, caseLabelList.
 
 
 %% (49) Case Labels
 
 production(caseLabels).
 
-caseLabels --> constExpression.
-caseLabels --> constExpression, ['..'], constExpression.
+caseLabels --> constExpression, (dotDot, constExpression ; []).
 
 
 %% (50) LOOP Statement
@@ -1325,21 +1093,10 @@ repeatStatement -->
 
 production(forStatement).
 
-forStatement --> forStatementHeader, ['DO'], statementSequence, ['END'].
-
-fragment(forStatementHeader).
-
-forStatementHeader --> forStatementHeaderHead, forStatementHeaderTail.
-
-fragment(forStatementHeaderHead).
-
-forStatementHeaderHead --> ['FOR'], controlVariable.
-forStatementHeaderHead --> ['FOR'], controlVariable, ascendOrDescend.
-
-fragment(forStatementHeaderTail).
-
-forStatementHeaderTail --> ['IN'], designator.
-forStatementHeaderTail --> ['IN'], range, ['OF'], ordinalType.
+forStatement -->
+  ['FOR'], controlVariable, (ascendOrDescend ; []),
+  ['IN'], (designator ; range, ['OF'], ordinalType), 
+  ['DO'], statementSequence, ['END'].
 
 %% (53.1) Control Variable
 
@@ -1364,8 +1121,7 @@ ordinalType --> typeIdent.
 
 production(designator).
 
-designator --> qualident.
-designator --> qualident, designatorTail.
+designator --> qualident, (designatorTail ; []).
 
 
 %% (55) Designator Tail
@@ -1375,35 +1131,29 @@ production(designatorTail).
 designatorTail --> designatorTailBody.
 designatorTail --> designatorTailBody, designatorTail.
 
-fragment(designatorTailBody).
+designatorTailBody --> bracketExprOrCaret, (qualidentTail ; []).
 
-designatorTailBody --> designatorTailBodyHead.
-designatorTailBody --> designatorTailBodyHead, designatorTailBodyTail.
+fragment(bracketExprOrCaret).
 
-fragment(designatorTailBodyHead).
+bracketExprOrCaret --> (lBracket, exprListOrSlice, rBracket ; caret).
 
-designatorTailBodyHead --> ['['], exprListOrSlice, [']'].
-designatorTailBodyHead --> ['^'].
+fragment(qualidentTail).
 
-fragment(designatorTailBodyTail).
-
-designatorTailBodyTail --> ['.'], ident.
-designatorTailBodyTail --> ['.'], ident, designatorTailBodyTail.
+qualidentTail --> dot, ident.
+qualidentTail --> dot, ident, qualidentTail.
 
 
 %% (56) Expression List Or Slice
 
 production(exprListOrSlice).
 
-exprListOrSlice --> expression.
-exprListOrSlice --> expression, expressionListTail.
-exprListOrSlice --> expression, ['..'].
-exprListOrSlice --> expression, ['..'], expression.
+exprListOrSlice --> expression, (expressionListTail ; []).
+exprListOrSlice --> expression, dotDot, (expression ; []).
 
 fragment(expressionListTail).
 
-expressionListTail --> [','], expression.
-expressionListTail --> [','], expression, expressionListTail.
+expressionListTail --> comma, expression.
+expressionListTail --> comma, expression, expressionListTail.
 
 
 %% (57) Expression
@@ -1417,12 +1167,12 @@ expression --> simpleExpression, operL1, simpleExpression.
 
 fragment(operL1).
 
-operL1 --> ['='].
-operL1 --> ['#'].
-operL1 --> ['<'].
-operL1 --> ['<='].
-operL1 --> ['>'].
-operL1 --> ['>='].
+operL1 --> equal.
+operL1 --> octothorpe.
+operL1 --> less.
+operL1 --> notGreater.
+operL1 --> greater.
+operL1 --> notLess.
 operL1 --> ['IN'].
 operL1 --> identityOp.
 operL1 --> arrayConcatOp.
@@ -1431,13 +1181,13 @@ operL1 --> arrayConcatOp.
 
 alias(identityOp).
 
-identityOp --> ['=='].
+identityOp --> equalEqual.
 
 %% (57.4) Array Concatenation Operator
 
 alias(arrayConcatOp).
 
-arrayConcatOp --> ['+>'].
+arrayConcatOp --> plusArrow.
 
 
 %% (58) Simple Expression
@@ -1454,15 +1204,15 @@ termList --> term, operL2, termList.
 
 fragment(sign).
 
-sign --> ['+'].
-sign --> ['-'].
+sign --> plus.
+sign --> minus.
 
 %% (58.1) Level-2 Operator
 
 fragment(operL2).
 
-operL2 --> ['+'].
-operL2 --> ['-'].
+operL2 --> plus.
+operL2 --> minus.
 operL2 --> ['OR'].
 
 
@@ -1477,8 +1227,8 @@ term --> factorOrNegation, operL3, term.
 
 fragment(operL3).
 
-operL3 --> ['*'].
-operL3 --> ['/'].
+operL3 --> asterisk.
+operL3 --> slash.
 operL3 --> ['DIV'].
 operL3 --> ['MOD'].
 operL3 --> ['AND'].
@@ -1495,23 +1245,21 @@ setDiffOp --> backslash.
 
 alias(dotProductOp).
 
-dotProductOp --> ['*.'].
+dotProductOp --> starDot.
 
 
 %% (60) Factor Or Negation
 
 production(factorOrNegation).
 
-factorOrNegation --> factorOrTypeConv.
-factorOrNegation --> ['NOT'], factorOrTypeConv.
+factorOrNegation --> (['NOT'] ; []), factorOrTypeConv.
 
 
 %% (61) Factor Or Type Conversion
 
 production(factorOrTypeConv).
 
-factorOrTypeConv --> factor.
-factorOrTypeConv --> factor, ['::'], typeIdent.
+factorOrTypeConv --> factor, (['::'], typeIdent ; []).
 
 
 %% (62) Factor
@@ -1521,17 +1269,15 @@ production(factor).
 factor --> numberLiteral.
 factor --> stringLiteral.
 factor --> structuredValue.
-factor --> ['('], expression, [')'].
-factor --> designator.
-factor --> designator, actualParameters.
+factor --> lParen, expression, rParen.
+factor --> designator, (actualParameters ; []).
 
 
 %% (63) Actual Parameters
 
 production(actualParameters).
 
-actualParameters --> ['('], [')'].
-actualParameters --> ['('], expressionList, [')'].
+actualParameters --> lParen, (expressionList ; []), rParen.
 
 
 %% (64) Expression List
@@ -1539,27 +1285,26 @@ actualParameters --> ['('], expressionList, [')'].
 production(expressionList).
 
 expressionList --> expression.
-expressionList --> expression, [','], expressionList.
+expressionList --> expression, comma, expressionList.
 
 
 %% (65) Structured Value
 
 production(structuredValue).
 
-structuredValue --> ['{'], valueComponentList, ['}'].
+structuredValue --> lBrace, valueComponentList, rBrace.
 
 fragment(valueComponentList).
 
 valueComponentList --> valueComponent.
-valueComponentList --> valueComponent, [','], valueComponentList.
+valueComponentList --> valueComponent, comma, valueComponentList.
 
 
 %% (66) Value Component
 
 production(valueComponent).
 
-valueComponent --> constExpression, ['BY'], constExpression.
-valueComponent --> constExpression, ['..'], constExpression.
+valueComponent --> constExpression, ((['BY'] ; dotDot ), constExpression ; []).
 valueComponent --> runtimeExpression.
 
 %% (66.1) Runtime Expression
@@ -1570,6 +1315,149 @@ runtimeExpression --> expression.
 
 
 %% T E R M I N A L S
+
+%% Special Symbols
+
+terminal(dot).
+
+dot --> ['.'].
+
+terminal(comma).
+
+comma --> [','].
+
+terminal(colon).
+
+colon --> [':'].
+
+terminal(semicolon).
+
+semicolon --> [';'].
+
+terminal(verticalBar).
+
+verticalBar --> ['|'].
+
+terminal(caret).
+
+caret --> ['^'].
+
+terminal(dotDot).
+
+dotDot --> ['..'].
+
+terminal(assign).
+
+assign --> [':='].
+
+terminal(plusPlus).
+
+plusPlus --> ['++'].
+
+terminal(minusMinus).
+
+minusMinus --> ['--'].
+
+terminal(plus).
+
+plus --> ['+'].
+
+terminal(plusArrow).
+
+plusArrow --> ['+>'].
+
+terminal(minus).
+
+minus --> ['-'].
+
+terminal(minusArrow).
+
+minusArrow --> ['->'].
+
+terminal(asterisk).
+
+asterisk --> ['*'].
+
+terminal(starDot).
+
+starDot --> ['*.'].
+
+terminal(solidus).
+
+slash --> ['/'].
+
+terminal(backslash).
+
+backslash --> ['\\'].
+
+terminal(colonColon).
+
+colonColon --> ['::'].
+
+terminal(equal).
+
+equal --> ['='].
+
+terminal(octothorpe).
+
+octothorpe --> ['#'].
+
+alias(notEqual).
+
+notEqual --> octothorpe.
+
+terminal(greater).
+
+greater --> ['>'].
+
+terminal(notLess).
+
+notLess --> ['>='].
+
+terminal(less).
+
+less --> ['<'].
+
+terminal(notGreater).
+
+notGreater --> ['<='].
+
+terminal(equalEqual).
+
+equalEqual --> ['=='].
+
+terminal(questionMark).
+
+questionMark --> ['?'].
+
+terminal(tilde).
+
+tilde --> ['~'].
+
+terminal(lParen).
+
+lParen --> ['('].
+
+terminal(rParen).
+
+rParen --> [')'].
+
+terminal(lBracket).
+
+lBracket --> ['['].
+
+terminal(rBracket).
+
+rBracket --> [']'].
+
+terminal(lBrace).
+
+lBrace --> ['{'].
+
+terminal(rBrace).
+
+rBrace --> ['}'].
+
 
 %% Identifier
 
@@ -1628,9 +1516,13 @@ fragment(digitZero).
 
 digitZero --> ['0'].
 
+fragment(digitOne).
+
+digitOne --> ['1'].
+
 fragment(digitOneToNine).
 
-digitOneToNine --> ['1'].
+digitOneToNine --> digitOne.
 digitOneToNine --> ['2'].
 digitOneToNine --> ['3'].
 digitOneToNine --> ['4'].
@@ -1654,8 +1546,8 @@ decimalNumberTail --> realNumberTail.
 
 fragment(realNumberTail).
 
-realNumberTail --> ['.'], digitSeq.
-realNumberTail --> ['.'], digitSeq, exponent.
+realNumberTail --> dot, digitSeq.
+realNumberTail --> dot, digitSeq, exponent.
 
 fragment(exponent).
 
@@ -1728,7 +1620,7 @@ base2DigitGroup --> base2Digit, base2DigitGroup.
 fragment(base2Digit).
 
 base2Digit --> digitZero.
-base2Digit --> ['1'].
+base2Digit --> digitOne.
 
 
 %% String Literal
@@ -1905,10 +1797,6 @@ chevronQuotedChar --> doubleQuote.
 chevronQuotedChar --> quotableCharacter.
 
 %% Character Synonyms
-
-fragment(backslash).
-
-backslash --> ['\\'].
 
 fragment(singleQuote).
 
