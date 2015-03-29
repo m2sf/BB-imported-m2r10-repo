@@ -45,7 +45,7 @@ PROCEDURE [CODONE] allDone ( list : ARGLIST OF <CoroutineType> ) : BOOLEAN;
 PROCEDURE [NEW] new
   ( NEW co : <CoroutineType>;
     stackSize : CARDINAL; p1 : T1; p2 : T2; p3 : T3 ... );
-(* Allocates and initialises a new coroutine.
+(* Allocates and initialises a new coroutine, puts co into state waiting.
    When zero is passed for stackSize, DefaultStackSize is used.
    The procedure is bound to the NEW statement.
    
@@ -55,8 +55,9 @@ PROCEDURE [NEW] new
 
 
 PROCEDURE [AWAKE] awake ( co : <CoroutineType> ) : ResultType;
-(* Passes control to coroutine co,
-   and returns result if co yields or returns a result.
+(* Passes control to coroutine co, puts co into state running.
+   Returns result if co yields or returns a result.
+   Raises runtime fault if co is in state done unless intercepted by a handler.
    The procedure is bound to predefined procedure AWAKE.
    
    Usage:
@@ -66,10 +67,9 @@ PROCEDURE [AWAKE] awake ( co : <CoroutineType> ) : ResultType;
 
 
 PROCEDURE [YIELD] yield ( result : ResultType );
-(* Yields control and passes result back to the caller,
-   and puts coroutine co into running state waiting.
-   ResultType must match the return type of the associated procedure.
-   No result must be given if the associated procedure is not a function.
+(* Yields control and passes result to the caller, puts co into state waiting.
+   ResultType must match the return type of co's associated procedure.
+   No result must be passed if co's associated procedure is not a function.
    This procedure is bound to the YIELD statement.
    
    Usage:
