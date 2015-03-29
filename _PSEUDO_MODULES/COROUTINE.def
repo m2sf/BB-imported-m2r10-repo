@@ -1,9 +1,6 @@
-(* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
-
 DEFINITION MODULE COROUTINE;
 
 CONST DefaultStackSize = 4096;
-
 
 (* A coroutine type is declared using the COROUTINE type constructor syntax:
 
@@ -83,5 +80,33 @@ PROCEDURE [RELEASE] release (VAR co : <CoroutineType> );
    
    Usage: RELEASE co; *)
 
+
+(* User handlers may intercept attempts to activate dead coroutines *)
+
+PROCEDURE InstallAwakeDeadCoroHandler
+  ( co : <CoroutineType>; handler : <HandlerType> );
+(* Installs a user defined fault event handler for coroutine co. By defuault,
+   an attempt to call AWAKE on a coroutine that has already terminated will
+   raise a runtime fault. If a handler is installed, no runtime fault will be
+   raised and the handler's return value is returned by AWAKE. The signature
+   of the handler must match the signature of the procedure associated with
+   the coroutine. A handler may be removed by passing NIL for handler.
+   
+   Usage:
+   
+   Signature of Coroutine Associated Procedure
+   
+   PROCEDURE [COROUTINE] Foo ( n : CARDINAL ) : INTEGER;
+   
+   Matching User Handler
+   
+   PROCEDURE IgnoreAwakeDeadCoro ( n : CARDINAL ) : INTEGER;
+   BEGIN
+     RETURN -1;
+   END IgnoreAwakeDeadCoro;
+   
+   Installing the Handler
+   
+   InstallAwakeDeadCoroHandler(co, IgnoreAwakeDeadCoro); *) 
 
 END COROUTINE.
