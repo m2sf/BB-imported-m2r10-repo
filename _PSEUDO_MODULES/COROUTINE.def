@@ -1,4 +1,7 @@
+(* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
 DEFINITION MODULE COROUTINE;
+
 
 CONST DefaultStackSize = 4096;
 
