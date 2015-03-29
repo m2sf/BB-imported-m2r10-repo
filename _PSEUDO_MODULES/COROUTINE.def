@@ -25,7 +25,9 @@ TYPE State = ( waiting, running, done );
 PROCEDURE currentState ( co : <CoroutineType> ) : State;
 (* Returns the current running state of coroutine co.
 
-   Usage: state := currentState(co); *)
+   Usage:
+   
+   state := currentState(co); *)
 
 
 PROCEDURE [CODONE] allDone ( list : ARGLIST OF <CoroutineType> ) : BOOLEAN;
@@ -34,6 +36,7 @@ PROCEDURE [CODONE] allDone ( list : ARGLIST OF <CoroutineType> ) : BOOLEAN;
    The procedure is bound to predefined function CODONE.
    
    Usage:
+   
    REPEAT
      AWAKE(co1); AWAKE(co2); AWAKE(co3)
    UNTIL CODONE(co1, co2, co3); *)
@@ -46,15 +49,20 @@ PROCEDURE [NEW] new
    When zero is passed for stackSize, DefaultStackSize is used.
    The procedure is bound to the NEW statement.
    
-   Usage: NEW co := { 0, p1, p2, p3, ... }; *)
+   Usage:
+   
+   NEW co := { 0, p1, p2, p3, ... }; *)
 
 
 PROCEDURE [AWAKE] awake ( co : <CoroutineType> ) : ResultType;
 (* Passes control to coroutine co,
-   returns result when co yields or returns.
-   The procedure is bound to predefined function AWAKE.
+   and returns result if co yields or returns a result.
+   The procedure is bound to predefined procedure AWAKE.
    
-   Usage: result := AWAKE(co); *)
+   Usage:
+   
+   AWAKE(co);
+   result := AWAKE(co); *)
 
 
 PROCEDURE [YIELD] yield ( result : ResultType );
@@ -65,6 +73,7 @@ PROCEDURE [YIELD] yield ( result : ResultType );
    This procedure is bound to the YIELD statement.
    
    Usage:
+   
    YIELD;
    YIELD result; *)
 
@@ -72,6 +81,7 @@ PROCEDURE [YIELD] yield ( result : ResultType );
 (* To terminate a coroutine, the RETURN statement is used instead of YIELD:
 
    Usage:
+   
    RETURN;
    RETURN result; *)
 
@@ -81,7 +91,9 @@ PROCEDURE [RELEASE] release (VAR co : <CoroutineType> );
    Raises a runtime fault if CurrentState(co) is not done.
    This procedure is bound to the RELEASE statement.
    
-   Usage: RELEASE co; *)
+   Usage:
+   
+   RELEASE co; *)
 
 
 (* User handlers may intercept attempts to activate dead coroutines *)
@@ -111,5 +123,6 @@ PROCEDURE InstallAwakeDeadCoroHandler
    Installing the Handler
    
    InstallAwakeDeadCoroHandler(co, IgnoreAwakeDeadCoro); *) 
+
 
 END COROUTINE.
