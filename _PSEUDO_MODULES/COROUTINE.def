@@ -1,0 +1,87 @@
+(* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE COROUTINE;
+
+CONST DefaultStackSize = 4096;
+
+
+(* A coroutine type is declared using the COROUTINE type constructor syntax:
+
+TYPE Coro = COROUTINE ( AssociatedProcedureIdentifier ); *)
+
+
+(* Associated procedures must be marked for association with a coroutine type:
+
+PROCEDURE [COROUTINE] assocProc ( p1 : T1; p2 : T2; p3 : T3; ... ) : Result; *)
+
+
+(* Coroutines have one of three states *)
+
+TYPE State = ( waiting, running, done );
+
+
+(* Functions to obtain the running states of coroutines *)
+
+PROCEDURE currentState ( co : <CoroutineType> ) : State;
+(* Returns the current running state of coroutine co.
+
+   Usage: state := currentState(co); *)
+
+
+PROCEDURE [CODONE] allDone ( list : ARGLIST OF <CoroutineType> ) : BOOLEAN;
+(* Returns TRUE if all coroutines in the argument list have terminated,
+   returns FALSE if any coroutine in the list has not yet terminated.
+   The procedure is bound to predefined function CODONE.
+   
+   Usage:
+   REPEAT
+     AWAKE(co1); AWAKE(co2); AWAKE(co3)
+   UNTIL CODONE(co1, co2, co3); *)
+
+
+PROCEDURE [NEW] new
+  ( NEW co : <CoroutineType>;
+    stackSize : CARDINAL; p1 : T1; p2 : T2; p3 : T3 ... );
+(* Allocates and initialises a new coroutine.
+   When zero is passed for stackSize, DefaultStackSize is used.
+   The procedure is bound to the NEW statement.
+   
+   Usage: NEW co := { 0, p1, p2, p3, ... }; *)
+
+
+PROCEDURE [AWAKE] awake ( co : <CoroutineType> ) : ResultType;
+(* Passes control to coroutine co,
+   returns result when co yields or returns.
+   The procedure is bound to predefined function AWAKE.
+   
+   Usage: result := AWAKE(co); *)
+
+
+PROCEDURE [YIELD] yield ( result : ResultType );
+(* Yields control and passes result back to the caller,
+   and puts coroutine co into running state waiting.
+   ResultType must match the return type of the associated procedure.
+   No result must be given if the associated procedure is not a function.
+   This procedure is bound to the YIELD statement.
+   
+   Usage:
+   YIELD;
+   YIELD result; *)
+
+
+(* To terminate a coroutine, the RETURN statement is used instead of YIELD:
+
+   Usage:
+   RETURN;
+   RETURN result; *)
+
+
+PROCEDURE [RELEASE] release (VAR co : <CoroutineType> );
+(* Deallocates coroutine co and passes NIL back in co.
+   Raises a runtime fault if CurrentState(co) is not done.
+   This procedure is bound to the RELEASE statement.
+   
+   Usage: RELEASE co; *)
+
+
+END COROUTINE.
