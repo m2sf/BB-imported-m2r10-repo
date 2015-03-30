@@ -10,10 +10,10 @@ CONST SuppportsAutomaticStackResize = <implementation defined boolean value>;
 
 (* A coroutine type is declared using the COROUTINE type constructor syntax:
 
-TYPE Coro = COROUTINE ( AssociatedProcedureIdentifier ); *)
+TYPE Coro = COROUTINE ( AssocProcTypeIdent ); *)
 
 
-(* Associated procedures must be marked for association with a coroutine type:
+(* Procedures to be associated with a coroutine must be explicitly marked:
 
 PROCEDURE [COROUTINE] assocProc ( p1 : T1; p2 : T2; p3 : T3; ... ) : Result; *)
 
@@ -39,14 +39,14 @@ PROCEDURE [CODONE] allDone ( list : ARGLIST OF <CoroutineType> ) : BOOLEAN;
 
 PROCEDURE [NEW] new
   ( NEW co : <CoroutineType>;
-    stackSize : CARDINAL; p1 : T1; p2 : T2; p3 : T3 ... );
+    stackSize : CARDINAL; p : AssocProcType; p1 : T1; p2 : T2; p3 : T3 ... );
 (* Allocates and initialises a new coroutine, puts co into state waiting.
    When zero is passed for stackSize, DefaultStackSize is used.
    The procedure is bound to the NEW statement.
    
    Usage:
    
-   NEW co := { 0, p1, p2, p3, ... }; *)
+   NEW co := { 0, assocProc, p1, p2, p3, ... }; *)
 
 
 PROCEDURE [AWAKE] awake ( co : <CoroutineType> ) : ResultType;
