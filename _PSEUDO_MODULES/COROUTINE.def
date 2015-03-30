@@ -1,9 +1,12 @@
-(* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(*!m2r10*) (* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE COROUTINE;
 
 
 CONST DefaultStackSize = 4096;
+
+CONST SuppportsAutomaticStackResize = <implementation defined boolean value>;
+
 
 (* A coroutine type is declared using the COROUTINE type constructor syntax:
 
@@ -20,15 +23,7 @@ PROCEDURE [COROUTINE] assocProc ( p1 : T1; p2 : T2; p3 : T3; ... ) : Result; *)
 TYPE State = ( waiting, running, done );
 
 
-(* Functions to obtain the running states of coroutines *)
-
-PROCEDURE currentState ( co : <CoroutineType> ) : State;
-(* Returns the current running state of coroutine co.
-
-   Usage:
-   
-   state := currentState(co); *)
-
+(* General Control Facilities *)
 
 PROCEDURE [CODONE] allDone ( list : ARGLIST OF <CoroutineType> ) : BOOLEAN;
 (* Returns TRUE if all coroutines in the argument list have terminated,
@@ -94,6 +89,25 @@ PROCEDURE [RELEASE] release (VAR co : <CoroutineType> );
    Usage:
    
    RELEASE co; *)
+
+
+(* Fine-Grained Control Facilities *)
+
+(* Obtain the state of a coroutine *)
+
+PROCEDURE currentState ( co : <CoroutineType> ) : State;
+(* Returns the current state of coroutine co. *)
+
+
+(* Coroutines may be scheduled for premature termination *)
+
+PROCEDURE scheduleTermination ( co : <CoroutineType> );
+(* Puts co into state done immediately if it is waiting, or after its next
+   yield if it is running. Invocation is ignored if co is already done. *)
+
+
+PROCEDURE terminationScheduled ( co : <CoroutineType> ) : BOOLEAN;
+(* Returns TRUE if co has been scheduled for termination, otherwise FALSE. *)
 
 
 (* User handlers may intercept attempts to activate dead coroutines *)
