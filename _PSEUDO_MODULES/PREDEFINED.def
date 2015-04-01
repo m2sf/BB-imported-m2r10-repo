@@ -136,7 +136,7 @@ PROCEDURE WRITEF
    => typeOf(v).WriteF(f, fmt, v1, v2, ...). *)
 
 
-(* Predefined Function Procedures (14) *)
+(* Predefined Function Procedures (16) *)
 
 PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
 (* Returns sign reversed value of x if sign of x is negative. *)
@@ -182,6 +182,12 @@ PROCEDURE RETRIEVE ( c : <CollectionType>; s : <AccessorType> ) : <ReturnType>;
 
 PROCEDURE RETRIEVE ( d : <Dictionary>; k : <KeyType>; n : CARDINAL ) : <ReturnType>;
 (* Returns the n-th value stored for key k in dictionary d. *)
+
+PROCEDURE AWAKE ( co : <Coroutine> ) : <ReturnType>;
+(* Passes control to coroutine co and returns the value co yields back. *)
+
+PROCEDURE CODONE ( list : ARGLIST OF <Coroutine> ) : BOOLEAN;
+(* Returns TRUE if all coroutines in list have terminated, otherwise FALSE. *)
 
 PROCEDURE MIN ( arglist : ARGLIST >0 OF <T> ) : <T>;
 (* Returns smallest value from arglist. T must be scalar or ordinal. *)
