@@ -1,0 +1,45 @@
+(*!m2pim*) (* Copyright (c) 2015 B.Kowarsch. All rights reserved. *)
+
+DEFINITION MODULE M2Lexer;
+
+(* Lexer for Modula-2 R10 Bootstrap Compiler *)
+
+
+(* Lexer Handle *)
+
+TYPE Lexer (* = OPAQUE *);
+
+
+(* Return Status *)
+
+TYPE Status =
+  ( success,
+    unableToAllocate,
+    illegalSymbolFound,
+    unescapedBackslash,
+    illegalCharInCharOrString,
+    endOfLineInCharOrString,
+    lexemeCapacityExceded,
+    commentNestingLimitExceded,
+    prematureEndOfFile );
+
+
+(* Operations *)
+
+PROCEDURE new ( VAR lexer : Lexer );
+ (* Create mew lexer instance. Passes NIL back if unsuccessful. *)
+
+PROCEDURE nextToken ( lexer : Lexer ) : Token;
+ (* Returns next token in input stream, does not consume the token. *)
+
+PROCEDURE consumeToken ( lexer : Lexer; VAR lexeme : ARRAY OF CHAR );
+ (* Consumes the next token and passes its lexeme back. *)
+
+PROCEDURE getStatus ( lexer : Lexer; VAR s : Status; VAR line, col : CARDINAL );
+ (* Passes status, line and column of current token back. *)
+
+PROCEDURE release ( VAR lexer : Lexer );
+ (* Release lexer instance. Passes NIL back if successful. *)
+
+
+END M2Lexer.
