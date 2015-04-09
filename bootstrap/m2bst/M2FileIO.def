@@ -1,0 +1,75 @@
+(*!m2pim*) (* Copyright (c) 2015 B.Kowarsch. All rights reserved. *)
+
+DEFINITION MODULE M2FileIO;
+
+(* File IO for Modula-2 source files and compilation product files. *)
+
+FROM M2Filenames IMPORT Filename;
+
+TYPE M2File (* = OPAQUE *);
+
+TYPE Status =
+  ( success,
+    invalidFileType,
+    allocationFailed );
+
+
+PROCEDURE openInfile
+  ( VAR file : M2File; name : Filename; status : Status );
+(* Passes back a newly allocated instance of M2File, associated with source
+   file name.  The file is opened for reading and the status of the operation
+   is passed back in status.  Passes NIL in file if unsuccessful. *)
+
+
+PROCEDURE openOutfile
+  ( VAR file : M2File; name : Filename; status : Status );
+(* Passes back a newly allocated instance of M2File, associated with source
+   file name.  The file is opened for writing and the status of the operation
+   is passed back in status.  Passes NIL in file if unsuccessful. *)
+
+
+PROCEDURE read ( file : M2File; VAR ch : CHAR );
+(* Reads the current 7-bit ASCII character from file, passes it back in ch and
+   advances the file's internal reading position accordingly.  If a character
+   with a code point >= 127 is found, ASCII.DEL is passed back instead.  If an
+   end-of-line marker is found, the first character following the end-of-line
+   marker is passed back, and the internal reading position and line and
+   column counters are updated accordingly.  If the end-of-file has been
+   reached prior to the call, ASCII.NUL is passed back. *)
+
+
+PROCEDURE lookahead ( file : M2File; VAR ch : CHAR );
+(* Reads the current lookahead character from file and passes it back in ch
+   without advancing the file's internal reading position and without up-
+   dating the line and column counters. *)
+
+
+PROCEDURE lookahead2 ( file : M2File; VAR ch : CHAR );
+(* Reads the second lookahead character from file and passes it back in ch
+   without advancing the file's internal reading position and without up-
+   dating the line and column counters. *)
+
+
+PROCEDURE write ( file : M2File; ch : CHAR );
+(* Writes 7-bit ASCII character ch to file. *)
+
+PROCEDURE writeStr ( file : M2File; s : ARRAY OF CHAR );
+(* Writes character string s to file. *)
+
+PROCEDURE sync ( file : M2File );
+(* Writes the internal buffer of file to the file. *)
+
+PROCEDURE getStatus ( file : M2File; status : Status );
+(* Passes the status of file's last operation back in status. *)
+
+PROCEDURE getPos ( file : M2File; line, col : CARDINAL );
+(* Passes the current line and column counter of file back in line and col. *)
+
+PROCEDURE eof ( file : M2File ) : BOOLEAN;
+(* Returns TRUE if the end of file has been reached, otherwise FALSE. *)
+
+PROCEDURE close ( file : M2File; status : Status );
+(* Closes file and passes the status of the operation back in status. *)
+
+
+END M2File.
