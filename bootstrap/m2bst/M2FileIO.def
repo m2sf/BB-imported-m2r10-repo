@@ -15,14 +15,14 @@ TYPE Status =
 
 
 PROCEDURE openInfile
-  ( VAR file : M2File; name : Filename; status : Status );
+  ( VAR file : M2File; name : Filename; VAR status : Status );
 (* Passes back a newly allocated instance of M2File, associated with source
    file name.  The file is opened for reading and the status of the operation
    is passed back in status.  Passes NIL in file if unsuccessful. *)
 
 
 PROCEDURE openOutfile
-  ( VAR file : M2File; name : Filename; status : Status );
+  ( VAR file : M2File; name : Filename; VAR status : Status );
 (* Passes back a newly allocated instance of M2File, associated with source
    file name.  The file is opened for writing and the status of the operation
    is passed back in status.  Passes NIL in file if unsuccessful. *)
@@ -59,7 +59,7 @@ PROCEDURE writeStr ( file : M2File; s : ARRAY OF CHAR );
 PROCEDURE sync ( file : M2File );
 (* Writes the internal buffer of file to the file. *)
 
-PROCEDURE getStatus ( file : M2File; status : Status );
+PROCEDURE getStatus ( file : M2File; VAR status : Status );
 (* Passes the status of file's last operation back in status. *)
 
 PROCEDURE getPos ( file : M2File; VAR line, col : CARDINAL );
@@ -68,7 +68,7 @@ PROCEDURE getPos ( file : M2File; VAR line, col : CARDINAL );
 PROCEDURE eof ( file : M2File ) : BOOLEAN;
 (* Returns TRUE if the end of file has been reached, otherwise FALSE. *)
 
-PROCEDURE close ( file : M2File; status : Status );
+PROCEDURE close ( file : M2File; VAR status : Status );
 (* Closes file and passes the status of the operation back in status. *)
 
 
