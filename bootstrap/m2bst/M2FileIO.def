@@ -62,7 +62,7 @@ PROCEDURE sync ( file : M2File );
 PROCEDURE getStatus ( file : M2File; status : Status );
 (* Passes the status of file's last operation back in status. *)
 
-PROCEDURE getPos ( file : M2File; line, col : CARDINAL );
+PROCEDURE getPos ( file : M2File; VAR line, col : CARDINAL );
 (* Passes the current line and column counter of file back in line and col. *)
 
 PROCEDURE eof ( file : M2File ) : BOOLEAN;
