@@ -9,6 +9,7 @@ Latest news:
 
 * 2015-04-05: Work on a bootstrap compiler has begun.
 * 2015-03-31: The language design has been finalised.
+* 2015-02-15: Fund raising efforts have begun.
 
 Quick links:
 
