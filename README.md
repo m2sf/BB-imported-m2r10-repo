@@ -5,6 +5,11 @@
 Welcome to the design and development repository of Modula-2 Revision 2010,
 its language report, reference compiler and standard library.
 
+Latest news:
+
+2005-04-05: Work on a bootstrap compiler has begun.
+2005-03-31: The language design has been finalised.
+
 Quick links:
 
 ** o  Finalised Grammar (up-to-date) **
@@ -41,10 +46,10 @@ Our [donation page](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_b
 
 ### About Classic Modula-2 ###
 
-Modula-2 is a modular, imperative programming language designed in 1978 at the
-Swiss Federal Institute of Technology in Zurich (ETHZ)  by Prof. Niklaus Wirth
-as a successor  to his earlier language  Pascal.  More information  about  the
-classic Modula-2 language and its history can be found at:
+Modula-2 is a strongly typed, modular, imperative programming language derived from
+Xerox' Mesa language. It was published in 1978 at the Swiss Federal Institute of Technology
+in Zurich (ETHZ) by Prof. Niklaus Wirth as a successor to his earlier language Pascal. 
+More information about the classic Modula-2 language and its history can be found at:
 
 http://en.wikipedia.org/wiki/Modula-2
 
@@ -54,8 +59,8 @@ http://en.wikipedia.org/wiki/Modula-2
 Modula-2 R10 is a modern revision of N.Wirth's Modula-2 language undertaken by
 B.Kowarsch  and R.Sutcliffe  in 2009  and 2010.  A pragma system  was added in
 in 2011 and 2012.  The Design was  refined and polished in 2013.  Extensive work
-was done on blueprints and templates for the standard library in 2014. The language
-report is  currently under editorial review  and will be published in book form in 2015.
+was done on blueprints and templates for the standard library in 2014 and 2105.
+The language report is under editorial review and will be published in a book in 2016.
 
 The primary design goals of the revision were type safety,  utmost readability
 and consistency,  and  suitability  as a  core language   for domain  specific
@@ -71,12 +76,12 @@ and thereby eliminate one of the major causes of feature growth.
 
 A reference compiler  for Modula-2 R10 has been  under development  since 2010
 but work had been suspended until the design is finalised. Initially, the compiler will
-generate C99 source code,  and eventually it will generate LLVM IR. Some updates
-were done in 2013 and 2014.  Development will fully resume after finalising the
-manuscripts for the book. 
+generate C99 source code,  and eventually it will generate LLVM IR.
+
+Work on a bootstrap compiler has begun in April 2015.
 
 The developer of GNU Modula-2 has pledged to add support for Modula-2 R10 in
-GM2 when the specification is final. The GM2 compiler is a front-end for GCC.
+GM2. The GM2 compiler is a Modula-2 front-end for GCC.
 
 
 ### Development Schedule ###
@@ -84,12 +89,10 @@ GM2 when the specification is final. The GM2 compiler is a front-end for GCC.
 This project is a  *private*  and  *self-funded*  effort by the authors who are
 doing this work in their own *spare* *time*.  Further, the authors believe that
 quality design  and proper specification are prerequisites for a quality
-implementation and cannot be rushed.  The finalisation  of the  manuscripts
-for the book and library - currently estimated for Jan/Feb of 2015 - will allow
-shifting of focus to the compiler implementation,  but at present there is
-*no fixed schedule* for the completion of the compiler.
+implementation and cannot be rushed.  Work on a bootstrap compiler
+is now under way but there is *no fixed schedule* for the completion of the compiler.
 
 Please consider [making a donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QA4WRY9TW7GT4) to speed up the development work.
 
 
-[Status: Dec 31, 2014]
+[Status: April 10, 2015]
