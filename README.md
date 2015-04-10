@@ -7,8 +7,8 @@ its language report, reference compiler and standard library.
 
 Latest news:
 
-2005-04-05: Work on a bootstrap compiler has begun.
-2005-03-31: The language design has been finalised.
+* 2005-04-05: Work on a bootstrap compiler has begun.
+* 2005-03-31: The language design has been finalised.
 
 Quick links:
 
