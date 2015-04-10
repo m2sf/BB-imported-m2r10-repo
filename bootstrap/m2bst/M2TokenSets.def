@@ -1,0 +1,45 @@
+(*!m2pim*) (* Copyright (c) 2015 B.Kowarsch. All rights reserved. *)
+
+DEFINITION MODULE M2TokenSets;
+
+(* Token Set ADT for Modula-2 R10 Bootstrap Compiler *)
+
+FROM M2Tokens IMPORT Token;
+
+TYPE TokenSet (* = OPAQUE *);
+
+PROCEDURE new
+  ( VAR tset : TokenSet; segment3, segment2, segment1, segment0 : LONGCARD );
+(* Passes a newly allocated and initialised TokenSet instance back in tset.
+   The set is initalised from parameters segment3 to segment0 as follows:
+   
+    bit 127                            bit 0
+     v                                    v
+    [<----------------tset---------------->]
+    [segment3][segment2][segment1][segment0]
+     ^         ^         ^         ^                
+    bit 32    bit 32    bit 32    bit 32
+    
+    The bits in tset correspond to the token values of type Token.
+    If the bitwidth of type LONGCARD is larger than 32, any higher bits are
+    ignored.  The procedure passes back NIL if allocation is unsuccessful. *)
+
+PROCEDURE insert ( tset : TokenSet; token : Token );
+(* Inserts token into token set tset. *)
+
+PROCEDURE remove ( tset : TokenSet; token : Token );
+(* Removes token from token set tset. *)
+
+PROCEDURE isEmpty ( tset : TokenSet ) : BOOLEAN;
+(* Returns TRUE if tset is empty, otherwise FALSE. *)
+
+PROCEDURE isElem ( tset : TokenSet; token : Token ) : BOOLEAN;
+(* Returns TRUE if token is an element of tset, otherwise FALSE. *)
+
+PROCEDURE count ( tset : TokenSet ) : CARDINAL;
+(* Returns the number of tokens in token set tset. *)
+
+PROCEDURE release ( VAR tset : TokenSet );
+(* Releases tset and passes back NIL if successful. *)
+
+END M2TokenSets.
