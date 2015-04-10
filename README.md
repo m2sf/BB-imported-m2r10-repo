@@ -60,7 +60,7 @@ http://en.wikipedia.org/wiki/Modula-2
 Modula-2 R10 is a modern revision of N.Wirth's Modula-2 language undertaken by
 B.Kowarsch  and R.Sutcliffe  in 2009  and 2010.  A pragma system  was added in
 in 2011 and 2012.  The Design was  refined and polished in 2013.  Extensive work
-was done on blueprints and templates for the standard library in 2014 and 2105.
+was done on blueprints and templates for the standard library in 2014 and 2015.
 The language report is under editorial review and will be published in a book in 2016.
 
 The primary design goals of the revision were type safety,  utmost readability
