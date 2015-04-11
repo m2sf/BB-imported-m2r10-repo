@@ -8,8 +8,7 @@ FROM M2Tokens IMPORT Token;
 FROM M2TokenSets IMPORT TokenSet;
 FROM M2Productions IMPORT Production;
 
-TYPE ProductionDB = ARRAY [MIN(Production)..MAX(Production)] OF TokenSet;
-
+(* Operations *)
 
 PROCEDURE FIRST ( p : Production ) : TokenSet;
 (* Returns a reference to the FIRST set of production p. *)
@@ -18,9 +17,9 @@ PROCEDURE FOLLOW ( p : Production ) : TokenSet;
 (* Returns a reference to the FOLLOW set of production p. *)
 
 PROCEDURE inFIRST ( p : Production; token : Token ) : BOOLEAN;
-(* Returns TRUE of token is an element of FIRST(p), otherwise FALSE. *)
+(* Returns TRUE if token is an element of FIRST(p), otherwise FALSE. *)
 
 PROCEDURE inFOLLOW ( p : Production; token : Token ) : BOOLEAN;
-(* Returns TRUE of token is an element of FOLLOW(p), otherwise FALSE. *)
+(* Returns TRUE if token is an element of FOLLOW(p), otherwise FALSE. *)
 
 END M2FirstFollowSets.
