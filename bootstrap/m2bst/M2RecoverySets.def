@@ -8,11 +8,12 @@ FROM M2Tokens IMPORT Token;
 FROM M2TokenSets IMPORT TokenSet;
 FROM M2Productions IMPORT Production;
 
+(* Operations *)
 
 PROCEDURE RecoverySet ( p : Production ) : TokenSet;
 (* Returns a reference to the recovery set of production p. *)
 
 PROCEDURE inRecoverySet ( p : Production; token : Token ) : BOOLEAN;
-(* Returns TRUE of token is an element of RecoverySet(p), otherwise FALSE. *)
+(* Returns TRUE if token is an element of RecoverySet(p), otherwise FALSE. *)
 
 END M2RecoverySets.
