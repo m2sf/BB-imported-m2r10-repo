@@ -1,0 +1,751 @@
+FOLLOW Sets for Modula-2 R10 Grammar
+
+compilationUnit =
+  { eof };
+  
+programModule =
+  { eof };
+  
+definitionModule =
+  { eof };
+  
+blueprint =
+  { eof };
+  
+identList =
+  { semicolon,
+    verticalBar,
+    colon,
+    rParen };
+
+moduleTypeSpec =
+  { semicolon };
+  
+propertySpec =
+  { semicolon };
+  
+literalSpec =
+  { semicolon };
+  
+protoLiteral =
+  { verticalBar,
+    semicolon };
+  
+requirement =
+  { semicolon };
+  
+constRequirement =
+  { semicolon };
+  
+propertyToBindTo =
+  { rBracket };
+  
+simpleConstRequirement =
+  { semicolon };
+
+procedureRequirement =
+  { semicolon };
+  
+entityToBindTo =
+  { rBracket };
+  
+libGenDirective =
+  { semicolon };
+  
+importDirective =
+  { semicolon };
+  
+identifiersToImport =
+  { semicolon };
+  
+block =
+  { Identifier };
+  
+statementSequence =
+  { semicolon,
+    verticalBar,
+    ELSIF
+    ELSE,
+    UNTIL,
+    END };
+  
+definition =
+  { CONST,
+    TYPE,
+    VAR,
+    PROCEDURE,
+    END };
+  
+constDefinition =
+  { semicolon };
+  
+variableDeclaration =
+  { semicolon,
+    INDETERMINATE,
+    END };
+  
+declaration =
+  { CONST,
+    TYPE,
+    VAR,
+    PROCEDURE,
+    BEGIN,
+    END };
+  
+type =
+  { semicolon };
+
+range =
+  { OF };
+  
+enumType =
+  { semicolon };
+  
+setType =
+  { semicolon };
+  
+arrayType =
+  { semicolon };
+  
+recordType =
+  { semicolon };
+  
+fieldList =
+  { semicolon,
+    INDETERMINATE,
+    END };
+  
+indeterminateField =
+  { END };
+  
+pointerType =
+  { semicolon };
+  
+coroutineType =
+  { semicolon };
+  
+procedureType =
+  { semicolon };
+  
+formalType =
+  { comma,
+    rParen };
+  
+simpleFormalType =
+  { comma,
+    rParen,
+    verticalBar,
+    semicolon,
+    rBrace };
+  
+attributedFormalType =
+  { comma,
+    rParen };
+  
+simpleVariadicFormalType =
+  { comma,
+    rParen,
+    semicolon };
+  
+variadicFormalType =
+  { comma,
+    rParen };
+  
+nonVariadicFormalType =
+  { semicolon,
+    rBrace };
+  
+procedureHeader =
+  { semicolon };
+  
+procedureSignature =
+  { semicolon };
+  
+formalParams =
+  { semicolon,
+    rParen };
+  
+attributedFormalParams =
+  { semicolon,
+    rParen };
+  
+variadicFormalParams =
+  { semicolon,
+    rParen };
+  
+nonVariadicFormalParams =
+  { semicolon,
+    rBrace };
+  
+qualident =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    lBracket,
+    rBracket,
+    rBrace,
+    verticalBar,
+    deref,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+statement =
+  { semicolon,
+    verticalBar,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    END };
+  
+memMgtOperation =
+  { semicolon,
+    verticalBar,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    END };
+  
+updateOrProcCall =
+  { semicolon,
+    verticalBar,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    END };
+  
+ifStatement =
+  { semicolon,
+    verticalBar,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    END };
+  
+caseStatement =
+  { semicolon,
+    verticalBar,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    END };
+  
+case =
+  { verticalBar,
+    ELSE,
+    END };
+  
+caseLabels =
+  { comma,
+    colon };
+  
+loopStatement =
+  { semicolon,
+    verticalBar,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    END };
+  
+whileStatement =
+  { semicolon,
+    verticalBar,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    END };
+  
+repeatStatement =
+  { semicolon,
+    verticalBar,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    END };
+  
+forStatement =
+  { semicolon,
+    verticalBar,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    END };
+  
+designator =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    rBracket,
+    rBrace,
+    verticalBar,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+designatorTail =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    rBracket,
+    rBrace,
+    verticalBar,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+exprListOrSlice =
+  { rBracket };
+  
+expression =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    lBracket,
+    rBracket,
+    rBrace,
+    verticalBar,
+    deref,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+simpleExpression =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    lBracket,
+    rBracket,
+    rBrace,
+    verticalBar,
+    deref,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+term =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    lBracket,
+    rBracket,
+    rBrace,
+    verticalBar,
+    deref,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+factorOrNegation =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    lBracket,
+    rBracket,
+    rBrace,
+    verticalBar,
+    deref,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+factorOrTypeConv =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    lBracket,
+    rBracket,
+    rBrace,
+    verticalBar,
+    deref,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+factor =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    lBracket,
+    rBracket,
+    rBrace,
+    verticalBar,
+    deref,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+actualParameters =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    lBracket,
+    rBracket,
+    rBrace,
+    verticalBar,
+    deref,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+expressionList =
+  { rParen };
+  
+structuredValue =
+  { semicolon,
+    comma,
+    lParen,
+    rParen,
+    lBracket,
+    rBracket,
+    rBrace,
+    verticalBar,
+    deref,
+    assign,
+    plusPlus,
+    minusMinus,
+    colon,
+    dotDot,
+    equal,
+    notEqual,
+    less,
+    lessOrEq,
+    greater,
+    greaterOrEq,
+    identity,
+    arrayCat,
+    plus,
+    minus,
+    asterisk,
+    asterDot,
+    realDiv,
+    setDiff,
+    typeConv,
+    IN,
+    OR,
+    AND,
+    DIV,
+    MOD,
+    OF,
+    BY,
+    THEN,
+    ELSIF,
+    ELSE,
+    UNTIL,
+    DO,
+    END };
+  
+valueComponent =
+  { comma,
+    rBrace };
+  
+END OF FILE
