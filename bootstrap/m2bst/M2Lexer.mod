@@ -16,7 +16,7 @@ TYPE LexerDescriptor = RECORD
 END;
 
 
-(* Return Status *)
+(* Return Status 
 
 TYPE Status =
   ( success,
@@ -27,7 +27,7 @@ TYPE Status =
     endOfLineInCharOrString,
     lexemeCapacityExceded,
     commentNestingLimitExceded,
-    prematureEndOfFile );
+    prematureEndOfFile ); *)
 
 
 (* Operations *)
@@ -57,7 +57,7 @@ BEGIN
   
   (* skip all whitespace, TAB and EOL characters *)
   WHILE NOT M2FileIO.eof(lexer^.infile) AND
-   (ch # ASCII.SPACE OR ch # ASCII.TAB OR ch # ASCII.EOL) DO
+   (ch = ASCII.SPACE OR ch = ASCII.TAB OR ch = ASCII.EOL) DO
    
     (* skip the current character *)
     M2FileIO.read(lexer^.infile, ch);
