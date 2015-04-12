@@ -1,0 +1,61 @@
+(*!m2pim*) (* Copyright (c) 2015 B.Kowarsch. All rights reserved. *)
+
+DEFINITION MODULE M2LexTab;
+
+(* Lexeme Storage for Modula-2 R10 Bootstrap Compiler *)
+
+
+(* Lexeme Table *)
+
+TYPE LexTab (* = OPAQUE *);
+
+
+(* Handle for Lexeme Access *)
+
+TYPE Handle = CARDINAL;
+
+
+(* Operations *)
+
+PROCEDURE new ( VAR table : LexTab );
+(* Creates a new lexeme table instance.  Passes back NIL if unsuccessful. *)
+
+
+PROCEDURE store
+  ( table : LexTab; VAR inBuffer : ARRAY OF CHAR; atIndex, length : CARDINAL;
+    VAR handle : Handle );
+(* Stores the substring inBuffer[atIndex .. atIndex + length] as an ASCII.NUL
+   terminated lexeme in table and passes back its access handle if it has not
+   already been stored in table.  Otherwise, passes back the access handle of
+   the already stored lexeme.  Handles are issued in consecutive order. *)
+
+
+PROCEDURE retrieve
+  ( table : LexTab; handle : Handle; VAR lexeme : ARRAY OF CHAR );
+(* Retrieves the lexeme stored in table for handle.  If it exists, it is
+   passed back in lexeme, otherwise ASCII.NUL is passed back in lexeme. *)
+
+
+PROCEDURE entryCount ( table : LexTab ) : CARDINAL;
+(* Returns the number of lexemes stored in table. *)
+
+
+PROCEDURE handleExists ( table : LexTab; handle : Handle ) : BOOLEAN;
+(* Returns TRUE if an entry exists for handle in table, otherwise FALSE. *)
+
+
+PROCEDURE lengthForHandle ( table : LexTab; handle : Handle ) : CARDINAL;
+(* Returns the length of the lexeme stored in table for handle.
+   Returns zero if no lexeme is stored for handle. *)
+
+
+PROCEDURE equalsLexemeForHandle
+  ( table : LexTab; handle : Handle; str : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if str is equal to the lexeme stored in table for handle. *)
+
+
+PROCEDURE release ( VAR table : LexTab );
+ (* Release lexeme table instance.  Passes back NIL if successful. *)
+
+
+END M2LexTab.
