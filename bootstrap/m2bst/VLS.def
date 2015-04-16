@@ -4,7 +4,13 @@ DEFINITION MODULE VLS;
 
 (* Variable Length String Library *)
 
+FROM Hash IMPORT Hash;
+
+
 TYPE String (* = OPAQUE *);
+
+(* The payload of a string is stored with its meta-data: length, hash value and
+   reference count.  Upon initialisation, the reference count is set to one. *)
 
 
 PROCEDURE new ( s : String; initWith : ARRAY OF CHAR );
