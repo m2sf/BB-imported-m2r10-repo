@@ -15,7 +15,7 @@ PROCEDURE new ( s : String; initWith : ARRAY OF CHAR );
 
 PROCEDURE newFromBuffer
   ( VAR s : String; VAR copyFrom : ARRAY OF CHAR );
-(* Passes back a newly allocated string in s.  String s is initalised with
+(* Passes back a newly allocated string in s.  String s is initialised with
    the contents of buffer copyFrom.  Does not modify copyFrom.  Passes back
    NIL if the operation is unsuccessful. *)
 
@@ -38,6 +38,7 @@ PROCEDURE hash ( s : String ) : Hash;
 PROCEDURE toAOC ( s : String; VAR aoc : ARRAY OF CHAR );
 (* Passes back the contents of s as an ASCII.NUL terminated character array
    in aoc.  Passes back ASCII.NUL if the operation is unsuccessful. *)
+
 
 PROCEDURE equals ( s1, s2 : String ) : BOOLEAN;
 (* Returns TRUE if the contents of s1 and s2 match, otherwise FALSE. *)
