@@ -1,0 +1,58 @@
+(*!m2pim*) (* Copyright (c) 2015 B.Kowarsch. All rights reserved. *)
+
+DEFINITION MODULE VLS;
+
+(* Variable Length String Library *)
+
+TYPE String (* = OPAQUE *);
+
+
+PROCEDURE new ( s : String; initWith : ARRAY OF CHAR );
+(* Passes back a newly allocated string in s.  String s is initialised with
+   the contents of ARRAY OF CHAR constant initWith.  Passes back NIL if the
+   operation is unsuccessful. *)
+
+
+PROCEDURE newFromBuffer
+  ( VAR s : String; VAR copyFrom : ARRAY OF CHAR );
+(* Passes back a newly allocated string in s.  String s is initalised with
+   the contents of buffer copyFrom.  Does not modify copyFrom.  Passes back
+   NIL if the operation is unsuccessful. *)
+
+
+PROCEDURE newFromBufferSlice
+  ( VAR s : String; VAR copyFrom : ARRAY OF CHAR; start, end : CARDINAL );
+(* Passes back a newly allocated string in s.  String s is initialised with
+   the contents of slice copyFrom[start .. end].  Does not modify copyFrom.
+   Passes back NIL if the operation is unsuccessful. *)
+
+
+PROCEDURE length ( s : String ) : CARDINAL;
+(* Returns the length of s.  Returns zero if s is NIL. *)
+
+
+PROCEDURE hash ( s : String ) : Hash;
+(* Returns the hash value of s.  Returns zero if s is NIL. *)
+
+
+PROCEDURE toAOC ( s : String; VAR aoc : ARRAY OF CHAR );
+(* Passes back the contents of s as an ASCII.NUL terminated character array
+   in aoc.  Passes back ASCII.NUL if the operation is unsuccessful. *)
+
+PROCEDURE equals ( s1, s2 : String ) : BOOLEAN;
+(* Returns TRUE if the contents of s1 and s2 match, otherwise FALSE. *)
+
+
+PROCEDURE eqAOC ( s : String; aoc : ARRAY OF CHAR ) : BOOLEAN;
+(* Returns TRUE if the contents of s match those of aoc, otherwise FALSE. *)
+
+
+PROCEDURE retain ( VAR s : String );
+(* Increments the reference count of s. *)
+
+
+PROCEDURE release ( VAR s : String );
+(* Decrements the reference count of s, deallocates if the result is zero. *)
+
+
+END VLS.
