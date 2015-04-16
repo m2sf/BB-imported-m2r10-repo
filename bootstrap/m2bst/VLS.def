@@ -48,12 +48,13 @@ PROCEDURE eqAOC ( s : String; aoc : ARRAY OF CHAR ) : BOOLEAN;
 (* Returns TRUE if the contents of s match those of aoc, otherwise FALSE. *)
 
 
-PROCEDURE retain ( VAR s : String );
+PROCEDURE retain ( s : String );
 (* Increments the reference count of s. *)
 
 
 PROCEDURE release ( VAR s : String );
-(* Decrements the reference count of s, deallocates if the result is zero. *)
+(* Decrements the reference count of s, deallocates if the result is zero.
+   Passes back NIL in s if s has been deallocated. *)
 
 
 END VLS.
