@@ -1,0 +1,132 @@
+(*!m2pim*) (* Copyright (c) 2015 B.Kowarsch. All rights reserved. *)
+
+DEFINITION MODULE M2Source;
+
+(* Modula-2 Source File Reader. *)
+
+FROM M2Filenames IMPORT Filename;
+
+FROM M2LexTab IMPORT LexDict, DictHandle;
+
+
+TYPE Source (* = OPAQUE *);
+
+TYPE Status =
+  ( success,
+    invalidFileType,
+    allocationFailed );
+
+
+(* ---------------------------------------------------------------------------
+ *  Definitions
+ *
+ *  start position :
+ *    the position of the first character in the source.
+ *
+ *  end position :
+ *    the position of the last character in the source.
+ *
+ *  current position :
+ *    the position of the character to be read next.
+ *
+ *  lookahead position :
+ *    the position immediately following the current position.
+ *
+ *  second lookahead position :
+ *    the position immediately following the lookahead position.
+ *
+ *  marked position :
+ *    a position marked as the start of a lexeme.
+ *
+ *  current character :
+ *    the character at the current position,
+ *    is is ASCII.NUL if eof is set.
+ *
+ *  lookahead character :
+ *    the character at the lookahead position,
+ *    it is ASCII.NUL if its position > end position or if eof is set.
+ *
+ *  second lookahead character :
+ *    the character at the second lookahead position,
+ *    it is ASCII.NUL if its position > end position or if eof is set.
+ *
+ *  current lexeme :
+ *    a character sequence that starts at an explicitly marked position
+ *    and ends at the current position, including the current position.
+ *
+ *  character consumption :
+ *    a character is consumed by advancing the current position
+ *    to the character's lookahead position or by setting eof.
+ *
+ *  end-of-line marker:
+ *    an ASCII.LF,
+ *    or a sequence consisting of an ASCII.CR followed by an ASCII.LF,
+ *    or a sole ASCII.CR that is not immediately followed by ASCII.LF.
+ *
+ *    The lookahead position of an end-of-line marker is the position
+ *    following the last character of the end-of-line marker.
+ *
+ *  end-of-file flag:
+ *    abbreviated as eof flag, is a boolean value that is set when
+ *    the character at the end position has been consumed.
+ *
+ * ---------------------------------------------------------------------------
+ *)
+
+
+PROCEDURE open
+  ( VAR s : Source; name : Filename; VAR status : Status );
+(* Passes back a newly allocated source instance associated with name in s.
+   The associated file is opened for reading and the current position is set
+   to the start position.  Passes back NIL in s if unsuccessful.
+   The status of the operation is passed back in status. *)
+
+
+PROCEDURE read ( s : Source; VAR current, next, la2 : CHAR );
+(* Passes back the current character in current and consumes it.  Passes the
+   lookahead character in next and the second lookahead character in la2. *)
+
+
+PROCEDURE consume ( s : source );
+(* Consumes the current character of s. *)
+
+
+PROCEDURE currChar ( s : Source ) : CHAR;
+(* Returns the current character of s and consumes it. *)
+
+
+PROCEDURE lookahead ( s : Source ) : CHAR;
+(* Returns the lookahead character of s.
+   Does not consume any character and does not set eof. *)
+
+
+PROCEDURE lookahead2 ( s : Source ) : CHAR;
+(* Returns the second lookahead character of s.
+   Does not consume any character and does not set eof. *)
+
+
+PROCEDURE markLexeme ( s : Source; VAR line, col : CARDINAL );
+(* Marks the current position in s as the start of the current lexeme.
+   Passes back the line counter in line and the column counter in column. *)
+
+
+PROCEDURE copyLexeme ( s : Source; dict : LexDict; VAR handle : DictHandle );
+(* Adds the current lexeme in s to lexeme dictionary dict and passes its
+   access handle back in handle.  Clears the current lexeme marker.
+   Fails silently and passes zero in handle if no marker has been set. *)
+
+
+PROCEDURE getLineAndColumn ( s : Source; VAR line, col : CARDINAL );
+(* Passes back the current line and column counters of s in line and col. *)
+
+
+PROCEDURE eof ( s : Source ) : BOOLEAN;
+(* Returns TRUE if the last character in s has been consumed, else FALSE. *)
+
+
+PROCEDURE close ( VAR s : Source; VAR status : Status );
+(* Closes the file associated with s and deallocates s.  Passes back NIL in s
+   if successful.  The status of the operation is passed back in status. *)
+
+
+END M2Source.
