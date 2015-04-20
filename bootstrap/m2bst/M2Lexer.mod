@@ -401,25 +401,29 @@ PROCEDURE consumeToken ( lexer : Lexer );
  (* Consumes the next token. *)
 BEGIN
   
-  IF lexer^.uncomsumed THEN
+  IF lexer^.unconsumed THEN
     lexer^.unconsumed := FALSE
   END
   
 END consumeToken;
 
 
-PROCEDURE getStatus ( lexer : Lexer; VAR s : Status; VAR line, col : CARDINAL );
- (* Passes status, line and column of current token back. *)
+PROCEDURE getStatus ( lexer : Lexer; VAR s : Status );
+ (* Passes back status of last operation in s. *)
 
 BEGIN
 
-  (* TO DO *)
+  IF lexer = NIL THEN
+    s := notInitialised
+  ELSE
+    s := lexer^.status
+  END
 
 END getStatus;
 
 
 PROCEDURE release ( VAR lexer : Lexer );
- (* Release lexer instance.  Passes NIL back if successful. *)
+ (* Release lexer instance.  Passes back NIL if successful. *)
 
 BEGIN
 
@@ -430,31 +434,147 @@ END release;
 
 (* Private Operations *)
 
-PROCEDURE matchResWordOrIdent
-  ( s : Source; VAR token : Token; VAR lexeme : Lexeme );
+(* ---------------------------------------------------------------------------
+ * procedure matchResWordOrIdent ( s, token )
+ *  matches the input in s to a reserved word or identifier
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  (1) s is the current input source and it must not be NIL.
+ *  (2) lookahead of s is the first character of the RW or identifier.
+ *
+ * post-conditions:
+ *  (1) lookahead of s is the character immediately following the last
+ *      character of the RW or identifier whose first character was the
+ *      lookahead of s upon entry into the procedure.
+ *  (2) if the input represents a reserved word or dual-use identifier,
+ *       its token value is passed back in token.
+ *      if the input represents any other identifier,
+ *       token value identifier is passed back in token.
+ *
+ * error-conditions:
+ *  (1) identifier consists entirely of non-alphanumeric characters
+ *       TO DO
+ *  (2) maximum length exceeded
+ *       TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE matchResWordOrIdent ( s : Source; VAR token : Token );
 
+VAR
+  ch, next : CHAR;
+  allChars, nonStdChars : CARDINAL;
+  
 BEGIN
+  
+  allChars := 0;
+  nonStdChars := 0;
+  
+  REPEAT
+    read(s, ch, next);
+    INC(allChars);
+    
+    IF (ch = "_") OR (ch = "$") THEN
+      INC(nonStdChars)
+    END
 
-  (* TO DO *)
-
+  UNTIL eof(s) OR NOT isIdentChar(next);
+  
+  IF allChars = nonStdChars THEN (* illegal identifier found *)
+    (* TO DO : handle error *)
+  END;
+  
+  (* TO DO : check for reserved word *)
+  
 END matchResWordOrIdent;
 
 
-PROCEDURE matchNumericLiteral
-  ( s : Source; VAR token : Token; VAR lexeme : Lexeme );
+(* ---------------------------------------------------------------------------
+ * procedure matchNumericLiteral ( s, token )
+ *  matches the input in s to numeric literal syntax
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  (1) s is the current input source and it must not be NIL.
+ *  (2) lookahead of s is the first digit of the literal.
+ *
+ * post-conditions:
+ *  (1) lookahead of s is the character immediately following the last digit
+ *      of the literal whose first digit was the lookahead of s upon entry
+ *      into the procedure.
+ *  (2) if the numeric literal represents a whole number,
+ *       token value wholeNumber is passed back in token.
+ *      if the numeric literal represents a character code,
+ *       token value quotedChar is passed back in token.
+ *      if the numeric literal represents a real number,
+ *       token value realNumber is passed back in token.
+ *
+ * error-conditions:
+ *  (1) missing digit after prefix
+ *       TO DO
+ *  (2) missing fractional part after decimal point
+ *       TO DO
+ *  (3) missing exponent part after exponent prefix
+ *       TO DO
+ *  (4) maximum length exceeded
+ *       TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE matchNumericLiteral ( s : Source; VAR token : Token );
 
 BEGIN
-
+  
+  read(s, ch, next);
+  IF ch = "0" THEN
+          
+    CASE next OF
+      "'" : (* decimal number *)
+    | "." : (* real number or range *)
+    | "b" : (* base-2 whole number *)
+    | "u" : (* base-16 character code *)
+    | "x" : (* base-16 whole number *)
+    
+    ELSE (* single digit zero *)
+    
+    END; (* CASE *)
+      
+  ELSE
+  
+  END
   (* TO DO *)
 
 END matchNumericLiteral;
 
 
-PROCEDURE matchQuotedLiteral
-  ( s : Source; VAR token : Token; VAR lexeme : Lexeme );
+(* ---------------------------------------------------------------------------
+ * procedure matchQuotedLiteral ( s, token )
+ *  matches the input in s to quoted literal syntax
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  (1) s is the current input source and it must not be NIL.
+ *  (2) lookahead of s is the opening quotation mark of the literal.
+ *
+ * post-conditions:
+ *  (1) lookahead of s is the character immediately following the closing
+ *      quotation mark that closes the literal whose opening quotation mark
+ *      was the lookahead of s upon entry into the procedure.
+ *  (2) if the quoted literal represents the empty string or a single
+ *      character, token value quotedChar is passed back in token.
+ *      Otherwise, token value quotedString is passed back in token.
+ *
+ * error-conditions:
+ *  (1) eof reached
+ *       TO DO
+ *  (2) illegal character encountered
+ *       TO DO
+ *  (3) unescaped backslash encountered
+ *       TO DO
+ *  (4) maximum length exceeded
+ *       TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE matchQuotedLiteral ( s : Source; VAR token : Token );
 
 VAR
-  ch, delimiter : CHAR;
+  delimiter, ch, next : CHAR;
   len : CARDINAL;
 
 BEGIN
@@ -462,47 +582,165 @@ BEGIN
   (* TO DO : update, following change to M2Source *)
   
   len := 0;
-  M2FileIO.read(lexer^.infile, delimiter);
-  M2FileIO.lookahead(lexer^.infile, ch);
+  read(s, delimiter, next);
   
-  WHILE NOT M2FileIO.eof(lexer^.infile) AND (ch # delimiter) DO
+  WHILE NOT eof(s) AND (next # delimiter) AND isPrintable(next) DO
     
-    len := len + 1
+    IF next # BACKSLASH THEN
+      read(s, ch, next);
+      INC(len)
+      
+    ELSE (* backslash *)
+      matchEscapeSequence(s, success);
+      
+      IF NOT success THEN (* unescaped backslash found *)
+        (* TO DO : handle error *)
+        
+      END
+    END
   END; (* WHILE *)
-
-  M2FileIO.read(lexer^.infile, delimiter);
+  
+  IF next = delimiter THEN
+    consume(s);
+    INC(len)
+    
+  ELSE (* illegal character in string literal found *)
+    (* TO DO : handle error *)
+    
+  END;
   
   IF len <= 1 THEN
-    RETURN quotedChar
+    token := quotedChar
+    
   ELSE (* len > 1 *)
-    RETURN quotedString
+    token := quotedString
+    
   END
   
 END matchQuotedLiteral;
 
 
-PROCEDURE matchLineComment
-  ( s : Source; VAR token : Token; VAR lexeme : Lexeme );
+(* ---------------------------------------------------------------------------
+ * procedure matchLineComment ( s, token )
+ *  matches the input in s to line comment syntax
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  (1) s is the current input source and it must not be NIL.
+ *  (2) lookahead of s is the opening exclamation point of a line comment.
+ *
+ * post-conditions:
+ *  (1) if the comment is terminated by end-of-line:
+ *       lookahead of s is the new-line character that closes the line comment
+ *       whose opening exclamation point was the lookahead of s upon entry
+ *       into the procedure, or
+ *      if the comment is terminated by end-of-file:
+ *       the last character in input s has been consumed.
+ *  (2) token value lineComment is passed back in token
+ *
+ * error-conditions:
+ *  (1) illegal character encountered
+ *       TO DO
+ *  (2) maximum comment length exceeded
+ *       TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE matchLineComment ( s : Source; VAR token : Token );
 
+VAR
+  ch, next : CHAR;
+  
 BEGIN
 
-  (* TO DO *)
+  REPEAT
+    read(s, ch, next)
+  UNTIL eof(s) OR (next = ASCII.LF);
+  
+  token := lineComment
 
 END matchLineComment;
 
 
-PROCEDURE matchBlockComment
-  ( s : Source; VAR token : Token; VAR lexeme : Lexeme );
+(* ---------------------------------------------------------------------------
+ * procedure matchBlockComment ( s, token )
+ *  matches the input in s to block comment syntax
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  (1) s is the current input source and it must not be NIL.
+ *  (2) lookahead of s is the opening parenthesis of a block comment.
+ *
+ * post-conditions:
+ *  (1) lookahead of s is the character immediately following the closing
+ *      parenthesis that closes the block comment whose opening parenthesis
+ *      was the lookahead of s upon entry into the procedure.
+ *  (2) token value blockComment is passed back in token
+ *
+ * error-conditions:
+ *  (1) eof reached
+ *       TO DO
+ *  (2) illegal character encountered
+ *       TO DO
+ *  (3) maximum comment length exceeded
+ *       TO DO
+ *  (4) maximum nesting level exceeded
+ *       TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE matchBlockComment ( s : Source; VAR token : Token );
 
+VAR
+  ch, next : CHAR;
+  nestLevel : CARDINAL;
+  
 BEGIN
-
+  
+  nestLevel := 1;
+  
+  WHILE NOT eof(s) AND (nestLevel > 0) DO
+    read(s, ch, next);
+    
+    IF (ch = "*") AND (next = ")") THEN
+      consume(s);
+      DEC(nestLevel)
+    
+    ELSIF (ch = "(") AND (next = "*") THEN
+      consume(s);
+      INC(nestLevel)
+      
+    END;
+    
+    consume(s)
+    
+  END; (* WHILE *)
+  
   (* TO DO *)
 
 END matchBlockComment;
 
 
-PROCEDURE matchChevronText
-  ( s : Source; VAR token : Token; VAR lexeme : Lexeme );
+(* ---------------------------------------------------------------------------
+ * procedure matchChevronText ( s, token )
+ *  matches the input in s to chevron text syntax
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  (1) s is the current input source and it must not be NIL.
+ *  (2) lookahead of s is the first character of the opening chevron.
+ *
+ * post-conditions:
+ *  (1) lookahead of s is the character immediately following the last
+ *      character of the closing chevron that closes the chevron text whose
+ *      opening delimiter was the lookahead of s upon entry into the procedure.
+ *  (2) token value chevronText is passed back in token
+ *
+ * error-conditions:
+ *  (1) eof reached
+ *       TO DO
+ *  (2) illegal character encountered
+ *       TO DO
+ *  (3) maximum length exceeded
+ *       TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE matchChevronText ( s : Source; VAR token : Token );
 
 BEGIN
 
@@ -511,8 +749,30 @@ BEGIN
 END matchChevronText;
 
 
-PROCEDURE matchPragma
-  ( s : Source; VAR token : Token; VAR lexeme : Lexeme );
+(* ---------------------------------------------------------------------------
+ * procedure matchPragma ( s, token )
+ *  matches the input in s to "<*" any legal characters "*>"
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  (1) s is the current input source and it must not be NIL.
+ *  (2) lookahead of s is the first character of the opening pragma delimiter.
+ *
+ * post-conditions:
+ *  (1) lookahead of s is the character immediately following the last
+ *      character of the closing delimiter that closes the pragma whose
+ *      opening delimiter was the lookahead of s upon entry into the procedure.
+ *  (2) token value pragma is passed back in token
+ *
+ * error-conditions:
+ *  (1) eof reached
+ *       TO DO
+ *  (2) illegal character encountered
+ *       TO DO
+ *  (3) maximum length exceeded
+ *       TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE matchPragma ( s : Source; VAR token : Token );
 
 BEGIN
 
