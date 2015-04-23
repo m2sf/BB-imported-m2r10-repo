@@ -80,7 +80,7 @@ A reference compiler  for Modula-2 R10 has been  under development  since 2010
 but work had been suspended until the design is finalised. Initially, the compiler will
 generate C99 source code,  and eventually it will generate LLVM IR.
 
-Work on a bootstrap compiler has begun in April 2015.
+Work on a [bootstrap compiler](https://bitbucket.org/trijezdci/m2r10/src/tip/bootstrap/m2bst) has begun in April 2015.
 
 The developer of GNU Modula-2 has pledged to add support for Modula-2 R10 in
 GM2. The GM2 compiler is a Modula-2 front-end for GCC.
