@@ -4,6 +4,12 @@ DEFINITION MODULE M2Lexer;
 
 (* Lexer for Modula-2 R10 Bootstrap Compiler *)
 
+FROM M2Tokens IMPORT Token;
+
+FROM M2TokenSets IMPORT TokenSet;
+
+FROM M2Symbol IMPORT Symbol;
+
 
 (* Lexer Handle *)
 
@@ -27,19 +33,23 @@ TYPE Status =
 (* Operations *)
 
 PROCEDURE new ( VAR lexer : Lexer );
- (* Create mew lexer instance. Passes NIL back if unsuccessful. *)
+(* Creates a new lexer instance. Passes NIL back if unsuccessful. *)
 
-PROCEDURE nextToken ( lexer : Lexer ) : Token;
- (* Returns next token in input stream, does not consume the token. *)
+PROCEDURE getSym ( lexer : Lexer; VAR current, next : Symbol );
+(* Passes back the current lookahead symbol in current and consumes it.
+   Passes the new lookahead symbol in next without consuming it. *)
 
-PROCEDURE consumeToken ( lexer : Lexer; VAR lexeme : ARRAY OF CHAR );
- (* Consumes the next token and passes its lexeme back. *)
+PROCEDURE consumeSym ( lexer : Lexer );
+(* Consumes the current lookahead symbol. *)
 
-PROCEDURE getStatus ( lexer : Lexer; VAR s : Status; VAR line, col : CARDINAL );
- (* Passes status, line and column of current token back. *)
+PROCEDURE lookaheadSym ( lexer : Lexer ) : Symbol;
+(* Returns the current lookahead symbol without consuming it. *)
+
+PROCEDURE getStatus ( lexer : Lexer; VAR s : Status );
+(* Passes the status of the last operation back in s. *)
 
 PROCEDURE release ( VAR lexer : Lexer );
- (* Release lexer instance. Passes NIL back if successful. *)
+(* Releases a lexer instance. Passes NIL back if successful. *)
 
 
 END M2Lexer.
