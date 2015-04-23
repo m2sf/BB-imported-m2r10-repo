@@ -7,7 +7,7 @@ its language report, reference compiler and standard library.
 
 Latest news:
 
-* 2015-04-05: Work on a bootstrap compiler has begun.
+* 2015-04-05: Work on a [bootstrap compiler](https://bitbucket.org/trijezdci/m2r10/src/tip/bootstrap/m2bst) has begun.
 * 2015-03-31: The language design has been finalised.
 * 2015-02-15: Fund raising efforts have begun.
 
@@ -91,7 +91,7 @@ GM2. The GM2 compiler is a Modula-2 front-end for GCC.
 This project is a  *private*  and  *self-funded*  effort by the authors who are
 doing this work in their own *spare* *time*.  Further, the authors believe that
 quality design  and proper specification are prerequisites for a quality
-implementation and cannot be rushed.  Work on a bootstrap compiler
+implementation and cannot be rushed.  Work on a [bootstrap compiler](https://bitbucket.org/trijezdci/m2r10/src/tip/bootstrap/m2bst)
 is now under way but there is *no fixed schedule* for the completion of the compiler.
 
 Please consider [making a donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QA4WRY9TW7GT4) to speed up the development work.
