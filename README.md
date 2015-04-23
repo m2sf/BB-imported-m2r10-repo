@@ -83,7 +83,7 @@ generate C99 source code,  and eventually it will generate LLVM IR.
 Work on a [bootstrap compiler](https://bitbucket.org/trijezdci/m2r10/src/tip/bootstrap/m2bst) has begun in April 2015.
 
 The developer of GNU Modula-2 has pledged to add support for Modula-2 R10 in
-GM2. The GM2 compiler is a Modula-2 front-end for GCC.
+GM2. A [to-do list for the conversion](https://bitbucket.org/trijezdci/m2r10/downloads/PIM-to-R10-Subset-Conversion.txt) is now available in the download area. The GM2 compiler is a Modula-2 front-end for GCC.
 
 
 ### Development Schedule ###
