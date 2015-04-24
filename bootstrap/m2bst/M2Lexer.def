@@ -4,10 +4,6 @@ DEFINITION MODULE M2Lexer;
 
 (* Lexer for Modula-2 R10 Bootstrap Compiler *)
 
-FROM M2Tokens IMPORT Token;
-
-FROM M2TokenSets IMPORT TokenSet;
-
 FROM M2Symbol IMPORT Symbol;
 
 
