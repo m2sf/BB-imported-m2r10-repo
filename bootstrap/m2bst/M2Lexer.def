@@ -6,6 +6,8 @@ DEFINITION MODULE M2Lexer;
 
 FROM M2Symbol IMPORT Symbol;
 
+FROM M2Filename IMPORT Filename;
+
 
 (* Lexer Handle *)
 
@@ -16,6 +18,7 @@ TYPE Lexer (* = OPAQUE *);
 
 TYPE Status =
   ( success,
+    alreadyInitialised,
     unableToAllocate,
     illegalSymbolFound,
     unescapedBackslash,
@@ -28,12 +31,13 @@ TYPE Status =
 
 (* Operations *)
 
-PROCEDURE new ( VAR lexer : Lexer );
-(* Creates a new lexer instance. Passes NIL back if unsuccessful. *)
+PROCEDURE new ( VAR lexer : Lexer; filename : Filename; VAR s : Status );
+ (* Create newly allocated and initialised lexer instance associated with
+    source file filename.  Passes back the status of the operation in s. *)
 
-PROCEDURE getSym ( lexer : Lexer; VAR current, next : Symbol );
+PROCEDURE getSym ( lexer : Lexer; VAR sym, next : Symbol );
 (* Passes back the current lookahead symbol in current and consumes it.
-   Passes the new lookahead symbol in next without consuming it. *)
+   Passes back the new lookahead symbol in next without consuming it. *)
 
 PROCEDURE consumeSym ( lexer : Lexer );
 (* Consumes the current lookahead symbol. *)
@@ -41,11 +45,14 @@ PROCEDURE consumeSym ( lexer : Lexer );
 PROCEDURE lookaheadSym ( lexer : Lexer ) : Symbol;
 (* Returns the current lookahead symbol without consuming it. *)
 
+PROCEDURE errorCount ( lexer : Lexer ) : CARDINAL;
+ (* Returns the lexer's accumulated error count. *)
+
 PROCEDURE getStatus ( lexer : Lexer; VAR s : Status );
 (* Passes the status of the last operation back in s. *)
 
 PROCEDURE release ( VAR lexer : Lexer );
-(* Releases a lexer instance. Passes NIL back if successful. *)
+ (* Release lexer instance. Passes back NIL in lexer if successful. *)
 
 
 END M2Lexer.
