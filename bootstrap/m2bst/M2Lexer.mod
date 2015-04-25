@@ -149,8 +149,6 @@ END release;
  * ---------------------------------------------------------------------------
  *)
 PROCEDURE readSymbol ( s : Source; VAR sym : Symbol );
-(* Passes back the current lookahead symbol in current and consumes it.
-   Passes the new lookahead symbol in next without consuming it. *)
 
 VAR
   ch, next, la2 : CHAR;
