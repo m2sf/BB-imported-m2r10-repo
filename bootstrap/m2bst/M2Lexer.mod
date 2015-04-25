@@ -26,9 +26,21 @@ END;
 
 (* Operations *)
 
+(* ---------------------------------------------------------------------------
+ * procedure new ( lexer, filename, status )
+ *  creates a new lexer instance, associated with filename
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE new ( VAR lexer : Lexer; filename : Filename; VAR s : Status );
- (* Create newly allocated and initialised lexer instance associated with
-    source file filename.  Passes back the status of the operation in s. *)
  
 BEGIN
  
@@ -60,13 +72,24 @@ BEGIN
   consumeSym(lexer);
   
   RETURN
-  
 END new;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure getSym ( lexer, symbol, lookaheadSymbol )
+ *  consumes current lookahead symbol, passes back new lookahead symbol
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE getSym ( lexer : Lexer; VAR sym, next : Symbol );
-(* Passes back the current lookahead symbol in current and consumes it.
-   Passes back the new lookahead symbol in next without consuming it. *)
 
 BEGIN
   
@@ -83,8 +106,21 @@ BEGIN
 END getSym;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure consumeSym ( lexer )
+ *  consumes current lookahead symbol
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE consumeSym ( lexer : Lexer );
-(* Consumes the current lookahead symbol and loads its successor. *)
 
 VAR
   ch, next, la2 : CHAR;
@@ -425,8 +461,21 @@ BEGIN
 END consumeSym;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure lookaheadSym ( lexer ) : Symbol
+ *  returns current lookahead symbol
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE lookaheadSym ( lexer : Lexer ) : Symbol;
-(* Returns the current lookahead symbol without consuming it. *)
 
 BEGIN
   
@@ -435,6 +484,20 @@ BEGIN
 END lookaheadSym;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure errorCount ( lexer ) : CARDINAL
+ *  returns current lexical error count
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE errorCount ( lexer : Lexer ) : CARDINAL;
  (* Returns the lexer's accumulated error count. *)
 
@@ -445,8 +508,21 @@ BEGIN
 END errorCount;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure getStatus ( lexer, status )
+ *  passes back status of last operation
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE getStatus ( lexer : Lexer; VAR s : Status );
- (* Passes back status of last operation in s. *)
 
 BEGIN
 
@@ -459,8 +535,22 @@ BEGIN
 END getStatus;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure release ( lexer )
+ *  releases lexer instance
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  (1) lexer must not be NIL
+ *
+ * post-conditions:
+ *  (1) lexer is deallocated
+ *  (2) NIL is passed back in lexer
+ *
+ * error-conditions:
+ *  (1) reference to lexer remains unmodified
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE release ( VAR lexer : Lexer );
- (* Release lexer instance. Passes back NIL in lexer if successful. *)
 
 BEGIN
 
