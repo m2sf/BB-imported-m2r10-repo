@@ -45,17 +45,20 @@ BEGIN
     RETURN
   END;
   
+  (* initialise source *)
   open(lexer^.source, filename, sourceStatus);
   IF sourceStatus # M2Source.success THEN
   (* TO DO: status *)
     RETURN
   END;
   
+  (* initialise error count and status *)
+  errorCount := 0;
+  status := success;
+  
   (* read the first symbol to be returned *)
   consumeSym(lexer);
   
-  errorCount := 0;
-  status := success;
   RETURN
   
 END new;
@@ -81,7 +84,7 @@ END getSym;
 
 
 PROCEDURE consumeSym ( lexer : Lexer );
-(* Consumes the current lookahead symbol. *)
+(* Consumes the current lookahead symbol and loads its successor. *)
 
 VAR
   ch, next, la2 : CHAR;
