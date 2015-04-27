@@ -2,20 +2,29 @@
 
 IMPLEMENTATION MODULE M2Source;
 
-(* Modula-2 Source File Reader. *)
+(* Modula-2 Source File Reader *)
 
-FROM M2Filenames IMPORT Filename;
+IMPORT FileIO;
 
-FROM M2LexTab IMPORT LexDict, DictHandle;
+FROM M2Params IMPORT MaxSourceFileSize;
+
+FROM M2LexTab IMPORT store;
 
 
-TYPE Source (* = OPAQUE *);
+TYPE Source = POINTER TO SourceDescriptor;
 
-TYPE Status =
-  ( success,
-    invalidFileType,
-    maxFileSizeExceeded,
-    allocationFailed );
+TYPE SourceDescriptor = RECORD
+  index,                   (* index of lookahead position in source buffer *)
+  endPos,                  (* index of end position in source buffer *)
+  lexPos : CARDINAL;       (* index of marked position in source buffer *)
+  buffer : SourceBuffer;   (* source buffer with entire source *)
+  line : LineCounter;      (* line counter for lookahead position *)
+  column : ColumnCounter   (* column counter for lookahead position *)
+END;
+
+TYPE SourceBuffer = ARRAY [0..MaxSourceFileSize] OF CHAR;
+(* always to be terminated by ASCII.NUL, therefore max index = size + 1 *)
+
 
 (* ---------------------------------------------------------------------------
  *  Definitions
@@ -26,21 +35,15 @@ TYPE Status =
  *  end position :
  *    the position of the last character in the source.
  *
- *  current position :
- *    the position of the character to be read next.
- *
  *  lookahead position :
- *    the position immediately following the current position.
+ *    the position of the character to be consumed next.
  *
  *  second lookahead position :
  *    the position immediately following the lookahead position.
  *
  *  marked position :
  *    a position recorded as the start of a lexeme.
- *
- *  current character :
- *    the character at the current position,
- *    it is ASCII.NUL if eof is set.
+ *    it is end position + 1 if no marker has been set.
  *
  *  lookahead character :
  *    the character at the lookahead position,
@@ -51,12 +54,12 @@ TYPE Status =
  *    it is ASCII.NUL if its position > end position or if eof is set.
  *
  *  marked lexeme :
- *    a character sequence that starts at the marked position
- *    and ends at the current position, including the current position.
+ *    a character sequence that starts at the marked position (inclusively)
+ *    and ends at the lookahead position (exclusively).
  *
  *  character consumption :
- *    a character is consumed by advancing the current position
- *    to the character's lookahead position or by setting eof.
+ *    a character is consumed by advancing the lookahead position
+ *    to the character's second lookahead position or by setting eof.
  *
  *  end-of-line marker:
  *    an ASCII.LF,
@@ -74,292 +77,406 @@ TYPE Status =
  *)
 
 
-PROCEDURE open
-  ( VAR s : Source; name : Filename; VAR status : Status );
+(* Operations *)
+
+(* ---------------------------------------------------------------------------
+ * procedure new ( source, filename, status )
+ *  creates a new source instance, associated with filename
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE new
+  ( VAR s : Source; filename : Filename; VAR status : Status );
 (* Passes back a newly allocated source instance associated with name in s.
-   The associated file is opened for reading and the current position is set
-   to the start position.  Passes back NIL in s if unsuccessful.
+   The associated file is opened for reading and the lookahead position is
+   set to the start position.  Passes back NIL in s if unsuccessful.
    The status of the operation is passed back in status. *)
 
 VAR
+  file : FileIO.File;
   source : Source;
+  bytesRead : CARDINAL;
   
 BEGIN
   
+  (* source must be NIL *)
   IF s # NIL THEN
-    status := allocTargetNotNil
+    status := allocTargetNotNil;
+    RETURN
+  END;
     
-  ELSE
-    NEW(source);
-    FileIO.open(source^.file, name);
-    FileIO.ReadNBytes(source^.file, s^.buffer, bytesRead);
-    
-    (* TO DO : check for errors and handle them *)
-    
-    source^.index := 0;
-    source^.maxIndex := bytesRead-1;
-    
-    source^.line := 1;
-    source^.col := 1;
+  IF FileSizeOf(filename) > MaxSourceFileSize THEN
+    status := sourceExceedsMaxFileSize;
+    RETURN
+  END;
   
-    status := success;
-    s := source
-  END
+  (* allocate source instance *)
+  NEW(source);
   
-END open;
+  (* read source file contents into buffer *)
+  FileIO.open(file, filename);
+  FileIO.ReadNBytes(file, source^.buffer, bytesRead);
+  FileIO.close(file);
+    
+  (* TO DO : check for and handle file IO errors *)
+  
+  (* set start and end position *)
+  source^.index := 0;
+  source^.endPos := bytesRead-1;
+  
+  (* clear lexeme marker by setting it beyond end position *)
+  source^.lexPos := source^.endPos+1;
+  
+  (* terminate buffer *)
+  source^.buffer[source^.endPos+1] := ASCII.NUL;
+  
+  (* initialise line and column counters *)
+  source^.line := 1; source^.column := 1;
+  
+  (* pass back status and source *)
+  status := success;
+  s := source;
+
+  RETURN  
+END new;
 
 
-PROCEDURE read ( s : Source; VAR current, next : CHAR );
-(* Passes back the current character in current and consumes it.  Passes the
-   lookahead character in next.  Does not consume the lookahead character. *)
+(* ---------------------------------------------------------------------------
+ * procedure getChar ( source, ch, next )
+ *  consumes current lookahead character, passes back new lookahead character
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE getChar ( s : Source; VAR ch, next : CHAR );
+(* Passes back the lookahead character in ch and consumes it.
+   Passes back the new lookahead character in next without consuming it. *)
 
 BEGIN
+
+  (* pass and consume lookahead character *)
+  ch := s^.buffer[s^.index];
+  consumeChar(s);
   
-  IF s^.eof THEN
-    ch := ASCII.NUL;
-    next := ASCII.NUL;
-    RETURN
-    
+  (* pass LF instead of CR *)
+  IF ch = ASCII.CR THEN
+    ch := ASCII.LF
   END;
+
+  (* pass new lookahead character *)
+  next := s^.buffer[s^.index];
   
-  IF source^.index = M2Params.MaxInFileSize THEN
-    
-  END;
-  
-  thisChar := source^.buffer[source^.index];
-  
-  (* check for line feed *)
-  IF thisChar = ASCII.LF THEN
-    ch := thisChar;
-    INC(source^.index);
-    INC(source^.line);
-    source^.column := 1
-  
-  (* check for carriage return *)
-  ELSIF thisChar = ASCII.CR THEN
-    ch := ASCII.LF;
-    INC(source^.index);
-    INC(source^.line);
-    source^.column := 1;
-    
-    (* skip LF immediately following CR *)
-    IF source^.buffer[source^.index] = ASCII.LF THEN
-      INC(source^.index)
-    END
-  
-  (* any other characters *)
-  ELSE
-    ch := thisChar;
-    INC(source^.index);
-    INC(source^.column)
-    
+  (* pass LF instead of CR *)
+  IF next := ASCII.CR THEN
+    next := ASCII.LF
   END;
   
   RETURN
-END readChar;
+END getChar;
   
 
-PROCEDURE consume ( s : source );
-(* Consumes the current character of s. *)
-
-BEGIN
-
-(* TO DO *)
-
-END consume;
-
-
-PROCEDURE currChar ( s : Source ) : CHAR;
-(* Returns the current character of s and consumes it. *)
+(* ---------------------------------------------------------------------------
+ * procedure consumeChar ( source )
+ *  consumes current lookahead character
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE consumeChar ( s : source );
 
 VAR
   ch : CHAR;
 
 BEGIN
-  (* check if current character lies beyond eof *)  
-  IF s^.eof OR (s^.index > MaxIndex) THEN
-    ch := ASCII.NUL
+  
+  (* remember the lookahead character *)
+  ch := s^.buffer[s^.index];
+  
+  (* ... and consume it *)
+  IF s^.index <= s^.endPos THEN
+    INC(s^.index)
     
-  ELSE (* current character lies within buffer *)
-    ch := s^.buffer[s^.index];
-    
-    (* translate ASCII.CR to ASCII.LF *)
-    IF ch = ASCII.CR THEN
-      ch := ASCII.LF;
-      
-      IF (s^.index+1 <= MaxIndex) AND (s^.buffer[s^.index+1] = ASCII.LF) THEN
-      
-      (* TO DO *)
-      
-      END
-      
-    END
   END;
   
-  RETURN ch
-END currChar;
+  (* check for new line *)
+  IF (* new line *) (ch = ASCII.LF) OR (ch = ASCII.CR) THEN
+    (* update line and column counters *)
+    INC(s^.line); s^.column := 1;
+    
+    (* check for CR LF sequence *)
+    IF (ch = ASCII.CR) AND (s^.buffer[s^.index] = ASCII.LF) THEN
+      (* consume trailing LF *)
+      INC(s^.index)
+      
+    END
+    
+  ELSE (* no new line *)
+    (* update column counter only *)
+    INC(s^.column)
+    
+  END
+    
+  RETURN
+END consumeChar;
 
 
-PROCEDURE lookahead ( s : Source ) : CHAR;
+(* ---------------------------------------------------------------------------
+ * procedure lookaheadChar ( source ) : CHAR
+ *  returns current lookahead character
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE lookaheadChar ( s : Source ) : CHAR;
 (* Returns the lookahead character of s.
    Does not consume any character and does not set eof. *)
 
 VAR
-  ch, next : CHAR;
+  next : CHAR;
   
 BEGIN
-  (* check if lookahead lies beyond eof *)  
-  IF s^.eof OR (s^.index >= MaxIndex) THEN
-    next := ASCII.NUL
-    
-  ELSE (* current position lies within buffer *)
-    ch := s^.buffer[s^.index];
-    
-    (* lookahead may still lie beyond eof ... *)
-    next := s^.buffer[s^.index+1]; (* tentative *)
+
+  (* get lookahead character *)
+  next := s^.buffer[s^.index];
   
-    (* ... if CR+LF sequence is at current position ... *)
-    IF (ch = ASCII.CR) AND (next = ASCII.LF) THEN
-      
-      (* ... and lies at the end of the buffer *)
-      IF s^.index+2 > MaxIndex THEN
-        next := ASCII.NUL
-        
-      ELSE (* lookahead lies within buffer *)
-        next := s^.buffer[s^.index+2]
-        
-        (* translate ASCII.CR to ASCII.LF *)
-        IF next = ASCII.CR THEN
-          next := ASCII.LF
-          
-        END
-      END
-    END
+  (* return LF instead of CR *)
+  IF next = ASCII.CR THEN
+    next := ASCII.LF
   END;
     
   RETURN next
-END lookahead;
+END lookaheadChar;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure lookahead2 ( source ) : CHAR
+ *  returns second lookahead character
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE lookahead2 ( s : Source ) : CHAR;
 (* Returns the second lookahead character of s.
    Does not consume any character and does not set eof. *)
    
 VAR
-  ch, next, la2 : CHAR;
+  next, la2 : CHAR;
   
 BEGIN
-  ch := s^.buffer[s^.index];
-  next := s^.buffer[s^.index+1];
   
-  (* skip LF immediately following CR *)
-  IF (ch = ASCII.CR) AND (next = ASCII.LF) THEN
-    la2 := s^.buffer[s^.index+2]
+  (* return ASCII.NUL if lookahead is last character or beyond eof *)
+  IF s^.index >= s^.endPos THEN
+    RETURN ASCII.NUL
+  END;
   
-  ELSIF next = ASCII.CR THEN
-    la2 := ASCII.LF
+  (* get lookahead and tentative second lookahead *)
+  next := s^.buffer[s^.index];
+  la2 := s^.buffer[s^.index+1];
   
-  ELSE
-    la2 := next
+  (* check if lookahead is CR LF sequence *)
+  IF (next = ASCII.CR) AND (la2 = ASCII.LF) THEN
+  
+    (* return ASCII.NUL if CR LF is at the very end of source *)
+    IF s^.index+1 >= s^.endPos THEN
+      RETURN ASCII.NUL
+    END;
     
+    (* otherwise second lookahead is character after CR LF sequence  *)
+    la2 := s^.buffer[s^.index+2]
+  END
+  
+  (* return LF instead of CR *)
+  IF la2 = ASCII.CR THEN
+    la2 := ASCII.LF
   END;
   
   RETURN la2
 END lookahead2;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure markLexeme ( source, line, col )
+ *  marks current lookahead position as the start of a lexeme
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE markLexeme ( s : Source; VAR line, col : CARDINAL );
 (* Marks the lookahead position in s as the start of the marked lexeme.
    Passes back lookahead position line and column counters in line and col. *)
 
 BEGIN
 
-  (* TO DO *)
+  s^.lexPos := s^.index;
+  line := s^.line;
+  col := s^.column;
 
+  RETURN
 END markLexeme;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure copyLexeme ( source, dict, handle )
+ *  adds a marked lexeme to lexeme dictionary dict
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE copyLexeme ( s : Source; dict : LexDict; VAR handle : DictHandle );
 (* Adds the marked lexeme in s to lexeme dictionary dict, passes its access
    handle back in handle and clears the lexeme marker.  If no lexeme marker
    has been set, no content is copied and zero is passed back in handle. *)
 
+VAR
+  length : CARDINAL;
+  
 BEGIN
-
-  (* TO DO *)
-
+  
+  (* return zero handle if no lexeme marker is set *)
+  IF s^.lexPos >= s^.index THEN
+    handle := 0;
+    RETURN
+  END;
+  
+  (* store marked lexeme in lexeme dictionary *)
+  length := s^.index - s^.lexPos;
+  store(dict, s^.buffer, s^.lexPos, length, handle);
+  
+  (* clear lexeme marker by setting it beyond end position *)
+  s^.lexPos := s^.endPos+1;
+  
+  RETURN
 END copyLexeme;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure getLineAndColumn ( source, line, column )
+ *  passes back line and column counters for current lookahead position
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE getLineAndColumn ( s : Source; VAR line, col : CARDINAL );
 (* Passes back the current line and column counters of s in line and col. *)
 
 BEGIN
+
   line := s^.line;
   col := s^.column;
-  
+
   RETURN
 END getLineAndColumn;
 
 
+(* ---------------------------------------------------------------------------
+ * procedure eof ( source ) : BOOLEAN
+ *  returns TRUE if last character in source has been consumed, else FALSE
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  TO DO
+ *
+ * post-conditions:
+ *  TO DO
+ *
+ * error-conditions:
+ *  TO DO
+ * ---------------------------------------------------------------------------
+ *)
 PROCEDURE eof ( s : Source ) : BOOLEAN;
-(* Returns TRUE if the last character in s has been consumed, else FALSE. *)
 
 BEGIN
-
-  (* TO DO *)
-
+  (* eof is set if lookahead position is greater than end position *)
+  RETURN s^.index > s^.endPos
 END eof;
 
 
-PROCEDURE close ( VAR s : Source; VAR status : Status );
-(* Closes the file associated with s and deallocates s.  Passes back NIL in s
-   if successful.  The status of the operation is passed back in status. *)
+(* ---------------------------------------------------------------------------
+ * procedure release ( source )
+ *  releases source instance
+ * ---------------------------------------------------------------------------
+ * pre-conditions:
+ *  (1) source must not be NIL
+ *
+ * post-conditions:
+ *  (1) lexer is deallocated
+ *  (2) NIL is passed back in source
+ *
+ * error-conditions:
+ *  (1) reference to source remains unmodified
+ * ---------------------------------------------------------------------------
+ *)
+PROCEDURE release ( VAR s : Source; VAR status : Status );
 
 BEGIN
 
-  (* TO DO *)
-
-END close;
-
-
-(* Private Operations *)
-
-PROCEDURE incrLine ( source : Source );
-
-BEGIN
-  
-  IF source^.index < source^.maxIndex THEN
-    INC(source^.index);
-    INC(source^.line);
-    source^.column := 1
-    
-  ELSE
-    source^.eof := TRUE
-    
+  IF s = NIL THEN
+    status := invalidReference;
+    RETURN
   END;
   
-  RETURN
-END incrLine;
-
-
-PROCEDURE incrColumn ( source : Source );
-(* Increments source's current reading position and column counter.
-   If reading position is at end of source, source's eof flag is set. *)
-
-BEGIN
-
-  IF source^.index < source^.maxIndex THEN
-    INC(source^.index);
-    INC(source^.column)
-    
-  ELSE
-    source^.eof := TRUE
-    
-  END;
+  DISPOSE(s);
+  status := success;
+  s := NIL;
   
   RETURN
-END incrColumn;
+END release;
 
 
 END M2Source.
