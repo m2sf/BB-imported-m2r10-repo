@@ -12,6 +12,14 @@ FROM M2Source IMPORT Source, getChar, consumeChar, lookaheadChar,
   lookahead2, markLexeme, copyLexeme, getLineAndColumn, eof;
 
 
+(* ASCII Printables *)
+
+CONST
+  SPACE = CHR(32);
+  BACKSLASH = CHR(92);   (* \ *)
+  SINGLEQUOTE = CHR(39); (* ' *)
+  DOUBLEQUOTE = CHR(34); (* " *)
+
 
 (* Lexer Descriptor *)
 
@@ -78,7 +86,7 @@ END new;
 
 (* ---------------------------------------------------------------------------
  * procedure getSym ( lexer, symbol, lookaheadSymbol )
- *  consumes current lookahead symbol, passes back new lookahead symbol
+ *  passes and consumes current lookahead symbol, passes new lookahead symbol
  * ---------------------------------------------------------------------------
  * pre-conditions:
  *  TO DO
@@ -97,7 +105,7 @@ BEGIN
   (* nextSymbol holds current lookahead, pass it back in sym *)
   sym := lexer^.nextSymbol;
   
-  (* read next symbol from source *)
+  (* consume the current and read the new lookahead symbol *)
   consumeSym(lexer);
   
   (* nextSymbol holds new lookahead, pass it back in next *)
@@ -163,7 +171,7 @@ BEGIN
     copyLexeme(lexer^.source, lexer^.dict, sym.lexeme)
 
   (* check for quoted literal *)
-  ELSIF (next = SingleQuote) OR (next = DoubleQuote) THEN
+  ELSIF (next = SINGLEQUOTE) OR (next = DOUBLEQUOTE) THEN
     markLexeme(lexer^.source, sym.line, sym.column);
     matchQuotedLiteral(lexer^.source, sym.token);
     copyLexeme(lexer^.source, lexer^.dict, sym.lexeme)
@@ -173,7 +181,7 @@ BEGIN
     CASE next OF
     
     (* next symbol is line comment *)
-    | "!" :
+      "!" :
         markLexeme(lexer^.source, sym.line, sym.column);
         matchLineComment(lexer^.source, sym.token);
         copyLexeme(lexer^.source, dict, sym.lexeme)
@@ -268,7 +276,7 @@ BEGIN
         END (* "-", "--" or "->" *)
     
     (* next symbol is "." or ".." *)
-      "." :
+    | "." :
         getChar(lexer^.source, ch, next);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         
