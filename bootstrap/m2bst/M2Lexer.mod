@@ -4,12 +4,13 @@ IMPLEMENTATION MODULE M2Lexer;
 
 (* Lexer for Modula-2 R10 Bootstrap Compiler *)
 
-IMPORT ASCII, M2Params;
+IMPORT ASCII, M2Params, M2Source;
 
 FROM M2Tokens IMPORT Token, TokenValue;
 
-FROM M2Source IMPORT Source, open, read, consume, lookahead, lookahead2,
-  markLexeme, copyLexeme, getLineAndColumn, eof, close;
+FROM M2Source IMPORT Source, getChar, consumeChar, lookaheadChar,
+  lookahead2, markLexeme, copyLexeme, getLineAndColumn, eof;
+
 
 
 (* Lexer Descriptor *)
@@ -58,7 +59,7 @@ BEGIN
   END;
   
   (* initialise source *)
-  open(lexer^.source, filename, sourceStatus);
+  M2Source.new(lexer^.source, filename, sourceStatus);
   IF sourceStatus # M2Source.success THEN
   (* TO DO: status *)
     RETURN
@@ -134,11 +135,11 @@ BEGIN
   END;
   
   (* all decisions are based on lookahead *)
-  next := lookahead(lexer^.source);
+  next := lookaheadChar(lexer^.source);
   
   (* skip any whitespace, tab and new line *)
   WHILE NOT eof(lexer^.source) AND isIgnoreChar(next) DO
-    read(source, ch, next)
+    getChar(source, ch, next)
   END; (* WHILE *)
   
   (* TO DO *)
@@ -179,7 +180,7 @@ BEGIN
     
     (* next symbol is "#" *)
     | "#" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := notEqual;
         sym.lexeme := lexemeForToken(notEqual)
@@ -192,7 +193,7 @@ BEGIN
           copyLexeme(lexer^.source, lexer^.dict, sym.lexeme)
         
         ELSE (* found "(" *)
-          consume(lexer^.source);
+          consumeChar(lexer^.source);
           getLineAndColumn(lexer^.source, sym.line, sym.column);
           sym.token := lParen;
           sym.lexeme := lexemeForToken(lParen)
@@ -201,14 +202,14 @@ BEGIN
     
     (* next symbol is ")" *)
     | ")" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.value := rParen;
         sym.lexeme := lexemeForToken(rParen)
     
     (* next symbol is "*" or "*." *)
     | "*" :
-        read(lexer^.source, ch, next);
+        getChar(lexer^.source, ch, next);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         
         IF next # "." THEN (* found "*" *)
@@ -216,7 +217,7 @@ BEGIN
           sym.lexeme := lexemeForToken(asterisk)
         
         ELSE (* found "*." *)
-          consume(lexer^.source);
+          consumeChar(lexer^.source);
           sym.token := asterDot;
           sym.lexeme := lexemeForToken(asterDot)
         
@@ -224,7 +225,7 @@ BEGIN
     
     (* next symbol is "+" or "++" *)
     | "+" :
-        read(lexer^.source, ch, next);
+        getChar(lexer^.source, ch, next);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         
         IF next # "+" THEN (* found "+" *)
@@ -232,7 +233,7 @@ BEGIN
           sym.lexeme := lexemeForToken(plus)
         
         ELSE (* found "++" *)
-          consume(lexer^.source);
+          consumeChar(lexer^.source);
           sym.token := plusPlus;
           sym.lexeme := lexemeForToken(plusPlus)
         
@@ -240,23 +241,23 @@ BEGIN
       
     (* next symbol is "," *)
     | "," :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := comma;
         sym.lexeme := lexemeForToken(comma)
     
     (* next symbol is "-", "--" or "->" *)
     | "-" :
-        read(lexer^.source, ch, next);
+        getChar(lexer^.source, ch, next);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         
         IF next = "-" THEN (* found "--" *)
-          consume(lexer^.source);
+          consumeChar(lexer^.source);
           sym.token := minusMinus;
           sym.lexeme := lexemeForToken(minusMinus)
         
         ELSIF next = ">" THEN (* found "->" *)
-          consume(lexer^.source);
+          consumeChar(lexer^.source);
           sym.token := rArrow;
           sym.lexeme := lexemeForToken(rArrow)
         
@@ -268,7 +269,7 @@ BEGIN
     
     (* next symbol is "." or ".." *)
       "." :
-        read(lexer^.source, ch, next);
+        getChar(lexer^.source, ch, next);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         
         IF next # "." THEN
@@ -276,7 +277,7 @@ BEGIN
           sym.lexeme := lexemeForToken(dotDot)
         
         ELSE (* found ".." *)
-          consume(lexer^.source);
+          consumeChar(lexer^.source);
           sym.token := dotDot;
           sym.lexeme := lexemeForToken(dotDot)
         
@@ -284,23 +285,23 @@ BEGIN
       
     (* next symbol is "/" *)
     | "/" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := realDiv;
         sym.lexeme := lexemeForToken(realDiv)
     
     (* next symbol is ":", ":=" or "::" *)
     | ":" :
-        read(lexer^.source, ch, next);
+        getChar(lexer^.source, ch, next);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         
         IF next = "=" THEN (* found ":=" *)
-          consume(lexer^.source);
+          consumeChar(lexer^.source);
           sym.token := assign;
           sym.lexeme := lexemeForToken(assign)
         
         ELSIF next = ":" THEN (* found "::" *)
-          consume(lexer^.source);
+          consumeChar(lexer^.source);
           sym.token := typeConv;
           sym.lexeme := lexemeForToken(typeConv)
         
@@ -312,7 +313,7 @@ BEGIN
     
     (* next symbol is ";" *)
     | ";" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := semicolon;
         sym.lexeme := lexemeForToken(semicolon)
@@ -332,11 +333,11 @@ BEGIN
           copyLexeme(lexer^.source, lexer^.dict, sym.lexeme)
         
         ELSE (* "<" or "<=" *)
-          read(lexer^.source, ch, next);
+          getChar(lexer^.source, ch, next);
           getLineAndColumn(lexer^.source, sym.line, sym.column);
                   
           IF next = "=" THEN (* found "<=" *)
-            consume(source);
+            consumeChar(source);
             sym.token := lessEq;
             sym.lexeme := lexemeForToken(lessEq)
             
@@ -350,7 +351,7 @@ BEGIN
     
     (* next symbol is "=" or "==" *)
     | "=" :
-        read(lexer^.source, ch, next);
+        getChar(lexer^.source, ch, next);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         
         IF next # "=" THEN (* found "=" *)
@@ -358,7 +359,7 @@ BEGIN
           sym.lexeme := lexemeForToken(equal)
         
         ELSE (* found "==" *)
-          consume(lexer^.source);
+          consumeChar(lexer^.source);
           sym.token := identity;
           sym.lexeme := lexemeForToken(identity)
         
@@ -366,11 +367,11 @@ BEGIN
     
     (* next symbol is ">" and ">=" *)
     | ">" :
-        read(lexer^.source, ch, next);
+        getChar(lexer^.source, ch, next);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         
         IF next # "=" THEN (* found ">=" *)
-          consume(lexer^.source);
+          consumeChar(lexer^.source);
           sym.token := greaterEq;
           sym.lexeme := lexemeForToken(greaterEq)
         
@@ -382,63 +383,63 @@ BEGIN
     
     (* next symbol is "?" *)
     | "?" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := qMark;
         sym.lexeme := lexemeForToken(qMark)
     
     (* next symbol is "[" *)
     | "[" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := lBracket;
         sym.lexeme := lexemeForToken(lBracket)
     
     (* next symbol is backslash *)
     | BACKSLASH :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := setDiff;
         sym.lexeme := lexemeForToken(setDiff)
     
     (* next symbol is "]" *)
     | "]" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := rBracket;
         sym.lexeme := lexemeForToken(rBracket)
     
     (* next symbol is "^" *)
     | "^" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := deref;
         sym.lexeme := lexemeForToken(deref)
     
     (* next symbol is "{" *)
     | "{" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := lBrace;
         sym.lexeme := lexemeForToken(lBrace)
     
     (* next symbol is "|" *)
     | "|" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := verticalBar;
         sym.lexeme := lexemeForToken(verticalBar)
     
     (* next symbol is "}" *)
     | "}" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := rBrace;
         sym.lexeme := lexemeForToken(rBrace)
     
     (* next symbol is "~" *)
     | "~" :
-        consume(lexer^.source);
+        consumeChar(lexer^.source);
         getLineAndColumn(lexer^.source, sym.line, sym.column);
         sym.token := tilde;
         sym.lexeme := lexemeForToken(tilde)
@@ -446,7 +447,7 @@ BEGIN
     (* next symbol is invalid *)
     ELSE
       markLexeme(lexer^.source, sym.line, sym.column);
-      consume(lexer^.source);
+      consumeChar(lexer^.source);
       sym.token := invalid;
       copyLexeme(lexer^.source, lexer^.dict, sym.lexeme);
       INC(lexer^.errorCount)
@@ -552,10 +553,26 @@ END getStatus;
  *)
 PROCEDURE release ( VAR lexer : Lexer );
 
+VAR
+  sourceStatus : M2Source.Status;
+  
 BEGIN
 
-  (* TO DO *)
+  (* lexer must not be NIL *)
+  IF lexer = NIL THEN
+    RETURN
+  END;
   
+  (* release source *)
+  M2Source.release(lexer^.source, sourceStatus);
+  
+  (* TO DO: check for and handle error(s) *)
+  
+  (* release lexer *)
+  DISPOSE(lexer);
+  lexer := NIL;
+  
+  RETURN
 END release;
 
 
@@ -599,7 +616,7 @@ BEGIN
   nonStdChars := 0;
   
   REPEAT
-    read(s, ch, next);
+    getChar(s, ch, next);
     INC(allChars);
     
     IF (ch >= "A") AND (ch <= "Z") THEN
@@ -658,7 +675,7 @@ PROCEDURE matchNumericLiteral
 
 BEGIN
   
-  read(s, ch, next);
+  getChar(s, ch, next);
   IF ch = "0" THEN
           
     CASE next OF
@@ -720,12 +737,12 @@ BEGIN
   (* TO DO : update, following change to M2Source *)
   
   len := 0;
-  read(s, delimiter, next);
+  getChar(s, delimiter, next);
   
   WHILE NOT eof(s) AND (next # delimiter) AND isPrintable(next) DO
     
     IF next # BACKSLASH THEN
-      read(s, ch, next);
+      getChar(s, ch, next);
       INC(len)
       
     ELSE (* backslash *)
@@ -739,7 +756,7 @@ BEGIN
   END; (* WHILE *)
   
   IF next = delimiter THEN
-    consume(s);
+    consumeChar(s);
     INC(len)
     
   ELSE (* illegal character in string literal found *)
@@ -791,7 +808,7 @@ VAR
 BEGIN
 
   REPEAT
-    read(s, ch, next)
+    getChar(s, ch, next)
   UNTIL eof(s) OR (next = ASCII.LF);
   
   token := lineComment
@@ -836,19 +853,19 @@ BEGIN
   nestLevel := 1;
   
   WHILE NOT eof(s) AND (nestLevel > 0) DO
-    read(s, ch, next);
+    getChar(s, ch, next);
     
     IF (ch = "*") AND (next = ")") THEN
-      consume(s);
+      consumeChar(s);
       DEC(nestLevel)
     
     ELSIF (ch = "(") AND (next = "*") THEN
-      consume(s);
+      consumeChar(s);
       INC(nestLevel)
       
     END;
     
-    consume(s)
+    consumeChar(s)
     
   END; (* WHILE *)
   
