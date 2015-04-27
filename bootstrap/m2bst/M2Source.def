@@ -2,7 +2,7 @@
 
 DEFINITION MODULE M2Source;
 
-(* Modula-2 Source File Reader. *)
+(* Modula-2 Source File Reader *)
 
 FROM M2Filenames IMPORT Filename;
 
@@ -13,7 +13,9 @@ TYPE Source (* = OPAQUE *);
 
 TYPE Status =
   ( success,
+    invalidReference,
     invalidFileType,
+    maxFileSizeExceeded,
     allocationFailed );
 
 
@@ -26,21 +28,15 @@ TYPE Status =
  *  end position :
  *    the position of the last character in the source.
  *
- *  current position :
- *    the position of the character to be read next.
- *
  *  lookahead position :
- *    the position immediately following the current position.
+ *    the position of the character to be consumed next.
  *
  *  second lookahead position :
  *    the position immediately following the lookahead position.
  *
  *  marked position :
- *    a position marked as the start of a lexeme.
- *
- *  current character :
- *    the character at the current position,
- *    is is ASCII.NUL if eof is set.
+ *    a position recorded as the start of a lexeme.
+ *    it is end position + 1 if no marker has been set.
  *
  *  lookahead character :
  *    the character at the lookahead position,
@@ -50,13 +46,13 @@ TYPE Status =
  *    the character at the second lookahead position,
  *    it is ASCII.NUL if its position > end position or if eof is set.
  *
- *  current lexeme :
- *    a character sequence that starts at an explicitly marked position
- *    and ends at the current position, including the current position.
+ *  marked lexeme :
+ *    a character sequence that starts at the marked position (inclusively)
+ *    and ends at the lookahead position (exclusively).
  *
  *  character consumption :
- *    a character is consumed by advancing the current position
- *    to the character's lookahead position or by setting eof.
+ *    a character is consumed by advancing the lookahead position
+ *    to the character's second lookahead position or by setting eof.
  *
  *  end-of-line marker:
  *    an ASCII.LF,
@@ -74,28 +70,26 @@ TYPE Status =
  *)
 
 
-PROCEDURE open
-  ( VAR s : Source; name : Filename; VAR status : Status );
+(* Operations *)
+
+PROCEDURE new
+  ( VAR s : Source; filename : Filename; VAR status : Status );
 (* Passes back a newly allocated source instance associated with name in s.
-   The associated file is opened for reading and the current position is set
-   to the start position.  Passes back NIL in s if unsuccessful.
+   The associated file is opened for reading and the lookahead position is
+   set to the start position.  Passes back NIL in s if unsuccessful.
    The status of the operation is passed back in status. *)
 
 
-PROCEDURE read ( s : Source; VAR current, next, la2 : CHAR );
-(* Passes back the current character in current and consumes it.  Passes the
-   lookahead character in next and the second lookahead character in la2. *)
+PROCEDURE getChar ( s : Source; VAR ch, next : CHAR );
+(* Passes back the lookahead character in ch and consumes it.
+   Passes back the new lookahead character in next without consuming it. *)
 
 
-PROCEDURE consume ( s : source );
+PROCEDURE consumeChar ( s : source );
 (* Consumes the current character of s. *)
 
 
-PROCEDURE currChar ( s : Source ) : CHAR;
-(* Returns the current character of s and consumes it. *)
-
-
-PROCEDURE lookahead ( s : Source ) : CHAR;
+PROCEDURE lookaheadChar ( s : Source ) : CHAR;
 (* Returns the lookahead character of s.
    Does not consume any character and does not set eof. *)
 
@@ -106,14 +100,14 @@ PROCEDURE lookahead2 ( s : Source ) : CHAR;
 
 
 PROCEDURE markLexeme ( s : Source; VAR line, col : CARDINAL );
-(* Marks the current position in s as the start of the current lexeme.
-   Passes back the line counter in line and the column counter in column. *)
+(* Marks the lookahead position in s as the start of the marked lexeme.
+   Passes back lookahead position line and column counters in line and col. *)
 
 
 PROCEDURE copyLexeme ( s : Source; dict : LexDict; VAR handle : DictHandle );
-(* Adds the current lexeme in s to lexeme dictionary dict and passes its
-   access handle back in handle.  Clears the current lexeme marker.
-   Fails silently and passes zero in handle if no marker has been set. *)
+(* Adds the marked lexeme in s to lexeme dictionary dict, passes its access
+   handle back in handle and clears the lexeme marker.  If no lexeme marker
+   has been set, no content is copied and zero is passed back in handle. *)
 
 
 PROCEDURE getLineAndColumn ( s : Source; VAR line, col : CARDINAL );
@@ -124,9 +118,9 @@ PROCEDURE eof ( s : Source ) : BOOLEAN;
 (* Returns TRUE if the last character in s has been consumed, else FALSE. *)
 
 
-PROCEDURE close ( VAR s : Source; VAR status : Status );
-(* Closes the file associated with s and deallocates s.  Passes back NIL in s
-   if successful.  The status of the operation is passed back in status. *)
+PROCEDURE release ( VAR s : Source; VAR status : Status );
+(* Deallocates s.  Passes back NIL in s if successful.
+   The status of the operation is passed back in status. *)
 
 
 END M2Source.
