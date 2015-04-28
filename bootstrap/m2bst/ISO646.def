@@ -157,6 +157,8 @@ CONST
 
 (* Aliases *)
 
+  NEWLINE = LF;
+  
   TAB = HT;
   
   SPACE = SP;
