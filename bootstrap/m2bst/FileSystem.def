@@ -1,0 +1,52 @@
+(*!m2pim*) (* Copyright (c) 2015 B.Kowarsch. All rights reserved. *)
+
+DEFINITION MODULE FileSystem;
+
+(* File System Access library *)
+
+
+TYPE AccessType = ( read, write, execute );
+
+TYPE Permissions = RECORD
+  owner, group, system : AccessType;
+END;
+
+TYPE Timestamp = RECORD
+  year : [1970..9999] (* OF CARDINAL *);
+  month : [1..12] (* OF CARDINAL *);
+  day : [1..31] (* OF CARDINAL *);
+  hour : [0..23] (* OF CARDINAL *);
+  minute,
+  second : [0..59] (* OF CARDINAL *);
+  millisec : [0..999] (* OF CARDINAL *)
+END;
+
+
+(* Operations *)
+
+PROCEDURE fileExists ( name : ARRAY OF CHAR ) : BOOLEAN;
+
+PROCEDURE isDirectory ( name : ARRAY OF CHAR ) : BOOLEAN;
+
+PROCEDURE getFileSize
+  ( name : ARRAY OF CHAR; VAR size : LONGCARD; VAR s : Status );
+
+PROCEDURE getPermissions
+  ( name : ARRAY OF CHAR; VAR p : Permissions; VAR s : Status );
+
+PROCEDURE getCreationTimeStamp
+  ( name : ARRAY OF CHAR; VAR ts : Timestamp; VAR s : Status );
+
+PROCEDURE getModificationTimeStamp
+  ( name : ARRAY OF CHAR; VAR ts : Timestamp; VAR s : Status );
+
+PROCEDURE createFile ( name : ARRAY OF CHAR; VAR s : Status );
+
+PROCEDURE removeFile ( name : ARRAY OF CHAR; VAR s : Status );
+
+PROCEDURE createDir ( name : ARRAY OF CHAR; VAR s : Status );
+
+PROCEDURE removeDir ( name : ARRAY OF CHAR; VAR s : Status );
+
+
+END FileSystem.
