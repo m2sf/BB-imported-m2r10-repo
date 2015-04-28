@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE M2Source;
 
 (* Modula-2 Source File Reader *)
 
-IMPORT FileIO;
+IMPORT ISO646, FileIO;
 
 FROM M2Params IMPORT MaxSourceFileSize;
 
@@ -136,7 +136,7 @@ BEGIN
   source^.lexPos := source^.endPos+1;
   
   (* terminate buffer *)
-  source^.buffer[source^.endPos+1] := ASCII.NUL;
+  source^.buffer[source^.endPos+1] := ISO646.NUL;
   
   (* initialise line and column counters *)
   source^.line := 1; source^.column := 1;
@@ -174,16 +174,16 @@ BEGIN
   consumeChar(s);
   
   (* pass LF instead of CR *)
-  IF ch = ASCII.CR THEN
-    ch := ASCII.LF
+  IF ch = ISO646.CR THEN
+    ch := ISO646.LF
   END;
 
   (* pass new lookahead character *)
   next := s^.buffer[s^.index];
   
   (* pass LF instead of CR *)
-  IF next := ASCII.CR THEN
-    next := ASCII.LF
+  IF next := ISO646.CR THEN
+    next := ISO646.LF
   END;
   
   RETURN
@@ -221,12 +221,12 @@ BEGIN
   END;
   
   (* check for new line *)
-  IF (* new line *) (ch = ASCII.LF) OR (ch = ASCII.CR) THEN
+  IF (* new line *) (ch = ISO646.LF) OR (ch = ISO646.CR) THEN
     (* update line and column counters *)
     INC(s^.line); s^.column := 1;
     
     (* check for CR LF sequence *)
-    IF (ch = ASCII.CR) AND (s^.buffer[s^.index] = ASCII.LF) THEN
+    IF (ch = ISO646.CR) AND (s^.buffer[s^.index] = ISO646.LF) THEN
       (* consume trailing LF *)
       INC(s^.index)
       
@@ -269,8 +269,8 @@ BEGIN
   next := s^.buffer[s^.index];
   
   (* return LF instead of CR *)
-  IF next = ASCII.CR THEN
-    next := ASCII.LF
+  IF next = ISO646.CR THEN
+    next := ISO646.LF
   END;
     
   RETURN next
@@ -302,7 +302,7 @@ BEGIN
   
   (* return ASCII.NUL if lookahead is last character or beyond eof *)
   IF s^.index >= s^.endPos THEN
-    RETURN ASCII.NUL
+    RETURN ISO646.NUL
   END;
   
   (* get lookahead and tentative second lookahead *)
@@ -310,11 +310,11 @@ BEGIN
   la2 := s^.buffer[s^.index+1];
   
   (* check if lookahead is CR LF sequence *)
-  IF (next = ASCII.CR) AND (la2 = ASCII.LF) THEN
+  IF (next = ISO646.CR) AND (la2 = ISO646.LF) THEN
   
     (* return ASCII.NUL if CR LF is at the very end of source *)
     IF s^.index+1 >= s^.endPos THEN
-      RETURN ASCII.NUL
+      RETURN ISO646.NUL
     END;
     
     (* otherwise second lookahead is character after CR LF sequence  *)
@@ -322,8 +322,8 @@ BEGIN
   END
   
   (* return LF instead of CR *)
-  IF la2 = ASCII.CR THEN
-    la2 := ASCII.LF
+  IF la2 = ISO646.CR THEN
+    la2 := ISO646.LF
   END;
   
   RETURN la2
