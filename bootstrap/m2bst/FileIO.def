@@ -1,0 +1,69 @@
+(*!m2pim*) (* Copyright (c) 2015 B.Kowarsch. All rights reserved. *)
+
+DEFINITION MODULE SimpleFileIO;
+
+(* Simple File IO library *)
+
+TYPE File (* = OPAQUE *);
+
+TYPE Mode = ( read, write, append );
+
+TYPE Status = ( success, failure );
+
+
+(* Operations common to all modes *)
+
+PROCEDURE open
+  ( VAR f : File; filename : ARRAY OF CHAR; mode : Mode; VAR s : Status );
+(* Opens file filename in mode. Passes file handle in f and status in s. *) 
+
+PROCEDURE getStatus ( f : File; VAR s : Status );
+(* Passes the status of the last operation on file f in s. *)
+
+PROCEDURE close ( VAR f : File; s : Status );
+(* Closes file associated with file handle f. Passes status in s. *)
+
+
+(* Operations exclusive to mode read *)
+
+PROCEDURE setPos ( f : File; pos : LONGCARD );
+(* Sets the reading position of file f to pos. *)
+
+PROCEDURE readBytes
+  ( f : File; VAR buffer : ARRAY OF BYTE; VAR bytesRead : LONGCARD );
+(* Reads contents starting at the current reading position of file f into
+   buffer until either buffer is full or eof is reached. The number of bytes
+   actually read is passed in bytesRead. *)
+
+PROCEDURE readChars
+  ( f : File; VAR buffer : ARRAY OF CHAR; VAR charsRead : LONGCARD );
+(* Reads contents starting at the current reading position of file f into
+   buffer until either the pen-ultimate index of buffer is written or eof
+   is reached. The buffer is then terminated with ASCII NUL. The number of
+   characters actually read is passed in charsRead. *)
+
+PROCEDURE eof ( f : File ) : BOOLEAN;
+(* Returns TRUE if the end of file f has been reached, otherwise FALSE. *)
+
+
+(* Operations common to modes read and write *)
+
+PROCEDURE getPos ( f : File; VAR pos : LONGCARD );
+(* Passes the current reading or writing position of file f in pos. *)
+
+
+(* Operations common to modes write and append *)
+
+PROCEDURE writeBytes
+  ( f : File; buffer : ARRAY OF BYTE; VAR bytesWritten : LONGCARD );
+(* Writes the contents of buffer at the current writing position to file f.
+   The number of bytes actually written is passed in bytesWritten. *)
+
+PROCEDURE writeChars
+  ( f : File; buffer : ARRAY OF CHAR; VAR charsWritten : LONGCARD );
+(* Writes the contents of buffer up to and excluding the first ASCII NUL
+   character code at the current writing position to file f.
+   The number of characters actually written is passed in charsWritten. *)
+
+
+END SimpleFileIO.
