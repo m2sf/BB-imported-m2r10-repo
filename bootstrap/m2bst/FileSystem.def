@@ -5,10 +5,10 @@ DEFINITION MODULE FileSystem;
 (* File System Access library *)
 
 
-TYPE AccessType = ( read, write, execute );
+TYPE AccessFlags = SET OF ( readAccess, writeAccess, executeAccess );
 
 TYPE Permissions = RECORD
-  owner, group, system : AccessType;
+  owner, group, world : AccessFlags;
 END;
 
 TYPE Timestamp = RECORD
