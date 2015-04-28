@@ -4,21 +4,15 @@ IMPLEMENTATION MODULE M2Lexer;
 
 (* Lexer for Modula-2 R10 Bootstrap Compiler *)
 
-IMPORT ASCII, M2Params, M2Source;
+IMPORT Files, M2Params, M2Source;
+
+FROM ISO646 IMPORT TAB, SPACE, NEWLINE,
+  BACKSLASH, SINGLEQUOTE, DOUBLEQUOTE, isDigit;
 
 FROM M2Tokens IMPORT Token, TokenValue;
 
 FROM M2Source IMPORT Source, getChar, consumeChar, lookaheadChar,
   lookahead2, markLexeme, copyLexeme, getLineAndColumn, eof;
-
-
-(* ASCII Printables *)
-
-CONST
-  SPACE = CHR(32);
-  BACKSLASH = CHR(92);   (* \ *)
-  SINGLEQUOTE = CHR(39); (* ' *)
-  DOUBLEQUOTE = CHR(34); (* " *)
 
 
 (* Lexer Descriptor *)
@@ -146,7 +140,8 @@ BEGIN
   next := lookaheadChar(lexer^.source);
   
   (* skip any whitespace, tab and new line *)
-  WHILE NOT eof(lexer^.source) AND isIgnoreChar(next) DO
+  WHILE NOT eof(lexer^.source) AND
+    ((next = SPACE) OR (next = TAB) OR (next = NEWLINE)) DO
     getChar(source, ch, next)
   END; (* WHILE *)
   
@@ -165,7 +160,7 @@ BEGIN
     copyLexeme(lexer^.source, lexer^.dict, sym.lexeme)
 
   (* check for numeric literal *)
-  ELSIF isDigit(next) THEN 
+  ELSIF (next >= "0") AND (next <= "9") THEN 
     markLexeme(lexer^.source, sym.line, sym.column);
     matchNumericLiteral(lexer^.source, sym.token);
     copyLexeme(lexer^.source, lexer^.dict, sym.lexeme)
@@ -484,7 +479,7 @@ END consumeSym;
  *  TO DO
  * ---------------------------------------------------------------------------
  *)
-PROCEDURE lookaheadSym ( lexer : Lexer ) : Symbol;
+PROCEDURE lookaheadSym ( lexer : Lexer ) : Symbol; (* PURE *)
 
 BEGIN
   
@@ -507,7 +502,7 @@ END lookaheadSym;
  *  TO DO
  * ---------------------------------------------------------------------------
  *)
-PROCEDURE errorCount ( lexer : Lexer ) : CARDINAL;
+PROCEDURE errorCount ( lexer : Lexer ) : CARDINAL; (* PURE *)
  (* Returns the lexer's accumulated error count. *)
 
 BEGIN
@@ -817,7 +812,7 @@ BEGIN
 
   REPEAT
     getChar(s, ch, next)
-  UNTIL eof(s) OR (next = ASCII.LF);
+  UNTIL eof(s) OR (next = NEWLINE);
   
   token := lineComment
 
