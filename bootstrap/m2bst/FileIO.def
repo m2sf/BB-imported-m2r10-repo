@@ -1,6 +1,6 @@
 (*!m2pim*) (* Copyright (c) 2015 B.Kowarsch. All rights reserved. *)
 
-DEFINITION MODULE SimpleFileIO;
+DEFINITION MODULE LowLevelFileIO;
 
 (* Simple File IO library *)
 
@@ -8,26 +8,65 @@ TYPE File (* = OPAQUE *);
 
 TYPE Mode = ( read, write, append );
 
-TYPE Status = ( success, failure );
+TYPE Status = ( success, failure ); (* TO DO: refine *)
 
 
-(* Operations common to all modes *)
+(* Operations *)
+
+(* Support for an operation depends on the mode in which the file has
+ * been opened. Any attempt to carry out an unsupported operation will
+ * fail with status failure.
+ *
+ * operation     supported in file mode
+ *               read    write   append
+ * ------------------------------------
+ * open          yes     yes     yes
+ * close         yes     yes     yes
+ * getMode       yes     yes     yes
+ * getStatus     yes     yes     yes
+ * getPos        yes     yes     no
+ * setPos        yes     no      no
+ * eof           yes     no      no
+ * readBytes     yes     no      no
+ * readChars     yes     no      no
+ * writeBytes    no      yes     yes
+ * writeChars    no      yes     yes
+ * ------------------------------------
+ *)
+
+
+(* Open and close *)
 
 PROCEDURE open
   ( VAR f : File; filename : ARRAY OF CHAR; mode : Mode; VAR s : Status );
 (* Opens file filename in mode. Passes file handle in f and status in s. *) 
 
-PROCEDURE getStatus ( f : File; VAR s : Status );
-(* Passes the status of the last operation on file f in s. *)
-
 PROCEDURE close ( VAR f : File; s : Status );
 (* Closes file associated with file handle f. Passes status in s. *)
 
 
-(* Operations exclusive to mode read *)
+(* Introspection *)
+
+PROCEDURE getMode ( f : File; VAR m : Mode );
+(* Passes the mode of file f in m. *)
+
+PROCEDURE getStatus ( f : File; VAR s : Status );
+(* Passes the status of the last operation on file f in s. *)
+
+
+(* Positioning *)
+
+PROCEDURE getPos ( f : File; VAR pos : LONGCARD );
+(* Passes the current reading or writing position of file f in pos. *)
 
 PROCEDURE setPos ( f : File; pos : LONGCARD );
 (* Sets the reading position of file f to pos. *)
+
+PROCEDURE eof ( f : File ) : BOOLEAN;
+(* Returns TRUE if the end of file f has been reached, otherwise FALSE. *)
+
+
+(* IO operations *)
 
 PROCEDURE readBytes
   ( f : File; VAR buffer : ARRAY OF BYTE; VAR bytesRead : LONGCARD );
@@ -42,18 +81,6 @@ PROCEDURE readChars
    is reached. The buffer is then terminated with ASCII NUL. The number of
    characters actually read is passed in charsRead. *)
 
-PROCEDURE eof ( f : File ) : BOOLEAN;
-(* Returns TRUE if the end of file f has been reached, otherwise FALSE. *)
-
-
-(* Operations common to modes read and write *)
-
-PROCEDURE getPos ( f : File; VAR pos : LONGCARD );
-(* Passes the current reading or writing position of file f in pos. *)
-
-
-(* Operations common to modes write and append *)
-
 PROCEDURE writeBytes
   ( f : File; buffer : ARRAY OF BYTE; VAR bytesWritten : LONGCARD );
 (* Writes the contents of buffer at the current writing position to file f.
@@ -66,4 +93,4 @@ PROCEDURE writeChars
    The number of characters actually written is passed in charsWritten. *)
 
 
-END SimpleFileIO.
+END LowLevelFileIO.
