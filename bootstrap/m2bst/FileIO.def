@@ -39,7 +39,10 @@ TYPE Status = ( success, failure ); (* TO DO: refine *)
 
 PROCEDURE open
   ( VAR f : File; filename : ARRAY OF CHAR; mode : Mode; VAR s : Status );
-(* Opens file filename in mode. Passes file handle in f and status in s. *) 
+(* Opens file filename in mode. Passes file handle in f and status in s.
+   If the file does not exist, it will be created when opened in write mode,
+   otherwise status failure is passed back in s.  When opening an already
+   existing file in write mode, all of its current contents are replaced. *)
 
 PROCEDURE close ( VAR f : File; s : Status );
 (* Closes file associated with file handle f. Passes status in s. *)
