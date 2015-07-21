@@ -61,4 +61,15 @@ PROCEDURE arccos ( r : REAL ) : REAL;
 PROCEDURE arctan ( r : REAL ) : REAL;
 (* Returns the arctangent of r. *)
 
+PROCEDURE sinh ( r : REAL ) : REAL;
+(* Returns the hyperbolic sine of r. *)
+
+PROCEDURE cosh ( r : REAL ) : REAL;
+(* Returns the hyperbolic cosine of r. *)
+
+PROCEDURE tanh ( r : REAL ) : REAL;
+(* Returns the hyperbolic tangent of r. *)
+
+
+
 END RealMath.
