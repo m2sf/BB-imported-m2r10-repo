@@ -61,4 +61,15 @@ PROCEDURE arccos ( r : LONGREAL ) : LONGREAL;
 PROCEDURE arctan ( r : LONGREAL ) : LONGREAL;
 (* Returns the arctangent of r. *)
 
+PROCEDURE sinh ( r : LONGREAL ) : LONGREAL;
+(* Returns the hyperbolic sine of r. *)
+
+PROCEDURE cosh ( r : LONGREAL ) : LONGREAL;
+(* Returns the hyperbolic cosine of r. *)
+
+PROCEDURE tanh ( r : LONGREAL ) : LONGREAL;
+(* Returns the hyperbolic tangent of r. *)
+
+
+
 END LongRealMath.
