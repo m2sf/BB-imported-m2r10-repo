@@ -26,52 +26,52 @@ PROCEDURE LONGMOD ( i, j : LONGINT ) : LONGINT;
 (* Returns i MOD j using PIM semantics *)
 
 PROCEDURE Read ( VAR ch : CHAR );
-(* Invokes READ(stdIn, ch) to call CHAR.Read(stdIn, ch) *)
+(* Invokes READ(stdIn, ch) to call CharIO.Read(stdIn, ch) *)
 
 PROCEDURE Write ( ch : CHAR );
-(* Invokes WRITE(stdOut, ch) to call CHAR.Write(stdOut, ch) *)
+(* Invokes WRITE(stdOut, ch) to call CharIO.Write(stdOut, ch) *)
 
 PROCEDURE ReadString ( VAR s : ARRAY OF CHAR );
-(* Invokes READ(stdIn, s) to call ARRAYOFCHAR.Read(stdIn, s) *)
+(* Invokes READ(stdIn, s) to call ArrayOfCharIO.Read(stdIn, s) *)
 
 PROCEDURE WriteString ( s : ARRAY OF CHAR );
-(* Invokes WRITE(stdOut, ch) to call ARRAYOFCHAR.Write(stdOut, s) *)
+(* Invokes WRITE(stdOut, ch) to call ArrayOfCharIO.Write(stdOut, s) *)
 
 PROCEDURE ReadCard ( VAR x : CARDINAL );
-(* Invokes READ(stdIn, x) to call CARDINAL.Read(stdIn, x) *)
+(* Invokes READ(stdIn, x) to call CardinalIO.Read(stdIn, x) *)
 
 PROCEDURE WriteCard ( x, n : CARDINAL );
-(* Invokes WRITEF(stdOut, ">n", x) to call CARDINAL.WriteF(stdOut, ">n", x) *)
+(* Invokes WRITEF(stdOut, ">n", x) to call CardinalIO.WriteF(stdOut, ">n", x) *)
 
 PROCEDURE WriteOct ( x, n : CARDINAL );
 (* Writes the value of x in base 8 representation to stdOut *)
 
 PROCEDURE WriteHex ( x, n : CARDINAL );
-(* Invokes WRITEF(stdOut, "H>n", x) to call CARDINAL.WriteF(stdOut, "H>n", x)
+(* Invokes WRITEF(stdOut, "x>n", x) to call CardinalIO.WriteF(stdOut, "x>n", x)
    n is replaced by the textual representation of the value of parameter n *)
 
 PROCEDURE ReadInt ( VAR x : INTEGER );
-(* Invokes READ(stdIn, x) to call INTEGER.Read(stdIn, x) *)
+(* Invokes READ(stdIn, x) to call IntegerIO.Read(stdIn, x) *)
 
 PROCEDURE WriteInt ( x : INTEGER; n : CARDINAL );
-(* Invokes WRITEF(stdOut, ">n", x) to call INTEGER.WriteF(stdOut, ">n", x)
+(* Invokes WRITEF(stdOut, ">n", x) to call IntegerIO.WriteF(stdOut, ">n", x)
    n is replaced by the textual representation of the value of parameter n *)
 
 PROCEDURE ReadWrd ( VAR x : WORD );
-(* Invokes READ(stdIn, x) to call WORD.Read(stdIn, x) *)
+(* Invokes READ(stdIn, x) to call WordIO.Read(stdIn, x) *)
 
 PROCEDURE WriteWrd ( x : WORD );
-(* Invokes WRITE(stdOut, x) to call WORD.Write(stdOut, x) *)
+(* Invokes WRITE(stdOut, x) to call WordIO.Write(stdOut, x) *)
 
 PROCEDURE ReadReal ( x : REAL );
-(* Invokes READ(stdIn, x) to call REAL.Read(stdIn, x) *)
+(* Invokes READ(stdIn, x) to call RealIO.Read(stdIn, x) *)
 
 PROCEDURE WriteReal ( x : REAL; n : INTEGER );
-(* Invokes WRITEF(stdOut, ">n", r) to call REAL.WriteF(stdOut, ">n", r)
+(* Invokes WRITEF(stdOut, ">n", r) to call RealIO.WriteF(stdOut, ">n", r)
    n is replaced by the textual representation of the value of parameter n *)
 
 PROCEDURE WriteFixPt ( x : REAL; n, k : INTEGER );
-(* Invokes WRITEF(stdOut, "n.m", r) to call REAL.WriteF(stdIn, "n.m", r)
+(* Invokes WRITEF(stdOut, "n.m", r) to call RealIO.WriteF(stdIn, "n.m", r)
    n is replaced by the textual representation of the value of parameter n,
    m is replaced by the textual representation of k - n - 1 *)
 
