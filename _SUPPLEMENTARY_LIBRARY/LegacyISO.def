@@ -49,50 +49,50 @@ PROCEDURE LONGREM ( i, j : LONGINT ) : LONGINT;
 (* Returns i REM j using ISO semantics *)
 
 PROCEDURE ReadChar ( VAR ch : CHAR );
-(* Invokes READ(stdIn, ch) to call CHAR.Read(stdIn, ch) *)
+(* Invokes READ(stdIn, ch) to call CharIO.Read(stdIn, ch) *)
 
 PROCEDURE WriteChar ( ch : CHAR );
-(* Invokes WRITE(stdOut, ch) to call CHAR.Write(stdOut, ch) *)
+(* Invokes WRITE(stdOut, ch) to call CharIO.Write(stdOut, ch) *)
 
 PROCEDURE ReadString ( VAR s : ARRAY OF CHAR );
-(* Invokes READ(stdIn, s) to call ARRAYOFCHAR.Read(stdIn, s) *)
+(* Invokes READ(stdIn, s) to call ArrayOfCharIO.Read(stdIn, s) *)
 
 PROCEDURE WriteString ( s : ARRAY OF CHAR );
-(* Invokes WRITE(stdOut, ch) to call ARRAYOFCHAR.Write(stdOut, s) *)
+(* Invokes WRITE(stdOut, ch) to call ArrayOfCharIO.Write(stdOut, s) *)
 
 PROCEDURE ReadCard ( VAR c : CARDINAL );
-(* Invokes READ(stdIn, c) to call CARDINAL.Read(stdIn, c) *)
+(* Invokes READ(stdIn, c) to call CardinalIO.Read(stdIn, c) *)
 
 PROCEDURE WriteCard ( c, width : CARDINAL );
-(* Invokes WRITEF(stdOut, ">n", c) to call CARDINAL.WriteF(stdOut, ">n", c)
+(* Invokes WRITEF(stdOut, ">n", c) to call CardinalIO.WriteF(stdOut, ">n", c)
    n is replaced by the textual representation of the value of width *)
 
 PROCEDURE ReadInt ( VAR i : INTEGER );
-(* Invokes READ(stdIn, i) to call INTEGER.Read(stdIn, i) *)
+(* Invokes READ(stdIn, i) to call IntegerIO.Read(stdIn, i) *)
 
 PROCEDURE WriteInt ( i, width : INTEGER );
-(* Invokes WRITEF(stdOut, ">n", i) to call INTEGER.WriteF(stdOut, ">n", i)
+(* Invokes WRITEF(stdOut, ">n", i) to call IntegerIO.WriteF(stdOut, ">n", i)
    n is replaced by the textual representation of the value of width *)
 
 PROCEDURE ReadReal ( r : REAL );
 (* Invokes READ(stdIn, r) to call REAL.Read(stdIn, r) *)
 
 PROCEDURE WriteReal ( r : REAL; width : CARDINAL );
-(* Invokes WRITEF(stdOut, ">n", r) to call REAL.WriteF(stdOut, ">n", r)
+(* Invokes WRITEF(stdOut, ">n", r) to call RealIO.WriteF(stdOut, ">n", r)
    n is replaced by the textual representation of the value of width *)
 
 PROCEDURE WriteEng ( r : REAL; sigFigs, width : CARDINAL );
-(* Invokes WRITEF(stdOut, "En>m", r) to call REAL.WriteF(stdIn, "En>m", r)
+(* Invokes WRITEF(stdOut, "En>m", r) to call RealIO.WriteF(stdIn, "En>m", r)
    n is replaced by textual representations of the value of sigFigs
    m is replace by the textual represenation of the value of width *)
 
 PROCEDURE WriteFloat ( r : REAL; sigFigs, width : CARDINAL );
-(* Invokes WRITEF(stdOut, "1.n>m", r) to call REAL.WriteF(stdIn, "1.n>m", r)
+(* Invokes WRITEF(stdOut, "S1.n>m", r) to call RealIO.WriteF(stdIn, "S1.n>m", r)
    n is replaced by the textual representation of the value of sigFigs,
    m is replaced by the textual representation of width - sigFigs - 1 *)
 
 PROCEDURE WriteFixed ( r : REAL; place : INTEGER; width : CARDINAL );
-(* Invokes WRITEF(stdOut, "n.m", r) to call REAL.WriteF(stdIn, "n.m", r)
+(* Invokes WRITEF(stdOut, "n.m", r) to call RealIO.WriteF(stdIn, "n.m", r)
    n is replaced by the textual representation of the value of places,
    m is replaced by the textual representation of width - places - 1 *)
 
