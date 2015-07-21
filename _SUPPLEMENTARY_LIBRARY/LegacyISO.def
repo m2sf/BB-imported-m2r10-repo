@@ -10,10 +10,10 @@ PROCEDURE CAP ( ch : CHAR ) : CHAR;
 (* Returns ASCII.toUpper(ch) *)
 
 PROCEDURE TRUNC ( r : REAL ) : CARDINAL;
-(* Returns REALMath.trunc(r) :: CARDINAL *)
+(* Returns RealMath.trunc(r) :: CARDINAL *)
 
 PROCEDURE INT ( r : REAL ) : INTEGER;
-(* Returns REALMath.trunc(r) :: INTEGER *)
+(* Returns RealMath.trunc(r) :: INTEGER *)
 
 PROCEDURE FLOAT ( i : INTEGER ) : REAL;
 (* Returns i :: REAL *)
