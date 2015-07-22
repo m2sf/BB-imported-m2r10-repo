@@ -50,31 +50,4 @@ PROCEDURE [=] isEqual ( z1, z2 : COMPLEX ) : BOOLEAN;
 (* Returns TRUE if COMPLEX values z1 and z2 are equal, otherwise FALSE.
    This function is bound to operators = and # for type COMPLEX. *)
 
-
-(* IO operations *)
-
-PROCEDURE [READ] Read( infile : File; VAR z : COMPLEX );
-(* Reads the textual representation of a COMPLEX value from input stream infile
-   - any leading whitespace is skipped
-   - any remaining characters that are part of the numeral being read are
-     removed from infile
-   - the numeric value of the numeral string read is assigned to the variable
-     passed in for z
-   - the file status is set to any of:
-     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
-   procedure is substituted for invocations of READ with a COMPLEX argument. *)
-
-PROCEDURE [WRITE] Write( outfile : File; CONST z : COMPLEX );
-(* Writes the textual representation of value z to output stream outfile. This
-   procedure is substituted for invocations of WRITE with a COMPLEX argument.*)
-
-PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
-    CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF COMPLEX );
-(* Writes a formatted textual representation of one or more COMPLEX values to
-   output stream outfile. The output format is determined by fmtStr. This
-   procedure is substituted for invocations of WRITEF with one or more
-   COMPLEX arguments. *)
-
 END COMPLEX.
