@@ -2,7 +2,7 @@
 
 DEFINITION MODULE ComplexIO [ProtoIO] FOR COMPLEX;
 
-(* IO Extension Library for Type BCD *)
+(* IO Extension Library for Type COMPLEX *)
 
 FROM FileIO IMPORT File;
 
