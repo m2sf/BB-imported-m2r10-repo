@@ -1,0 +1,32 @@
+(* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LongComplexIO [ProtoIO] FOR LONGCOMPLEX;
+
+(* IO Extension Library for Type LONGCOMPLEX *)
+
+
+PROCEDURE [READ] Read( infile : File; VAR z : LONGCOMPLEX );
+(* Reads the textual representation of a LONGCOMPLEX value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the numeral being read are
+     removed from infile
+   - the numeric value of the numeral string read is assigned to the variable
+     passed in for z
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This procedure
+     is substituted for invocations of READ with a LONGCOMPLEX argument. *)
+
+PROCEDURE [WRITE] Write( outfile : File; CONST z : LONGCOMPLEX );
+(* Writes the textual representation of value z to stream outfile. This pro-
+   cedure is substituted for invocations of WRITE with a LONGCOMPLEX argument.*)
+
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : VARIADIC OF LONGCOMPLEX );
+(* Writes a formatted textual representation of one or more LONGCOMPLEX values
+   to output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   LONGCOMPLEX arguments. *)
+   
+ END LongComplexIO.
