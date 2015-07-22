@@ -69,8 +69,8 @@ CONST
     TargetByteOrder = <target dependent value>;
       (* byte order of the target architecture *)
 
-    TargetIsBiEndian = <target dependent boolean value>;
-      (* TRUE if the target is bi-endian, otherwise FALSE *)
+    TargetIsBigEndian = <target dependent boolean value>;
+      (* TRUE if the target is big-endian, otherwise FALSE *)
 
 
 (* General low-level facilities *)
