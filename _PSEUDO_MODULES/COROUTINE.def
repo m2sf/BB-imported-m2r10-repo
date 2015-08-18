@@ -25,16 +25,16 @@ TYPE State = ( waiting, running, done );
 
 (* General Control Facilities *)
 
-PROCEDURE [CODONE] allDone ( list : ARGLIST OF <CoroutineType> ) : BOOLEAN;
+PROCEDURE [DONE] allDone ( list : ARGLIST OF <CoroutineType> ) : BOOLEAN;
 (* Returns TRUE if all coroutines in the argument list have terminated,
    returns FALSE if any coroutine in the list has not yet terminated.
-   The procedure is bound to predefined function CODONE.
+   The procedure is bound to predefined function DONE.
    
    Usage:
    
    REPEAT
      AWAKE(co1); AWAKE(co2); AWAKE(co3)
-   UNTIL CODONE(co1, co2, co3); *)
+   UNTIL DONE(co1, co2, co3); *)
 
 
 PROCEDURE [NEW] new
