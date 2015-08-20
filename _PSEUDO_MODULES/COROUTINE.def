@@ -25,18 +25,7 @@ TYPE State = ( waiting, running, done );
 
 (* General Control Facilities *)
 
-PROCEDURE DONE ( list : ARGLIST OF <CoroutineType> ) : BOOLEAN;
-(* Returns TRUE if all coroutines in the argument list have terminated,
-   returns FALSE if any coroutine in the list has not yet terminated.
-   
-   Usage:
-   
-   REPEAT
-     COROUTINE.AWAKE(co1);
-     COROUTINE.AWAKE(co2);
-     COROUTINE.AWAKE(co3)
-   UNTIL COROUTINE.DONE(co1, co2, co3); *)
-
+(* Creating a Coroutine *)
 
 PROCEDURE [NEW] new
   ( NEW co : <CoroutineType>;
@@ -50,6 +39,8 @@ PROCEDURE [NEW] new
    NEW co := { assocProc, 0, p1, p2, p3, ... }; *)
 
 
+(* Activating a Coroutine *)
+
 PROCEDURE AWAKE ( co : <CoroutineType> ) : ResultType;
 (* Passes control to coroutine co, puts co into state running.
    Returns result if co yields or returns a result.
@@ -61,11 +52,15 @@ PROCEDURE AWAKE ( co : <CoroutineType> ) : ResultType;
    result := COROUTINE.AWAKE(co); *)
 
 
-PROCEDURE [YIELD] yield ( result : ResultType );
-(* Yields control and passes result to the caller, puts co into state waiting.
-   ResultType must match the return type of co's associated procedure.
-   No result must be passed if co's associated procedure is not a function.
-   This procedure is bound to the YIELD statement.
+(* Suspending a Coroutine *)
+
+(* The YIELD statement suspends a coroutine.
+   
+   Suspending a coroutine yields control and returns a result to the caller,
+   thereby putting the coroutine into state waiting.
+   
+   The result must match the return type of the associated procedure.
+   No result must be returned if the associated procedure is not a function.
    
    Usage:
    
@@ -73,13 +68,38 @@ PROCEDURE [YIELD] yield ( result : ResultType );
    YIELD result; *)
 
 
-(* To terminate a coroutine, the RETURN statement is used instead of YIELD:
+(* Terminating a Coroutine *)
+
+(* The RETURN statement terminates a coroutine.
+   
+   Terminating a coroutine returns control and a final result to the caller,
+   thereby putting the coroutine into state done.
+   
+   The result must match the return type of the associated procedure.
+   No result must be returned if the associated procedure is not a function.
 
    Usage:
    
    RETURN;
    RETURN result; *)
 
+
+(* Checking the Termination State of a Coroutine *)
+
+PROCEDURE DONE ( list : ARGLIST OF <CoroutineType> ) : BOOLEAN;
+(* Returns TRUE if all coroutines in the argument list have terminated,
+   returns FALSE if any coroutine in the list has not yet terminated.
+   
+   Usage:
+   
+   REPEAT
+     COROUTINE.AWAKE(co1);
+     COROUTINE.AWAKE(co2);
+     COROUTINE.AWAKE(co3)
+   UNTIL COROUTINE.DONE(co1, co2, co3); *)
+
+
+(* Deallocating a Coroutine *)
 
 PROCEDURE [RELEASE] release (VAR co : <CoroutineType> );
 (* Deallocates coroutine co and passes NIL back in co.
@@ -93,13 +113,13 @@ PROCEDURE [RELEASE] release (VAR co : <CoroutineType> );
 
 (* Fine-Grained Control Facilities *)
 
-(* Obtain the state of a coroutine *)
+(* Obtaining the State of a Coroutine *)
 
 PROCEDURE currentState ( co : <CoroutineType> ) : State;
 (* Returns the current state of coroutine co. *)
 
 
-(* Coroutines may be scheduled for premature termination *)
+(* Scheduling a Coroutine for Premature Termination *)
 
 PROCEDURE scheduleTermination ( co : <CoroutineType> );
 (* Puts co into state done immediately if it is waiting, or after its next
@@ -110,7 +130,7 @@ PROCEDURE terminationScheduled ( co : <CoroutineType> ) : BOOLEAN;
 (* Returns TRUE if co has been scheduled for termination, otherwise FALSE. *)
 
 
-(* User handlers may intercept attempts to activate dead coroutines *)
+(* Intercepting Attempts to Activate Dead Coroutines *)
 
 PROCEDURE InstallAwakeDeadCoroHandler
   ( co : <CoroutineType>; handler : <HandlerType> );
