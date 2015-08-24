@@ -49,10 +49,13 @@ TYPE LITERAL =
 (* Replaced by TRUE if type T supports storage of NIL as a value,
    otherwise FALSE. *)
 
+(* MACRO *) PROCEDURE TORDERED ( T : <CollectionTypeIdent> ) : BOOLEAN;
+(* Replaced by TRUE if type T is an ordered collection, otherwise FALSE. *)
+
 (* For macro TLIMIT, see documentation module PREDEFINED.def *)
 
-(* Any invocation of the above macro with an argument that is not an
-   identifier of a collection type will cause a compile time error. *)
+(* Any invocation of collection property macros with an argument that is
+   not an identifier of a collection type will cause a compile time error. *)
 
 
 (* Querying Scalar Properties *)
