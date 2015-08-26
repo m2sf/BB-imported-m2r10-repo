@@ -4,7 +4,7 @@ DEFINITION MODULE TPROPERTIES;
 
 (* Classification *)
 
-TYPE PROPERTY =
+TYPE CLASSIFICATION =
   ( isComputational, isNumber, isScalar, isCountable, isSigned,
     isCollection, isIndexed, isRigid, isSet, isMultiSet, isDict, isMultiDict );
 
@@ -17,8 +17,9 @@ TYPE LITERAL =
 
 (* Querying Classification Properties *)
 
-(* MACRO *) PROCEDURE TPROPERTY ( T : <TypeIdent>; p : PROPERTY ) : BOOLEAN;
-(* Replaced by TRUE if type T has property p, otherwise FALSE. *)
+(* MACRO *) PROCEDURE TCLASSIFIED
+  ( T : <TypeIdent>; c : ARGLIST OF CLASSIFICATION ) : BOOLEAN;
+(* Replaced by TRUE if type T matches classification c, otherwise FALSE. *)
 
 
 (* Querying Literal Compatibility *)
