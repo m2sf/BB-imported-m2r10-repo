@@ -1,4 +1,4 @@
-(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(*!m2r10*) (* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* General Blueprint for Dynamically Allocatable Collection ADTs *)
 
@@ -9,12 +9,13 @@ REFERENTIAL AccessorType, ValueType, HandlerType, LoopBodyType;
 
 (* Required Module Type *)
 
-MODULE TYPE = OPAQUE :=
-  CHAR | UNICHAR |
+MODULE TYPE = { isCollection; * };
+
+TLITERAL =
+  charLiteral | unicharLiteral |
   { ARGLIST OF AccessorType } |
   { ARGLIST OF { AccessorType, ValueType } };
-(* Dynamic Collection ADTs must be opaque,
-   quoted literals or structured literals are compatible. *)
+(* Quoted literals or structured literals are compatible. *)
 
 
 (* Required Constants *)
@@ -26,18 +27,25 @@ CONST [NIL] allowsNilStorage : BOOLEAN;
    Its value may be TRUE or FALSE. *)
 
 
+(* Storage Capacity *)
+
+CONST [TLIMIT] capacity : LONGCARD;
+(* Required constant to define the entry limit of a collection ADT.
+   Its value may be any LONGCARD value. Zero indicates no-limit. *)
+
+
 (* Orderedness *)
 
-CONST [TBDFOR] supportsBidirectionalForLoopIteration : BOOLEAN;
+CONST [TORDERED] isOrdered : BOOLEAN;
 (* Required constant to define whether conforming ADTs permit bidirectional
    FOR loop iteration. Its value may be TRUE or FALSE. *)
 
 
 (* Memory Management Model *)
 
-CONST [TDYN] isDynamic : TRUE;
+CONST [TDYN] isDynamic : BOOLEAN;
 (* Required constant to define whether conforming ADTs should be dynamic.
-   Its value is always TRUE for OPAQUE ADTs. *)
+   Its value may be TRUE or FALSE. *)
 
 CONST [TREFC] isRefCounted : BOOLEAN;
 (* Required constant to define whether conforming ADTs should be reference
@@ -53,14 +61,7 @@ CONST * invAccessorRetrievalIntercept : BOOLEAN;
 
 (* Required Procedures *)
 
-
 (* Introspection *)
-
-(* Binding to Predefined Function TLIMIT *)
-
-PROCEDURE [TLIMIT];
-(* Specialised blueprints must always require binding to TLIMIT. *)
-
 
 (* Binding to Predefined Function COUNT or LENGTH *)
 
@@ -70,18 +71,17 @@ PROCEDURE [TLIMIT];
 
 (* Memory Management *)
 
-PROCEDURE [NEW];
-(* Specialised blueprints must always require binding to NEW. *)
-
-PROCEDURE [NEWCOPY];
-(* Specialised blueprints must always require binding to NEWCOPY. *)
+isDynamic -> PROCEDURE [NEW];
+(* Specialised blueprints shall require binding to NEW
+   when the ADT is dynamic. *)
 
 isRefCounted -> PROCEDURE [RETAIN];
-(* Specialised blueprints must require binding to RETAIN when the
-   ADT is reference counted. *)
+(* Specialised blueprints shall require binding to RETAIN
+   when the ADT is reference counted. *)
 
-PROCEDURE [RELEASE];
-(* Specialised blueprints must always require binding to RELEASE. *)
+isDynamic -> PROCEDURE [RELEASE];
+(* Specialised blueprints shall require binding to RELEASE
+   when the ADT is dynamic. *)
 
 
 (* Literal Assignment *)
@@ -89,15 +89,15 @@ PROCEDURE [RELEASE];
 (* Binding to the := Operator *)
 
 PROCEDURE [:=];
-(* Specialised blueprints must always require binding to the := operator. *)
+(* Specialised blueprints shall require binding to the := operator. *)
 
 
 (* Copying *)
 
-(* Binding to Predefined Procedure COPY *)
+(* Binding to COPY *)
 
 PROCEDURE [COPY];
-(* Specialised blueprints must always require binding to COPY. *)
+(* Specialised blueprints shall require binding to COPY. *)
 
 
 (* Value Storage *)
@@ -105,7 +105,7 @@ PROCEDURE [COPY];
 (* Binding to Predefined Procedure STORE *)
 
 PROCEDURE [STORE];
-(* Specialised blueprints must always require binding to STORE. *)
+(* Specialised blueprints shall require binding to STORE. *)
 
 
 (* Value Retrieval *)
@@ -113,7 +113,7 @@ PROCEDURE [STORE];
 (* Binding to Predefined Function RETRIEVE *)
 
 PROCEDURE [RETRIEVE];
-(* Specialised blueprints must always require binding to RETRIEVE. *)
+(* Specialised blueprints shall require binding to RETRIEVE. *)
 
 
 (* Invalid Accessor Retrieval Error Handling *)
