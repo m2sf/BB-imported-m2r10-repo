@@ -7,34 +7,15 @@ BLUEPRINT ProtoReal [ProtoScalar];
 
 (* Required Module Type *)
 
-MODULE TYPE = RECORD;
-(* Real number ADTs shall be statically allocatable. *)
+MODULE TYPE = { isComputational, isNumber, isScalar, isSigned };
 
-LITERAL = REAL;
+TLITERAL = REAL;
 (* Real number literals shall be compatible. *)
 
 
 (* Required Constants *)
 
-(* Classification *)
-
-CONST [TCOMP] isComputational = TRUE;
-(* Real number ADTs are always computational. *)
-
-CONST [TNUM] isNumeric = TRUE;
-(* Real number ADTs are always numeric. *)
-
-CONST isScalar = TRUE;
-(* Real number ADTs are always scalar. *)
-
-CONST isCountable = FALSE;
-(* Real number ADTs are always uncountable. *)
-
-
 (* Scalar Properties *)
-
-CONST [TSIGNED] isSigned = TRUE;
-(* Real number ADTs are always signed. *)
 
 CONST [TBASE] base : CARDINAL; (* either 2 or 10 *)
 (* Real number shall define the radix in which values are encoded. *)
