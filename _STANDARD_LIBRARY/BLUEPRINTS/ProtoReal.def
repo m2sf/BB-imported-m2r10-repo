@@ -9,7 +9,7 @@ BLUEPRINT ProtoReal [ProtoScalar];
 
 MODULE TYPE = { isComputational, isNumber, isScalar, isSigned };
 
-TLITERAL = REAL;
+TLITERAL = realNumberLiteral;
 (* Real number literals shall be compatible. *)
 
 
