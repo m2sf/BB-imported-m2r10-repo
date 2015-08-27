@@ -7,34 +7,15 @@ BLUEPRINT ProtoCardinal [ProtoScalar];
 
 (* Required Module Type *)
 
-MODULE TYPE = RECORD;
-(* Cardinal ADTs shall be statically allocatable. *)
+MODULE TYPE = { isComputational, isNumber, isScalar, isCountable };
 
-LITERAL = INTEGER;
-(* Integer literals shall be compatible. *)
+LITERAL = wholeNumberLiteral;
+(* Whole number literals shall be compatible. *)
 
 
 (* Required Constants *)
 
-(* Classification *)
-
-CONST [TCOMP] isComputational = TRUE;
-(* Cardinal ADTs are always computational. *)
-
-CONST [TNUM] isNumeric = TRUE;
-(* Cardinal ADTs are always numeric. *)
-
-CONST isScalar = TRUE;
-(* Cardinal ADTs are always scalar. *)
-
-CONST isCountable = TRUE;
-(* Cardinal ADTs are always countable. *)
-
-
 (* Scalar Properties *)
-
-CONST [TSIGNED] isSigned = FALSE;
-(* Cardinal ADTs are always unsigned. *)
 
 CONST [TBASE] base = 2;
 (* Cardinal ADTs are always encoded in radix 2. *)
@@ -137,6 +118,9 @@ PROCEDURE [>] isGreater ( n, m : ProtoCardinal ) : BOOLEAN;
 
 
 (* Inhibited Bindings *)
+
+PROCEDURE [+/-] = NONE; (* inhibited *)
+(* Cardinal ADTs may not be required to bind to sign reversal. *)
 
 PROCEDURE [/] = NONE; (* inhibited *)
 (* Cardinal ADTs may not be required to bind to / (division). *)
