@@ -7,34 +7,15 @@ BLUEPRINT ProtoInteger [ProtoScalar];
 
 (* Required Module Type *)
 
-MODULE TYPE = RECORD;
-(* Integer ADTs shall be statically allocatable. *)
+MODULE TYPE = { isComputational, isNumber, isScalar, isCountable, isSigned };
 
-LITERAL = INTEGER;
-(* Integer literals shall be compatible. *)
+TLITERAL = wholeNumberLiteral;
+(* Whole number literals shall be compatible. *)
 
 
 (* Required Constants *)
 
-(* Classification *)
-
-CONST [TCOMP] isComputational = TRUE;
-(* Integer ADTs are always computational. *)
-
-CONST [TNUM] isNumeric = TRUE;
-(* Integer ADTs are always numeric. *)
-
-CONST isScalar = TRUE;
-(* Integer ADTs are always scalar. *)
-
-CONST isCountable = TRUE;
-(* Integer ADTs are always countable. *)
-
-
 (* Scalar Properties *)
-
-CONST [TSIGNED] isSigned = TRUE;
-(* Integer ADTs are always signed. *)
 
 CONST [TBASE] base = 2;
 (* Integer ADTs are always encoded in radix 2. *)
