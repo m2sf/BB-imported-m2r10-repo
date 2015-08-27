@@ -1,11 +1,17 @@
 (* (C) 2014-15 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-BLUEPRINT ProtoRoot; (* Top-level blueprint for ADT libraries *)
+BLUEPRINT ProtoRoot;
 
-(* conforming libraries are required to provide an ADT *)
+(* General Top-level Blueprint for ADT Libraries *)
 
-MODULE TYPE = OPAQUE | RECORD;
 
+MODULE TYPE = *;
+(* Conforming libraries are required to provide an ADT *)
+
+
+(* Required Constants *)
+
+(* Memory Management *)
 
 CONST [TDYN] isDynamic : BOOLEAN;
 
