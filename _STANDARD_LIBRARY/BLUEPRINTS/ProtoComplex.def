@@ -7,26 +7,13 @@ BLUEPRINT ProtoComplex [ProtoNonScalar];
 
 (* Required Module Type *)
 
-MODULE TYPE = RECORD;
-(* All complex number ADTs shall be statically allocatable. *)
+MODULE TYPE = { isComputational, isNumber };
 
-LITERAL = { REAL, REAL };
+TLITERAL = { realNumberLiteral, realNumberLiteral };
 (* Structured literals with two real values shall be compatible. *)
 
 
 (* Required Constants *)
-
-(* Classification *)
-
-CONST [TCOMP] isComputational = TRUE;
-(* Complex number ADTs are always computational. *)
-
-CONST [TNUM] isNumeric = TRUE;
-(* Complex number ADTs are always numeric. *)
-
-CONST isScalar = FALSE;
-(* Complex number ADTs are never scalar. *)
-
 
 (* Memory Management *)
 
