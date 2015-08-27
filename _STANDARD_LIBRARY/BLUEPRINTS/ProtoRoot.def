@@ -1,4 +1,4 @@
-(* (C) 2014-15 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(*!m2r10*) (* (C) 2014-15 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 BLUEPRINT ProtoRoot;
 
