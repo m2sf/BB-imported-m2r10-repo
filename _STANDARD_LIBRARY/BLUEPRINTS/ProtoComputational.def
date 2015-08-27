@@ -14,11 +14,11 @@ MODULE TYPE = { isComputational; ~isNumber; * };
 
 (* Memory Management *)
 
-CONST [TDYN] isDynamic;
+CONST [TDYN] isDynamic : BOOLEAN;
 (* Computational ADTs shall define whether they are dynamically allocatable. *)
 
 isDynamic ->
-CONST [TREFC] isRefCounted;
+CONST [TREFC] isRefCounted : BOOLEAN;
 (* Dynamic ADTs shall define whether they are reference counted. *)
 
 
