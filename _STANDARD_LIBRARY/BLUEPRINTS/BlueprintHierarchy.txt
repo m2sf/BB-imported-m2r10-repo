@@ -12,17 +12,17 @@ Computational Blueprints   Collection Blueprints         Extension Blueprints
  |  |  |                    |  |                          |
  |  |  +--ProtoInteger      |  +--ProtoStaticString       +--ProtoComplexMath
  |  |  |                    |                             |
- |  |  +--ProtoCardinal     +--ProtoSet (dynamic)         +--ProtoTupleMath
+ |  |  +--ProtoCardinal     +--ProtoList (dynamic)        +--ProtoTupleMath
  |  |                       |                             |
- |  +--ProtoNonScalar       +--ProtoFuzzySet (dynamic)    +--ProtoVectorMath
+ |  +--ProtoNonScalar       +--ProtoSet (dynamic)         +--ProtoVectorMath
  |     |                    |                             |
- |     +--ProtoComplex      +--ProtoArray (dynamic)       +--ProtoArrrayMath
+ |     +--ProtoComplex      +--ProtoFuzzySet (dynamic)    +--ProtoArrrayMath
  |                          |                             |
- +--ProtoTuple              +--ProtoString (dynamic)      +--ProtoDateTimeMath
+ +--ProtoTuple              +--ProtoArray (dynamic)       +--ProtoDateTimeMath
  |                          |
- +--ProtoVector             +--ProtoDictionary (dynamic)
- |
- +--ProtoCompArray
+ +--ProtoVector             +--ProtoString (dynamic)
+ |                          |
+ +--ProtoCompArray          +--ProtoDictionary (dynamic)
  |
  +--ProtoDateTime
  
