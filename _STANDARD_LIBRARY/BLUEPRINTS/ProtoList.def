@@ -1,0 +1,411 @@
+(* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Specialised Blueprint for Dynamically Allocatable List ADTs *)
+
+BLUEPRINT ProtoList [ProtoCollection];
+
+REFERENTIAL ValueType, HandlerType, LoopBodyType;
+
+
+(* Required Module Type *)
+
+MODULE TYPE = { isCollection, isList };
+
+TLITERAL = { ARGLIST OF ValueType };
+(* Array literals with a variable number of values shall be compatible. *)
+
+
+(* Required Constants *)
+
+(* Memory Management Model *)
+
+CONST [TDYN] isDynamic = TRUE;
+(* Required constant to define whether conforming ADTs shall implement
+   dynamic memory management.  Its value is always TRUE for ProtoList ADTs. *)
+
+(* This value may be queried by invoking TDYN(ListADT) *)
+
+
+CONST [TREFC] isRefCounted : BOOLEAN;
+(* Constant to define whether conforming dynamic ADTs shall implement
+   reference counting.  Its value may be TRUE or FALSE. *)
+
+(* This value may be queried by invoking TREFC(ListADT) *)
+
+
+(* Capacity Limit *)
+
+CONST [TLIMIT] capacityLimit : LONGCARD;
+(* Required constant to set an entry limit for the ADT.
+   Its value may be any LONGCARD value. Zero indicates no-limit. *)
+
+(* This value may be queried by invoking TLIMIT(ListADT) *)
+
+
+(* NIL Storage *)
+
+CONST [TNIL] supportsNilStorage : BOOLEAN;
+(* Constant to define whether or not conforming ADTs shall treat
+(* NIL as a storable value.  Its value may be TRUE or FALSE. *)
+
+(* This value may be queried by invoking TNIL(ListADT) *)
+
+
+(* Iteration Order *)
+
+CONST * ascAndDescFor = FALSE;
+(* Constant to define whether conforming ADTs shall support both ascending and
+   descending FOR loop iteration.  This value is always FALSE for list ADTs. *)
+
+
+(* Invalid Accessor Retrieval Intercept *)
+
+CONST * invAccessorRetrievalIntercept = TRUE;
+(* Required constant to define whether invalid accessor retrieval errors may
+   be intercepted by user defined handlers.  Always TRUE for list ADTs. *)
+
+
+(* Required Procedures *)
+
+(* Introspection *)
+
+(* Binding to Predefined Function COUNT *)
+
+PROCEDURE [COUNT] count ( list : ProtoList ) : LONGCARD;
+(* Required function to return the number of values stored in a list. *)
+
+(* Supports use case: COUNT(list)  *)
+
+
+PROCEDURE capacity ( list : ProtoList ) : LONGCARD;
+(* Required function to return the allocated capacity of a list. *)
+
+
+PROCEDURE isResizable ( list : ProtoList ) : BOOLEAN;
+(* Required function to return the resizable property of a list. *)
+
+
+(* Memory Management *)
+
+(* Binding to NEW *)
+
+PROCEDURE [NEW] new
+  ( NEW newList : ProtoList; initialCapacity : LONGCARD );
+(* Required procedure to allocate a new list with a default or given initial
+   capacity. *)
+
+(* Supports use cases:
+   
+   NEW list;
+   
+   NEW list OF capacity;
+   
+   and in combination with bindings to STORE and RETRIEVE:
+   
+   NEW list := listExpression; *)
+
+
+(* Binding to RETAIN *)
+
+isRefCounted ->
+PROCEDURE [RETAIN] retain ( list : ProtoList );
+(* Procedure to retain a list and prevent its deallocation.
+   Required when reference counting is supported. *)
+
+(* Supports use case:
+   
+   RETAIN list; *)
+
+
+(* Binding to RELEASE *)
+
+PROCEDURE [RELEASE] release ( list : ProtoList );
+(* Required procedure to cancel an outstanding retain and ultimately deallocate
+   a list when no further retains are outstanding, or immediately when
+   reference counting is not supported. *)
+
+(* Supports use case:
+   
+   RELEASE list; *)
+
+
+(* Value Storage *)
+
+(* Binding to STORE *)
+
+PROCEDURE [STORE] storeValue
+ ( target : ProtoList; index : LONGCARD; value : ValueType );
+(* Required procedure to store a single value at a given index in a target
+   list or append it to the target list if the index equals COUNT(target). *)
+
+(* Supports use cases:
+   
+   list[index] := value;
+   
+   COPY list[index] := value;
+   
+   STORE(list, index, value); *)
+
+
+PROCEDURE [STORE|#] storeValues
+  ( target : ProtoList; fromIndex : LONGCARD; values : ARRAY OF ValueType );
+(* Procedure to store multiple values at a given start index in a target
+   list or append them if the start index equals COUNT(target). *)
+
+(* Supports use cases:
+   
+   COPY list := listExpression;
+   
+   and slice updates of the form
+   
+   COPY list[n..m] := listExpression;
+      
+   when COUNT(list[n..m]) <= COUNT(listExpression). *)
+
+
+PROCEDURE [STORE|*] fillWithValue
+  ( target : ProtoList;
+    fromIndex : LONGCARD; valueCount : LONGCARD; fillValue : ValueType );
+(* Procedure to store a given number of fill values at a given start index in
+   a target list or append them if the start index equals COUNT(target). *)
+
+(* Supports use cases:
+   
+   COPY list := { fillValue BY valueCount };
+   
+   and slice updates of the form
+   
+   COPY list[n..m] := { fillValue BY valueCount };
+   
+   when COUNT(list[n..m]) <= COUNT(listExpression). *)
+
+
+(* Value Retrieval *)
+
+(* Binding to RETRIEVE *)
+
+PROCEDURE [RETRIEVE] valueAtIndex
+ ( list : ProtoList; index : IndexType ) : ValueType;
+(* Required function to return the value stored in a list at a given index. *)
+
+(* Supports use cases:
+      
+   list[index]
+   
+   RETRIEVE(list, index)
+   
+   FIRST(list) => RETRIEVE(list, 0)
+   
+   LAST(list) => RETRIEVE(list, -1)
+   
+   within expressions. *)
+
+
+(* Index Out Of Range Retrieval Error Handling *)
+
+(* A user defined index-out-of-range handler function may be used to change
+   the default behaviour when RETRIEVE is called with an out-of-range index. *)
+
+(* Handler Type *)
+
+invAccessorRetrievalIntercept ->
+TYPE HandlerType = PROCEDURE ( VAR ValueType ) : BOOLEAN;
+(* Procedure type for user defined index-out-of-range handlers.
+   The type is required when invAccessorRetrievalIntercept is TRUE. *)
+
+
+(* An example of an index-out-of-range handler is given below:
+   
+   PROCEDURE mayAbortOnIndexOutOfRange
+     ( VAR valueToReturn : CARDINAL ) : BOOLEAN;
+   BEGIN
+     valueToReturn := 0;
+     RETURN FALSE
+   END mayAbortOnIndexOutOfRange;
+   
+   This handler tells its caller not to abort and to return zero. *)
+
+
+(* Handler Installation *)
+
+invAccessorRetrievalIntercept ->
+PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
+(* Procedure to install a user defined index-out-of-range handler.
+   The procedure is required when invAccessorRetrievalIntercept is TRUE. *)
+
+
+(* Value Insertion *)
+
+(* Binding to INSERT *)
+
+PROCEDURE [INSERT] insertValue
+  ( VAR target : ProtoList; atIndex : LONGCARD; value : ValueType );
+(* Required procedure to insert a given value into a target list
+   at a given index. *)
+
+(* Supports use cases:
+   
+   list[index..] := value;
+   
+   COPY list[index..] := value;
+   
+   INSERT(list, index, value); *)
+
+
+PROCEDURE [INSERT|#] insertValues
+  ( VAR target : ProtoList; atIndex : LONGCARD; values : ARRAY OF ValueType );
+(* Required procedure to insert one or more given values into a target list
+   at a given index. *)
+
+(* Supports use cases:
+   
+   COPY list[index..] := { val1, val2, val3, ... };
+   
+   INSERT(list, index, val1, val2, val3, ...);
+   
+   COPY list[index..] := listExpression; *)
+
+
+PROCEDURE [INSERT|*] insertAndFill
+  ( VAR target : ProtoList;
+    atIndex : LONGCARD; valueCount : LONGCARD; fillValue : ValueType );
+(* Required procedure to insert a given number of given fill-values
+   into a target list at a given index. *)
+
+(* Supports use case:
+      
+   COPY list[index..] := { fillValue BY valueCount };
+   
+   and slice updates of the form
+   
+   COPY list[n..m] := { fillValue BY valueCount };
+   
+   when COUNT(list[n..m]) > COUNT(listExpression). *)
+
+
+(* Value Removal *)
+
+(* Binding to REMOVE *)
+
+PROCEDURE [REMOVE] removeValue
+  ( list : ProtoList; atIndex : LONGCARD );
+(* Required procedure to remove a value from a list at a given index. *)
+
+(* Supports use case:
+   
+   REMOVE(list, index); *)
+
+
+PROCEDURE [REMOVE|#] removeValues
+  ( VAR target : ProtoList; atIndex : LONGCARD; valueCount : LONGCARD );
+(* Required procedure to remove one or more values from a list. *)
+
+(* Supports use cases:
+      
+   REMOVE(list, index, valueCount);
+   
+   COPY list[n..m] := EMPTY; *)
+
+
+PROCEDURE [REMOVE|*] removeAllValues ( list : ProtoList );
+(* Required procedure to remove all values from a list. *)
+
+(* Supports use cases:
+   
+   REMOVE(list, 0, COUNT(list));
+      
+   COPY list := EMPTY; *)
+
+
+(* Iteration *)
+
+(* Binding to FOR *)
+
+TYPE LoopBodyType = PROCEDURE ( VAR ProtoList, CONST ValueType );
+(* Required procedure type to synthesise the body of a for loop. *)
+
+PROCEDURE [FOR] forIterator
+  ( VAR list : ProtoList; doStatements : LoopBodyType );
+
+(* Required procedure to iterate over all values of a list
+   in list order and execute body doStatements for each value. *)
+
+(* Supports use case:
+   
+   FOR value IN list DO statementSequence END; *)
+
+
+(* Relational Operations *)
+
+(* Binding to the = and # Operators *)
+
+PROCEDURE [=] isEqual ( list1, list2 : ProtoList ) : BOOLEAN;
+(* Required function to test the equivalence of two lists. *)
+
+(* Supported use cases:
+   
+   list1 = list2
+   
+   list1 # list2
+   
+   within expressions. *)
+
+
+(* Other List Operations *)
+
+PROCEDURE car ( list : ProtoList ) : ValueType;
+(* Required function to return the first value of a list. *)
+
+PROCEDURE cdr ( list : ProtoList ) : ProtoList;
+(* Required function to return the rest of a list. *)
+
+PROCEDURE cadr ( list : ProtoList ) : ValueType;
+(* Required function to return car(cdr(list)). *)
+
+PROCEDURE cddr ( list : ProtoList ) : ProtoList;
+(* Required function to return cdr(cdr(list)). *)
+
+PROCEDURE caddr ( list : ProtoList ) : ValueType;
+(* Required function to return car(cddr(list)). *)
+
+PROCEDURE cdddr ( list : ProtoList ) : ProtoList;
+(* Required function to return cdr(cddr(list)) *)
+
+
+(* Inhibited Bindings *)
+
+(* Arithmetic Operations *)
+
+(* Arithmetic operations +, -, *, and / are not meaningful for list ADTs.
+   Conforming blueprints may not require binding to these operations. *)
+
+PROCEDURE [+] = NONE; (* inhibited *)
+
+PROCEDURE [-] = NONE; (* inhibited *)
+
+PROCEDURE [*] = NONE; (* inhibited *)
+
+PROCEDURE [/] = NONE; (* inhibited *)
+
+
+(* Relational Operations *)
+
+(* Relational operations >, >=, < and <= are not meaningful for list ADTs.
+   Conforming blueprints may not require binding to these operations. *)
+
+PROCEDURE [<] = NONE; (* inhibited *)
+
+PROCEDURE [>] = NONE; (* inhibited *)
+
+
+(* Set Operations *)
+
+(* Set operations are not meaningful for list ADTs.  Conforming blueprints
+   may not require binding to these operations. *)
+
+PROCEDURE [SUBSET] = NONE; (* inhibited *)
+
+PROCEDURE [\] = NONE; (* inhibited *)
+
+
+END ProtoList.
