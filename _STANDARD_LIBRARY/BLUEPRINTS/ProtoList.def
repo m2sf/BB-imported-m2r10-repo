@@ -96,7 +96,7 @@ PROCEDURE [NEW] new ( NEW newList : ProtoList );
    
    NEW list;
       
-   and in combination with bindings to STORE and RETRIEVE:
+   and in combination with bindings to APPEND and RETRIEVE:
    
    NEW list := listExpression; *)
 
