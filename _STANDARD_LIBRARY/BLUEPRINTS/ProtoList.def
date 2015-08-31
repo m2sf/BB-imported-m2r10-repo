@@ -4,7 +4,7 @@
 
 BLUEPRINT ProtoList [ProtoCollection];
 
-REFERENTIAL ValueType, HandlerType, LoopBodyType;
+REFERENTIAL AccessorType, ValueType, HandlerType, LoopBodyType;
 
 
 (* Required Module Type *)
@@ -89,17 +89,13 @@ PROCEDURE isResizable ( list : ProtoList ) : BOOLEAN;
 
 (* Binding to NEW *)
 
-PROCEDURE [NEW] new
-  ( NEW newList : ProtoList; initialCapacity : LONGCARD );
-(* Required procedure to allocate a new list with a default or given initial
-   capacity. *)
+PROCEDURE [NEW] new ( NEW newList : ProtoList );
+(* Required procedure to allocate a new list. *)
 
 (* Supports use cases:
    
    NEW list;
-   
-   NEW list OF capacity;
-   
+      
    and in combination with bindings to STORE and RETRIEVE:
    
    NEW list := listExpression; *)
@@ -129,14 +125,25 @@ PROCEDURE [RELEASE] release ( list : ProtoList );
    RELEASE list; *)
 
 
+(* Value Access *)
+
+PROCEDURE [SEEK] accessorForIndex
+  ( list : ProtoList; index : LONGCARD ) : AccessorType;
+(* Required function to return an accessor to the value stored at index.
+   
+   Supports use case:
+   
+   accessor := SEEK(list, n); *)
+
+
 (* Value Storage *)
 
 (* Binding to STORE *)
 
 PROCEDURE [STORE] storeValue
- ( target : ProtoList; index : LONGCARD; value : ValueType );
-(* Required procedure to store a single value at a given index in a target
-   list or append it to the target list if the index equals COUNT(target). *)
+ ( target : ProtoList; VAR accessor : AccessorType; value : ValueType );
+(* Required procedure to store a single value for a given accessor in list
+   and to pass back a new accessor to the successor of the stored value. *)
 
 (* Supports use cases:
    
@@ -149,8 +156,8 @@ PROCEDURE [STORE] storeValue
 
 PROCEDURE [STORE|#] storeValues
   ( target : ProtoList; fromIndex : LONGCARD; values : ARRAY OF ValueType );
-(* Procedure to store multiple values at a given start index in a target
-   list or append them if the start index equals COUNT(target). *)
+(* Required procedure to store multiple values at a given start index in
+   target list.  Given values may not exceed the specified segment. *)
 
 (* Supports use cases:
    
@@ -166,8 +173,8 @@ PROCEDURE [STORE|#] storeValues
 PROCEDURE [STORE|*] fillWithValue
   ( target : ProtoList;
     fromIndex : LONGCARD; valueCount : LONGCARD; fillValue : ValueType );
-(* Procedure to store a given number of fill values at a given start index in
-   a target list or append them if the start index equals COUNT(target). *)
+(* Required procedure to store a given number of fill values at a given start
+   index in target list.  Fill values may not exceed the specified segment. *)
 
 (* Supports use cases:
    
@@ -184,9 +191,10 @@ PROCEDURE [STORE|*] fillWithValue
 
 (* Binding to RETRIEVE *)
 
-PROCEDURE [RETRIEVE] valueAtIndex
- ( list : ProtoList; index : IndexType ) : ValueType;
-(* Required function to return the value stored in a list at a given index. *)
+PROCEDURE [RETRIEVE] valueForAccessor
+ ( list : ProtoList; VAR accessor : AccessorType ) : ValueType;
+(* Required function to return the value stored for a given accessor in list
+   and to pass back a new accessor to the successor of the retrieved value. *)
 
 (* Supports use cases:
       
@@ -239,9 +247,9 @@ PROCEDURE installIndexOutOfRangeHandler ( handler : HandlerType );
 (* Binding to INSERT *)
 
 PROCEDURE [INSERT] insertValue
-  ( VAR target : ProtoList; atIndex : LONGCARD; value : ValueType );
-(* Required procedure to insert a given value into a target list
-   at a given index. *)
+  ( VAR target : ProtoList; VAR accessor : AccessorType; value : ValueType );
+(* Required procedure to insert a single value at a given accessor in list
+   and to pass back a new accessor to the successor of the inserted value. *)
 
 (* Supports use cases:
    
@@ -254,8 +262,8 @@ PROCEDURE [INSERT] insertValue
 
 PROCEDURE [INSERT|#] insertValues
   ( VAR target : ProtoList; atIndex : LONGCARD; values : ARRAY OF ValueType );
-(* Required procedure to insert one or more given values into a target list
-   at a given index. *)
+(* Required procedure to insert multiple values at a given start index in
+   target list. *)
 
 (* Supports use cases:
    
@@ -269,10 +277,10 @@ PROCEDURE [INSERT|#] insertValues
 PROCEDURE [INSERT|*] insertAndFill
   ( VAR target : ProtoList;
     atIndex : LONGCARD; valueCount : LONGCARD; fillValue : ValueType );
-(* Required procedure to insert a given number of given fill-values
-   into a target list at a given index. *)
+(* Required procedure to insert a given number of fill values
+   at a given start index in target list. *)
 
-(* Supports use case:
+(* Supports use cases:
       
    COPY list[index..] := { fillValue BY valueCount };
    
@@ -283,13 +291,47 @@ PROCEDURE [INSERT|*] insertAndFill
    when COUNT(list[n..m]) > COUNT(listExpression). *)
 
 
+(* Appending Values *)
+
+(* Binding to APPEND *)
+
+PROCEDURE [APPEND] appendValue
+  ( VAR target : ProtoList; value : ValueType );
+(* Required procedure to append a single value to the end of a list. *)
+
+(* Supports use case:
+      
+   APPEND(list, value); *)
+
+
+PROCEDURE [APPEND|,] appendValues
+  ( VAR target : ProtoList; values : ARRAY OF ValueType );
+(* Required procedure to append one or more values to the end of a list. *)
+
+(* Supports use cases:
+      
+   NEW list := { value1, value2, value3, ... };
+   
+   APPEND(list, value1, value2, value3, ...); *)
+
+
+PROCEDURE [APPEND|*] appendAndFill
+  ( target : ProtoList; valueCount : LONGCARD; fillValue : ValueType );
+(* Required procedure to append a given number of fill values to a list. *)
+
+(* Supports use case:
+   
+   NEW list := { fillValue BY valueCount }; *)
+
+
 (* Value Removal *)
 
 (* Binding to REMOVE *)
 
 PROCEDURE [REMOVE] removeValue
-  ( list : ProtoList; atIndex : LONGCARD );
-(* Required procedure to remove a value from a list at a given index. *)
+  ( list : ProtoList; VAR accessor : AccessorType );
+(* Required procedure to remove the value stored for a given accessor in list
+   and to pass back a new accessor to the successor of the removed value. *)
 
 (* Supports use case:
    
@@ -321,18 +363,20 @@ PROCEDURE [REMOVE|*] removeAllValues ( list : ProtoList );
 
 (* Binding to FOR *)
 
-TYPE LoopBodyType = PROCEDURE ( VAR ProtoList, CONST ValueType );
+TYPE LoopBodyType = PROCEDURE ( ProtoList, CONST AccessorType, VAR ValueType );
 (* Required procedure type to synthesise the body of a for loop. *)
 
 PROCEDURE [FOR] forIterator
   ( VAR list : ProtoList; doStatements : LoopBodyType );
 
-(* Required procedure to iterate over all values of a list
-   in list order and execute body doStatements for each value. *)
+(* Required procedure to iterate over all values of a list in list order
+   and execute body doStatements for each accessor/value pair. *)
 
-(* Supports use case:
+(* Supports use cases:
    
-   FOR value IN list DO statementSequence END; *)
+   FOR accessor IN list DO statementSequence END;
+   
+   FOR accessor, value IN list DO statementSequence END; *)
 
 
 (* Relational Operations *)
