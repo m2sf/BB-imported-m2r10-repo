@@ -9,9 +9,7 @@ REFERENTIAL IndexType, ValueType, HandlerType, LoopBodyType;
 
 (* Required Module Type *)
 
-MODULE TYPE = OPAQUE;
-
-TPROPERTIES = isCollection, isIndexed;
+MODULE TYPE = { isCollection, isIndexed };
 (* Array ADTs are indexed collections. *)
 
 TLITERAL = { ARGLIST OF ValueType };
@@ -52,6 +50,12 @@ CONST [TFLAGS] supportsNilStorage : BOOLEAN;
 
 (* This value may be queried by invoking
    TFLAGS(ArrayADT, supportsNilStorage) *)
+
+
+(* FOR Loop Parameters *)
+
+(* TFLAGS forOmitsAccessor, forOmitsValue and forOmitsAscDesc are set
+   to FALSE for indexed collections and may not be set by conforming ADTs. *)
 
 
 (* Invalid Accessor Retrieval Intercept *)
