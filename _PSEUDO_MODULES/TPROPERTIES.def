@@ -5,19 +5,20 @@ DEFINITION MODULE TPROPERTIES;
 (* Classification *)
 
 TYPE CLASSIFICATION =
-  ( isComputational, isNumber, isScalar, isCountable, isSigned,
-    isCollection, isIndexed, isRigid, isSet, isMultiSet, isDict, isMultiDict );
+  ( isComputational, isNumeric, isScalar, isCountable, isSigned,
+    isCollection, isIndexed, isRigid, isList, isSet, isMultiSet,
+    isDict, isMultiDict );
 
 (* Literal Compatibility *)
 
 TYPE LITERAL =
-  ( charLiteral, unicharLiteral, stringLiteral, unistringLiteral,
-    wholeNumberLiteral, realNumberLiteral );
+  ( wholeNumberLiteral, realNumberLiteral,
+    charLiteral, unicharLiteral, stringLiteral, unistringLiteral );
 
 (* Feature Flags *)
 
 TYPE FLAG =
- ( supportsConcat, supportsNilStorage, forProhibitsAscDesc, forOmitsAccessor );
+ ( supportsConcat, supportsNilStorage, forOmitsAccessor, forOmitsValue );
 
 
 (* Querying Classification Properties *)
