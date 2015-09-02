@@ -44,18 +44,30 @@ CONST [TLIMIT] capacityLimit : LONGCARD;
 
 (* NIL Storage *)
 
-CONST [TNIL] supportsNilStorage : BOOLEAN;
+CONST [TFLAGS] supportsNilStorage : BOOLEAN;
 (* Constant to define whether or not conforming ADTs shall treat
 (* NIL as a storable value.  Its value may be TRUE or FALSE. *)
 
 (* This value may be queried by invoking TNIL(ListADT) *)
 
 
-(* Iteration Order *)
+(* FOR Loop Variants *)
 
-CONST * ascAndDescFor = FALSE;
-(* Constant to define whether conforming ADTs shall support both ascending and
-   descending FOR loop iteration.  This value is always FALSE for list ADTs. *)
+CONST [TFLAGS] forOmitsAccessor = TRUE;
+(* Constant to define whether conforming ADTs shall omit the accessor as loop
+   variant in FOR loop headers.  This value is always TRUE for list ADTs. *)
+
+(* This value may be queried by invoking TFLAGS(ListADT, forOmitsAccessor) *)
+
+
+(* FOR Loop Suffix *)
+
+CONST [TFLAGS] forOmitsAscDesc : BOOLEAN;
+(* Constant to define whether conforming ADTs shall only support nondirectional
+   FOR loop iteration, omitting ascender/descender suffixes.  Its value should
+   be set to TRUE for single-ended lists, to FALSE for double-ended lists. *)
+
+(* This value may be queried by invoking TFLAGS(ListADT, forOmitsAscDesc) *)
 
 
 (* Invalid Accessor Retrieval Intercept *)
@@ -189,9 +201,9 @@ PROCEDURE [STORE|*] fillWithValue
 
 (* Value Retrieval *)
 
-(* Binding to RETRIEVE *)
+(* Binding to VALUE *)
 
-PROCEDURE [RETRIEVE] valueForAccessor
+PROCEDURE [VALUE] valueForAccessor
  ( list : ProtoList; VAR accessor : AccessorType ) : ValueType;
 (* Required function to return the value stored for a given accessor in list
    and to pass back a new accessor to the successor of the retrieved value. *)
@@ -200,11 +212,11 @@ PROCEDURE [RETRIEVE] valueForAccessor
       
    list[index]
    
-   RETRIEVE(list, index)
+   VALUE(list, index)
    
-   FIRST(list) => RETRIEVE(list, 0)
+   FIRST(list) => VALUE(list, 0)
    
-   LAST(list) => RETRIEVE(list, -1)
+   LAST(list) => VALUE(list, -1)
    
    within expressions. *)
 
@@ -212,7 +224,7 @@ PROCEDURE [RETRIEVE] valueForAccessor
 (* Index Out Of Range Retrieval Error Handling *)
 
 (* A user defined index-out-of-range handler function may be used to change
-   the default behaviour when RETRIEVE is called with an out-of-range index. *)
+   the default behaviour when VALUE is called with an out-of-range index. *)
 
 (* Handler Type *)
 
