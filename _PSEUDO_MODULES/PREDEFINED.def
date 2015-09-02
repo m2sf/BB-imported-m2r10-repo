@@ -177,10 +177,10 @@ PROCEDURE LENGTH
 PROCEDURE PTR ( variable : <AnyType>; T : <TypeIdentifier> ) : <T> ;
 (* Returns a pointer of type T, pointing to variable. *)
 
-PROCEDURE RETRIEVE ( c : <CollectionType>; s : <AccessorType> ) : <ReturnType>;
+PROCEDURE VALUE ( c : <CollectionType>; s : <AccessorType> ) : <ReturnType>;
 (* Returns the value stored for accessor s in collection c. *)
 
-PROCEDURE RETRIEVE ( d : <Dictionary>; k : <KeyType>; n : CARDINAL ) : <ReturnType>;
+PROCEDURE VALUE ( d : <Dictionary>; k : <KeyType>; n : CARDINAL ) : <ReturnType>;
 (* Returns the n-th value stored for key k in dictionary d. *)
 
 PROCEDURE FIRST ( c : <OrderedCollection> ) : <ValueType>;
