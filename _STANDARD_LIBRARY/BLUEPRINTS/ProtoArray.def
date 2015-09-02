@@ -37,7 +37,8 @@ CONST [TREFC] isRefCounted : BOOLEAN;
 (* Capacity Limit *)
 
 CONST [TLIMIT] capacityLimit : LONGCARD;
-(* Required function to return the index/value pair limit of the ADT. *)
+(* Required constant to set an entry limit for the ADT.
+   Its value may be any LONGCARD value. Zero indicates no-limit. *)
 
 (* This value may be queried by invoking TLIMIT(ArrayADT) *)
 
