@@ -46,18 +46,12 @@ CONST [TLIMIT] capacityLimit : LONGCARD;
 
 (* NIL Storage *)
 
-CONST [TNIL] supportsNilStorage : BOOLEAN;
+CONST [TFLAGS] supportsNilStorage : BOOLEAN;
 (* Constant to define whether or not conforming ADTs shall treat
 (* NIL as a storable value.  Its value may be TRUE or FALSE. *)
 
-(* This value may be queried by invoking TNIL(ArrayADT) *)
-
-
-(* Iteration Order *)
-
-CONST * bidirectionalForLoop = TRUE;
-(* Constant to define whether conforming ADTs shall support descending
-   FOR loop iteration.  This value is always TRUE for array ADTs. *)
+(* This value may be queried by invoking
+   TFLAGS(ArrayADT, supportsNilStorage) *)
 
 
 (* Invalid Accessor Retrieval Intercept *)
@@ -102,7 +96,7 @@ PROCEDURE [NEW] new
    
    NEW array OF capacity;
    
-   and in combination with bindings to STORE and RETRIEVE:
+   and in combination with bindings to STORE and VALUE:
    
    NEW array := arrayExpression; *)
 
@@ -184,9 +178,9 @@ PROCEDURE [STORE|*] fillWithValue
 
 (* Value Retrieval *)
 
-(* Binding to RETRIEVE *)
+(* Binding to VALUE *)
 
-PROCEDURE [RETRIEVE] valueAtIndex
+PROCEDURE [VALUE] valueAtIndex
  ( array : ProtoArray; index : IndexType ) : ValueType;
 (* Required function to return the value stored in an array at a given index. *)
 
@@ -194,7 +188,7 @@ PROCEDURE [RETRIEVE] valueAtIndex
    
    array[index]
    
-   RETRIEVE(array, index, value)
+   VALUE(array, index)
    
    within expressions. *)
 
@@ -202,7 +196,7 @@ PROCEDURE [RETRIEVE] valueAtIndex
 (* Index Out Of Range Retrieval Error Handling *)
 
 (* A user defined index-out-of-range handler function may be used to change
-   the default behaviour when RETRIEVE is called with an out-of-range index. *)
+   the default behaviour when VALUE is called with an out-of-range index. *)
 
 (* Handler Type *)
 
@@ -319,22 +313,38 @@ PROCEDURE [REMOVE|*] removeAllValues ( array : ProtoArray );
 
 (* Binding to FOR *)
 
-TYPE LoopBodyType = PROCEDURE ( VAR ProtoArray, CONST IndexType );
+TYPE * LoopBodyType =
+  PROCEDURE ( ProtoArray, CONST IndexType, VAR ValueType );
 (* Required procedure type to synthesise the body of a for loop. *)
 
-PROCEDURE [FOR] forIterator
-  ( VAR array : ProtoArray; doStatements : LoopBodyType; order : CHAR );
+PROCEDURE [FOR|++] ascForIterator
+  ( VAR array : ProtoArray; doStatements : LoopBodyType );
 
-(* Required procedure to iterate over all indices of an array in ascending "+"
-   or descending "-" order and execute body doStatements for each index. *)
+(* Required procedure to iterate over all index/value pairs of an array
+   in ascending order and execute body doStatements for each pair. *)
 
 (* Supports use cases:
    
    FOR index IN array DO statementSequence END;
-
+      
+   FOR index, value IN array DO statementSequence END;
+   
    FOR index++ IN array DO statementSequence END;
    
-   FOR index-- IN array DO statementSequence END; *)
+   FOR index, value ++ IN array DO statementSequence END; *)
+
+
+PROCEDURE [FOR|--] descForIterator
+  ( VAR array : ProtoArray; doStatements : LoopBodyType );
+
+(* Required procedure to iterate over all index/value pairs of an array
+   in descending order and execute body doStatements for each pair. *)
+
+(* Supports use cases:
+      
+   FOR index-- IN array DO statementSequence END;
+      
+   FOR index, value -- IN array DO statementSequence END; *)
 
 
 (* Relational Operations *)
