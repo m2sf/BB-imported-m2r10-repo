@@ -19,7 +19,7 @@ isDynamic ->
 CONST [TREFC] isRefCounted : BOOLEAN;
 
 isDynamic ->
-PROCEDURE [NEW] new ( NEW target : ProtoRoot; initialCapacity : LONGCARD );
+PROCEDURE [NEW];
 
 isRefCounted ->
 PROCEDURE [RETAIN] retain ( VAR target : ProtoRoot );
