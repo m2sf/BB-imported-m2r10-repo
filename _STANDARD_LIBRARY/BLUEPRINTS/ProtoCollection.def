@@ -1,4 +1,4 @@
-(*!m2r10*) (* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(*!m2r10*) (* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* General Blueprint for Dynamically Allocatable Collection ADTs *)
 
@@ -20,11 +20,15 @@ TLITERAL =
 
 (* Required Constants *)
 
-(* NIL Storage *)
+(* Memory Management Model *)
 
-CONST [NIL] allowsNilStorage : BOOLEAN;
-(* Required constant to define whether NIL should be a storable value.
+CONST [TDYN] isDynamic : BOOLEAN;
+(* Required constant to define whether conforming ADTs should be dynamic.
    Its value may be TRUE or FALSE. *)
+
+CONST [TREFC] isRefCounted : BOOLEAN;
+(* Required constant to define whether conforming ADTs should be reference
+   counted. Its value may be TRUE or FALSE. *)
 
 
 (* Storage Capacity *)
@@ -41,15 +45,11 @@ CONST [TORDERED] isOrdered : BOOLEAN;
    FOR loop iteration. Its value may be TRUE or FALSE. *)
 
 
-(* Memory Management Model *)
+(* NIL Storage *)
 
-CONST [TDYN] isDynamic : BOOLEAN;
-(* Required constant to define whether conforming ADTs should be dynamic.
+CONST [TFLAGS] supportsNilStorage : BOOLEAN;
+(* Required constant to define whether NIL should be a storable value.
    Its value may be TRUE or FALSE. *)
-
-CONST [TREFC] isRefCounted : BOOLEAN;
-(* Required constant to define whether conforming ADTs should be reference
-   counted. Its value may be TRUE or FALSE. *)
 
 
 (* Support for Invalid Accessor Retrieval Intercept *)
@@ -84,22 +84,6 @@ isDynamic -> PROCEDURE [RELEASE];
    when the ADT is dynamic. *)
 
 
-(* Literal Assignment *)
-
-(* Binding to the := Operator *)
-
-PROCEDURE [:=];
-(* Specialised blueprints shall require binding to the := operator. *)
-
-
-(* Copying *)
-
-(* Binding to COPY *)
-
-PROCEDURE [COPY];
-(* Specialised blueprints shall require binding to COPY. *)
-
-
 (* Value Storage *)
 
 (* Binding to Predefined Procedure STORE *)
@@ -110,10 +94,10 @@ PROCEDURE [STORE];
 
 (* Value Retrieval *)
 
-(* Binding to Predefined Function RETRIEVE *)
+(* Binding to Predefined Function VALUE *)
 
-PROCEDURE [RETRIEVE];
-(* Specialised blueprints shall require binding to RETRIEVE. *)
+PROCEDURE [VALUE];
+(* Specialised blueprints shall require binding to VALUE. *)
 
 
 (* Invalid Accessor Retrieval Error Handling *)
@@ -153,6 +137,14 @@ PROCEDURE [REMOVE];
 (* Specialised blueprints must always require binding to REMOVE. *)
 
 
+(* Value Appending *)
+
+(* Binding to APPEND *)
+
+(* The operation APPEND is not common to all collection ADTs,
+   its binding may be required by more specialised blueprints. *)
+
+
 (* Membership Test *)
 
 (* Binding to IN syntax *)
@@ -163,30 +155,10 @@ PROCEDURE [REMOVE];
 
 (* Iteration *)
 
-(* Binding to FOR IN iterator *)
+(* Binding to FOR *)
 
-TYPE LoopBodyType = PROCEDURE ( VAR ProtoCollection, CONST AccessorType );
-(* Specialised blueprints must require procedure type for synthesised
-   FOR loop bodies. *)
-
-PROCEDURE [FOR];
-(* Specialised blueprints must always require binding to FOR. *)
-
-
-(* Concatenation *)
-
-(* Binding to Predefined Procedure CONCAT *)
-
-(* The operation CONCAT is not common to all collection ADTs,
-   its binding may be required by more specialised blueprints. *)
-
-
-(* Slicing *)
-
-(* Binding to the .. Operator *)
-
-(* The operation .. is not common to all collection ADTs,
-   its binding may be required by more specialised blueprints. *)
+(* FOR loop iteration is not common to all collection ADTs,
+   its bindings may be required by more specialised blueprints. *)
 
 
 (* Relational Operations *)
@@ -219,37 +191,31 @@ PROCEDURE [=];
 (* Conforming blueprints may not require bindings to RETAIN and CONCAT,
    nor to any set operations if the ADT is not reference counted. *)
 
-NOT isRefCounted -> PROCEDURE [RETAIN] : NIL; (* inhibited *)
+NOT isRefCounted -> PROCEDURE [RETAIN] = NONE; (* inhibited *)
 
-NOT isRefCounted  -> PROCEDURE [CONCAT] : NIL; (* inhibited *)
+NOT isRefCounted  -> PROCEDURE [+] = NONE; (* inhibited *)
 
-NOT isRefCounted  -> PROCEDURE [..] : NIL; (* inhibited *)
+NOT isRefCounted  -> PROCEDURE [-] = NONE; (* inhibited *)
 
-NOT isRefCounted  -> PROCEDURE [+] : NIL; (* inhibited *)
+NOT isRefCounted  -> PROCEDURE [*] = NONE; (* inhibited *)
 
-NOT isRefCounted  -> PROCEDURE [-] : NIL; (* inhibited *)
-
-NOT isRefCounted  -> PROCEDURE [*] : NIL; (* inhibited *)
-
-NOT isRefCounted  -> PROCEDURE [/] : NIL; (* inhibited *)
+NOT isRefCounted  -> PROCEDURE [/] = NONE; (* inhibited *)
 
 
 (* Unconditionally Inhibited Bindings *)
 
 (* Numeric Properties *)
 
-(* Numeric properties are not meaningful for collection ADTs.
+(* Scalar properties are not meaningful for collection ADTs.
    Conforming blueprints may not require bindings to these properties. *)
 
-CONST [TSIGNED] : NIL; (* inhibited *)
+CONST [TBASE] = NONE; (* inhibited *)
 
-CONST [TBASE] : NIL; (* inhibited *)
+CONST [TPRECISION] = NONE; (* inhibited *)
 
-CONST [TPRECISION] : NIL; (* inhibited *)
+CONST [TMINEXP] = NONE; (* inhibited *)
 
-CONST [TMINEXP] : NIL; (* inhibited *)
-
-CONST [TMAXEXP] : NIL; (* inhibited *)
+CONST [TMAXEXP] = NONE; (* inhibited *)
 
 
 (* Introspection *)
@@ -257,33 +223,33 @@ CONST [TMAXEXP] : NIL; (* inhibited *)
 (* Operations TMIN and TMAX are not meaningful for collection ADTs.
    Conforming blueprints may not require bindings to these operations. *)
 
-PROCEDURE [TMIN] : NIL; (* inhibited *)
+PROCEDURE [TMIN] = NONE; (* inhibited *)
 
-PROCEDURE [TMAX] : NIL; (* inhibited *)
+PROCEDURE [TMAX] = NONE; (* inhibited *)
 
 
 (* Arithmetic Operations *)
 
-(* Operations ABS, NEG, DIV and MOD are not meaningful for collection ADTs.
+(* Operations ABS, +/-, DIV and MOD are not meaningful for collection ADTs.
    Conforming blueprints may not require bindings to these operations. *)
 
-PROCEDURE [ABS] : NIL; (* inhibited *)
+PROCEDURE [ABS] = NONE; (* inhibited *)
 
-PROCEDURE [NEG] : NIL; (* inhibited *)
+PROCEDURE [+/-] = NONE; (* inhibited *)
 
-PROCEDURE [DIV] : NIL; (* inhibited *)
+PROCEDURE [DIV] = NONE; (* inhibited *)
 
-PROCEDURE [MOD] : NIL; (* inhibited *)
+PROCEDURE [MOD] = NONE; (* inhibited *)
 
 
-(* Arithmetic Conversion *)
+(* Scalar Conversion *)
 
-(* Arithmetic conversions are not meaningful for collection ADTs.
+(* Scalar conversions are not meaningful for collection ADTs.
    Conforming blueprints may not require bindings to these operations. *)
 
-PROCEDURE [SXF] : NIL; (* inhibited *)
+PROCEDURE [SXF] = NONE; (* inhibited *)
 
-PROCEDURE [VAL] : NIL; (* inhibited *)
+PROCEDURE [VAL] = NONE; (* inhibited *)
 
 
 END ProtoCollection.
