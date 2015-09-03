@@ -41,16 +41,6 @@ CONST [TLIMIT] capacityLimit : LONGCARD;
 (* This value may be queried by invoking TLIMIT(SetADT) *)
 
 
-(* NIL Storage *)
-
-CONST [TFLAGS] supportsNilStorage : BOOLEAN;
-(* Constant to define whether or not conforming ADTs shall treat
-(* NIL as a storable element.  Its value may be TRUE or FALSE. *)
-
-(* This value may be queried by invoking
-   TFLAGS(SetADT, supportsNilStorage) *)
-
-
 (* Maximum Multiplicity *)
 
 CONST maxMultiplicity = 1;
@@ -58,11 +48,29 @@ CONST maxMultiplicity = 1;
    stored in a set.  Its value is always one for ProtoSet ADTs. *)
 
 
-(* Iteration Order *)
+(* NIL Storage *)
 
-CONST * bidirectionalIteration = FALSE;
-(* Constant to define whether conforming ADTs shall support descending
-   FOR loop iteration.  Its value is always FALSE for ProtoSet ADTs. *)
+CONST [TFLAGS] supportsNilStorage : BOOLEAN;
+(* Constant to define whether or not conforming ADTs shall treat
+   NIL as a storable element.  Its value may be TRUE or FALSE. *)
+
+(* This value may be queried by invoking TFLAGS(SetADT, supportsNilStorage) *)
+
+
+(* FOR Loop Syntax *)
+
+CONST [TFLAGS] forOmitsValue = (maxMultiplicity = 1);
+(* Constant to define whether or not conforming ADTs shall support value
+   loop variants in FOR loop headers.  Always TRUE for ProtoSet ADTs. *)
+
+(* This value may be queried by invoking TFLAGS(SetADT, forOmitsValue) *)
+
+
+CONST [TFLAGS] forOmitsAscDesc = (NOT isOrdered);
+(* Constant to define whether or not conforming ADTs shall support both
+   ascending and descending FOR loop iteration.  FALSE when ordered. *)
+
+(* This value may be queried by invoking TFLAGS(SetADT, forOmitsAscDesc) *)
 
 
 (* Optional Features *)
