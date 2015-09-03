@@ -188,8 +188,8 @@ PROCEDURE [=];
 
 (* Conditionally Inhibited Bindings *)
 
-(* Conforming blueprints may not require bindings to RETAIN and CONCAT,
-   nor to any set operations if the ADT is not reference counted. *)
+(* Conforming blueprints that are not reference counted
+   may not require bindings to RETAIN, nor to any set operations. *)
 
 NOT isRefCounted -> PROCEDURE [RETAIN] = NONE; (* inhibited *)
 
