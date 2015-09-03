@@ -9,9 +9,7 @@ REFERENTIAL ElementType, CounterType, LoopBodyType;
 
 (* Required Module Type *)
 
-MODULE TYPE = OPAQUE;
-
-TPROPERTIES = isCollection, isSet;
+MODULE TYPE = { isCollection, isSet };
 
 TLITERAL = { ARGLIST OF ElementType };
 (* Set literals with a variable number of elements shall be compatible. *)
@@ -45,11 +43,12 @@ CONST [TLIMIT] capacityLimit : LONGCARD;
 
 (* NIL Storage *)
 
-CONST [TNIL] supportsNilStorage : BOOLEAN;
+CONST [TFLAGS] supportsNilStorage : BOOLEAN;
 (* Constant to define whether or not conforming ADTs shall treat
 (* NIL as a storable element.  Its value may be TRUE or FALSE. *)
 
-(* This value may be queried by invoking TNIL(SetADT) *)
+(* This value may be queried by invoking
+   TFLAGS(SetADT, supportsNilStorage) *)
 
 
 (* Maximum Multiplicity *)
@@ -118,7 +117,7 @@ PROCEDURE [NEW] new
    
    NEW set OF capacity;
    
-   and in combination with bindings to STORE and RETRIEVE:
+   and in combination with bindings to STORE and VALUE:
    
    NEW set := setExpression; *)
 
@@ -176,7 +175,7 @@ PROCEDURE [STORE|,] storeCounterForElements
 
 (* Value Retrieval *)
 
-(* Binding to RETRIEVE *)
+(* Binding to VALUE *)
 
 PROCEDURE [RETRIEVE] counterForElement
   ( VAR set : ProtoSet; element : ElementType ) : CounterType;
@@ -186,7 +185,7 @@ PROCEDURE [RETRIEVE] counterForElement
    
    set[element]
    
-   RETRIEVE(set, element)
+   VALUE(set, element)
    
    within expressions. *)
 
