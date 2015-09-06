@@ -42,4 +42,16 @@ BLUEPRINT TCONSTRAINTS;
 [FOR|++] <> [FOR|--];
 (* Bindings to FOR++ and FOR-- are mutually dependent. *)
 
+isCountable -> CONST [TSCALAR] eMin = 0;
+(* Classification isCountable requires eMin to be defined with a zero value. *)
+
+isCountable -> CONST [TSCALAR] eMax = 0;
+(* Classification isCountable requires eMax to be defined with a zero value. *)
+
+(eMin = 0) AND (eMax = 0) -> isCountable;
+(* eMin and eMax defined with a zero value require isCountable to be set. *)
+
+isSigned <> CONST [TMIN] < 0;
+(* Classification isSigned and a negative TMIN value are mutually dependent. *)
+
 END TCONSTRAINTS.
