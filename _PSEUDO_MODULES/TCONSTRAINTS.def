@@ -1,0 +1,31 @@
+(* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+(* Language defined blueprint constraints *)
+
+BLUEPRINT TCONSTRAINTS;
+
+[TSCALAR] -> [+], [-], [*];
+(* Binding to TSCALAR requires bindings to +, - and *. *)
+
+[TSCALAR] -> [/] | [DIV], [MOD];
+(* Binding to TSCALAR requires bindings to either /, or DIV and MOD. *)
+
+[+] -> [-] | [\];
+(* Binding to + requires binding to either - or \. *)
+
+[ABS] <> [+/-];
+(* Bindings to ABS and unary minus are mutually dependent. *)
+
+[/] >< [DIV], [MOD];
+(* Binding to / is mutually exclusive with DIV and MOD. *)
+
+[LENGTH] >< [COUNT], [COUNT|#];
+(* Binding to LENGTH is mutual exclusive with COUNT and COUNT|#. *)
+
+[SUBSET] >< [<], [>];
+(* Binding to SUBSET is mutually exclusive with < and >. *)
+
+[FOR] >< [FOR|++], [FOR--];
+(* Binding to FOR is mutually exclusive with FOR|++ and FOR|--. *)
+
+END TCONSTRAINTS.
