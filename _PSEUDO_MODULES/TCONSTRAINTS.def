@@ -25,7 +25,13 @@ BLUEPRINT TCONSTRAINTS;
 [SUBSET] >< [<], [>];
 (* Binding to SUBSET is mutually exclusive with < and >. *)
 
+[<] <> [>];
+(* Bindings to < and > are mutually dependent. *)
+
 [FOR] >< [FOR|++], [FOR--];
 (* Binding to FOR is mutually exclusive with FOR|++ and FOR|--. *)
+
+[FOR|++] <> [FOR|--];
+(* Bindings to FOR++ and FOR-- are mutually dependent. *)
 
 END TCONSTRAINTS.
