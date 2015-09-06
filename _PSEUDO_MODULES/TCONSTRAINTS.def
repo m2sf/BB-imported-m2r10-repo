@@ -13,9 +13,16 @@ BLUEPRINT TCONSTRAINTS;
 (isScalar) -> [/] | [DIV], [MOD];
 (* Classification isScalar requires bindings to either /, or DIV and MOD. *)
 
+(isCountable) <> [TSCALAR] eMin = 0 AND [TSCALAR] eMax = 0;
+(* Classification isCountable is mutually dependent with eMin and eMax
+   both defined as zero. *)
+
 (isCountable) <> [DIV], [MOD];
 (* Classification isCountable and bindings to DIV and MOD
    are mutally dependent. *)
+
+(isSigned) <> [TMIN] < 0;
+(* Classification isSigned is mutually dependent with TMIN being negative. *)
 
 (isSigned) <> [ABS], [+/-];
 (* Classification isSigned and bindings to ABS and unary minus
@@ -41,17 +48,5 @@ BLUEPRINT TCONSTRAINTS;
 
 [FOR|++] <> [FOR|--];
 (* Bindings to FOR++ and FOR-- are mutually dependent. *)
-
-isCountable -> CONST [TSCALAR] eMin = 0;
-(* Classification isCountable requires eMin to be defined with a zero value. *)
-
-isCountable -> CONST [TSCALAR] eMax = 0;
-(* Classification isCountable requires eMax to be defined with a zero value. *)
-
-(eMin = 0) AND (eMax = 0) -> isCountable;
-(* eMin and eMax defined with a zero value require isCountable to be set. *)
-
-isSigned <> CONST [TMIN] < 0;
-(* Classification isSigned and a negative TMIN value are mutually dependent. *)
 
 END TCONSTRAINTS.
