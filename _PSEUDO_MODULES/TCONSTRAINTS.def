@@ -1,20 +1,28 @@
 (* (C) 2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-(* Language defined blueprint constraints *)
+(* Language defined global blueprint constraints *)
 
 BLUEPRINT TCONSTRAINTS;
 
-[TSCALAR] -> [+], [-], [*];
-(* Binding to TSCALAR requires bindings to +, - and *. *)
+(isScalar) <> [TSCALAR];
+(* Classification isScalar and binding to TSCALAR are mutually dependent. *)
 
-[TSCALAR] -> [/] | [DIV], [MOD];
-(* Binding to TSCALAR requires bindings to either /, or DIV and MOD. *)
+(isScalar) -> [+], [-], [*];
+(* Classification isScalar requires bindings to +, - and * (multiplication). *)
+
+(isScalar) -> [/] | [DIV], [MOD];
+(* Classification isScalar requires bindings to either /, or DIV and MOD. *)
+
+(isCountable) <> [DIV], [MOD];
+(* Classification isCountable and bindings to DIV and MOD
+   are mutally dependent. *)
+
+(isSigned) <> [ABS], [+/-];
+(* Classification isSigned and bindings to ABS and unary minus
+   are mutually dependent. *)
 
 [+] -> [-] | [\];
 (* Binding to + requires binding to either - or \. *)
-
-[ABS] <> [+/-];
-(* Bindings to ABS and unary minus are mutually dependent. *)
 
 [/] >< [DIV], [MOD];
 (* Binding to / is mutually exclusive with DIV and MOD. *)
