@@ -429,7 +429,7 @@ lappend non_terminals castingFormalType {
 
 # (21.2) Address Type Identifier
 lappend non_terminals addressTypeIdent {
-  or /ADDRESS {line /UNSAFE . /ADDRESS}
+  line {optx /UNSAFE .} /ADDRESS
 }
 
 # (22) Attributed Formal Type
@@ -474,7 +474,11 @@ lappend non_terminals nonVariadicFormalType {
 
 # (26) Procedure Header
 lappend non_terminals procedureHeader {
-  line PROCEDURE {or {line [ entityToBindTo ]} restrictedExport nil}
+  line PROCEDURE {
+    or
+      {line [ {or entityToBindTo /COROUTINE} ]}
+      restrictedExport nil
+    }
   procedureSignature
 }
 
@@ -714,17 +718,17 @@ lappend non_terminals expression {
 # (46.1) Level-1 Operator
 lappend non_terminals operL1 {
   or
-    = # < <= > >= IN identityOp concatOp
+    = # < <= > >= IN concatOp identityOp
 }
 
-# (46.2) Identity Operator
-lappend non_terminals identityOp {
-  line ==
-}
-
-# (46.3) Concatenation Operator
+# (46.2) Concatenation Operator
 lappend non_terminals concatOp {
   line &
+}
+
+# (46.3) Identity Operator
+lappend non_terminals identityOp {
+  line ==
 }
 
 # (47) Simple Expression
