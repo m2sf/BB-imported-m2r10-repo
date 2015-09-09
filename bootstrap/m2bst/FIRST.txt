@@ -1,111 +1,142 @@
-FIRST Sets for Modula-2 R10 Grammar
+FIRST Sets for Modula-2 R10 Grammar, status: Aug 31, 2015
 
 compilationUnit =
-  { IMPLEMENTATION,
-    DEFINITION,
-    BLUEPRINT,
-    MODULE };
-  
-programModule =
-  { MODULE };
+  { DEFINITION,
+    IMPLEMENTATION,
+    MODULE,
+    BLUEPRINT };
   
 definitionModule =
   { DEFINITION };
   
-blueprint =
-  { BLUEPRINT };
-  
-identList =
-  { Identifier };
+importList =
+  { GENLIB,
+    FROM,
+    IMPORT };
 
-moduleTypeSpec =
-  { OPAQUE,
-    RECORD };
-  
-propertySpec =
-  { TPROPERTIES };
-  
-literalSpec =
-  { TLITERAL };
-  
-protoLiteral =
-  { Identifier,
-    lBrace };
-  
-requirement =
-  { NOT,
-    Identifier,
-    CONST,
-    PROCEDURE,
-    TYPE };
-  
-constRequirement =
-  { CONST };
-  
-propertyToBindTo =
-  { TDYN,
-    TREFC,
-    TBASE,
-    TPRECISION,
-    TMINEXP,
-    TMAXEXP,
-    TNIL,
-    TLIMIT };
-  
-simpleConstRequirement =
-  { Identifier };
-
-procedureRequirement =
-  { PROCEDURE };
-  
-entityToBindTo =
-  { NEW,
-    RETAIN,
-    RELEASE,
-    COPY,
-    FOR,
-    IN,
-    DIV,
-    MOD,
-    COROUTINE,
-    ABS,
-    LENGTH,
-    EXISTS,
-    SUBSET,
-    READ,
-    READNEW,
-    WRITE,
-    WRITEF,
-    TMIN,
-    TMAX,
-    SXF,
-    VAL,
-    COUNT,
-    RETRIEVE,
-    STORE,
-    INSERT,
-    REMOVE,
-    plus,
-    minus,
-    asterisk,
-    realDiv,
-    backslash,
-    equal,
-    less,
-    greater,
-    asterDot,
-    typeConv };
-  
 libGenDirective =
   { GENLIB };
   
 importDirective =
-  { IMPORT,
-    FROM };
-  
-identifiersToImport =
+  { FROM,
+    IMPORT };
+
+qualident =
   { Identifier };
-  
+
+definition =
+  { CONST,
+    TYPE,
+    VAR,
+    PROCEDURE };
+
+constDefinition =
+  { lbracket,
+    asterisk,
+    Identifier };
+
+typeDefinition =
+  { asterisk,
+    Ident };
+
+variableDeclaration =
+  { Identifier };
+
+identList =
+  { Identifier };
+
+range =
+  { lbracket };
+
+type =
+  { Identifier,
+    ALIAS,
+    lbracket,
+    CONST,
+    lparen,
+    SET,
+    ARRAY,
+    RECORD,
+    POINTER,
+    COROUTINE,
+    PROCEDURE };
+
+enumType =
+  { lparen };
+
+setType =
+  { SET };
+
+arrayType =
+  { ARRAY };
+
+recordType =
+  { RECORD };
+
+fieldList =
+  { asterisk,
+    Identifier };
+
+indeterminateField =
+  { tilde };
+
+pointerType =
+  { POINTER };
+
+coroutineType =
+  { COROUTINE };
+
+procedureType =
+  { PROCEDURE };
+
+simpleFormalType =
+  { ARRAY,
+    Identifier,
+    CAST };
+
+attributedFormalType =
+  { CONST,
+    VAR,
+    NEW };
+
+simpleVariadicFormalType =
+  { ARGLIST };
+
+variadicFormalType =
+  { CONST,
+    VAR,
+    NEW,
+    ARRAY,
+    Identifier,
+    CAST };
+
+procedureHeader =
+  { PROCEDURE };
+
+formalParameters =
+  { Identifier,
+    CONST,
+    VAR,
+    NEW };  
+
+attributedFormalParams =
+  { CONST,
+    VAR,
+    NEW };
+
+variadicFormalParams =
+  { ARGLIST };
+
+nonVariadicFormalParams =
+  { CONST,
+    VAR,
+    NEW,
+    Identifier };
+
+implOrPrgmModule =
+  { IMPLEMENTATION,
+    MODULE };
+
 block =
   { CONST,
     TYPE,
@@ -113,7 +144,7 @@ block =
     PROCEDURE,
     BEGIN,
     END };
-  
+
 statementSequence =
   { NEW,
     RETAIN,
@@ -129,133 +160,7 @@ statementSequence =
     RETURN,
     YIELD,
     EXIT };
-  
-definition =
-  { CONST,
-    TYPE,
-    VAR,
-    PROCEDURE };
-  
-constDefinition =
-  { Identifier,
-    lBracket,
-    asterisk };
-  
-variableDeclaration =
-  { Identifier };
-  
-declaration =
-  { CONST,
-    TYPE,
-    VAR,
-    PROCEDURE };
-  
-type =
-  { Identifier,
-    ALIAS,
-    lBracket,
-    CONST,
-    lParen,
-    SET,
-    ARRAY,
-    RECORD,
-    POINTER,
-    COROUTINE,
-    PROCEDURE };
 
-range =
-  { lBracket };
-  
-enumType =
-  { lParen };
-  
-setType =
-  { SET };
-  
-arrayType =
-  { ARRAY };
-  
-recordType =
-  { RECORD };
-  
-fieldList =
-  { asterisk,
-    Identifier };
-  
-indeterminateField =
-  { INDETERMINATE };
-  
-pointerType =
-  { POINTER };
-  
-coroutineType =
-  { COROUTINE };
-  
-procedureType =
-  { PROCEDURE };
-  
-formalType =
-  { ARRAY,
-    Identifier,
-    CAST,
-    CONST,
-    VAR,
-    NEW,
-    ARGLIST };
-  
-simpleFormalType =
-  { ARRAY,
-    Identifier,
-    CAST };
-  
-attributedFormalType =
-  { CONST,
-    VAR,
-    NEW };
-  
-simpleVariadicFormalType =
-  { ARGLIST };
-  
-variadicFormalType =
-  { ARGLIST };
-  
-nonVariadicFormalType =
-  { CONST,
-    VAR,
-    NEW,
-    ARRAY,
-    Identifier,
-    CAST };
-  
-procedureHeader =
-  { PROCEDURE };
-  
-procedureSignature =
-  { Identifier };
-  
-formalParams =
-  { Identifier,
-    CONST,
-    VAR,
-    NEW };
-  
-attributedFormalParams =
-  { CONST,
-    VAR,
-    NEW };
-  
-variadicFormalParams =
-  { ARGLIST };
-  
-nonVariadicFormalParams =
-  { CONST,
-    VAR,
-    NEW,
-    Identifier };
-  
-qualident =
-  { Identifier };
-  
 statement =
   { NEW,
     RETAIN,
@@ -271,145 +176,177 @@ statement =
     RETURN,
     YIELD,
     EXIT };
-  
+
 memMgtOperation =
   { NEW,
     RETAIN,
     RELEASE };
-  
+
 updateOrProcCall =
   { Identifier,
     COPY };
-  
+
 ifStatement =
   { IF };
-  
+
 caseStatement =
   { CASE };
-  
-case =
-  { plus,
-    minus,
-    NOT,
-    numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
-    Identifier };
-  
-caseLabels =
-  { plus,
-    minus,
-    NOT,
-    numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
-    Identifier };
-  
+
 loopStatement =
   { LOOP };
-  
+
 whileStatement =
   { WHILE };
-  
+
 repeatStatement =
   { REPEAT };
-  
+
 forStatement =
   { FOR };
-  
+
 designator =
   { Identifier };
-  
-designatorTail =
-  { lBracket,
-    deref };
-  
-exprListOrSlice =
-  { plus,
-    minus,
-    NOT,
-    numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
-    Identifier };
-  
+
 expression =
   { plus,
     minus,
     NOT,
-    numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
+    Number,
+    String,
+    lbrace,
+    lparen,
     Identifier };
-  
+
 simpleExpression =
   { plus,
     minus,
     NOT,
-    numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
+    Number,
+    String,
+    lbrace,
+    lparen,
     Identifier };
-  
+
 term =
   { NOT,
-    numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
+    Number,
+    String,
+    lbrace,
+    lparen,
     Identifier };
-  
+
 factorOrNegation =
   { NOT,
-    numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
+    Number,
+    String,
+    lbrace,
+    lparen,
     Identifier };
-  
+
 factorOrTypeConv =
-  { numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
+  { Number,
+    String,
+    lbrace,
+    lparen,
     Identifier };
-  
+
 factor =
-  { numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
+  { Number,
+    String,
+    lbrace,
+    lparen,
     Identifier };
-  
+
 actualParameters =
-  { lParen };
-  
+  { lparen };
+
 expressionList =
   { plus,
     minus,
     NOT,
-    numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
+    Number,
+    String,
+    lbrace,
+    lparen,
     Identifier };
-  
+
 structuredValue =
-  { lBrace };
-  
-valueComponent =
-  { plus,
-    minus,
-    NOT,
-    numericLiteral,
-    quotedLiteral,
-    lBrace,
-    lParen,
+  { lbrace };
+
+blueprint =
+  { BLUEPRINT };
+
+typeClassification =
+  { lbrace,
+    asterisk };
+
+literalCompatibility =
+  { TLITERAL };
+
+structuredProtoLiteral =
+  { lbrace };
+
+constraint =
+  { lparen,
+    lbracket };
+
+requirement =
+  { NOT,
     Identifier };
+
+constRequirement =
+  { CONST };
+
+propertyToBindTo =
+  { TDYN,
+    TREFC,
+    TORDERED,
+    TSORTED,
+    TLIMIT,
+    TSCALAR,
+    TMAX,
+    TMIN,
+    TFLAGS };
+
+procRequirement =
+  { PROCEDURE };
+
+entityToBindTo =
+  { NEW,
+    RETAIN,
+    RELEASE,
+    COPY,
+    FOR,
+    plus,
+    minus,
+    asterisk,
+    realDiv,
+    backslash,
+    equal,
+    less,
+    greater,
+    asterDot,
+    typeConv,
+    IN,
+    DIV,
+    MOD,
+    plusMinus,
+    ABS,
+    LENGTH,
+    EXISTS,
+    SEEK,
+    SUBSET,
+    READ,
+    READNEW,
+    WRITE,
+    WRITEF,
+    SXF,
+    VAL,
+    COUNT,
+    VALUE,
+    STORE,
+    INSERT,
+    REMOVE,
+    APPEND };
   
 END OF FILE
