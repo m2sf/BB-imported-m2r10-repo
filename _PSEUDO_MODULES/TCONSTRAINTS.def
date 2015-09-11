@@ -29,13 +29,13 @@ BLUEPRINT TCONSTRAINTS;
    are mutually dependent. *)
 
 [+] -> [-] | [\];
-(* Binding to + requires binding to either - or \. *)
+(* Binding to + requires binding to either - (minus) or \ (set difference). *)
 
 [/] >< [DIV], [MOD];
 (* Binding to / is mutually exclusive with DIV and MOD. *)
 
 [LENGTH] >< [COUNT], [COUNT|#];
-(* Binding to LENGTH is mutual exclusive with COUNT and COUNT|#. *)
+(* Binding to LENGTH is mutually exclusive with COUNT and COUNT|#. *)
 
 [SUBSET] >< [<], [>];
 (* Binding to SUBSET is mutually exclusive with < and >. *)
