@@ -21,14 +21,12 @@ BLUEPRINT TCONSTRAINTS;
 (* Classification isCountable and bindings to DIV and MOD
    are mutally dependent. *)
 
-(isSigned) <> [TMIN] < 0;
-(* Classification isSigned is mutually dependent with TMIN being negative. *)
+(isSigned) <> [TMIN] < 0 AND [TMAX] > 0;
+(* Classification isSigned is mutually dependent with TMIN < 0 and TMAX > 0. *)
 
-[+/-] <> [TMIN] < 0 AND [TMAX] > 0;
-(* Binding to unary minus is mutually dependent with TMIN < 0 and TMAX > 0. *)
-
-[ABS] <> [+/-];
-(* Binding to ABS is mutually dependent with unary minus. *)
+(isSigned) <> [ABS], [+/-];
+(* Classification isSigned and bindings to ABS and unary minus
+   are mutally dependent. *)
 
 [+] -> [-] | [\];
 (* Binding to + requires binding to either - (minus) or \ (set difference). *)
