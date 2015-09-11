@@ -4,8 +4,9 @@
 
 BLUEPRINT TCONSTRAINTS;
 
-(isScalar) <> [TSCALAR];
-(* Classification isScalar and binding to TSCALAR are mutually dependent. *)
+(isScalar) <> [TSCALAR], [TMIN], [TMAX];
+(* Classification isScalar and bindings to TSCALAR, TMIN and TMAX
+   are mutually dependent. *)
 
 (isScalar) -> [+], [-], [*];
 (* Classification isScalar requires bindings to +, - and * (multiplication). *)
@@ -14,8 +15,7 @@ BLUEPRINT TCONSTRAINTS;
 (* Classification isScalar requires bindings to either /, or DIV and MOD. *)
 
 (isCountable) <> [TSCALAR] eMin = 0 AND [TSCALAR] eMax = 0;
-(* Classification isCountable is mutually dependent with eMin and eMax
-   both defined as zero. *)
+(* Classification isCountable is mutually dependent with eMin = eMax = 0. *)
 
 (isCountable) <> [DIV], [MOD];
 (* Classification isCountable and bindings to DIV and MOD
@@ -24,9 +24,11 @@ BLUEPRINT TCONSTRAINTS;
 (isSigned) <> [TMIN] < 0;
 (* Classification isSigned is mutually dependent with TMIN being negative. *)
 
-(isSigned) <> [ABS], [+/-];
-(* Classification isSigned and bindings to ABS and unary minus
-   are mutually dependent. *)
+[+/-] <> [TMIN] < 0 AND [TMAX] > 0;
+(* Binding to unary minus is mutually dependent with TMIN < 0 and TMAX > 0. *)
+
+[ABS] <> [+/-];
+(* Binding to ABS is mutually dependent with unary minus. *)
 
 [+] -> [-] | [\];
 (* Binding to + requires binding to either - (minus) or \ (set difference). *)
