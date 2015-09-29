@@ -5,6 +5,8 @@
 Welcome to the design and development repository of Modula-2 Revision 2010,
 its language report, reference compiler and standard library.
 
+Please also visit our wiki at: http://modula-2.net/m2r10
+
 Latest news:
 
 * 2015-04-05: Work on a [bootstrap compiler](https://bitbucket.org/trijezdci/m2r10/src/tip/bootstrap/m2bst) has begun.
