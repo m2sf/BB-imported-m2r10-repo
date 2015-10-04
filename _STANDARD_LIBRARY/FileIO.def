@@ -8,7 +8,8 @@ DEFINITION MODULE FileIO;
    any particular structure. The module represents the lowest level interface
    for file based IO in the standard library. *)
 
-FROM Integers IMPORT CARDINAL64; (* assuming 64-bit file systems *)
+IMPORT Integers;
+ALIAS FOR CADRDINAL64 OF Integers; (* assuming 64-bit file systems *)
 
 
 (* File accessor, file status and file mode *)
@@ -44,11 +45,13 @@ TYPE
      
    Any attempt to open or reopen a file, passing an invalid file mode shall
    fail with status invalidMode. *)
-     
-    Mode = SET OF ( read,             (* reading is permitted if set        *)
-                    write,            (* writing is permitted if set        *)
-                    append,           (* writing always appends if set      *)
-                    sync );           (* writing always flushes if set      *)
+
+TYPE ModeFlags = ( read,              (* reading is permitted if set        *)
+                   write,             (* writing is permitted if set        *)
+                   append,            (* writing always appends if set      *)
+                   sync );            (* writing always flushes if set      *)
+
+TYPE Mode = SET OF ModeFlags;
 
 
 (* Alias types for implementation dependent file position and file size *)
