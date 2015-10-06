@@ -1,4 +1,4 @@
-(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE COMPILER;
 
@@ -159,17 +159,6 @@ CONST ImplModelOfTypeLongReal = <implementation defined, IEEE754Support value>;
 
 (* MACRO *) PROCEDURE ConformsToBlueprint( <B>; <T> ) : BOOLEAN;
 (* Expands to TRUE if type T conforms to blueprint B, otherwise FALSE. *)
-
-(* Type Capability Tests *)
-
-(* MACRO *) PROCEDURE TNIL ( <T> ) : BOOLEAN;
-(* Expands to TRUE if type T supports NIL storage, otherwise FALSE. Type T
-   must be an opaque collection type whose components are pointer values.
-   A compile time error occurs if any other type is passed to TNIL. *)
-
-(* MACRO *) PROCEDURE TBIDI ( <T> ) : BOOLEAN;
-(* Expands to TRUE if type T supports bidirectional FOR loop iteration,
-   otherwise FALSE. A compile time error occurs if T is not iterable. *)
 
 
 (* Compile Time Arithmetic *)
