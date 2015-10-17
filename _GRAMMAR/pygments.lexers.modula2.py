@@ -258,6 +258,7 @@ class Modula2Lexer(RegexLexer):
             
             # M2 R10 Template Engine placeholders
             (r'##[a-zA-Z][a-zA-Z0-9]*##', Name.Placeholder),
+            (r'@@[a-zA-Z][a-zA-Z0-9]*@@', Name.Placeholder),
         ],
         'prefixed_number_literals': [
             # Base-2, whole number
@@ -358,8 +359,6 @@ class Modula2Lexer(RegexLexer):
             (r'><', Punctuation), # M2R10 + ObjM2
             
             # Template Punctuation
-            (r'##', Punctuation), # M2R10 + ObjM2
-            (r'@@', Punctuation), # M2R10 + ObjM2
             (r'<#', Punctuation), # M2R10 + ObjM2
             (r'#>', Punctuation), # M2R10 + ObjM2
             
@@ -449,6 +448,7 @@ class Modula2Lexer(RegexLexer):
             (r'\(\*! .*?\*\)', Comment.Special.HeaderDoc),
             
             # Doxygen Comment
+            (r'^//[/!].*?\n', Comment.Single.Doxygen),
             (r'^![<!>].*?\n', Comment.Single.Doxygen),
         ],
         'comments': [
@@ -712,7 +712,7 @@ class Modula2Lexer(RegexLexer):
         # blueprint specific
         ':,', ':*', ':#', '->', '<>', '><',
         # template specific
-        '##', '@@', '<#', '#>'
+        '<#', '#>'
         # pragma specific
         '?',
     )
@@ -752,9 +752,9 @@ class Modula2Lexer(RegexLexer):
 
     # Modula-2 R10 builtins in addition to the common set
     m2r10_additional_builtins = (
-        # 29 additional builtins
-        'APPEND', 'COUNT', 'COROUTINE', 'EMPTY', 'EXISTS', 'FIRST', 'INSERT',
-        'LAST', 'LENGTH', 'LONGCARD', 'OCTET', 'PTR', 'PRED', 'READ', 'READNEW',
+        # 28 additional builtins
+        'APPEND', 'COUNT', 'EMPTY', 'EXISTS', 'FIRST', 'INSERT', 'LAST',
+        'LENGTH', 'LONGCARD', 'OCTET', 'PTR', 'PRED', 'READ', 'READNEW',
         'REMOVE', 'RETRIEVE', 'SORT', 'SORTNEW', 'SUCC', 'TLIMIT', 'TMAX',
         'TMIN', 'TODO', 'TRUE', 'TSIZE', 'UNICHAR', 'WRITE', 'WRITEF',
     )
@@ -780,6 +780,8 @@ class Modula2Lexer(RegexLexer):
         # 7 additional builtins (COMPILER)
         'COMPILER', 'DEBUG', 'MODNAME', 'PROCNAME', 'LINENUM', 'DEFAULT',
         'HASH',
+        # 4 additional builtins (COROUTINE)
+        'COROUTINE', 'AWAKE', 'DONE',
         # 7 additional builtins (ASSEMBLER)
         'ASSEMBLER', 'ASM', 'REG', 'REGISTER', 'SETREG', 'GETREG', 'CODE',
     )
