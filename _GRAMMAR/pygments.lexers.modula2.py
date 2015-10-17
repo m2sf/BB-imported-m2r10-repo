@@ -164,6 +164,19 @@ class Modula2Lexer(RegexLexer):
     `$ pygmentize -O full,dialect=m2r10,treat_stdlib_adts_as_builtins=Off ...`
         Render standard library ADTs as ordinary library types.   
     
+    
+    ISO Modula-2 Specific Lexical Synonyms
+    
+    Uses of ! and @ as synonyms for | and ^ are rendered as lexical errors.
+    
+    When Modula-2 was first published, 6-bit character sets had *long* been
+    obsolete.  No Modula-2 compiler ever supported any 6-bit character set
+    platform.  EBCDIC character sets support either vertical bar or broken
+    line characters and caret or upwards pointing arrow characters.
+    There was never any need for the ISO M2 working group to define these
+    synonyms nor has there ever been any need to use them.  Their use is
+    discouraged.  Both synonyms will thus be rendered as lexical errors.
+    
     .. versionadded:: 1.3
     """
 
@@ -304,6 +317,24 @@ class Modula2Lexer(RegexLexer):
             (r"'[^']*'", String),  # single quoted string
             (r'"[^"]*"', String),  # double quoted string
         ],
+        'schroedinger_digraphs': [
+            # digraphs that could be either operators or punctuation
+            # depending on context that cannot be determined by regex
+            
+            # diamond
+            #  operator synonym in PIM and ISO
+            #  punctuation in M2R10 and ObjM2
+            (r'<>', Schroedinger),
+        ],
+        'schroedinger_unigraphs': [
+            # unigraphs that could be either operators or punctuation
+            # depending on context that cannot be determined by regex
+            
+            # tilde
+            #  operator synonym in PIM and ISO
+            #  punctuation in M2R10 and ObjM2
+            (r'~', Schroedinger),
+        ],
         'digraph_punctuation': [
             # Assignment Symbol
             (r':=', Punctuation),
@@ -311,16 +342,26 @@ class Modula2Lexer(RegexLexer):
             # Range Constructor
             (r'\.\.', Punctuation),
             
-            # Ascend/Descend/Increment/Decrement Mutators
+            # Ascender/Increment and Descender/Decrement
             (r'\+\+', Punctuation), # M2R10 + ObjM2
             (r'--', Punctuation), # M2R10 + ObjM2
             
             # Chevron Brackets
-            (r'<<', Punctuation), # M2R10 + ISO
-            (r'>>', Punctuation), # M2R10 + ISO
+            (r'<<', Punctuation), # M2R10 + ObjM2
+            (r'>>', Punctuation), # M2R10 + ObjM2
             
             # Blueprint Punctuation
-            (r'->', Punctuation), # M2R10 + ISO
+            (r':,', Punctuation), # M2R10 + ObjM2
+            (r':*', Punctuation), # M2R10 + ObjM2
+            (r':#', Punctuation), # M2R10 + ObjM2
+            (r'->', Punctuation), # M2R10 + ObjM2
+            (r'><', Punctuation), # M2R10 + ObjM2
+            
+            # Template Punctuation
+            (r'##', Punctuation), # M2R10 + ObjM2
+            (r'@@', Punctuation), # M2R10 + ObjM2
+            (r'<#', Punctuation), # M2R10 + ObjM2
+            (r'#>', Punctuation), # M2R10 + ObjM2
             
             # Synonym Braces
             (r'\(\.', Punctuation), # PIM + ISO
@@ -334,43 +375,28 @@ class Modula2Lexer(RegexLexer):
             # Common Punctuation
             (r'[\(\)\[\]{},.:;\|]', Punctuation),
             
-            # Undetermined ADT property suffix
-            (r'\?', Punctuation), # M2R10 + ObjM2
+            # Unqualified Import/Alias Wildcard *
+            (r'\*(?=;)', Punctuation),
+            (r'\*(?= ;)', Punctuation),
             
             # Re-Export Suffix +
             (r'\+(?=([,;]))', Punctuation),
             (r'\+(?= ;)', Punctuation),
             
-            # Import Wildcard *
-            (r'\*(?=;)', Punctuation),
-            (r'\*(?= ;)', Punctuation),
-            
-            # Ancillary Constant Prefix
-            (r'~(?=([ ]*[a-zA-Z_\$][a-zA-Z0-9_\$]*[ ]*=))', Punctuation),
-            
-            # Binding Differentiators
-            (r'\*(?=\])', Punctuation),
-            (r'\*(?= \])', Punctuation),
-            (r'(?<=\|)#', Punctuation),
-            
-            # Ancillary Constant Prefix
-            (r'(?<=CONST)~', Punctuation),
-            (r'(?<=CONST )~', Punctuation),
-            
-            # Individual Tokens Within Sequence "[+/-]" are Punctuation
+            # Treat Characters Within Sequence "[+/-]" as Punctuation
             (r'\+(?=/-)', Punctuation),
             (r'/(?=-])', Punctuation),
             (r'-(?=])', Punctuation),
             
-            # Synonym for vertical bar
-            (r'!', Punctuation), # ISO
+            # Pragma value query prefix
+            (r'\?', Punctuation),
+            
+            # extension RW/name prefix
+            (r'@', Punctuation),
         ],
         'digraph_operators': [
-            # Dot Product Operator
-            (r'\*\.', Operator),
-            
-            # Array Concatenation Operator
-            (r'\+>', Operator), # M2R10 + ObjM2
+            # Exponentiation Operator
+            (r'\*\*', Operator),
             
             # Relational Operators
             (r'<=', Operator),
@@ -381,9 +407,6 @@ class Modula2Lexer(RegexLexer):
             
             # Type Conversion Operator
             (r'::', Operator), # M2R10 + ObjM2
-            
-            # Synonym Operator
-            (r'<>', Operator), # ISO + PIM
         ],
         'unigraph_operators': [
             # Arithmetic Operators
@@ -396,13 +419,11 @@ class Modula2Lexer(RegexLexer):
             # Relational Operators
             (r'[=#<>]', Operator),
             
+            # Ampersand Operator
+            (r'&', Operator),
+            
             # Dereferencing Operator
             (r'\^', Operator),
-            
-            # Synonym Operators
-            (r'@', Operator), # ISO
-            (r'&', Operator), # PIM + ISO
-            (r'~', Operator), # PIM + ISO
             
             # Smalltalk Message Prefix
             (r'`', Operator), # ObjM2
@@ -428,7 +449,6 @@ class Modula2Lexer(RegexLexer):
             (r'\(\*! .*?\*\)', Comment.Special.HeaderDoc),
             
             # Doxygen Comment
-            (r'^//[/!].*?\n', Comment.Single.Doxygen),
             (r'^![<!>].*?\n', Comment.Single.Doxygen),
         ],
         'comments': [
@@ -490,8 +510,10 @@ class Modula2Lexer(RegexLexer):
             include('prefixed_number_literals'),
             include('non_affixed_number_literals'),
             include('string_literals'),
+            include('schroedinger_digraphs'),
             include('digraph_punctuation'),
             include('digraph_operators'),
+            include('schroedinger_unigraphs'),
             include('unigraph_punctuation'),
             include('unigraph_operators'),
         ]
@@ -506,7 +528,7 @@ class Modula2Lexer(RegexLexer):
 
     # Common Operators Dataset
     common_operators = (
-        '+', '-', '*', '/', '=', '#', '<', '>', '<=', '>=', '^',
+        '+', '-', '*', '/', '&', '=', '#', '<', '>', '<=', '>=', '^',
     )
 
     # Common Comments and Pragmas Dataset
@@ -565,7 +587,7 @@ class Modula2Lexer(RegexLexer):
 
     # PIM Modula-2 operators in addition to the common set
     pim_additional_operators = (
-        '&', '~', '<>',
+        '~', '<>',
     )
     
     # PIM Modula-2 literals in addition to the common set
@@ -607,12 +629,12 @@ class Modula2Lexer(RegexLexer):
     
     # ISO Modula-2 punctuation in addition to the common set
     iso_additional_punctuation = (
-        '!', '(.', '.)', '(:', ':)',
+        '(.', '.)', '(:', ':)',
     )
 
     # ISO Modula-2 operators in addition to the common set
     iso_additional_operators = (
-        '&', '~', '@', '<>',
+        '~', '<>',
     )
     
     # ISO Modula-2 literals in addition to the common set
@@ -654,9 +676,9 @@ class Modula2Lexer(RegexLexer):
 
     # ISO Modula-2 pseudo-builtins in addition to the common set
     iso_additional_pseudo_builtins = (
-        # 15 additional builtins (SYSTEM)
+        # 14 additional builtins (SYSTEM)
         'SYSTEM', 'BITSPERLOC', 'BYTE', 'LOCSPERBYTE', 'LOCSPERWORD', 'LOC',
-        'ADDADR', 'SUBADR', 'DIFADR', 'MAKEADR', 'ADR',
+        'ADDADR', 'SUBADR', 'DIFADR', 'MAKEADR',
         'ROTATE', 'SHIFT', 'CAST', 'TSIZE',
         # 13 additional builtins (COROUTINES)
         'COROUTINES', 'ATTACH', 'COROUTINE', 'CURRENT', 'DETACH', 'HANDLER',
@@ -681,15 +703,23 @@ class Modula2Lexer(RegexLexer):
     
     # Modula-2 R10 punctuation in addition to the common set
     m2r10_additional_punctuation = (
-        # definition and implementation
-        '+', '*',  '++', '--', '<<', '>>',
-        # blueprints
-        '-', '/', '#', '?', '~', '->',
+        # common
+        '+', '*', '~',
+        # definition specific
+        '<<', '>>',
+        # implementation specific
+        '++', '--',
+        # blueprint specific
+        ':,', ':*', ':#', '->', '<>', '><',
+        # template specific
+        '##', '@@', '<#', '#>'
+        # pragma specific
+        '?',
     )
 
     # Modula-2 R10 operators in addition to the common set
     m2r10_additional_operators = (
-        '\\', '*.',  '+>', '==', '::',
+        '\\', '==', '::',
     )
 
     # Modula-2 R10 literals in addition to the common set
@@ -716,27 +746,26 @@ class Modula2Lexer(RegexLexer):
     # Modula-2 R10 reserved words in addition to the common set
     m2r10_additional_reserved_words = (
         # 12 additional reserved words
-        'ALIAS', 'ARGLIST', 'BLUEPRINT', 'COPY', 'GENLIB', 'INDETERMINATE',
-        'NEW', 'NONE', 'OPAQUE', 'REFERENTIAL', 'RELEASE', 'RETAIN',
-        # 2 additional reserved words with symbolic assembly option
-        'ASM', 'REG',
+        'ALIAS', 'ARGLIST', 'BLUEPRINT', 'COPY', 'GENLIB', 'NEW',
+        'NONE', 'OPAQUE', 'REFERENTIAL', 'RELEASE', 'RETAIN', 'YIELD',
     )
 
     # Modula-2 R10 builtins in addition to the common set
     m2r10_additional_builtins = (
-        # 26 additional builtins
-        'CARDINAL', 'COUNT', 'EMPTY', 'EXISTS', 'INSERT', 'LENGTH', 'LONGCARD',
-        'OCTET', 'PTR', 'PRED', 'READ', 'READNEW', 'REMOVE', 'RETRIEVE', 'SORT',
-        'STORE', 'SUBSET', 'SUCC', 'TLIMIT', 'TMAX', 'TMIN', 'TRUE', 'TSIZE',
-        'UNICHAR', 'WRITE', 'WRITEF',
+        # 29 additional builtins
+        'APPEND', 'COUNT', 'COROUTINE', 'EMPTY', 'EXISTS', 'FIRST', 'INSERT',
+        'LAST', 'LENGTH', 'LONGCARD', 'OCTET', 'PTR', 'PRED', 'READ', 'READNEW',
+        'REMOVE', 'RETRIEVE', 'SORT', 'SORTNEW', 'SUCC', 'TLIMIT', 'TMAX',
+        'TMIN', 'TODO', 'TRUE', 'TSIZE', 'UNICHAR', 'WRITE', 'WRITEF',
     )
     
     # Modula-2 R10 pseudo-builtins in addition to the common set
     m2r10_additional_pseudo_builtins = (
-        # 13 additional builtins (TPROPERTIES)
+        # 4 additional builtins (primitives)
+        'SEEK', 'STORE', 'SUBSET', 'VALUE',
+        # 12 additional builtins (TPROPERTIES)
         'TPROPERTIES', 'PROPERTY', 'LITERAL', 'TPROPERTY', 'TLITERAL',
-        'TBUILTIN', 'TDYN', 'TREFC', 'TNIL', 'TBASE', 'TPRECISION',
-        'TMAXEXP', 'TMINEXP', 
+        'TBUILTIN', 'TDYN', 'TFLAGS', 'TORDERED', 'TREFC', 'TSCALAR', 'TSORTED',
         # 4 additional builtins (CONVERSION)
         'CONVERSION', 'TSXFSIZE', 'SXF', 'VAL',
         # 35 additional builtins (UNSAFE)
@@ -751,20 +780,20 @@ class Modula2Lexer(RegexLexer):
         # 7 additional builtins (COMPILER)
         'COMPILER', 'DEBUG', 'MODNAME', 'PROCNAME', 'LINENUM', 'DEFAULT',
         'HASH',
-        # 5 additional builtins (ASSEMBLER)
-        'ASSEMBLER', 'REGISTER', 'SETREG', 'GETREG', 'CODE',
+        # 7 additional builtins (ASSEMBLER)
+        'ASSEMBLER', 'ASM', 'REG', 'REGISTER', 'SETREG', 'GETREG', 'CODE',
     )
     
 #  O b j e c t i v e   M o d u l a - 2   D a t a s e t s
     
     # ObjM2 punctuation in addition to Modula-2 R10
     objm2_additional_punctuation = (
-        # None
+        '@',
     )
 
     # ObjM2 operators in addition to Modula-2 R10
     objm2_additional_operators = (
-        '`', '@',
+        '`',
     )
 
     # ObjM2 literals in addition to Modula-2 R10
@@ -2662,6 +2691,19 @@ class Modula2Lexer(RegexLexer):
                     self.set_dialect(indicated_dialect)
                     self.dialect_set_by_tag = True
             #
+            # first check tokens that may either be operators or punctuation
+            if token is Schroedinger:
+                #print "lexeme = ", value, " : token = ", token
+                if self.dialect == UNKNOWN:
+                    if value not in self.operators \
+                      and value not in self.punctuation:
+                        token = Error
+                else: # self.dialect is known
+                    if value in self.operators:
+                        token = Operator
+                    elif value in self.punctuation:
+                        token = Punctuation
+            #
             # check punctuation, mark unsupported punctuation as errors
             if token is Punctuation:
                 #print "lexeme = ", value, " : token = ", token
@@ -2683,8 +2725,6 @@ class Modula2Lexer(RegexLexer):
                         value = u'≥'
                     elif value == '==':
                         value = u'≡'
-                    elif value == '*.':
-                        value = u'•'
                     elif value == '~':
                         value = u'¬'
             #
