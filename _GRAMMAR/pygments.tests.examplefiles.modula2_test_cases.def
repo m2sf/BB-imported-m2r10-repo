@@ -197,15 +197,6 @@ string := "It is eight O'clock.";
 (* {} *) CONST Foo = { 1, 2, 3 };
 
 
-(*- Synonym for Vertical Bar -*)
-
-(* supported by ISO *)
-
-(* rendered as errors if unsupported *)
-
-(* ! *) CASE foo OF 0 : bar ! 1 : baz ! 2 : bam END;
-
-
 (*- Ascend/Descend and Increment/Decrement Suffix -*)
 
 (* supported by M2 R10 + ObjM2 *)
@@ -219,11 +210,15 @@ string := "It is eight O'clock.";
 
 (*- Wildcard Import -*)
 
-(* supported by M2 R10, ObjM2, p1 and Stony Brook *)
-
 (* rendered as error if unsupported *)
 
-FROM ASSEMBLER IMPORT *;
+(* example for p1 and Stony Brook *)
+
+FROM FooLib IMPORT *;
+
+(* example for M2 R10 and ObjM2 *)
+
+IMPORT ASSEMBLER ALIAS *;
 
 
 (*- Import to Re-Export -*)
@@ -250,31 +245,41 @@ IMPORT Foo+, Bar+;
 
 (* rendered as errors if unsupported *)
 
-(* Undetermined Type Property Suffix ? *)
+(* Type Classification Prefix *)
 
-TPROPERTIES = isCollection, isIndexed | isRigid?;
+TPROPERTIES = { isCollection, isIndexed; ~isRigid };
 
-(* Ancillary Blueprint Constant Prefix ~ *)
-
-CONST ~ isFoobar = Foo AND Bar;
-
-(* Blueprint Requirement Implication -> *)
+(* Requirement Implication -> *)
 
 isFoobar ->
 PROCEDURE [ABS] abs ( i : ProtoInteger ) : ProtoInteger;
+
+(* Mutual Dependency Constraint <> *)
+
+[DIV] <> [MOD]
+
+(* Mutual Exclusion Constraint <> *)
+
+[DIV] >< [/]
 
 (* Unary Minus Binding symbol *)
 
 PROCEDURE [+/-] unaryMinus ( i : ProtoInteger ) : ProtoInteger;
 
-(* Binding Selector # *)
 
-PROCEDURE [STORE|#] storeValues ...;
+(* Binding Selector :, *)
 
-(* Binding Selector * *)
+PROCEDURE [REMOVE|,] removeElements
+  ( VAR target : ProtoSet; elements : ARGLIST >0 OF ElementType );
 
-PROCEDURE [REMOVE|*] removeAllValues;
-  ( target : ProtoArray; fromIndex : IndexType; values : ARRAY OF ValueType );
+(* Binding Selector :* *)
+
+PROCEDURE [REMOVE:*] removeAllValues ( VAR target : ProtoSet );
+
+(* Binding Selector :# *)
+
+PROCEDURE [REMOVE:#] removeValues
+  ( VAR target : ProtoArray; atIndex : IndexType; valueCount : LONGCARD );
 
 
 (*= Non-Alphabetic Operator Tests =*)
@@ -289,10 +294,12 @@ PROCEDURE [REMOVE|*] removeAllValues;
 
 (* #, >=, <= *) notEqual := a # b; notLess := a >= b; notGreater := a <= b;
 
+(* & *) foo := bar & baz;
+
 (* ^ *) next := this^.next
 
 
-(*- Pascal Style Inequality Operator -*)
+(*- Synonym for # Operator -*)
 
 (* supported by PIM + ISO *)
 
@@ -301,24 +308,13 @@ PROCEDURE [REMOVE|*] removeAllValues;
 (* <> *) bool := a <> b;
 
 
-(*- Synonyms for NOT and AND Operators -*)
+(*- Synonym for NOT Operator -*)
 
 (* supported by PIM + ISO *)
 
 (* rendered as errors if unsupported *)
 
 (* ~ *) not := ~ a;
-
-(* & *) and := a & b;
-
-
-(*- Synonym for Pointer Dereferencing Operator -*)
-
-(* supported by ISO *)
-
-(* rendered as error if unsupported *)
-
-(* @ *) next := this@.next;
 
 
 (*- ISO 80000-2 Compliant Set Difference Operator -*)
@@ -346,24 +342,6 @@ PROCEDURE [REMOVE|*] removeAllValues;
 (* rendered as error if unsupported *)
 
 (* :: *) int := real :: INTEGER;
-
-
-(*- Dot Product Operator -*)
-
-(* supported by M2 R10 + ObjM2 *)
-
-(* rendered as error if unsupported *)
-
-(* *. *) dotProduct := v1 *. v2;
-
-
-(*- Array Concatenator -*)
-
-(* supported by M2 R10 + ObjM2 *)
-
-(* rendered as error if unsupported *)
-
-(* +> *) concatenation := array1 +> array2;
 
 
 (*- Smalltalk Message Prefix -*)
@@ -497,10 +475,6 @@ IF foo <= bar THEN ... END;
 
 IF foo == bar THEN ... END;
 
-(* dot product operator *. *)
-
-dotProduct := v1 *. v2;
-
 (* NOT operator synonym ~ *)
 
 not := ~ a;
@@ -565,7 +539,7 @@ lowercase_$123% camelCase_$123% TitleCase_$123% UPPERCASE_$123%
 DEFINITION MODULE ##CustomInteger## [ProtoInteger];
 
 TYPE ##CustomInteger## = RECORD
-  * hidden : ARRAY ##BitwidthInOctets## OF OCTET
+  * hidden : ARRAY ##BitwidthInOctets## OF OCTET
 END;
 
 
@@ -614,12 +588,8 @@ ABSTRACT AS CLASS GUARD INHERIT OVERRIDE READONLY REVEAL TRACED UNSAFEGUARDED
 
 (* core language *)
 
-ALIAS ARGLIST BLUEPRINT COPY GENLIB INDETERMINATE NEW NONE OPAQUE REFERENTIAL
-RELEASE RETAIN
-
-(* with symbolic assembler option *)
-
-ASM REG
+ALIAS ARGLIST BLUEPRINT COPY GENLIB NEW NONE OPAQUE REFERENTIAL
+RELEASE RETAIN YIELD
 
 
 (*- Additional Reserved Words for ObjM2 -*)
@@ -767,16 +737,20 @@ complexDivException protException sysException coException exException
 
 (* proper builtins *)
 
-CARDINAL COUNT EMPTY EXISTS INSERT LENGTH LONGCARD OCTET PTR PRED READ READNEW
-REMOVE RETRIEVE SORT STORE SUBSET SUCC TLIMIT TMAX TMIN TRUE TSIZE UNICHAR
-WRITE WRITEF
+APPEND CARDINAL COUNT EMPTY EXISTS FIRST INSERT LAST LENGTH LONGCARD OCTET PTR
+PRED READ READNEW REMOVE SORT SORTNEW STORE SUBSET SUCC TLIMIT TMAX TMIN TODO
+TRUE TSIZE UNICHAR WRITE WRITEF
 
 (* pseudo-builtins *)
 
+(* primitives *)
+
+SEEK STORE SUBSET VALUE
+
 (* TPROPERTIES builtin-module *)
 
-TPROPERTIES PROPERTY LITERAL TPROPERTY TLITERAL TBUILTIN TDYN TREFC TNIL
-TBASE TPRECISION TMAXEXP TMINEXP 
+TPROPERTIES PROPERTY LITERAL TPROPERTY TLITERAL TBUILTIN TDYN TFLAGS TORDERED
+TREFC TSCALAR TSORTED 
 
 (* CONVERSION builtin-module *)
 
@@ -786,7 +760,7 @@ CONVERSION TSXFSIZE SXF VAL
 
 UNSAFE CAST BYTE INTRINSIC AVAIL ADD SUB ADDC SUBC FETCHADD FETCHSUB SHL SHR
 ASHR ROTL ROTR ROTLC ROTRC BWNOT BWAND BWOR BWXOR BWNAND BWNOR SETBIT TESTBIT
-LSBIT MSBIT CSBITS BAIL HALT TODO FFI ADDR VARGLIST VARGC
+LSBIT MSBIT CSBITS BAIL HALT FFI FFIDENT ADDR VARGLIST VARGC
 
 (* ATOMIC builtin-module *)
 
@@ -796,9 +770,13 @@ ATOMIC INTRINSIC AVAIL SWAP CAS INC DEC BWAND BWNAND BWOR BWXOR
 
 COMPILER DEBUG MODNAME PROCNAME LINENUM DEFAULT HASH
 
+(* COROUTINE builtin-module *)
+
+COROUTINE AWAKE DONE
+
 (* ASSEMBLER builtin-module *)
 
-ASSEMBLER REGISTER SETREG GETREG CODE
+ASSEMBLER ASM REG REGISTER SETREG GETREG CODE
 
 
 (*- Identifiers of first class ADTs for M2 R10 -*)
