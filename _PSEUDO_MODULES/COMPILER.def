@@ -199,7 +199,7 @@ TYPE UniqueTypeID = <implementation defined>;
 
 (* List of quoted enumerated values of an enumeration type *)
 
-(* MACRO *) PROCEDURE STRINGS ( enumType : <T> ) : CONST ARRAY OF CHAR;
+(* MACRO *) PROCEDURE STRINGS ( enumType : <T> ) : <StructuredLiteral>;
 (* Expands to a structured literal with a comma separated list of quoted
    string literals, each of which contains the identifier of an enumerated
    value of the enumeration type T given by its argument.  The list follows
