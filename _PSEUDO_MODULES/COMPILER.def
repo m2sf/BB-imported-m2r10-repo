@@ -181,14 +181,6 @@ CONST ImplModelOfTypeLongReal = <implementation defined, IEEE754Support value>;
    number given by its argument.  T is a predefined whole number type. *)
 
 
-(* Empty Operation *)
-
-PROCEDURE TODO;
-(* Empty statement to indicate unimplemented code.  Causes a compile time
-   warning when compiling in DEBUG mode, otherwise a compile time error.
-   Automatically imported into every context when in DEBUG mode. *)
-
-
 (* Unique ID of a type *)
 
 TYPE UniqueTypeID = <implementation defined>;
@@ -203,6 +195,21 @@ TYPE UniqueTypeID = <implementation defined>;
 (* MACRO *) PROCEDURE HASH ( literal : ARRAY OF CHAR ) : LONGCARD;
 (* Expands to the hash value of a string literal, excluding the enclosing
    quotation marks, calculated by the compiler's internal hash function. *)
+
+
+(* List of quoted enumerated values of an enumeration type *)
+
+(* MACRO *) PROCEDURE STRINGS ( enumType : <T> ) : CONST ARRAY OF CHAR;
+(* Expands to a structured literal with a comma separated list of quoted
+   string literals, each of which contains the identifier of an enumerated
+   value of the enumeration type T given by its argument.  The list follows
+   the same order as the enumerated value list in T's type declaration.
+   
+   Example:
+   
+   TYPE Foo = ( foo, bar, baz );
+   
+   STRINGS(Foo) expands to { "foo", "bar", "baz" } *)
 
 
 END COMPILER.
