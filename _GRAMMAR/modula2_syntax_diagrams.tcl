@@ -1,6 +1,6 @@
 #!/usr/bin/wish
 #
-# Syntax diagram generator for Modula-2 (R10), status Aug 31, 2015
+# Syntax diagram generator for Modula-2 (R10), status May 15, 2016
 #
 # This script is derived from the SQLite project's bubble-generator script.
 # It is quite possibly the only such tool that can wrap-around diagrams so
@@ -171,13 +171,13 @@ lappend non_terminals definitionModule {
   stack
     {line DEFINITION MODULE moduleIdent}
     {line {optx [ blueprintToObey ]} {optx FOR typeToExtend} ;}
-    {line {loop nil {nil importList ;}} {loop nil {nil definition nil}}
+    {line {loop nil {nil import ;}} {loop nil {nil definition nil}}
       END moduleIdent .}
 }
 
 # (2.1) Module Identifier, Blueprint Identifier, Type to Extend
 lappend non_terminals moduleIdent {
-  line Ident
+  line AlphaNumIdent
 }
 
 # (2.2) Blueprint to Obey
@@ -185,9 +185,30 @@ lappend non_terminals blueprintToObey {
   line blueprintIdent
 }
 
-# (3) Import List
-lappend non_terminals importList {
-  or libGenDirective importDirective
+# (3) Import
+lappend non_terminals import {
+  or
+    {line IMPORT impexLib {
+      or
+        {loop nil {nil , impexLib}}
+        {line ALIAS unqualifiedAliases}
+      }}
+    libGenDirective
+}
+
+# (3.1) Import/Re-Export Library
+lappend non_terminals impexLib {
+  line libIdent {optx reExport}
+}
+
+# (3.2) Unqualified Aliases
+lappend non_terminals unqualifiedAliases {
+  line identList
+}
+
+# (3.3) Re-Export Tag
+lappend non_terminals reExport {
+  line +
 }
 
 # (4) Library Generation Directive
@@ -196,117 +217,94 @@ lappend non_terminals libGenDirective {
   FOR {loop {line placeholder = replacement} ;} END
 }
 
-# (4.1) Library Identifier, Template, Placeholder
-lappend non_terminals libIdent {
-  line Ident
+# (4) Library Generation Directive 2
+lappend non_terminals libGenDirective2 {
+  line GENLIB libIdent FROM template
+  FOR {loop substitution ;} END
 }
 
-# (4.2) Replacement
+# (4) Library Generation Directive 3
+lappend non_terminals libGenDirective3 {
+  stack
+    {line GENLIB libIdent FROM template}
+    {line FOR {loop substitution ;} END}
+}
+
+# (4.1) Substitution
+lappend non_terminals substitution {
+  line placeholder = replacement
+}
+
+# (4.2) Library Identifier, Template, Placeholder
+lappend non_terminals libIdent {
+  line AlphaNumIdent
+}
+
+# (4.3) Replacement
 lappend non_terminals replacement {
   or NumberLiteral StringLiteral ChevronText
 }
 
-# (5) Import Directive
-lappend non_terminals importDirective {
-  or
-    {line FROM {or moduleIdent {line ENUM enumTypeIdent}}
-      IMPORT {or identifiersToImport importAll}}
-    {line IMPORT modulesToImport}
-}
-
-# (5.1) Enumeration Type Identifier
-lappend non_terminals enumTypeIdent {
-  line typeIdent
-}
-
-# (5.2) Type Identifier
-lappend non_terminals typeIdent {
-  line qualident
-}
-
-# (5.3) Modules to Import, Identifiers to Import
-lappend non_terminals identifiersToImport {
-  loop {line Ident {optx reExport}} ,
-}
-
-# (5.4) Re-Export
-lappend non_terminals reExport {
-  line +
-}
-
-# (5.5) Import All
-lappend non_terminals importAll {
-  line *
-}
-
-# (6) Qualified Identifier
+# (5) Qualified Identifier
 lappend non_terminals qualident {
-  loop Ident .
+  loop ident .
 }
 
-# (7) Definition
+# (5.1) Identifier
+lappend non_terminals ident {
+  or AlphaNumIdent ForeignIdent
+}
+
+# (6) Definition
 lappend non_terminals definition {
   line {
     or
       {line CONST {loop {line constDefinition ;} nil} }
       {line TYPE {loop {line typeDefinition ;} nil} }
-      {line VAR {loop {line variableDeclaration ;} nil} }
+      {line VAR {loop {line identList : typeIdent ;} nil} }
       {line procedureHeader ;}
+      {line toDoList ;}
   }
 }
 
-# (8) Constant Definition
-lappend non_terminals constDefinition {
-  line {or {line [ propertyToBindTo ]} restrictedExport nil}
-    Ident = constExpression
+# (6.1) Type Identifier
+lappend non_terminals typeIdent {
+  line qualident
 }
 
-# (8.1) Constant Expression
+# (7) Constant Definition
+lappend non_terminals constDefinition {
+  line {or {line [ propertyToBindTo ]} restrictedExport nil}
+    ident = constExpression
+}
+
+# (7.1) Constant Expression
 lappend non_terminals constExpression {
   line expression
 }
 
-# (8.2) Restricted Export
+# (7.2) Restricted Export
 lappend non_terminals restrictedExport {
   line *
 }
 
-# (9) Type Definition
+# (8) Type Definition
 lappend non_terminals typeDefinition {
-  line {optx restrictedExport} Ident = {or OPAQUE type}
+  line {optx restrictedExport} ident = {or type OPAQUE}
 }
 
-# (10) Variable Declaration
-lappend non_terminals variableDeclaration {
-  line identList : {optx range OF} typeIdent
-}
-
-# (11) Identifier List
+# (9) Identifier List
 lappend non_terminals identList {
-  loop Ident ,
+  loop ident ,
 }
 
-# (12) Range
-lappend non_terminals range {
-  line [ {optx greaterThan} constExpression .. {optx lessThan} constExpression ]
-}
-
-# (12.1) Greater Than
-lappend non_terminals greatherThan {
-  line >
-}
-
-# (12.2) Less Than
-lappend non_terminals lessThan {
-  line <
-}
-
-# (13) Type
+# (10) Type
 lappend non_terminals type {
   line {
     or
-      {line typeIdent}
-      {line derivedSubType}
+      {line derivedType}
+      {line equivType}
+      {line subrangeType}
       {line enumType}
       {line setType}
       {line arrayType}
@@ -317,147 +315,161 @@ lappend non_terminals type {
   }
 }
 
-# (13.1) Derived Sub-Type
-lappend non_terminals derivedSubType {
+# (10.1) Derived Type, Dynamic Type
+lappend non_terminals derivedType {
+  line typeIdent
+}
+
+# (10.2) Equivalence Type
+lappend non_terminals equivType {
   or
     {line ALIAS OF typeIdent}
-    {line range OF ordinalOrScalarType}
     {line CONST dynamicTypeIdent}
 }
 
-# (13.2) Ordinal Or Scalar Type, Dynamic Type
+# (11) Subrange Type
+lappend non_terminals subrangeType {
+  line range OF ordinalOrScalarType
+}
+
+# (11.1) Range
+lappend non_terminals range {
+  line [ {optx greaterThan} constExpression .. {optx lessThan} constExpression ]
+}
+
+# (11.2) Greater Than
+lappend non_terminals greatherThan {
+  line >
+}
+
+# (11.3) Less Than
+lappend non_terminals lessThan {
+  line <
+}
+
+# (11.4) Ordinal Or Scalar Type
 lappend non_terminals ordinalOrScalarType {
   line typeIdent
 }
 
-# (14) Enumeration Type
+# (12) Enumeration Type
 lappend non_terminals enumType {
   line ( {optx + enumTypeToExtend ,} identList )
 }
 
-# (14.1) Enumeration Type To Extend
+# (12.1) Enumeration Type To Extend
 lappend non_terminals enumTypeToExtend {
   line enumTypeIdent
 }
 
-# (15) Set Type
+# (12.2) Enumeration Type Identifier
+lappend non_terminals enumTypeIdent {
+  line typeIdent
+}
+
+# (13) Set Type
 lappend non_terminals setType {
   line SET OF enumTypeIdent
 }
 
-# (16) Array Type
+# (14) Array Type
 lappend non_terminals arrayType {
-  line ARRAY {loop componentCount ,} OF typeIdent
+  line {optx FLEX} ARRAY {loop valueCount ,} OF typeIdent
 }
 
-# (16.1) Component Count
-lappend non_terminals componentCount {
+# (14.1) Value Count
+lappend non_terminals valueCount {
   line constExpression
 }
 
-# (17) Record Type
+# (15) Record Type
 lappend non_terminals recordType {
-  line RECORD
-    {or
-      {line {loop fieldList ;} {optx indeterminateField}}
-      {line ( recTypeToExtend ) {loop fieldList ;}}
-    }
-  END
+  line RECORD {optx ( recTypeToExtend )} {loop fieldList ;} END
 }
 
-# (17.1) Field List
-lappend non_terminals fieldList {
-  line {optx restrictedExport} variableDeclaration
-}
-
-# (17.2) Record Type To Extend
+# (15.1) Record Type To Extend
 lappend non_terminals recTypeToExtend {
-  line typeIdent
+  or typeIdent /NIL
 }
 
-# (17.3) Indeterminate Field Declaration
-lappend non_terminals indeterminateField {
-  line ~ Ident : ARRAY discriminantFieldIdent OF typeIdent
+# (15.2) Field List
+lappend non_terminals fieldList {
+  line {optx restrictedExport} variableDeclaration {optx = constExpression}
 }
 
-# (17.4) Discriminant Field Identifier
-lappend non_terminals discriminantFieldIdent {
-  line Ident
-}
-
-# (18) Pointer Type
+# (16) Pointer Type
 lappend non_terminals pointerType {
   line POINTER TO {optx CONST} typeIdent
 }
 
-# (19) Coroutine Type
+# (17) Coroutine Type
 lappend non_terminals coroutineType {
   line /COROUTINE ( assocProcType )
 }
 
-# (19.1) Associated Procedure Type
+# (17.1) Associated Procedure Type
 lappend non_terminals assocProcType {
   line typeIdent
 }
 
-# (20) Procedure Type
+# (18) Procedure Type
 lappend non_terminals procedureType {
   line PROCEDURE {optx ( {loop formalType ,} )} {optx : returnedType}
 }
 
-# (20.1) Formal Type
+# (18.1) Formal Type
 lappend non_terminals formalType {
   or simpleFormalType attributedFormalType variadicFormalType
 }
 
-# (20.2) Returned Type
+# (18.2) Returned Type
 lappend non_terminals returnedType {
   line typeIdent
 }
 
-# (21) Simple Formal Type
+# (19) Simple Formal Type
 lappend non_terminals simpleFormalType {
   or
     {line {optx ARRAY OF} typeIdent}
     castingFormalType
 }
 
-# (21.1) Casting Formal Type
+# (19.1) Casting Formal Type
 lappend non_terminals castingFormalType {
   line /CAST {or {line ARRAY OF /OCTET} addressTypeIdent}
 }
 
-# (21.2) Address Type Identifier
+# (19.2) Address Type Identifier
 lappend non_terminals addressTypeIdent {
   line {optx /UNSAFE .} /ADDRESS
 }
 
-# (22) Attributed Formal Type
+# (20) Attributed Formal Type
 lappend non_terminals attributedFormalType {
-  line {or CONST VAR NEW} {or simpleFormalType simpleVariadicFormalType}
+  line {or CONST NEW VAR} {or simpleFormalType simpleVariadicFormalType}
 }
 
-# (23) Simple Variadic Formal Type
+# (21) Simple Variadic Formal Type
 lappend non_terminals simpleVariadicFormalType {
   line ARGLIST {optx reqNumOfArgs} OF simpleFormalType {optx terminator}
 }
 
-# (23.1) Required Number Of Arguments
+# (21.1) Required Number Of Arguments
 lappend non_terminals reqNumOfArgs {
   line {optx greaterThan} constExpression
 }
 
-# (23.2) Argument List Terminator
+# (21.2) Argument List Terminator
 lappend non_terminals terminator {
   line | constQualident
 }
 
-# (23.3) Constant Qualified Identifier
+# (21.3) Constant Qualified Identifier
 lappend non_terminals constQualident {
   line qualident
 }
 
-# (24) Variadic Formal Type
+# (22) Variadic Formal Type
 lappend non_terminals variadicFormalType {
   line ARGLIST {optx reqNumOfArgs} OF {
     or
@@ -467,12 +479,12 @@ lappend non_terminals variadicFormalType {
     {optx terminator}
 }
 
-# (25) Non-Variadic Formal Type
+# (23) Non-Variadic Formal Type
 lappend non_terminals nonVariadicFormalType {
-  line {or CONST VAR NEW nil} simpleFormalType
+  line {or CONST NEW VAR nil} simpleFormalType
 }
 
-# (26) Procedure Header
+# (24) Procedure Header
 lappend non_terminals procedureHeader {
   line PROCEDURE {
     or
@@ -482,25 +494,25 @@ lappend non_terminals procedureHeader {
   procedureSignature
 }
 
-# (27) Procedure Signature
+# (25) Procedure Signature
 lappend non_terminals procedureSignature {
-  line Ident {optx ( {loop formalParams ;} )} {optx : returnedType}
+  line ident {optx ( {loop formalParams ;} )} {optx : returnedType}
 }
 
-# (28) Formal Parameters
+# (26) Formal Parameters
 lappend non_terminals formalParams {
   or
     {line identList : {or simpleFormalType variadicFormalParams}}
     attributedFormalParams
 }
 
-# (29) Attributed Formal Parameters
+# (27) Attributed Formal Parameters
 lappend non_terminals attributedFormalParams {
-  line {or CONST VAR NEW} identList :
+  line {or CONST NEW VAR} identList :
     {or simpleFormalType simpleVariadicFormalType}
 }
 
-# (30) Variadic Formal Parameters
+# (28) Variadic Formal Parameters
 #
 #  Due to layout constraints, postscript output needs to be edited:
 #  numOfArg => numOfArgs, terminato => terminator
@@ -514,9 +526,9 @@ lappend non_terminals variadicFormalParams {
     {optx terminato}
 }
 
-# (31) Non-Variadic Formal Parameters
+# (29) Non-Variadic Formal Parameters
 lappend non_terminals nonVariadicFormalParams {
-  line {or CONST VAR NEW nil} identList : simpleFormalType
+  line {or CONST NEW VAR nil} identList : simpleFormalType
 }
 
 
@@ -524,53 +536,135 @@ lappend non_terminals nonVariadicFormalParams {
 # Implementation and Program Module Syntax
 # ----------------------------------------
 
-# (32) Implementation or Program Module
+# (30) Implementation or Program Module
 lappend non_terminals implOrPrgmModule {
   stack
     {line {optx IMPLEMENTATION} MODULE moduleIdent ;}
-    {line {loop nil {nil importList ;}} block moduleIdent .}
+    {line {loop nil {nil privateImport ;}} block moduleIdent .}
 }
 
-# (33) Block
+# (31) Private Import
+lappend non_terminals privateImport {
+  line IMPORT libIdent {
+    or
+      {loop nil {nil , libIdent}}
+      {line ALIAS privateAliases}
+    }
+}
+
+# (31.1) Private Aliases
+lappend non_terminals privateAliases {
+  or identList *
+}
+
+# (32) Block
 lappend non_terminals block {
   line {loop nil {nil declaration nil}}
   {optx BEGIN statementSequence} END
 }
 
-# (34) Declaration
+# (33) Declaration
 lappend non_terminals declaration {
   line {
     or
-      {line CONST {loop {line Ident = constExpression ;} nil} }
-      {line TYPE {loop {line Ident = type ;} nil} }
+      {line CONST {loop {line ident = constExpression ;} nil} }
+      {line TYPE {loop {line typeDeclaration ;} nil} }
       {line VAR {loop {line variableDeclaration ;} nil} }
-      {line procedureHeader ; block Ident ;}
+      {line ALIAS localAliases FOR origin ;}
+      {line procedureHeader ; block ident ;}
+      {line toDoList ;}
   }
 }
 
-# (35) Statement Sequence
+# (33.1) Local Aliases
+lappend non_terminals localAliases {
+  line privateAliases
+}
+
+# (33.2) Origin
+lappend non_terminals origin {
+  line {loop {line ident .} nil} *
+}
+
+# (34) Type Declaration
+lappend non_terminals typeDeclaration {
+  line ident = {or type indeterminateRecType}
+}
+
+# (34.1) Indeterminate Record Type
+lappend non_terminals indeterminateRecType {
+  line VAR RECORD {loop {line variableDeclaration ;} nil} indeterminateField END
+}
+
+# (34.2) Indeterminate Field Declaration
+lappend non_terminals indeterminateField {
+  line VAR ident : ARRAY discriminantFieldIdent OF typeIdent
+}
+
+# (34.3) Discriminant Field Identifier
+lappend non_terminals discriminantFieldIdent {
+  line ident
+}
+
+# (35) Variable Declaration
+lappend non_terminals variableDeclaration {
+  line identList : {
+    or
+      {line {optx ARRAY valueCount OF} typeIdent}
+      subrangeType
+      procedureType
+    }
+}
+
+# (36) Statement Sequence
 lappend non_terminals statementSequence {
   loop statement ;
 }
 
-# (36) Statement
+# (37) Statement
 lappend non_terminals statement {
   line {
     or
+      emptyStatement
       memMgtOperation
       updateOrProcCall
+      returnStatement
       ifStatement
       caseStatement
       loopStatement
       whileStatement
       repeatStatement
       forStatement
-      {line {or RETURN YIELD} {optx expression}}
       EXIT
   }
 }
 
-# (37) Memory Management Operation
+# (37.1) Empty Statement
+lappend non_terminals emptyStatement {
+  line toDoList
+}
+
+# 38) TO DO List
+lappend non_terminals toDoList {
+  line TO DO {optx ( trackingRef , weight )} {loop toDoTask ;} END
+}
+
+# (38.1) TO DO Task
+lappend non_terminals toDoTask {
+  line description {optx , estimatedHours}
+}
+
+# (38.2) Issue Tracking Reference, Description
+lappend non_terminals description {
+  line StringLiteral
+}
+
+# (38.3) Weight, Estimated Hours
+lappend non_terminals estimatedHours {
+  line constExpression
+}
+
+# (39) Memory Management Operation
 lappend non_terminals memMgtOperation {
   or
     {line NEW designator {or {line OF initSize} {line := initValue} nil}}
@@ -578,33 +672,38 @@ lappend non_terminals memMgtOperation {
     {line RELEASE designator}
 }
 
-# (37.1) Initial Size, Initial Value
+# (39.1) Initial Size, Initial Value
 lappend non_terminals initSize {
   line expression
 }
 
-# (38) Update Or Procedure Call
+# (40) Update Or Procedure Call
 lappend non_terminals updateOrProcCall {
   or
     {line designator {
       or
-        {line := expression}
         {line incOrDecSuffix}
-        {line actualParameters}
+        {line := expression}
+        {line ( expressionList )}
         nil
       }
     }
     {line COPY designator := expression}
 }
 
-# (38.1) Increment Or Decrement Suffix
+# (40.1) Increment Or Decrement Suffix
 lappend non_terminals incOrDecSuffix {
   or
     {line ++}
     {line --}
 }
 
-# (39) IF Statement
+# (41) Return Or Yield Statement
+lappend non_terminals returnStatement {
+  line {or RETURN YIELD} {optx expression}
+}
+
+# (42) IF Statement
 lappend non_terminals ifStatement {
   stack
     {line IF boolExpression THEN statementSequence}
@@ -612,80 +711,85 @@ lappend non_terminals ifStatement {
     {line {optx ELSE statementSequence} END}
 }
 
-# (39.1) Boolean Expression
+# (42.1) Boolean Expression
 lappend non_terminals boolExpression {
   line expression
 }
 
-# (40) CASE Statement
+# (43) CASE Statement
 lappend non_terminals caseStatement {
   line CASE expression OF
     {loop {line | case} nil} {optx ELSE statementSequence} END
 }
 
-# (40.1) Case
+# (43.1) Case
 lappend non_terminals case {
   line {loop caseLabels ,} : statementSequence
 }
 
-# (40.2) Case Labels
+# (43.2) Case Labels
 lappend non_terminals caseLabels {
   line constExpression {optx .. constExpression}
 }
 
-# (41) LOOP Statement
+# (44) LOOP Statement
 lappend non_terminals loopStatement {
   line LOOP statementSequence END
 }
 
-# (42) WHILE Statement
+# (45) WHILE Statement
 lappend non_terminals whileStatement {
   line WHILE boolExpression DO statementSequence END
 }
 
-# (43) REPEAT Statement
+# (46) REPEAT Statement
 lappend non_terminals repeatStatement {
   line REPEAT statementSequence UNTIL boolExpression
 }
 
-# (44) FOR Statement
+# (47) FOR Statement
 lappend non_terminals forStatement {
-  line FOR forLoopVariants IN iterableEntity DO statementSequence END
+  line FOR forLoopVariants IN iterableExpr DO statementSequence END
 }
 
-# (44.1) FOR Loop Variants
+# (47.1) FOR Loop Variants
 lappend non_terminals forLoopVariants {
   or
     {line accessor {optx ascOrDesc} {optx , value}}
     {line /VALUE value {optx ascOrDesc}}
 }
 
-# (44.2) Accessor, Value
+# (47.2) Accessor, Value
 lappend non_terminals accessor {
-  line Ident
+  line ident
 }
 
-# (44.3) Ascender Or Descender
+# (47.3) Ascender Or Descender
 lappend non_terminals ascOrDesc {
   line incOrDecSuffix
 }
 
-# (44.4) Iterable Entity
-lappend non_terminals iterableEntity {
-  or designator {line range OF ordinalType}
+# (47.4) Iterable Expression
+lappend non_terminals iterableExpr {
+  or designator {line ordinalRange OF ordinalType}
 }
 
-# (44.5) Ordinal Type
-lappend non_terminals ordialType {
+# (47.5) Ordinal Range
+lappend non_terminals ordinalRange {
+  line [ expression .. expression ]
+}
+
+# (47.6) Ordinal Type
+lappend non_terminals ordinalType {
   line typeIdent
 }
 
-# (45) Designator
+# (48) Designator
 lappend non_terminals designator {
   line qualident {optx designatorTail}
 }
 
-# (45.1) Designator Tail
+# (48.1) Designator Tail
 lappend non_terminals designatorTail {
   line {
     loop {
@@ -694,12 +798,12 @@ lappend non_terminals designatorTail {
           {line [ exprListOrSlice ]}
           ^
       }
-      {optx {loop {line . Ident} nil}}
+      {optx {loop {line . ident} nil}}
     }
   }
 }
 
-# (45.2) Expression List Or Slice
+# (48.2) Expression List Or Slice
 lappend non_terminals exprListOrSlice {
   line expression {
     optx {
@@ -710,102 +814,109 @@ lappend non_terminals exprListOrSlice {
   }
 }
 
-# (46) Expression
+# (49) Expression List
+lappend non_terminals expressionList {
+  loop expression ,
+}
+
+# (50) Expression
 lappend non_terminals expression {
   line simpleExpression {optx operL1 simpleExpression}
 }
 
-# (46.1) Level-1 Operator
+# (50.1) Level-1 Operator
 lappend non_terminals operL1 {
   or
-    = # < <= > >= IN concatOp identityOp
+    = # < <= > >= IN identityOp
 }
 
-# (46.2) Concatenation Operator
-lappend non_terminals concatOp {
-  line &
-}
-
-# (46.3) Identity Operator
+# (50.2) Identity Operator
 lappend non_terminals identityOp {
   line ==
 }
 
-# (47) Simple Expression
+# (51) Simple Expression
 lappend non_terminals simpleExpression {
-  line {or + - nil} {loop term operL2}
+  or
+    {loop term operL2}
+    {line - simpleFactor}
 }
 
-# (47.1) Level-2 Operator
+# (51.1) Level-2 Operator
 lappend non_terminals operL2 {
-  line {or + - OR}
+  or + - OR concatOp setDiffOp
 }
 
-# (48) Term
-lappend non_terminals term {
-  loop factorOrNegation operL3
+# (51.2) Concatenation Operator
+lappend non_terminals concatOp {
+  line &
 }
 
-# (48.1) Level-3 Operator
-lappend non_terminals operL3 {
-  line {or * / DIV MOD AND setDiffOp dotProductOp}
-}
-
-# (48.2) Set Difference Operator
+# (51.3) Set Difference Operator
 lappend non_terminals setDiffOp {
   line BACKSLASH
 }
 
-# (48.3) Dot Product Operator
-lappend non_terminals dotProductOp {
-  line *.
+# (52) Term
+lappend non_terminals term {
+  loop simpleTerm operL3
 }
 
-# (49) Factor Or Negation
-lappend non_terminals factorOrNegation {
-  line {optx NOT} factorOrTypeConv
+# (52.1) Level-3 Operator
+lappend non_terminals operL3 {
+  or * / DIV MOD AND
 }
 
-# (50) Factor Or Type Conversion
-lappend non_terminals factorOrTypeConv {
-  line factor {optx :: typeIdent}
+# (53) Simple Term
+lappend non_terminals simpleTerm {
+  line {optx NOT} factor
 }
 
-# (51) Factor
+## (53) Simple Term (with exponentiation)
+#lappend non_terminals simpleTerm2 {
+#  or {loop factor **} {line NOT factor}
+#}
+
+# (54) Factor
 lappend non_terminals factor {
+  line simpleFactor {optx typeConvOp typeIdent}
+}
+
+# (54.1) Type Conversion Operator
+lappend non_terminals typeConvOp {
+  line ::
+}
+
+# (55) Simple Factor
+lappend non_terminals simpleFactor {
   line {
     or
       NumberLiteral
       StringLiteral
       structuredValue
+      designatorOrFuncCall
       {line ( expression )}
-      {line designator {optx actualParameters}}
     }
 }
 
-# (52) Actual Parameters
-lappend non_terminals actualParameters {
-  line ( {optx expressionList} )
+# (55.1) Designator Or Function Call
+lappend non_terminals designatorOrFuncCall {
+  line designator {optx ( {optx expressionList} )}
 }
 
-# (53) Expression List
-lappend non_terminals expressionList {
-  loop expression ,
-}
-
-# (54) Structured Value
+# (55.2) Structured Value
 lappend non_terminals structuredValue {
   line LBRACE {loop valueComponent ,} RBRACE
 }
 
-# (54.1) Value Component
+# (55.3) Value Component
 lappend non_terminals valueComponent {
   or
     {line constExpression {optx {or BY ..} constExpression}}
     {line runtimeExpression}
 }
 
-# (54.2) Runtime Expression
+# (55.4) Runtime Expression
 lappend non_terminals runtimeExpression {
   line expression
 }
@@ -815,7 +926,7 @@ lappend non_terminals runtimeExpression {
 # Blueprint Syntax
 # ----------------
 
-# (55) Blueprint
+# (56) Blueprint
 lappend non_terminals blueprint {
   stack
     {line
@@ -834,55 +945,49 @@ lappend non_terminals blueprint {
       END blueprintIdent .}
 }
 
-# (55.1) Blueprint Identifier
+# (56.1) Blueprint Identifier
 lappend non_terminals blueprintIdent {
-  line Ident
+  line AlphaNumIdent
 }
 
-# (55.2) Blueprint to Refine, Blueprint for Type to Extend
+# (56.2) Blueprint to Refine, Blueprint for Type to Extend
 lappend non_terminals blueprintToRefine {
   line blueprintIdent
 }
 
-# (56) Type Classification
+# (57) Type Classification
 lappend non_terminals typeClassification {
   or
-    {line LBRACE determinedClassification
-      {optx ; refinableClassification} {optx ; *} RBRACE}
+    {line LBRACE {loop attributedClassification ,} {optx ; *} RBRACE}
     *
 }
 
-# (56.1) Determined Classification
-lappend non_terminals determinedClassification {
-  loop classificationIdent ,
+# (57.1) Attributed Classification
+lappend non_terminals attributedClassification {
+  line {or + - *}  classificationIdent
 }
 
-# (56.2) Refinable Classification
-lappend non_terminals refinableClassification {
-  loop {line ~ classificationIdent} ,
-}
-
-# (56.3) Classification Identifier
+# (57.2) Classification Identifier
 lappend non_terminals classificationIdent {
-  line Ident 
+  line ident 
 }
 
-# (57) Literal Compatibility
+# (58) Literal Compatibility
 lappend non_terminals literalCompatibility {
   line /TLITERAL = {loop protoLiteral |} 
 }
 
-# (57.1) Proto Literal
+# (58.1) Proto Literal
 lappend non_terminals protoLiteral {
   or protoLiteralIdent structuredProtoLiteral 
 }
 
-# (57.2) Proto Literal Identifier
+# (58.2) Proto Literal Identifier
 lappend non_terminals protoLiteralIdent {
-  line Ident 
+  line ident 
 }
 
-# (58) Structured Proto Literal
+# (59) Structured Proto Literal
 lappend non_terminals structuredProtoLiteral {
   line LBRACE {
     or
@@ -895,85 +1000,85 @@ lappend non_terminals structuredProtoLiteral {
   } RBRACE
 }
 
-# (58.1) Required Value Count
+# (59.1) Required Value Count
 lappend non_terminals reqValueCount {
   line {optx greaterThan} wholeNumber
 }
 
-# (58.2) Greater Than
+# (59.2) Greater Than
 lappend non_terminals greaterThan {
   line > 
 }
 
-# (58.3) Whole Number
+# (59.3) Whole Number
 lappend non_terminals wholeNumber {
   line NumberLiteral 
 }
 
-# (58.4) Builtin Or Referential Identifier
+# (59.4) Builtin Or Referential Identifier
 lappend non_terminals builtinOrReferential {
-  line Ident
+  line ident
 }
 
-# (59) Constraint
+# (60) Constraint
 lappend non_terminals constraint {
   line constraintTerm {or oneWayDependency mutalDependencyOrExclusion}
 }
 
-# (59.1) Constraint Term
+# (60.1) Constraint Term
 lappend non_terminals constraintTerm {
   or
     {line ( classificationOrFlagIdent )}
     {line [ bindableEntityOrProperty ]}
 }
 
-# (59.2) Bindable Entity Or Property
+# (60.2) Bindable Entity Or Property
 lappend non_terminals bindableEntityOrProperty {
   or entityToBindTo propertyToBindTo
 }
 
-# (59.3) One-Way Dependency
+# (60.3) One-Way Dependency
 lappend non_terminals oneWayDependency {
   line -> {loop termList |}
 }
 
-# (59.4) Mutual Dependency Or Exclusion
+# (60.4) Mutual Dependency Or Exclusion
 lappend non_terminals mutalDependencyOrExclusion {
   line {or <> ><} termList
 }
 
-# (59.5) Term List
+# (60.5) Term List
 lappend non_terminals termList {
   loop constraintTerm ,
 }
 
-# (59.6) Classification Or Flag Identifier
+# (60.6) Classification Or Flag Identifier
 lappend non_terminals classificationOrFlagIdent {
-  line Ident
+  line ident
 }
 
-# (60) Requirement
+# (61) Requirement
 lappend non_terminals requirement {
   line {optx condition ->}
   {or typeRequirement constRequirement procRequirement}
 }
 
-# (60.1) Condition
+# (61.1) Condition
 lappend non_terminals condition {
   line {optx NOT} boolConstIdent 
 }
 
-# (60.2) Boolean Constant Identifier
+# (61.2) Boolean Constant Identifier
 lappend non_terminals boolConstIdent {
-  line Ident 
+  line ident
 }
 
-# (60.3) Type Requirement
+# (61.3) Type Requirement
 lappend non_terminals typeRequirement {
   line TYPE typeDefinition 
 }
 
-# (61) Constant Requirement
+# (62) Constant Requirement
 lappend non_terminals constRequirement {
   line CONST {
     or
@@ -983,51 +1088,51 @@ lappend non_terminals constRequirement {
     }
 }
 
-# (61.1) Simple Constant Requirement
+# (62.1) Simple Constant Requirement
 lappend non_terminals simpleConstRequirement {
-  line Ident {
+  line ident {
     or
       {line = constExpression}
       {line : builtinTypeIdent}
     }
 }
 
-# (61.2) Constant Expression
+# (62.2) Constant Expression
 lappend non_terminals constExpression {
   line expression
 }
 
-# (61.3) Built-in Type Identifier
+# (62.3) Built-in Type Identifier
 lappend non_terminals builtinTypeIdent {
-  line Ident
+  line ident
 }
 
-# (61.4) Restricted Export
+# (62.4) Restricted Export
 lappend non_terminals restrictedExport {
   line *
 }
 
-# (62) Property To Bind To
+# (63) Property To Bind To
 lappend non_terminals propertyToBindTo {
   or memMgtProperty collectionProperty scalarProperty /TFLAGS
 }
 
-# (62.1) Memory Management Property
+# (63.1) Memory Management Property
 lappend non_terminals memMgtProperty {
   or /TDYN /TREFC
 }
 
-# (62.2) Collection Property
+# (63.2) Collection Property
 lappend non_terminals collectionProperty {
   or /TORDERED /TSORTED /TLIMIT
 }
 
-# (62.3) Scalar Property
+# (63.3) Scalar Property
 lappend non_terminals scalarProperty {
   or /TSCALAR /TMAX /TMIN
 }
 
-# (63) Procedure Requirement
+# (64) Procedure Requirement
 lappend non_terminals procedureRequirement {
   line PROCEDURE {
     or
@@ -1037,74 +1142,74 @@ lappend non_terminals procedureRequirement {
     }
 }
 
-# (64) Entity To Bind To
+# (65) Entity To Bind To
 lappend non_terminals entityToBindTo {
   or bindableResWord bindableOperator bindableMacro
 }
 
-# (64.1) Bindable Reserved Word
+# (65.1) Bindable Reserved Word
 lappend non_terminals bindableResWord {
   or
     NEW RETAIN RELEASE COPY bindableFor
 }
 
-# (64.2) Bindable FOR
+# (65.2) Bindable FOR
 lappend non_terminals bindableFor {
   line FOR {optx forBindingDifferentiator}
 }
 
-# (64.3) FOR Binding Differentiator
+# (65.3) FOR Binding Differentiator
 lappend non_terminals forBindingDifferentiator {
-  line | {or ++ --}
+  line : {or ++ --}
 }
 
-# (64.4) Bindable Operator
+# (65.4) Bindable Operator
 lappend non_terminals bindableOperator {
   or
-    + - * / BACKSLASH = < > *. :: IN DIV MOD unaryMinus
+    + - * / BACKSLASH = < > :: IN DIV MOD unaryMinus
 }
 
-# (64.5) Unary Minus
+# (65.5) Unary Minus
 lappend non_terminals unaryMinus {
-  line + / -
+  line +/-
 }
 
-# (64.6) Bindable Macro
+# (65.6) Bindable Macro
 lappend non_terminals bindableMacro {
   or
-    /ABS /LENGTH /EXISTS /SEEK /SUBSET
+    /ABS /LENGTH /EXISTS /SUBSET
     /READ /READNEW /WRITE /WRITEF /SXF /VAL
     multiBindableMacro1 multiBindableMacro2 multiBindableMacro3
 }
 
-# (64.7) Multi-Bindable Macro 1
+# (65.7) Multi-Bindable Macro 1
 lappend non_terminals multiBindableMacro1 {
-  line {or /COUNT /VALUE} {optx bindingDifferentiator1}
+  line {or /COUNT /VALUE /SEEK} {optx bindingDifferentiator1}
 }
 
-# (64.8) Binding Differentiator 1
+# (65.8) Binding Differentiator 1
 lappend non_terminals bindingDifferentiator1 {
-  line | #
+  line : \#
 }
 
-# (64.9) Multi-Bindable Macro 2
+# (65.9) Multi-Bindable Macro 2
 lappend non_terminals multiBindableMacro2 {
-  line {or /STORE /INSERT /REMOVE} {optx bindingDifferentiator3}
+  line {or /STORE /INSERT /REMOVE} {optx bindingDifferentiator2}
 }
 
-# (64.10) Binding Differentiator 2
+# (65.10) Binding Differentiator 2
 lappend non_terminals bindingDifferentiator2 {
-  line | {or , # *}
+  line : {or , \# *}
 }
 
-# (64.11) Multi-Bindable Macro 3
+# (65.11) Multi-Bindable Macro 3
 lappend non_terminals multiBindableMacro3 {
   line /APPEND {optx bindingDifferentiator3}
 }
 
-# (64.12) Binding Differentiator 3
+# (65.12) Binding Differentiator 3
 lappend non_terminals bindingDifferentiator3 {
-  line | {or , *}
+  line : {or , *}
 }
 
 
@@ -1124,7 +1229,7 @@ lappend non_terminals langExtn_implOrPrgmModule {
 
 # Architecture
 lappend non_terminals langExtn_arch {
-  line Ident
+  line ident
 }
 
 # Register Mapping Facility
@@ -1275,14 +1380,14 @@ lappend res_words END {
   line END
 }
 
-# (1.17) ENUM
-lappend res_words ENUM {
-  line ENUM
-}
-
-# (1.18) EXIT
+# (1.17) EXIT
 lappend res_words EXIT {
   line EXIT
+}
+
+# (1.18) FLEX
+lappend res_words FLEX {
+  line FLEX
 }
 
 # (1.19) FOR
@@ -1646,236 +1751,230 @@ lappend res_symbols Caret {
   line ^
 }
 
-# (3.7) Tilde
-lappend res_symbols Tilde {
-  line ~
-}
-
-# (3.8) Double Dot
+# (3.7) Double Dot
 lappend res_symbols DoubleDot {
   line ..
 }
 
-# (3.9) Assign
+# (3.8) Assign
 lappend res_symbols Assign {
   line :=
 }
 
-# (3.10) Double Plus
+# (3.9) Double Plus
 lappend res_symbols DoublePlus {
   line ++
 }
 
-# (3.11) Double Minus
+# (3.10) Double Minus
 lappend res_symbols DoubleMinus {
   line --
 }
 
-# (3.12) Double Colon
+# (3.11) Double Colon
 lappend res_symbols DoubleColon {
   line ::
 }
 
-# (3.13) Plus
+# (3.12) Plus
 lappend res_symbols Plus {
   line +
 }
 
-# (3.14) Minus
+# (3.13) Minus
 lappend res_symbols Minus {
   line -
 }
 
-# (3.15) Asterisk
+# (3.14) Asterisk
 lappend res_symbols Asterisk {
   line *
 }
 
-# (3.16) Dot Product
-lappend res_symbols DotProduct {
-  line *.
-}
-
-# (3.17) Slash
+# (3.15) Slash
 lappend res_symbols Slash {
   line /
 }
 
-# (3.18) Backslash
+# (3.16) Backslash
 lappend res_symbols Backslash {
   line BACKSLASH
 }
 
-# (3.19) Equal
+# (3.17) Equal
 lappend res_symbols Equal {
   line =
 }
 
-# (3.20) Octothorpe
-lappend res_symbols Octothorpe {
+# (3.18) Not Equal
+lappend res_symbols NotEqual {
   line #
 }
 
-# (3.21) Greater Than
+# (3.19) Greater Than
 lappend res_symbols GreaterThan {
   line >
 }
 
-# (3.22) Greater Or Equal
+# (3.20) Greater Or Equal
 lappend res_symbols GreaterOrEqual {
   line >=
 }
 
-# (3.23) Less Than
+# (3.21) Less Than
 lappend res_symbols LessThan {
   line <
 }
 
-# (3.24) Less Or Equal
+# (3.22) Less Or Equal
 lappend res_symbols LessOrEqual {
   line <=
 }
 
-# (3.25) Identity
+# (3.23) Identity
 lappend res_symbols Identity {
   line ==
 }
 
-# (3.26) Ampersand
+# (3.24) Ampersand
 lappend res_symbols Ampersand {
   line &
 }
 
-# (3.27) Dash Arrow
+# (3.25) Dash Arrow
 lappend res_symbols DashArrow {
   line ->
 }
 
-# (3.28) Diamond
+# (3.26) Diamond
 lappend res_symbols Diamond {
   line <>
 }
 
-# (3.29) Mutual Exclusion
+# (3.27) Mutual Exclusion
 lappend res_symbols Mutex {
   line ><
 }
 
-# (3.30) Left Parenthesis
+# (3.28) Plus Minus
+lappend res_symbols plusMinus {
+  line +/-
+}
+
+# (3.29) Left Parenthesis
 lappend res_symbols LeftParen {
   line (
 }
 
-# (3.31) Right Parenthesis
+# (3.30) Right Parenthesis
 lappend res_symbols RightParen {
   line )
 }
 
-# (3.32) Left Bracket
+# (3.31) Left Bracket
 lappend res_symbols LeftBracket {
   line [
 }
 
-# (3.33) Right Bracket
+# (3.32) Right Bracket
 lappend res_symbols RightBracket {
   line ]
 }
 
-# (3.34) Left Brace
+# (3.33) Left Brace
 lappend res_symbols LeftBrace {
   line LBRACE
 }
 
-# (3.35) Right Brace
+# (3.34) Right Brace
 lappend res_symbols RightBrace {
   line RBRACE
 }
 
-# (3.36) Question Mark
+# (3.35) Question Mark
 lappend res_symbols QuestionMark {
   line ?
 }
 
-# (3.37) Open Pragma
+# (3.36) Open Pragma
 lappend res_symbols OpenPragma {
   line <*
 }
 
-# (3.38) Close Pragma
+# (3.37) Close Pragma
 lappend res_symbols ClosePragma {
   line *>
 }
 
-# (3.39) Single Quote
+# (3.38) Single Quote
 lappend res_symbols SingleQuote {
   line SINGLE_QUOTE
 }
 
-# (3.40) Double Quote
+# (3.39) Double Quote
 lappend res_symbols DoubleQuote {
   line DOUBLE_QUOTE
 }
 
-# (3.41) Open Chevrons
+# (3.40) Open Chevrons
 lappend res_symbols OpenPragma {
   line <<
 }
 
-# (3.42) Close Chevrons
+# (3.41) Close Chevrons
 lappend res_symbols ClosePragma {
   line >>
 }
 
-# (3.43) Exclamation
+# (3.42) Exclamation
 lappend res_symbols Exclamation {
   line !
 }
 
-# (3.44) Open Comment
+# (3.43) Open Comment
 lappend res_symbols OpenComment {
   line (*
 }
 
-# (3.45) Close Comment
+# (3.44) Close Comment
 lappend res_symbols CloseComment {
   line *)
 }
 
 
-# --------------
-# (4) Identifier
-# --------------
-lappend terminals Ident {
-  line {
-    or
-    Letter
-    {line {loop ForeignIdentChar nil} {loop LetterOrDigit nil}}
-  }
-  {loop nil IdentTailChar}
+# ----------------------------
+# (4) Alpha-Numeric Identifier
+# ----------------------------
+
+# (4) Alpha Numeric Identifier
+lappend terminals AlphaNumIdent {
+  line Letter {loop nil LetterOrDigit}
 }
 
-# (4.1) Foreign Identifier Character
-lappend terminals ForeignIdentChar {
-  or _ $
-}
-
-# (4.2) Letter Or Digit
+# (4.1) Letter Or Digit
 lappend terminals LetterOrDigit {
   or Letter Digit
 }
 
-# (4.3) Identifier Tail Character
-lappend terminals IdentTailChar {
-  or LetterOrDigit ForeignIdentChar
+
+# ----------------------
+# (5) Foreign Identifier
+# ----------------------
+
+lappend terminals ForeignIdent {
+  or
+    {line $ {loop LetterOrDigit nil} {loop nil ForeignIdentTail}}
+    {line AlphaNumIdent {loop ForeignIdentTail nil}}
 }
 
-# (4.4) Standard Library Identifier
-lappend terminals StdLibIdent {
-  line Letter {loop nil LetterOrDigit}
+# (4.1) Foreign Identifier Tail
+lappend terminals ForeignIdentTail {
+  line {or $ _} {loop LetterOrDigit nil}
 }
+
 
 # ------------------
-# (5) Number Literal
+# (6) Number Literal
 # ------------------
 lappend terminals NumberLiteral {
   or
@@ -1890,7 +1989,7 @@ lappend terminals NumberLiteral {
     {line 1..9 {optx DecimalNumberTail}}
 }
 
-# (5.1) Decimal Number Tail
+# (6.1) Decimal Number Tail
 lappend terminals DecimalNumberTail {
   or
    {line {optx SINGLE_QUOTE} DigitSeq {optx RealNumberTail}}
@@ -1902,112 +2001,112 @@ lappend terminals DecimalNumberTail {
 #   line SINGLE_QUOTE
 # }
 
-# (5.2) Real Number Tail
+# (6.2) Real Number Tail
 lappend terminals RealNumberTail {
   line . DigitSeq {optx e {or + - nil} DigitSeq }
 }
 
-# (5.3) Digit Sequence
+# (6.3) Digit Sequence
 lappend terminals DigitSeq {
   loop DigitGroup SINGLE_QUOTE
 }
 
-# (5.3b) Digit Group
+# (6.3b) Digit Group
 lappend terminals DigitGroup {
   loop Digit nil
 }
 
-# (5.4) Base-16 Digit Sequence
+# (6.4) Base-16 Digit Sequence
 lappend terminals Base16DigitSeq {
   loop Base16DigitGroup SINGLE_QUOTE
 }
 
-# (5.4b) Base-16 Digit Group
+# (6.4b) Base-16 Digit Group
 lappend terminals Base16DigitGroup {
   loop Base16Digit nil
 }
 
-# (5.5) Base-2 Digit Sequence
+# (6.5) Base-2 Digit Sequence
 lappend terminals Base2DigitSeq {
   loop Base2DigitGroup SINGLE_QUOTE
 }
 
-# (5.5b) Base-2 Digit Group
+# (6.5b) Base-2 Digit Group
 lappend terminals Base2DigitGroup {
   loop Base2Digit nil
 }
 
-# (5.6) Digit
+# (6.6) Digit
 lappend terminals Digit {
   or Base2Digit 2 3 4 5 6 7 8 9
 }
 
-# (5.7) Base-16 Digit
+# (6.7) Base-16 Digit
 lappend terminals Base16Digit {
   or Digit A B C D E F
 }
 
-# (5.8) Base-2 Digit
+# (6.8) Base-2 Digit
 lappend terminals Base2Digit {
   or 0 1
 }
 
 # ------------------
-# (6) String Literal
+# (7) String Literal
 # ------------------
 lappend terminals StringLiteral {
   or SingleQuotedString DoubleQuotedString
 }
 
-# (6.1) Single Quoted String
+# (7.1) Single Quoted String
 lappend terminals SingleQuotedString {
   line SINGLE_QUOTE
     {optx {loop {or QuotableCharacter DOUBLE_QUOTE} nil}}
   SINGLE_QUOTE
 }
 
-# (6.2) Double Quoted String
+# (7.2) Double Quoted String
 lappend terminals DoubleQuotedString {
   line DOUBLE_QUOTE
     {optx {loop {or QuotableCharacter SINGLE_QUOTE} nil}}
   DOUBLE_QUOTE
 }
 
-# (6.3) Quotable Character
+# (7.3) Quotable Character
 lappend terminals QuotableCharacter {
   or Digit Letter Space NonAlphaNumQuotable EscapedCharacter
 }
 
-# (6.4) Letter
+# (7.4) Letter
 lappend terminals Letter {
   or A..Z a..z 
 }
 
-# (6.5) Space
+# (7.5) Space
 # CONST Space = CHR(32);
 
-# (6.6a) Non-Alphanumeric Quotable Character
+# (7.6a) Non-Alphanumeric Quotable Character
 lappend terminals NonAlphaNumQuotable1 {
   or ! # $ % & ( ) * + ,
 }
 
-# (6.6b) Non-Alphanumeric Quotable Character
+# (7.6b) Non-Alphanumeric Quotable Character
 lappend terminals NonAlphaNumQuotable2 {
   or - . / : ; < = > ? @
 }
 
-# (6.6c) Non-Alphanumeric Quotable Character
+# (7.6c) Non-Alphanumeric Quotable Character
 lappend terminals NonAlphaNumQuotable3 {
   or [ ] ^ _ ` LBRACE | RBRACE ~
 }
 
-# (6.7) Escaped Character
+# (7.7) Escaped Character
 lappend terminals EscapedCharacter {
   line BACKSLASH {or n t BACKSLASH}
 }
 
 # ---------------------------------
-# (7) Chevron Delimited Source Text
+# (8) Chevron Delimited Source Text
 # ---------------------------------
 lappend terminals ChevronText {
   line <<
@@ -2017,7 +2116,7 @@ lappend terminals ChevronText {
 
 
 # ---------------------------------------------------------------------------
-# Terminal Symbols for Optional Language Extensions
+# Terminal and Symbols for Optional Language Extensions
 # ---------------------------------------------------------------------------
 #
 
@@ -2037,6 +2136,13 @@ lappend res_idents langExtn_ASM {
 # REG
 lappend res_idents langExtn_REG {
   line /REG
+}
+
+# Additional Token for Objective Modula-2
+
+# Backquote
+lappend res_symbols Backquote {
+  line `
 }
 
 
@@ -2067,7 +2173,7 @@ lappend ignore_symbols BlockComment {
 # (3.1) Comment Character
 lappend ignore_symbols CommentCharacter {
   or Digit Letter Whitespace NonAlphaNumQuotable
-  BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE EndOfLine
+  BACKSLASH SINGLE_QUOTE DOUBLE_QUOTE
 }
 
 # (4) End-Of-Line Marker
@@ -2100,26 +2206,26 @@ lappend pragmas pragma {
 # (1.1) Pragma Body
 lappend pragmas pragmaBody {
   or
-    pragmaMSG
-    pragmaIF
+    ctMsgPragma
+    condCompPragma
     procDeclAttrPragma
-    pragmaPTW
-    pragmaFORWARD
-    pragmaENCODING
-    pragmaALIGN
-    pragmaPADBITS
-    pragmaPURITY
+    promiseToWritePragma
+    forwardDeclPragma
+    charEncodingPragma
+    memAlignmentPragma
+    bitPaddingPragma
+    purityAttrPragma
     varDeclAttrPragma
-    pragmaDEPRECATED
-    pragmaGENERATED
-    pragmaADDR
-    pragmaFFI
-    pragmaFFIDENT
+    deprecationPragma
+    genTimestampPragma
+    memMappingPragma
+    ffiPragma
+    ffidentPragma
     implDefinedPragma
 }
 
 # (2) Body Of Compile Time Message Pragma
-lappend pragmas pragmaMSG {
+lappend pragmas ctMsgPragma {
   line MSG = ctMsgMode : ctMsgComponentList
 }
 
@@ -2164,30 +2270,30 @@ lappend pragmas PragmaSymbol {
 }
 
 # (3) Body Of Conditional Compilation Pragma
-lappend pragmas pragmaIF {
+lappend pragmas condCompPragma {
   or
-    {line {or IF ELSIF} inPragmaExpression}
+    {line {or IF ELSIF} inPragmaExpr}
     ELSE
     END
 }
 
 # (4) Body Of Procedure Declaration Attribute Pragma
 lappend pragmas procDeclAttrPragma {
-  or INLINE NOINLINE NORETURN
+  or INLINE NOINLINE BLOCKING NORETURN
 }
 
 # (5) Body Of Promise-To-Write Pragma
-lappend pragmas pragmaPTW {
-  line PTW
+lappend pragmas promiseToWritePragma {
+  line OUT
 }
 
 # (6) Body Of Forward Declaration Pragma
-lappend pragmas pragmaFORWARD {
+lappend pragmas forwardDeclPragma {
   line FORWARD {or {line TYPE identList} procedureHeader}
 }
 
 # (7) Body Of Character Encoding Pragma
-lappend pragmas pragmaENCODING {
+lappend pragmas charEncodingPragma {
   line ENCODING = {or `ASCII `UTF8} {optx : codePointSampleList}
 }
 
@@ -2207,32 +2313,32 @@ lappend pragmas charCodeLiteral {
 }
 
 # (8) Body Of Memory Alignment Pragma
-lappend pragmas pragmaALIGN {
-  line ALIGN = inPragmaExpression
+lappend pragmas memAlignmentPragma {
+  line ALIGN = inPragmaExpr
 }
 
 # (9) Body Of Bit Padding Pragma
-lappend pragmas pragmaPADBITS {
-  line PADBITS = inPragmaExpression
+lappend pragmas bitPaddingPragma {
+  line PADBITS = inPragmaExpr
 }
 
 # (10) Body Of Purity Attribute Pragma
-lappend pragmas pragmaPURITY {
-  line PURITY = inPragmaExpression
+lappend pragmas purityAttrPragma {
+  line PURITY = inPragmaExpr
 }
 
 # (11) Body Of Variable Declaration Attribute Pragma
-lappend pragmas variableAttrPragma {
+lappend pragmas varDeclAttrPragma {
   or SINGLEASSIGN LOWLATENCY VOLATILE
 }
 
 # (12) Body Of Deprecation Pragma
-lappend pragmas pragmaDEPRECATED {
+lappend pragmas deprecationPragma {
   line DEPRECATED
 }
 
 # (13) Body Of Generation Timestamp Pragma
-lappend pragmas pragmaGENERATED {
+lappend pragmas genTimestampPragma {
   line GENERATED FROM template , datestamp , timestamp
 }
 
@@ -2243,32 +2349,37 @@ lappend pragmas datestamp {
 
 # (13.2) Time Stamp
 lappend pragmas timestamp {
-  line hours : minutes : seconds + timezone
+  line hours : minutes : seconds {optx utcOffset}
 }
 
-# (13.3) year, month, day, hours, minutes, seconds, timezone
+# (13.3) Year, Month, Day, Hours, Minutes, Seconds
 lappend pragmas year_month_day_etc {
   line wholeNumber
 }
 
+# (13.4) UTC Offset
+lappend pragmas utcOffset {
+  line {or + -} wholeNumber
+}
+
 # (14) Body Of Memory Mapping Pragma
-lappend pragmas pragmaADDR {
-  line ADDR = inPragmaExpression
+lappend pragmas memMappingPragma {
+  line ADDR = inPragmaExpr
 }
 
 # (15) Body Of Foreign Function Interface Pragma
-lappend pragmas pragmaFFI {
+lappend pragmas ffiPragma {
   line FFI = {or `C `Fortran `CLR `JVM }
 }
 
 # (16) Body Of Foreign Function Identifier Mapping Pragma
-lappend pragmas pragmaFFIDENT {
+lappend pragmas ffidentPragma {
   line FFIDENT = StringLiteral
 }
 
 # (17) Body of Implementation Defined Pragma
 lappend pragmas implDefinedPragma {
-  line {optx implPrefix .} PragmaSymbol {optx = inPragmaExpression} | ctMsgMode
+  line {optx implPrefix .} PragmaSymbol {optx = inPragmaExpr} | ctMsgMode
 }
 
 # (17.1) Implementation Prefix
@@ -2277,7 +2388,7 @@ lappend pragmas implPrefix {
 }
 
 # (18) In-Pragma Expression
-lappend pragmas inPragmaExpression {
+lappend pragmas inPragmaExpr {
   line inPragmaSimpleExpr {optx inPragmaOperL1 inPragmaSimpleExpr}
 }
 
@@ -2288,7 +2399,9 @@ lappend pragmas inPragmaOperL1 {
 
 # (19) In-Pragma Simple Expression
 lappend pragmas inPragmaSimpleExpr {
-  line {or + - nil} {loop inPragmaTerm inPragmaOperL2}
+  or
+    {loop inPragmaTerm inPragmaOperL2}
+    {line - inPragmaFactor}
 }
 
 # (19.1) In-Pragma Level-2 Operator
@@ -2298,7 +2411,7 @@ lappend pragmas inPragmaOperL2 {
 
 # (20) In-Pragma Term
 lappend pragmas inPragmaTerm {
-  loop inPragmaFactorOrNegation inPragmaOperL3
+  loop inPragmaSimpleTerm inPragmaOperL3
 }
 
 # (20.1) In-Pragma Level-3 Operator
@@ -2306,8 +2419,8 @@ lappend pragmas inPragmaOperL3 {
   or * DIV MOD AND
 }
 
-# (21) In-Pragma Factor Or Negation
-lappend pragmas inPragmaFactorOrNegation {
+# (21) In-Pragma Simple Term
+lappend pragmas inPragmaSimpleTerm {
   line {optx NOT} inPragmaFactor
 }
 
@@ -2316,13 +2429,13 @@ lappend pragmas inPragmaFactor {
   or
     wholeNumber
     constQualident
-    {line ( inPragmaExpression )}
-    inPragmaCompileTimeFunctionCall
+    {line ( inPragmaExpr )}
+    inPragmaCtFunctionCall
 }
 
 # (23) In-Pragma Compile Time Function Call
-lappend pragmas inPragmaCompileTimeFunctionCall {
-  line qualident ( {loop inPragmaExpression ,} ) 
+lappend pragmas inPragmaCtFunctionCall {
+  line qualident ( {loop inPragmaExpr ,} ) 
 }
 
 
