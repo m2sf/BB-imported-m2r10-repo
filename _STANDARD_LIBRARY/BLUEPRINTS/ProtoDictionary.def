@@ -106,7 +106,7 @@ PROCEDURE [COUNT] count ( dict : ProtoDictionary ) : LONGCARD;
 
 
 NOT uniqueKeys ->
-PROCEDURE [COUNT|#] valueCountForKey
+PROCEDURE [COUNT:#] valueCountForKey
   ( VAR target : ProtoDictionary; key : KeyType ) : LONGCARD;
 (* Function to return the number of values stored in a dictionary for a
    given key.  This function is required when keys are not unique. *)
@@ -182,7 +182,7 @@ PROCEDURE [STORE] storeValueForKey
 
 
 NOT uniqueKeys ->
-PROCEDURE [STORE|#] storeNthValueForKey
+PROCEDURE [STORE:#] storeNthValueForKey
   ( VAR target : ProtoDictionary;
     key : KeyType; index : LONGCARD; value : ValueType );
 (* Procedure to overwrite the n-th value of a given key in a dictionary.
@@ -195,7 +195,7 @@ PROCEDURE [STORE|#] storeNthValueForKey
    STORE(dict, key, index, value); *)
 
 
-PROCEDURE [STORE|,] storeValuesForKeys
+PROCEDURE [STORE:,] storeValuesForKeys
   ( VAR target : ProtoDictionary;
     entries : ARGLIST >0 OF { key : KeyType; value : ValueType } );
 (* Required to overwrite the values of given keys in a dictionary. *)
@@ -209,9 +209,9 @@ PROCEDURE [STORE|,] storeValuesForKeys
 
 (* Value Retrieval *)
 
-(* Binding to RETRIEVE *)
+(* Binding to VALUE *)
 
-PROCEDURE [RETRIEVE] valueForKey
+PROCEDURE [VALUE] valueForKey
   ( dict : ProtoDictionary; key : KeyType; VAR value : ValueType );
 (* Required to retrieve the value of a given key in a dictionary. *)
 
@@ -219,13 +219,13 @@ PROCEDURE [RETRIEVE] valueForKey
    
    dict[key]
    
-   RETRIEVE(dict, key)
+   VALUE(dict, key)
    
    within expressions. *)
 
 
 NOT uniqueKeys ->
-PROCEDURE [RETRIEVE|#] nthValueForKey
+PROCEDURE [VALUE:#] nthValueForKey
   ( dict : ProtoDictionary; key : KeyType; index : LONGCARD;
     VAR value : ValueType );
 (* Procedure to retrieve the n-th value of a given key in a dictionary.
@@ -235,7 +235,7 @@ PROCEDURE [RETRIEVE|#] nthValueForKey
    
    dict[key, index]
    
-   RETRIEVE(dict, key, index)
+   VALUE(dict, key, index)
    
    within expressions. *)
 
@@ -275,7 +275,7 @@ PROCEDURE [INSERT] insertValueForKey
    INSERT(dict, key, value); *)
 
 
-PROCEDURE [INSERT|,] insertKeysAndValues
+PROCEDURE [INSERT:,] insertKeysAndValues
   ( VAR target : ProtoDictionary;
     entries : ARGLIST >0 OF { key : KeyType; value : ValueType } );
 (* Required to add new key/value pairs to a dictionary. *)
@@ -299,7 +299,7 @@ PROCEDURE [REMOVE] removeKey
 
 
 NOT uniqueKeys ->
-PROCEDURE [REMOVE|#] removeNthValueForKey
+PROCEDURE [REMOVE:#] removeNthValueForKey
   ( VAR target : ProtoDictionary; key : KeyType; index : LONGCARD );
 (* Procedure to remove the n-th value stored for key from a dictionary.
    This procedure is required when keys are not unique. *)
@@ -309,7 +309,7 @@ PROCEDURE [REMOVE|#] removeNthValueForKey
    REMOVE(dict, key, index); *)
 
 
-PROCEDURE [REMOVE|,] removeKeys
+PROCEDURE [REMOVE:,] removeKeys
   ( VAR target : ProtoDictionary; keys : ARGLIST >0 OF KeyType );
 (* Required to remove given keys and their values from a dictionary. *)
 
@@ -318,7 +318,7 @@ PROCEDURE [REMOVE|,] removeKeys
    REMOVE(dict, key1, key2, key3, ...); *)
 
 
-PROCEDURE [REMOVE|*] removeAllKeys ( VAR dict : ProtoDictionary );
+PROCEDURE [REMOVE:*] removeAllKeys ( VAR dict : ProtoDictionary );
 (* Required to remove all keys and their values from a dictionary. *)
 
 (* Supports use case:
@@ -360,7 +360,7 @@ PROCEDURE installInvalidKeyHandler ( handler : HandlerType );
 
 (* Copying *)
 
-(* Copying is synthesised from bindings to STORE and RETRIEVE. *)
+(* Copying is synthesised from bindings to STORE and VALUE. *)
 
 
 (* Iteration *)
