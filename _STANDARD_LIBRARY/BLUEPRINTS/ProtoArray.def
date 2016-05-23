@@ -1,4 +1,4 @@
-(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* Specialised Blueprint for Dynamically Allocatable Array ADTs *)
 
@@ -148,7 +148,7 @@ PROCEDURE [STORE] storeValue
    STORE(array, index, value); *)
 
 
-PROCEDURE [STORE|#] storeValues
+PROCEDURE [STORE:#] storeValues
   ( target : ProtoArray; fromIndex : IndexType; values : ARRAY OF ValueType );
 (* Procedure to store multiple values at a given start index in a target
    array or append them if the start index equals COUNT(target). *)
@@ -164,7 +164,7 @@ PROCEDURE [STORE|#] storeValues
    when COUNT(array[n..m]) <= COUNT(arrayExpression). *)
 
 
-PROCEDURE [STORE|*] fillWithValue
+PROCEDURE [STORE:*] fillWithValue
   ( target : ProtoArray;
     fromIndex : IndexType; valueCount : LONGCARD; fillValue : ValueType );
 (* Procedure to store a given number of fill values at a given start index in
@@ -249,7 +249,7 @@ PROCEDURE [INSERT] insertValue
    INSERT(array, index, value); *)
 
 
-PROCEDURE [INSERT|#] insertValues
+PROCEDURE [INSERT:#] insertValues
   ( VAR target : ProtoArray; atIndex : IndexType; values : ARRAY OF ValueType );
 (* Required procedure to insert one or more given values into a target array
    at a given index. *)
@@ -263,7 +263,7 @@ PROCEDURE [INSERT|#] insertValues
    COPY array[index..] := arrayExpression; *)
 
 
-PROCEDURE [INSERT|*] insertAndFill
+PROCEDURE [INSERT:*] insertAndFill
   ( VAR target : ProtoArray;
     atIndex : IndexType; valueCount : LONGCARD; fillValue : ValueType );
 (* Required procedure to insert a given number of given fill-values
@@ -293,7 +293,7 @@ PROCEDURE [REMOVE] removeValue
    REMOVE(array, index); *)
 
 
-PROCEDURE [REMOVE|#] removeValues
+PROCEDURE [REMOVE:#] removeValues
   ( VAR target : ProtoArray; atIndex : IndexType; valueCount : LONGCARD );
 (* Required procedure to remove one or more values from an array. *)
 
@@ -304,7 +304,7 @@ PROCEDURE [REMOVE|#] removeValues
    COPY array[n..m] := EMPTY; *)
 
 
-PROCEDURE [REMOVE|*] removeAllValues ( array : ProtoArray );
+PROCEDURE [REMOVE:*] removeAllValues ( array : ProtoArray );
 (* Required procedure to remove all values from an array. *)
 
 (* Supports use cases:
@@ -322,7 +322,7 @@ TYPE * LoopBodyType =
   PROCEDURE ( ProtoArray, CONST IndexType, VAR ValueType );
 (* Required procedure type to synthesise the body of a for loop. *)
 
-PROCEDURE [FOR|++] ascForIterator
+PROCEDURE [FOR:++] ascForIterator
   ( VAR array : ProtoArray; doStatements : LoopBodyType );
 
 (* Required procedure to iterate over all index/value pairs of an array
@@ -339,7 +339,7 @@ PROCEDURE [FOR|++] ascForIterator
    FOR index, value ++ IN array DO statementSequence END; *)
 
 
-PROCEDURE [FOR|--] descForIterator
+PROCEDURE [FOR:--] descForIterator
   ( VAR array : ProtoArray; doStatements : LoopBodyType );
 
 (* Required procedure to iterate over all index/value pairs of an array
