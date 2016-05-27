@@ -54,22 +54,11 @@ TYPE LONGREAL = <implementation or target dependent real number range>;
 (* Real number type with precision equal to or higher than REAL. *)
 
 
-(* Predefined Proper Procedures (8) *)
+(* Predefined Proper Procedures (9) *)
 
-PROCEDURE STORE
-  ( VAR target : <Array>; index : <IndexType>; value : <ValueType> );
-(* STORE(array, index, value)
-   stores value at index in target array. *)
-
-PROCEDURE STORE
-  ( VAR target : <Set>; element : <ElementType> );
-(* STORE(set, elem)
-   stores elem in target set. *)
-
-PROCEDURE STORE
-  ( VAR target : <Dictionary>; key : <KeyType>; value : <ValueType> );
-(* STORE(dictionary, key, value)
-   stores value for key in target dictionary. *)
+PROCEDURE APPEND ( VAR target : <Array>; ARGLIST >0 OF <ValueType> );
+(* APPEND(array, val1, val2, val3, ...)
+   Appends values val1, val2, val3, ... to target array. *)
 
 PROCEDURE INSERT
   ( VAR target : <Array>;
@@ -118,6 +107,11 @@ PROCEDURE SORT
    populates array with accessors of collection,
    sorted by value in descending order. *) 
 
+PROCEDURE SORTNEW
+  ( NEW target : <Array>; source : <Collection>; (*OPT*) order : CHAR );
+(* SORTNEW(array, collection, order)
+   allocates new array and invokes SORT(array, source, order). *)
+
 PROCEDURE READ ( f : File; VAR v : <AnyMutableType> );
 (* READ(f, v)
    => typeOf(v).Read(f, v). *)
@@ -136,7 +130,7 @@ PROCEDURE WRITEF
    => typeOf(v).WriteF(f, fmt, v1, v2, ...). *)
 
 
-(* Predefined Function Procedures (16) *)
+(* Predefined Function Procedures (15) *)
 
 PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
 (* Returns sign reversed value of x if sign of x is negative. *)
@@ -144,25 +138,18 @@ PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
 PROCEDURE ODD ( x : <WholeNumberType> ) : BOOLEAN;
 (* Returns TRUE if z is odd, otherwise FALSE. *)
 
+PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType>; 
+(* Returns the character whose code point is x.
+   Return type is CHAR if x < 128, otherwise UNICHAR. *)
+
+PROCEDURE ORD ( x : <OrdinalType> ) : <WholeNumberType>;
+(* Returns ordinal value of x. *)
+
 PROCEDURE PRED ( x : <OrdinalType>; (*OPT*) n : <UnsignedType> ) : <typeOf(x)>;
 (* Returns n-th predecessor of x, or immediate predecessor if n is omitted. *)
 
 PROCEDURE SUCC ( x : <OrdinalType>; (*OPT*) n : <UnsignedType> ) : <typeOf(x)>;
 (* Returns n-th successor of x, or immediate successor if n is omitted. *)
-
-PROCEDURE ORD ( x : <OrdinalType> ) : <WholeNumberType>;
-(* Returns ordinal value of x. *)
-
-PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType>; 
-(* Returns the character whose code point is x.
-   Return type is CHAR if x < 128, otherwise UNICHAR. *)
-
-PROCEDURE EXISTS
-  ( d : <Dictionary>; k : <KeyType>; v : <ValueType> ) : BOOLEAN;
-(* Returns TRUE if v is stored for k in dictionary d. *)
-
-PROCEDURE SUBSET ( a, b : <SetOrCollectionType> ) : BOOLEAN ;
-(* Returns TRUE if b is a subset of a, otherwise FALSE. *)
 
 PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD;
 (* Returns number of items stored in collection c. *)
@@ -174,14 +161,12 @@ PROCEDURE LENGTH
   ( CONST s : <CharacterArrayOrStringADT> ) : [0..TMAX(INTEGER)] OF INTEGER;
 (* Returns the length of character string s. *)
 
-PROCEDURE PTR ( variable : <AnyType>; T : <TypeIdentifier> ) : <T> ;
-(* Returns a pointer of type T, pointing to variable. *)
+PROCEDURE CAPACITY ( c : <SetOrCollectionType> ) : LONGCARD;
+(* Returns the capacity of collection c. *)
 
-PROCEDURE VALUE ( c : <CollectionType>; s : <AccessorType> ) : <ReturnType>;
-(* Returns the value stored for accessor s in collection c. *)
-
-PROCEDURE VALUE ( d : <Dictionary>; k : <KeyType>; n : CARDINAL ) : <ReturnType>;
-(* Returns the n-th value stored for key k in dictionary d. *)
+PROCEDURE EXISTS
+  ( d : <Dictionary>; k : <KeyType>; v : <ValueType> ) : BOOLEAN;
+(* Returns TRUE if v is stored for k in dictionary d. *)
 
 PROCEDURE FIRST ( c : <OrderedCollection> ) : <ValueType>;
 (* Returns the first value stored in ordered collection c. *)
@@ -194,6 +179,9 @@ PROCEDURE MIN ( arglist : ARGLIST >0 OF <T> ) : <T>;
 
 PROCEDURE MAX ( arglist : ARGLIST >0 OF <T> ) : <T>;
 (* Returns largest value from arglist. T must be scalar or ordinal. *)
+
+PROCEDURE PTR ( variable : <AnyType>; T : <TypeIdentifier> ) : <T> ;
+(* Returns a pointer of type T, pointing to variable. *)
 
 
 (* Compile-Time Macros (4) *)
