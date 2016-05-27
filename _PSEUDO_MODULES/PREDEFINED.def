@@ -1,4 +1,4 @@
-(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 (* DOCUMENTATION *) DEFINITION MODULE PREDEFINED;
 
@@ -11,7 +11,8 @@ CONST NIL = <target dependent value>; (* usually 0 :: ADDRESS *)
 (* Invalid pointer value, compatible with all pointer types. *)
 
 CONST EMPTY = {} | "";
-(* Empty structured value, compatible with all collection types. *)
+(* Empty structured value,
+   compatible with any variable length collection type. *)
 
 CONST TRUE = BOOLEAN.TRUE;
 (* Boolean truth value 'true'. *)
@@ -110,7 +111,8 @@ PROCEDURE SORT
 PROCEDURE SORTNEW
   ( NEW target : <Array>; source : <Collection>; (*OPT*) order : CHAR );
 (* SORTNEW(array, collection, order)
-   allocates new array and invokes SORT(array, source, order). *)
+   allocates new array of sufficient size
+   then invokes SORT(array, source, order). *)
 
 PROCEDURE READ ( f : File; VAR v : <AnyMutableType> );
 (* READ(f, v)
@@ -132,24 +134,23 @@ PROCEDURE WRITEF
 
 (* Predefined Function Procedures (15) *)
 
-PROCEDURE ABS ( x : <NumericType> ) : <OperandType>;
-(* Returns sign reversed value of x if sign of x is negative. *)
+PROCEDURE ABS ( n : <NumericType> ) : <OperandType>;
+(* Returns sign reversed value of n if sign of n is negative. *)
 
-PROCEDURE ODD ( x : <WholeNumberType> ) : BOOLEAN;
-(* Returns TRUE if z is odd, otherwise FALSE. *)
+PROCEDURE ODD ( n : <WholeNumberType> ) : BOOLEAN;
+(* Returns TRUE if n is odd, otherwise FALSE. *)
 
-PROCEDURE CHR ( x : <UnsignedType> ) : <CharOrUnicharType>; 
-(* Returns the character whose code point is x.
-   Return type is CHAR if x < 128, otherwise UNICHAR. *)
+PROCEDURE CHR ( n : [0..127] OF <OctetOrCardinal> ) : CHAR; 
+(* Returns the character whose code point is n. *)
 
 PROCEDURE ORD ( x : <OrdinalType> ) : <WholeNumberType>;
 (* Returns ordinal value of x. *)
 
-PROCEDURE PRED ( x : <OrdinalType>; (*OPT*) n : <UnsignedType> ) : <typeOf(x)>;
-(* Returns n-th predecessor of x, or immediate predecessor if n is omitted. *)
+PROCEDURE PRED ( n : <OrdinalType>; (*OPT*) m : <UnsignedType> ) : <typeOf(n)>;
+(* Returns m-th predecessor of n, or immediate predecessor if m is omitted. *)
 
-PROCEDURE SUCC ( x : <OrdinalType>; (*OPT*) n : <UnsignedType> ) : <typeOf(x)>;
-(* Returns n-th successor of x, or immediate successor if n is omitted. *)
+PROCEDURE SUCC ( n : <OrdinalType>; (*OPT*) m : <UnsignedType> ) : <typeOf(n)>;
+(* Returns m-th successor of n, or immediate successor if m is omitted. *)
 
 PROCEDURE COUNT ( c : <SetOrCollectionType> ) : LONGCARD;
 (* Returns number of items stored in collection c. *)
@@ -158,7 +159,7 @@ PROCEDURE COUNT ( d : <Dictionary>; k : <KeyType> ) : LONGCARD;
 (* Returns number of items stored for key k in dictionary d. *)
 
 PROCEDURE LENGTH
-  ( CONST s : <CharacterArrayOrStringADT> ) : [0..TMAX(INTEGER)] OF INTEGER;
+  ( CONST s : <CharacterArrayOrStringADT> ) : LONGCARD;
 (* Returns the length of character string s. *)
 
 PROCEDURE CAPACITY ( c : <SetOrCollectionType> ) : LONGCARD;
