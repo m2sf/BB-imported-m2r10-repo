@@ -1,10 +1,10 @@
-(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE ByteIO [ProtoIO] FOR BYTE;
 
 (* IO Extension Library for Type BYTE *)
 
-FROM FileIO IMPORT File;
+IMPORT FileIO;
 
 (* EBNF of the textual representation of BYTE values:
     octetValue : simpleFormat |
@@ -17,7 +17,7 @@ FROM FileIO IMPORT File;
     base16Digit : "0" .. "9" | "A" .. "F" ;
     bit : "0" | "1" ; *)
 
-PROCEDURE [READ] Read ( infile : File; VAR b : BYTE );
+PROCEDURE [READ] Read ( infile : FileIO.File; VAR b : BYTE );
 (* Reads the textual representation of a BYTE value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -27,14 +27,14 @@ PROCEDURE [READ] Read ( infile : File; VAR b : BYTE );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a BYTE argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : File; b : BYTE );
+PROCEDURE [WRITE] Write ( outfile : FileIO.File; b : BYTE );
 (* Writes the value of BYTE b in simple format to stream outfile. This
    procedure is substituted for invocations of WRITE with a BYTE argument.*)
 
 PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
+  ( outfile      : FileIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : VARIADIC OF BYTE );
+    items        : ARGLIST >0 OF BYTE );
 (* Writes a formatted textual representation of one or more BYTE values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
