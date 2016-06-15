@@ -1,4 +1,4 @@
-(* (C) 2009, 2010 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE TextIO;
 
@@ -7,32 +7,32 @@ DEFINITION MODULE TextIO;
 (* This module interprets the contents of files as a sequence of lines of text
    delimited by newline. The module is implemented on top of module FileIO. *)
 
-FROM FileIO IMPORT File;
+IMPORT FileIO;
 
 
 (* Read a line of text *)
 
-PROCEDURE ReadLine ( file : File; VAR str : ARRAY OF CHAR );
+PROCEDURE ReadLine ( infile : FileIO.File; VAR str : ARRAY OF CHAR );
 (* Reads a line of text from <file> and passes it back in <str>. A runtime
    error is raised if the line exceeds the capacity of <str>. *)
 
 
 (* Skip a line of text *)
 
-PROCEDURE SkipLine ( file : File );
+PROCEDURE SkipLine ( infile : FileIO.File );
 (* Read and ignore all characters up to and including the first newline. *)
 
 
 (* Write a line of text *)
 
-PROCEDURE WriteLine ( file : File; str : VARIADIC OF ARRAY OF CHAR );
+PROCEDURE WriteLine ( outfile : FileIO.File; str : ARGLIST >0 OF ARRAY OF CHAR );
 (* Writes a sequence of character strings as a line to <file>. The line is
    terminated by newline. *)
 
 
 (* Write an empty line of text *)
 
-PROCEDURE WriteLn ( file : File );
+PROCEDURE WriteLn ( outfile : FileIO.File );
 (* Writes an empty line to <file>. The line is terminated by newline. *)
 
 END TextIO.
