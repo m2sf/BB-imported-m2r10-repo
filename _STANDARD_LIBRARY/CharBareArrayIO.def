@@ -2,16 +2,18 @@
 
 DEFINITION MODULE CharBareArrayIO [ProtoBareArrayIO] FOR CHAR;
 
-(* IO Support for BARE ARRAY OF CHAR types *)
+(* IO Extension Library for BARE ARRAY OF CHAR types *)
 
 IMPORT FileIO;
 
-PROCEDURE [READ] ReadBA ( file : FileIO.File; VAR a : BARE ARRAY OF CHAR );
+PROCEDURE [READ] ReadBA ( infile : FileIO.File; VAR a : BARE ARRAY OF CHAR );
 
-PROCEDURE [WRITE] WriteBA ( file : FileIO.File; CONST a : BARE ARRAY OF CHAR );
+PROCEDURE [WRITE] WriteBA
+  ( outfile : FileIO.File; CONST a : BARE ARRAY OF CHAR );
 
 PROCEDURE [WRITEF] WriteFBA
-  ( file : FileIO.File; fmt : ARRAY OF CHAR;
-    CONST values : ARGLIST >0 OF BARE ARRAY OF CHAR );
+  ( outfile : FileIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST items : ARGLIST >0 OF BARE ARRAY OF CHAR );
 
 END CharBareArrayIO.
