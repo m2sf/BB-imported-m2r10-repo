@@ -1,10 +1,10 @@
-(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE LongRealIO [ProtoIO] FOR LONGREAL;
 
 (* IO Extension Library for Type LONGREAL *)
 
-FROM FileIO IMPORT File;
+IMPORT FileIO;
 
 (* EBNF of the textual representation of LONGREAL values:
 
@@ -48,7 +48,7 @@ FROM FileIO IMPORT File;
 (* Bindings required for static ADTs by blueprint ProtoIO *)
 
 
-PROCEDURE [READ] Read( infile : File; VAR r : LONGREAL );
+PROCEDURE [READ] Read( infile : FileIO.File; VAR r : LONGREAL );
 (* Reads the textual representation of a LONGREAL value from input stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the numeral being read are
@@ -59,14 +59,14 @@ PROCEDURE [READ] Read( infile : File; VAR r : LONGREAL );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
      procedure is substituted for invocations of READ with a LONGREAL argument. *)
 
-PROCEDURE [WRITE] Write( outfile : File; CONST r : LONGREAL );
+PROCEDURE [WRITE] Write( outfile : FileIO.File; CONST r : LONGREAL );
 (* Writes the textual representation of value r to output stream outfile. This
    procedure is substituted for invocations of WRITE with a LONGREAL argument. *)
 
 PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
+  ( outfile      : FileIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST OF LONGREAL );
+    items        : ARGLIST >0 OF LONGREAL );
 (* Writes a formatted textual representation of one or more REAL values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
