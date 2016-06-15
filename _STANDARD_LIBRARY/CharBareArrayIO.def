@@ -12,6 +12,6 @@ PROCEDURE [WRITE] WriteBA ( file : FileIO.File; CONST a : BARE ARRAY OF CHAR );
 
 PROCEDURE [WRITEF] WriteFBA
   ( file : FileIO.File; fmt : ARRAY OF CHAR;
-    CONST values : ARGLIST OF BARE ARRAY OF CHAR );
+    CONST values : ARGLIST >0 OF BARE ARRAY OF CHAR );
 
 END CharBareArrayIO.
