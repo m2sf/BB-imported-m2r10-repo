@@ -6,13 +6,13 @@ DEFINITION MODULE CharBareArrayIO [ProtoBareArrayIO] FOR CHAR;
 
 IMPORT FileIO;
 
-PROCEDURE [READ] ReadBA
+PROCEDURE [READ] ReadBareArray
   ( infile : FileIO.File; VAR a : BARE ARRAY OF CHAR );
 
-PROCEDURE [WRITE] WriteBA
+PROCEDURE [WRITE] WriteBareArray
   ( outfile : FileIO.File; CONST a : BARE ARRAY OF CHAR );
 
-PROCEDURE [WRITEF] WriteFBA
+PROCEDURE [WRITEF] WriteFBareArray
   ( outfile : FileIO.File;
     CONST fmtStr : ARRAY OF CHAR;
     CONST items : ARGLIST >0 OF BARE ARRAY OF CHAR );
