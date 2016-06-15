@@ -1,6 +1,6 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE Integers;
+DEFINITION MODULE StdIntegers;
 
 (* Import Aggregator for Signed Integer Types *) 
 
@@ -35,4 +35,4 @@ IMPORT INTEGER64+; (* import into client module *)
 IMPORT INTEGER128+; (* import into client module *)
 
 
-END Integers.
+END StdIntegers.
