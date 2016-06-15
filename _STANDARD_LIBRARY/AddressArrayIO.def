@@ -1,0 +1,9 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE AddressArrayIO;
+
+(* Re-Export Array IO Extension Libraries of Type ADDRESS *)
+
+IMPORT AddressBareArrayIO+; (* handles arrays and bare arrays *)
+
+END AddressArrayIO.
