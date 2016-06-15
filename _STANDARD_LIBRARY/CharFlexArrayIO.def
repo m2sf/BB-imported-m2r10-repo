@@ -2,16 +2,18 @@
 
 DEFINITION MODULE CharFlexArrayIO [ProtoFlexArrayIO] FOR CHAR;
 
-(* IO Support for ARRAY OF CHAR types *)
+(* IO Extension Library for ARRAY OF CHAR types *)
 
 IMPORT FileIO;
 
-PROCEDURE [READ] ReadA ( file : FileIO.File; VAR a : ARRAY OF CHAR );
+PROCEDURE [READ] ReadA ( infile : FileIO.File; VAR a : ARRAY OF CHAR );
 
-PROCEDURE [WRITE] WriteA ( file : FileIO.File; CONST a : ARRAY OF CHAR );
+PROCEDURE [WRITE] WriteA
+  ( outfile : FileIO.File; CONST a : ARRAY OF CHAR );
 
 PROCEDURE [WRITEF] WriteFA
-  ( file : FileIO.File; fmt : ARRAY OF CHAR;
-    CONST values : ARGLIST >0 OF ARRAY OF CHAR );
+  ( outfile : FileIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST items : ARGLIST >0 OF ARRAY OF CHAR );
 
 END CharFlexArrayIO.
