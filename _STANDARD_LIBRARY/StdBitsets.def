@@ -1,6 +1,6 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE Bitsets;
+DEFINITION MODULE StdBitsets;
 
 (* Alias types for Bitsets *) 
 
@@ -48,4 +48,4 @@ TYPE BITSET64 = ALIAS OF BS64;
 TYPE BITSET128 = ALIAS OF BS128;
 
 
-END Bitsets.
+END StdBitsets.
