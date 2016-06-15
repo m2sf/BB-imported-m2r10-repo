@@ -1,4 +1,4 @@
-(* (C) 2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2013-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE StdIO;
 
@@ -6,13 +6,12 @@ DEFINITION MODULE StdIO;
  
 IMPORT FileIO;
 
-TYPE
-    File = ALIAS OF FileIO.File;
-    Status = ALIAS OF FileIO.Status;
+TYPE File = ALIAS OF FileIO.File;
+
+TYPE Status = ALIAS OF FileIO.Status;
 
 
-VAR
-    stdIn, stdOut, stdErr : File;
+VAR stdIn, stdOut, stdErr : File;
     
 (* Import of module StdIO causes the variables stdIn, stdOut and stdErr
    to be initialized to their respective implementation defined defaults. *)
@@ -26,7 +25,7 @@ PROCEDURE WriteLn;
 PROCEDURE SkipLine;
 (* Consumes all characters up to and including the next newline from stdIn. *)
 
-PROCEDURE StatusOf( file : File ) : Status;
+PROCEDURE statusOf( file : File ) : Status;
 (* Calls procedure FileIO.StatusOf.  Returns the current status of <file> *)
 
 
