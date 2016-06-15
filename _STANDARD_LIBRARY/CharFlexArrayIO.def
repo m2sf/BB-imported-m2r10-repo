@@ -6,13 +6,13 @@ DEFINITION MODULE CharFlexArrayIO [ProtoFlexArrayIO] FOR CHAR;
 
 IMPORT FileIO;
 
-PROCEDURE [READ] ReadA
+PROCEDURE [READ] ReadArray
   ( infile : FileIO.File; VAR a : ARRAY OF CHAR );
 
-PROCEDURE [WRITE] WriteA
+PROCEDURE [WRITE] WriteArray
   ( outfile : FileIO.File; CONST a : ARRAY OF CHAR );
 
-PROCEDURE [WRITEF] WriteFA
+PROCEDURE [WRITEF] WriteFArray
   ( outfile : FileIO.File;
     CONST fmtStr : ARRAY OF CHAR;
     CONST items : ARGLIST >0 OF ARRAY OF CHAR );
