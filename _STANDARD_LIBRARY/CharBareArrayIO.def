@@ -1,0 +1,17 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CharBareArrayIO [ProtoBareArrayIO] FOR CHAR;
+
+(* IO Support for BARE ARRAY OF CHAR types *)
+
+IMPORT FileIO;
+
+PROCEDURE [READ] ReadBA ( file : FileIO.File; VAR a : BARE ARRAY OF CHAR );
+
+PROCEDURE [WRITE] WriteBA ( file : FileIO.File; CONST a : BARE ARRAY OF CHAR );
+
+PROCEDURE [WRITEF] WriteFBA
+  ( file : FileIO.File; fmt : ARRAY OF CHAR;
+    CONST values : ARGLIST OF BARE ARRAY OF CHAR );
+
+END CharBareArrayIO.
