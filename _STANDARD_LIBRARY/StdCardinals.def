@@ -1,6 +1,6 @@
-(* (C) 2009-2012 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE Cardinals;
+DEFINITION MODULE StdCardinals;
 
 (* Import Aggregator for Unsigned Integer Types *) 
 
@@ -35,4 +35,4 @@ IMPORT CARDINAL64+; (* import into client module *)
 IMPORT CARDINAL128+; (* import into client module *)
 
 
-END Cardinals.
+END StdCardinals.
