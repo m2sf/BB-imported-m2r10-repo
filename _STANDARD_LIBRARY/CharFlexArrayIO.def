@@ -1,45 +1,17 @@
-(* (C) 2009-2014 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE ARRAYOFCHAR [AOC] FOR CHAR;
+DEFINITION MODULE CharFlexArrayIO [ProtoFlexArrayIO] FOR CHAR;
 
-(* Runtime Support Library for ARRAY OF CHAR Types - No import required *)
+(* IO Support for ARRAY OF CHAR types *)
 
-PROCEDURE [INSERT] InsertChars
-  ( VAR string : ARRAY OF CHAR; index : INTEGER; CONST chars : ARRAY OF CHAR );
-(* Inserts chars at index into string.  If the resulting string length exceeds
-   the capacity of string, runtime fault StringCapacityExceeded is raised. *)
+IMPORT FileIO;
 
-PROCEDURE [CONCAT] Concat
-  ( VAR result : ARRAY OF CHAR; items  : VARIADIC OF ARRAY OF CHAR );
-(* Concatenates two or more ARRAY OF CHAR values  passed in for items  in the
-   order they appear in the argument list and passes back the resulting ARRAY
-   OF CHAR in result.  If only a single argument is passed in for items,  the
-   argument is passed back verbatim in result.  String terminators in between
-   concatenation items are removed.  A final string terminator is appended to
-   the end of the result.  The capacity of the variable  passed in for result
-   must be sufficient to hold the result  including string terminator.  If it
-   is  not sufficient,  runtime fault StringCapacityExceeded shall be raised.
-   This procedure is substituted for invocations of CONCAT when its first ar-
-   gument is a variable of an ARRAY OF CHAR type. *)
+PROCEDURE [READ] ReadA ( file : FileIO.File; VAR a : ARRAY OF CHAR );
 
-PROCEDURE [..] CopySlice
-  ( VAR   target : ARRAY OF CHAR; tgtStartIndex, tgtEndIndex : INTEGER;
-    CONST source : ARRAY OF CHAR; srcStartIndex, srcEndIndex : INTEGER );
-(* Copies characters  from source,  starting at srcStartIndex  and  ending at
-   srcEndIndex  into target  at tgtStartIndex  but not exceeding tgtEndIndex.
-   Positive indices count forward starting with zero indicating the left most
-   character.  Negative indices  count backward  starting with -1  indicating
-   the right most character.  If the target indices denote the entire target,
-   a string terminator  is written  after the last character copied,  thereby
-   effectively overwriting all the target's contents  even if the copied sub-
-   string is shorter than the target.  If the target's start index is further
-   right than its end index,  the copying order into the target slice  is re-
-   versed.  If the source's start index is further right  than its end index,
-   the copying order  from the source slice is reversed.  If the source slice
-   is longer than the target slice,  only those characters that will fit into
-   the target slice are copied.  If the source slice is shorter than the tar-
-   get slice,  only the available characters of the source slice  are copied.
-   If  any index  is out of bounds  of the  associated string,  runtime fault
-   indexOutOfBounds shall be raised. *)
+PROCEDURE [WRITE] WriteA ( file : FileIO.File; CONST a : ARRAY OF CHAR );
 
-END ARRAYOFCHAR.
+PROCEDURE [WRITEF] WriteFA
+  ( file : FileIO.File; fmt : ARRAY OF CHAR;
+    CONST values : ARGLIST >0 OF ARRAY OF CHAR );
+
+END CharFlexArrayIO.
