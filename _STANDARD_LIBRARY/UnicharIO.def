@@ -1,10 +1,10 @@
-(* (C) 2009-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE UnicharIO [ProtoIO] FOR UNICHAR;
 
 (* IO Extension Library for Type UNICHAR *)
 
-FROM FileIO IMPORT File;
+IMPORT FileIO;
 
 (* EBNF of the textual representation of UNICHAR values:
     charValue : textFormat | numericFormat ;
@@ -12,7 +12,7 @@ FROM FileIO IMPORT File;
     numericFormat : "0u" ( base16Digit base16Digit )+ ;
     base16Digit : "0" .. "9" | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( infile : File; VAR ch : UNICHAR );
+PROCEDURE [READ] Read ( infile : FileIO.File; VAR ch : UNICHAR );
 (* Reads a CHAR value from stream infile
    - any leading whitespace is skipped
    - the character being read is removed from infile
@@ -21,14 +21,14 @@ PROCEDURE [READ] Read ( infile : File; VAR ch : UNICHAR );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a UNICHAR argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : File; ch : UNICHAR );
+PROCEDURE [WRITE] Write ( outfile : FileIO.File; ch : UNICHAR );
 (* Writes the textual representation of UNICHAR ch to stream outfile. This
    procedure is substituted for invocations of WRITE with a UNICHAR argument.*)
 
 PROCEDURE [WRITEF] WriteF
-  ( outfile      : File;
+  ( outfile      : FileIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST OF UNICHAR );
+    items        : ARGLIST >0 OF UNICHAR );
 (* Writes a formatted textual representation of one or more UNICHAR values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
