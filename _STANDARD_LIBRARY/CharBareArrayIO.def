@@ -6,7 +6,8 @@ DEFINITION MODULE CharBareArrayIO [ProtoBareArrayIO] FOR CHAR;
 
 IMPORT FileIO;
 
-PROCEDURE [READ] ReadBA ( infile : FileIO.File; VAR a : BARE ARRAY OF CHAR );
+PROCEDURE [READ] ReadBA
+  ( infile : FileIO.File; VAR a : BARE ARRAY OF CHAR );
 
 PROCEDURE [WRITE] WriteBA
   ( outfile : FileIO.File; CONST a : BARE ARRAY OF CHAR );
