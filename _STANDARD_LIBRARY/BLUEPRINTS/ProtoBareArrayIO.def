@@ -13,17 +13,17 @@ MODULE TYPE = NONE; (* inhibited *)
 
 PROCEDURE [READ] ReadBareArray
   ( f : File; VAR value : BARE ARRAY OF ProtoRoot );
-(* Required binding to macro READ for arrays of the target type *)
+(* Required binding to macro READ for common arrays of the target type *)
 
 PROCEDURE [WRITE] WriteBareArray
   ( f : File; CONST value : BARE ARRAY OF ProtoRoot );
-(* Required binding to macro WRITE for arrays of the target type *)
+(* Required binding to macro WRITE for common arrays of the target type *)
 
 PROCEDURE [WRITEF] WriteFBareArray
   ( f : File;
     fmt : ARRAY OF CHAR;
-    CONST values : ARGLIST OF BARE ARRAY OF ProtoRoot );
-(* Required binding to macro WRITEF for arrays of the target type *)
+    CONST values : ARGLIST >0 OF BARE ARRAY OF ProtoRoot );
+(* Required binding to macro WRITEF for common arrays of the target type *)
 
 
 END ProtoBareArrayIO.
