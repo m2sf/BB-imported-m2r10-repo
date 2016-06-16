@@ -1,15 +1,15 @@
-(* (C) 2012-2015 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2012-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 BLUEPRINT ProtoCardinal [ProtoScalar];
 
-(* Specialized Blueprint for Cardinal ADTs *)
+(* Specialized Canonical Blueprint for Cardinal ADTs *)
 
 
 (* Required Module Type *)
 
-MODULE TYPE = { isComputational, isNumber, isScalar, isCountable };
+MODULE TYPE = { IsComputational, IsNumber, IsScalar, IsCountable };
 
-LITERAL = wholeNumberLiteral;
+LITERAL = WholeNumberLiteral;
 (* Whole number literals shall be compatible. *)
 
 
@@ -17,22 +17,22 @@ LITERAL = wholeNumberLiteral;
 
 (* Scalar Properties *)
 
-CONST [TBASE] base = 2;
+CONST [TBASE] Base = 2;
 (* Cardinal ADTs are always encoded in radix 2. *)
 
-CONST [TPRECISION] precision : CARDINAL; (* 1 to 4000 *)
+CONST [TPRECISION] Precision : CARDINAL; (* 1 to 4000 *)
 (* Cardinal ADTs shall define the maximum number of encodable digits. *)
 
-CONST [TMINEXP] eMin = 0;
-(* Cardinal ADTs shall define eMin with a value of zero. *)
+CONST [TMINEXP] EMin = 0;
+(* Cardinal ADTs shall define EMin with a value of zero. *)
 
-CONST [TMAXEXP] eMax = 0;
-(* Cardinal ADTs shall define eMax with a value of zero. *)
+CONST [TMAXEXP] EMax = 0;
+(* Cardinal ADTs shall define EMax with a value of zero. *)
 
 
 (* Memory Management *)
 
-CONST [TDYN] isDynamic = FALSE;
+CONST [TDYN] IsDynamic = FALSE;
 (* Cardinal ADTs are always statically allocated. *)
 
 
@@ -56,13 +56,13 @@ PROCEDURE [TMAX] maxValue : ProtoCardinal;
 
 (* Conversion to Scalar Exchange Format *)
 
-PROCEDURE [SXF] toSXF ( value : ProtoCardinal; VAR sxf : ARRAY OF OCTET );
+PROCEDURE [SXF] ToSXF ( value : ProtoCardinal; VAR sxf : ARRAY OF OCTET );
 (* Required procedure to convert a cardinal to scalar exchange format. *)
 
 
 (* Conversion from Scalar Exchange Format *)
 
-PROCEDURE [VAL] fromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
+PROCEDURE [VAL] FromSXF ( sxf : ARRAY OF OCTET; VAR value : ProtoCardinal );
 (* Required procedure to convert from scalar exchange format to a cardinal. *)
 
 
@@ -74,22 +74,22 @@ PROCEDURE [ABS] abs ( n : ProtoCardinal ) : ProtoCardinal;
 
 (* Odd/Even Test *)
 
-PROCEDURE [ODD] odd ( n : ProtoCardinal ) : ProtoCardinal;
+PROCEDURE [ODD] isOdd ( n : ProtoCardinal ) : ProtoCardinal;
 (* Required function to test whether a cardinal is odd or even. *)
 
 
 (* Arithmetic Operations *)
 
-PROCEDURE [+] add ( n, m : ProtoCardinal ) : ProtoCardinal;
+PROCEDURE [+] sum ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the sum of two cardinals. *)
 
-PROCEDURE [-] subtract ( n, m : ProtoCardinal ) : ProtoCardinal;
+PROCEDURE [-] diff ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the difference of two cardinals. *)
 
-PROCEDURE [*] multiply ( n, m : ProtoCardinal ) : ProtoCardinal;
+PROCEDURE [*] product ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the product of two cardinals. *)
 
-PROCEDURE [DIV] divide ( n, m : ProtoCardinal ) : ProtoCardinal;
+PROCEDURE [DIV] quotient ( n, m : ProtoCardinal ) : ProtoCardinal;
 (* Required function to return the quotient of two cardinals,
    using Euclidean integer division. *)
 
