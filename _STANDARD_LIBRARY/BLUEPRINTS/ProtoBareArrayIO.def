@@ -11,17 +11,19 @@ MODULE TYPE = NONE; (* inhibited *)
 
 (* Required IO bindings *)
 
-PROCEDURE [READ] Read ( f : File; VAR value : BARE ARRAY OF ProtoRoot );
+PROCEDURE [READ] ReadBareArray
+  ( f : File; VAR value : BARE ARRAY OF ProtoRoot );
 (* Required binding to macro READ for arrays of the target type *)
 
-PROCEDURE [WRITE] Write ( f : File; value : ProtoRoot );
+PROCEDURE [WRITE] WriteBareArray
+  ( f : File; CONST value : BARE ARRAY OF ProtoRoot );
 (* Required binding to macro WRITE for arrays of the target type *)
 
-PROCEDURE [WRITEF] WriteF
+PROCEDURE [WRITEF] WriteFBareArray
   ( f : File;
     fmt : ARRAY OF CHAR;
-    values : ARGLIST OF BARE ARRAY OF ProtoRoot );
+    CONST values : ARGLIST OF BARE ARRAY OF ProtoRoot );
 (* Required binding to macro WRITEF for arrays of the target type *)
 
 
-END ProtoIO.
+END ProtoBareArrayIO.
