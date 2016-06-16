@@ -1,0 +1,29 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+BLUEPRINT ProtoFlexArrayIO [ProtoExtension] FOR ProtoRoot;
+
+(* Blueprint for regular array IO extension libraries *)
+
+REFERENTIAL File;
+
+MODULE TYPE = NONE; (* inhibited *)
+
+
+(* Required IO bindings *)
+
+PROCEDURE [READ] ReadArray
+  ( f : File; VAR value : ARRAY OF ProtoRoot );
+(* Required binding to macro READ for regular arrays of the target type *)
+
+PROCEDURE [WRITE] WriteBareArray
+  ( f : File; CONST value : ARRAY OF ProtoRoot );
+(* Required binding to macro WRITE for regular arrays of the target type *)
+
+PROCEDURE [WRITEF] WriteFBareArray
+  ( f : File;
+    fmt : ARRAY OF CHAR;
+    CONST values : ARGLIST >0 OF ARRAY OF ProtoRoot );
+(* Required binding to macro WRITEF for regular arrays of the target type *)
+
+
+END ProtoFlexArrayIO.
