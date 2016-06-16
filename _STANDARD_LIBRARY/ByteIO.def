@@ -1,0 +1,9 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ByteIO;
+
+(* Import Aggregator for IO Extension Libraries of Type BYTE *)
+
+IMPORT ByteBaseIO+, ByteArrayIO+;
+
+END ByteIO.
