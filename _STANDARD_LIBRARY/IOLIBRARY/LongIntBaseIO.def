@@ -1,8 +1,8 @@
 (* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LongIntIO [ProtoIO] FOR LONGINT;
+DEFINITION MODULE LongIntBaseIO [ProtoIO] FOR LONGINT;
 
-(* IO Extension Library for Type LONGINT *)
+(* IO Extension Library for Values of Type LONGINT *)
 
 IMPORT FileIO;
 
@@ -46,4 +46,4 @@ PROCEDURE [WRITEF] WriteF
    LONGINT arguments. *)
 
 
-END LongIntIO.
+END LongIntBaseIO.
