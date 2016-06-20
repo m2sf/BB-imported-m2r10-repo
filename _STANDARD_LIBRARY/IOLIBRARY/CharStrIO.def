@@ -1,20 +1,20 @@
 (* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CharFlexArrayIO [ProtoFlexArrayIO] FOR CHAR;
+DEFINITION MODULE CharStrIO [ProtoStrIO] FOR CHAR;
 
-(* IO Extension Library for ARRAY OF CHAR types *)
+(* IO Extension Library for String Types of CHAR *)
 
 IMPORT FileIO;
 
-PROCEDURE [READ] ReadArray
-  ( infile : FileIO.File; VAR a : ARRAY OF CHAR );
+PROCEDURE [READ] ReadStr
+  ( infile : FileIO.File; VAR str : ARRAY OF CHAR );
 
-PROCEDURE [WRITE] WriteArray
-  ( outfile : FileIO.File; CONST a : ARRAY OF CHAR );
+PROCEDURE [WRITE] WriteStr
+  ( outfile : FileIO.File; CONST str : ARRAY OF CHAR );
 
-PROCEDURE [WRITEF] WriteFArray
+PROCEDURE [WRITEF] WriteFStr
   ( outfile : FileIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST items : ARGLIST >0 OF ARRAY OF CHAR );
+    CONST strings : ARGLIST >0 OF ARRAY OF CHAR );
 
-END CharFlexArrayIO.
+END CharStrIO.
