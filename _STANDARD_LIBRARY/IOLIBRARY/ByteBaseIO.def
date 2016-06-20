@@ -1,8 +1,8 @@
 (* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE ByteBaseIO [ProtoIO] FOR UNSAFE.BYTE;
+DEFINITION MODULE ByteBaseIO [ProtoIO] FOR BYTE;
 
-(* Base IO Extension Library for Type BYTE *)
+(* Base IO Extension Library for Values of Type BYTE *)
 
 IMPORT UNSAFE, FileIO;
 
