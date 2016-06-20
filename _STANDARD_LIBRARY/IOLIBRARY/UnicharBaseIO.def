@@ -1,6 +1,6 @@
 (* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE UnicharIO [ProtoIO] FOR UNICHAR;
+DEFINITION MODULE UnicharBaseIO [ProtoIO] FOR UNICHAR;
 
 (* IO Extension Library for Values of Type UNICHAR *)
 
@@ -34,4 +34,4 @@ PROCEDURE [WRITEF] WriteF
    procedure is substituted for invocations of WRITEF with one or more
    UNICHAR arguments. *)
 
-END UnicharIO.
+END UnicharBaseIO.
