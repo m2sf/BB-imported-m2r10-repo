@@ -1,0 +1,40 @@
+/* IO Library Module Hierarchy in GraphViz DOT */
+
+digraph IO {
+  node [shape=none]
+  
+  "IO Libraries" ->
+    { IOSupport ByteIO WordIO AddressIO };
+
+IOSupport ->
+    { CharIO UnicharIO BooleanIO 
+      OctetIO CardinalIO LongCardIO IntegerIO LongIntIO RealIO LongRealIO };
+  
+  CharIO -> { CharBaseIO CharArrayIO CharStrIO };
+
+  BooleanIO -> { BooleanBaseIO BooleanArrayIO };
+
+  UnicharIO -> { UnicharBaseIO UnicharArrayIO UnicharStrIO };
+  
+  OctetIO -> { OctetBaseIO OctetArrayIO };
+  
+  CardinalIO -> { CardinalBaseIO CardinalArrayIO };
+  
+  LongCardIO -> { LongCardBaseIO LongCardArrayIO };
+
+  IntegerIO -> { IntegerBaseIO IntegerArrayIO };
+  
+  LongIntIO -> { LongIntBaseIO LongIntArrayIO };
+
+  RealIO -> { RealBaseIO RealArrayIO };
+  
+  LongRealIO -> { LongRealBaseIO LongRealArrayIO };
+  
+  ByteIO -> { ByteBaseIO ByteArrayIO };
+
+  WordIO -> { WordBaseIO WordArrayIO };
+
+  AddressIO -> { AddressBaseIO AddressArrayIO };
+}
+
+/* END OF FILE */
