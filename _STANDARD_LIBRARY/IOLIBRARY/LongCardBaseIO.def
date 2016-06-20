@@ -1,8 +1,8 @@
 (* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LongCardIO [ProtoIO] FOR LONGCARD;
+DEFINITION MODULE LongCardBaseIO [ProtoIO] FOR LONGCARD;
 
-(* IO Extension Library for Type LONGCARD *)
+(* IO Extension Library for Values of Type LONGCARD *)
 
 IMPORT FileIO;
 
@@ -46,4 +46,4 @@ PROCEDURE [WRITEF] WriteF
    LONGCARD arguments. *)
 
 
-END LongCardIO.
+END LongCardBaseIO.
