@@ -1,8 +1,8 @@
 (* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE OctetIO [ProtoIO] FOR OCTET;
+DEFINITION MODULE OctetBaseIO [ProtoIO] FOR OCTET;
 
-(* IO Extension Library for Type OCTET *)
+(* IO Extension Library for Values of Type OCTET *)
 
 IMPORT FileIO;
 
@@ -41,4 +41,4 @@ PROCEDURE [WRITEF] WriteF
    OCTET arguments. *)
 
 
-END OctetIO.
+END OctetBaseIO.
