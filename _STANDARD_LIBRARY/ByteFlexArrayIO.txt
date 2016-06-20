@@ -1,1 +1,0 @@
-IO library ByteBareArrayIO handles *both* bare *and* flex arrays of BYTE.
