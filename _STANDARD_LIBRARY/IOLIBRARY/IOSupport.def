@@ -7,10 +7,10 @@ DEFINITION MODULE IOSupport;
 IMPORT BooleanIO+, BooleanArrayIO+;
 (* Imports IO modules for predefined type BOOLEAN into the importing module. *)
 
-IMPORT CharIO+, CharArrayIO+;
+IMPORT CharIO+, CharArrayIO+, CharStrIO+;
 (* Imports IO modules for predefined type CHAR into the importing module. *)
 
-IMPORT UnicharIO+, UnicharArrayIO+;
+IMPORT UnicharIO+, UnicharArrayIO+, UnicharStrIO+;
 (* Imports IO modules for predefined type UNICHAR into the importing module. *)
 
 IMPORT OctetIO+, OctetArrayIO+;
