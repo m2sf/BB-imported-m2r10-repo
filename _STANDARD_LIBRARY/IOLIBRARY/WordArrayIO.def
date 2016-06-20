@@ -1,0 +1,20 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE WordArrayIO [ProtoArrayIO] FOR WORD;
+
+(* IO Extension Library for Array Types of WORD *)
+
+IMPORT UNSAFE, FileIO;
+
+PROCEDURE [READ] ReadArray
+  ( infile : FileIO.File; VAR array : BARE ARRAY OF UNSAFE.WORD );
+
+PROCEDURE [WRITE] WriteArray
+  ( outfile : FileIO.File; CONST array : BARE ARRAY OF UNSAFE.WORD );
+
+PROCEDURE [WRITEF] WriteFArray
+  ( outfile : FileIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF UNSAFE.WORD );
+
+END WordArrayIO.
