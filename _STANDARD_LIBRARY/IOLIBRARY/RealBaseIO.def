@@ -1,8 +1,8 @@
 (* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE RealIO [ProtoIO] FOR REAL;
+DEFINITION MODULE RealBaseIO [ProtoIO] FOR REAL;
 
-(* IO Extension Library for Type REAL *)
+(* IO Extension Library for Values of Type REAL *)
 
 IMPORT FileIO;
 
@@ -73,4 +73,4 @@ PROCEDURE [WRITEF] WriteF
    REAL arguments. *)
 
 
-END RealIO.
+END RealBaseIO.
