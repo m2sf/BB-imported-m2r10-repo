@@ -1,0 +1,9 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CharIO;
+
+(* Import Aggregator for IO Extension Libraries of Type CHAR *)
+
+IMPORT CharBaseIO+, CharArrayIO+, CharStrIO+;
+
+END CharIO.
