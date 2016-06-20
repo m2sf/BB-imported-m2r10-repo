@@ -1,0 +1,9 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE BooleanIO;
+
+(* Import Aggregator for IO Extension Libraries of Type BOOLEAN *)
+
+IMPORT BooleanBaseIO+, BooleanArrayIO+;
+
+END BooleanIO.
