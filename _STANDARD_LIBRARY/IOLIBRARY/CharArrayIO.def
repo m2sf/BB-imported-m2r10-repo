@@ -1,9 +1,20 @@
 (* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CharArrayIO;
+DEFINITION MODULE CharArrayIO [ProtoArrayIO] FOR CHAR;
 
-(* Re-Export Array IO Extension Libraries of Type CHAR *)
+(* IO Extension Library for array types of CHAR *)
 
-IMPORT CharBareArrayIO+, CharFlexArrayIO+;
+IMPORT FileIO;
+
+PROCEDURE [READ] ReadArray
+  ( infile : FileIO.File; VAR array : BARE ARRAY OF CHAR );
+
+PROCEDURE [WRITE] WriteArray
+  ( outfile : FileIO.File; CONST array : BARE ARRAY OF CHAR );
+
+PROCEDURE [WRITEF] WriteFArray
+  ( outfile : FileIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF CHAR );
 
 END CharArrayIO.
