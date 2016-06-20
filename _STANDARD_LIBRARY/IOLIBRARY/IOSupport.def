@@ -4,34 +4,34 @@ DEFINITION MODULE IOSupport;
 
 (* Aggregator Module for I/O Operations of Predefined Types *)
 
-IMPORT BooleanIO+, BooleanArrayIO+;
+IMPORT BooleanBaseIO+, BooleanArrayIO+;
 (* Imports IO modules for predefined type BOOLEAN into the importing module. *)
 
-IMPORT CharIO+, CharArrayIO+, CharStrIO+;
+IMPORT CharBaseIO+, CharArrayIO+, CharStrIO+;
 (* Imports IO modules for predefined type CHAR into the importing module. *)
 
-IMPORT UnicharIO+, UnicharArrayIO+, UnicharStrIO+;
+IMPORT UnicharBaseIO+, UnicharArrayIO+, UnicharStrIO+;
 (* Imports IO modules for predefined type UNICHAR into the importing module. *)
 
-IMPORT OctetIO+, OctetArrayIO+;
+IMPORT OctetBaseIO+, OctetArrayIO+;
 (* Imports IO modules for predefined type OCTET into the importing module. *)
 
-IMPORT CardinalIO+, CardinalArrayIO+;
+IMPORT CardinalBaseIO+, CardinalArrayIO+;
 (* Imports IO modules for predefined type CARDINAL into the importing module. *)
 
-IMPORT LongCardIO+, LongCardArrayIO+;
+IMPORT LongCardBaseIO+, LongCardArrayIO+;
 (* Imports IO modules for predefined type LONGCARD into the importing module. *)
 
-IMPORT IntegerIO+, IntegerArrayIO+;
+IMPORT IntegerBaseIO+, IntegerArrayIO+;
 (* Imports IO modules for predefined type INTEGER into the importing module. *)
 
-IMPORT LongIntIO+, LongIntArrayIO+;
+IMPORT LongIntBaseIO+, LongIntArrayIO+;
 (* Imports IO modules for predefined type LONGINT into the importing module. *)
 
-IMPORT RealIO+, RealArrayIO+;
+IMPORT RealBaseIO+, RealArrayIO+;
 (* Imports IO modules for predefined type REAL into the importing module. *)
 
-IMPORT LongRealIO+, LongRealArrayIO+;
+IMPORT LongRealBaseIO+, LongRealArrayIO+;
 (* Imports IO modules for pervasive type LONGREAL into the importing module. *)
 
 END IOSupport.
