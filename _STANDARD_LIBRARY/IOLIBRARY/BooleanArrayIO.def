@@ -1,0 +1,20 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE BooleanArrayIO [ProtoArrayIO] FOR BOOLEAN;
+
+(* IO Extension Library for array types of BOOLEAN *)
+
+IMPORT FileIO;
+
+PROCEDURE [READ] ReadArray
+  ( infile : FileIO.File; VAR array : BARE ARRAY OF BOOLEAN );
+
+PROCEDURE [WRITE] WriteArray
+  ( outfile : FileIO.File; CONST array : BARE ARRAY OF BOOLEAN );
+
+PROCEDURE [WRITEF] WriteFArray
+  ( outfile : FileIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF BOOLEAN );
+
+END BooleanArrayIO.
