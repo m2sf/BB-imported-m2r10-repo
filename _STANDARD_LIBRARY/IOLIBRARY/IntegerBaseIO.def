@@ -1,8 +1,8 @@
 (* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE IntegerIO [ProtoIO] FOR INTEGER;
+DEFINITION MODULE IntegerBaseIO [ProtoIO] FOR INTEGER;
 
-(* IO Extension Library for Type INTEGER *)
+(* IO Extension Library for Values of Type INTEGER *)
 
 IMPORT FileIO;
 
@@ -46,4 +46,4 @@ PROCEDURE [WRITEF] WriteF
    INTEGER arguments. *)
 
 
-END IntegerIO.
+END IntegerBaseIO.
