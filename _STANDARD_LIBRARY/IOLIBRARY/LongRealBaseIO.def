@@ -1,8 +1,8 @@
 (* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE LongRealIO [ProtoIO] FOR LONGREAL;
+DEFINITION MODULE LongRealBaseIO [ProtoIO] FOR LONGREAL;
 
-(* IO Extension Library for Type LONGREAL *)
+(* IO Extension Library for Values of Type LONGREAL *)
 
 IMPORT FileIO;
 
@@ -73,4 +73,4 @@ PROCEDURE [WRITEF] WriteF
    LONGREAL arguments. *)
 
 
-END LongRealIO.
+END LongRealBaseIO.
