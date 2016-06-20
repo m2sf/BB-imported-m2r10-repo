@@ -1,9 +1,0 @@
-(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
-
-DEFINITION MODULE ByteArrayIO;
-
-(* Import Aggregator for Array IO Extension Libraries of Type BYTE *)
-
-IMPORT ByteBareArrayIO+; (* handles arrays and bare arrays *)
-
-END ByteArrayIO.
