@@ -2,7 +2,7 @@
 
 DEFINITION MODULE UnicharIO [ProtoIO] FOR UNICHAR;
 
-(* IO Extension Library for Type UNICHAR *)
+(* IO Extension Library for Values of Type UNICHAR *)
 
 IMPORT FileIO;
 
