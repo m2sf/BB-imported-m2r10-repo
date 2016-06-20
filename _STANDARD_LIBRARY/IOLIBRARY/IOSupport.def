@@ -4,6 +4,9 @@ DEFINITION MODULE IOSupport;
 
 (* Aggregator Module for I/O Operations of Predefined Types *)
 
+IMPORT StdIO+;
+(* Imports StdIO into the importing modue. *)
+
 IMPORT BooleanBaseIO+, BooleanArrayIO+;
 (* Imports IO modules for predefined type BOOLEAN into the importing module. *)
 
