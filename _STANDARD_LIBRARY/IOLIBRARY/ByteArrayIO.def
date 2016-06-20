@@ -1,20 +1,20 @@
 (* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE ByteBareArrayIO [ProtoBareArrayIO] FOR UNSAFE.BYTE;
+DEFINITION MODULE ByteArrayIO [ProtoArrayIO] FOR BYTE;
 
-(* Common IO Extension Library for bare and flex arrays of BYTE *)
+(* Common IO Extension Library for Array Types of BYTE *)
 
 IMPORT UNSAFE, FileIO;
 
-PROCEDURE [READ] ReadBareArray
+PROCEDURE [READ] ReadArray
   ( infile : FileIO.File; VAR a : BARE ARRAY OF UNSAFE.BYTE );
 
-PROCEDURE [WRITE] WriteBareArray
+PROCEDURE [WRITE] WriteArray
   ( outfile : FileIO.File; CONST a : BARE ARRAY OF UNSAFE.BYTE );
 
-PROCEDURE [WRITEF] WriteFBareArray
+PROCEDURE [WRITEF] WriteFArray
   ( outfile : FileIO.File;
     CONST fmtStr : ARRAY OF CHAR;
     CONST items : ARGLIST >0 OF BARE ARRAY OF UNSAFE.BYTE );
 
-END ByteBareArrayIO.
+END ByteArrayIO.
