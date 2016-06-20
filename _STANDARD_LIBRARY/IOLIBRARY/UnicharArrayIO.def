@@ -1,9 +1,20 @@
 (* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE UnicharArrayIO;
+DEFINITION MODULE UnicharArrayIO [ProtoArrayIO] FOR UNICHAR;
 
-(* Re-Export Array IO Extension Libraries of Type UNICHAR *)
+(* IO Extension Library for Array Types of UNICHAR *)
 
-IMPORT UnicharBareArrayIO+, UnicharFlexArrayIO+;
+IMPORT FileIO;
+
+PROCEDURE [READ] ReadArray
+  ( infile : FileIO.File; VAR array : BARE ARRAY OF UNICHAR );
+
+PROCEDURE [WRITE] WriteArray
+  ( outfile : FileIO.File; CONST array : BARE ARRAY OF UNICHAR );
+
+PROCEDURE [WRITEF] WriteFArray
+  ( outfile : FileIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF UNICHAR );
 
 END UnicharArrayIO.
