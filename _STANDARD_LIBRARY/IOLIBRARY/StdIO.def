@@ -1,0 +1,16 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE StdIO;
+
+(* Standard IO Special File Access *)
+
+PROCEDURE [STDIN] in : FileIO.File;
+(* Returns the file handle for stdin, bound to macro STDIN *)
+
+PROCEDURE [STDOUT] out : FileIO.File;
+(* Returns the file handle for stdout, bound to macro STDOUT *)
+
+PROCEDURE [STDERR] err : FileIO.File;
+(* Returns the file handle for stderr, bound to macro STDERR *)
+
+END StdIO.
