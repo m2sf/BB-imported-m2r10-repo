@@ -1,0 +1,20 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LongRealArrayIO [ProtoArrayIO] FOR LONGREAL;
+
+(* IO Extension Library for Array Types of LONGREAL *)
+
+IMPORT FileIO;
+
+PROCEDURE [READ] ReadArray
+  ( infile : FileIO.File; VAR array : BARE ARRAY OF LONGREAL );
+
+PROCEDURE [WRITE] WriteArray
+  ( outfile : FileIO.File; CONST array : BARE ARRAY OF LONGREAL );
+
+PROCEDURE [WRITEF] WriteFArray
+  ( outfile : FileIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF LONGREAL );
+
+END LongRealArrayIO.
