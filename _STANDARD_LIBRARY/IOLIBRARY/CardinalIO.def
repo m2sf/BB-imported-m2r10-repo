@@ -1,0 +1,9 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CardinalIO;
+
+(* Import Aggregator for IO Extension Libraries of Type CARDINAL *)
+
+IMPORT CardinalBaseIO+, CardinalArrayIO+;
+
+END CardinalIO.
