@@ -1,6 +1,6 @@
 (* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE CharIO [ProtoIO] FOR CHAR;
+DEFINITION MODULE CharBaseIO [ProtoIO] FOR CHAR;
 
 (* IO Extension Library for Values of Type CHAR *)
 
@@ -34,4 +34,4 @@ PROCEDURE [WRITEF] WriteF
    procedure is substituted for invocations of WRITEF with one or more
    CHAR arguments. *)
 
-END CharIO.
+END CharBaseIO.
