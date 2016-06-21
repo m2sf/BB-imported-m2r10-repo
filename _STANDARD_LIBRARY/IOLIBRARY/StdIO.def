@@ -4,13 +4,15 @@ DEFINITION MODULE StdIO;
 
 (* Standard IO Special File Access *)
 
-PROCEDURE [STDIN] in : FileIO.File;
+IMPORT ChanIO;
+
+PROCEDURE [STDIN] in : ChanIO.Channel;
 (* Returns the file handle for stdin, bound to macro STDIN *)
 
-PROCEDURE [STDOUT] out : FileIO.File;
+PROCEDURE [STDOUT] out : ChanIO.Channel;
 (* Returns the file handle for stdout, bound to macro STDOUT *)
 
-PROCEDURE [STDERR] err : FileIO.File;
+PROCEDURE [STDERR] err : ChanIO.Channel;
 (* Returns the file handle for stderr, bound to macro STDERR *)
 
 END StdIO.
