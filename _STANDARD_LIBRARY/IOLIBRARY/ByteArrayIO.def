@@ -4,16 +4,16 @@ DEFINITION MODULE ByteArrayIO [ProtoArrayIO] FOR BYTE;
 
 (* Common IO Extension Library for Array Types of BYTE *)
 
-IMPORT UNSAFE, FileIO;
+IMPORT UNSAFE, ChanIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FileIO.File; VAR a : BARE ARRAY OF UNSAFE.BYTE );
+  ( infile : ChanIO.Channel; VAR a : BARE ARRAY OF UNSAFE.BYTE );
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FileIO.File; CONST a : BARE ARRAY OF UNSAFE.BYTE );
+  ( outfile : ChanIO.Channel; CONST a : BARE ARRAY OF UNSAFE.BYTE );
 
 PROCEDURE [WRITEF] WriteFArray
-  ( outfile : FileIO.File;
+  ( outfile : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     CONST items : ARGLIST >0 OF BARE ARRAY OF UNSAFE.BYTE );
 
