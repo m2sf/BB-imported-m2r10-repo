@@ -1,0 +1,76 @@
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE RealBaseFIO [ProtoIO] FOR REAL;
+
+(* File-Only IO Extension Library for Values of Type REAL *)
+
+IMPORT FilePtrIO;
+
+(* EBNF of the textual representation of REAL values:
+
+    realValue :
+        unpaddedRealValue | leftPaddedRealValue | rightPaddedRealValue ;
+    leftPaddedRealValue : padding+ unPaddedRealValue ;
+    rightPaddedRealValue : unPaddedRealValue padding+ ;
+    unPaddedRealValue : simpleFormat | otherFormats ;
+    otherFormats : sign? fillChar*
+        ( fixedFmtNumeral | engFmtNumeral | expFmtNumeral ) suffix? ;
+    simpleFormat : negativeSign? decimalDigit '.' decimalDigit+ exponent ;
+    fixedFmtNumeral : integralPart decimalPoint fractionalPart ;
+    engFmtNumeral : engIntegralPart decimalPoint fractionalPart engExponent ;
+    expFmtNumeral : fixedFmtNumeral exponent ;
+    padding : ' ' ;
+    sign : " " | "+" | "-" ;
+    negativeSign : "-" ;
+    fillChar : " " | "*" | "0" ;
+    integralPart :
+        decimalDigit decimalDigit? decimalDigit? ( separator? digitGroup )* ;
+    engIntegralPart :
+        ( ( ( decimalDigit separator? )? decimalDigit )? decimalDigit )?
+        decimalDigit ;
+    fractionalPart :
+        ( decimalDigit ( decimalDigit ( decimalDigit separator )? )? )*
+        decimalDigit ;
+    exponent : "E" ( "+" | "-" ) decimalDigit decimalDigit+ ;
+    engExponent : exponent ;
+    decimalPoint : "." | "," ;
+    separator : " " | "." | "," ;
+    digitGroup : decimalDigit decimalDigit decimalDigit ;
+    decimalDigit  : "0" .. "9" ;
+    suffix : "'" character* "'" ;
+
+   Static semantics:
+
+    decimalPoint and separator must never both use the same symbol
+    the value represented by engExponent must always be divisible by three. *)
+
+
+(* Bindings required for static ADTs by blueprint ProtoIO *)
+
+
+PROCEDURE [READ] Read( infile : FilePtrIO.File; VAR r : REAL );
+(* Reads the textual representation of a REAL value from input stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the numeral being read are
+     removed from infile
+   - the numeric value of the numeral string read is assigned to the variable
+     passed in for r
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+     procedure is substituted for invocations of READ with a REAL argument. *)
+
+PROCEDURE [WRITE] Write( outfile : FilePtrIO.File; CONST r : REAL );
+(* Writes the textual representation of value r to output stream outfile. This
+   procedure is substituted for invocations of WRITE with a REAL argument. *)
+
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : FilePtrIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST >0 OF REAL );
+(* Writes a formatted textual representation of one or more REAL values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   REAL arguments. *)
+
+
+END RealBaseFIO.
