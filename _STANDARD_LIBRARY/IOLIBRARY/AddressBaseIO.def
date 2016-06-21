@@ -22,9 +22,9 @@ PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR adr : ADDRESS );
 (* Reads the textual representation of an ADDRESS value from channel inchan
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
-     removed from infile
+     removed from inchan
    - the textual representation of the value read is assigned to adr
-   - the file status is set to any of:
+   - the channel status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an ADDRESS argument.*)
 
