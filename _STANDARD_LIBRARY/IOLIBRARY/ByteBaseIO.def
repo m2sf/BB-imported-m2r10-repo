@@ -4,7 +4,7 @@ DEFINITION MODULE ByteBaseIO [ProtoIO] FOR BYTE;
 
 (* Base IO Extension Library for Values of Type BYTE *)
 
-IMPORT UNSAFE, FileIO;
+IMPORT UNSAFE, ChanIO;
 
 (* EBNF of the textual representation of BYTE values:
     octetValue : simpleFormat |
@@ -17,26 +17,26 @@ IMPORT UNSAFE, FileIO;
     base16Digit : "0" .. "9" | "A" .. "F" ;
     bit : "0" | "1" ; *)
 
-PROCEDURE [READ] Read ( infile : FileIO.File; VAR b : UNSAFE.BYTE );
-(* Reads the textual representation of a BYTE value from stream infile
+PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR b : UNSAFE.BYTE );
+(* Reads the textual representation of a BYTE value from channel inchan
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
-     removed from infile
+     removed from inchan
    - the textual representation of the value read is assigned to b
    - the file status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a BYTE argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : FileIO.File; b : UNSAFE.BYTE );
-(* Writes the value of BYTE b in simple format to stream outfile. This
+PROCEDURE [WRITE] Write ( outchan : ChanIO.Channel; b : UNSAFE.BYTE );
+(* Writes the value of BYTE b in simple format to channel outchan. This
    procedure is substituted for invocations of WRITE with a BYTE argument.*)
 
 PROCEDURE [WRITEF] WriteF
-  ( outfile      : FileIO.File;
+  ( outfile      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     items        : ARGLIST >0 OF UNSAFE.BYTE );
 (* Writes a formatted textual representation of one or more BYTE values to
-   output stream outfile. The output format is determined by fmtStr. This
+   output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    BYTE arguments. *)
 
