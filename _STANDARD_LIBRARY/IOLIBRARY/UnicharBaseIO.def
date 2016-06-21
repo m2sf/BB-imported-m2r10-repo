@@ -4,7 +4,7 @@ DEFINITION MODULE UnicharBaseIO [ProtoIO] FOR UNICHAR;
 
 (* IO Extension Library for Values of Type UNICHAR *)
 
-IMPORT FileIO;
+IMPORT ChanIO;
 
 (* EBNF of the textual representation of UNICHAR values:
     charValue : textFormat | numericFormat ;
@@ -12,25 +12,25 @@ IMPORT FileIO;
     numericFormat : "0u" ( base16Digit base16Digit )+ ;
     base16Digit : "0" .. "9" | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( infile : FileIO.File; VAR ch : UNICHAR );
-(* Reads a CHAR value from stream infile
+PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR ch : UNICHAR );
+(* Reads a UNICHAR value from channel inchan
    - any leading whitespace is skipped
-   - the character being read is removed from infile
+   - the character being read is removed from inchan
    - the code point of the character value read is assigned to ch
-   - the file status is set to any of:
+   - the channel status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a UNICHAR argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : FileIO.File; ch : UNICHAR );
-(* Writes the textual representation of UNICHAR ch to stream outfile. This
+PROCEDURE [WRITE] Write ( outchan : ChanIO.Channel; ch : UNICHAR );
+(* Writes the textual representation of UNICHAR ch to chanel outchan. This
    procedure is substituted for invocations of WRITE with a UNICHAR argument.*)
 
 PROCEDURE [WRITEF] WriteF
-  ( outfile      : FileIO.File;
+  ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     items        : ARGLIST >0 OF UNICHAR );
 (* Writes a formatted textual representation of one or more UNICHAR values to
-   output stream outfile. The output format is determined by fmtStr. This
+   output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    UNICHAR arguments. *)
 
