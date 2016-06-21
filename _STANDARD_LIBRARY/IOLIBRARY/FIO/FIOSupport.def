@@ -1,0 +1,40 @@
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE FIOSupport;
+
+(* Aggregator Module for File-Only I/O Operations of Predefined Types *)
+
+IMPORT StdFIO+;
+(* Imports StdIO into the importing modue. *)
+
+IMPORT BooleanBaseFIO+, BooleanArrayFIO+;
+(* Imports FIO modules for predefined type BOOLEAN into the importing module. *)
+
+IMPORT CharBaseFIO+, CharArrayFIO+, CharStrFIO+;
+(* Imports FIO modules for predefined type CHAR into the importing module. *)
+
+IMPORT UnicharBaseFIO+, UnicharArrayFIO+, UnicharStrFIO+;
+(* Imports FIO modules for predefined type UNICHAR into the importing module. *)
+
+IMPORT OctetBaseFIO+, OctetArrayFIO+;
+(* Imports FIO modules for predefined type OCTET into the importing module. *)
+
+IMPORT CardinalBaseFIO+, CardinalArrayFIO+;
+(* Imports FIO modules for predefined type CARDINAL into the importing module. *)
+
+IMPORT LongCardBaseFIO+, LongCardArrayFIO+;
+(* Imports FIO modules for predefined type LONGCARD into the importing module. *)
+
+IMPORT IntegerBaseFIO+, IntegerArrayFIO+;
+(* Imports FIO modules for predefined type INTEGER into the importing module. *)
+
+IMPORT LongIntBaseFIO+, LongIntArrayFIO+;
+(* Imports FIO modules for predefined type LONGINT into the importing module. *)
+
+IMPORT RealBaseFIO+, RealArrayFIO+;
+(* Imports FIO modules for predefined type REAL into the importing module. *)
+
+IMPORT LongRealBaseFIO+, LongRealArrayFIO+;
+(* Imports FIO modules for pervasive type LONGREAL into the importing module. *)
+
+END FIOSupport.
