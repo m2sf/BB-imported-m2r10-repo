@@ -7,13 +7,13 @@ DEFINITION MODULE ByteArrayIO [ProtoArrayIO] FOR BYTE;
 IMPORT UNSAFE, ChanIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : ChanIO.Channel; VAR a : BARE ARRAY OF UNSAFE.BYTE );
+  ( inchan : ChanIO.Channel; VAR a : BARE ARRAY OF UNSAFE.BYTE );
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : ChanIO.Channel; CONST a : BARE ARRAY OF UNSAFE.BYTE );
+  ( outchan : ChanIO.Channel; CONST a : BARE ARRAY OF UNSAFE.BYTE );
 
 PROCEDURE [WRITEF] WriteFArray
-  ( outfile : ChanIO.Channel;
+  ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     CONST items : ARGLIST >0 OF BARE ARRAY OF UNSAFE.BYTE );
 
