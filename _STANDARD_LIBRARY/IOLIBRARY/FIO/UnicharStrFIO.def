@@ -1,0 +1,20 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE UnicharStrFIO [ProtoStrIO] FOR UNICHAR;
+
+(* File-Only IO Extension Library for String Types of UNICHAR *)
+
+IMPORT FilePtrIO;
+
+PROCEDURE [READ] ReadStr
+  ( infile : FilePtrIO.File; VAR str : ARRAY OF UNICHAR );
+
+PROCEDURE [WRITE] WriteStr
+  ( outfile : FilePtrIO.File; CONST str : ARRAY OF UNICHAR );
+
+PROCEDURE [WRITEF] WriteFStr
+  ( outfile : FilePtrIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST strings : ARGLIST >0 OF ARRAY OF UNICHAR );
+
+END UnicharStrFIO.
