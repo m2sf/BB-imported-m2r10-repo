@@ -1,0 +1,20 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ByteArrayFIO [ProtoArrayIO] FOR BYTE;
+
+(* File-Only IO Extension Library for Array Types of BYTE *)
+
+IMPORT UNSAFE, FilePtrIO;
+
+PROCEDURE [READ] ReadArray
+  ( infile : FilePtrIO.File; VAR a : BARE ARRAY OF UNSAFE.BYTE );
+
+PROCEDURE [WRITE] WriteArray
+  ( outfile : FilePtrIO.File; CONST a : BARE ARRAY OF UNSAFE.BYTE );
+
+PROCEDURE [WRITEF] WriteFArray
+  ( outfile : FilePtrIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST items : ARGLIST >0 OF BARE ARRAY OF UNSAFE.BYTE );
+
+END ByteArrayFIO.
