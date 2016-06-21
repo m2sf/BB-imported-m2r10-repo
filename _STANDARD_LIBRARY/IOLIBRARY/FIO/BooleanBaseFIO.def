@@ -1,0 +1,37 @@
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE BooleanBaseFIO [ProtoIO] FOR BOOLEAN;
+
+(* File-Only IO Extension Library for Values of Type BOOLEAN *)
+
+IMPORT FilePtrIO;
+
+(* EBNF of the textual representation of BOOLEAN values:
+    boolValue : trueFalseFormat | yesNoFormat ;
+    trueFalseFormat : "TRUE" | "FALSE" ;
+    yesNoFormat : "YES" | "NO" ; *)
+
+PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR b : BOOLEAN );
+(* Reads the textual representation of a BOOLEAN value from stream infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the value being read are
+     removed from infile
+   - the textual representation of the value read is assigned to b
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with a BOOLEAN argument.*)
+
+PROCEDURE [WRITE] Write ( outfile : FilePtrIO.File; b : BOOLEAN );
+(* Writes the textual representation of BOOLEAN b to stream outfile. This
+   procedure is substituted for invocations of WRITE with a BOOLEAN argument.*)
+
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : FilePtrIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST >0 OF BOOLEAN );
+(* Writes a formatted textual representation of one or more BOOLEAN values to
+   output stream outfile. The output format is determined by fmtStr. This
+   procedure is substituted for invocations of WRITEF with one or more
+   BOOLEAN arguments. *)
+
+END BooleanBaseFIO.
