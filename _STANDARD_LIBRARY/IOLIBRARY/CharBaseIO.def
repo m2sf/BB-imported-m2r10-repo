@@ -4,7 +4,7 @@ DEFINITION MODULE CharBaseIO [ProtoIO] FOR CHAR;
 
 (* IO Extension Library for Values of Type CHAR *)
 
-IMPORT FileIO;
+IMPORT ChanIO;
 
 (* EBNF of the textual representation of CHAR values:
     charValue : textFormat | numericFormat ;
@@ -12,25 +12,25 @@ IMPORT FileIO;
     numericFormat : "0u" base16Digit base16Digit ;
     base16Digit : "0" .. "9" | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( infile : FileIO.File; VAR ch : CHAR );
-(* Reads a CHAR value from stream infile
+PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR ch : CHAR );
+(* Reads a CHAR value from channel inchan
    - any leading whitespace is skipped
-   - the character being read is removed from infile
+   - the character being read is removed from inchan
    - the code point of the character value read is assigned to ch
-   - the file status is set to any of:
+   - the channel status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a CHAR argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : FileIO.File; ch : CHAR );
-(* Writes the textual representation of CHAR ch to stream outfile. This
+PROCEDURE [WRITE] Write ( outchan : ChanIO.Channel; ch : CHAR );
+(* Writes the textual representation of CHAR ch to channel outchan. This
    procedure is substituted for invocations of WRITE with a CHAR argument.*)
 
 PROCEDURE [WRITEF] WriteF
-  ( outfile      : FileIO.File;
+  ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     items        : ARGLIST >0 OF CHAR );
 (* Writes a formatted textual representation of one or more CHAR values to
-   output stream outfile. The output format is determined by fmtStr. This
+   output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    CHAR arguments. *)
 
