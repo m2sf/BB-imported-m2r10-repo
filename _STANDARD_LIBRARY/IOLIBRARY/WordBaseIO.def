@@ -4,7 +4,7 @@ DEFINITION MODULE WordBaseIO [ProtoIO] FOR WORD;
 
 (* IO Extension Library for Values of Type WORD *)
 
-IMPORT FileIO;
+IMPORT ChanIO;
 
 (* EBNF of the textual representation of WORD values:
     wordValue :
@@ -18,26 +18,26 @@ IMPORT FileIO;
     WORD values are always left padded with zeroes to the length
     required to represent the maximum value of type WORD. *)
 
-PROCEDURE [READ] Read ( infile : FileIO.File; VAR w : WORD );
-(* Reads the textual representation of a WORD value from stream infile
+PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR w : WORD );
+(* Reads the textual representation of a WORD value from channel inchan
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
-     removed from infile
+     removed from inchan
    - the textual representation of the value read is assigned to w
-   - the file status is set to any of:
+   - the channel status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a WORD argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : FileIO.File; w : WORD );
-(* Writes the value of WORD w in standard format to stream outfile. This
+PROCEDURE [WRITE] Write ( outchan : ChanIO.Channel; w : WORD );
+(* Writes the value of WORD w in standard format to channel outchan. This
    procedure is substituted for invocations of WRITE with a WORD argument.*)
 
 PROCEDURE [WRITEF] WriteF
-  ( outfile      : FileIO.File;
+  ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     items        : ARGLIST >0 OF WORD );
 (* Writes a formatted textual representation of one or more WORD values to
-   output stream outfile. The output format is determined by fmtStr. This
+   output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    WORD arguments. *)
 
