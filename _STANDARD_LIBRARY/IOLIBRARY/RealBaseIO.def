@@ -4,7 +4,7 @@ DEFINITION MODULE RealBaseIO [ProtoIO] FOR REAL;
 
 (* IO Extension Library for Values of Type REAL *)
 
-IMPORT FileIO;
+IMPORT ChanIO;
 
 (* EBNF of the textual representation of REAL values:
 
@@ -48,27 +48,27 @@ IMPORT FileIO;
 (* Bindings required for static ADTs by blueprint ProtoIO *)
 
 
-PROCEDURE [READ] Read( infile : FileIO.File; VAR r : REAL );
-(* Reads the textual representation of a REAL value from input stream infile
+PROCEDURE [READ] Read( inchan : ChanIO.Channel; VAR r : REAL );
+(* Reads the textual representation of a REAL value from input channel inchan
    - any leading whitespace is skipped
    - any remaining characters that are part of the numeral being read are
-     removed from infile
+     removed from inchan
    - the numeric value of the numeral string read is assigned to the variable
      passed in for r
-   - the file status is set to any of:
+   - the channel status is set to any of:
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
      procedure is substituted for invocations of READ with a REAL argument. *)
 
-PROCEDURE [WRITE] Write( outfile : FileIO.File; CONST r : REAL );
-(* Writes the textual representation of value r to output stream outfile. This
+PROCEDURE [WRITE] Write( outchan : ChanIO.Channel; CONST r : REAL );
+(* Writes the textual representation of value r to output channel outchan. This
    procedure is substituted for invocations of WRITE with a REAL argument. *)
 
 PROCEDURE [WRITEF] WriteF
-  ( outfile      : FileIO.File;
+  ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     items        : ARGLIST >0 OF REAL );
 (* Writes a formatted textual representation of one or more REAL values to
-   output stream outfile. The output format is determined by fmtStr. This
+   output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    REAL arguments. *)
 
