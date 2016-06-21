@@ -5,7 +5,7 @@ DEFINITION MODULE FIOSupport;
 (* Aggregator Module for File-Only I/O Operations of Predefined Types *)
 
 IMPORT StdFIO+;
-(* Imports StdIO into the importing modue. *)
+(* Imports StdFIO into the importing modue. *)
 
 IMPORT BooleanBaseFIO+, BooleanArrayFIO+;
 (* Imports FIO modules for predefined type BOOLEAN into the importing module. *)
