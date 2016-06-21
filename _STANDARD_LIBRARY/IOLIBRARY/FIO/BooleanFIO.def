@@ -1,0 +1,9 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE BooleanFIO;
+
+(* Import Aggregator for File-Only IO Extension Libraries of Type BOOLEAN *)
+
+IMPORT BooleanBaseFIO+, BooleanArrayFIO+;
+
+END BooleanFIO.
