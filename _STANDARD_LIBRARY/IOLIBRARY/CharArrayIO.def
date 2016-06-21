@@ -4,16 +4,16 @@ DEFINITION MODULE CharArrayIO [ProtoArrayIO] FOR CHAR;
 
 (* IO Extension Library for Array Types of CHAR *)
 
-IMPORT FileIO;
+IMPORT ChanIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FileIO.File; VAR array : BARE ARRAY OF CHAR );
+  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF CHAR );
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FileIO.File; CONST array : BARE ARRAY OF CHAR );
+  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF CHAR );
 
 PROCEDURE [WRITEF] WriteFArray
-  ( outfile : FileIO.File;
+  ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     CONST arrays : ARGLIST >0 OF BARE ARRAY OF CHAR );
 
