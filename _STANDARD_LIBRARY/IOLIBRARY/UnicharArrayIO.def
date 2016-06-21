@@ -4,16 +4,16 @@ DEFINITION MODULE UnicharArrayIO [ProtoArrayIO] FOR UNICHAR;
 
 (* IO Extension Library for Array Types of UNICHAR *)
 
-IMPORT FileIO;
+IMPORT ChanIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FileIO.File; VAR array : BARE ARRAY OF UNICHAR );
+  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF UNICHAR );
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FileIO.File; CONST array : BARE ARRAY OF UNICHAR );
+  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF UNICHAR );
 
 PROCEDURE [WRITEF] WriteFArray
-  ( outfile : FileIO.File;
+  ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     CONST arrays : ARGLIST >0 OF BARE ARRAY OF UNICHAR );
 
