@@ -1,0 +1,40 @@
+/* File-Only IO Library Module Hierarchy in GraphViz DOT */
+
+digraph FIO {
+  node [shape=none]
+  
+  "FIO Libraries" ->
+    { FIOSupport ByteFIO WordFIO AddressFIO };
+  
+  FIOSupport ->
+    { CharFIO UnicharFIO BooleanFIO 
+      OctetFIO CardinalFIO LongCardFIO IntegerFIO LongIntFIO RealFIO LongRealFIO };
+  
+  CharFIO -> { CharBaseFIO CharArrayFIO CharStrFIO };
+
+  BooleanFIO -> { BooleanBaseFIO BooleanArrayFIO };
+
+  UnicharFIO -> { UnicharBaseFIO UnicharArrayFIO UnicharStrFIO };
+  
+  OctetFIO -> { OctetBaseFIO OctetArrayFIO };
+  
+  CardinalFIO -> { CardinalBaseFIO CardinalArrayFIO };
+  
+  LongCardFIO -> { LongCardBaseFIO LongCardArrayFIO };
+
+  IntegerFIO -> { IntegerBaseFIO IntegerArrayFIO };
+  
+  LongIntFIO -> { LongIntBaseFIO LongIntArrayFIO };
+
+  RealFIO -> { RealBaseFIO RealArrayFIO };
+  
+  LongRealFIO -> { LongRealBaseFIO LongRealArrayFIO };
+  
+  ByteFIO -> { ByteBaseFIO ByteArrayFIO };
+
+  WordFIO -> { WordBaseFIO WordArrayFIO };
+
+  AddressFIO -> { AddressBaseFIO AddressArrayFIO };
+}
+
+/* END OF FILE */
