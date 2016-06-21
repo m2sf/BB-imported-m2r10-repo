@@ -1,0 +1,23 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ChanIO;
+
+(* Channel Based IO *)
+
+
+(* Channel Root Type *)
+
+TYPE Channel = RECORD ( NIL )
+  Get : PROCEDURE ( Channel, VAR OCTET) = InvalidGet;
+  Put : PROCEDURE ( Channel, OCTET) = InvalidPut
+END;
+
+(* Default Implementations for Get and Put *)
+
+PROCEDURE InvalidGet ( chan : Channel; VAR data : OCTET );
+(* Signals IO error or raises a runtime fault, implementation defined. *)
+
+PROCEDURE InvalidPut ( chan : Channel; data : OCTET );
+(* Signals IO error or raises a runtime fault, implementation defined. *)
+
+END ChanIO.
