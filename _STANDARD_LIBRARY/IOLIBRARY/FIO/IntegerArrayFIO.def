@@ -1,0 +1,20 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE IntegerArrayFIO [ProtoArrayIO] FOR INTEGER;
+
+(* File-Only IO Extension Library for Array Types of INTEGER *)
+
+IMPORT FilePtrIO;
+
+PROCEDURE [READ] ReadArray
+  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF INTEGER );
+
+PROCEDURE [WRITE] WriteArray
+  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF INTEGER );
+
+PROCEDURE [WRITEF] WriteFArray
+  ( outfile : FilePtrIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF INTEGER );
+
+END IntegerArrayFIO.
