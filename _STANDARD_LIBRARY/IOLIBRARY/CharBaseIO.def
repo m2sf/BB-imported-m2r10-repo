@@ -4,7 +4,7 @@ DEFINITION MODULE CharBaseIO [ProtoIO] FOR CHAR;
 
 (* Channel IO Extension Library for Values of Type CHAR *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 (* EBNF of the textual representation of CHAR values:
     charValue : textFormat | numericFormat ;
@@ -12,7 +12,9 @@ IMPORT ChanIO;
     numericFormat : "0u" base16Digit base16Digit ;
     base16Digit : "0" .. "9" | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR ch : CHAR );
+PROCEDURE [READ] Read
+  ( inchan : ChanIO.Channel; VAR ch : CHAR )
+  [ inchan = StdIO.in (* default argument *) ];
 (* Reads a CHAR value from channel inchan
    - any leading whitespace is skipped
    - the character being read is removed from inchan
@@ -21,14 +23,17 @@ PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR ch : CHAR );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a CHAR argument. *)
 
-PROCEDURE [WRITE] Write ( outchan : ChanIO.Channel; ch : CHAR );
+PROCEDURE [WRITE] Write
+  ( outchan : ChanIO.Channel; ch : CHAR )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes the textual representation of CHAR ch to channel outchan. This
    procedure is substituted for invocations of WRITE with a CHAR argument.*)
 
 PROCEDURE [WRITEF] WriteF
   ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF CHAR );
+    items        : ARGLIST >0 OF CHAR )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more CHAR values to
    output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
