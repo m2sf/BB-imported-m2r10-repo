@@ -2,7 +2,7 @@
 
 DEFINITION MODULE UnicharBaseIO [ProtoIO] FOR UNICHAR;
 
-(* IO Extension Library for Values of Type UNICHAR *)
+(* Channel IO Extension Library for Values of Type UNICHAR *)
 
 IMPORT ChanIO;
 
