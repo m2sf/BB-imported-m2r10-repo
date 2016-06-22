@@ -2,7 +2,7 @@
 
 DEFINITION MODULE UnicharBaseFIO [ProtoIO] FOR UNICHAR;
 
-(* File-Only IO Extension Library for Values of Type UNICHAR *)
+(* File-Pointer IO Extension Library for Values of Type UNICHAR *)
 
 IMPORT FilePtrIO;
 
