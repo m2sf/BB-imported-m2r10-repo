@@ -2,7 +2,7 @@
 
 DEFINITION MODULE WordArrayIO [ProtoArrayIO] FOR WORD;
 
-(* IO Extension Library for Array Types of WORD *)
+(* Channel IO Extension Library for Array Types of WORD *)
 
 IMPORT UNSAFE, ChanIO;
 
