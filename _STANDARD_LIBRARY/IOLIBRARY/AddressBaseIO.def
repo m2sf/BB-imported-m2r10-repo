@@ -2,7 +2,7 @@
 
 DEFINITION MODULE AddressBaseIO [ProtoIO] FOR ADDRESS;
 
-(* IO Extension Library for Values of Type ADDRESS *)
+(* Channel IO Extension Library for Values of Type ADDRESS *)
 
 IMPORT ChanIO;
 
