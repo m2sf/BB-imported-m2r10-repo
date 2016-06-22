@@ -4,17 +4,20 @@ DEFINITION MODULE LongRealArrayIO [ProtoArrayIO] FOR LONGREAL;
 
 (* Channel IO Extension Library for Array Types of LONGREAL *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 PROCEDURE [READ] ReadArray
-  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF LONGREAL );
+  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF LONGREAL )
+  [ inchan = StdIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF LONGREAL );
+  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF LONGREAL )
+  [ outchan = StdIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF LONGREAL );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF LONGREAL )
+  [ outchan = StdIO.out (* default argument *) ];
 
 END LongRealArrayIO.
