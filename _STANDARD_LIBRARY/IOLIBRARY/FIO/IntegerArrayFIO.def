@@ -2,7 +2,7 @@
 
 DEFINITION MODULE IntegerArrayFIO [ProtoArrayIO] FOR INTEGER;
 
-(* File-Only IO Extension Library for Array Types of INTEGER *)
+(* File-Pointer IO Extension Library for Array Types of INTEGER *)
 
 IMPORT FilePtrIO;
 
