@@ -2,7 +2,7 @@
 
 DEFINITION MODULE AddressIO;
 
-(* Import Aggregator for IO Extension Libraries of Type ADDRESS *)
+(* Import Aggregator for Channel IO Extension Libraries of Type ADDRESS *)
 
 IMPORT AddressBaseIO+, AddressArrayIO+;
 
