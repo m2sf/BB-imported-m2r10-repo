@@ -4,17 +4,20 @@ DEFINITION MODULE OctetArrayIO [ProtoArrayIO] FOR OCTET;
 
 (* Channel IO Extension Library for Array Types of OCTET *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 PROCEDURE [READ] ReadArray
-  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF OCTET );
+  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF OCTET )
+  [ inchan = StdIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF OCTET );
+  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF OCTET )
+  [ outchan = StdIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF OCTET );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF OCTET )
+  [ outchan = StdIO.out (* default argument *) ];
 
 END OctetArrayIO.
