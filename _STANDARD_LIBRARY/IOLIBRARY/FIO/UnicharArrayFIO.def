@@ -2,7 +2,7 @@
 
 DEFINITION MODULE UnicharArrayFIO [ProtoArrayIO] FOR UNICHAR;
 
-(* File-Only IO Extension Library for Array Types of UNICHAR *)
+(* File-Pointer IO Extension Library for Array Types of UNICHAR *)
 
 IMPORT FilePtrIO;
 
