@@ -1,0 +1,40 @@
+/* File-Descriptor Based IO Library Module Hierarchy in GraphViz DOT */
+
+digraph FDIO {
+  node [shape=none]
+  
+  "FDIO Libraries" ->
+    { FDIOSupport ByteFDIO WordFDIO AddressFDIO };
+  
+  FDIOSupport ->
+    { CharFDIO UnicharFDIO BooleanFDIO 
+      OctetFDIO CardinalFDIO LongCardFDIO IntegerFDIO LongIntFDIO RealFDIO LongRealFDIO };
+  
+  CharFDIO -> { CharBaseFDIO CharArrayFDIO CharStrFDIO };
+
+  BooleanFDIO -> { BooleanBaseFDIO BooleanArrayFDIO };
+
+  UnicharFDIO -> { UnicharBaseFDIO UnicharArrayFDIO UnicharStrFDIO };
+  
+  OctetFDIO -> { OctetBaseFDIO OctetArrayFDIO };
+  
+  CardinalFDIO -> { CardinalBaseFDIO CardinalArrayFDIO };
+  
+  LongCardFDIO -> { LongCardBaseFDIO LongCardArrayFDIO };
+
+  IntegerFDIO -> { IntegerBaseFDIO IntegerArrayFDIO };
+  
+  LongIntFDIO -> { LongIntBaseFDIO LongIntArrayFDIO };
+
+  RealFDIO -> { RealBaseFDIO RealArrayFDIO };
+  
+  LongRealFDIO -> { LongRealBaseFDIO LongRealArrayFDIO };
+  
+  ByteFDIO -> { ByteBaseFDIO ByteArrayFDIO };
+
+  WordFDIO -> { WordBaseFDIO WordArrayFDIO };
+
+  AddressFDIO -> { AddressBaseFDIO AddressArrayFDIO };
+}
+
+/* END OF FILE */
