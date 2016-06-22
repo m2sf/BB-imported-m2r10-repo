@@ -2,7 +2,7 @@
 
 DEFINITION MODULE IOSupport;
 
-(* Aggregator Module for I/O Operations of Predefined Types *)
+(* Aggregator Module for Channel I/O Operations of Predefined Types *)
 
 IMPORT StdIO+;
 (* Imports StdIO into the importing modue. *)
