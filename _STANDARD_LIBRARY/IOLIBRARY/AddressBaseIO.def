@@ -20,7 +20,7 @@ IMPORT ChanIO, StdIO;
 
 PROCEDURE [READ] Read
   ( inchan : ChanIO.Channel; VAR adr : ADDRESS )
-  [ inchan = StdIO.in (* default *) ];
+  [ inchan = StdIO.in (* default argument *) ];
 (* Reads the textual representation of an ADDRESS value from channel inchan
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -32,7 +32,7 @@ PROCEDURE [READ] Read
 
 PROCEDURE [WRITE] Write
   ( outchan : ChanIO.Channel; adr : ADDRESS )
-  [ outchan = StdIO.in (* default *) ];
+  [ outchan = StdIO.in (* default argument *) ];
 (* Writes the value of ADDRESS adr in standard format to channel outchan. This
    procedure is substituted for invocations of WRITE with an ADDRESS argument.*)
 
@@ -40,7 +40,7 @@ PROCEDURE [WRITE] WriteF
   ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     items        : ARGLIST >0 OF ADDRESS )
-  [ outchan = StdIO.in (* default *) ];
+  [ outchan = StdIO.in (* default argument *) ];
 (* Writes a formatted textual representation of one or more ADDRESS values to
    output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
