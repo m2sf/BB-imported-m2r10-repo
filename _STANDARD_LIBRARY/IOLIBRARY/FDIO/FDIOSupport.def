@@ -1,0 +1,40 @@
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE FDIOSupport;
+
+(* Aggregator Module for File-Descriptor I/O Operations of Predefined Types *)
+
+IMPORT StdFDIO+;
+(* Imports StdFDIO into the importing modue. *)
+
+IMPORT BooleanBaseFDIO+, BooleanArrayFDIO+;
+(* Imports FDIO modules for predefined type BOOLEAN into the importing module. *)
+
+IMPORT CharBaseFDIO+, CharArrayFDIO+, CharStrFDIO+;
+(* Imports FDIO modules for predefined type CHAR into the importing module. *)
+
+IMPORT UnicharBaseFDIO+, UnicharArrayFDIO+, UnicharStrFDIO+;
+(* Imports FDIO modules for predefined type UNICHAR into the importing module. *)
+
+IMPORT OctetBaseFDIO+, OctetArrayFDIO+;
+(* Imports FDIO modules for predefined type OCTET into the importing module. *)
+
+IMPORT CardinalBaseFDIO+, CardinalArrayFDIO+;
+(* Imports FDIO modules for predefined type CARDINAL into the importing module. *)
+
+IMPORT LongCardBaseFDIO+, LongCardArrayFDIO+;
+(* Imports FDIO modules for predefined type LONGCARD into the importing module. *)
+
+IMPORT IntegerBaseFDIO+, IntegerArrayFDIO+;
+(* Imports FDIO modules for predefined type INTEGER into the importing module. *)
+
+IMPORT LongIntBaseFDIO+, LongIntArrayFDIO+;
+(* Imports FDIO modules for predefined type LONGINT into the importing module. *)
+
+IMPORT RealBaseFDIO+, RealArrayFDIO+;
+(* Imports FDIO modules for predefined type REAL into the importing module. *)
+
+IMPORT LongRealBaseFDIO+, LongRealArrayFDIO+;
+(* Imports FDIO modules for pervasive type LONGREAL into the importing module. *)
+
+END FDIOSupport.
