@@ -4,17 +4,20 @@ DEFINITION MODULE LongCardArrayFIO [ProtoArrayIO] FOR LONGCARD;
 
 (* File-Pointer IO Extension Library for Array Types of LONGCARD *)
 
-IMPORT FilePtrIO;
+IMPORT FilePtrIO, StdFIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF LONGCARD );
+  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF LONGCARD )
+  [ infile = StdFIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF LONGCARD );
+  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF LONGCARD )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF LONGCARD );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF LONGCARD )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 END LongCardArrayFIO.
