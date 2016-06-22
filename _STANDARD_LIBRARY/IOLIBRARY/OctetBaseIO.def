@@ -2,7 +2,7 @@
 
 DEFINITION MODULE OctetBaseIO [ProtoIO] FOR OCTET;
 
-(* IO Extension Library for Values of Type OCTET *)
+(* Channel IO Extension Library for Values of Type OCTET *)
 
 IMPORT ChanIO;
 
