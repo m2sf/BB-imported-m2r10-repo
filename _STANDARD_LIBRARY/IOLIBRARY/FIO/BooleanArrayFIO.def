@@ -2,7 +2,7 @@
 
 DEFINITION MODULE BooleanArrayFIO [ProtoArrayIO] FOR BOOLEAN;
 
-(* File-Only IO Extension Library for Array Types of BOOLEAN *)
+(* File-Pointer IO Extension Library for Array Types of BOOLEAN *)
 
 IMPORT FilePtrIO;
 
