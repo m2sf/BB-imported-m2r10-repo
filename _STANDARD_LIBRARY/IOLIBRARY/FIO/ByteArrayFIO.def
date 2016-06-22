@@ -2,7 +2,7 @@
 
 DEFINITION MODULE ByteArrayFIO [ProtoArrayIO] FOR BYTE;
 
-(* File-Only IO Extension Library for Array Types of BYTE *)
+(* File-Pointer IO Extension Library for Array Types of BYTE *)
 
 IMPORT UNSAFE, FilePtrIO;
 
