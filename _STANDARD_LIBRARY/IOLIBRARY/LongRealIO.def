@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongRealIO;
 
-(* Import Aggregator for IO Extension Libraries of Type LONGREAL *)
+(* Import Aggregator for Channel IO Extension Libraries of Type LONGREAL *)
 
 IMPORT LongRealBaseIO+, LongRealArrayIO+;
 
