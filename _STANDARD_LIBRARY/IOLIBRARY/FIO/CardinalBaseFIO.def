@@ -2,7 +2,7 @@
 
 DEFINITION MODULE CardinalBaseFIO [ProtoIO] FOR CARDINAL;
 
-(* File-Only IO Extension Library for Values of Type CARDINAL *)
+(* File-Pointer IO Extension Library for Values of Type CARDINAL *)
 
 IMPORT FilePtrIO;
 
