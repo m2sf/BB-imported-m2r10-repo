@@ -1,0 +1,44 @@
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE AddressBaseFDIO [ProtoIO] FOR ADDRESS;
+
+(* File-Descriptor IO Extension Library for Values of Type ADDRESS *)
+
+IMPORT FileDescIO;
+
+(* EBNF of the textual representation of ADDRESS values:
+    addressValue :
+       digitGroup digitGroup ( groupSeparator? digitGroup digitGroup )* ;
+    digitGroup : base16Digit base16Digit ;
+    base16Digit : "0" .. "9" | "A" .. "F" ;
+    groupSeparator : " " | "." | ":" ;
+    
+    static semantics:
+    
+    ADDRESS values are always left padded with zeroes to the length
+    required to represent the maximum value of type ADDRESS. *)
+
+PROCEDURE [READ] Read ( infile : FileDescIO.File; VAR adr : ADDRESS );
+(* Reads the textual representation of an ADDRESS value from infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the value being read are
+     removed from infile
+   - the textual representation of the value read is assigned to adr
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an ADDRESS argument.*)
+
+PROCEDURE [WRITE] Write ( outfile : FileDescIO.File; adr : ADDRESS );
+(* Writes the value of ADDRESS adr in standard format to outfile. This
+   procedure is substituted for invocations of WRITE with an ADDRESS argument.*)
+
+PROCEDURE [WRITE] WriteF
+  ( outfile      : FileDescIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST >0 OF ADDRESS );
+(* Writes a formatted textual representation of one or more ADDRESS values to
+   outfile. The output format is determined by fmtStr. This procedure is sub-
+   stituted for invocations of WRITEF with one or more ADDRESS arguments. *)
+
+
+END AddressBaseFDIO.
