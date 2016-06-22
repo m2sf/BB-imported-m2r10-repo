@@ -4,7 +4,7 @@ DEFINITION MODULE CardinalBaseFIO [ProtoIO] FOR CARDINAL;
 
 (* File-Pointer IO Extension Library for Values of Type CARDINAL *)
 
-IMPORT FilePtrIO;
+IMPORT FilePtrIO, StdFIO;
 
 (* EBNF of the textual representation of CARDINAL values:
     cardinalValue : simpleFormat |
@@ -22,7 +22,9 @@ IMPORT FilePtrIO;
     decimalDigit  : "0" .. "9" ;
     base16Digit : decimalDigit | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR n : CARDINAL );
+PROCEDURE [READ] Read
+  ( infile : FilePtrIO.File; VAR n : CARDINAL )
+  [ infile = StdFIO.in (* default argument *) ];
 (* Reads the textual representation of a CARDINAL value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -32,18 +34,20 @@ PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR n : CARDINAL );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a CARDINAL argument.*)
 
-PROCEDURE [WRITE] Write ( outfile : FilePtrIO.File; n : CARDINAL );
+PROCEDURE [WRITE] Write
+  ( outfile : FilePtrIO.File; n : CARDINAL )
+  [ outfile = StdFIO.out (* default argument *) ];
 (* Writes the value of CARDINAL n in simple format to stream outfile. This pro-
    cedure is substituted for invocations of WRITE with a CARDINAL argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF CARDINAL );
+    items        : ARGLIST >0 OF CARDINAL )
+  [ outfile = StdFIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more CARDINAL values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    CARDINAL arguments. *)
-
 
 END CardinalBaseFIO.
