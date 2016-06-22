@@ -2,7 +2,7 @@
 
 DEFINITION MODULE ByteBaseFIO [ProtoIO] FOR BYTE;
 
-(* Base IO Extension Library for Values of Type BYTE *)
+(* File-Pointer IO Extension Library for Values of Type BYTE *)
 
 IMPORT UNSAFE, FilePtrIO;
 
