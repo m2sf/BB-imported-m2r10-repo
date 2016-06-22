@@ -4,17 +4,20 @@ DEFINITION MODULE CharArrayFIO [ProtoArrayIO] FOR CHAR;
 
 (* File-Pointer IO Extension Library for Array Types of CHAR *)
 
-IMPORT FilePtrIO;
+IMPORT FilePtrIO, StdFIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF CHAR );
+  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF CHAR )
+  [ infile = StdFIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF CHAR );
+  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF CHAR )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF CHAR );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF CHAR )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 END CharArrayFIO.
