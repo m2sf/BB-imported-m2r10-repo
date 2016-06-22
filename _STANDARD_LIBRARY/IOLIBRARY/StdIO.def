@@ -2,7 +2,7 @@
 
 DEFINITION MODULE StdIO;
 
-(* Standard IO Special File Access *)
+(* Channel Based Standard IO Special File Access *)
 
 IMPORT ChanIO;
 
