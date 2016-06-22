@@ -2,7 +2,7 @@
 
 DEFINITION MODULE ByteArrayIO [ProtoArrayIO] FOR BYTE;
 
-(* Common IO Extension Library for Array Types of BYTE *)
+(* Channel IO Extension Library for Array Types of BYTE *)
 
 IMPORT UNSAFE, ChanIO;
 
