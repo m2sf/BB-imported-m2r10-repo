@@ -2,7 +2,7 @@
 
 DEFINITION MODULE WordArrayFIO [ProtoArrayIO] FOR WORD;
 
-(* File-Only IO Extension Library for Array Types of WORD *)
+(* File-Pointer IO Extension Library for Array Types of WORD *)
 
 IMPORT UNSAFE, FilePtrIO;
 
