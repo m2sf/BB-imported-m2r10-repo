@@ -2,7 +2,7 @@
 
 DEFINITION MODULE WordBaseFIO [ProtoIO] FOR WORD;
 
-(* File-Only IO Extension Library for Values of Type WORD *)
+(* File-Pointer IO Extension Library for Values of Type WORD *)
 
 IMPORT FilePtrIO;
 
