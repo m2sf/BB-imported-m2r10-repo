@@ -2,7 +2,7 @@
 
 DEFINITION MODULE OctetIO;
 
-(* Import Aggregator for IO Extension Libraries of Type OCTET *)
+(* Import Aggregator for Channel IO Extension Libraries of Type OCTET *)
 
 IMPORT OctetBaseIO+, OctetArrayIO+;
 
