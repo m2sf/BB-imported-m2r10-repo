@@ -1,0 +1,20 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE CharStrFDIO [ProtoStrIO] FOR CHAR;
+
+(* File-Descriptor IO Extension Library for String Types of CHAR *)
+
+IMPORT FileDescIO;
+
+PROCEDURE [READ] ReadStr
+  ( infile : FileDescIO.File; VAR str : ARRAY OF CHAR );
+
+PROCEDURE [WRITE] WriteStr
+  ( outfile : FileDescIO.File; CONST str : ARRAY OF CHAR );
+
+PROCEDURE [WRITEF] WriteFStr
+  ( outfile : FileDescIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    CONST strings : ARGLIST >0 OF ARRAY OF CHAR );
+
+END CharStrFDIO.
