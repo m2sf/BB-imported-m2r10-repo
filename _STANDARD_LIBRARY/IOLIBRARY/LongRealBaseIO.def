@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongRealBaseIO [ProtoIO] FOR LONGREAL;
 
-(* IO Extension Library for Values of Type LONGREAL *)
+(* Channel IO Extension Library for Values of Type LONGREAL *)
 
 IMPORT ChanIO;
 
