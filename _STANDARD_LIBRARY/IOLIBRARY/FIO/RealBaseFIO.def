@@ -2,7 +2,7 @@
 
 DEFINITION MODULE RealBaseFIO [ProtoIO] FOR REAL;
 
-(* File-Only IO Extension Library for Values of Type REAL *)
+(* File-Pointer IO Extension Library for Values of Type REAL *)
 
 IMPORT FilePtrIO;
 
