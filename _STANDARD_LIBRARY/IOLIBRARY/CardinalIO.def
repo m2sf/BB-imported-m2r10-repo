@@ -2,7 +2,7 @@
 
 DEFINITION MODULE CardinalIO;
 
-(* Import Aggregator for IO Extension Libraries of Type CARDINAL *)
+(* Import Aggregator for Channel IO Extension Libraries of Type CARDINAL *)
 
 IMPORT CardinalBaseIO+, CardinalArrayIO+;
 
