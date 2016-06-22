@@ -2,7 +2,7 @@
 
 DEFINITION MODULE BooleanBaseIO [ProtoIO] FOR BOOLEAN;
 
-(* IO Extension Library for Values of Type BOOLEAN *)
+(* Channel IO Extension Library for Values of Type BOOLEAN *)
 
 IMPORT ChanIO;
 
