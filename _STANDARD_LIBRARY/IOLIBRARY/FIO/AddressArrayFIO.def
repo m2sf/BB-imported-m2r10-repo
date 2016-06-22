@@ -4,17 +4,20 @@ DEFINITION MODULE AddressArrayFIO [ProtoArrayIO] FOR ADDRESS;
 
 (* File-Pointer IO Extension Library for Array Types of ADDRESS *)
 
-IMPORT FilePtrIO;
+IMPORT UNSAFE, FilePtrIO, StdFIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF ADDRESS );
+  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF UNSAFE.ADDRESS )
+  [ infile = StdFIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF ADDRESS );
+  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF UNSAFE.ADDRESS )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF ADDRESS );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF UNSAFE.ADDRESS )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 END AddressArrayFIO.
