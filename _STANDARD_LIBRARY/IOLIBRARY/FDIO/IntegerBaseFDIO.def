@@ -1,0 +1,48 @@
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE IntegerBaseFDIO [ProtoIO] FOR INTEGER;
+
+(* File-Descriptor IO Extension Library for Values of Type INTEGER *)
+
+IMPORT FileDescIO;
+
+(* EBNF of the textual representation of INTEGER values:
+    integerValue : simpleFormat |
+        base16Format | rawBase16Format | universalFormat ;
+    simpleFormat : decimalDigit+ ;
+    base16Format : "0x" base16Digit+ ;
+    rawBase16Format : "0" base16Digit+ ;
+    universalFormat :  sign? fillChar* numeral ;
+    sign : "+" | "-" ;
+    fillChar : " " | "*" | "0" ;
+    numeral : leadDigitGroup ( separator? digitGroup )* ;
+    separator : " " | "'" | "." | "," ;
+    leadDigitGroup : decimalDigit decimalDigit? decimalDigit? ;
+    digitGroup : decimalDigit decimalDigit decimalDigit ;
+    decimalDigit  : "0" .. "9" ;
+    base16Digit : decimalDigit | "A" .. "F" ; *)
+
+PROCEDURE [READ] Read ( infile : FileDescIO.File; VAR i : INTEGER );
+(* Reads the textual representation of an INTEGER value from infile
+   - any leading whitespace is skipped
+   - any remaining characters that are part of the value being read are
+     removed from infile
+   - the textual representation of the value read is assigned to i
+   - the file status is set to any of:
+     success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
+   procedure is substituted for invocations of READ with an INTEGER argument.*)
+
+PROCEDURE [WRITE] Write ( outfile : FileDescIO.File; i : INTEGER );
+(* Writes the value of INTEGER i in simple format to outfile. This procedure
+   is substituted for invocations of WRITE with an INTEGER argument. *)
+
+PROCEDURE [WRITEF] WriteF
+  ( outfile      : FileDescIO.File;
+    CONST fmtStr : ARRAY OF CHAR;
+    items        : ARGLIST >0 OF INTEGER );
+(* Writes a formatted textual representation of one or more INTEGER values to
+   outfile. The output format is determined by fmtStr. This procedure is sub-
+   stituted for invocations of WRITEF with one or more INTEGER arguments. *)
+
+
+END IntegerBaseFDIO.
