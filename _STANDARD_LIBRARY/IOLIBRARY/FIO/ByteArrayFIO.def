@@ -4,17 +4,20 @@ DEFINITION MODULE ByteArrayFIO [ProtoArrayIO] FOR BYTE;
 
 (* File-Pointer IO Extension Library for Array Types of BYTE *)
 
-IMPORT UNSAFE, FilePtrIO;
+IMPORT UNSAFE, FilePtrIO, StdFIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FilePtrIO.File; VAR a : BARE ARRAY OF UNSAFE.BYTE );
+  ( infile : FilePtrIO.File; VAR a : BARE ARRAY OF UNSAFE.BYTE )
+  [ infile = StdFIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FilePtrIO.File; CONST a : BARE ARRAY OF UNSAFE.BYTE );
+  ( outfile : FilePtrIO.File; CONST a : BARE ARRAY OF UNSAFE.BYTE )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST items : ARGLIST >0 OF BARE ARRAY OF UNSAFE.BYTE );
+    CONST items : ARGLIST >0 OF BARE ARRAY OF UNSAFE.BYTE )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 END ByteArrayFIO.
