@@ -2,7 +2,7 @@
 
 DEFINITION MODULE BooleanIO;
 
-(* Import Aggregator for IO Extension Libraries of Type BOOLEAN *)
+(* Import Aggregator for Channel IO Extension Libraries of Type BOOLEAN *)
 
 IMPORT BooleanBaseIO+, BooleanArrayIO+;
 
