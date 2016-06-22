@@ -4,17 +4,20 @@ DEFINITION MODULE ByteArrayFDIO [ProtoArrayIO] FOR BYTE;
 
 (* File-Descriptor IO Extension Library for Array Types of BYTE *)
 
-IMPORT UNSAFE, FileDescIO;
+IMPORT UNSAFE, FileDescIO, StdFDIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FileDescIO.File; VAR a : BARE ARRAY OF UNSAFE.BYTE );
+  ( infile : FileDescIO.File; VAR a : BARE ARRAY OF UNSAFE.BYTE )
+  [ infile = StdFDIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FileDescIO.File; CONST a : BARE ARRAY OF UNSAFE.BYTE );
+  ( outfile : FileDescIO.File; CONST a : BARE ARRAY OF UNSAFE.BYTE )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FileDescIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST items : ARGLIST >0 OF BARE ARRAY OF UNSAFE.BYTE );
+    CONST items : ARGLIST >0 OF BARE ARRAY OF UNSAFE.BYTE )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 END ByteArrayFDIO.
