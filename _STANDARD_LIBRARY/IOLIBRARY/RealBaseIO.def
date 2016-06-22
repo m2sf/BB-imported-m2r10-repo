@@ -4,7 +4,7 @@ DEFINITION MODULE RealBaseIO [ProtoIO] FOR REAL;
 
 (* Channel IO Extension Library for Values of Type REAL *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 (* EBNF of the textual representation of REAL values:
 
@@ -44,11 +44,11 @@ IMPORT ChanIO;
     decimalPoint and separator must never both use the same symbol
     the value represented by engExponent must always be divisible by three. *)
 
-
 (* Bindings required for static ADTs by blueprint ProtoIO *)
 
-
-PROCEDURE [READ] Read( inchan : ChanIO.Channel; VAR r : REAL );
+PROCEDURE [READ] Read
+  ( inchan : ChanIO.Channel; VAR r : REAL )
+  [ inchan = StdIO.in (* default argument *) ];
 (* Reads the textual representation of a REAL value from input channel inchan
    - any leading whitespace is skipped
    - any remaining characters that are part of the numeral being read are
@@ -59,18 +59,20 @@ PROCEDURE [READ] Read( inchan : ChanIO.Channel; VAR r : REAL );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
      procedure is substituted for invocations of READ with a REAL argument. *)
 
-PROCEDURE [WRITE] Write( outchan : ChanIO.Channel; CONST r : REAL );
+PROCEDURE [WRITE] Write
+  ( outchan : ChanIO.Channel; CONST r : REAL )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes the textual representation of value r to output channel outchan. This
    procedure is substituted for invocations of WRITE with a REAL argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF REAL );
+    items        : ARGLIST >0 OF REAL )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more REAL values to
    output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    REAL arguments. *)
-
 
 END RealBaseIO.
