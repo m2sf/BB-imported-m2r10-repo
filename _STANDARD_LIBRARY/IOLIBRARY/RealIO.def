@@ -2,7 +2,7 @@
 
 DEFINITION MODULE RealIO;
 
-(* Import Aggregator for IO Extension Libraries of Type REAL *)
+(* Import Aggregator for Channel IO Extension Libraries of Type REAL *)
 
 IMPORT RealBaseIO+, RealArrayIO+;
 
