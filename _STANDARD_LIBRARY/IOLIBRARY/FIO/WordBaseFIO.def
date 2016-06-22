@@ -4,7 +4,7 @@ DEFINITION MODULE WordBaseFIO [ProtoIO] FOR WORD;
 
 (* File-Pointer IO Extension Library for Values of Type WORD *)
 
-IMPORT FilePtrIO;
+IMPORT UNSAFE, FilePtrIO, StdFIO;
 
 (* EBNF of the textual representation of WORD values:
     wordValue :
@@ -18,7 +18,9 @@ IMPORT FilePtrIO;
     WORD values are always left padded with zeroes to the length
     required to represent the maximum value of type WORD. *)
 
-PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR w : WORD );
+PROCEDURE [READ] Read
+  ( infile : FilePtrIO.File; VAR w : WORD )
+  [ infile = StdFIO.in (* default argument *) ];
 (* Reads the textual representation of a WORD value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -28,14 +30,17 @@ PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR w : WORD );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a WORD argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : FilePtrIO.File; w : WORD );
+PROCEDURE [WRITE] Write
+  ( outfile : FilePtrIO.File; w : WORD )
+  [ outfile = StdFIO.out (* default argument *) ];
 (* Writes the value of WORD w in standard format to stream outfile. This
    procedure is substituted for invocations of WRITE with a WORD argument.*)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF WORD );
+    items        : ARGLIST >0 OF WORD )
+  [ outfile = StdFIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more WORD values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
