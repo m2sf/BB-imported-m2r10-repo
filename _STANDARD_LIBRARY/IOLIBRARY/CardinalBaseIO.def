@@ -4,7 +4,7 @@ DEFINITION MODULE CardinalBaseIO [ProtoIO] FOR CARDINAL;
 
 (* Channel IO Extension Library for Values of Type CARDINAL *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 (* EBNF of the textual representation of CARDINAL values:
     cardinalValue : simpleFormat |
@@ -22,7 +22,9 @@ IMPORT ChanIO;
     decimalDigit  : "0" .. "9" ;
     base16Digit : decimalDigit | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR n : CARDINAL );
+PROCEDURE [READ] Read
+  ( inchan : ChanIO.Channel; VAR n : CARDINAL )
+  [ inchan = StdIO.in (* default argument *) ];
 (* Reads the textual representation of a CARDINAL value from channel inchan
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -32,14 +34,17 @@ PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR n : CARDINAL );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a CARDINAL argument.*)
 
-PROCEDURE [WRITE] Write ( outchan : ChanIO.Channel; n : CARDINAL );
+PROCEDURE [WRITE] Write
+  ( outchan : ChanIO.Channel; n : CARDINAL )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes the value of CARDINAL n in simple format to channel outchan. This pro-
    cedure is substituted for invocations of WRITE with a CARDINAL argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF CARDINAL );
+    items        : ARGLIST >0 OF CARDINAL )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more CARDINAL values to
    output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
