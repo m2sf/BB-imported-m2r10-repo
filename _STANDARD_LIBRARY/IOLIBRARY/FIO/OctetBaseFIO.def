@@ -2,7 +2,7 @@
 
 DEFINITION MODULE OctetBaseFIO [ProtoIO] FOR OCTET;
 
-(* File-Only IO Extension Library for Values of Type OCTET *)
+(* File-Pointer IO Extension Library for Values of Type OCTET *)
 
 IMPORT FilePtrIO;
 
