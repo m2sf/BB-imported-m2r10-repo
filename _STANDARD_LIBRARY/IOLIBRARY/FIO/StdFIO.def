@@ -6,13 +6,13 @@ DEFINITION MODULE StdFIO;
 
 IMPORT FilePtrIO;
 
-PROCEDURE [STDIN] in : FilePtrIO.File;
-(* Returns the file handle for stdin, bound to macro STDIN *)
+PROCEDURE in : FilePtrIO.File;
+(* Returns a file pointer associated with stdin *)
 
-PROCEDURE [STDOUT] out : FilePtrIO.File;
-(* Returns the file handle for stdout, bound to macro STDOUT *)
+PROCEDURE out : FilePtrIO.File;
+(* Returns a file pointer associated with stdout *)
 
-PROCEDURE [STDERR] err : FilePtrIO.File;
-(* Returns the file handle for stderr, bound to macro STDERR *)
+PROCEDURE err : FilePtrIO.File;
+(* Returns a file pointer associated with stderr *)
 
 END StdFIO.
