@@ -4,7 +4,7 @@ DEFINITION MODULE IntegerBaseFDIO [ProtoIO] FOR INTEGER;
 
 (* File-Descriptor IO Extension Library for Values of Type INTEGER *)
 
-IMPORT FileDescIO;
+IMPORT FileDescIO, StdFDIO;
 
 (* EBNF of the textual representation of INTEGER values:
     integerValue : simpleFormat |
@@ -22,7 +22,9 @@ IMPORT FileDescIO;
     decimalDigit  : "0" .. "9" ;
     base16Digit : decimalDigit | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( infile : FileDescIO.File; VAR i : INTEGER );
+PROCEDURE [READ] Read
+  ( infile : FileDescIO.File; VAR i : INTEGER )
+  [ infile = StdFDIO.in (* default argument *) ];
 (* Reads the textual representation of an INTEGER value from infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -32,17 +34,19 @@ PROCEDURE [READ] Read ( infile : FileDescIO.File; VAR i : INTEGER );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an INTEGER argument.*)
 
-PROCEDURE [WRITE] Write ( outfile : FileDescIO.File; i : INTEGER );
+PROCEDURE [WRITE] Write
+  ( outfile : FileDescIO.File; i : INTEGER )
+  [ outfile = StdFDIO.out (* default argument *) ];
 (* Writes the value of INTEGER i in simple format to outfile. This procedure
    is substituted for invocations of WRITE with an INTEGER argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : FileDescIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF INTEGER );
+    items        : ARGLIST >0 OF INTEGER )
+  [ outfile = StdFDIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more INTEGER values to
    outfile. The output format is determined by fmtStr. This procedure is sub-
    stituted for invocations of WRITEF with one or more INTEGER arguments. *)
-
 
 END IntegerBaseFDIO.
