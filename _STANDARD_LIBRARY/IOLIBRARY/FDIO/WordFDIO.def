@@ -1,0 +1,9 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE WordFDIO;
+
+(* Import Aggregator for File-Descriptor IO Extension Libraries of Type WORD *)
+
+IMPORT WordBaseFDIO+, WordArrayFDIO+;
+
+END WordFDIO.
