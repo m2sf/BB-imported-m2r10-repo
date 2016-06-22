@@ -4,17 +4,20 @@ DEFINITION MODULE CardinalArrayFIO [ProtoArrayIO] FOR CARDINAL;
 
 (* File-Pointer IO Extension Library for Array Types of CARDINAL *)
 
-IMPORT FilePtrIO;
+IMPORT FilePtrIO, StdFIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF CARDINAL );
+  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF CARDINAL )
+  [ infile = StdFIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF CARDINAL );
+  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF CARDINAL )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF CARDINAL );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF CARDINAL )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 END CardinalArrayFIO.
