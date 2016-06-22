@@ -2,7 +2,7 @@
 
 DEFINITION MODULE IntegerArrayIO [ProtoArrayIO] FOR INTEGER;
 
-(* IO Extension Library for Array Types of INTEGER *)
+(* Channel IO Extension Library for Array Types of INTEGER *)
 
 IMPORT ChanIO;
 
