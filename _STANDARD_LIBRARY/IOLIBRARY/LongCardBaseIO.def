@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongCardBaseIO [ProtoIO] FOR LONGCARD;
 
-(* IO Extension Library for Values of Type LONGCARD *)
+(* Channel IO Extension Library for Values of Type LONGCARD *)
 
 IMPORT ChanIO;
 
