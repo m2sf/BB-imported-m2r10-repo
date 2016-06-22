@@ -4,14 +4,16 @@ DEFINITION MODULE BooleanBaseIO [ProtoIO] FOR BOOLEAN;
 
 (* Channel IO Extension Library for Values of Type BOOLEAN *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 (* EBNF of the textual representation of BOOLEAN values:
     boolValue : trueFalseFormat | yesNoFormat ;
     trueFalseFormat : "TRUE" | "FALSE" ;
     yesNoFormat : "YES" | "NO" ; *)
 
-PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR b : BOOLEAN );
+PROCEDURE [READ] Read
+  ( inchan : ChanIO.Channel; VAR b : BOOLEAN )
+  [ inchan = StdIO.in (* default argument *) ];
 (* Reads the textual representation of a BOOLEAN value from channel inchan
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -21,14 +23,17 @@ PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR b : BOOLEAN );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a BOOLEAN argument.*)
 
-PROCEDURE [WRITE] Write ( outchan : ChanIO.Channel; b : BOOLEAN );
+PROCEDURE [WRITE] Write
+  ( outchan : ChanIO.Channel; b : BOOLEAN )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes the textual representation of BOOLEAN b to channel outchan. This
    procedure is substituted for invocations of WRITE with a BOOLEAN argument.*)
 
 PROCEDURE [WRITEF] WriteF
   ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF BOOLEAN );
+    items        : ARGLIST >0 OF BOOLEAN )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more BOOLEAN values to
    output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
