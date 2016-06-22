@@ -2,7 +2,7 @@
 
 DEFINITION MODULE IntegerIO;
 
-(* Import Aggregator for IO Extension Libraries of Type INTEGER *)
+(* Import Aggregator for Channel IO Extension Libraries of Type INTEGER *)
 
 IMPORT IntegerBaseIO+, IntegerArrayIO+;
 
