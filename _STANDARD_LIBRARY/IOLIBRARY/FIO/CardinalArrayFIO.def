@@ -2,7 +2,7 @@
 
 DEFINITION MODULE CardinalArrayFIO [ProtoArrayIO] FOR CARDINAL;
 
-(* File-Only IO Extension Library for Array Types of CARDINAL *)
+(* File-Pointer IO Extension Library for Array Types of CARDINAL *)
 
 IMPORT FilePtrIO;
 
