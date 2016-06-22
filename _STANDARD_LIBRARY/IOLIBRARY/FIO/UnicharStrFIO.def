@@ -2,7 +2,7 @@
 
 DEFINITION MODULE UnicharStrFIO [ProtoStrIO] FOR UNICHAR;
 
-(* File-Only IO Extension Library for String Types of UNICHAR *)
+(* File-Pointer IO Extension Library for String Types of UNICHAR *)
 
 IMPORT FilePtrIO;
 
