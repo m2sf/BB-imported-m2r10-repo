@@ -2,7 +2,7 @@
 
 DEFINITION MODULE ByteIO;
 
-(* Import Aggregator for IO Extension Libraries of Type BYTE *)
+(* Import Aggregator for Channel IO Extension Libraries of Type BYTE *)
 
 IMPORT ByteBaseIO+, ByteArrayIO+;
 
