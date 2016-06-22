@@ -6,13 +6,13 @@ DEFINITION MODULE StdIO;
 
 IMPORT ChanIO;
 
-PROCEDURE [STDIN] in : ChanIO.Channel;
-(* Returns the file handle for stdin, bound to macro STDIN *)
+PROCEDURE in : ChanIO.Channel;
+(* Returns an IO channel associated with stdin *)
 
-PROCEDURE [STDOUT] out : ChanIO.Channel;
-(* Returns the file handle for stdout, bound to macro STDOUT *)
+PROCEDURE out : ChanIO.Channel;
+(* Returns an IO channel associated with stdout *)
 
-PROCEDURE [STDERR] err : ChanIO.Channel;
-(* Returns the file handle for stderr, bound to macro STDERR *)
+PROCEDURE err : ChanIO.Channel;
+(* Returns an IO channel associated with stderr *)
 
 END StdIO.
