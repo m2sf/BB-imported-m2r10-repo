@@ -4,7 +4,7 @@ DEFINITION MODULE WordBaseFDIO [ProtoIO] FOR WORD;
 
 (* File-Descriptor IO Extension Library for Values of Type WORD *)
 
-IMPORT FileDescIO;
+IMPORT UNSAFE, FileDescIO, StdFDIO;
 
 (* EBNF of the textual representation of WORD values:
     wordValue :
@@ -18,7 +18,9 @@ IMPORT FileDescIO;
     WORD values are always left padded with zeroes to the length
     required to represent the maximum value of type WORD. *)
 
-PROCEDURE [READ] Read ( infile : FileDescIO.File; VAR w : WORD );
+PROCEDURE [READ] Read
+  ( infile : FileDescIO.File; VAR w : UNSAFE.WORD )
+  [ infile = StdFDIO.in (* default argument *) ];
 (* Reads the textual representation of a WORD value from infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -28,14 +30,17 @@ PROCEDURE [READ] Read ( infile : FileDescIO.File; VAR w : WORD );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a WORD argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : FileDescIO.File; w : WORD );
+PROCEDURE [WRITE] Write
+  ( outfile : FileDescIO.File; w : UNSAFE.WORD )
+  [ outfile = StdFDIO.out (* default argument *) ];
 (* Writes the value of WORD w in standard format to outfile. This procedure
    is substituted for invocations of WRITE with a WORD argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : FileDescIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF WORD );
+    items        : ARGLIST >0 OF UNSAFE.WORD )
+  [ outfile = StdFDIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more WORD values to
    outfile. The output format is determined by fmtStr. This procedure is
    substituted for invocations of WRITEF with one or more WORD arguments. *)
