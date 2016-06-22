@@ -4,7 +4,7 @@ DEFINITION MODULE UnicharBaseIO [ProtoIO] FOR UNICHAR;
 
 (* Channel IO Extension Library for Values of Type UNICHAR *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 (* EBNF of the textual representation of UNICHAR values:
     charValue : textFormat | numericFormat ;
@@ -12,7 +12,9 @@ IMPORT ChanIO;
     numericFormat : "0u" ( base16Digit base16Digit )+ ;
     base16Digit : "0" .. "9" | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR ch : UNICHAR );
+PROCEDURE [READ] Read
+  ( inchan : ChanIO.Channel; VAR ch : UNICHAR )
+  [ inchan = StdIO.in (* default argument *) ];
 (* Reads a UNICHAR value from channel inchan
    - any leading whitespace is skipped
    - the character being read is removed from inchan
@@ -21,14 +23,17 @@ PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR ch : UNICHAR );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a UNICHAR argument. *)
 
-PROCEDURE [WRITE] Write ( outchan : ChanIO.Channel; ch : UNICHAR );
+PROCEDURE [WRITE] Write
+  ( outchan : ChanIO.Channel; ch : UNICHAR )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes the textual representation of UNICHAR ch to chanel outchan. This
    procedure is substituted for invocations of WRITE with a UNICHAR argument.*)
 
 PROCEDURE [WRITEF] WriteF
   ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF UNICHAR );
+    items        : ARGLIST >0 OF UNICHAR )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more UNICHAR values to
    output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
