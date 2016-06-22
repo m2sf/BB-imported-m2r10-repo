@@ -4,7 +4,7 @@ DEFINITION MODULE IntegerBaseFIO [ProtoIO] FOR INTEGER;
 
 (* File-Pointer IO Extension Library for Values of Type INTEGER *)
 
-IMPORT FilePtrIO;
+IMPORT FilePtrIO, StdFIO;
 
 (* EBNF of the textual representation of INTEGER values:
     integerValue : simpleFormat |
@@ -22,7 +22,9 @@ IMPORT FilePtrIO;
     decimalDigit  : "0" .. "9" ;
     base16Digit : decimalDigit | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR i : INTEGER );
+PROCEDURE [READ] Read
+  ( infile : FilePtrIO.File; VAR i : INTEGER )
+  [ infile = StdFIO.in (* default argument *) ];
 (* Reads the textual representation of an INTEGER value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -32,18 +34,20 @@ PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR i : INTEGER );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an INTEGER argument.*)
 
-PROCEDURE [WRITE] Write ( outfile : FilePtrIO.File; i : INTEGER );
+PROCEDURE [WRITE] Write
+  ( outfile : FilePtrIO.File; i : INTEGER )
+  [ outfile = StdFIO.out (* default argument *) ];
 (* Writes the value of INTEGER i in simple format to stream outfile. This pro-
    cedure is substituted for invocations of WRITE with an INTEGER argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF INTEGER );
+    items        : ARGLIST >0 OF INTEGER )
+  [ outfile = StdFIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more INTEGER values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    INTEGER arguments. *)
-
 
 END IntegerBaseFIO.
