@@ -4,7 +4,7 @@ DEFINITION MODULE OctetBaseIO [ProtoIO] FOR OCTET;
 
 (* Channel IO Extension Library for Values of Type OCTET *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 (* EBNF of the textual representation of OCTET values:
     octetValue : simpleFormat |
@@ -17,7 +17,9 @@ IMPORT ChanIO;
     base16Digit : "0" .. "9" | "A" .. "F" ;
     bit : "0" | "1" ; *)
 
-PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR n : OCTET );
+PROCEDURE [READ] Read
+  ( inchan : ChanIO.Channel; VAR n : OCTET )
+  [ inchan = StdIO.in (* default argument *) ];
 (* Reads the textual representation of an OCTET value from channel inchan
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -27,18 +29,20 @@ PROCEDURE [READ] Read ( inchan : ChanIO.Channel; VAR n : OCTET );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an OCTET argument.*)
 
-PROCEDURE [WRITE] Write ( outchan : ChanIO.Channel; n : OCTET );
+PROCEDURE [WRITE] Write
+  ( outchan : ChanIO.Channel; n : OCTET )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes the value of OCTET n in simple format to channel outchan. This pro-
    cedure is substituted for invocations of WRITE with an OCTET argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF OCTET );
+    items        : ARGLIST >0 OF OCTET )
+  [ outchan = StdIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more OCTET values to
    output channel outchan. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    OCTET arguments. *)
-
 
 END OctetBaseIO.
