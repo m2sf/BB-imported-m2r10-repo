@@ -2,7 +2,7 @@
 
 DEFINITION MODULE CharArrayFIO [ProtoArrayIO] FOR CHAR;
 
-(* File-Only IO Extension Library for Array Types of CHAR *)
+(* File-Pointer IO Extension Library for Array Types of CHAR *)
 
 IMPORT FilePtrIO;
 
