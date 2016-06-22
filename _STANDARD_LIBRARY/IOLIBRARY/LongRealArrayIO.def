@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongRealArrayIO [ProtoArrayIO] FOR LONGREAL;
 
-(* IO Extension Library for Array Types of LONGREAL *)
+(* Channel IO Extension Library for Array Types of LONGREAL *)
 
 IMPORT ChanIO;
 
