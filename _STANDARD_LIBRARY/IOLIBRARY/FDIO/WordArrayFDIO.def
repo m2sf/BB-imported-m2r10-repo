@@ -4,17 +4,20 @@ DEFINITION MODULE WordArrayFDIO [ProtoArrayIO] FOR WORD;
 
 (* File-Descriptor IO Extension Library for Array Types of WORD *)
 
-IMPORT UNSAFE, FileDescIO;
+IMPORT UNSAFE, FileDescIO, StdFDIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FileDescIO.File; VAR array : BARE ARRAY OF UNSAFE.WORD );
+  ( infile : FileDescIO.File; VAR array : BARE ARRAY OF UNSAFE.WORD )
+  [ infile = StdFDIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FileDescIO.File; CONST array : BARE ARRAY OF UNSAFE.WORD );
+  ( outfile : FileDescIO.File; CONST array : BARE ARRAY OF UNSAFE.WORD )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FileDescIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF UNSAFE.WORD );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF UNSAFE.WORD )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 END WordArrayFDIO.
