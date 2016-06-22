@@ -2,7 +2,7 @@
 
 DEFINITION MODULE UnicharStrIO [ProtoStrIO] FOR UNICHAR;
 
-(* IO Extension Library for String Types of UNICHAR *)
+(* Channel IO Extension Library for String Types of UNICHAR *)
 
 IMPORT ChanIO;
 
