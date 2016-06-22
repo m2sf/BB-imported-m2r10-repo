@@ -2,7 +2,7 @@
 
 DEFINITION MODULE WordBaseIO [ProtoIO] FOR WORD;
 
-(* IO Extension Library for Values of Type WORD *)
+(* Channel IO Extension Library for Values of Type WORD *)
 
 IMPORT ChanIO;
 
