@@ -1,4 +1,4 @@
-/* File-Only IO Library Module Hierarchy in GraphViz DOT */
+/* File-Pointer IO Library Module Hierarchy in GraphViz DOT */
 
 digraph FIO {
   node [shape=none]
