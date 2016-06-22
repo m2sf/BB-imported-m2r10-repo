@@ -4,14 +4,16 @@ DEFINITION MODULE BooleanBaseFDIO [ProtoIO] FOR BOOLEAN;
 
 (* File-Descriptor IO Extension Library for Values of Type BOOLEAN *)
 
-IMPORT FileDescIO;
+IMPORT FileDescIO, StdFDIO;
 
 (* EBNF of the textual representation of BOOLEAN values:
     boolValue : trueFalseFormat | yesNoFormat ;
     trueFalseFormat : "TRUE" | "FALSE" ;
     yesNoFormat : "YES" | "NO" ; *)
 
-PROCEDURE [READ] Read ( infile : FileDescIO.File; VAR b : BOOLEAN );
+PROCEDURE [READ] Read
+  ( infile : FileDescIO.File; VAR b : BOOLEAN )
+  [ infile = StdFDIO.in (* default argument *) ];
 (* Reads the textual representation of a BOOLEAN value from infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -21,14 +23,17 @@ PROCEDURE [READ] Read ( infile : FileDescIO.File; VAR b : BOOLEAN );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a BOOLEAN argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : FileDescIO.File; b : BOOLEAN );
+PROCEDURE [WRITE] Write
+  ( outfile : FileDescIO.File; b : BOOLEAN )
+  [ outfile = StdFDIO.out (* default argument *) ];
 (* Writes the textual representation of BOOLEAN b to outfile. This procedure
    is substituted for invocations of WRITE with a BOOLEAN argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : FileDescIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF BOOLEAN );
+    items        : ARGLIST >0 OF BOOLEAN )
+  [ outfile = StdFDIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more BOOLEAN values to
    outfile. The output format is determined by fmtStr. This procedure is sub-
    stituted for invocations of WRITEF with one or more BOOLEAN arguments. *)
