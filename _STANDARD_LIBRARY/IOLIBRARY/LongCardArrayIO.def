@@ -4,17 +4,20 @@ DEFINITION MODULE LongCardArrayIO [ProtoArrayIO] FOR LONGCARD;
 
 (* CHannel IO Extension Library for Array Types of LONGCARD *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 PROCEDURE [READ] ReadArray
-  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF LONGCARD );
+  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF LONGCARD )
+  [ inchan = StdIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF LONGCARD );
+  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF LONGCARD )
+  [ outchan = StdIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF LONGCARD );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF LONGCARD )
+  [ outchan = StdIO.out (* default argument *) ];
 
 END LongCardArrayIO.
