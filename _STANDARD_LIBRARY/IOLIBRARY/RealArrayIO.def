@@ -4,17 +4,20 @@ DEFINITION MODULE RealArrayIO [ProtoArrayIO] FOR REAL;
 
 (* Channel IO Extension Library for Array Types of REAL *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 PROCEDURE [READ] ReadArray
-  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF REAL );
+  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF REAL )
+  [ inchan = StdIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF REAL );
+  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF REAL )
+  [ outchan = StdIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF REAL );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF REAL )
+  [ outchan = StdIO.out (* default argument *) ];
 
 END RealArrayIO.
