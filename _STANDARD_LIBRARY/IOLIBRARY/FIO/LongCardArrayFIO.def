@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongCardArrayFIO [ProtoArrayIO] FOR LONGCARD;
 
-(* File-Only IO Extension Library for Array Types of LONGCARD *)
+(* File-Pointer IO Extension Library for Array Types of LONGCARD *)
 
 IMPORT FilePtrIO;
 
