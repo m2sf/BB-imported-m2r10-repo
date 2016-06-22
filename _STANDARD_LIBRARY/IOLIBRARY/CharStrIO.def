@@ -4,17 +4,20 @@ DEFINITION MODULE CharStrIO [ProtoStrIO] FOR CHAR;
 
 (* Channel IO Extension Library for String Types of CHAR *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 PROCEDURE [READ] ReadStr
-  ( inchan : ChanIO.Channel; VAR str : ARRAY OF CHAR );
+  ( inchan : ChanIO.Channel; VAR str : ARRAY OF CHAR )
+  [ inchan = StdIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteStr
-  ( outchan : ChanIO.Channel; CONST str : ARRAY OF CHAR );
+  ( outchan : ChanIO.Channel; CONST str : ARRAY OF CHAR )
+  [ outchan = StdIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFStr
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST strings : ARGLIST >0 OF ARRAY OF CHAR );
+    CONST strings : ARGLIST >0 OF ARRAY OF CHAR )
+  [ outchan = StdIO.out (* default argument *) ];
 
 END CharStrIO.
