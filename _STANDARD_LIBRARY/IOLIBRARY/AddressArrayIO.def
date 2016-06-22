@@ -4,20 +4,20 @@ DEFINITION MODULE AddressArrayIO [ProtoArrayIO] FOR ADDRESS;
 
 (* Channel IO Extension Library for Array Types of ADDRESS *)
 
-IMPORT ChanIO, StdIO;
+IMPORT UNSAFE, ChanIO, StdIO;
 
 PROCEDURE [READ] ReadArray
-  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF ADDRESS )
+  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF UNSAFE.ADDRESS )
   [ inchan = StdIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF ADDRESS )
+  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF UNSAFE.ADDRESS )
   [ outchan = StdIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF ADDRESS )
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF UNSAFE.ADDRESS )
   [ outchan = StdIO.out (* default argument *) ];
 
 END AddressArrayIO.
