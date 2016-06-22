@@ -4,17 +4,20 @@ DEFINITION MODULE LongRealArrayFDIO [ProtoArrayIO] FOR LONGREAL;
 
 (* File-Descriptor IO Extension Library for Array Types of LONGREAL *)
 
-IMPORT FileDescIO;
+IMPORT FileDescIO, StdFDIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FileDescIO.File; VAR array : BARE ARRAY OF LONGREAL );
+  ( infile : FileDescIO.File; VAR array : BARE ARRAY OF LONGREAL )
+  [ infile = StdFDIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FileDescIO.File; CONST array : BARE ARRAY OF LONGREAL );
+  ( outfile : FileDescIO.File; CONST array : BARE ARRAY OF LONGREAL )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FileDescIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF LONGREAL );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF LONGREAL )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 END LongRealArrayFDIO.
