@@ -2,7 +2,7 @@
 
 DEFINITION MODULE CardinalBaseIO [ProtoIO] FOR CARDINAL;
 
-(* IO Extension Library for Values of Type CARDINAL *)
+(* Channel IO Extension Library for Values of Type CARDINAL *)
 
 IMPORT ChanIO;
 
