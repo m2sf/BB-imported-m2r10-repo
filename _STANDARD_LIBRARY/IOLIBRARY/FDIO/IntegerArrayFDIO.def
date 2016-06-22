@@ -4,17 +4,20 @@ DEFINITION MODULE IntegerArrayFDIO [ProtoArrayIO] FOR INTEGER;
 
 (* File-Descriptor IO Extension Library for Array Types of INTEGER *)
 
-IMPORT FileDescIO;
+IMPORT FileDescIO, StdFDIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FileDescIO.File; VAR array : BARE ARRAY OF INTEGER );
+  ( infile : FileDescIO.File; VAR array : BARE ARRAY OF INTEGER )
+  [ infile = StdFDIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FileDescIO.File; CONST array : BARE ARRAY OF INTEGER );
+  ( outfile : FileDescIO.File; CONST array : BARE ARRAY OF INTEGER )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FileDescIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF INTEGER );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF INTEGER )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 END IntegerArrayFDIO.
