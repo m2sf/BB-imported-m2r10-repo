@@ -2,7 +2,7 @@
 
 DEFINITION MODULE FIOSupport;
 
-(* Aggregator Module for File-Only I/O Operations of Predefined Types *)
+(* Aggregator Module for File-Pointer I/O Operations of Predefined Types *)
 
 IMPORT StdFIO+;
 (* Imports StdFIO into the importing modue. *)
