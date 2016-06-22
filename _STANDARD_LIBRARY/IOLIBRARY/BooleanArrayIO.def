@@ -2,7 +2,7 @@
 
 DEFINITION MODULE BooleanArrayIO [ProtoArrayIO] FOR BOOLEAN;
 
-(* IO Extension Library for Array Types of BOOLEAN *)
+(* Channel IO Extension Library for Array Types of BOOLEAN *)
 
 IMPORT ChanIO;
 
