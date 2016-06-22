@@ -6,13 +6,13 @@ DEFINITION MODULE StdFDIO;
 
 IMPORT FileDescIO;
 
-PROCEDURE [STDIN] in : FileDescIO.File;
-(* Returns the file handle for stdin, bound to macro STDIN *)
+PROCEDURE in : FileDescIO.File;
+(* Returns a file descriptor associated with stdin *)
 
-PROCEDURE [STDOUT] out : FileDescIO.File;
-(* Returns the file handle for stdout, bound to macro STDOUT *)
+PROCEDURE out : FileDescIO.File;
+(* Returns a file descriptor associated with stdout *)
 
-PROCEDURE [STDERR] err : FileDescIO.File;
-(* Returns the file handle for stderr, bound to macro STDERR *)
+PROCEDURE err : FileDescIO.File;
+(* Returns a file descriptor associated with stderr *)
 
 END StdFDIO.
