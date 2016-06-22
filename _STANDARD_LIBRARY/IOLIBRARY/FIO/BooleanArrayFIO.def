@@ -4,17 +4,20 @@ DEFINITION MODULE BooleanArrayFIO [ProtoArrayIO] FOR BOOLEAN;
 
 (* File-Pointer IO Extension Library for Array Types of BOOLEAN *)
 
-IMPORT FilePtrIO;
+IMPORT FilePtrIO, StdFIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF BOOLEAN );
+  ( infile : FilePtrIO.File; VAR array : BARE ARRAY OF BOOLEAN )
+  [ infile = StdFIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF BOOLEAN );
+  ( outfile : FilePtrIO.File; CONST array : BARE ARRAY OF BOOLEAN )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF BOOLEAN );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF BOOLEAN )
+  [ outfile = StdFIO.out (* default argument *) ];
 
 END BooleanArrayFIO.
