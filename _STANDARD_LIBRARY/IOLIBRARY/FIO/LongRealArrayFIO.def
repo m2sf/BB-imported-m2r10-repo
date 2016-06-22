@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongRealArrayFIO [ProtoArrayIO] FOR LONGREAL;
 
-(* File-Only IO Extension Library for Array Types of LONGREAL *)
+(* File-Pointer IO Extension Library for Array Types of LONGREAL *)
 
 IMPORT FilePtrIO;
 
