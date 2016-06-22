@@ -4,17 +4,20 @@ DEFINITION MODULE CharStrFDIO [ProtoStrIO] FOR CHAR;
 
 (* File-Descriptor IO Extension Library for String Types of CHAR *)
 
-IMPORT FileDescIO;
+IMPORT FileDescIO, StdFDIO;
 
 PROCEDURE [READ] ReadStr
-  ( infile : FileDescIO.File; VAR str : ARRAY OF CHAR );
+  ( infile : FileDescIO.File; VAR str : ARRAY OF CHAR )
+  [ infile = StdFDIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteStr
-  ( outfile : FileDescIO.File; CONST str : ARRAY OF CHAR );
+  ( outfile : FileDescIO.File; CONST str : ARRAY OF CHAR )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFStr
   ( outfile : FileDescIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST strings : ARGLIST >0 OF ARRAY OF CHAR );
+    CONST strings : ARGLIST >0 OF ARRAY OF CHAR )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 END CharStrFDIO.
