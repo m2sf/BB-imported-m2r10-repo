@@ -2,7 +2,7 @@
 
 DEFINITION MODULE CardinalFIO;
 
-(* Import Aggregator for File-Only IO Extension Libraries of Type CARDINAL *)
+(* Import Aggregator for File-Pointer IO Extension Libraries of Type CARDINAL *)
 
 IMPORT CardinalBaseFIO+, CardinalArrayFIO+;
 
