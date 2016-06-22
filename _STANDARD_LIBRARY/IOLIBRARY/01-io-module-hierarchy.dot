@@ -1,4 +1,4 @@
-/* IO Library Module Hierarchy in GraphViz DOT */
+/* Channel IO Library Module Hierarchy in GraphViz DOT */
 
 digraph IO {
   node [shape=none]
