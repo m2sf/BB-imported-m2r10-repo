@@ -2,7 +2,7 @@
 
 DEFINITION MODULE StdFDIO;
 
-(* File-Descriptor Standard IO Special File Access *)
+(* File-Descriptor Based Standard IO Special File Access *)
 
 IMPORT FileDescIO;
 
