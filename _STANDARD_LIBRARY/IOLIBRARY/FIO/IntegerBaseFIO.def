@@ -2,7 +2,7 @@
 
 DEFINITION MODULE IntegerBaseFIO [ProtoIO] FOR INTEGER;
 
-(* File-Only IO Extension Library for Values of Type INTEGER *)
+(* File-Pointer IO Extension Library for Values of Type INTEGER *)
 
 IMPORT FilePtrIO;
 
