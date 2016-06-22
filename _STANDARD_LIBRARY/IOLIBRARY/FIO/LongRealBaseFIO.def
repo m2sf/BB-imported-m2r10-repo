@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongRealBaseFIO [ProtoIO] FOR LONGREAL;
 
-(* File-Only IO Extension Library for Values of Type LONGREAL *)
+(* File-Pointer IO Extension Library for Values of Type LONGREAL *)
 
 IMPORT FilePtrIO;
 
