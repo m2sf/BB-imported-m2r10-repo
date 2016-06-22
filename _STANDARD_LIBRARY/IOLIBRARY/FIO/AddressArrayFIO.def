@@ -2,7 +2,7 @@
 
 DEFINITION MODULE AddressArrayFIO [ProtoArrayIO] FOR ADDRESS;
 
-(* File-Only IO Extension Library for Array Types of ADDRESS *)
+(* File-Pointer IO Extension Library for Array Types of ADDRESS *)
 
 IMPORT FilePtrIO;
 
