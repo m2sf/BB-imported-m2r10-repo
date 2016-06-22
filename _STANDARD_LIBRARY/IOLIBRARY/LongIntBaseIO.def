@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongIntBaseIO [ProtoIO] FOR LONGINT;
 
-(* IO Extension Library for Values of Type LONGINT *)
+(* Channel IO Extension Library for Values of Type LONGINT *)
 
 IMPORT ChanIO;
 
