@@ -4,7 +4,7 @@ DEFINITION MODULE UnicharBaseFDIO [ProtoIO] FOR UNICHAR;
 
 (* File-Descriptor IO Extension Library for Values of Type UNICHAR *)
 
-IMPORT FileDescIO;
+IMPORT FileDescIO, StdFDIO;
 
 (* EBNF of the textual representation of UNICHAR values:
     charValue : textFormat | numericFormat ;
@@ -12,7 +12,9 @@ IMPORT FileDescIO;
     numericFormat : "0u" base16Digit base16Digit base16Digit*;
     base16Digit : "0" .. "9" | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( infile : FileDescIO.File; VAR ch : UNICHAR );
+PROCEDURE [READ] Read
+  ( infile : FileDescIO.File; VAR ch : UNICHAR )
+  [ infile = StdFDIO.in (* default argument *) ];
 (* Reads a CHAR value from infile
    - any leading whitespace is skipped
    - the character being read is removed from infile
@@ -21,14 +23,17 @@ PROCEDURE [READ] Read ( infile : FileDescIO.File; VAR ch : UNICHAR );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This pro-
    cedure is substituted for invocations of READ with a UNICHAR argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : FileDescIO.File; ch : UNICHAR );
+PROCEDURE [WRITE] Write
+  ( outfile : FileDescIO.File; ch : UNICHAR )
+  [ outfile = StdFDIO.out (* default argument *) ];
 (* Writes the textual representation of UNICHAR ch to outfile. This pro-
    cedure is substituted for invocations of WRITE with a UNICHAR argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : FileDescIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF UNICHAR );
+    items        : ARGLIST >0 OF UNICHAR )
+  [ outfile = StdFDIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more UNICHAR values
    to outfile. The output format is determined by fmtStr. This procedure is
    substituted for invocations of WRITEF with one or more UNICHAR arguments. *)
