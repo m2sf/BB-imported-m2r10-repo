@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongIntArrayFIO [ProtoArrayIO] FOR LONGINT;
 
-(* File-Only IO Extension Library for Array Types of LONGINT *)
+(* File-Pointer IO Extension Library for Array Types of LONGINT *)
 
 IMPORT FilePtrIO;
 
