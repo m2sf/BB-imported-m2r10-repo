@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongCardArrayIO [ProtoArrayIO] FOR LONGCARD;
 
-(* IO Extension Library for Array Types of LONGCARD *)
+(* CHannel IO Extension Library for Array Types of LONGCARD *)
 
 IMPORT ChanIO;
 
