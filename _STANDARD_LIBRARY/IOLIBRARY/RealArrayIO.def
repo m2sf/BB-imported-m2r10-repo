@@ -2,7 +2,7 @@
 
 DEFINITION MODULE RealArrayIO [ProtoArrayIO] FOR REAL;
 
-(* IO Extension Library for Array Types of REAL *)
+(* Channel IO Extension Library for Array Types of REAL *)
 
 IMPORT ChanIO;
 
