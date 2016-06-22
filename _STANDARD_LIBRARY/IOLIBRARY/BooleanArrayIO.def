@@ -18,6 +18,6 @@ PROCEDURE [WRITEF] WriteFArray
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     CONST arrays : ARGLIST >0 OF BARE ARRAY OF BOOLEAN )
-  [ inchan = StdIO.out (* default argument *) ];
+  [ outchan = StdIO.out (* default argument *) ];
 
 END BooleanArrayIO.
