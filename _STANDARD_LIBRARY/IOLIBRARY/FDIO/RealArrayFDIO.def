@@ -4,17 +4,20 @@ DEFINITION MODULE RealArrayFDIO [ProtoArrayIO] FOR REAL;
 
 (* File-Descriptor IO Extension Library for Array Types of REAL *)
 
-IMPORT FileDescIO;
+IMPORT FileDescIO, StdFDIO;
 
 PROCEDURE [READ] ReadArray
-  ( infile : FileDescIO.File; VAR array : BARE ARRAY OF REAL );
+  ( infile : FileDescIO.File; VAR array : BARE ARRAY OF REAL )
+  [ infile = StdFDIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outfile : FileDescIO.File; CONST array : BARE ARRAY OF REAL );
+  ( outfile : FileDescIO.File; CONST array : BARE ARRAY OF REAL )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outfile : FileDescIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF REAL );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF REAL )
+  [ outfile = StdFDIO.out (* default argument *) ];
 
 END RealArrayFDIO.
