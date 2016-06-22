@@ -2,7 +2,7 @@
 
 DEFINITION MODULE OctetArrayIO [ProtoArrayIO] FOR OCTET;
 
-(* IO Extension Library for Array Types of OCTET *)
+(* Channel IO Extension Library for Array Types of OCTET *)
 
 IMPORT ChanIO;
 
