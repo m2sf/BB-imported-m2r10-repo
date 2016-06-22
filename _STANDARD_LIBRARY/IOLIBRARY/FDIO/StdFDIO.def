@@ -1,0 +1,18 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE StdFDIO;
+
+(* File-Descriptor Standard IO Special File Access *)
+
+IMPORT FileDescIO;
+
+PROCEDURE [STDIN] in : FileDescIO.File;
+(* Returns the file handle for stdin, bound to macro STDIN *)
+
+PROCEDURE [STDOUT] out : FileDescIO.File;
+(* Returns the file handle for stdout, bound to macro STDOUT *)
+
+PROCEDURE [STDERR] err : FileDescIO.File;
+(* Returns the file handle for stderr, bound to macro STDERR *)
+
+END StdFDIO.
