@@ -2,7 +2,7 @@
 
 DEFINITION MODULE StdFIO;
 
-(* File-Pointer Standard IO Special File Access *)
+(* File-Pointer Based Standard IO Special File Access *)
 
 IMPORT FilePtrIO;
 
