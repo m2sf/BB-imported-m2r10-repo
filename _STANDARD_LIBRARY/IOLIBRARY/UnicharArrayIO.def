@@ -2,7 +2,7 @@
 
 DEFINITION MODULE UnicharArrayIO [ProtoArrayIO] FOR UNICHAR;
 
-(* IO Extension Library for Array Types of UNICHAR *)
+(* Channel IO Extension Library for Array Types of UNICHAR *)
 
 IMPORT ChanIO;
 
