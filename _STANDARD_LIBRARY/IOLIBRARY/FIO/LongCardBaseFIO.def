@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongCardBaseFIO [ProtoIO] FOR LONGCARD;
 
-(* File-Only IO Extension Library for Values of Type LONGCARD *)
+(* File-Pointer IO Extension Library for Values of Type LONGCARD *)
 
 IMPORT FilePtrIO;
 
