@@ -2,7 +2,7 @@
 
 DEFINITION MODULE CharStrFIO [ProtoStrIO] FOR CHAR;
 
-(* File-Only IO Extension Library for String Types of CHAR *)
+(* File-Pointer IO Extension Library for String Types of CHAR *)
 
 IMPORT FilePtrIO;
 
