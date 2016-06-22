@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongIntArrayIO [ProtoArrayIO] FOR LONGINT;
 
-(* IO Extension Library for Array Types of LONGINT *)
+(* Channel IO Extension Library for Array Types of LONGINT *)
 
 IMPORT ChanIO;
 
