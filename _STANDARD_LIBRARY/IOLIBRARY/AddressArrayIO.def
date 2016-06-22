@@ -8,16 +8,16 @@ IMPORT ChanIO, StdIO;
 
 PROCEDURE [READ] ReadArray
   ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF ADDRESS )
-  [ inchan = StdIO.in (* default *) ];
+  [ inchan = StdIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
   ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF ADDRESS )
-  [ outchan = StdIO.out (* default *) ];
+  [ outchan = StdIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
     CONST arrays : ARGLIST >0 OF BARE ARRAY OF ADDRESS )
-  [ outchan = StdIO.out (* default *) ];
+  [ outchan = StdIO.out (* default argument *) ];
 
 END AddressArrayIO.
