@@ -1,0 +1,9 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE LongCardFDIO;
+
+(* Import Aggregator for File-Descriptor IO Extension Libraries of Type LONGCARD *)
+
+IMPORT LongCardBaseFDIO+, LongCardArrayFDIO+;
+
+END LongCardFDIO.
