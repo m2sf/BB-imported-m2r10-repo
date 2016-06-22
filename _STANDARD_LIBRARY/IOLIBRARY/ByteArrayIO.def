@@ -4,17 +4,20 @@ DEFINITION MODULE ByteArrayIO [ProtoArrayIO] FOR BYTE;
 
 (* Channel IO Extension Library for Array Types of BYTE *)
 
-IMPORT UNSAFE, ChanIO;
+IMPORT UNSAFE, ChanIO, StdIO;
 
 PROCEDURE [READ] ReadArray
-  ( inchan : ChanIO.Channel; VAR a : BARE ARRAY OF UNSAFE.BYTE );
+  ( inchan : ChanIO.Channel; VAR a : BARE ARRAY OF UNSAFE.BYTE )
+  [ inchan = StdIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outchan : ChanIO.Channel; CONST a : BARE ARRAY OF UNSAFE.BYTE );
+  ( outchan : ChanIO.Channel; CONST a : BARE ARRAY OF UNSAFE.BYTE )
+  [ outchan = StdIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST items : ARGLIST >0 OF BARE ARRAY OF UNSAFE.BYTE );
+    CONST items : ARGLIST >0 OF BARE ARRAY OF UNSAFE.BYTE )
+  [ outchan = StdIO.out (* default argument *) ];
 
 END ByteArrayIO.
