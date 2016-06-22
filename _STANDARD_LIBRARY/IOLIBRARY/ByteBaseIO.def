@@ -2,7 +2,7 @@
 
 DEFINITION MODULE ByteBaseIO [ProtoIO] FOR BYTE;
 
-(* Base IO Extension Library for Values of Type BYTE *)
+(* Channel IO Extension Library for Values of Type BYTE *)
 
 IMPORT UNSAFE, ChanIO;
 
