@@ -2,7 +2,7 @@
 
 DEFINITION MODULE UnicharIO;
 
-(* Import Aggregator for IO Extension Libraries of Type UNICHAR *)
+(* Import Aggregator for Channel IO Extension Libraries of Type UNICHAR *)
 
 IMPORT UnicharBaseIO+, UnicharArrayIO+, UnicharStrIO+;
 
