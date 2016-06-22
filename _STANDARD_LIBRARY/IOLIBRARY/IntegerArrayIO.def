@@ -4,17 +4,20 @@ DEFINITION MODULE IntegerArrayIO [ProtoArrayIO] FOR INTEGER;
 
 (* Channel IO Extension Library for Array Types of INTEGER *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 PROCEDURE [READ] ReadArray
-  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF INTEGER );
+  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF INTEGER )
+  [ inchan = StdIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF INTEGER );
+  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF INTEGER )
+  [ outchan = StdIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF INTEGER );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF INTEGER )
+  [ outchan = StdIO.out (* default argument *) ];
 
 END IntegerArrayIO.
