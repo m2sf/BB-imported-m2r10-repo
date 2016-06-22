@@ -4,7 +4,7 @@ DEFINITION MODULE CharBaseFIO [ProtoIO] FOR CHAR;
 
 (* File-Pointer IO Extension Library for Values of Type CHAR *)
 
-IMPORT FilePtrIO;
+IMPORT FilePtrIO, StdFIO;
 
 (* EBNF of the textual representation of CHAR values:
     charValue : textFormat | numericFormat ;
@@ -12,7 +12,9 @@ IMPORT FilePtrIO;
     numericFormat : "0u" base16Digit base16Digit ;
     base16Digit : "0" .. "9" | "A" .. "F" ; *)
 
-PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR ch : CHAR );
+PROCEDURE [READ] Read
+  ( infile : FilePtrIO.File; VAR ch : CHAR )
+  [ infile = StdFIO.in (* default argument *) ];
 (* Reads a CHAR value from stream infile
    - any leading whitespace is skipped
    - the character being read is removed from infile
@@ -21,14 +23,17 @@ PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR ch : CHAR );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with a CHAR argument. *)
 
-PROCEDURE [WRITE] Write ( outfile : FilePtrIO.File; ch : CHAR );
+PROCEDURE [WRITE] Write
+  ( outfile : FilePtrIO.File; ch : CHAR )
+  [ outfile = StdFIO.out (* default argument *) ];
 (* Writes the textual representation of CHAR ch to stream outfile. This
    procedure is substituted for invocations of WRITE with a CHAR argument.*)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF CHAR );
+    items        : ARGLIST >0 OF CHAR )
+  [ outfile = StdFIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more CHAR values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
