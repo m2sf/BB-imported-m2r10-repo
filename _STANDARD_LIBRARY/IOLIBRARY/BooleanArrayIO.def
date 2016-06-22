@@ -4,17 +4,20 @@ DEFINITION MODULE BooleanArrayIO [ProtoArrayIO] FOR BOOLEAN;
 
 (* Channel IO Extension Library for Array Types of BOOLEAN *)
 
-IMPORT ChanIO;
+IMPORT ChanIO, StdIO;
 
 PROCEDURE [READ] ReadArray
-  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF BOOLEAN );
+  ( inchan : ChanIO.Channel; VAR array : BARE ARRAY OF BOOLEAN )
+  [ inchan = StdIO.in (* default argument *) ];
 
 PROCEDURE [WRITE] WriteArray
-  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF BOOLEAN );
+  ( outchan : ChanIO.Channel; CONST array : BARE ARRAY OF BOOLEAN )
+  [ outchan = StdIO.out (* default argument *) ];
 
 PROCEDURE [WRITEF] WriteFArray
   ( outchan : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    CONST arrays : ARGLIST >0 OF BARE ARRAY OF BOOLEAN );
+    CONST arrays : ARGLIST >0 OF BARE ARRAY OF BOOLEAN )
+  [ inchan = StdIO.out (* default argument *) ];
 
 END BooleanArrayIO.
