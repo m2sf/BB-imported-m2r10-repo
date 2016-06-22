@@ -2,7 +2,7 @@
 
 DEFINITION MODULE AddressArrayIO [ProtoArrayIO] FOR ADDRESS;
 
-(* IO Extension Library for Array Types of ADDRESS *)
+(* Channel IO Extension Library for Array Types of ADDRESS *)
 
 IMPORT ChanIO;
 
