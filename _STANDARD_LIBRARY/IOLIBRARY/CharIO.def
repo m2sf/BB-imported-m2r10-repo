@@ -2,7 +2,7 @@
 
 DEFINITION MODULE CharIO;
 
-(* Import Aggregator for IO Extension Libraries of Type CHAR *)
+(* Import Aggregator for Channel IO Extension Libraries of Type CHAR *)
 
 IMPORT CharBaseIO+, CharArrayIO+, CharStrIO+;
 
