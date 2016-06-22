@@ -4,7 +4,7 @@ DEFINITION MODULE OctetBaseFIO [ProtoIO] FOR OCTET;
 
 (* File-Pointer IO Extension Library for Values of Type OCTET *)
 
-IMPORT FilePtrIO;
+IMPORT FilePtrIO, StdFIO;
 
 (* EBNF of the textual representation of OCTET values:
     octetValue : simpleFormat |
@@ -17,7 +17,9 @@ IMPORT FilePtrIO;
     base16Digit : "0" .. "9" | "A" .. "F" ;
     bit : "0" | "1" ; *)
 
-PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR n : OCTET );
+PROCEDURE [READ] Read
+  ( infile : FilePtrIO.File; VAR n : OCTET )
+  [ infile = StdFIO.in (* default argument *) ];
 (* Reads the textual representation of an OCTET value from stream infile
    - any leading whitespace is skipped
    - any remaining characters that are part of the value being read are
@@ -27,18 +29,20 @@ PROCEDURE [READ] Read ( infile : FilePtrIO.File; VAR n : OCTET );
      success, outOfRange, wrongFormat, endOfLine, or endOfInput. This
    procedure is substituted for invocations of READ with an OCTET argument.*)
 
-PROCEDURE [WRITE] Write ( outfile : FilePtrIO.File; n : OCTET );
+PROCEDURE [WRITE] Write
+  ( outfile : FilePtrIO.File; n : OCTET )
+  [ outfile = StdFIO.out (* default argument *) ];
 (* Writes the value of OCTET n in simple format to stream outfile. This pro-
    cedure is substituted for invocations of WRITE with an OCTET argument. *)
 
 PROCEDURE [WRITEF] WriteF
   ( outfile      : FilePtrIO.File;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF OCTET );
+    items        : ARGLIST >0 OF OCTET )
+  [ outfile = StdFIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more OCTET values to
    output stream outfile. The output format is determined by fmtStr. This
    procedure is substituted for invocations of WRITEF with one or more
    OCTET arguments. *)
-
 
 END OctetBaseFIO.
