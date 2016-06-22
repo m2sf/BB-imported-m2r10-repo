@@ -2,7 +2,7 @@
 
 DEFINITION MODULE WordIO;
 
-(* Import Aggregator for IO Extension Libraries of Type WORD *)
+(* Import Aggregator for Channel IO Extension Libraries of Type WORD *)
 
 IMPORT WordBaseIO+, WordArrayIO+;
 
