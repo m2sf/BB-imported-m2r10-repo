@@ -4,7 +4,7 @@ DEFINITION MODULE AddressBaseIO [ProtoIO] FOR ADDRESS;
 
 (* Channel IO Extension Library for Values of Type ADDRESS *)
 
-IMPORT ChanIO, StdIO;
+IMPORT UNSAFE, ChanIO, StdIO;
 
 (* EBNF of the textual representation of ADDRESS values:
     addressValue :
@@ -19,7 +19,7 @@ IMPORT ChanIO, StdIO;
     required to represent the maximum value of type ADDRESS. *)
 
 PROCEDURE [READ] Read
-  ( inchan : ChanIO.Channel; VAR adr : ADDRESS )
+  ( inchan : ChanIO.Channel; VAR adr : UNSAFE.ADDRESS )
   [ inchan = StdIO.in (* default argument *) ];
 (* Reads the textual representation of an ADDRESS value from channel inchan
    - any leading whitespace is skipped
@@ -31,7 +31,7 @@ PROCEDURE [READ] Read
    procedure is substituted for invocations of READ with an ADDRESS argument.*)
 
 PROCEDURE [WRITE] Write
-  ( outchan : ChanIO.Channel; adr : ADDRESS )
+  ( outchan : ChanIO.Channel; adr : UNSAFE.ADDRESS )
   [ outchan = StdIO.out (* default argument *) ];
 (* Writes the value of ADDRESS adr in standard format to channel outchan. This
    procedure is substituted for invocations of WRITE with an ADDRESS argument.*)
@@ -39,7 +39,7 @@ PROCEDURE [WRITE] Write
 PROCEDURE [WRITE] WriteF
   ( outchan      : ChanIO.Channel;
     CONST fmtStr : ARRAY OF CHAR;
-    items        : ARGLIST >0 OF ADDRESS )
+    items        : ARGLIST >0 OF UNSAFE.ADDRESS )
   [ outchan = StdIO.out (* default argument *) ];
 (* Writes a formatted textual representation of one or more ADDRESS values to
    output channel outchan. The output format is determined by fmtStr. This
