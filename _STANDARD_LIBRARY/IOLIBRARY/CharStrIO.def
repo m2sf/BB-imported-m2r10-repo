@@ -2,7 +2,7 @@
 
 DEFINITION MODULE CharStrIO [ProtoStrIO] FOR CHAR;
 
-(* IO Extension Library for String Types of CHAR *)
+(* Channel IO Extension Library for String Types of CHAR *)
 
 IMPORT ChanIO;
 
