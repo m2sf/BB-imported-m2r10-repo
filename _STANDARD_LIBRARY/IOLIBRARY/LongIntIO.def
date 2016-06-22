@@ -2,7 +2,7 @@
 
 DEFINITION MODULE LongIntIO;
 
-(* Import Aggregator for IO Extension Libraries of Type LONGINT *)
+(* Import Aggregator for Channel IO Extension Libraries of Type LONGINT *)
 
 IMPORT LongIntBaseIO+, LongIntArrayIO+;
 
