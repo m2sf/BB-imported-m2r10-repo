@@ -1,0 +1,125 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE FileDescIO;
+
+(* Driver for File IO on File Descriptors *)
+
+(* This module interprets the contents of files as a stream of octets  without
+   any particular structure.  This is a low level API.  For common use,  it is
+   recommended to use the channel based API of module FileIO instead. *)
+
+IMPORT Cardinals, FileMode. FileStatus;
+
+(* File descriptor *)
+
+CONST InvalidFile = -1;
+
+TYPE File = INTEGER;
+
+
+(* Resource Allocation *)
+
+PROCEDURE Open
+  ( VAR fd : File; CONST filename : ARRAY OF CHAR; mode : Mode );
+(* Opens file <filename> in access mode <mode>.  On success, a file descriptor
+   is passed back  in <fd>.  On failure, InvalidFile  is passed back  in <fd>.
+   Sets the file position depending on <mode>.  The status of the operation is
+   passed back in <status>. *)
+
+
+(* Introspection *)
+
+PROCEDURE modeOf ( fd : File ) : Mode;
+(* Returns the access mode of <fd>. *)
+
+PROCEDURE statusOf ( fd : File ) : Status;
+(* Returns the status of the most recent operation on <fd>. *)
+
+
+(* I/O *)
+
+PROCEDURE Read ( fd : File; VAR data : OCTET );
+(* Reads an octet from <fd> and passes it back in <data>. *)
+
+PROCEDURE ReadBlock
+  ( fd : File; VAR data : ARRAY OF OCTET; octetsRead : LONGCARD );
+(* Reads as many octets from <fd> as are available and fit into buffer <data>.
+   Reading starts at the current position. The number of octets read is passed
+   back in <octetsRead>.  The current position is advanced by <octetsRead>. *)
+
+PROCEDURE ReadBlockAtOffset
+  ( fd : File;
+    VAR data : ARRAY OF OCTET;
+    VAR octetsRead : LONGCARD;
+    offset : LONGCARD );
+(* Reads as many octets from <fd> as are available and fit into buffer <data>.
+   Reading starts at position <offset>.  The number of  octets read  is passed
+   back in <octetsRead>.  The current position is NOT advanced. *)
+
+PROCEDURE Write ( fd : File; data : OCTET );
+(* Writes the octet passed in <data> to <fd>. *)
+
+PROCEDURE WriteBlock
+  ( fd : File; CONST data : ARRAY OF OCTET; octetsWritten : LONGCARD );
+(* Writes buffer <data> to <fd>.  Writing starts at the current position.  The
+   number of  octets written  is passed back in <octetsWritten>.  The  current
+   position is advanced by <octetsRead>. *)
+
+PROCEDURE WriteBlockAtOffset
+  ( fd : File;
+    data : ARRAY OF OCTET;
+    VAR octetsRead : LONGCARD;
+    offset : LONGCARD );
+(* Writes buffer <data>  to <fd>.  Writing  starts  at position <offset>.  The
+   number of  octets written  is passed back in <octetsWritten>.  The  current
+   position is NOT advanced. *)
+
+PROCEDURE eof ( fd : File ) : BOOLEAN;
+(* Returns TRUE if <fd> has reached the end of the file, otherwise FALSE. *)
+
+
+(* Positioning *)
+
+PROCEDURE SetPos ( fd : File; pos : LONGCARD );
+(* Sets the current position of <fd> to <pos>. *)
+
+PROCEDURE Advance ( fd : File; offset : LONGCARD );
+(* Advances the current position of <fd> by <offset>. *)
+
+PROCEDURE Rewind ( fd : File );
+(* Sets the current position of <fd> to zero and resets its eof status. *)
+
+
+TYPE FromPosition = ( Start, Current, End );
+
+PROCEDURE SetRelPos
+  ( fd : File; from : FromPosition; offset : LONGINT; VAR newPos : LONGCARD );
+(* Sets the current position of <fd> relative to <from> by <offset> and passes
+   the resulting absolute position back in <newPos>. *)
+
+
+(* Special File Descriptors *)
+
+PROCEDURE isSpecialFile ( fd : File ) : BOOLEAN;
+(* Returns TRUE if <fd> is associated with a special file, otherwise FALSE. *)
+
+PROCEDURE defaultInFile : File;
+(* Returns the file descriptor associated with the current process' stdin *)
+
+PROCEDURE defaultOutFile : File;
+(* Returns the file descriptor associated with the current process' stdout *)
+
+PROCEDURE defaultErrFile : File;
+(* Returns the file descriptor associated with the current process' stderr *)
+
+
+(* Resource Deallocation *)
+
+PROCEDURE Close ( VAR fd : File; VAR status : Status );
+(* Closes the file associated with <fd>, passes status back in <status>. *)
+
+PROCEDURE CloseAll ( VAR status : Status );
+(* Closes all open file descriptors of the current process, except for those
+   associated with stdin, stdout and stderr, passes status in <status>. *)
+
+END FileDescIO.
