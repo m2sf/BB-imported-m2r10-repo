@@ -4,7 +4,7 @@ DEFINITION MODULE FileIO;
 
 (* Channel Based File IO *)
 
-IMPORT ChanIO, FilePtrIO;
+IMPORT ChanIO, FilePtrIO, FileMode;
 
 
 (* File Channel *)
@@ -16,10 +16,6 @@ END;
 
 TYPE Status = ALIAS OF FilePtrIO.Status;
 
-TYPE Mode = ALIAS OF FilePtrIO.Mode;
-
-TYPE ModeFlags = ALIAS OF FilePtrIO.ModeFlags;
-
 TYPE FileSize = ALIAS OF FilePtrIO.FileSize;
 
 TYPE FilePos = ALIAS OF FilePtrIO.FilePos;
@@ -27,13 +23,7 @@ TYPE FilePos = ALIAS OF FilePtrIO.FilePos;
 
 (* Predefined file modes *)
 
-CONST
-  WO = FilePtrIO.Write;
-  RO = FilePtrIO.ReadOnly;
-  RW = FilePtrIO.ReadWrite;
-  Append = FilePtrIO.Append;
-  
-  DefaultBufferSize = FilePtrIO.DefaultBufferSize;
+CONST DefaultBufferSize = FilePtrIO.DefaultBufferSize;
 
 
 (* Parameter consistency checks *)
@@ -44,9 +34,6 @@ PROCEDURE isFileChannel ( chan : ChanIO.Channel ) : BOOLEAN;
 PROCEDURE isValidAccessor ( handle : FilePtrIO.File ) : BOOLEAN;
 (* Returns TRUE if <handle> is a valid file accessor, otherwise FALSE. *)
 
-PROCEDURE isValidMode ( mode : Mode ) : BOOLEAN;
-(* Returns TRUE if <mode> is a valid file mode, otherwise FALSE. *)
-
 PROCEDURE isValidPos ( chan : ChanIO.Channel; pos : FilePos ) : BOOLEAN;
 (* Returns TRUE if <pos> is a valid file position for <chan>, else FALSE. *)
 
@@ -55,7 +42,7 @@ PROCEDURE isValidPos ( chan : ChanIO.Channel; pos : FilePos ) : BOOLEAN;
 
 PROCEDURE Open ( VAR chan       : ChanIO.Channel;
                  CONST filename : ARRAY OF CHAR;
-                 mode           : Mode;
+                 mode           : FileMode;
                  VAR status     : Status );
 (* Opens file <filename> in file mode <mode> and passes a file channel back in
    <chan>.  On success,  the handle of <chan> is a valid file accessor and its
@@ -64,7 +51,7 @@ PROCEDURE Open ( VAR chan       : ChanIO.Channel;
 
 PROCEDURE OpenWithBuffer ( VAR chan         : ChanIO.Channel;
                            CONST filename   : ARRAY OF CHAR;
-                           mode             : Mode;
+                           mode             : FileMode;
                            VAR buffer       : ARRAY OF OCTET;
                            VAR status       : Status );
 (* Opens file <filename>  in file mode <mode>  using <buffer> as a custom file
@@ -73,7 +60,7 @@ PROCEDURE OpenWithBuffer ( VAR chan         : ChanIO.Channel;
    On failure,  the  handle of <chan>  is NIL.  The status of the operation is
    passed back in <status>. *)
 
-PROCEDURE ReOpen ( chan : ChanIO.Channel; mode : Mode );
+PROCEDURE ReOpen ( chan : ChanIO.Channel; mode : FileMode );
 (* Flushes the file associated with file channel <chan>  and changes  its mode
    to <mode>.  Sets the file position depending on <mode>. *)
 
@@ -81,12 +68,14 @@ PROCEDURE ReOpen ( chan : ChanIO.Channel; mode : Mode );
    the file position  to be set  to the beginning of the file.  Opening or re-
    opening a file in a mode whose append flag is set  causes the file position
    to be set  to the end of the file.  An attempt to open a file that is a di-
-   rectory fails with status code mayNotOpenDirectory. *)
+   rectory fails with status code mayNotOpenDirectory.  Any attempt to open or
+   reopen a file  while passing  an invalid file access mode  shall fail  with
+   status code invalidMode. *)
 
 
 (* File mode, status and name *)
 
-PROCEDURE modeOf ( chan : ChanIO.Channel ) : Mode;
+PROCEDURE modeOf ( chan : ChanIO.Channel ) : FileMode;
 (* Returns the access mode of the file associated with file channel <chan>. *)
 
 PROCEDURE statusOf ( chan : ChanIO.Channel ) : Status;
@@ -103,7 +92,7 @@ PROCEDURE GetName ( chan : ChanIO.Channel; VAR filename : ARRAY OF CHAR );
 
 (* File position operations *)
 
-PROCEDURE EOF ( chan : ChanIO.Channel ) : BOOLEAN;
+PROCEDURE eof ( chan : ChanIO.Channel ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file channel <chan> has
    been reached, otherwise FALSE. *)
 
@@ -199,7 +188,7 @@ PROCEDURE Flush ( chan : ChanIO.Channel );
    fail with status operationNotSupported. *)
 
 
-(* Closing files *)
+(* Closing a File Channel *)
 
 PROCEDURE Close ( VAR chan : ChanIO.Channel; VAR status : Status );
 (* Performs Flush on <chan>, closes the associated file and passes NIL back
@@ -235,6 +224,5 @@ PROCEDURE defaultErrFile : ChanIO.Channel;
 PROCEDURE defaultNullFile : ChanIO.Channel;
 (* Returns a file channel associated with the null device, open in write
    mode.  Write operations on this file have no effect. *)
-
 
 END FileIO.
