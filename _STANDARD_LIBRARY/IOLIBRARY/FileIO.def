@@ -4,7 +4,7 @@ DEFINITION MODULE FileIO;
 
 (* File Specific Channel Based IO *)
 
-IMPORT ChanIO, FilePtrIO, FileMode, FileStatus, IOSIZE;
+IMPORT ChanIO, FilePtrIO, FileMode, IOStatus, IOSIZE;
 
 
 (* File Channel *)
@@ -50,7 +50,7 @@ PROCEDURE Open
   ( NEW file       : File;
     CONST filename : ARRAY OF CHAR;
     mode           : FileMode;
-    VAR status     : FileStatus );
+    VAR status     : IOStatus );
 (* Opens file <filename> in file mode <mode>.  On success, a  newly allocated
    and initialised file channel is passed back in <file>.  On failure, NIL is
    passed back in <file>.  A status code is passed back in <status>. *)
@@ -60,7 +60,7 @@ PROCEDURE OpenWithBuffer
     CONST filename   : ARRAY OF CHAR;
     mode             : FileMode;
     VAR buffer       : BARE ARRAY OF OCTET;
-    VAR status       : FileStatus );
+    VAR status       : IOStatus );
 (* Opens file <filename>  in file mode <mode>  using <buffer> as a custom file
    buffer.   On success,  a newly allocated  and initialised  file channel  is
    passed back in <file>.  On failure, NIL is passed back in <file>.  A status
@@ -76,7 +76,7 @@ PROCEDURE ReOpen ( file : File; mode : FileMode );
 PROCEDURE modeOf ( file : File ) : FileMode;
 (* Returns the access mode of <file>. *)
 
-PROCEDURE statusOf ( file : File ) : FileStatus;
+PROCEDURE statusOf ( file : File ) : IOStatus;
 (* Returns the status of the most recent operation on <file>. *)
 
 PROCEDURE nameLen ( file : File ) : CARDINAL;
@@ -188,7 +188,7 @@ PROCEDURE Flush ( chan : ChanIO.Channel );
 
 (* Closing a File *)
 
-PROCEDURE Close ( VAR file : File; VAR status : Status );
+PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
 (* Performs Flush on <file>,  closes  the associated file,  deallocates <file>
    and passes NIL back in <file>. A status code is passed back in <status>. *)
 
