@@ -1,0 +1,32 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE FileMode;
+
+(* File Access Mode Type Common to all File IO Drivers *)
+
+CONST
+  RO = { Flags.Read };
+  WO = { Flags.Write };
+  RW = { Flags.Read, Flags.Write };
+
+
+TYPE FileMode = SET OF Flags;
+
+(* The file access mode consists of four flags: read, write, append and sync.
+   These flags may be combined arbitrarily, subject to the following rules:
+   
+   (1) a file mode may not be the empty set
+   (2) append may not be set if read is set
+   (3) append may only be set if write is set
+   (4) sync may only be set if write is set  *)
+
+TYPE Flags = ( Read,     (* reading is permitted if set   *)
+               Write,    (* writing is permitted if set   *)
+               Append,   (* writing always appends if set *)
+               Sync );   (* writing always flushes if set *)
+
+
+PROCEDURE isValid ( mode : FileMode ) : BOOLEAN;
+(* Returns TRUE if mode is a valid file access mode, otherwise FALSE. *)
+
+END FileMode.
