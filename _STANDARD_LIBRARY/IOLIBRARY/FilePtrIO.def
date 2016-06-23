@@ -8,45 +8,32 @@ DEFINITION MODULE FilePtrIO;
    any particular structure.  This is a low level API.  For common use,  it is
    recommended to use the channel based API of module FileIO instead. *)
 
-IMPORT Cardinals, FileMode;
+IMPORT FileMode, IOStatus, IOSIZE;
 
 (* File accessor and file status *)
 
 TYPE File = OPAQUE; (* implementation defined file accessor *)
     
-    (* Any attempt to pass an invalid file accessor to a file operation other
-       than opening a file shall raise runtime fault InvalidAccessor. *)
-        
-TYPE Status = ( success,               (* operation completed successfully  *)
-                fileNotFound,          (* no file found with this filename  *)
-                nameTooLong,           (* the passed filename is too long   *)
-                illegalCharsInName,    (* illegal chars in passed filename  *)
-                invalidMode,           (* the passed mode is invalid        *)
-                alreadyOpen,           (* the passed file is already open   *)
-                mayNotOpenDirectory,   (* attempt to open a directory       *)
-                accessDenied,          (* the filesystem denied file access *)
-                accessBeyondEOF,       (* attempt to read past end of file  *)
-                fileSizeLimitExceeded, (* attempt to write past size limit  *)
-                openFileLimitExceeded, (* attempt to open too many files    *)
-                operationNotSupported, (* unsupported operation attempted   *)
-                deviceFull,            (* the device capacity is exceeded   *)
-                deviceError );         (* the device reported a failure     *)
+(* Any attempt to pass an invalid file accessor to a file operation other
+   than opening a file shall raise runtime fault InvalidAccessor. *)
 
 
-(* Alias types for implementation dependent file position and file size *)
+(* Alias types for file position and file size *)
 
-    FileSize = ALIAS OF CARDINAL64; (* must always be an unsigned type *)
+    FileSize = ALIAS OF LONGCARD;
     
     FilePos = ALIAS OF FileSize;
 
 
+(* Introspection *)
+
 CONST DefaultBufferSize = <implementation defined value>;
-
-
-(* Parameter consistency checks *)
 
 PROCEDURE isValidAccessor ( file : File ) : BOOLEAN;
 (* Returns TRUE if <file> is a valid file accessor, otherwise FALSE. *)
+
+PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
+(* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
 
 PROCEDURE isValidPos ( file : File; pos : FilePos ) : BOOLEAN;
 (* Returns TRUE if <pos> is a valid file position for <file>,
@@ -55,20 +42,22 @@ PROCEDURE isValidPos ( file : File; pos : FilePos ) : BOOLEAN;
 
 (* Opening files *)
 
-PROCEDURE Open ( NEW file       : File;
-                 CONST filename : ARRAY OF CHAR;
-                 mode           : FileMode;
-                 VAR status     : Status );
+PROCEDURE Open
+  ( NEW file       : File;
+    CONST filename : ARRAY OF CHAR;
+    mode           : FileMode;
+    VAR status     : IOStatus );
 (* Opens the file <filename> in file mode <mode>.  If sucessful passes a file
    accessor back in <file>,  otherwise passes NIL back in <file>.  Sets the
    file position depending on <mode>.  The status of the operation is passed
    back in <status>. *)
 
-PROCEDURE OpenWithBuffer ( NEW file         : File;
-                           CONST filename   : ARRAY OF CHAR;
-                           mode             : FileMode;
-                           VAR buffer       : ARRAY OF OCTET;
-                           VAR status       : Status );
+PROCEDURE OpenWithBuffer
+  ( NEW file         : File;
+    CONST filename   : ARRAY OF CHAR;
+    mode             : FileMode;
+    VAR buffer       : ARRAY OF OCTET;
+    VAR status       : IOStatus );
 (* Opens the file <filename> in file mode <mode> using <buffer> as a custom
    file buffer.  If successful passes a file accessor back in <file>,  other-
    wise passes NIL back in <file>.  Sets the file position depending on <mode>.
@@ -85,12 +74,12 @@ PROCEDURE ReOpen ( file : File; mode : FileMode );
    rectory fails with status code mayNotOpenDirectory. *)
 
 
-(* File mode, status and name *)
+(* Querying File Mode, Status and Filename *)
 
 PROCEDURE modeOf ( file : File ) : FileMode;
 (* Returns the file mode of file accessor <file>. *)
 
-PROCEDURE statusOf ( file : File ) : Status;
+PROCEDURE statusOf ( file : File ) : IOStatus;
 (* Returns the status of the most recent operation for <file>. *)
 
 PROCEDURE nameLen ( file : File ) : CARDINAL;
@@ -99,15 +88,15 @@ PROCEDURE nameLen ( file : File ) : CARDINAL;
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 (* Passes the name  of the file  associated with  file accessor <file> back in
    <filename>.  If the name  exceeds the capacity  of the filename array,  the 
-   operation fails  with status nameTooLong,  passing an empty string  back in
+   operation fails  with status NameTooLong,  passing an empty string  back in
    <filename>. *)
 
 
 (* File position operations *)
 
-PROCEDURE eof ( file : File ) : BOOLEAN;
+PROCEDURE dataReady ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file accessor <file>
-   has been reached, otherwise FALSE. *)
+   has NOT been reached, otherwise FALSE. *)
 
 PROCEDURE currentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file accessor <file> where a
@@ -140,10 +129,10 @@ PROCEDURE Rewind ( file : File );
 
 (* Any attempt to call  LastValidWritePos, SetPos, Advance or Rewind  on  a
    file accessor  whose file mode  has the append flag set  shall fail with
-   status operationNotSupported.  Any attempt to set a file's read position
-   past the end of the file  shall fail  with status  accessBeyondEOF.  Any
+   status OperationNotSupported.  Any attempt to set a file's read position
+   past the end of the file  shall fail  with status  AccessBeyondEOF.  Any
    attempt to set a file's write position past LastValidWritePos shall fail
-   with status accessBeyondEOF. *)
+   with status AccessBeyondEOF. *)
 
 
 (* Read and write operations *)
@@ -156,22 +145,24 @@ PROCEDURE Lookahead ( file : File; VAR data : OCTET );
 (* Reads the first lookahead octet of <file>, passes it back in <data>, but
    does NOT advance the read/write position of <file>.  If the lookahead
    octet lies beyond the end of the file then no data is passed back and
-   the file status is set to accessBeyondEOF. *)
+   the file status is set to AccessBeyondEOF. *)
 
 PROCEDURE LA2 ( file : File; VAR data : OCTET );
 (* Reads the second lookahead octet of <file>, passes it back in <data>, but
    does NOT advance the read/write position of <file>.  If the second look-
    ahead octet lies beyond the end of the file then no data is passed back
-   and the file status is set to accessBeyondEOF. *)
+   and the file status is set to AccessBeyondEOF. *)
 
-PROCEDURE ReadBlock ( file : File;
-                      VAR data : ARRAY OF OCTET; VAR octetsRead : FileSize );
+PROCEDURE ReadBlock
+  ( file           : File;
+    VAR data       : ARRAY OF OCTET;
+    VAR octetsRead : IOSIZE );
 (* Reads a block of data at the current position of <file>. Passes the block
    of data back in <data> and the number of octets read in <octetsRead>.
    The read/write position of <file> is advanced accordingly. *)
 
 (* Any attempt to read or lookahead read from a file whose read flag is not
-   set shall fail with status operationNotSupported. *)
+   set shall fail with status OperationNotSupported. *)
 
 
 PROCEDURE Write ( file : File; data : OCTET );
@@ -183,8 +174,10 @@ PROCEDURE Write ( file : File; data : OCTET );
    read/write position of <file> is advanced by one after the data has been
    written. *)
 
-PROCEDURE WriteBlock ( file : File;
-                       data : ARRAY OF OCTET; VAR octetsWritten : FileSize );
+PROCEDURE WriteBlock
+  ( file              : File;
+    data              : ARRAY OF OCTET;
+    VAR octetsWritten : IOSIZE );
 (* Performs a write or append operation depending on the mode of <file>.
    In write mode, the procedure writes the block of data passed in <data>
    starting at the current read/write position of <file>. In append mode, the
@@ -203,7 +196,7 @@ PROCEDURE Flush ( file : File );
 
 (* Closing files *)
 
-PROCEDURE Close ( VAR file : File; VAR status : Status );
+PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
 (* Performs Flush on <file>, closes the associated file and passes NIL back
    in <file>.  The status of the operation is passed back  in <status>. *)
 
@@ -219,20 +212,14 @@ PROCEDURE Close ( VAR file : File; VAR status : Status );
    operationNotSupported.  NameLen  and LastValidSetPos will return zero  and
    GetName will pass an empty string. *)
 
-PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
-(* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
-   
 PROCEDURE defaultInFile : File;
-(* Returns the file accessor associated with an implementation defined source
-   for program input, open in read mode, usually a terminal. *)
+(* Returns a file accessor associated with stdin. *)
 
 PROCEDURE defaultOutFile : File;
-(* Returns the file accessor associated with an implementation defined desti-
-   nation for program output, open in write mode, usually a terminal. *)
+(* Returns a file accessor associated with stdout. *)
 
 PROCEDURE defaultErrFile : File;
-(* Returns the file accessor associated with an implementation defined desti-
-   nation for program error output, open in write mode, usually a terminal. *)
+(* Returns a file accessor associated with stderr. *)
 
 PROCEDURE defaultNullFile : File;
 (* Returns the file accessor associated with the null device, open in write
