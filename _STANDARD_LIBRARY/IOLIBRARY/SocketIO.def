@@ -1,0 +1,69 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE SocketIO;
+
+(* Channel Based Socket IO *)
+
+IMPORT ChanIO, NetSockIO;
+
+
+(* Socket Channel *)
+
+TYPE Socket = RECORD ( ChanIO.Channel )
+  [Get = Read; Put = Write]
+  handle : NetSockIO.Socket
+END;
+
+
+(* Introspection *)
+
+PROCEDURE isSocketChannel ( chan : ChanIO.Channel ) : BOOLEAN;
+(* Returns TRUE if <chan> is a valid socket channel, otherwise FALSE. *)
+
+PROCEDURE isValidNetSocket ( socket : Socket ) : BOOLEAN;
+(* Returns TRUE if <handle> is a valid socket accessor, otherwise FALSE. *)
+
+
+(* Resource Allocation *)
+
+PROCEDURE Open
+  ( VAR socket : Socket;
+    CONST dest : ARRAY OF CHAR;
+    mode : Mode;
+    VAR status : Status );
+
+
+(* Status Query *)
+
+PROCEDURE statusOf ( socket : Socket ) : Status;
+(* Returns the status of the most recent operation for <socket>. *)
+
+
+(* I/O Operations *)
+
+PROCEDURE Read ( chan : ChanIO.Channel; VAR data : OCTET );
+(* Reads the next available octet from <chan> and passes it back in <data>. *)
+
+PROCEDURE ReadBlock
+  ( socket : Socket;
+    VAR data : ARRAY OF OCTET;
+    VAR octetsRead : LONGCARD );
+(* Reads a block of data from <socket> and passes it back in <data>.
+   The number of octets read is passed back in <octetsRead>. *)
+
+PROCEDURE Write ( chan : ChanIO.Channel; data : OCTET );
+(* Writes octet <data> to <chan>. *)
+
+PROCEDURE WriteBlock
+ ( socket : Socket; data : ARRAY OF OCTET; VAR octetsRead : LONGCARD );
+(* Writes a block of octets passed in <data> to <socket> and
+   passes the number of octets written back in <octetsRead>. *)
+
+
+(* Resource Deallocation *)
+
+PROCEDURE Close ( VAR socket : Socket; VAR status : Status );
+(* Closes the connection on <socket> and passes NIL back in <socket>. 
+   The status of the operation is passed back  in <status>. *)
+
+END SocketIO.
