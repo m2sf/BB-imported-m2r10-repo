@@ -1,0 +1,19 @@
+The IO library has three layers:
+* Channel based IO
+* File-Pointer based IO
+* File-Descriptor based IO
+
+Type specific IO libraries are located in:
+* subdirectory CHIO for channel based IO
+* subdirectory FIO for file-pointer based IO
+* subdirectory FDIO for file-descriptor based IO
+
+Channel specific IO libraries are:
+* ChanIO, provides generic channel type for channel IO
+* FileIO, provides file specific channel type
+* SocketIO, provides socket specific channel type
+
+System Interface IO libraries are:
+* FilePtrIO, Interface to system specific file-pointer IO
+* FileDescIO, Interface to system specific file-descriptor IO
+* NetSockIO, Interface to system specific network socket IO
