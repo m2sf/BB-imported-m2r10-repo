@@ -4,20 +4,23 @@ DEFINITION MODULE ChanIO;
 
 (* Channel Based IO *)
 
+IMPORT IOSIZE;
 
 (* Channel Root Type *)
 
-TYPE Channel = RECORD ( NIL )
-  Get : PROCEDURE ( Channel, VAR OCTET) = InvalidGet;
-  Put : PROCEDURE ( Channel, OCTET) = InvalidPut
+TYPE Channel = POINTER TO Descriptor;
+
+(* Channel Root Descriptor *)
+
+TYPE Descriptor = RECORD ( NIL )
+  (* method slots for generic input *)
+  ready : PROCEDURE ( Channel ) : BOOLEAN;
+  Get   : PROCEDURE ( Channel, VAR OCTET);
+  GetN  : PROCEDURE ( Channel, VAR ARRAY OF OCTET, IOSIZE );
+  (* method slots for generic input *)
+  Put   : PROCEDURE ( Channel, OCTET);
+  PutN  : PROCEDURE ( Channel, ARRAY OF OCTET, IOSIZE );
+  Sync  : PROCEDURE ( Channel )
 END;
-
-(* Default Implementations for Get and Put *)
-
-PROCEDURE InvalidGet ( chan : Channel; VAR data : OCTET );
-(* Signals IO error or raises a runtime fault, implementation defined. *)
-
-PROCEDURE InvalidPut ( chan : Channel; data : OCTET );
-(* Signals IO error or raises a runtime fault, implementation defined. *)
 
 END ChanIO.
