@@ -35,6 +35,12 @@ PROCEDURE modeOf ( fd : File ) : Mode;
 PROCEDURE statusOf ( fd : File ) : Status;
 (* Returns the status of the most recent operation on <fd>. *)
 
+PROCEDURE isValidFile ( fd : File ) : BOOLEAN;
+(* Returns TRUE if <fd> is a valid file descriptor, otherwise FALSE. *)
+
+PROCEDURE isSpecialFile ( fd : File ) : BOOLEAN;
+(* Returns TRUE if <fd> is associated with a special file, otherwise FALSE. *)
+
 
 (* I/O *)
 
@@ -99,9 +105,6 @@ PROCEDURE SetRelPos
 
 
 (* Special File Descriptors *)
-
-PROCEDURE isSpecialFile ( fd : File ) : BOOLEAN;
-(* Returns TRUE if <fd> is associated with a special file, otherwise FALSE. *)
 
 PROCEDURE defaultInFile : File;
 (* Returns the file descriptor associated with the current process' stdin *)
