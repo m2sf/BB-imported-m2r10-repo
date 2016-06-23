@@ -19,10 +19,11 @@ END;
 
 TYPE FilePos = ALIAS OF FileSize;
 
-CONST DefaultBufferSize = FilePtrIO.DefaultBufferSize;
-
 
 (* Introspection *)
+
+CONST DefaultBufferSize = FilePtrIO.DefaultBufferSize;
+(* The buffer size used when no custom buffer is specified. *)
 
 PROCEDURE isFileChannel ( chan : ChanIO.Channel ) : BOOLEAN;
 (* Returns TRUE if <chan> is a valid file channel, otherwise FALSE. *)
@@ -43,7 +44,7 @@ PROCEDURE isValidPos ( file : File; pos : FilePos ) : BOOLEAN;
    the file position  to be set  to the beginning of the file.  Opening or re-
    opening a file in a mode whose append flag is set  causes the file position
    to be set  to the end of the file.  An attempt to open a file that is a di-
-   rectory fails with status code mayNotOpenDirectory. *)
+   rectory fails with status code MayNotOpenDirectory. *)
 
 PROCEDURE Open
   ( NEW file       : File;
@@ -70,7 +71,7 @@ PROCEDURE ReOpen ( file : File; mode : FileMode );
    The file position is set depending on <mode>. *)
 
 
-(* Querying Mode, Status and Name *)
+(* Querying Mode, Status and Filename *)
 
 PROCEDURE modeOf ( file : File ) : FileMode;
 (* Returns the access mode of <file>. *)
@@ -127,7 +128,9 @@ PROCEDURE Rewind ( file : File );
 
 (* I/O operations *)
 
-PROCEDURE dataReady ( file : File ) : BOOLEAN;
+(* For genericity, all I/O operations take type ChanIO.Channel as argument. *)
+
+PROCEDURE dataReady ( chan : ChanIO.Channel ) : BOOLEAN;
 (* Returns TRUE if the end of <file> has NOT been reached, otherwise FALSE. *)
 
 PROCEDURE Read ( chan : ChanIO.Channel; VAR data : OCTET );
@@ -190,16 +193,18 @@ PROCEDURE Close ( VAR file : File; VAR status : Status );
    and passes NIL back in <file>. A status code is passed back in <status>. *)
 
 
-(* Channels for Special Files *)
+(* File Channels for Special Files *)
 
-(* Special files  are automatically opened when module FileIO is initialised.
-   The file mode of a special file is either read  or write.   EOF always re-
-   turns FALSE and CurrentPos always returns TMIN(FilePos) for special files.
-   Any attempt to open a special file will fail with status AlreadyOpen.  Any
-   attempt to call ReOpen, NameLen, GetName, LastValidSetPos, SetPos, Rewind,
-   Advance, Lookahead, LA2, ReadBlock, Flush or Close  will fail with  status
-   OperationNotSupported.  NameLen  and LastValidSetPos will return zero  and
-   GetName will pass an empty string. *)
+(* Special files stdin, stdout and stderr are automatically opened when a pro-
+   cess is created.  Associated file channels are allocated when module FileIO
+   is initialised.  The functions below return these associated file channels.
+   The access mode of stdin is RO,  that of stdout and stderr is WO.  Function
+   dataReady always returns TRUE for stdin. Function currentPos always returns
+   TMIN(FilePos) for any special file. Any attempt to open a special file will
+   fail with status AlreadyOpen. Any attempt to call ReOpen, nameLen, GetName,
+   lastValidSetPos, SetPos, Rewind, Advance, Lookahead, LA2, ReadBlock,  Flush
+   or Close will fail with status OperationNotSupported. Functions nameLen and
+   lastValidSetPos will return zero and GetName will pass an empty string. *)
    
 PROCEDURE defaultInFile : File;
 (* Returns a file channel associated with special file stdin. *)
