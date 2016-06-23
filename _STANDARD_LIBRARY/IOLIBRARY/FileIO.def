@@ -2,227 +2,216 @@
 
 DEFINITION MODULE FileIO;
 
-(* Channel Based File IO *)
+(* File Specific Channel Based IO *)
 
-IMPORT ChanIO, FilePtrIO, FileMode;
+IMPORT ChanIO, FilePtrIO, FileMode, FileStatus, IOSIZE;
 
 
 (* File Channel *)
 
-TYPE File = RECORD ( ChanIO.Channel )
-  [Get = Read; Put = Write]
-  handle : FilePtrIO.File
+TYPE File = POINTER TO Descriptor;
+
+TYPE Descriptor = RECORD ( ChanIO.Descriptor )
+[ ready = dataReady; Get = Read; GetN = ReadBlock;
+  Put = Write; PutN = WriteBlock; Sync = Flush ]
+* handle : FilePtrIO.File
 END;
 
-TYPE Status = ALIAS OF FilePtrIO.Status;
-
-TYPE FileSize = ALIAS OF FilePtrIO.FileSize;
-
-TYPE FilePos = ALIAS OF FilePtrIO.FilePos;
-
-
-(* Predefined file modes *)
+TYPE FilePos = ALIAS OF FileSize;
 
 CONST DefaultBufferSize = FilePtrIO.DefaultBufferSize;
 
 
-(* Parameter consistency checks *)
+(* Introspection *)
 
 PROCEDURE isFileChannel ( chan : ChanIO.Channel ) : BOOLEAN;
 (* Returns TRUE if <chan> is a valid file channel, otherwise FALSE. *)
 
-PROCEDURE isValidAccessor ( handle : FilePtrIO.File ) : BOOLEAN;
-(* Returns TRUE if <handle> is a valid file accessor, otherwise FALSE. *)
+PROCEDURE isValidFile ( file : File ) : BOOLEAN;
+(* Returns TRUE if the file accessor of <file> is valid, otherwise FALSE. *)
 
-PROCEDURE isValidPos ( chan : ChanIO.Channel; pos : FilePos ) : BOOLEAN;
-(* Returns TRUE if <pos> is a valid file position for <chan>, else FALSE. *)
+PROCEDURE isSpecialFile ( chan : ChanIO.Channel ) : BOOLEAN;
+(* Returns TRUE if chan is associated with a special file, otherwise FALSE. *)
+
+PROCEDURE isValidPos ( file : File; pos : FilePos ) : BOOLEAN;
+(* Returns TRUE if <pos> is a valid position for <file>, otherwise FALSE. *)
 
 
-(* Opening files *)
-
-PROCEDURE Open ( VAR chan       : ChanIO.Channel;
-                 CONST filename : ARRAY OF CHAR;
-                 mode           : FileMode;
-                 VAR status     : Status );
-(* Opens file <filename> in file mode <mode> and passes a file channel back in
-   <chan>.  On success,  the handle of <chan> is a valid file accessor and its
-   file position depends on <mode>.  On failure,  the handle of <chan> is NIL.
-   The status of the operation is passed back in <status>. *)
-
-PROCEDURE OpenWithBuffer ( VAR chan         : ChanIO.Channel;
-                           CONST filename   : ARRAY OF CHAR;
-                           mode             : FileMode;
-                           VAR buffer       : ARRAY OF OCTET;
-                           VAR status       : Status );
-(* Opens file <filename>  in file mode <mode>  using <buffer> as a custom file
-   buffer and passes a file channel back in <chan>.  On success, the handle of
-   <chan> is a  valid file accessor  and its file position  depends on <mode>.
-   On failure,  the  handle of <chan>  is NIL.  The status of the operation is
-   passed back in <status>. *)
-
-PROCEDURE ReOpen ( chan : ChanIO.Channel; mode : FileMode );
-(* Flushes the file associated with file channel <chan>  and changes  its mode
-   to <mode>.  Sets the file position depending on <mode>. *)
+(* Opening and Re-opening a File *)
 
 (* Opening or reopening a file in a mode  whose append flag is not set  causes
    the file position  to be set  to the beginning of the file.  Opening or re-
    opening a file in a mode whose append flag is set  causes the file position
    to be set  to the end of the file.  An attempt to open a file that is a di-
-   rectory fails with status code mayNotOpenDirectory.  Any attempt to open or
-   reopen a file  while passing  an invalid file access mode  shall fail  with
-   status code invalidMode. *)
+   rectory fails with status code mayNotOpenDirectory. *)
+
+PROCEDURE Open
+  ( NEW file       : File;
+    CONST filename : ARRAY OF CHAR;
+    mode           : FileMode;
+    VAR status     : FileStatus );
+(* Opens file <filename> in file mode <mode>.  On success, a  newly allocated
+   and initialised file channel is passed back in <file>.  On failure, NIL is
+   passed back in <file>.  A status code is passed back in <status>. *)
+
+PROCEDURE OpenWithBuffer
+  ( NEW file         : File;
+    CONST filename   : ARRAY OF CHAR;
+    mode             : FileMode;
+    VAR buffer       : BARE ARRAY OF OCTET;
+    VAR status       : FileStatus );
+(* Opens file <filename>  in file mode <mode>  using <buffer> as a custom file
+   buffer.   On success,  a newly allocated  and initialised  file channel  is
+   passed back in <file>.  On failure, NIL is passed back in <file>.  A status
+   code is passed back in <status>. *)
+
+PROCEDURE ReOpen ( file : File; mode : FileMode );
+(* Flushes <file> and changes its access mode to <mode>.
+   The file position is set depending on <mode>. *)
 
 
-(* File mode, status and name *)
+(* Querying Mode, Status and Name *)
 
-PROCEDURE modeOf ( chan : ChanIO.Channel ) : FileMode;
-(* Returns the access mode of the file associated with file channel <chan>. *)
+PROCEDURE modeOf ( file : File ) : FileMode;
+(* Returns the access mode of <file>. *)
 
-PROCEDURE statusOf ( chan : ChanIO.Channel ) : Status;
-(* Returns the status of the most recent operation for file channel <chan>. *)
+PROCEDURE statusOf ( file : File ) : FileStatus;
+(* Returns the status of the most recent operation on <file>. *)
 
-PROCEDURE nameLen ( chan : ChanIO.Channel ) : CARDINAL;
-(* Returns the length of the filename associated with file channel <chan>. *)
+PROCEDURE nameLen ( file : File ) : CARDINAL;
+(* Returns the length of the filename associated with <file>. *)
 
-PROCEDURE GetName ( chan : ChanIO.Channel; VAR filename : ARRAY OF CHAR );
-(* Passes the name  of the file  associated  with  file channel <chan> back in
-   <filename>.  If the name exceeds the capacity of <filename>,  the operation
-   fails with status nameTooLong passing an empty string back in <filename>. *)
+PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
+(* Passes the name of the file  associated with <file> back in <filename>.  If
+   the name exceeds the capacity of <filename> the operation fails with status
+   code NameTooLong and an empty string is passed back in <filename>. *)
 
 
-(* File position operations *)
+(* Fie Positioning *)
 
-PROCEDURE eof ( chan : ChanIO.Channel ) : BOOLEAN;
-(* Returns TRUE if the end of the file associated with file channel <chan> has
-   been reached, otherwise FALSE. *)
+PROCEDURE currentPos ( file : File ) : FilePos;
+(* Returns the current read/write position of <file>. *)
 
-PROCEDURE currentPos ( chan : ChanIO.Channel ) : FilePos;
-(* Returns the current read/write position for the file associated with file
-   channel <chan>.  TMIN(FilePos) represents the beginning of a file. *)
-
-PROCEDURE lastValidSetPos ( chan : ChanIO.Channel ) : FilePos;
-(* Returns the most advanced position that may be passed to SetPos for file
-   channel <chan>.  The return value depends on length and mode of <chan>
+PROCEDURE lastValidSetPos ( file : File ) : FilePos;
+(* Returns the most advanced position that may be passed to SetPos for <file>.
+   The return value depends on the size and access mode of <file> as follows:
    
-   (1) if <chan> is in append mode, the function returns zero and sets the
-       associated file's status to OperationNotSupported.
-   (2) if <chan> is empty, then TMIN(FilePos) is returned.
-   (3) if <chan> is not empty and has its write flag set, then the position
-       of the last octet in the associated file plus one is returned.
-   (4) if <chan> is not empty and has its read but not its write flag set,
-       then the position of the last octet in the file is returned. *) 
+   (1) if <file> is in append mode, the function returns zero and sets the
+       status of <file> to OperationNotSupported.
+   (2) if <file> is empty, then TMIN(FilePos) is returned.
+   (3) if <file> is not empty and has its write flag set, then the position
+       of the last octet in <file> plus one is returned.
+   (4) if <file> is not empty and has its read but not its write flag set,
+       then the position of the last octet in <file> is returned. *)
 
-PROCEDURE SetPos ( chan : ChanIO.Channel; pos : FilePos );
-(* Sets the  read/write position  for  file channel <chan>  to <pos>.  For
-   any empty file, <pos> must be zero. For any non-empty file in read mode,
-   <pos> must be  less than  LastValidWritePos.  For any  non-empty file in
-   write mode, <pos> must be  less than or equal  to LastValidWritePos. *)
+PROCEDURE SetPos ( file : File; pos : FilePos );
+(* Sets the  read/write position of <chan> to <pos>. For any empty file, <pos>
+   must be zero.  For any non-empty file in read mode, <pos> must be less than
+   LastValidWritePos. For any non-empty file in write mode, <pos> must be less
+   than or equal to LastValidWritePos. *)
 
-PROCEDURE Advance ( chan : ChanIO.Channel; offset : FilePos );
-(* Advances the read/write position for file channel <chan> by <offset>. *)
+PROCEDURE Advance ( file : File; offset : FilePos );
+(* Advances the read/write position of <file> by <offset>. *)
 
-PROCEDURE Rewind ( chan : ChanIO.Channel );
-(* Sets the read/write position for file channel <chan>  to the  beginning
-   of the file and resets its end-of-file status. *)
+PROCEDURE Rewind ( file : File );
+(* Sets the read/write position of <file> to the beginning of the file and re-
+   sets its end-of-file status. *)
 
-(* Any attempt to call  LastValidWritePos, SetPos, Advance or Rewind  on  a
-   file channel  whose file mode  has the append flag set  shall fail with
-   status operationNotSupported.  Any attempt to set a file's read position
-   past the end of the file  shall fail  with status  accessBeyondEOF.  Any
-   attempt to set a file's write position past LastValidWritePos shall fail
-   with status accessBeyondEOF. *)
+(* Any attempt to call  LastValidWritePos, SetPos, Advance or Rewind on a file
+   channel whose access mode  has the append flag set  shall fail  with status
+   OperationNotSupported.  Any attempt  to set  a file channel's read position
+   past  the  end  of the file  shall fail  with  status AccessBeyondEOF.  Any
+   attempt to set a file channel's write position past LastValidWritePos shall
+   fail with status AccessBeyondEOF. *)
 
 
-(* Read and write operations *)
+(* I/O operations *)
+
+PROCEDURE dataReady ( file : File ) : BOOLEAN;
+(* Returns TRUE if the end of <file> has NOT been reached, otherwise FALSE. *)
 
 PROCEDURE Read ( chan : ChanIO.Channel; VAR data : OCTET );
 (* Reads one octet of data  at the current position of <chan>,  passes it back
-   in <data> and advances the read/write position of <chan> by one. *)
+   in <data> and advances the current read/write position of <chan> by one. *)
 
 PROCEDURE Lookahead ( chan : ChanIO.Channel; VAR data : OCTET );
 (* Reads the first lookahead octet  of <chan>,  passes it back in <data>,  but
    does NOT advance the read/write position of <chan>.  If the lookahead octet
    lies beyond the end  of the file  then no data is passed back  and the file
-   status is set to accessBeyondEOF. *)
+   status is set to AccessBeyondEOF. *)
 
 PROCEDURE LA2 ( chan : ChanIO.Channel; VAR data : OCTET );
 (* Reads the second lookahead octet of <chan>,  passes it back in <data>,  but
    does  NOT advance  the read/write position  of <chan>.  If the second look-
    ahead octet lies beyond the end of the file then no data is passed back and
-   the file status is set to accessBeyondEOF. *)
+   the file status is set to AccessBeyondEOF. *)
 
-PROCEDURE ReadBlock ( chan : ChanIO.Channel;
-                      VAR data : ARRAY OF OCTET; VAR octetsRead : FileSize );
+PROCEDURE ReadBlock
+  ( chan           : ChanIO.Channel;
+    VAR data       : ARRAY OF OCTET;
+    VAR octetsRead : IOSIZE );
 (* Reads a block of data  at the current position of <chan>.  Passes the block
    of data back in <data>  and the number of octets read in <octetsRead>.  The
-   read/write position of <chan> is advanced accordingly. *)
+   current read/write position of <chan> is advanced by <octetsRead>. *)
 
-(* Any attempt  to read or lookahead read  from a file  whose read flag is not
-   set shall fail with status operationNotSupported. *)
+(* Any attempt  to read or lookahead read  from a file channel whose read flag
+   is not set shall fail with status OperationNotSupported. *)
 
 
 PROCEDURE Write ( chan : ChanIO.Channel; data : OCTET );
-(* Performs a write or append operation depending on the mode of <chan>.
-   In write mode, the procedure writes one octet in <data> to the current
-   position of <chan>. In append mode, the procedure atomically sets the
-   current read/write position of <chan> to the end of the file and appends
-   one octet in <data> to the end of the file. In either mode, the current
-   read/write position of <chan> is advanced by one after the data has been
-   written. *)
+(* Performs a write or append operation depending on the access mode of <chan>
+   and advances the current read/write position by one after the data has been
+   written. In write mode <data> is written to the current position of <chan>.
+   In append mode the procedure  atomically  sets the current read/write posi-
+   tion to the end of the file and appends <data> to the end of <chan>. *)
 
-PROCEDURE WriteBlock ( chan : ChanIO.Channel;
-                       data : ARRAY OF OCTET; VAR octetsWritten : FileSize );
-(* Performs a write or append operation depending on the mode of <chan>.
-   In write mode, the procedure writes the block of data passed in <data>
-   starting at the current read/write position of <chan>. In append mode, the
-   procedure atomically sets the current read/write position of <file> to the
-   end of the file and appends the block of data passed in <data> to the end
-   of the file. In either mode, the current read/write position of <file> is
-   advanced by the number of octets written and the number of octets written
-   is passed back in <octetsWritten> after the data has been written. *)
+PROCEDURE WriteBlock
+  ( chan              : ChanIO.Channel;
+    data              : BARE ARRAY OF OCTET;
+    VAR octetsWritten : IOSIZE );
+(* Performs a write or append operation depending on the access mode of <chan>
+   and passes the actual number of octets written in <octetsWritten>. The cur-
+   rent read/write position is advanced accordingly. In write mode, the proce-
+   dure writes <data> at the current read/write position of <chan>.  In append
+   mode,  it atomically sets the current read/write position to the end of the
+   file and appends <data> to the end of <chan>. *)
 
 PROCEDURE Flush ( chan : ChanIO.Channel );
 (* Writes unwritten data in any buffer of <chan> to its associated file. *)
 
-(* Any attempt to write to or flush a file whose write flag is not set shall
-   fail with status operationNotSupported. *)
+(* Any attempt  to write to  or flush a file whose write flag is not set shall
+   fail with status OperationNotSupported. *)
 
 
-(* Closing a File Channel *)
+(* Closing a File *)
 
-PROCEDURE Close ( VAR chan : ChanIO.Channel; VAR status : Status );
-(* Performs Flush on <chan>, closes the associated file and passes NIL back
-   in <chan>.  The status of the operation is passed back  in <status>. *)
+PROCEDURE Close ( VAR file : File; VAR status : Status );
+(* Performs Flush on <file>,  closes  the associated file,  deallocates <file>
+   and passes NIL back in <file>. A status code is passed back in <status>. *)
 
 
-(* Implementation defined accessors to special files *)
+(* Channels for Special Files *)
 
 (* Special files  are automatically opened when module FileIO is initialised.
    The file mode of a special file is either read  or write.   EOF always re-
    turns FALSE and CurrentPos always returns TMIN(FilePos) for special files.
-   Any attempt to open a special file will fail with status alreadyOpen.  Any
+   Any attempt to open a special file will fail with status AlreadyOpen.  Any
    attempt to call ReOpen, NameLen, GetName, LastValidSetPos, SetPos, Rewind,
    Advance, Lookahead, LA2, ReadBlock, Flush or Close  will fail with  status
-   operationNotSupported.  NameLen  and LastValidSetPos will return zero  and
+   OperationNotSupported.  NameLen  and LastValidSetPos will return zero  and
    GetName will pass an empty string. *)
-
-PROCEDURE isSpecialFile ( chan : ChanIO.Channel ) : BOOLEAN;
-(* Returns TRUE if chan is associated with a special file, otherwise FALSE. *)
    
 PROCEDURE defaultInFile : ChanIO.Channel;
-(* Returns the file accessor associated with an implementation defined source
-   for program input, open in read mode, usually a terminal. *)
+(* Returns a file channel associated with special file stdin. *)
 
 PROCEDURE defaultOutFile : ChanIO.Channel;
-(* Returns a file channel associated with an implementation defined desti-
-   nation for program output, open in write mode, usually a terminal. *)
+(* Returns a file channel associated with special file stdout. *)
 
 PROCEDURE defaultErrFile : ChanIO.Channel;
-(* Returns a file channel associated with an implementation defined desti-
-   nation for program error output, open in write mode, usually a terminal. *)
+(* Returns a file channel associated with special file stderr. *)
 
 PROCEDURE defaultNullFile : ChanIO.Channel;
-(* Returns a file channel associated with the null device, open in write
-   mode.  Write operations on this file have no effect. *)
+(* Returns a file channel associated with the null device, open in write mode.
+   Write operations on this file channel have no effect. *)
 
 END FileIO.
