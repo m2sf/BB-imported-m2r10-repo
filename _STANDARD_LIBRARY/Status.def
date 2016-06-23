@@ -7,4 +7,7 @@ TYPE Status = RECORD ( NIL )
   success : BOOLEAN
 END;
 
+(* Status Code Base Type *)
+TYPE BaseCode = ( Success, Failure );
+
 END Status.
