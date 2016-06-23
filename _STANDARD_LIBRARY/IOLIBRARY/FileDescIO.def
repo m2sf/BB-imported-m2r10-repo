@@ -8,7 +8,7 @@ DEFINITION MODULE FileDescIO;
    any particular structure.  This is a low level API.  For common use,  it is
    recommended to use the channel based API of module FileIO instead. *)
 
-IMPORT Cardinals, FileMode. FileStatus;
+IMPORT Cardinals, FileMode, IOStatus, IOSIZE;
 
 (* File descriptor *)
 
@@ -20,7 +20,10 @@ TYPE File = INTEGER;
 (* Resource Allocation *)
 
 PROCEDURE Open
-  ( VAR fd : File; CONST filename : ARRAY OF CHAR; mode : Mode );
+  ( VAR fd         : File;
+    CONST filename : ARRAY OF CHAR;
+    mode           : FileMode;
+    VAR status     : IOStatus );
 (* Opens file <filename> in access mode <mode>.  On success, a file descriptor
    is passed back  in <fd>.  On failure, InvalidFile  is passed back  in <fd>.
    Sets the file position depending on <mode>.  The status of the operation is
@@ -32,7 +35,7 @@ PROCEDURE Open
 PROCEDURE modeOf ( fd : File ) : Mode;
 (* Returns the access mode of <fd>. *)
 
-PROCEDURE statusOf ( fd : File ) : Status;
+PROCEDURE statusOf ( fd : File ) : IOStatus;
 (* Returns the status of the most recent operation on <fd>. *)
 
 PROCEDURE isValidFile ( fd : File ) : BOOLEAN;
@@ -48,16 +51,16 @@ PROCEDURE Read ( fd : File; VAR data : OCTET );
 (* Reads an octet from <fd> and passes it back in <data>. *)
 
 PROCEDURE ReadBlock
-  ( fd : File; VAR data : ARRAY OF OCTET; octetsRead : LONGCARD );
+  ( fd : File; VAR data : ARRAY OF OCTET; octetsRead : IOSIZE );
 (* Reads as many octets from <fd> as are available and fit into buffer <data>.
    Reading starts at the current position. The number of octets read is passed
    back in <octetsRead>.  The current position is advanced by <octetsRead>. *)
 
 PROCEDURE ReadBlockAtOffset
-  ( fd : File;
-    VAR data : ARRAY OF OCTET;
-    VAR octetsRead : LONGCARD;
-    offset : LONGCARD );
+  ( fd             : File;
+    VAR data       : ARRAY OF OCTET;
+    VAR octetsRead : IOSIZE;
+    offset         : LONGCARD );
 (* Reads as many octets from <fd> as are available and fit into buffer <data>.
    Reading starts at position <offset>.  The number of  octets read  is passed
    back in <octetsRead>.  The current position is NOT advanced. *)
@@ -66,16 +69,16 @@ PROCEDURE Write ( fd : File; data : OCTET );
 (* Writes the octet passed in <data> to <fd>. *)
 
 PROCEDURE WriteBlock
-  ( fd : File; CONST data : ARRAY OF OCTET; octetsWritten : LONGCARD );
+  ( fd : File; CONST data : ARRAY OF OCTET; octetsWritten : IOSIZE );
 (* Writes buffer <data> to <fd>.  Writing starts at the current position.  The
    number of  octets written  is passed back in <octetsWritten>.  The  current
    position is advanced by <octetsRead>. *)
 
 PROCEDURE WriteBlockAtOffset
-  ( fd : File;
-    data : ARRAY OF OCTET;
-    VAR octetsRead : LONGCARD;
-    offset : LONGCARD );
+  ( fd             : File;
+    data           : ARRAY OF OCTET;
+    VAR octetsRead : IOSIZE;
+    offset         : LONGCARD );
 (* Writes buffer <data>  to <fd>.  Writing  starts  at position <offset>.  The
    number of  octets written  is passed back in <octetsWritten>.  The  current
    position is NOT advanced. *)
@@ -94,7 +97,6 @@ PROCEDURE Advance ( fd : File; offset : LONGCARD );
 
 PROCEDURE Rewind ( fd : File );
 (* Sets the current position of <fd> to zero and resets its eof status. *)
-
 
 TYPE FromPosition = ( Start, Current, End );
 
@@ -118,10 +120,10 @@ PROCEDURE defaultErrFile : File;
 
 (* Resource Deallocation *)
 
-PROCEDURE Close ( VAR fd : File; VAR status : Status );
+PROCEDURE Close ( VAR fd : File; VAR status : IOStatus );
 (* Closes the file associated with <fd>, passes status back in <status>. *)
 
-PROCEDURE CloseAll ( VAR status : Status );
+PROCEDURE CloseAll ( VAR status : IOStatus );
 (* Closes all open file descriptors of the current process, except for those
    associated with stdin, stdout and stderr, passes status in <status>. *)
 
