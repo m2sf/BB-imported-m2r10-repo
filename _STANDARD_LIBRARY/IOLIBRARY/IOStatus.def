@@ -5,8 +5,11 @@ DEFINITION MODULE IOStatus;
 IMPORT Status;
 
 TYPE IOStatus = RECORD ( Status )
-  code : Code
+  [ success = TRUE ]
+  code : Code = Success
 END;
+
+CONST Success = Code.Success;
 
 TYPE Code =
   ( +Status.BaseCode,        (* inherits Success and Failure      *)
