@@ -1,0 +1,11 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE IOSIZE;
+
+IMPORT Cardinals;
+
+(* Common Type For Read/Write Count *)
+
+TYPE IOSIZE = ALIAS OF CARDINAL64;
+
+END IOSIZE.
