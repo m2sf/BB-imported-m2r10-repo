@@ -1,0 +1,10 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE Status;
+
+(* Status Root Type *)
+TYPE Status = RECORD ( NIL )
+  success : BOOLEAN
+END;
+
+END Status.
