@@ -17,7 +17,7 @@ TYPE Descriptor = RECORD ( NIL )
   ready : PROCEDURE ( Channel ) : BOOLEAN;
   Get   : PROCEDURE ( Channel, VAR OCTET);
   GetN  : PROCEDURE ( Channel, VAR ARRAY OF OCTET, IOSIZE );
-  (* method slots for generic input *)
+  (* method slots for generic output *)
   Put   : PROCEDURE ( Channel, OCTET);
   PutN  : PROCEDURE ( Channel, ARRAY OF OCTET, IOSIZE );
   Sync  : PROCEDURE ( Channel )
