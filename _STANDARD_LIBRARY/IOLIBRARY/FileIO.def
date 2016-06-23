@@ -201,16 +201,16 @@ PROCEDURE Close ( VAR file : File; VAR status : Status );
    OperationNotSupported.  NameLen  and LastValidSetPos will return zero  and
    GetName will pass an empty string. *)
    
-PROCEDURE defaultInFile : ChanIO.Channel;
+PROCEDURE defaultInFile : File;
 (* Returns a file channel associated with special file stdin. *)
 
-PROCEDURE defaultOutFile : ChanIO.Channel;
+PROCEDURE defaultOutFile : File;
 (* Returns a file channel associated with special file stdout. *)
 
-PROCEDURE defaultErrFile : ChanIO.Channel;
+PROCEDURE defaultErrFile : File;
 (* Returns a file channel associated with special file stderr. *)
 
-PROCEDURE defaultNullFile : ChanIO.Channel;
+PROCEDURE defaultNullFile : File;
 (* Returns a file channel associated with the null device, open in write mode.
    Write operations on this file channel have no effect. *)
 
