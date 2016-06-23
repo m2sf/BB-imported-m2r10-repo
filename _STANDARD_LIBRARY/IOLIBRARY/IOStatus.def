@@ -1,0 +1,23 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE IOStatus;
+
+IMPORT Status;
+
+TYPE IOStatus =
+  ( +Status,                 (* inherits Success and Failure      *)
+    FileNotFound,            (* no file found with this filename  *)
+    NameTooLong,             (* the passed filename is too long   *)
+    IllegalCharsInName,      (* illegal chars in passed filename  *)
+    InvalidMode,             (* the passed mode is invalid        *)
+    AlreadyOpen,             (* the passed file is already open   *)
+    MayNotOpenDirectory,     (* attempt to open a directory       *)
+    AccessDenied,            (* the filesystem denied file access *)
+    AccessBeyondEOF,         (* attempt to read past end of file  *)
+    FileSizeLimitExceeded,   (* attempt to write past size limit  *)
+    OpenFileLimitExceeded,   (* attempt to open too many files    *)
+    OperationNotSupported,   (* unsupported operation attempted   *)
+    DeviceFull,              (* the device capacity is exceeded   *)
+    DeviceError );           (* the device reported a failure     *)
+
+END IOStatus.
