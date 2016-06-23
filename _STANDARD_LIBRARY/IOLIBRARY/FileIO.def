@@ -17,7 +17,7 @@ TYPE Descriptor = RECORD ( ChanIO.Descriptor )
 * handle : FilePtrIO.File
 END;
 
-TYPE FilePos = ALIAS OF FileSize;
+TYPE FilePos = ALIAS OF FilePtrIO.FileSize;;
 
 
 (* Introspection *)
