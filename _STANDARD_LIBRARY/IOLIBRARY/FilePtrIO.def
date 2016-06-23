@@ -8,9 +8,9 @@ DEFINITION MODULE FilePtrIO;
    any particular structure.  This is a low level API.  For common use,  it is
    recommended to use the channel based API of module FileIO instead. *)
 
-IMPORT Cardinals; (* for FileSize and FilePos *)
+IMPORT Cardinals, FileMode;
 
-(* File accessor, file status and file mode *)
+(* File accessor and file status *)
 
 TYPE File = OPAQUE; (* implementation defined file accessor *)
     
@@ -32,24 +32,6 @@ TYPE Status = ( success,               (* operation completed successfully  *)
                 deviceFull,            (* the device capacity is exceeded   *)
                 deviceError );         (* the device reported a failure     *)
 
-(* The mode of a file  consists of  four flags:  read, write, append and sync.
-   These flags may be combined arbitrarily, subject to the following rules:
-   
-   (1) a file mode may not be the empty set
-   (2) append may not be set if read is set
-   (3) append may only be set if write is set
-   (4) sync may only be set if write is set
-     
-   Any attempt  to open  or reopen  a file  while passing an invalid file mode
-   shall fail with status invalidMode. *)
-
-TYPE ModeFlags = ( read,              (* reading is permitted if set        *)
-                   write,             (* writing is permitted if set        *)
-                   append,            (* writing always appends if set      *)
-                   sync );            (* writing always flushes if set      *)
-
-TYPE Mode = SET OF ModeFlags;
-
 
 (* Alias types for implementation dependent file position and file size *)
 
@@ -58,24 +40,13 @@ TYPE Mode = SET OF ModeFlags;
     FilePos = ALIAS OF FileSize;
 
 
-(* Predefined file modes *)
-
-CONST
-  WO = { Mode.Write };
-  RO = { Mode.Read };
-  RW = { Mode.Read, Mode.Write };
-  Append = { Mode.Write, Mode.Append };
-    
-  DefaultBufferSize = <implementation defined value>;
+CONST DefaultBufferSize = <implementation defined value>;
 
 
 (* Parameter consistency checks *)
 
 PROCEDURE isValidAccessor ( file : File ) : BOOLEAN;
 (* Returns TRUE if <file> is a valid file accessor, otherwise FALSE. *)
-
-PROCEDURE isValidMode ( mode : Mode ) : BOOLEAN;
-(* Returns TRUE if <mode> is a valid file mode, otherwise FALSE. *)
 
 PROCEDURE isValidPos ( file : File; pos : FilePos ) : BOOLEAN;
 (* Returns TRUE if <pos> is a valid file position for <file>,
@@ -86,7 +57,7 @@ PROCEDURE isValidPos ( file : File; pos : FilePos ) : BOOLEAN;
 
 PROCEDURE Open ( NEW file       : File;
                  CONST filename : ARRAY OF CHAR;
-                 mode           : Mode;
+                 mode           : FileMode;
                  VAR status     : Status );
 (* Opens the file <filename> in file mode <mode>.  If sucessful passes a file
    accessor back in <file>,  otherwise passes NIL back in <file>.  Sets the
@@ -95,7 +66,7 @@ PROCEDURE Open ( NEW file       : File;
 
 PROCEDURE OpenWithBuffer ( NEW file         : File;
                            CONST filename   : ARRAY OF CHAR;
-                           mode             : Mode;
+                           mode             : FileMode;
                            VAR buffer       : ARRAY OF OCTET;
                            VAR status       : Status );
 (* Opens the file <filename> in file mode <mode> using <buffer> as a custom
@@ -103,7 +74,7 @@ PROCEDURE OpenWithBuffer ( NEW file         : File;
    wise passes NIL back in <file>.  Sets the file position depending on <mode>.
    The status is passed back in <status>. *)
 
-PROCEDURE ReOpen ( file : File; mode : Mode );
+PROCEDURE ReOpen ( file : File; mode : FileMode );
 (* Flushes the file associated with file accessor <file> and changes its mode
    to <mode>. Sets the file position depending on <mode>. *)
 
@@ -116,7 +87,7 @@ PROCEDURE ReOpen ( file : File; mode : Mode );
 
 (* File mode, status and name *)
 
-PROCEDURE modeOf ( file : File ) : Mode;
+PROCEDURE modeOf ( file : File ) : FileMode;
 (* Returns the file mode of file accessor <file>. *)
 
 PROCEDURE statusOf ( file : File ) : Status;
@@ -134,7 +105,7 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 
 (* File position operations *)
 
-PROCEDURE EOF ( file : File ) : BOOLEAN;
+PROCEDURE eof ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file accessor <file>
    has been reached, otherwise FALSE. *)
 
@@ -236,9 +207,6 @@ PROCEDURE Close ( VAR file : File; VAR status : Status );
 (* Performs Flush on <file>, closes the associated file and passes NIL back
    in <file>.  The status of the operation is passed back  in <status>. *)
 
-PROCEDURE CloseAll;
-(* Closes all open files. *)
-
 
 (* Implementation defined accessors to special files *)
 
@@ -269,6 +237,5 @@ PROCEDURE defaultErrFile : File;
 PROCEDURE defaultNullFile : File;
 (* Returns the file accessor associated with the null device, open in write
    mode.  Write operations on this file have no effect. *)
-
 
 END FilePtrIO.
