@@ -4,8 +4,12 @@ DEFINITION MODULE IOStatus;
 
 IMPORT Status;
 
-TYPE IOStatus =
-  ( +Status,                 (* inherits Success and Failure      *)
+TYPE IOStatus = RECORD ( Status )
+  code : Code
+END;
+
+TYPE Code =
+  ( +Status.BaseCode,        (* inherits Success and Failure      *)
     FileNotFound,            (* no file found with this filename  *)
     NameTooLong,             (* the passed filename is too long   *)
     IllegalCharsInName,      (* illegal chars in passed filename  *)
