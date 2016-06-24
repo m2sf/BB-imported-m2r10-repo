@@ -26,16 +26,16 @@ CONST DefaultBufferSize = FilePtrIO.DefaultBufferSize;
 (* The buffer size used when no custom buffer is specified. *)
 
 PROCEDURE isFileChannel ( chan : ChanIO.Channel ) : BOOLEAN;
-(* Returns TRUE if <chan> is a valid file channel, otherwise FALSE. *)
+(* Returns TRUE if <chan> is a valid file channel, else FALSE. *)
 
 PROCEDURE isValidFile ( file : File ) : BOOLEAN;
-(* Returns TRUE if the file accessor of <file> is valid, otherwise FALSE. *)
+(* Returns TRUE if the file accessor of <file> is valid, else FALSE. *)
 
-PROCEDURE isSpecialFile ( chan : ChanIO.Channel ) : BOOLEAN;
-(* Returns TRUE if chan is associated with a special file, otherwise FALSE. *)
+PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
+(* Returns TRUE if <file> is associated with a special file, else FALSE. *)
 
 PROCEDURE isValidPos ( file : File; pos : FilePos ) : BOOLEAN;
-(* Returns TRUE if <pos> is a valid position for <file>, otherwise FALSE. *)
+(* Returns TRUE if <pos> is a valid position for <file>, else FALSE. *)
 
 
 (* Opening and Re-opening a File *)
