@@ -21,6 +21,8 @@ TYPE Descriptor = RECORD ( NIL )
   Put   : PROCEDURE ( Channel, OCTET);
   PutN  : PROCEDURE ( Channel, ARRAY OF OCTET, IOSIZE );
   Sync  : PROCEDURE ( Channel )
+  (* method slot for generic status query *)
+  failed : PROCEDURE ( Channel, VAR IOStatus ) : BOOLEAN;
 END;
 
 END ChanIO.
