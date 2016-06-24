@@ -182,7 +182,7 @@ PROCEDURE Flush ( file : File );
 (* Channel Method Implementations *)
 
 PROCEDURE dataReady ( chan : ChanIO.Channel ) : BOOLEAN;
-(* Channel method implementation corresponding to NOT eof(). *)
+(* Channel method implementation equivalent to NOT eof(). *)
 
 PROCEDURE GetOctet
   ( chan : ChanIO.Channel; VAR data : OCTET; VAR status : IOStatus );
@@ -204,7 +204,7 @@ PROCEDURE PutBlock
 (* Channel method implementation corresponding to WriteBlock(). *)
 
 PROCEDURE SyncData ( chan : ChanIO.Channel; VAR status : IOStatus );
-(* Channel method implementation corresponding to WriteBlock(). *)
+(* Channel method implementation corresponding to Flush(). *)
 
 
 (* Closing a File *)
