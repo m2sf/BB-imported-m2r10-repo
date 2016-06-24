@@ -12,8 +12,8 @@ IMPORT ChanIO, FilePtrIO, FileMode, IOStatus, IOSIZE;
 TYPE File = POINTER TO Descriptor;
 
 TYPE Descriptor = RECORD ( ChanIO.Descriptor )
-[ ready = dataReady; Get = Read; GetN = ReadBlock;
-  Put = Write; PutN = WriteBlock; Sync = Flush; failed = failed ]
+[ ready = dataReady; Get = GetOctet; GetN = GetBlock;
+  Put = PutOctet; PutN = PutBlock; Sync = SyncData ]
 * handle : FilePtrIO.File
 END;
 
@@ -128,66 +128,83 @@ PROCEDURE Rewind ( file : File );
 
 (* I/O operations *)
 
-(* For genericity, all I/O operations take type ChanIO.Channel as argument. *)
+PROCEDURE eof ( file : File ) : BOOLEAN;
+(* Returns TRUE if the end of <file> has been reached, otherwise FALSE. *)
 
-PROCEDURE dataReady ( chan : ChanIO.Channel ) : BOOLEAN;
-(* Returns TRUE if the end of <file> has NOT been reached, otherwise FALSE. *)
+PROCEDURE Read ( file : File; VAR data : OCTET );
+(* Reads one octet of data  at the current position of <file>,  passes it back
+   in <data> and advances the current read/write position of <file> by one. *)
 
-PROCEDURE failed ( chan : IOChan.Channel; VAR status : IOStatus ) : BOOLEAN;
-(* Returns TRUE  if the  most recent operation  on <chan>  was NOT successful.   
-   The status of the most recent operation is passed back in <status>. *)
-
-PROCEDURE Read ( chan : ChanIO.Channel; VAR data : OCTET );
-(* Reads one octet of data  at the current position of <chan>,  passes it back
-   in <data> and advances the current read/write position of <chan> by one. *)
-
-PROCEDURE Lookahead ( chan : ChanIO.Channel; VAR data : OCTET );
-(* Reads the first lookahead octet  of <chan>,  passes it back in <data>,  but
-   does NOT advance the read/write position of <chan>.  If the lookahead octet
+PROCEDURE Lookahead ( file : file; VAR data : OCTET );
+(* Reads the first lookahead octet  of <file>,  passes it back in <data>,  but
+   does NOT advance the read/write position of <file>.  If the lookahead octet
    lies beyond the end  of the file  then no data is passed back  and the file
    status is set to AccessBeyondEOF. *)
 
-PROCEDURE LA2 ( chan : ChanIO.Channel; VAR data : OCTET );
-(* Reads the second lookahead octet of <chan>,  passes it back in <data>,  but
-   does  NOT advance  the read/write position  of <chan>.  If the second look-
+PROCEDURE LA2 ( file : File; VAR data : OCTET );
+(* Reads the second lookahead octet of <file>,  passes it back in <data>,  but
+   does  NOT advance  the read/write position  of <file>.  If the second look-
    ahead octet lies beyond the end of the file then no data is passed back and
    the file status is set to AccessBeyondEOF. *)
 
 PROCEDURE ReadBlock
-  ( chan           : ChanIO.Channel;
-    VAR data       : ARRAY OF OCTET;
-    VAR octetsRead : IOSIZE );
-(* Reads a block of data  at the current position of <chan>.  Passes the block
+  ( file : File; VAR data : ARRAY OF OCTET; VAR octetsRead : IOSIZE );
+(* Reads a block of data  at the current position of <file>.  Passes the block
    of data back in <data>  and the number of octets read in <octetsRead>.  The
-   current read/write position of <chan> is advanced by <octetsRead>. *)
+   current read/write position of <file> is advanced by <octetsRead>. *)
 
 (* Any attempt  to read or lookahead read  from a file channel whose read flag
    is not set shall fail with status OperationNotSupported. *)
 
-
-PROCEDURE Write ( chan : ChanIO.Channel; data : OCTET );
-(* Performs a write or append operation depending on the access mode of <chan>
+PROCEDURE Write ( file : File; data : OCTET );
+(* Performs a write or append operation depending on the access mode of <file>
    and advances the current read/write position by one after the data has been
-   written. In write mode <data> is written to the current position of <chan>.
+   written. In write mode <data> is written to the current position of <file>.
    In append mode the procedure  atomically  sets the current read/write posi-
-   tion to the end of the file and appends <data> to the end of <chan>. *)
+   tion to the end of the file and appends <data> to the end of <file>. *)
 
 PROCEDURE WriteBlock
-  ( chan              : ChanIO.Channel;
-    data              : BARE ARRAY OF OCTET;
-    VAR octetsWritten : IOSIZE );
-(* Performs a write or append operation depending on the access mode of <chan>
+  ( file : File; data : BARE ARRAY OF OCTET; VAR octestWritten : IOSIZE );
+(* Performs a write or append operation depending on the access mode of <file>
    and passes the actual number of octets written in <octetsWritten>. The cur-
    rent read/write position is advanced accordingly. In write mode, the proce-
    dure writes <data> at the current read/write position of <chan>.  In append
    mode,  it atomically sets the current read/write position to the end of the
-   file and appends <data> to the end of <chan>. *)
+   file and appends <data> to the end of <file>. *)
 
-PROCEDURE Flush ( chan : ChanIO.Channel );
+PROCEDURE Flush ( file : File );
 (* Writes unwritten data in any buffer of <chan> to its associated file. *)
 
 (* Any attempt  to write to  or flush a file whose write flag is not set shall
    fail with status OperationNotSupported. *)
+
+
+(* Channel Method Implementations *)
+
+PROCEDURE dataReady ( chan : ChanIO.Channel ) : BOOLEAN;
+(* Channel method implementation corresponding to NOT eof(). *)
+
+PROCEDURE GetOctet
+  ( chan : ChanIO.Channel; VAR data : OCTET; VAR status : IOStatus );
+(* Channel method implementation corresponding to Read(). *)
+
+PROCEDURE GetBlock
+  ( chan : ChanIO.Channel; VAR data : ARRAY OF OCTET; VAR status : IOStatus );
+(* Channel method implementation corresponding to ReadBlock(). *)
+
+PROCEDURE PutOctet
+  ( chan : ChanIO.Channel; data : OCTET; VAR status : IOStatus );
+(* Channel method implementation corresponding to Write(). *)
+
+PROCEDURE PutBlock
+  ( chan              : ChanIO.Channel;
+    data              : ARRAY OF OCTET;
+    VAR octetsWritten : IOSIZE;
+    VAR status        : IOStatus );
+(* Channel method implementation corresponding to WriteBlock(). *)
+
+PROCEDURE SyncData ( chan : ChanIO.Channel; VAR status : IOStatus );
+(* Channel method implementation corresponding to WriteBlock(). *)
 
 
 (* Closing a File *)
