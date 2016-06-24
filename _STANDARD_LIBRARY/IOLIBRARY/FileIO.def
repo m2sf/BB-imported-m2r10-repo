@@ -13,7 +13,7 @@ TYPE File = POINTER TO Descriptor;
 
 TYPE Descriptor = RECORD ( ChanIO.Descriptor )
 [ ready = dataReady; Get = Read; GetN = ReadBlock;
-  Put = Write; PutN = WriteBlock; Sync = Flush ]
+  Put = Write; PutN = WriteBlock; Sync = Flush; failed = failed ]
 * handle : FilePtrIO.File
 END;
 
@@ -132,6 +132,10 @@ PROCEDURE Rewind ( file : File );
 
 PROCEDURE dataReady ( chan : ChanIO.Channel ) : BOOLEAN;
 (* Returns TRUE if the end of <file> has NOT been reached, otherwise FALSE. *)
+
+PROCEDURE failed ( chan : IOChan.Channel; VAR status : IOStatus ) : BOOLEAN;
+(* Returns TRUE  if the  most recent operation  on <chan>  was NOT successful.   
+   The status of the most recent operation is passed back in <status>. *)
 
 PROCEDURE Read ( chan : ChanIO.Channel; VAR data : OCTET );
 (* Reads one octet of data  at the current position of <chan>,  passes it back
