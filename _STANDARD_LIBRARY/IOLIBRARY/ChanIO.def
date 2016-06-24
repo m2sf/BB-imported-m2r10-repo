@@ -4,7 +4,7 @@ DEFINITION MODULE ChanIO;
 
 (* Channel Based IO *)
 
-IMPORT IOSIZE;
+IMPORT IOStatus, IOSIZE;
 
 (* Channel Root Type *)
 
@@ -15,14 +15,12 @@ TYPE Channel = POINTER TO Descriptor;
 TYPE Descriptor = RECORD ( NIL )
   (* method slots for generic input *)
   ready : PROCEDURE ( Channel ) : BOOLEAN;
-  Get   : PROCEDURE ( Channel, VAR OCTET);
-  GetN  : PROCEDURE ( Channel, VAR ARRAY OF OCTET, IOSIZE );
+  Get   : PROCEDURE ( Channel, VAR OCTET, VAR IOStatus );
+  GetN  : PROCEDURE ( Channel, VAR ARRAY OF OCTET, VAR IOStatus );
   (* method slots for generic output *)
-  Put   : PROCEDURE ( Channel, OCTET);
-  PutN  : PROCEDURE ( Channel, ARRAY OF OCTET, IOSIZE );
-  Sync  : PROCEDURE ( Channel )
-  (* method slot for generic status query *)
-  failed : PROCEDURE ( Channel, VAR IOStatus ) : BOOLEAN;
+  Put   : PROCEDURE ( Channel, OCTET, VAR IOStatus );
+  PutN  : PROCEDURE ( Channel, ARRAY OF OCTET, VAR IOSIZE, VAR IOStatus );
+  Sync  : PROCEDURE ( Channel, VAR IOStatus )
 END;
 
 END ChanIO.
