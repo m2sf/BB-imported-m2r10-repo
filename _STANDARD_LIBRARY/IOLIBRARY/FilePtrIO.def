@@ -18,11 +18,11 @@ TYPE File = OPAQUE; (* implementation defined file accessor *)
    than opening a file shall raise runtime fault InvalidAccessor. *)
 
 
-(* Alias types for file position and file size *)
+(* File Size and Postion *)
 
-    FileSize = ALIAS OF LONGCARD;
-    
-    FilePos = ALIAS OF FileSize;
+TYPE Size = ALIAS OF IOSIZE;
+
+TYPE Pos = ALIAS OF Size;
 
 
 (* Introspection *)
@@ -35,7 +35,7 @@ PROCEDURE isValidAccessor ( file : File ) : BOOLEAN;
 PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
 
-PROCEDURE isValidPos ( file : File; pos : FilePos ) : BOOLEAN;
+PROCEDURE isValidPos ( file : File; pos : Pos ) : BOOLEAN;
 (* Returns TRUE if <pos> is a valid file position for <file>,
    otherwise FALSE. *)
 
@@ -114,13 +114,13 @@ PROCEDURE lastValidSetPos ( file : File ) : FilePos;
    (4) if <file> is not empty and has its read but not its write flag set,
        then the position of the last octet in <file> is returned. *) 
 
-PROCEDURE SetPos ( file : File; pos : FilePos );
+PROCEDURE SetPos ( file : File; pos : Pos );
 (* Sets the  read/write position  for  file accessor <file>  to <pos>.  For
    any empty file, <pos> must be zero. For any non-empty file in read mode,
    <pos> must be  less than  LastValidWritePos.  For any  non-empty file in
    write mode, <pos> must be  less than or equal  to LastValidWritePos. *)
 
-PROCEDURE Advance ( file : File; offset : FilePos );
+PROCEDURE Advance ( file : File; offset : Pos );
 (* Advances the read/write position for file accessor <file> by <offset>. *)
 
 PROCEDURE Rewind ( file : File );
