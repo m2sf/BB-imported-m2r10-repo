@@ -20,9 +20,9 @@ END;
 
 (* File Size and Postion *)
 
-TYPE Size = ALIAS OF IOSIZE;
+TYPE Size = ALIAS OF FilePtrIO.Size;
 
-TYPE Pos = ALIAS OF Size;
+TYPE Pos = ALIAS OF FilePtrIO.Size;
 
 
 (* Introspection *)
