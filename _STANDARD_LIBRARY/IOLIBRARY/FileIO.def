@@ -22,7 +22,7 @@ END;
 
 TYPE Size = ALIAS OF FilePtrIO.Size;
 
-TYPE Pos = ALIAS OF FilePtrIO.Size;
+TYPE Pos = ALIAS OF FilePtrIO.Pos;
 
 
 (* Introspection *)
