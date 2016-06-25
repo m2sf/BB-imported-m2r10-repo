@@ -8,7 +8,7 @@ DEFINITION MODULE FileDescIO;
    any particular structure.  This is a low level API.  For common use,  it is
    recommended to use the channel based API of module FileIO instead. *)
 
-IMPORT Cardinals, FileMode, IOStatus, IOSIZE;
+IMPORT IOSIZE, IOStatus, FileMode;
 
 (* File descriptor *)
 
@@ -16,6 +16,11 @@ CONST InvalidFile = -1;
 
 TYPE File = INTEGER;
 
+(* File Size and Postion *)
+
+TYPE Size = ALIAS OF IOSIZE;
+
+TYPE Pos = ALIAS OF Size;
 
 (* Resource Allocation *)
 
@@ -60,7 +65,7 @@ PROCEDURE ReadBlockAtOffset
   ( fd             : File;
     VAR data       : ARRAY OF OCTET;
     VAR octetsRead : IOSIZE;
-    offset         : LONGCARD );
+    offset         : Pos );
 (* Reads as many octets from <fd> as are available and fit into buffer <data>.
    Reading starts at position <offset>.  The number of  octets read  is passed
    back in <octetsRead>.  The current position is NOT advanced. *)
@@ -78,7 +83,7 @@ PROCEDURE WriteBlockAtOffset
   ( fd             : File;
     data           : ARRAY OF OCTET;
     VAR octetsRead : IOSIZE;
-    offset         : LONGCARD );
+    offset         : Pos );
 (* Writes buffer <data>  to <fd>.  Writing  starts  at position <offset>.  The
    number of  octets written  is passed back in <octetsWritten>.  The  current
    position is NOT advanced. *)
@@ -89,19 +94,24 @@ PROCEDURE eof ( fd : File ) : BOOLEAN;
 
 (* Positioning *)
 
-PROCEDURE SetPos ( fd : File; pos : LONGCARD );
+PROCEDURE SetPos ( fd : File; pos : Pos );
 (* Sets the current position of <fd> to <pos>. *)
 
-PROCEDURE Advance ( fd : File; offset : LONGCARD );
+PROCEDURE Advance ( fd : File; offset : Pos );
 (* Advances the current position of <fd> by <offset>. *)
 
 PROCEDURE Rewind ( fd : File );
 (* Sets the current position of <fd> to zero and resets its eof status. *)
 
+
+(* Low-Level Positioning *)
+
+TYPE RelPos = ALIAS OF LONGINT;
+
 TYPE FromPosition = ( Start, Current, End );
 
 PROCEDURE SetRelPos
-  ( fd : File; from : FromPosition; offset : LONGINT; VAR newPos : LONGCARD );
+  ( fd : File; from : FromPosition; offset : RelPos; VAR newPos : Pos );
 (* Sets the current position of <fd> relative to <from> by <offset> and passes
    the resulting absolute position back in <newPos>. *)
 
