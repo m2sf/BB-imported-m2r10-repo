@@ -42,6 +42,10 @@ TYPE DefaultBufferArray = BARE ARRAY DefaultBufferSize OF OCTET;
 VAR fileTable : FileTable;
 
 
+(* stdin, stdout, stderr and nullfile *)
+VAR dfltInFile, dfltOutFile, dfltErrFile, nullFile : File;
+
+
 (* Introspection *)
 
 PROCEDURE isValidAccessor ( file : File ) : BOOLEAN;
@@ -424,7 +428,7 @@ PROCEDURE defaultNullFile : File;
 (* Returns the file accessor associated with the null device, open in write
    mode.  Write operations on this file have no effect. *)
 BEGIN
-  RETURN dfltNullFile
+  RETURN nullFile
 END defaultNullFile;
 
 BEGIN
