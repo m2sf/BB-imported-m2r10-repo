@@ -8,7 +8,7 @@ DEFINITION MODULE FilePtrIO;
    any particular structure.  This is a low level API.  For common use,  it is
    recommended to use the channel based API of module FileIO instead. *)
 
-IMPORT FileMode, IOStatus, IOSIZE;
+IMPORT IOSIZE, IOStatus, FileMode;
 
 (* File accessor and file status *)
 
