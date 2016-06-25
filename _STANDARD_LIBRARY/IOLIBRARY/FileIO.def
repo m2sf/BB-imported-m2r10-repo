@@ -4,7 +4,7 @@ DEFINITION MODULE FileIO;
 
 (* File Specific Channel Based IO *)
 
-IMPORT ChanIO, FilePtrIO, FileMode, IOStatus, IOSIZE;
+IMPORT ChanIO, FilePtrIO, IOSIZE, IOStatus, FileMode;
 
 
 (* File Channel *)
@@ -17,7 +17,12 @@ TYPE Descriptor = RECORD ( ChanIO.Descriptor )
 * handle : FilePtrIO.File
 END;
 
-TYPE FilePos = ALIAS OF FilePtrIO.FileSize;;
+
+(* File Size and Postion *)
+
+TYPE Size = ALIAS OF IOSIZE;
+
+TYPE Pos = ALIAS OF Size;
 
 
 (* Introspection *)
@@ -34,7 +39,7 @@ PROCEDURE isValidFile ( file : File ) : BOOLEAN;
 PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if <file> is associated with a special file, else FALSE. *)
 
-PROCEDURE isValidPos ( file : File; pos : FilePos ) : BOOLEAN;
+PROCEDURE isValidPos ( file : File; pos : Pos ) : BOOLEAN;
 (* Returns TRUE if <pos> is a valid position for <file>, else FALSE. *)
 
 
@@ -90,10 +95,10 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 
 (* Fie Positioning *)
 
-PROCEDURE currentPos ( file : File ) : FilePos;
+PROCEDURE currentPos ( file : File ) : Pos;
 (* Returns the current read/write position of <file>. *)
 
-PROCEDURE lastValidSetPos ( file : File ) : FilePos;
+PROCEDURE lastValidSetPos ( file : File ) : Pos;
 (* Returns the most advanced position that may be passed to SetPos for <file>.
    The return value depends on the size and access mode of <file> as follows:
    
@@ -105,13 +110,13 @@ PROCEDURE lastValidSetPos ( file : File ) : FilePos;
    (4) if <file> is not empty and has its read but not its write flag set,
        then the position of the last octet in <file> is returned. *)
 
-PROCEDURE SetPos ( file : File; pos : FilePos );
+PROCEDURE SetPos ( file : File; pos : Pos );
 (* Sets the  read/write position of <chan> to <pos>. For any empty file, <pos>
    must be zero.  For any non-empty file in read mode, <pos> must be less than
    LastValidWritePos. For any non-empty file in write mode, <pos> must be less
    than or equal to LastValidWritePos. *)
 
-PROCEDURE Advance ( file : File; offset : FilePos );
+PROCEDURE Advance ( file : File; offset : Pos );
 (* Advances the read/write position of <file> by <offset>. *)
 
 PROCEDURE Rewind ( file : File );
