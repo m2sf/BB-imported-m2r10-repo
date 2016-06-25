@@ -242,7 +242,7 @@ END Flush;
 PROCEDURE dataReady ( chan : ChanIO.Channel ) : BOOLEAN;
 (* Channel method implementation equivalent to NOT eof(). *)
 BEGIN
-  CASE chan OF
+  CASE chan^ OF
   | Descriptor : RETURN (NOT FilePtrIO.eof(chan^.handle))
   ELSE
     (* signal IO error or raise runtime fault *)
@@ -253,7 +253,7 @@ PROCEDURE GetOctet
   ( chan : ChanIO.Channel; VAR data : OCTET; VAR status : IOStatus );
 (* Channel method implementation corresponding to Read(). *)
 BEGIN
-  CASE chan OF
+  CASE chan^ OF
   | Descriptor :
     FilePtrIO.Read(chan^.handle, octet);
     status := FilePtrIO.statusOf(chan^.handle)
@@ -267,7 +267,7 @@ PROCEDURE GetBlock
 (* Channel method implementation corresponding to ReadBlock(). *)
 VAR count : IOSIZE;
 BEGIN
-  CASE chan OF
+  CASE chan^ OF
   | Descriptor :
     FilePtrIO.ReadBlock(chan^.handle, data, count);
     status := FilePtrIO.statusOf(chan^.handle)
@@ -280,7 +280,7 @@ PROCEDURE PutOctet
   ( chan : ChanIO.Channel; data : OCTET; VAR status : IOStatus );
 (* Channel method implementation corresponding to Write(). *)
 BEGIN
-  CASE chan OF
+  CASE chan^ OF
   | Descriptor :
     FilePtrIO.Write(chan^.handle, octet);
     status := FilePtrIO.statusOf(chan^.handle)
@@ -296,7 +296,7 @@ PROCEDURE PutBlock
     VAR status        : IOStatus );
 (* Channel method implementation corresponding to WriteBlock(). *)
 BEGIN
-  CASE chan OF
+  CASE chan^ OF
   | Descriptor :
     FilePtrIO.WriteBlock(chan^.handle, data, octetsWritten);
     status := FilePtrIO.statusOf(chan^.handle)
@@ -308,7 +308,7 @@ END PutBlock;
 PROCEDURE SyncData ( chan : ChanIO.Channel; VAR status : IOStatus );
 (* Channel method implementation corresponding to Flush(). *)
 BEGIN
-  CASE chan OF
+  CASE chan^ OF
   | Descriptor :
     FilePtrIO.Flush(chan^.handle);
     status := FilePtrIO.statusOf(chan^.handle)
