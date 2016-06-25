@@ -392,7 +392,16 @@ PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
 (* Performs Flush on <file>, closes the associated file and passes NIL back
    in <file>.  The status of the operation is passed back  in <status>. *)
 BEGIN
-  (* TO DO *)
+  IF FileTable.isPresent(fileTable, file) THEN
+    FileTable.Remove(fileTable, file);
+    Flush(file);
+    FileDescIO.Close(file^.fd, status);
+    ClearBuffer(file);
+    DeallocBuffer(file);
+    status := { FALSE, IOStatus.Success }
+  ELSE
+    status := { TRUE, IOStatus.InvalidFile }
+  END
 END Close;
 
 (* Implementation defined accessors to special files *)
