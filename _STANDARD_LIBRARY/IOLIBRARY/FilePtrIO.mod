@@ -12,14 +12,15 @@ TYPE File = POINTER TO Descriptor; (* implementation defined file accessor *)
     
 TYPE Descriptor = RECORD
   fd : FileDescIO.File;
+  special : BOOLEAN;
   name : DString;
   mode : FileMode;
   maxPos,
-  currPos : Pos;
+  bufPos : Pos;
   status : IOStatus;
   bufSize,
-  bufOffs : IOSIZE;
-  bufAddr : UNSAFE.ADDRESS;
+  index : IOSIZE;
+  buffer : UNSAFE.ADDRESS
 END;
 
 
@@ -50,14 +51,18 @@ END isValidAccessor;
 PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
 BEGIN
-  RETURN FileDescIO.isSpecialFile(file^.fd)
+  RETURN file^.special
 END isSpecialFile;
 
 PROCEDURE isValidPos ( file : File; pos : Pos ) : BOOLEAN;
 (* Returns TRUE if <pos> is a valid file position for <file>,
    otherwise FALSE. *)
 BEGIN
-  RETURN pos <= file^.maxPos
+  IF FileMode.Write IN file^.mode THEN
+    RETURN pos + 1 <= file^.maxPos
+  ELSE
+    RETURN pos <= file^.maxPos
+  END
 END isValidPos;
 
 
@@ -101,7 +106,7 @@ BEGIN
   bufAddr := UNSAFE.ADR(newBuf);
     
   (* allocate a new file structure *)
-  NewFileWithDescriptor(newFile, filename, mode, bufSiz, bufAddr, fd);
+  NewFileWithDescriptor(newFile, filename, mode, bufSize, bufAddr, fd);
   
   (* on failure bail out *)
   IF newFile = NIL THEN
@@ -189,19 +194,31 @@ END ReOpen;
 PROCEDURE modeOf ( file : File ) : FileMode;
 (* Returns the file mode of file accessor <file>. *)
 BEGIN
-  RETURN file^.mode;
+  IF file = NIL THEN
+    RETURN {}
+  ELSE
+    RETURN file^.mode
+  END
 END modeOf;
 
 PROCEDURE statusOf ( file : File ) : IOStatus;
 (* Returns the status of the most recent operation for <file>. *)
 BEGIN
-  RETURN file^.status;
+  IF File = NIL THEN
+    RETURN { TRUE, IOStatus.InvalidFile }
+  ELSE
+    RETURN file^.status
+  END
 END statusOf;
 
 PROCEDURE nameLen ( file : File ) : CARDINAL;
 (* Returns the length of the filename associated with <file>. *)
 BEGIN
-  RETURN file^.name^.len
+  IF file = NIL THEN
+    RETURN 0
+  ELSE
+    RETURN file^.name^.len
+  END
 END nameLen;
 
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
@@ -210,7 +227,7 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
    operation fails  with status NameTooLong,  passing an empty string  back in
    <filename>. *)
 BEGIN
-  IF file^.name^.len < CAPACITY(filename) THEN
+  IF file # NIL AND file^.name^.len < CAPACITY(filename) THEN
     COPY filename := file^.name^.str;
   ELSE
     filename := "";
@@ -223,14 +240,28 @@ PROCEDURE eof ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file accessor <file>
    has been reached, otherwise FALSE. *)
 BEGIN
-  RETURN file^.eof
+  IF file = NIL THEN
+    RETURN FALSE
+  ELSE
+    file^.status := { FALSE, IOStatus.Succes };
+    RETURN file^.eof
+  END
 END eof;
 
 PROCEDURE currentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file accessor <file> where a
    value of TMIN(FilePos) represents the beginning of a file. *)
 BEGIN
-  RETURN file^.currPos
+  IF file = NIL THEN
+    file^.status := { TRUE, IOStatus.InvalidFile };
+    RETURN 0
+  ELSIF file^.special THEN
+    file^.status := { TRUE, IOStatus.OperationNotSupported };
+    RETURN 0
+  ELSE
+    file^.status := { TRUE, IOStatus.Success };
+    RETURN file^.bufPos + file^.index
+  END
 END currentPos;
 
 PROCEDURE lastValidSetPos ( file : File ) : FilePos;
@@ -245,10 +276,10 @@ PROCEDURE lastValidSetPos ( file : File ) : FilePos;
    (4) if <file> is not empty and has its read but not its write flag set,
        then the position of the last octet in <file> is returned. *)
 BEGIN
-  IF FileMode.Append IN file^.mode THEN
-    file^.status := IOStatus.OperationNotSupported
+  IF file = NIL THEN
     RETURN 0
-  ELSIF maxPos = 0 THEN
+  ELSIF FileMode.Append IN file^.mode THEN
+    file^.status := { TRUE, IOStatus.OperationNotSupported }
     RETURN 0
   ELSIF FileMode.Write IN file^.mode THEN
     RETURN maxPos + 1
@@ -267,6 +298,10 @@ PROCEDURE SetPos ( file : File; pos : Pos );
    <pos> must be  less than  LastValidWritePos.  For any  non-empty file in
    write mode, <pos> must be  less than or equal  to LastValidWritePos. *)
 BEGIN
+  IF file = NIL THEN
+    RETURN
+  END;
+  
   IF pos > lastValidSetPos THEN
     status := IOStatus.InvalidPos;
     RETURN
@@ -285,14 +320,23 @@ END SetPos;
 PROCEDURE Advance ( file : File; offset : Pos );
 (* Advances the read/write position for file accessor <file> by <offset>. *)
 BEGIN
-  (* TO DO *)
+  IF file^.currPos + file^.bufOffs >= file^.bufSize THEN
+  (* new position is outside of current buffer *)
+  (* load file portion into buffer and update buffer start marker *)
+  ELSE
+    file^.currPos++
+  END
 END Advance;
 
 PROCEDURE Rewind ( file : File );
 (* Sets the read/write position for file accessor <file>  to the  beginning
    of the file and resets its end-of-file status. *)
 BEGIN
-  (* TO DO *)
+  IF file^.bufOffs > 0 THEN
+  (* new position is outside of current buffer *)
+  (* load file portion into buffer and update buffer start marker *)
+  END;
+  file^.currPos := 0;
 END Rewind;
 
 (* Any attempt to call  LastValidWritePos, SetPos, Advance or Rewind  on  a
@@ -309,7 +353,13 @@ PROCEDURE Read ( file : File; VAR data : OCTET );
 (* Reads one octet of data at the current position of <file>, passes it back
    in <data> and advances the read/write position of <file> by one. *)
 BEGIN
-  (* TO DO *)
+  data := file^.currAddr^;
+  IF file^.currAddr < file^.lastBufAddr THEN
+    file^.currAddr++
+  ELSE
+    LoadBuffer(file^.fd, firstBufAddr, lastBufAddr);
+    file^.currAddr := firstBufAddr
+  END
 END Read;
 
 PROCEDURE Lookahead ( file : File; VAR data : OCTET );
@@ -350,7 +400,13 @@ PROCEDURE Write ( file : File; data : OCTET );
    read/write position of <file> is advanced by one after the data has been
    written. *)
 BEGIN
-  (* TO DO *)
+  file^.currAddr^ := data;
+  IF file^.currAddr < file^.lastBufAddr THEN
+    file^.currAddr++
+  ELSE
+    FlushAndLoad(file^.fd, firstBufAddr, lastBufAddr);
+    file^.currAddr := firstBufAddr
+  END
 END Write;
 
 PROCEDURE WriteBlock
