@@ -23,13 +23,6 @@ TYPE Descriptor = RECORD
 END;
 
 
-(* File Size and Postion *)
-
-TYPE Size = ALIAS OF IOSIZE;
-
-TYPE Pos = ALIAS OF Size;
-
-
 (* Default File Buffer *)
 
 TYPE DefaultBuffer = POINTER TO DefaultBufferArray;
@@ -105,7 +98,7 @@ BEGIN
   END;
   
   bufSize := DefaultBufferSize;
-  bufAddr := UNSAFE.ADDR(newBuf);
+  bufAddr := UNSAFE.ADR(newBuf);
     
   (* allocate a new file structure *)
   NewFileWithDescriptor(newFile, filename, mode, bufSiz, bufAddr, fd);
@@ -157,7 +150,7 @@ BEGIN
     
   (* custom buffer *)
   bufSize := COUNT(buffer);
-  bufAddr := UNSAFE.ADDR(buffer);
+  bufAddr := UNSAFE.ADR(buffer);
   
   (* allocate a new file structure *)
   NewFileWithDescriptor(newFile, filename, mode, bufSize, bufAddr, fd);
