@@ -26,9 +26,9 @@ END;
 
 (* Default File Buffer *)
 
-TYPE DefaultBuffer = POINTER TO DefaultBufferArray;
+TYPE DefaultBufferPtr = POINTER TO DefaultBuffer;
 
-TYPE DefaultBufferArray = BARE ARRAY DefaultBufferSize OF OCTET;
+TYPE DefaultBuffer = BARE ARRAY DefaultBufferSize OF OCTET;
 
 
 (* File Table *)
@@ -45,21 +45,29 @@ VAR dfltInFile, dfltOutFile, dfltErrFile, nullFile : File;
 PROCEDURE isValidAccessor ( file : File ) : BOOLEAN;
 (* Returns TRUE if <file> is a valid file accessor, otherwise FALSE. *)
 BEGIN
-  RETURN FileTable.isPresent(fileTable, file)
+  IF file = NIL THEN
+    RETURN FALSE
+  ELSE
+    RETURN FileTable.isPresent(fileTable, file)
+  END
 END isValidAccessor;
 
 PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
 BEGIN
-  RETURN file^.special
+  IF file = NIL THEN
+    RETURN FALSE
+  END
+    RETURN file^.special
+  END
 END isSpecialFile;
 
 PROCEDURE isValidPos ( file : File; pos : Pos ) : BOOLEAN;
 (* Returns TRUE if <pos> is a valid file position for <file>,
    otherwise FALSE. *)
 BEGIN
-  IF FileMode.Write IN file^.mode THEN
-    RETURN pos + 1 <= file^.maxPos
+  IF file = NIL THEN
+    RETURN FALSE
   ELSE
     RETURN pos <= file^.maxPos
   END
@@ -80,7 +88,7 @@ PROCEDURE Open
 VAR
   fd : FileDescIO.File;
   newFile : File;
-  newBuf : DefaultBuffer;
+  newBuf : DefaultBufferPtr;
   bufSize : IOSIZE;
   bufAddr : UNSAFE.ADDRESS;
 BEGIN
@@ -227,10 +235,13 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
    operation fails  with status NameTooLong,  passing an empty string  back in
    <filename>. *)
 BEGIN
-  IF file # NIL AND file^.name^.len < CAPACITY(filename) THEN
-    COPY filename := file^.name^.str;
+  IF file = NIL THEN
+    filename := ""
+  ELSIF file^.name^.len >= CAPACITY(filename) THEN
+    status := { TRUE, IOStatus.NameTooLong };
+    filename := ""
   ELSE
-    filename := "";
+    COPY filename := file^.name^.str;
   END
 END GetName;
 
@@ -287,7 +298,7 @@ BEGIN
     RETURN maxPos
   ELSE
     (* if we get here, the file's mode is corrupt *)
-    (* mitigate *)
+    (* TO DO : mitigation *)
     RETURN 0
   END
 END lastValidSetPos;
@@ -302,41 +313,69 @@ BEGIN
     RETURN
   END;
   
-  IF pos > lastValidSetPos THEN
-    status := IOStatus.InvalidPos;
+  IF pos > lastValidSetPos(file) THEN
+    file^.status := { TRUE, IOStatus.InvalidPos };
     RETURN
   END;
   
-  (* TO DO *)
-  IF (* pos is outside of current buffer *) THEN
-    (* load the requested file portion into the buffer
-       and update buffer start marker bufOffs accordingly *)
+  IF (pos < file^.bufPos) OR (pos > file^.bufPos + file^.bufSize) THEN
+    (* target position lies outside of current buffer *)
+    FlushBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+    LoadBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+    file^.index := 0;
+  ELSE
+    file^.index := pos - file^.bufPos
   END;
   
-  file^.currPos := pos;
+  file^.status := { FALSE, IOStatus.Success };
   RETURN
 END SetPos;
 
 PROCEDURE Advance ( file : File; offset : Pos );
 (* Advances the read/write position for file accessor <file> by <offset>. *)
+VAR
+  targetPos : Pos;
 BEGIN
-  IF file^.currPos + file^.bufOffs >= file^.bufSize THEN
-  (* new position is outside of current buffer *)
-  (* load file portion into buffer and update buffer start marker *)
+  IF file = NIL THEN
+    RETURN
+  END;
+  
+  targetPos := file^.bufPos + index + 1;
+  IF targetPos > lastValidSetPos(file) THEN
+    file^.status := { TRUE, IOStatus.InvalidPos };
+    RETURN
+  END;
+  
+  IF targetPos > file^.bufPos + file^.bufSize THEN
+    (* target position lies outside of current buffer *)
+    FlushBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+    LoadBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+    file^.index := 0;
   ELSE
-    file^.currPos++
+    file^.index := targetPos - file^.bufPos
   END
+
+  file^.status := { FALSE, IOStatus.Success };
+  RETURN
 END Advance;
 
 PROCEDURE Rewind ( file : File );
 (* Sets the read/write position for file accessor <file>  to the  beginning
    of the file and resets its end-of-file status. *)
 BEGIN
-  IF file^.bufOffs > 0 THEN
-  (* new position is outside of current buffer *)
-  (* load file portion into buffer and update buffer start marker *)
+  IF file = NIL THEN
+    RETURN
   END;
-  file^.currPos := 0;
+  
+  IF file^.bufPos > 0 THEN
+    (* target position lies outside of current buffer *)
+    FlushBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+    LoadBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+  END;
+  file^.index := 0;
+  file^.eof := FALSE;
+  file^.status := { FALSE, IOStatus.Success };
+  RETURN
 END Rewind;
 
 (* Any attempt to call  LastValidWritePos, SetPos, Advance or Rewind  on  a
