@@ -58,7 +58,7 @@ CONST
 PROCEDURE ADR ( var : <AnyType> ) : ADDRESS;
 (* Returns the address of variable var. *)
 
-PROCEDURE CAST ( <AnyTargetTypeIdentifier>; val : <AnyType> ) : <TargetType>;
+PROCEDURE CAST ( <TargetTypeIdentifier>; val : <AnyType> ) : <TargetType>;
 (* Returns the value of val, cast to the target type,
    val may be a variable, a constant or a literal. *)
 
