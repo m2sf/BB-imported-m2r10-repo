@@ -372,6 +372,7 @@ BEGIN
     FlushBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
     LoadBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
   END;
+  
   file^.index := 0;
   file^.eof := FALSE;
   file^.status := { FALSE, IOStatus.Success };
@@ -392,13 +393,23 @@ PROCEDURE Read ( file : File; VAR data : OCTET );
 (* Reads one octet of data at the current position of <file>, passes it back
    in <data> and advances the read/write position of <file> by one. *)
 BEGIN
-  data := file^.currAddr^;
-  IF file^.currAddr < file^.lastBufAddr THEN
-    file^.currAddr++
+  IF file = NIL THEN
+    RETURN
+  END;
+  
+  data := file^.buffer[file^.index];
+  
+  IF file^.index < file^.bufSize - 1 THEN
+    file^.index++
   ELSE
-    LoadBuffer(file^.fd, firstBufAddr, lastBufAddr);
-    file^.currAddr := firstBufAddr
-  END
+    (* end of buffer reached, flush and reload *)
+    FlushBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+    LoadBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+    file^.index := 0;
+  END;
+
+  file^.status := { FALSE, IOStatus.Success };
+  RETURN
 END Read;
 
 PROCEDURE Lookahead ( file : File; VAR data : OCTET );
@@ -418,13 +429,36 @@ PROCEDURE LA2 ( file : File; VAR data : OCTET );
 
 PROCEDURE ReadBlock
   ( file           : File;
-    VAR data       : ARRAY OF OCTET;
-    VAR octetsRead : IOSIZE );
-(* Reads a block of data at the current position of <file>. Passes the block
-   of data back in <data> and the number of octets read in <octetsRead>.
-   The read/write position of <file> is advanced accordingly. *)
+    VAR data       : ARRAY OF OCTET );
+(* Reads a block of data  at the current position of <file>,  passes it back
+   in <data> and advances the read/write position of <file> by the number of
+   octets read. *)
+VAR
+  octetsRead, maxIndex : IOSIZE;
 BEGIN
-  (* TO DO *)
+  IF file = NIL THEN
+    RETURN
+  END;
+  
+  octetsRead := 0;
+  WHILE (octetsRead < COUNT(array)) AND (NOT file^.eof) DO
+  
+    IF file^.index = file^.bufSize THEN
+      FlushBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+      LoadBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+      file^.index := 0
+    END;
+    
+    maxIndex := file^.bufSize - file^.index - 1;
+    FOR index IN [0..maxIndex] DO
+      file^.buffer[file^.index] := data[index];
+      octetsRead++;
+      file^.index++
+    END; (* FOR *)    
+  END; (* WHILE *)
+    
+  file^.status := { FALSE, IOStatus.Success };
+  RETURN
 END ReadBlock;
 
 (* Any attempt to read or lookahead read from a file whose read flag is not
@@ -439,13 +473,23 @@ PROCEDURE Write ( file : File; data : OCTET );
    read/write position of <file> is advanced by one after the data has been
    written. *)
 BEGIN
-  file^.currAddr^ := data;
-  IF file^.currAddr < file^.lastBufAddr THEN
-    file^.currAddr++
+  IF file = NIL THEN
+    RETURN
+  END;
+  
+  file^.buffer[file^.index] := data;
+  
+  IF file^.index < file^.bufSize - 1 THEN
+    file^.index++
   ELSE
-    FlushAndLoad(file^.fd, firstBufAddr, lastBufAddr);
-    file^.currAddr := firstBufAddr
-  END
+    (* end of buffer reached, flush and reload *)
+    FlushBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+    LoadBuffer(file^.buffer, file^.fd, file^.bufPos, file^.bufSize);
+    file^.index := 0;
+  END;
+
+  file^.status := { FALSE, IOStatus.Success };
+  RETURN
 END Write;
 
 PROCEDURE WriteBlock
