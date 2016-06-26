@@ -55,10 +55,10 @@ CONST
 
 (* General low-level facilities *)
 
-PROCEDURE ADR( var : <AnyType> ) : ADDRESS;
+PROCEDURE ADR ( var : <AnyType> ) : ADDRESS;
 (* Returns the address of variable var. *)
 
-PROCEDURE CAST( <AnyTargetTypeIdentifier>; val : <AnyType> ) : <TargetType>;
+PROCEDURE CAST ( <AnyTargetTypeIdentifier>; val : <AnyType> ) : <TargetType>;
 (* Returns the value of val, cast to the target type,
    val may be a variable, a constant or a literal. *)
 
@@ -70,41 +70,41 @@ TYPE INTRINSIC = ( ADD, SUB, ADDC, SUBC, FETCHADD, FETCHSUB,
                    BWNOT, BWAND, BWOR, BWXOR, BWNAND, BWNOR,
                    SETBIT, TESTBIT, LSBIT, MSBIT, CSBITS);
 
-PROCEDURE AVAIL( intrinsic : INTRINSIC; bitwidth : CARDINAL ) : BOOLEAN;
+PROCEDURE AVAIL ( intrinsic : INTRINSIC; bitwidth : CARDINAL ) : BOOLEAN;
 (* Returns TRUE if the given intrinsic is available for the given bitwidth,
    otherwise FALSE. The value of bitwidth must be a compile time expression.*)
 
 
 (* Machine level arithmetic *)
 
-PROCEDURE ADD( VAR x : <AnyType>; y : <AnyType> );
+PROCEDURE ADD ( VAR x : <AnyType>; y : <AnyType> );
 (* Adds operand y to operand x,  ignoring overflow.
    The bit widths of the operand types must match.
    The bit pattern of y is interpreted as an unsigned number. *)
 
-PROCEDURE SUB( VAR x : <AnyType>; y : <AnyType> );
+PROCEDURE SUB ( VAR x : <AnyType>; y : <AnyType> );
 (* Subtracts operand y from operand x, ignoring overflow.
    The bit widths of the operand types must match.
    The bit pattern of y is interpreted as an unsigned number. *)
 
-PROCEDURE ADDC( VAR x : <AnyType>; y : <AnyType>; VAR c : BOOLEAN );
+PROCEDURE ADDC ( VAR x : <AnyType>; y : <AnyType>; VAR c : BOOLEAN );
 (* Adds operand y to operand x,  adds 1 if TRUE is passed in for c,
    then passes the result back in x and the resulting carry bit back in c.
    The bit widths of the operand types of x and y must match.
    The bit pattern of y is interpreted as an unsigned number. *)
 
-PROCEDURE SUBC( VAR x : <AnyType>; y : <AnyType>; VAR c : BOOLEAN );
+PROCEDURE SUBC ( VAR x : <AnyType>; y : <AnyType>; VAR c : BOOLEAN );
 (* Subtracts operand y from operand x,  adds 1 if TRUE is passed in for c,
    then passes the result back in x and the resulting carry bit back in c.
    The bit widths of the operand types of x and y must match.
    The bit pattern of y is interpreted as an unsigned number. *)
 
-PROCEDURE FETCHADD( VAR x : <AnyType>; y : <AnyType> ) : TypeOf(x);
+PROCEDURE FETCHADD ( VAR x : <AnyType>; y : <AnyType> ) : TypeOf(x);
 (* Atomically adds operand y to operand x and returns the prior value of x,
    ignoring overflow.  The bitwidths of the operand types must match.
    The bit pattern of y is interpreted as an unsigned number. *)
 
-PROCEDURE FETCHSUB( VAR x : <AnyType>; y : <AnyType> ) : TypeOf(x);
+PROCEDURE FETCHSUB ( VAR x : <AnyType>; y : <AnyType> ) : TypeOf(x);
 (* Atomically subtracts operand y from operand x and returns the prior value
    of x,  ignoring overflow.  The bitwidths of the operand types must match.
    The bit pattern of y is interpreted as an unsigned number. *)
@@ -112,79 +112,79 @@ PROCEDURE FETCHSUB( VAR x : <AnyType>; y : <AnyType> ) : TypeOf(x);
 
 (* Shift operations *)
 
-PROCEDURE SHL( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
+PROCEDURE SHL ( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
 (* Returns the value of operand x shifted left by n bits. *)
 
-PROCEDURE SHR( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
+PROCEDURE SHR ( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
 (* Returns the value of operand x logically shifted right by n bits. *)
 
-PROCEDURE ASHR( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
+PROCEDURE ASHR ( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
 (* Returns the value of operand x arithmetically shifted right by n bits. *)
 
-PROCEDURE ROTL( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
+PROCEDURE ROTL ( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
 (* Returns the value of operand x rotated left by n bits. *)
 
-PROCEDURE ROTR( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
+PROCEDURE ROTR ( x : <AnyType>; n : OCTET ) : <TypeOf(x)>;
 (* Returns the value of operand x rotated right by n bits. *)
 
-PROCEDURE ROTLC( x : <AnyType>; VAR c : <TypeOf(x)>; n : OCTET ) : <TypeOf(x)>;
+PROCEDURE ROTLC ( x : <AnyType>; VAR c : <TypeOf(x)>; n : OCTET ) : <TypeOf(x)>;
 (* Returns the value of operand x rotated left by n bits,
    rotating through n bits of c, passing the rotated out bits back in c. *)
 
-PROCEDURE ROTRC( x : <AnyType>; VAR c : <TypeOf(x)>; n : OCTET ) : <TypeOf(x)>;
+PROCEDURE ROTRC ( x : <AnyType>; VAR c : <TypeOf(x)>; n : OCTET ) : <TypeOf(x)>;
 (* Returns the value of operand x rotated right by n bits,
    rotating through n bits of c, passing the rotated out bits back in c. *)
 
 
 (* Bitwise operations *)
 
-PROCEDURE BWNOT( x : <AnyType> ) : <TypeOf(x)>;
+PROCEDURE BWNOT ( x : <AnyType> ) : <TypeOf(x)>;
 (* Returns the bitwise logical NOT of operand x. *)
 
-PROCEDURE BWAND( x, y : <AnyType> ) : <TypeOf(x)>;
+PROCEDURE BWAND ( x, y : <AnyType> ) : <TypeOf(x)>;
 (* Returns the bitwise logical AND of operands x and y. *)
 
-PROCEDURE BWOR( x, y : <AnyType> ) : <TypeOf(x)>;
+PROCEDURE BWOR ( x, y : <AnyType> ) : <TypeOf(x)>;
 (* Returns the bitwise logical OR of operands x and y. *)
 
-PROCEDURE BWXOR( x, y : <AnyType> ) : <TypeOf(x)>;
+PROCEDURE BWXOR ( x, y : <AnyType> ) : <TypeOf(x)>;
 (* Returns the bitwise logical exclusive OR of operands x and y. *)
 
-PROCEDURE BWNAND( x, y : <AnyType> ) : <TypeOf(x)>;
+PROCEDURE BWNAND ( x, y : <AnyType> ) : <TypeOf(x)>;
 (* Returns the inverted bitwise logical AND of operands x and y. *)
 
-PROCEDURE BWNOR( x, y : <AnyType> ) : <TypeOf(x)>;
+PROCEDURE BWNOR ( x, y : <AnyType> ) : <TypeOf(x)>;
 (* Returns the inverted bitwise logical OR of operands x and y. *)
 
 
 (* Single bit operations *)
 
-PROCEDURE SETBIT( VAR x : <AnyType>; n : OCTET; bitval : BOOLEAN );
+PROCEDURE SETBIT ( VAR x : <AnyType>; n : OCTET; bitval : BOOLEAN );
 (* Sets bit n of x if bitval is TRUE, otherwise clears it. *)
 
-PROCEDURE TESTBIT( x : <AnyType>; n : OCTET ) : BOOLEAN;
+PROCEDURE TESTBIT ( x : <AnyType>; n : OCTET ) : BOOLEAN;
 (* Returns TRUE if bit n of x is set, otherwise FALSE. *)
 
 
 (* Bit tests *)
 
-PROCEDURE LSBIT( x : <AnyType> ) : CARDINAL;
+PROCEDURE LSBIT ( x : <AnyType> ) : CARDINAL;
 (* Returns the position of the least significant set bit of x. *)
 
-PROCEDURE MSBIT( x : <AnyType> ) : CARDINAL;
+PROCEDURE MSBIT ( x : <AnyType> ) : CARDINAL;
 (* Returns the position of the most significant set bit of x. *)
 
-PROCEDURE CSBITS( x : <AnyType> ) : CARDINAL;
+PROCEDURE CSBITS ( x : <AnyType> ) : CARDINAL;
 (* Counts and returns the number of set bits in x. *)
 
 
 (* Miscellaneous *)
 
-PROCEDURE UNWRET( (* OPT *) x : <AnyType> );
+PROCEDURE UNWRET ( (* OPT *) x : <AnyType> );
 (* Returns program control to the caller of the calling procedure and
    passes x as the return value, x must match the caller's return type. *)
 
-PROCEDURE HALT( status : <OrdinalType> );
+PROCEDURE HALT ( status : <OrdinalType> );
 (* Immediately aborts the running program and passes a status code to the
    operating environment, status codes are target platform dependent. *)
 
@@ -212,6 +212,7 @@ TYPE VARGLIST;
    only available in combination with pragma FFI and it may only be used as a
    formal type.  No aliases, derivatives, variables, casts or conversions. *)
 
+
 (* Macro to count arguments passed to a formal parameter of type VARGLIST *)
 
 (* MACRO *) PROCEDURE VARGC : <AnyWholeNumberType> ;
@@ -227,14 +228,10 @@ TYPE VARGLIST;
 
 CONST
   BitsPerMachineByte = <target dependent value>;
-  (* size of smallest addressable unit *)
+  (* size of smallest addressable unit, measured in bits *)
 
   MachineBytesPerMachineWord = <target dependent value>;
-  (* size of of a machine word *)
-
-  OctetsPerMachineWord = <target dependent value>;
-  (* number of octets required to store a machine word *)
-
+  (* size of of a machine word, measured in machine bytes *)
 
 TYPE MACHINEBYTE;  (* target dependent byte *)
 
