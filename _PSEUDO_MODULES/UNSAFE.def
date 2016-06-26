@@ -1,4 +1,4 @@
-(* (C) 2009-2013 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+(* (C) 2009-2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
 DEFINITION MODULE UNSAFE;
 
@@ -8,69 +8,69 @@ DEFINITION MODULE UNSAFE;
 (* Implementation defined types *)
 
 CONST
-    OctetsPerByte = <implementation defined value>;
-      (* size of an abstract byte *)
+  OctetsPerByte = <implementation defined value>;
+  (* size of an abstract byte, measured in octets *)
 
-    BytesPerWord = <implementation defined value>;
-      (* size of an abstract word *)
+  BytesPerWord = <implementation defined value>;
+  (* size of an abstract word, measured in bytes *)
 
 
-TYPE
-    BYTE = OPAQUE RECORD (* abstract byte *)
-        ARRAY OctetsPerByte OF OCTET;
-    END; (* BYTE *)
+TYPE BYTE = RECORD (* abstract byte *)
+* BARE ARRAY OctetsPerByte OF OCTET;
+END; (* BYTE *)
 
-    WORD = OPAQUE RECORD (* abstract word *)
-        ARRAY BytesPerWord OF BYTE;
-    END; (* WORD *)
+TYPE WORD = OPAQUE RECORD (* abstract word *)
+* BARE ARRAY BytesPerWord OF BYTE;
+END; (* WORD *)
 
+TYPE ADDRESS = POINTER TO OCTET;
+
+TYPE WORDADDR = POINTER TO WORD;
+  
 
 (* Target dependent machine types *)
 
 CONST
-    BitsPerMachineByte = <target dependent value>;
-      (* size of smallest addressable unit *)
+  BitsPerMachineByte = <target dependent value>;
+  (* size of smallest addressable unit *)
 
-    MachineBytesPerMachineWord = <target dependent value>;
-      (* size of of a machine word *)
+  MachineBytesPerMachineWord = <target dependent value>;
+  (* size of of a machine word *)
 
-    OctetsPerMachineWord = <target dependent value>;
-      (* number of octets required to store a machine word *)
+  OctetsPerMachineWord = <target dependent value>;
+  (* number of octets required to store a machine word *)
 
 
-TYPE
-    MACHINEBYTE;  (* target dependent byte *)
+TYPE MACHINEBYTE;  (* target dependent byte *)
 
-    MACHINEWORD = OPAQUE RECORD (* target dependent word *)
-        ARRAY MachineBytesPerMachineWord OF MACHINEBYTE;
-    END; (* MACHINEWORD *)
-
-    ADDRESS; (* target dependent machine address *)
+TYPE MACHINEWORD = RECORD (* target dependent word *)
+* BARE ARRAY MachineBytesPerMachineWord OF MACHINEBYTE;
+END; (* MACHINEWORD *)
 
 
 (* Information about the target architecture *)
 
 CONST
-    TargetName =  <target dependent string value>;
-      (* name of the target architecture *)
+  TargetName =  <target dependent string value>;
+  (* name of the target architecture *)
 
-    BigEndian = 03210H;
-      (* constant for 3-2-1-0 byte order *)
+  BigEndian = 03210H;
+  (* constant for 3-2-1-0 byte order *)
 
-    LittleEndian = 0123H;
-      (* constant for 0-1-2-3 byte order *)
+  LittleEndian = 0123H;
+  (* constant for 0-1-2-3 byte order *)
 
-    BigLittleEndian = 02301H;
-      (* constant for 2-3-0-1 byte order *)
+  BigLittleEndian = 02301H;
+  (* constant for 2-3-0-1 byte order *)
 
-    LittleBigEndian = 02103H;
-      (* constant for 2-1-0-3 byte order *)
+  LittleBigEndian = 02103H;
+  (* constant for 2-1-0-3 byte order *)
 
-    TargetByteOrder = <target dependent value>;
-      (* byte order of the target architecture *)
+  TargetByteOrder = <target dependent value>;
+  (* byte order of the target architecture *)
 
-    TargetIsBigEndian = <target dependent boolean value>;
-      (* TRUE if the target is big-endian, otherwise FALSE *)
+  TargetIsBigEndian = <target dependent boolean value>;
+  (* TRUE if the target is big-endian, otherwise FALSE *)
 
 
 (* General low-level facilities *)
@@ -200,7 +200,7 @@ PROCEDURE CSBITS( x : <AnyType> ) : CARDINAL;
 
 (* Miscellaneous *)
 
-PROCEDURE BAIL( (* OPT *) x : <AnyType> );
+PROCEDURE UNWRET( (* OPT *) x : <AnyType> );
 (* Returns program control to the caller of the calling procedure and
    passes x as the return value, x must match the caller's return type. *)
 
@@ -212,34 +212,34 @@ PROCEDURE HALT( status : <OrdinalType> );
 (* Optional facilities *)
 
 
-(* Pseudo-constants for enabling unsafe pragmas *)
+(* Enabling unsafe pragmas *)
 
-CONST FFI; (* only available if pragma FFI is supported *)
-(* Import of constant FFI  enables pragma FFI  within the importing module.
-   Constant has no value, cannot be used for any purpose other than import. *)
+PRAGMA FFI;
+(* If optional pragma FFI is supported, an import of module UNSAFE
+   will enable the use of pragma FFI within the importing module. *)
 
-CONST ADDR; (* only available if pragma ADDR is supported *)
-(* Import of constant ADDR enables pragma ADDR within the importing module.
-   Constant has no value, cannot be used for any purpose other than import. *)
+PRAGMA ADDR;
+(* If optional pragma ADDR is supported, an import of module UNSAFE
+   will enable the use of pragma ADDR within the importing module. *)
 
 
-(* Pseudo-type for unsafe interfacing to foreign variadic functions *)
+(* Formal type for interfacing to untyped foreign variadic functions *)
 
-TYPE VARGLIST; (* only available if pragma FFI is supported *)
-(* A parameter of type  VARGLIST  may be declared within the formal parameter
-   list of an interface definition for a variadic  foreign  function.  It de-
-   notes the untyped variadic argument list  of the foreign function  and  it
-   may  only  be used in combination with pragma FFI.  This type is a pseudo-
-   type, it cannot be used for any other purpose. *)
+TYPE VARGLIST;
+(* VARGLIST denotes  the  formal type  of a  formal parameter  of an  untyped
+   variadic parameter in a foreign function interface definition.  There  may
+   be at most one untyped variadic parameter and it must be last. The type is
+   only available in combination with pragma FFI and it may only be used as a
+   formal type.  No aliases, derivatives, variables, casts or conversions. *)
 
-(* Macro VARGC for use within calls to unsafe foreign variadic functions *)
+(* Macro to count arguments passed to a formal parameter of type VARGLIST *)
 
-(* MACRO *) PROCEDURE VARGC : <Z-Type> ;
+(* MACRO *) PROCEDURE VARGC : <AnyWholeNumberType> ;
 (* An invocation  of macro VARGC  within the actual parameter list  of a call
-   to an  unsafe foreign variadic function  is replaced by the argument count
-   of the variadic arguments passed to the variadic parameter within the same
-   function call.  Its replacement value  is compatible  with  any predefined
-   whole number type.  Any use of the macro outside the actual parameter list
-   of a call to a foreign variadic function will cause a compile time error. *)
+   to a foreign variadic function  is replaced by the  argument count  of the
+   arguments passed  to a parameter of formal type VARGLIST.  Its replacement
+   value is compatible with any predefined whole number type. Any use outside
+   the actual parameter list of a foreign variadic function call will cause a
+   compile time error. *)
 
 END UNSAFE.
