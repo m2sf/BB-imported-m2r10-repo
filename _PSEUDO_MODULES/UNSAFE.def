@@ -26,26 +26,6 @@ END; (* WORD *)
 TYPE ADDRESS = POINTER TO OCTET;
 
 TYPE WORDADDR = POINTER TO WORD;
-  
-
-(* Target dependent machine types *)
-
-CONST
-  BitsPerMachineByte = <target dependent value>;
-  (* size of smallest addressable unit *)
-
-  MachineBytesPerMachineWord = <target dependent value>;
-  (* size of of a machine word *)
-
-  OctetsPerMachineWord = <target dependent value>;
-  (* number of octets required to store a machine word *)
-
-
-TYPE MACHINEBYTE;  (* target dependent byte *)
-
-TYPE MACHINEWORD = RECORD (* target dependent word *)
-* BARE ARRAY MachineBytesPerMachineWord OF MACHINEBYTE;
-END; (* MACHINEWORD *)
 
 
 (* Information about the target architecture *)
@@ -241,5 +221,25 @@ TYPE VARGLIST;
    value is compatible with any predefined whole number type. Any use outside
    the actual parameter list of a foreign variadic function call will cause a
    compile time error. *)
+
+
+(* Types for architectures not based on multiples of eight *)
+
+CONST
+  BitsPerMachineByte = <target dependent value>;
+  (* size of smallest addressable unit *)
+
+  MachineBytesPerMachineWord = <target dependent value>;
+  (* size of of a machine word *)
+
+  OctetsPerMachineWord = <target dependent value>;
+  (* number of octets required to store a machine word *)
+
+
+TYPE MACHINEBYTE;  (* target dependent byte *)
+
+TYPE MACHINEWORD = RECORD (* target dependent word *)
+* BARE ARRAY MachineBytesPerMachineWord OF MACHINEBYTE;
+END; (* MACHINEWORD *)
 
 END UNSAFE.
