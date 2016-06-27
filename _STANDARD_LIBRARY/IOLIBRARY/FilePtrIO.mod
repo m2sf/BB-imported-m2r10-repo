@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE FilePtrIO;
 
 (* Driver for File IO on File Pointers *)
 
-IMPORT UNSAFE, FileDescIO, FileTable;
+IMPORT UNSAFE, FileDescIO, PtrSet;
 
 (* File accessor and file status *)
 
@@ -33,7 +33,7 @@ TYPE DefaultBuffer = BARE ARRAY DefaultBufferSize OF OCTET;
 
 (* File Table *)
 
-VAR fileTable : FileTable;
+VAR fileTable : PtrSet;
 
 
 (* stdin, stdout, stderr and nullfile *)
@@ -42,13 +42,18 @@ VAR dfltInFile, dfltOutFile, dfltErrFile, nullFile : File;
 
 (* Introspection *)
 
+PROCEDURE openFileCount : LONGCARD;
+BEGIN
+  RETURN PtrSet.Count(fileTable)
+END openFileCount;
+
 PROCEDURE isValidAccessor ( file : File ) : BOOLEAN;
 (* Returns TRUE if <file> is a valid file accessor, otherwise FALSE. *)
 BEGIN
   IF file = NIL THEN
     RETURN FALSE
   ELSE
-    RETURN FileTable.isPresent(fileTable, file)
+    RETURN PtrSet.isPresent(fileTable, file)
   END
 END isValidAccessor;
 
@@ -125,7 +130,7 @@ BEGIN
   END;
   
   (* register new file in file table *)
-  FileTable.Insert(fileTable, newFile);
+  PtrSet.Insert(fileTable, newFile);
   
   file := newFile;
   RETURN
@@ -177,7 +182,7 @@ BEGIN
   END;
   
   (* register new file in file table *)
-  FileTable.Insert(fileTable, newFile);
+  PtrSet.Insert(fileTable, newFile);
   
   file := newFile;
   RETURN
@@ -525,7 +530,7 @@ PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
    in <file>.  The status of the operation is passed back  in <status>. *)
 BEGIN
   IF FileTable.isPresent(fileTable, file) THEN
-    FileTable.Remove(fileTable, file);
+    PtrSet.Remove(fileTable, file);
     Flush(file);
     FileDescIO.Close(file^.fd, status);
     ClearBuffer(file);
