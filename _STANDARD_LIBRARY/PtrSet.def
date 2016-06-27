@@ -1,0 +1,23 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE PtrSet;
+
+(* Generic Pointer Set *)
+
+IMPORT UNSAFE;
+
+TYPE PtrSet = OPAQUE;
+
+PROCEDURE New ( NEW set : PtrSet );
+
+PROCEDURE Count ( set : PtrSet ) : LONGCARD;
+
+PROCEDURE isPresent ( set : PtrSet;  ptr : CAST UNSAFE.ADDRESS ) : BOOLEAN;
+
+PROCEDURE Insert ( set : PtrSet; ptr : CAST UNSAFE.ADDRESS );
+
+PROCEDURE Remove ( set : PtrSet; ptr : CAST UNSAFE.ADDRESS );
+
+PROCEDURE Release ( VAR PtrSet : set );
+
+END PtrSet.
