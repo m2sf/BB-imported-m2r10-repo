@@ -535,6 +535,7 @@ BEGIN
     FileDescIO.Close(file^.fd, status);
     ClearBuffer(file);
     DeallocBuffer(file);
+    RELEASE(file);
     status := { FALSE, IOStatus.Success }
   ELSE
     status := { TRUE, IOStatus.InvalidFile }
