@@ -140,7 +140,7 @@ PROCEDURE Read ( file : File; VAR data : OCTET );
 (* Reads one octet of data  at the current position of <file>,  passes it back
    in <data> and advances the current read/write position of <file> by one. *)
 
-PROCEDURE Lookahead ( file : file; VAR data : OCTET );
+PROCEDURE Lookahead ( file : File; VAR data : OCTET );
 (* Reads the first lookahead octet  of <file>,  passes it back in <data>,  but
    does NOT advance the read/write position of <file>.  If the lookahead octet
    lies beyond the end  of the file  then no data is passed back  and the file
@@ -169,7 +169,7 @@ PROCEDURE Write ( file : File; data : OCTET );
    tion to the end of the file and appends <data> to the end of <file>. *)
 
 PROCEDURE WriteBlock
-  ( file : File; data : BARE ARRAY OF OCTET; VAR octestWritten : IOSIZE );
+  ( file : File; data : BARE ARRAY OF OCTET; VAR octetsWritten : IOSIZE );
 (* Performs a write or append operation depending on the access mode of <file>
    and passes the actual number of octets written in <octetsWritten>. The cur-
    rent read/write position is advanced accordingly. In write mode, the proce-
