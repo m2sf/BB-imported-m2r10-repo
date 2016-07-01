@@ -175,7 +175,7 @@ BEGIN
   FilePtrIO(file^.handle, data)
 END Read;
 
-PROCEDURE Lookahead ( file : file; VAR data : OCTET );
+PROCEDURE Lookahead ( file : File; VAR data : OCTET );
 (* Reads the first lookahead octet  of <file>,  passes it back in <data>,  but
    does NOT advance the read/write position of <file>.  If the lookahead octet
    lies beyond the end  of the file  then no data is passed back  and the file
@@ -216,7 +216,7 @@ BEGIN
 END Write;
 
 PROCEDURE WriteBlock
-  ( file : File; data : BARE ARRAY OF OCTET; VAR octestWritten : IOSIZE );
+  ( file : File; data : BARE ARRAY OF OCTET; VAR octetsWritten : IOSIZE );
 (* Performs a write or append operation depending on the access mode of <file>
    and passes the actual number of octets written in <octetsWritten>. The cur-
    rent read/write position is advanced accordingly. In write mode, the proce-
@@ -255,7 +255,7 @@ PROCEDURE GetOctet
 BEGIN
   CASE chan^ OF
   | Descriptor :
-    FilePtrIO.Read(chan^.handle, octet);
+    FilePtrIO.Read(chan^.handle, data);
     status := FilePtrIO.statusOf(chan^.handle)
   ELSE
     (* signal IO error or raise runtime fault *)
@@ -274,7 +274,7 @@ BEGIN
   ELSE
     (* signal IO error or raise runtime fault *)
   END
-END GetOctet;
+END GetBlock;
 
 PROCEDURE PutOctet
   ( chan : ChanIO.Channel; data : OCTET; VAR status : IOStatus );
@@ -282,7 +282,7 @@ PROCEDURE PutOctet
 BEGIN
   CASE chan^ OF
   | Descriptor :
-    FilePtrIO.Write(chan^.handle, octet);
+    FilePtrIO.Write(chan^.handle, data);
     status := FilePtrIO.statusOf(chan^.handle)
   ELSE
     (* signal IO error or raise runtime fault *)
