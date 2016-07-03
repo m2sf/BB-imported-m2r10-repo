@@ -10,7 +10,8 @@ DEFINITION MODULE FilePtrIO;
 
 IMPORT IOSIZE, IOStatus, FileMode;
 
-(* File accessor and file status *)
+
+(* File Accessor *)
 
 TYPE File = OPAQUE; (* implementation defined file accessor *)
     
@@ -18,16 +19,27 @@ TYPE File = OPAQUE; (* implementation defined file accessor *)
    than opening a file shall raise runtime fault InvalidAccessor. *)
 
 
-(* File Size and Postion *)
+(* Default Stream Accessors *)
 
-TYPE Size = ALIAS OF IOSIZE;
+(* Default streams are automatically opened by the operating system  upon pro-
+   cess creation.  Their mode is either Read  or Write.  Any attempt to open a
+   default stream  will  fail  with  status  AlreadyOpen.  Any attempt to call
+   ReOpen, NameLen, GetName, Lookahead, LA2, Flush, Close  or  any positioning
+   operation will fail with status OperationNotSupported.  Functions  nameLen,
+   currentPos, LastValidSetPos  will return zero,  eof and isValidPos will re-
+   turn FALSE and procedure GetName will pass an empty string. *)
 
-TYPE Pos = ALIAS OF Size;
+PROCEDURE defaultInFile : File;
+(* Returns an accessor associated with stdin. *)
+
+PROCEDURE defaultOutFile : File;
+(* Returns an accessor associated with stdout. *)
+
+PROCEDURE defaultErrFile : File;
+(* Returns an accessor associated with stderr. *)
 
 
-(* Introspection *)
-
-CONST DefaultBufferSize = <implementation defined value>;
+(* Inspection *)
 
 PROCEDURE isValidAccessor ( file : File ) : BOOLEAN;
 (* Returns TRUE if <file> is a valid file accessor, otherwise FALSE. *)
@@ -35,32 +47,35 @@ PROCEDURE isValidAccessor ( file : File ) : BOOLEAN;
 PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if file is associated with a special file, otherwise FALSE. *)
 
-PROCEDURE isValidPos ( file : File; pos : Pos ) : BOOLEAN;
-(* Returns TRUE if <pos> is a valid file position for <file>,
-   otherwise FALSE. *)
 
+(* Opening and Closing Files and Streams *)
 
-(* Opening files *)
+(* NOT supported on default streams *)
+
+CONST
+  MinBufferSize = 256; (* in octets *)
+  DefaultBufferSize = <implementation defined value>;
 
 PROCEDURE Open
   ( NEW file       : File;
     CONST filename : ARRAY OF CHAR;
     mode           : FileMode;
     VAR status     : IOStatus );
-(* Opens the file <filename> in file mode <mode>.  If sucessful passes a file
-   accessor back in <file>,  otherwise passes NIL back in <file>.  Sets the
-   file position depending on <mode>.  The status of the operation is passed
-   back in <status>. *)
+(* Opens the file <filename> in file mode <mode> using an internal file buffer
+   of size DefaultBufferSize and passes a file accessor back in <file>. Passes
+   NIL back in <file>  if unsuccessful.  Sets the  file position  depending on
+   <mode>. The status of the operation is passed back in <status>. *)
 
-PROCEDURE OpenWithBuffer
-  ( NEW file         : File;
-    CONST filename   : ARRAY OF CHAR;
-    mode             : FileMode;
-    VAR buffer       : ARRAY OF OCTET;
-    VAR status       : IOStatus );
-(* Opens the file <filename> in file mode <mode> using <buffer> as a custom
-   file buffer.  If successful passes a file accessor back in <file>,  other-
-   wise passes NIL back in <file>.  Sets the file position depending on <mode>.
+PROCEDURE OpenWithBufferSize
+  ( NEW file       : File;
+    CONST filename : ARRAY OF CHAR;
+    mode           : FileMode;
+    bufSize        : IOSIZE;
+    VAR status     : IOStatus );
+(* Opens the file <filename> in file mode <mode> using an internal file buffer
+   of size <bufSize>  and passes a file accessor back in <file>.  If <bufSize>
+   is less than MinBufferSize, value MinBufferSize is used instead. Passes NIL
+   back in <file> if unsuccessful. Sets the file position depending on <mode>.
    The status is passed back in <status>. *)
 
 PROCEDURE ReOpen ( file : File; mode : FileMode );
@@ -73,14 +88,15 @@ PROCEDURE ReOpen ( file : File; mode : FileMode );
    to be set to the end of the file.  An attempt to open a file that is a di-
    rectory fails with status code mayNotOpenDirectory. *)
 
+PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
+(* Performs Flush on <file>, closes the associated file and passes NIL back
+   in <file>.  The status of the operation is passed back  in <status>. *)
 
-(* Querying File Mode, Status and Filename *)
+
+(* Querying Mode, Name and Status *)
 
 PROCEDURE modeOf ( file : File ) : FileMode;
 (* Returns the file mode of file accessor <file>. *)
-
-PROCEDURE statusOf ( file : File ) : IOStatus;
-(* Returns the status of the most recent operation for <file>. *)
 
 PROCEDURE nameLen ( file : File ) : CARDINAL;
 (* Returns the length of the filename associated with <file>. *)
@@ -91,8 +107,15 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
    operation fails  with status NameTooLong,  passing an empty string  back in
    <filename>. *)
 
+PROCEDURE statusOf ( file : File ) : IOStatus;
+(* Returns the status of the most recent operation for <file>. *)
 
-(* File position operations *)
+
+(* File-Only Positioning Operations *)
+
+TYPE Size = ALIAS OF IOSIZE;
+
+TYPE Pos = ALIAS OF Size;
 
 PROCEDURE eof ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file accessor <file>
@@ -101,6 +124,10 @@ PROCEDURE eof ( file : File ) : BOOLEAN;
 PROCEDURE currentPos ( file : File ) : FilePos;
 (* Returns the current read/write position for file accessor <file> where a
    value of TMIN(FilePos) represents the beginning of a file. *)
+
+PROCEDURE isValidPos ( file : File; pos : Pos ) : BOOLEAN;
+(* Returns TRUE if <pos> is a valid file position for <file>,
+   otherwise FALSE. *)
 
 PROCEDURE lastValidSetPos ( file : File ) : FilePos;
 (* Returns the most advanced position that may be passed to SetPos for file
@@ -135,31 +162,17 @@ PROCEDURE Rewind ( file : File );
    with status AccessBeyondEOF. *)
 
 
-(* Read and write operations *)
+(* Common I/O operations *)
 
 PROCEDURE Read ( file : File; VAR data : OCTET );
 (* Reads one octet of data at the current position of <file>, passes it back
    in <data> and advances the read/write position of <file> by one. *)
 
-PROCEDURE Lookahead ( file : File; VAR data : OCTET );
-(* Reads the first lookahead octet of <file>, passes it back in <data>, but
-   does NOT advance the read/write position of <file>.  If the lookahead
-   octet lies beyond the end of the file then no data is passed back and
-   the file status is set to AccessBeyondEOF. *)
 
-PROCEDURE LA2 ( file : File; VAR data : OCTET );
-(* Reads the second lookahead octet of <file>, passes it back in <data>, but
-   does NOT advance the read/write position of <file>.  If the second look-
-   ahead octet lies beyond the end of the file then no data is passed back
-   and the file status is set to AccessBeyondEOF. *)
-
-PROCEDURE ReadBlock
-  ( file           : File;
-    VAR data       : ARRAY OF OCTET;
-    VAR octetsRead : IOSIZE );
-(* Reads a block of data at the current position of <file>. Passes the block
-   of data back in <data> and the number of octets read in <octetsRead>.
-   The read/write position of <file> is advanced accordingly. *)
+PROCEDURE ReadBlock ( file : File; VAR data : ARRAY OF OCTET );
+(* Reads a block of data up to the capacity of <data>, starting at the current
+   position  of <file>  and passes it back in <data>.  The read/write position
+   of <file> is advanced accordingly. *)
 
 (* Any attempt to read or lookahead read from a file whose read flag is not
    set shall fail with status OperationNotSupported. *)
@@ -187,6 +200,21 @@ PROCEDURE WriteBlock
    advanced by the number of octets written and the number of octets written
    is passed back in <octetsWritten> after the data has been written. *)
 
+
+(* File-Only I/O operations *)
+
+PROCEDURE Lookahead ( file : File; VAR data : OCTET );
+(* Reads the first lookahead octet of <file>, passes it back in <data>, but
+   does NOT advance the read/write position of <file>.  If the lookahead
+   octet lies beyond the end of the file then no data is passed back and
+   the file status is set to AccessBeyondEOF. *)
+
+PROCEDURE LA2 ( file : File; VAR data : OCTET );
+(* Reads the second lookahead octet of <file>, passes it back in <data>, but
+   does NOT advance the read/write position of <file>.  If the second look-
+   ahead octet lies beyond the end of the file then no data is passed back
+   and the file status is set to AccessBeyondEOF. *)
+
 PROCEDURE Flush ( file : File );
 (* Writes unwritten data in any buffer of <file> to its associated file. *)
 
@@ -194,35 +222,14 @@ PROCEDURE Flush ( file : File );
    fail with status operationNotSupported. *)
 
 
-(* Closing files *)
+(* Stream-Only I/O Operations *)
 
-PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
-(* Performs Flush on <file>, closes the associated file and passes NIL back
-   in <file>.  The status of the operation is passed back  in <status>. *)
+CONST
+  InsertBufferSize = <implementation defiled value>;
 
-
-(* Implementation defined accessors to special files *)
-
-(* Special files  are automatically opened when module FileIO is initialised.
-   The file mode of a special file is either read  or write.   EOF always re-
-   turns FALSE and CurrentPos always returns TMIN(FilePos) for special files.
-   Any attempt to open a special file will fail with status alreadyOpen.  Any
-   attempt to call ReOpen, NameLen, GetName, LastValidSetPos, SetPos, Rewind,
-   Advance, Lookahead, LA2, ReadBlock, Flush or Close  will fail with  status
-   operationNotSupported.  NameLen  and LastValidSetPos will return zero  and
-   GetName will pass an empty string. *)
-
-PROCEDURE defaultInFile : File;
-(* Returns a file accessor associated with stdin. *)
-
-PROCEDURE defaultOutFile : File;
-(* Returns a file accessor associated with stdout. *)
-
-PROCEDURE defaultErrFile : File;
-(* Returns a file accessor associated with stderr. *)
-
-PROCEDURE defaultNullFile : File;
-(* Returns the file accessor associated with the null device, open in write
-   mode.  Write operations on this file have no effect. *)
+PROCEDURE Insert ( stream : File; data : OCTET );
+(* Inserts octet <data> into input stream <stream> to be read by the next read
+   operation on <stream>.  Inserted octets are stored in a FIFO buffer of size
+   InsertBufferSize.  The minimum size of the insert buffer is two octets. *)
 
 END FilePtrIO.
