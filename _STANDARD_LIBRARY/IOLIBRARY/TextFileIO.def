@@ -118,7 +118,8 @@ PROCEDURE la2 ( file : File ) : CHAR;
 (* String Input *)
 
 PROCEDURE MarkStr ( file : File );
-(* Sets an internal marker to mark the current position of <file>. *)
+(* Sets an internal marker to mark the current position of <file> as the start
+   of a character sequence to be collected later with function markedStr. *)
 
 PROCEDURE markedStr ( file : File ) : String;
 (* Allocates a  new string  initialised with the  character sequence  from the
