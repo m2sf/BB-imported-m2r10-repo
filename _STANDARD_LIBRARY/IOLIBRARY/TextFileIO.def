@@ -1,0 +1,139 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE TextFileIO;
+
+(* Driver for Text File IO *)
+
+(* This module interprets the contents of files as a stream of characters,
+   structured into lines, separated by LF or CR-LF end-of-line markers. *)
+
+IMPORT IOSIZE, IOStatus, FileMode;
+
+
+(* File Accessor *)
+
+TYPE File = OPAQUE; (* implementation defined file accessor *)
+    
+(* Any attempt to pass an invalid file accessor to a file operation other
+   than opening a file shall raise runtime fault InvalidAccessor. *)
+
+
+(* Inspection *)
+
+PROCEDURE isValidAccessor ( file : File ) : BOOLEAN;
+(* Returns TRUE if <file> is a valid file accessor, otherwise FALSE. *)
+
+
+(* Opening and Closing Files *)
+
+CONST
+  MinBufferSize = 256; (* in octets *)
+  DefaultBufferSize = <implementation defined value>;
+
+PROCEDURE Open
+  ( NEW file       : File;
+    CONST filename : ARRAY OF CHAR;
+    mode           : FileMode;
+    VAR status     : IOStatus );
+(* Opens the file <filename> in file mode <mode> using an internal file buffer
+   of size DefaultBufferSize and passes a file accessor back in <file>. Passes
+   NIL back in <file>  if unsuccessful.  Sets the  file position  depending on
+   <mode>. The status of the operation is passed back in <status>. *)
+
+PROCEDURE OpenWithBufferSize
+  ( NEW file       : File;
+    CONST filename : ARRAY OF CHAR;
+    mode           : FileMode;
+    bufSize        : IOSIZE;
+    VAR status     : IOStatus );
+(* Opens the file <filename> in file mode <mode> using an internal file buffer
+   of size <bufSize>  and passes a file accessor back in <file>.  If <bufSize>
+   is less than MinBufferSize, value MinBufferSize is used instead. Passes NIL
+   back in <file> if unsuccessful. Sets the file position depending on <mode>.
+   The status is passed back in <status>. *)
+
+PROCEDURE ReOpen ( file : File; mode : FileMode );
+(* Flushes the file associated with file accessor <file>  and changes its mode
+   to <mode>. Sets the file position depending on <mode>. *)
+
+(* Opening or reopening a file  in a mode  whose append flag is not set causes
+   the file position to be set  to the beginning  of the file.  Opening or re-
+   opening a file  in a mode whose append flag is set causes the file position
+   to be set  to the end of the file.  An attempt to open a file that is a di-
+   rectory fails with status code mayNotOpenDirectory. *)
+
+PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
+(* Performs Flush on <file>,  closes the associated file  and  passes NIL back
+   in <file>.  The status of the operation is passed back  in <status>. *)
+
+
+(* Querying File Parameters *)
+
+PROCEDURE modeOf ( file : File ) : FileMode;
+(* Returns the file mode of file accessor <file>. *)
+
+PROCEDURE strRepo ( file : File ) : StringRepo;
+(* Returns the string repository associated with <file>. *)
+
+PROCEDURE filename ( file : File ) : String;
+(* Returns a newly allocated string with the filename of <file>. *)
+
+PROCEDURE statusOf ( file : File ) : IOStatus;
+(* Returns the status of the most recent operation for <file>. *)
+
+
+(* Line and Column Counters *)
+
+PROCEDURE currCol ( file : File ) : LONGCARD;
+(* Returns the column counter for the current position of <file>. *)
+
+PROCEDURE currLine ( file : File ) : LONGCARD;
+(* Returns the line counter for the current position of <file>. *)
+
+
+(* Text Input *)
+
+PROCEDURE eof ( file : File ) : BOOLEAN;
+(* Returns TRUE if the end of the file associated with file accessor <file>
+   has been reached, otherwise FALSE. *)
+
+PROCEDURE char ( file : File ) : CHAR;
+(* Returns the  character at the  current position of <file>  and advances the
+   read/write position of <file> by one. *)
+
+PROCEDURE next ( file : File ) : CHAR;
+(* Returns the  character at the  current position of <file> without advancing
+   the read/write position. *)
+
+PROCEDURE la2 ( file : File ) : CHAR;
+(* Returns the  character that  follows the current position of <file> without
+   advancing the read/write position. *)
+
+(* Any attempt to  read  or lookahead read  from a file whose read flag is not
+   set shall fail with status OperationNotSupported. *)
+
+
+(* Marking and Reading Strings *)
+
+PROCEDURE MarkStr ( file : File );
+(* Sets an internal marker to mark the current position of <file>. *)
+
+PROCEDURE markedStr ( file : File ) : String;
+(* Allocates a  new string  initialised with the  character sequence  from the
+   marked position to the current position of <file> and returns it. *)
+
+
+(* Text Output *)
+
+PROCEDURE Write ( file : File; ch : CHAR );
+(* Writes character <ch>  to <file> at the  current position  and advances the
+   current position by one. *)
+
+PROCEDURE WriteStr ( file : File; CONST str : ARRAY OF CHAR );
+(* Writes the character sequence <str>  to <file>  at the current position and
+   advances the current position by the length of the character sequence. *)
+
+PROCEDURE Flush ( file : File );
+(* Writes unwritten data in any buffer of <file> to its associated file. *)
+
+END TextFileIO.
