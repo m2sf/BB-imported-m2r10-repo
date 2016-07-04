@@ -93,7 +93,7 @@ PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
    in <file>.  The status of the operation is passed back  in <status>. *)
 
 
-(* Querying Mode, Name and Status *)
+(* Querying File Parameters *)
 
 PROCEDURE modeOf ( file : File ) : FileMode;
 (* Returns the file mode of file accessor <file>. *)
@@ -174,8 +174,16 @@ PROCEDURE ReadBlock ( file : File; VAR data : ARRAY OF OCTET );
    position  of <file>  and passes it back in <data>.  The read/write position
    of <file> is advanced accordingly. *)
 
-(* Any attempt to read or lookahead read from a file whose read flag is not
-   set shall fail with status OperationNotSupported. *)
+CONST
+  InsertBufferSize = <implementation defined value>;
+
+PROCEDURE Insert ( stream : File; data : OCTET );
+(* Inserts octet <data> into input stream <stream> to be read by the next read
+   operation on <stream>.  Inserted octets are stored in a FIFO buffer of size
+   InsertBufferSize.  The minimum size of the insert buffer is two octets. *)
+
+(* Any attempt to perform the above I/O operations on any file or stream whose
+   read flag is not set shall fail with status OperationNotSupported. *)
 
 
 PROCEDURE Write ( file : File; data : OCTET );
@@ -203,33 +211,10 @@ PROCEDURE WriteBlock
 
 (* File-Only I/O operations *)
 
-PROCEDURE Lookahead ( file : File; VAR data : OCTET );
-(* Reads the first lookahead octet of <file>, passes it back in <data>, but
-   does NOT advance the read/write position of <file>.  If the lookahead
-   octet lies beyond the end of the file then no data is passed back and
-   the file status is set to AccessBeyondEOF. *)
-
-PROCEDURE LA2 ( file : File; VAR data : OCTET );
-(* Reads the second lookahead octet of <file>, passes it back in <data>, but
-   does NOT advance the read/write position of <file>.  If the second look-
-   ahead octet lies beyond the end of the file then no data is passed back
-   and the file status is set to AccessBeyondEOF. *)
-
 PROCEDURE Flush ( file : File );
 (* Writes unwritten data in any buffer of <file> to its associated file. *)
 
 (* Any attempt to write to or flush a file whose write flag is not set shall
    fail with status operationNotSupported. *)
-
-
-(* Stream-Only I/O Operations *)
-
-CONST
-  InsertBufferSize = <implementation defiled value>;
-
-PROCEDURE Insert ( stream : File; data : OCTET );
-(* Inserts octet <data> into input stream <stream> to be read by the next read
-   operation on <stream>.  Inserted octets are stored in a FIFO buffer of size
-   InsertBufferSize.  The minimum size of the insert buffer is two octets. *)
 
 END FilePtrIO.
