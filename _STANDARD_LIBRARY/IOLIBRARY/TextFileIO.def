@@ -93,7 +93,7 @@ PROCEDURE currLine ( file : File ) : LONGCARD;
 (* Returns the line counter for the current position of <file>. *)
 
 
-(* Text Input *)
+(* Character Input *)
 
 PROCEDURE eof ( file : File ) : BOOLEAN;
 (* Returns TRUE if the end of the file associated with file accessor <file>
@@ -115,7 +115,7 @@ PROCEDURE la2 ( file : File ) : CHAR;
    set shall fail with status OperationNotSupported. *)
 
 
-(* Marking and Reading Strings *)
+(* String Input *)
 
 PROCEDURE MarkStr ( file : File );
 (* Sets an internal marker to mark the current position of <file>. *)
@@ -125,7 +125,7 @@ PROCEDURE markedStr ( file : File ) : String;
    marked position to the current position of <file> and returns it. *)
 
 
-(* Text Output *)
+(* Character and String Output *)
 
 PROCEDURE Write ( file : File; ch : CHAR );
 (* Writes character <ch>  to <file> at the  current position  and advances the
