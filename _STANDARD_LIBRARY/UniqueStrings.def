@@ -1,0 +1,28 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE UniqueStrings;
+
+(* Unique Strings Repository *)
+
+TYPE Repo = OPAQUE;
+
+TYPE String = OPAQUE;
+
+PROCEDURE New ( NEW repo : Repo );
+(* Allocates and returns a new unique string repository. *)
+
+PROCEDURE Release ( VAR repo : Repo );
+(* Deallocates unique string repository <repo>. *)
+
+PROCEDURE stringForStr ( repo : Repo; CONST str : ARRAY OF CHAR ) : String;
+(* Searches character sequence <str> in repository <repo>.  If found, the unique
+   string  previously stored  in <repo> is returned.  If not found, a new unique
+   string is added to <repo> and returned. *)
+
+PROCEDURE length ( string : String ) : LONGCARD;
+(* Returns the length of unique string <string>. *)
+
+PROCEDURE CopyString ( string : String; VAR str : ARRAY OF CHAR );
+(* Copies the character sequence stored in <string> to <str>. *)
+
+END UniqueStrings.
