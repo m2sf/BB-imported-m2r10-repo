@@ -7,7 +7,7 @@ DEFINITION MODULE TextFileIO;
 (* This module interprets the contents of files as a stream of characters,
    structured into lines, separated by LF or CR-LF end-of-line markers. *)
 
-IMPORT IOSIZE, IOStatus, FileMode, StringRepo;
+IMPORT IOSIZE, IOStatus, FileMode, UniqueStrings;
 
 
 (* File Accessor *)
@@ -34,7 +34,7 @@ PROCEDURE Open
   ( NEW file       : File;
     CONST filename : ARRAY OF CHAR;
     mode           : FileMode;
-    strRepo        : StringRepo;
+    strRepo        : UniqueStrings.Repo;
     VAR status     : IOStatus );
 (* Opens the file <filename> in file mode <mode> using an internal file buffer
    of size DefaultBufferSize and passes a file accessor back in <file>. Passes
@@ -46,7 +46,7 @@ PROCEDURE OpenWithBufferSize
     CONST filename : ARRAY OF CHAR;
     mode           : FileMode;
     bufSize        : IOSIZE;
-    strRepo        : StringRepo;
+    strRepo        : UniqueStrings.Repo;
     VAR status     : IOStatus );
 (* Opens the file <filename> in file mode <mode> using an internal file buffer
    of size <bufSize>  and passes a file accessor back in <file>.  If <bufSize>
@@ -74,7 +74,7 @@ PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
 PROCEDURE modeOf ( file : File ) : FileMode;
 (* Returns the file mode of file accessor <file>. *)
 
-PROCEDURE strRepo ( file : File ) : StringRepo;
+PROCEDURE strRepo ( file : File ) : UniqueStrings.Repo;
 (* Returns the string repository associated with <file>. *)
 
 PROCEDURE filename ( file : File ) : String;
