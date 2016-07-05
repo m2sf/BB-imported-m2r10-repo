@@ -93,6 +93,17 @@ PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
    in <file>.  The status of the operation is passed back  in <status>. *)
 
 
+(* Status operations *)
+
+PROCEDURE statusOf ( file : File ) : IOStatus;
+(* Returns the status of the most recent operation for <file>. *)
+
+PROCEDURE SetStatus ( file : File; status : IOStatus; VAR valid : BOOLEAN );
+(* Sets the status of <file>  to <status> if it meets the integrity condition.
+   Where <status.code> is set to Success <status.failed> must be FALSE, other-
+   it must be TRUE.  Passes TRUE in <valid> if successful, otherwise FALSE. *)
+
+
 (* Querying File Parameters *)
 
 PROCEDURE modeOf ( file : File ) : FileMode;
@@ -106,9 +117,6 @@ PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
    <filename>.  If the name  exceeds the capacity  of the filename array,  the 
    operation fails  with status NameTooLong,  passing an empty string  back in
    <filename>. *)
-
-PROCEDURE statusOf ( file : File ) : IOStatus;
-(* Returns the status of the most recent operation for <file>. *)
 
 
 (* File-Only Positioning Operations *)
