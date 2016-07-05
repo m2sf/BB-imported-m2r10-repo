@@ -4,7 +4,7 @@ DEFINITION MODULE Status;
 
 (* Status Root Type *)
 TYPE Status = RECORD ( NIL )
-  success : BOOLEAN
+  failed : BOOLEAN
 END;
 
 (* Status Code Base Type *)
