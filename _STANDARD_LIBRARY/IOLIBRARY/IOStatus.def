@@ -5,7 +5,7 @@ DEFINITION MODULE IOStatus;
 IMPORT Status;
 
 TYPE IOStatus = RECORD ( Status )
-  [ success = TRUE ]
+  [ failed = FALSE ]
   code : Code = Success
 END;
 
