@@ -114,9 +114,8 @@ PROCEDURE nameLen ( file : File ) : CARDINAL;
 
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
 (* Passes the name  of the file  associated with  file accessor <file> back in
-   <filename>.  If the name  exceeds the capacity  of the filename array,  the 
-   operation fails  with status NameTooLong,  passing an empty string  back in
-   <filename>. *)
+   <filename>. If the name exceeds the capacity of <filename>, an empty string 
+   is passed back in <filename>.  Does not alter the status of <file>. *)
 
 
 (* File-Only Positioning Operations *)
