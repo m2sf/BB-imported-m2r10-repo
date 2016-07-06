@@ -14,13 +14,16 @@ TYPE Channel = POINTER TO Descriptor;
 
 TYPE Descriptor = RECORD ( NIL )
   (* method slots for generic input *)
-  ready : PROCEDURE ( Channel ) : BOOLEAN;
-  Get   : PROCEDURE ( Channel, VAR OCTET, VAR IOStatus );
-  GetN  : PROCEDURE ( Channel, VAR ARRAY OF OCTET, VAR IOStatus );
+  ready   : PROCEDURE ( Channel, IOSIZE ) : BOOLEAN;
+  Get     : PROCEDURE ( Channel, VAR OCTET, VAR IOStatus );
+  GetN    : PROCEDURE ( Channel, VAR ARRAY OF OCTET, VAR IOStatus );
+  Ins     : PROCEDURE ( Channel, OCTET, VAR IOStatus );
   (* method slots for generic output *)
-  Put   : PROCEDURE ( Channel, OCTET, VAR IOStatus );
-  PutN  : PROCEDURE ( Channel, ARRAY OF OCTET, VAR IOSIZE, VAR IOStatus );
-  Sync  : PROCEDURE ( Channel, VAR IOStatus )
+  Put     : PROCEDURE ( Channel, OCTET, VAR IOStatus );
+  PutN    : PROCEDURE ( Channel, ARRAY OF OCTET, VAR IOSIZE, VAR IOStatus );
+  Sync    : PROCEDURE ( Channel, VAR IOStatus );
+  (* method slot for setting status *)
+  SetStat : PROCEDURE ( Channel, IOStatus, BOOLEAN )
 END;
 
 END ChanIO.
