@@ -140,23 +140,11 @@ PROCEDURE Read ( file : File; VAR data : OCTET );
 (* Reads one octet of data  at the current position of <file>,  passes it back
    in <data> and advances the current read/write position of <file> by one. *)
 
-PROCEDURE Lookahead ( file : File; VAR data : OCTET );
-(* Reads the first lookahead octet  of <file>,  passes it back in <data>,  but
-   does NOT advance the read/write position of <file>.  If the lookahead octet
-   lies beyond the end  of the file  then no data is passed back  and the file
-   status is set to AccessBeyondEOF. *)
-
-PROCEDURE LA2 ( file : File; VAR data : OCTET );
-(* Reads the second lookahead octet of <file>,  passes it back in <data>,  but
-   does  NOT advance  the read/write position  of <file>.  If the second look-
-   ahead octet lies beyond the end of the file then no data is passed back and
-   the file status is set to AccessBeyondEOF. *)
-
 PROCEDURE ReadBlock
-  ( file : File; VAR data : ARRAY OF OCTET; VAR octetsRead : IOSIZE );
+  ( file : File; VAR data : ARRAY OF OCTET );
 (* Reads a block of data  at the current position of <file>.  Passes the block
-   of data back in <data>  and the number of octets read in <octetsRead>.  The
-   current read/write position of <file> is advanced by <octetsRead>. *)
+   of data  back in <data>.  The read/write position of <file>  is advanced by
+   the number of octets read. *)
 
 (* Any attempt  to read or lookahead read  from a file channel whose read flag
    is not set shall fail with status OperationNotSupported. *)
