@@ -22,8 +22,9 @@ TYPE Descriptor = RECORD ( NIL )
   Put     : PROCEDURE ( Channel, OCTET );
   PutN    : PROCEDURE ( Channel, ARRAY OF OCTET, VAR IOSIZE );
   Sync    : PROCEDURE ( Channel );
-  (* method slot for getting and setting status *)
+  (* method slots for status handling *)
   status  : PROCEDURE ( Channel ) : IOStatus;
+  StatMsg : PROCEDURE ( Channel, IOStatus );
   SetStat : PROCEDURE ( Channel, IOStatus, BOOLEAN )
 END;
 
@@ -58,6 +59,9 @@ END;
 
 (* PROCEDURE status ( chan : Channel ) : IOStatus;
    Returns the status of the most recent operation on <chan>. *)
+
+(* PROCEDURE StatMsg ( chan : Channel; status : IOStatus );
+   Emits a status message for <status> on <chan>. *)
 
 (* PROCEDURE SetStat
      ( chan : Channel; status : IOStatus; VAR valid : BOOLEAN );
