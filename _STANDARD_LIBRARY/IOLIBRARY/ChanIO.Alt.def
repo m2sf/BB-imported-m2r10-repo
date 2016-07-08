@@ -30,16 +30,14 @@ END;
 
 (* Channel Method Specification *)
 
-(* PROCEDURE ready
-     ( chan : Channel; octets : IOSIZE ) : BOOLEAN;
+(* PROCEDURE ready ( chan : Channel; octets : IOSIZE ) : BOOLEAN;
    Returns TRUE if <chan> has at least <octets> number of octets available for
    reading, otherwise FALSE. *)
 
 (* PROCEDURE Get ( chan : Channel; VAR data : OCTET );
    Reads one octet from <chan> and passes it back in <data>. *)
 
-(* PROCEDURE GetN
-     ( chan : Channel; VAR data : ARRAY OF OCTET );
+(* PROCEDURE GetN ( chan : Channel; VAR data : ARRAY OF OCTET );
    Reads a block of data up to the capacity of <data>  from <chan>  and passes
    it back in <data>. *)
 
