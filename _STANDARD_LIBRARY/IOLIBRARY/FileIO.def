@@ -12,23 +12,13 @@ IMPORT ChanIO, FilePtrIO, IOSIZE, IOStatus, FileMode;
 TYPE File = POINTER TO Descriptor;
 
 TYPE Descriptor = RECORD ( ChanIO.Descriptor )
-[ ready = dataReady; Get = GetOctet; GetN = GetBlock;
-  Put = PutOctet; PutN = PutBlock; Sync = SyncData ]
+[ ready = dataReady; Get = GetOctet; GetN = GetBlock; Ins = Insert;
+  Put = PutOctet; PutN = PutBlock; Sync = SyncData; SetStat = SetStatus ]
 * handle : FilePtrIO.File
 END;
 
 
-(* File Size and Postion *)
-
-TYPE Size = ALIAS OF FilePtrIO.Size;
-
-TYPE Pos = ALIAS OF FilePtrIO.Pos;
-
-
-(* Introspection *)
-
-CONST DefaultBufferSize = FilePtrIO.DefaultBufferSize;
-(* The buffer size used when no custom buffer is specified. *)
+(* Inspection *)
 
 PROCEDURE isFileChannel ( chan : ChanIO.Channel ) : BOOLEAN;
 (* Returns TRUE if <chan> is a valid file channel, else FALSE. *)
@@ -39,17 +29,17 @@ PROCEDURE isValidFile ( file : File ) : BOOLEAN;
 PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if <file> is associated with a special file, else FALSE. *)
 
-PROCEDURE isValidPos ( file : File; pos : Pos ) : BOOLEAN;
-(* Returns TRUE if <pos> is a valid position for <file>, else FALSE. *)
 
-
-(* Opening and Re-opening a File *)
+(* Opening and Closing a File *)
 
 (* Opening or reopening a file in a mode  whose append flag is not set  causes
    the file position  to be set  to the beginning of the file.  Opening or re-
    opening a file in a mode whose append flag is set  causes the file position
    to be set  to the end of the file.  An attempt to open a file that is a di-
    rectory fails with status code MayNotOpenDirectory. *)
+
+CONST DefaultBufferSize = FilePtrIO.DefaultBufferSize;
+(* The buffer size used when no buffer size is specified. *)
 
 PROCEDURE Open
   ( NEW file       : File;
@@ -75,28 +65,48 @@ PROCEDURE ReOpen ( file : File; mode : FileMode );
 (* Flushes <file> and changes its access mode to <mode>.
    The file position is set depending on <mode>. *)
 
+PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
+(* Performs Flush on <file>,  closes  the associated file,  deallocates <file>
+   and passes NIL back in <file>. A status code is passed back in <status>. *)
 
-(* Querying Mode, Status and Filename *)
+
+(* Status operations *)
+
+PROCEDURE statusOf ( file : File ) : IOStatus;
+(* Returns the status of the most recent operation for <file>. *)
+
+PROCEDURE SetStatus
+  ( chan : ChanIO.Channel; status : IOStatus; VAR valid : BOOLEAN );
+(* Sets the status of <file> to <status>  if it meets the following condition:
+   Where <status.code> is set to Success <status.failed> must be FALSE, other-
+   wise TRUE.  Passes TRUE in <valid> if successful, otherwise FALSE. *)
+
+
+(* Querying File Parameters *)
 
 PROCEDURE modeOf ( file : File ) : FileMode;
 (* Returns the access mode of <file>. *)
-
-PROCEDURE statusOf ( file : File ) : IOStatus;
-(* Returns the status of the most recent operation on <file>. *)
 
 PROCEDURE nameLen ( file : File ) : CARDINAL;
 (* Returns the length of the filename associated with <file>. *)
 
 PROCEDURE GetName ( file : File; VAR filename : ARRAY OF CHAR );
-(* Passes the name of the file  associated with <file> back in <filename>.  If
-   the name exceeds the capacity of <filename> the operation fails with status
-   code NameTooLong and an empty string is passed back in <filename>. *)
+(* Passes the name  of the file  associated with  file accessor <file> back in
+   <filename>. If the name exceeds the capacity of <filename>, an empty string 
+   is passed back in <filename>.  Does not alter the status of <file>. *)
 
 
-(* Fie Positioning *)
+(* File Positioning *)
+
+TYPE Size = ALIAS OF FilePtrIO.Size;
+
+TYPE Pos = ALIAS OF FilePtrIO.Pos;
 
 PROCEDURE currentPos ( file : File ) : Pos;
 (* Returns the current read/write position of <file>. *)
+
+PROCEDURE isValidPos ( file : File; pos : Pos ) : BOOLEAN;
+(* Returns TRUE if <pos> is a valid position for <file>, else FALSE. *)
 
 PROCEDURE lastValidSetPos ( file : File ) : Pos;
 (* Returns the most advanced position that may be passed to SetPos for <file>.
@@ -149,6 +159,17 @@ PROCEDURE ReadBlock
 (* Any attempt  to read or lookahead read  from a file channel whose read flag
    is not set shall fail with status OperationNotSupported. *)
 
+CONST
+  InsertBufferSize = FilePtrIO.InsertBufferSize;
+
+PROCEDURE Insert ( chan : ChanIO.Channel; data : OCTET );
+(* Inserts octet <data> into input channel <chan>  to be read by the next read
+   operation on <chan>.  Inserted octets are stored in a  FIFO buffer  of size
+   InsertBufferSize.  The minimum size of the insert buffer is two octets. *)
+
+(* Any attempt to perform the above I/O operations on any file whose Read flag
+   is not set will fail with status NotOpenForReading. *)
+
 PROCEDURE Write ( file : File; data : OCTET );
 (* Performs a write or append operation depending on the access mode of <file>
    and advances the current read/write position by one after the data has been
@@ -168,14 +189,16 @@ PROCEDURE WriteBlock
 PROCEDURE Flush ( file : File );
 (* Writes unwritten data in any buffer of <chan> to its associated file. *)
 
-(* Any attempt  to write to  or flush a file whose write flag is not set shall
-   fail with status OperationNotSupported. *)
+(* Any attempt  to write to  or flush a file whose Write flag is not set shall
+   fail with status NotOpenForWriting. *)
 
 
 (* Channel Method Implementations *)
 
-PROCEDURE dataReady ( chan : ChanIO.Channel ) : BOOLEAN;
-(* Channel method implementation equivalent to NOT eof(). *)
+PROCEDURE dataReady
+  ( chan : ChanIO.Channel; octets : IOSIZE; VAR status : IOStatus ) : BOOLEAN;
+(* Returns TRUE if <chan> has at least <octets> number of octets available for
+   reading, otherwise FALSE. *)
 
 PROCEDURE GetOctet
   ( chan : ChanIO.Channel; VAR data : OCTET; VAR status : IOStatus );
@@ -198,39 +221,5 @@ PROCEDURE PutBlock
 
 PROCEDURE SyncData ( chan : ChanIO.Channel; VAR status : IOStatus );
 (* Channel method implementation corresponding to Flush(). *)
-
-
-(* Closing a File *)
-
-PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
-(* Performs Flush on <file>,  closes  the associated file,  deallocates <file>
-   and passes NIL back in <file>. A status code is passed back in <status>. *)
-
-
-(* File Channels for Special Files *)
-
-(* Special files stdin, stdout and stderr are automatically opened when a pro-
-   cess is created.  Associated file channels are allocated when module FileIO
-   is initialised.  The functions below return these associated file channels.
-   The access mode of stdin is RO,  that of stdout and stderr is WO.  Function
-   dataReady always returns TRUE for stdin. Function currentPos always returns
-   TMIN(FilePos) for any special file. Any attempt to open a special file will
-   fail with status AlreadyOpen. Any attempt to call ReOpen, nameLen, GetName,
-   lastValidSetPos, SetPos, Rewind, Advance, Lookahead, LA2, ReadBlock,  Flush
-   or Close will fail with status OperationNotSupported. Functions nameLen and
-   lastValidSetPos will return zero and GetName will pass an empty string. *)
-   
-PROCEDURE defaultInFile : File;
-(* Returns a file channel associated with special file stdin. *)
-
-PROCEDURE defaultOutFile : File;
-(* Returns a file channel associated with special file stdout. *)
-
-PROCEDURE defaultErrFile : File;
-(* Returns a file channel associated with special file stderr. *)
-
-PROCEDURE defaultNullFile : File;
-(* Returns a file channel associated with the null device, open in write mode.
-   Write operations on this file channel have no effect. *)
 
 END FileIO.
