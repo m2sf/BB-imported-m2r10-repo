@@ -1,1 +1,68 @@
-(* new file *)
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE ChanIO;
+
+(* Channel Based IO *)
+
+IMPORT IOStatus, IOSIZE;
+
+(* Channel Root Type *)
+
+TYPE Channel = POINTER TO Descriptor;
+
+(* Channel Root Descriptor *)
+
+TYPE Descriptor = RECORD ( NIL )
+  (* method slots for generic input *)
+  ready   : PROCEDURE ( Channel, IOSIZE ) : BOOLEAN;
+  Get     : PROCEDURE ( Channel, VAR OCTET );
+  GetN    : PROCEDURE ( Channel, VAR ARRAY OF OCTET );
+  Insert  : PROCEDURE ( Channel, OCTET );
+  (* method slots for generic output *)
+  Put     : PROCEDURE ( Channel, OCTET );
+  PutN    : PROCEDURE ( Channel, ARRAY OF OCTET, VAR IOSIZE );
+  Sync    : PROCEDURE ( Channel );
+  (* method slot for getting and setting status *)
+  status  : PROCEDURE ( Channel ) : IOStatus;
+  SetStat : PROCEDURE ( Channel, IOStatus, BOOLEAN )
+END;
+
+(* Channel Method Specification *)
+
+(* PROCEDURE ready
+     ( chan : Channel; octets : IOSIZE ) : BOOLEAN;
+   Returns TRUE if <chan> has at least <octets> number of octets available for
+   reading, otherwise FALSE. *)
+
+(* PROCEDURE Get ( chan : Channel; VAR data : OCTET );
+   Reads one octet from <chan> and passes it back in <data>. *)
+
+(* PROCEDURE GetN
+     ( chan : Channel; VAR data : ARRAY OF OCTET );
+   Reads a block of data up to the capacity of <data>  from <chan>  and passes
+   it back in <data>. *)
+
+(* PROCEDURE Insert ( chan : Channel; data : OCTET );
+   Inserts <data> into <chan> to be read by the next read operation. *)
+
+(* PROCEDURE Put ( chan : Channel; data : OCTET ;
+   Writes <data> to <chan>. *)
+
+(* PROCEDURE PutN
+     ( chan : Channel; data : ARRAY OF OCTET; VAR written : IOSIZE );
+   Writes a block of data passed in <data> to <chan> and passes the number of
+   octets written back in <written>. *)
+
+(* PROCEDURE Sync ( chan : Channel );
+   If <chan> is buffered, writes any unwritten buffer data to <chan>. *)
+
+(* PROCEDURE status ( chan : Channel ) : IOStatus;
+   Returns the status of the most recent operation on <chan>. *)
+
+(* PROCEDURE SetStat
+     ( chan : Channel; status : IOStatus; VAR valid : BOOLEAN );
+   Sets the status of <chan> to <status> if it meets the followin condition:
+   Where <status.code> is Success, <status.failed> must be FALSE, else TRUE.
+   If the condition is met, TRUE is passed back in <valid>, else FALSE. *)
+
+END ChanIO.
