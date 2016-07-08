@@ -22,7 +22,8 @@ TYPE Descriptor = RECORD ( NIL )
   Put     : PROCEDURE ( Channel, OCTET, VAR IOStatus );
   PutN    : PROCEDURE ( Channel, ARRAY OF OCTET, VAR IOSIZE, VAR IOStatus );
   Sync    : PROCEDURE ( Channel, VAR IOStatus );
-  (* method slot for setting status *)
+  (* method slots for status handling *)
+  StatMsg : PROCEDURE ( Channel, IOStatus );
   SetStat : PROCEDURE ( Channel, IOStatus, BOOLEAN )
 END;
 
@@ -57,6 +58,9 @@ END;
 
 (* PROCEDURE Sync ( chan : Channel; VAR status : IOStatus );
    If <chan> is buffered, writes any unwritten buffer data to <chan>. *)
+
+(* PROCEDURE StatMsg ( chan : Channel; status : IOStatus );
+   Emits a status message for <status> on <chan>. *)
 
 (* PROCEDURE SetStat
      ( chan : Channel; status : IOStatus; VAR valid : BOOLEAN );
