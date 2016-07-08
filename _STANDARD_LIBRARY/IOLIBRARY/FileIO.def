@@ -32,12 +32,6 @@ PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
 
 (* Opening and Closing a File *)
 
-(* Opening or reopening a file in a mode  whose append flag is not set  causes
-   the file position  to be set  to the beginning of the file.  Opening or re-
-   opening a file in a mode whose append flag is set  causes the file position
-   to be set  to the end of the file.  An attempt to open a file that is a di-
-   rectory fails with status code MayNotOpenDirectory. *)
-
 CONST DefaultBufferSize = FilePtrIO.DefaultBufferSize;
 (* The buffer size used when no buffer size is specified. *)
 
@@ -50,20 +44,27 @@ PROCEDURE Open
    and initialised file channel is passed back in <file>.  On failure, NIL is
    passed back in <file>.  A status code is passed back in <status>. *)
 
-PROCEDURE OpenWithBuffer
-  ( NEW file         : File;
-    CONST filename   : ARRAY OF CHAR;
-    mode             : FileMode;
-    VAR buffer       : BARE ARRAY OF OCTET;
-    VAR status       : IOStatus );
-(* Opens file <filename>  in file mode <mode>  using <buffer> as a custom file
-   buffer.   On success,  a newly allocated  and initialised  file channel  is
-   passed back in <file>.  On failure, NIL is passed back in <file>.  A status
-   code is passed back in <status>. *)
+PROCEDURE OpenWithBufferSize
+  ( NEW file       : File;
+    CONST filename : ARRAY OF CHAR;
+    mode           : FileMode;
+    bufSize        : IOSIZE;
+    VAR status     : IOStatus );
+(* Opens the file <filename> in file mode <mode> using an internal file buffer
+   of size <bufSize>  and passes a file accessor back in <file>.  If <bufSize>
+   is less than MinBufferSize, value MinBufferSize is used instead. Passes NIL
+   back in <file> if unsuccessful. Sets the file position depending on <mode>.
+   The status is passed back in <status>. *)
 
 PROCEDURE ReOpen ( file : File; mode : FileMode );
 (* Flushes <file> and changes its access mode to <mode>.
    The file position is set depending on <mode>. *)
+
+(* Opening or reopening a file in a mode  whose append flag is not set  causes
+   the file position  to be set  to the beginning of the file.  Opening or re-
+   opening a file in a mode whose append flag is set  causes the file position
+   to be set  to the end of the file.  An attempt to open a file that is a di-
+   rectory fails with status code MayNotOpenDirectory. *)
 
 PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
 (* Performs Flush on <file>,  closes  the associated file,  deallocates <file>
