@@ -98,6 +98,9 @@ PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
 PROCEDURE statusOf ( file : File ) : IOStatus;
 (* Returns the status of the most recent operation for <file>. *)
 
+PROCEDURE StatusMsg ( file : File; status : IOStatus );
+(* Writes a status message for <status> to <file>. *)
+
 PROCEDURE SetStatus ( file : File; status : IOStatus; VAR valid : BOOLEAN );
 (* Sets the status of <file>  to <status> if it meets the integrity condition.
    Where <status.code> is set to Success <status.failed> must be FALSE, other-
@@ -171,7 +174,11 @@ PROCEDURE Rewind ( file : File );
 
 (* Common I/O operations *)
 
-PROCEDURE Read ( file : File; VAR data : OCTET );
+PROCEDURE dataReady ( file : File; octets : IOSIZE ) : BOOLEAN;
+(* Returns TRUE if <file> has at least <octets> number of octets available for
+   reading, otherwise FALSE. *)
+
+PROCEDURE ReadOctet ( file : File; VAR data : OCTET );
 (* Reads one octet of data at the current position of <file>, passes it back
    in <data> and advances the read/write position of <file> by one. *)
 
@@ -193,7 +200,7 @@ PROCEDURE Insert ( stream : File; data : OCTET );
    read flag is not set shall fail with status OperationNotSupported. *)
 
 
-PROCEDURE Write ( file : File; data : OCTET );
+PROCEDURE WriteOctet ( file : File; data : OCTET );
 (* Performs a write or append operation depending on the mode of <file>.
    In write mode, the procedure writes one octet in <data> to the current
    position of <file>. In append mode, the procedure atomically sets the
@@ -217,6 +224,9 @@ PROCEDURE WriteBlock
 
 
 (* File-Only I/O operations *)
+
+PROCEDURE isBuffered ( file : File ) : BOOLEAN;
+(* Returns TRUE if <file> is buffered, otherwise FALSE. *)
 
 PROCEDURE Flush ( file : File );
 (* Writes unwritten data in any buffer of <file> to its associated file. *)
