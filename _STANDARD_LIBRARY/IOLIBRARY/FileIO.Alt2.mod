@@ -46,7 +46,7 @@ BEGIN
   (* allocate new channel *)
   NEW newFile;
   IF newFile = NIL THEN
-    status := { TRUE, AllocationFailed };
+    status := {TRUE, AllocationFailed};
     RETURN
   END;
   
