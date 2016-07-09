@@ -77,7 +77,26 @@ PROCEDURE OpenWithBufferSize
    back in <file> if unsuccessful. Sets the file position depending on <mode>.
    The status is passed back in <status>. *)
 BEGIN
-  (* TO DO *)
+  (* allocate new channel *)
+  NEW newFile;
+  IF newFile = NIL THEN
+    status := {TRUE, AllocationFailed};
+    RETURN
+  END;
+  
+  (* open file *)
+  FilePtrIO.OpenWithBufferSize(newFile, filename, mode, bufSize, status);
+  IF status.failed THEN
+    RELEASE newFile;
+    RETURN;
+  END;
+    
+  (* install channel type specific methods *)
+  newFile^.op := opVector;
+  
+  (* pass new channel *)
+  file := newFile;
+  RETURN
 END OpenWithBufferSize;
 
 PROCEDURE ReOpen ( file : File; mode : FileMode );
