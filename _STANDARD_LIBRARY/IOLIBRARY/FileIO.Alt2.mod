@@ -24,7 +24,7 @@ END isFileChannel;
 PROCEDURE isValidFile ( file : File ) : BOOLEAN;
 (* Returns TRUE if the file accessor of <file> is valid, else FALSE. *)
 BEGIN
-  (* TO DO *)
+  RETURN FilePtrIO.isValidFile(file^.handle)
 END isValidFile;
 
 
