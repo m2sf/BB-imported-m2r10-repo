@@ -41,7 +41,7 @@ PROCEDURE Open
 (* Opens file <filename> in file mode <mode>.  On success, a  newly allocated
    and initialised file channel is passed back in <file>.  On failure, NIL is
    passed back in <file>.  A status code is passed back in <status>. *)
-VAR newFile;
+VAR newFile : File;
 BEGIN
   (* allocate new channel *)
   NEW newFile;
@@ -76,6 +76,7 @@ PROCEDURE OpenWithBufferSize
    is less than MinBufferSize, value MinBufferSize is used instead. Passes NIL
    back in <file> if unsuccessful. Sets the file position depending on <mode>.
    The status is passed back in <status>. *)
+VAR newFile : File;
 BEGIN
   (* allocate new channel *)
   NEW newFile;
