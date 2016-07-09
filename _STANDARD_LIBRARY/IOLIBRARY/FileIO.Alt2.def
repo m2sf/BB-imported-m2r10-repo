@@ -71,7 +71,7 @@ PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
 PROCEDURE statusOf ( chan : IOChan.Channel ) : IOStatus;
 (* Returns the status of the most recent operation on <chan>. *)
 
-PROCEDURE StatusMsg ( chan : IOChan.Channel; status : IOStatus ) : IOStatus;
+PROCEDURE StatusMsg ( chan : IOChan.Channel; status : IOStatus );
 (* Writes a status message for <status> to <chan>. *)
 
 PROCEDURE SetStatus
