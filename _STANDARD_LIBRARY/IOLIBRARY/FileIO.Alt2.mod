@@ -204,6 +204,12 @@ TYPE Size = ALIAS OF FilePtrIO.Size;
 
 TYPE Pos = ALIAS OF FilePtrIO.Pos;
 
+PROCEDURE eof ( file : File ) : BOOLEAN; (* for convenience *)
+(* Returns TRUE if the end of <file> has been reached, otherwise FALSE. *)
+BEGIN
+  RETURN FilePtrIO.eof(file^.handle)
+END eof;
+
 PROCEDURE currentPos ( file : File ) : Pos;
 (* Returns the current read/write position of <file>. *)
 BEGIN
@@ -262,12 +268,6 @@ END Rewind;
 
 
 (* I/O operations *)
-
-PROCEDURE eof ( file : File ) : BOOLEAN; (* for convenience *)
-(* Returns TRUE if the end of <file> has been reached, otherwise FALSE. *)
-BEGIN
-  RETURN FilePtrIO.eof(file^.handle)
-END eof;
 
 PROCEDURE dataReady ( chan : ChanIO.Channel; octets : IOSIZE ) : BOOLEAN;
 (* Returns TRUE if <chan> has at least <octets> number of octets available for
