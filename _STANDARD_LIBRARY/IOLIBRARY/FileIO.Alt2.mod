@@ -139,7 +139,7 @@ PROCEDURE StatusMsg ( chan : IOChan.Channel; status : IOStatus );
 BEGIN
   CASE chan OF
   | FileIO.File :
-    (* TO DO *)
+    FilePtrIO.StatusMsg(chan^.handle, status)
   ELSE
     (* invalid channel type *)
   END
