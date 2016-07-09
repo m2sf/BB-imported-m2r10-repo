@@ -114,7 +114,7 @@ BEGIN
   END
 END statusOf;
 
-PROCEDURE StatusMsg ( chan : IOChan.Channel; status : IOStatus ) : IOStatus;
+PROCEDURE StatusMsg ( chan : IOChan.Channel; status : IOStatus );
 (* Writes a status message for <status> to <chan>. *)
 BEGIN
   CASE chan OF
