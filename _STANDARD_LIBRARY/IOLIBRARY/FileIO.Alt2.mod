@@ -30,9 +30,6 @@ END isValidFile;
 
 (* Opening and Closing a File *)
 
-CONST DefaultBufferSize = FilePtrIO.DefaultBufferSize;
-(* The buffer size used when no buffer size is specified. *)
-
 PROCEDURE Open
   ( NEW file       : File;
     CONST filename : ARRAY OF CHAR;
@@ -200,10 +197,6 @@ END GetName;
 
 (* File Positioning *)
 
-TYPE Size = ALIAS OF FilePtrIO.Size;
-
-TYPE Pos = ALIAS OF FilePtrIO.Pos;
-
 PROCEDURE eof ( file : File ) : BOOLEAN; (* for convenience *)
 (* Returns TRUE if the end of <file> has been reached, otherwise FALSE. *)
 BEGIN
@@ -275,7 +268,7 @@ PROCEDURE dataReady ( chan : ChanIO.Channel; octets : IOSIZE ) : BOOLEAN;
 BEGIN
   CASE chan OF
   | FileIO.File :
-    FilePtrIO.dataReady(chan^.handle, octets)
+    RETURN FilePtrIO.dataReady(chan^.handle, octets)
   ELSE
     (* invalid channel type *)
   END
@@ -307,8 +300,16 @@ BEGIN
   END
 END ReadBlock;
 
-CONST
-  InsertBufferSize = FilePtrIO.InsertBufferSize;
+PROCEDURE insertReady ( chan : ChanIO.Channel ) : BOOLEAN;
+(* Returns FALSE if the insert buffer of <chan> is full, otherwise TRUE. *)
+BEGIN
+  CASE chan OF
+  | FileIO.File :
+    RETURN FilePtrIO.insertReady(chan^.handle)
+  ELSE
+    (* invalid channel type *)
+  END
+END insertReady;
 
 PROCEDURE Insert ( chan : ChanIO.Channel; data : OCTET );
 (* Inserts octet <data> into input channel <chan>  to be read by the next read
@@ -358,14 +359,19 @@ BEGIN
   END
 END WriteBlock;
 
-PROCEDURE isBuffered ( chan : ChanIO.Channel ) : BOOLEAN;
-(* Returns TRUE if <chan> is buffered, otherwise FALSE. *)
+PROCEDURE isFlushable ( chan : ChanIO.Channel ) : BOOLEAN;
+(* Returns TRUE if <chan> is flushable, otherwise FALSE. *)
 BEGIN
-  RETURN TRUE
-END isBuffered;
+  CASE chan OF
+  | FileIO.File :
+    RETURN FilePtrIO.isFlushable(chan^.handle)
+  ELSE
+    (* invalid channel type *)
+  END
+END isFlushable;
 
 PROCEDURE Flush ( chan : ChanIO.Channel );
-(* Writes unwritten data in any buffer of <chan> to its associated file. *)
+(* Writes any unwritten buffer data to the file of <chan> if flushable. *)
 BEGIN
   CASE chan OF
   | FileIO.File :
@@ -389,9 +395,10 @@ BEGIN
   opVector^.dataReady := dataReady;
   opVector^.ReadOctet := ReadOctet;
   opVector^.ReadBlock := ReadBlock;
+  opVector^.insertReady := insertReady;
   opVector^.Insert := Insert;
   opVector^.WriteOctet := WriteOctet;
   opVector^.WriteBlock := WriteBlock;
-  opVector^.isBuffered := isBuffered;
+  opVector^.isFlushable := isFlushable;
   opVector^.Flush := Flush
 END FileIO.
