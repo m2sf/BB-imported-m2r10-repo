@@ -36,8 +36,36 @@ TYPE DefaultBuffer = BARE ARRAY DefaultBufferSize OF OCTET;
 VAR fileTable : PtrSet;
 
 
-(* stdin, stdout, stderr and nullfile *)
-VAR dfltInFile, dfltOutFile, dfltErrFile, nullFile : File;
+(* Default Stream Accessors *)
+
+(* Default streams are automatically opened by the operating system  upon pro-
+   cess creation.  Their mode is either Read  or Write.  Any attempt to open a
+   default stream  will  fail  with  status  AlreadyOpen.  Any attempt to call
+   ReOpen, NameLen, GetName, Lookahead, LA2, Flush, Close  or  any positioning
+   operation will fail with status OperationNotSupported.  Functions  nameLen,
+   currentPos, LastValidSetPos  will return zero,  eof and isValidPos will re-
+   turn FALSE and procedure GetName will pass an empty string. *)
+
+(* stdin, stdout, stderr *)
+VAR dfltInFile, dfltOutFile, dfltErrFile : File;
+
+PROCEDURE defaultInFile : File;
+(* Returns a file accessor associated with stdin. *)
+BEGIN
+  RETURN dfltInFile
+END defaultInFile;
+
+PROCEDURE defaultOutFile : File;
+(* Returns a file accessor associated with stdout. *)
+BEGIN
+  RETURN dfltOutFile
+END defaultOutFile;
+
+PROCEDURE defaultErrFile : File;
+(* Returns a file accessor associated with stderr. *)
+BEGIN
+  RETURN dfltErrFile
+END defaultErrFile;
 
 
 (* Inspection *)
@@ -573,47 +601,9 @@ END Flush;
 (* Any attempt to write to or flush a file whose write flag is not set shall
    fail with status operationNotSupported. *)
 
-
-(* Implementation defined accessors to special files *)
-
-(* Special files  are automatically opened when module FileIO is initialised.
-   The file mode of a special file is either read  or write.   EOF always re-
-   turns FALSE and CurrentPos always returns TMIN(FilePos) for special files.
-   Any attempt to open a special file will fail with status alreadyOpen.  Any
-   attempt to call ReOpen, NameLen, GetName, LastValidSetPos, SetPos, Rewind,
-   Advance, Lookahead, LA2, ReadBlock, Flush or Close  will fail with  status
-   operationNotSupported.  NameLen  and LastValidSetPos will return zero  and
-   GetName will pass an empty string. *)
-
-PROCEDURE defaultInFile : File;
-(* Returns a file accessor associated with stdin. *)
-BEGIN
-  RETURN dfltInFile
-END defaultInFile;
-
-PROCEDURE defaultOutFile : File;
-(* Returns a file accessor associated with stdout. *)
-BEGIN
-  RETURN dfltOutFile
-END defaultOutFile;
-
-PROCEDURE defaultErrFile : File;
-(* Returns a file accessor associated with stderr. *)
-BEGIN
-  RETURN dfltErrFile
-END defaultErrFile;
-
-PROCEDURE defaultNullFile : File;
-(* Returns the file accessor associated with the null device, open in write
-   mode.  Write operations on this file have no effect. *)
-BEGIN
-  RETURN nullFile
-END defaultNullFile;
-
 BEGIN
   (* TO DO *)
   (* create file structure for dfltInFile, init with fd for stdin *)
   (* create file structure for dfltOutFile, init with fd for stdout *)
   (* create file structure for dfltErrFile, init with fd for stderr *)
-  (* create file structure for dfltNullFile, inti with new fd for /dev/null *)  
 END FilePtrIO.
