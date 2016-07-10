@@ -4,7 +4,7 @@ IMPLEMENTATION MODULE FilePtrIO;
 
 (* Driver for File IO on File Pointers *)
 
-IMPORT UNSAFE, FileDescIO, PtrSet;
+IMPORT UNSAFE, IOParams, FileDescIO, PtrSet;
 
 (* File accessor and file status *)
 
@@ -28,7 +28,7 @@ END;
 
 TYPE DefaultBufferPtr = POINTER TO DefaultBuffer;
 
-TYPE DefaultBuffer = BARE ARRAY DefaultBufferSize OF OCTET;
+TYPE DefaultBuffer = BARE ARRAY IOParams.DefaultBufferSize OF OCTET;
 
 
 (* File Table *)
