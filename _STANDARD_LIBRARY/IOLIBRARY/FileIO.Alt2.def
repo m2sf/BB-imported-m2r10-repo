@@ -159,8 +159,10 @@ PROCEDURE ReadBlock
    of data back in <data>  and  advances  the  current  read/write position of
    <chan> by the number of octets read. *)
 
-CONST
-  InsertBufferSize = FilePtrIO.InsertBufferSize;
+CONST InsertBufferSize = FilePtrIO.InsertBufferSize;
+
+PROCEDURE insertReady ( chan : ChanIO.Channel ) : BOOLEAN;
+(* Returns FALSE if the insert buffer of <chan> is full, otherwise TRUE. *)
 
 PROCEDURE Insert ( chan : ChanIO.Channel; data : OCTET );
 (* Inserts octet <data> into input channel <chan>  to be read by the next read
@@ -186,11 +188,11 @@ PROCEDURE WriteBlock
    atomically sets the current read/write position to the end of the file  and
    appends <data> to the end of <chan>. *)
 
-PROCEDURE isBuffered ( chan : ChanIO.Channel ) : BOOLEAN;
-(* Returns TRUE if <chan> is buffered, otherwise FALSE. *)
+PROCEDURE isFlushable ( chan : ChanIO.Channel ) : BOOLEAN;
+(* Returns TRUE if <chan> is flushable, otherwise FALSE. *)
 
 PROCEDURE Flush ( chan : ChanIO.Channel );
-(* Writes unwritten data in any buffer of <chan> to its associated file. *)
+(* Writes any unwritten buffer data to the file of <chan> if flushable. *)
 
 (* Any attempt  to write to  or flush a file whose Write flag is not set shall
    fail with status NotOpenForWriting. *)
