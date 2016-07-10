@@ -1,0 +1,12 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE IOParams;
+
+CONST
+  MinBufferSize = 256;
+  DefaultBufferSize = <implementation defined whole number value>;
+  
+  MinInsertBufferSize = 2;
+  InsertBufferSize = <implementation defined whole number value>;
+
+END IOParams.
