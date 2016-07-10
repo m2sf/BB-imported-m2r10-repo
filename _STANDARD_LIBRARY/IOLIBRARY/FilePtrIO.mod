@@ -40,12 +40,7 @@ VAR fileTable : PtrSet;
 VAR dfltInFile, dfltOutFile, dfltErrFile, nullFile : File;
 
 
-(* Introspection *)
-
-PROCEDURE openFileCount : LONGCARD;
-BEGIN
-  RETURN PtrSet.Count(fileTable)
-END openFileCount;
+(* Inspection *)
 
 PROCEDURE isValidAccessor ( file : File ) : BOOLEAN;
 (* Returns TRUE if <file> is a valid file accessor, otherwise FALSE. *)
@@ -66,17 +61,6 @@ BEGIN
     RETURN file^.special
   END
 END isSpecialFile;
-
-PROCEDURE isValidPos ( file : File; pos : Pos ) : BOOLEAN;
-(* Returns TRUE if <pos> is a valid file position for <file>,
-   otherwise FALSE. *)
-BEGIN
-  IF file = NIL THEN
-    RETURN FALSE
-  ELSE
-    RETURN pos <= file^.maxPos
-  END
-END isValidPos;
 
 
 (* Opening and Closing Files *)
@@ -219,6 +203,39 @@ BEGIN
 END Close;
 
 
+(* Status operations *)
+
+PROCEDURE statusOf ( file : File ) : IOStatus;
+(* Returns the status of the most recent operation for <file>. *)
+BEGIN
+  IF File = NIL THEN
+    RETURN { TRUE, IOStatus.InvalidFile }
+  ELSE
+    RETURN file^.status
+  END
+END statusOf;
+
+PROCEDURE StatusMsg ( file : File; status : IOStatus );
+(* Writes a status message for <status> to <file>. *)
+BEGIN
+  (* TO DO *)
+END StatusMsg;
+
+PROCEDURE SetStatus ( file : File; status : IOStatus; VAR valid : BOOLEAN );
+(* Sets the status of <file>  to <status> if it meets the integrity condition.
+   Where <status.code> is set to Success <status.failed> must be FALSE, other-
+   it must be TRUE.  Passes TRUE in <valid> if successful, otherwise FALSE. *)
+BEGIN
+  IF (status.code = IOStatus.Success AND status.failed) OR
+     (status.code # IOStatus.Success AND NOT status.failed) THEN
+    file^.status := status;
+    valid := TRUE
+  ELSE
+    valid := FALSE
+  END
+END SetStatus;
+
+
 (* Querying File Parameters *)
 
 PROCEDURE modeOf ( file : File ) : FileMode;
@@ -230,16 +247,6 @@ BEGIN
     RETURN file^.mode
   END
 END modeOf;
-
-PROCEDURE statusOf ( file : File ) : IOStatus;
-(* Returns the status of the most recent operation for <file>. *)
-BEGIN
-  IF File = NIL THEN
-    RETURN { TRUE, IOStatus.InvalidFile }
-  ELSE
-    RETURN file^.status
-  END
-END statusOf;
 
 PROCEDURE nameLen ( file : File ) : CARDINAL;
 (* Returns the length of the filename associated with <file>. *)
@@ -296,6 +303,17 @@ BEGIN
     RETURN file^.bufPos + file^.index
   END
 END currentPos;
+
+PROCEDURE isValidPos ( file : File; pos : Pos ) : BOOLEAN;
+(* Returns TRUE if <pos> is a valid file position for <file>,
+   otherwise FALSE. *)
+BEGIN
+  IF file = NIL THEN
+    RETURN FALSE
+  ELSE
+    RETURN pos <= file^.maxPos
+  END
+END isValidPos;
 
 PROCEDURE lastValidSetPos ( file : File ) : FilePos;
 (* Returns the most advanced position that may be passed to SetPos for file
@@ -409,7 +427,14 @@ END Rewind;
    with status AccessBeyondEOF. *)
 
 
-(* Read and write operations *)
+(* I/O operations *)
+
+PROCEDURE dataReady ( file : File; octets : IOSIZE ) : BOOLEAN;
+(* Returns TRUE if <file> has at least <octets> number of octets available for
+   reading, otherwise FALSE. *)
+BEGIN
+  (* TO DO *)
+END dataReady;
 
 PROCEDURE Read ( file : File; VAR data : OCTET );
 (* Reads one octet of data at the current position of <file>, passes it back
