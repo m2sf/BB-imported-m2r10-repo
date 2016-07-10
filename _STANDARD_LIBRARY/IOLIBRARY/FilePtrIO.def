@@ -191,6 +191,9 @@ PROCEDURE ReadBlock ( file : File; VAR data : ARRAY OF OCTET );
 CONST
   InsertBufferSize = <implementation defined value>;
 
+PROCEDURE insertReady ( file : File ) : BOOLEAN;
+(* Returns FALSE if the insert buffer of <file> is full, otherwise TRUE. *)
+
 PROCEDURE Insert ( stream : File; data : OCTET );
 (* Inserts octet <data> into input stream <stream> to be read by the next read
    operation on <stream>.  Inserted octets are stored in a FIFO buffer of size
@@ -225,11 +228,11 @@ PROCEDURE WriteBlock
 
 (* File-Only I/O operations *)
 
-PROCEDURE isBuffered ( file : File ) : BOOLEAN;
-(* Returns TRUE if <file> is buffered, otherwise FALSE. *)
+PROCEDURE isFlushable ( file : File ) : BOOLEAN;
+(* Returns TRUE if <file> is flushable, otherwise FALSE. *)
 
 PROCEDURE Flush ( file : File );
-(* Writes unwritten data in any buffer of <file> to its associated file. *)
+(* Writes any unwritten buffer data to <file> if flushable. *)
 
 (* Any attempt to write to or flush a file whose write flag is not set shall
    fail with status operationNotSupported. *)
