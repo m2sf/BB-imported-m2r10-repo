@@ -24,28 +24,30 @@ TYPE Operations = POINTER TO OpDescriptor;
 
 TYPE OpDescriptor = RECORD ( NIL )
   (* method slots for status handling *)
-  statusOf   : PROCEDURE ( Channel ) : IOStatus;
-  StatusMsg  : PROCEDURE ( Channel, IOStatus );
-  SetStatus  : PROCEDURE ( Channel, IOStatus, BOOLEAN );
+  statusOf    : PROCEDURE ( Channel ) : IOStatus;
+  StatusMsg   : PROCEDURE ( Channel, IOStatus );
+  SetStatus   : PROCEDURE ( Channel, IOStatus, BOOLEAN );
   (* method slots for parameter query *)
-  modeOf     : PROCEDURE ( Channel ) : FileMode;
-  nameLen    : PROCEDURE ( Channel ) : LONGCARD;
-  GetName    : PROCEDURE ( Channel, VAR ARRAY OF CHAR );
+  modeOf      : PROCEDURE ( Channel ) : FileMode;
+  nameLen     : PROCEDURE ( Channel ) : LONGCARD;
+  GetName     : PROCEDURE ( Channel, VAR ARRAY OF CHAR );
   (* method slots for generic input *)
-  dataReady  : PROCEDURE ( Channel, IOSIZE ) : BOOLEAN;
-  ReadOctet  : PROCEDURE ( Channel, VAR OCTET );
-  ReadBlock  : PROCEDURE ( Channel, VAR ARRAY OF OCTET );
-  Insert     : PROCEDURE ( Channel, OCTET );
+  dataReady   : PROCEDURE ( Channel, IOSIZE ) : BOOLEAN;
+  ReadOctet   : PROCEDURE ( Channel, VAR OCTET );
+  ReadBlock   : PROCEDURE ( Channel, VAR ARRAY OF OCTET );
+  insertReady : PROCEDURE ( Channel ) : BOOLEAN;
+  Insert      : PROCEDURE ( Channel, OCTET );
   (* method slots for generic output *)
-  WriteOctet : PROCEDURE ( Channel, OCTET );
-  WriteBlock : PROCEDURE ( Channel, ARRAY OF OCTET, VAR IOSIZE );
-  isBuffered : PROCEDURE ( Channel ) : BOOLEAN;
-  Flush      : PROCEDURE ( Channel );
+  WriteOctet  : PROCEDURE ( Channel, OCTET );
+  WriteBlock  : PROCEDURE ( Channel, ARRAY OF OCTET, VAR IOSIZE );
+  isFlushable : PROCEDURE ( Channel ) : BOOLEAN;
+  Flush       : PROCEDURE ( Channel );
 END;
 
 (* Generic Channel Operations *)
 
-(* Procedures invoke the respective method slot of their first argument. *)
+(* Each procedure invokes an associated method slot of its channel parameter.
+   Each channel type is responsible for installing the appropriate methods. *)
 
 PROCEDURE statusOf ( chan : Channel ) : IOStatus;
 (* Returns the status of the most recent operation on <chan>. *)
@@ -80,6 +82,9 @@ PROCEDURE ReadBlock ( chan : Channel; VAR data : ARRAY OF OCTET );
 (* Reads a block of data up to the capacity of <data>  from <chan>  and passes
    it back in <data>. *)
 
+PROCEDURE insertReady ( chan : Channel ) : BOOLEAN;
+(* Returns FALSE is the insert buffer of <chan> is full, otherwise TRUE. *)
+
 PROCEDURE Insert ( chan : Channel; data : OCTET );
 (* Inserts <data> into <chan> to be read by the next read operation. *)
 
@@ -91,10 +96,10 @@ PROCEDURE WriteBlock
 (* Writes a block of data passed in <data> to <chan> and passes the number of
    octets written back in <written>. *)
 
-PROCEDURE isBuffered ( chan : Channel ) : BOOLEAN;
-(* Returns TRUE if <chan> is buffered, otherwise FALSE. *)
+PROCEDURE isFlushable ( chan : Channel ) : BOOLEAN;
+(* Returns TRUE if <chan> is flushable, otherwise FALSE. *)
 
 PROCEDURE Flush ( chan : Channel );
-(* If <chan> is buffered, writes any unwritten buffer data to <chan>. *)
+(* Writes any unwritten buffer data to the medium of <chan> if flushable. *)
 
 END ChanIO.
