@@ -79,7 +79,7 @@ BEGIN
 END isValidPos;
 
 
-(* Opening files *)
+(* Opening and Closing Files *)
 
 PROCEDURE Open
   ( NEW file       : File;
@@ -201,8 +201,25 @@ END ReOpen;
    to be set to the end of the file.  An attempt to open a file that is a di-
    rectory fails with status code mayNotOpenDirectory. *)
 
+PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
+(* Performs Flush on <file>, closes the associated file and passes NIL back
+   in <file>.  The status of the operation is passed back  in <status>. *)
+BEGIN
+  IF FileTable.isPresent(fileTable, file) THEN
+    PtrSet.Remove(fileTable, file);
+    Flush(file);
+    FileDescIO.Close(file^.fd, status);
+    ClearBuffer(file);
+    DeallocBuffer(file);
+    RELEASE(file);
+    status := {FALSE, IOStatus.Success}
+  ELSE
+    status := {TRUE, IOStatus.InvalidFile}
+  END
+END Close;
 
-(* Querying File Mode, Status and Filename *)
+
+(* Querying File Parameters *)
 
 PROCEDURE modeOf ( file : File ) : FileMode;
 (* Returns the file mode of file accessor <file>. *)
@@ -417,21 +434,6 @@ BEGIN
   RETURN
 END Read;
 
-PROCEDURE Lookahead ( file : File; VAR data : OCTET );
-(* Reads the first lookahead octet of <file>, passes it back in <data>, but
-   does NOT advance the read/write position of <file>.  If the lookahead
-   octet lies beyond the end of the file then no data is passed back and
-   the file status is set to AccessBeyondEOF. *)
-BEGIN
-  (* TO DO *)
-END LookAhead;
-
-PROCEDURE LA2 ( file : File; VAR data : OCTET );
-(* Reads the second lookahead octet of <file>, passes it back in <data>, but
-   does NOT advance the read/write position of <file>.  If the second look-
-   ahead octet lies beyond the end of the file then no data is passed back
-   and the file status is set to AccessBeyondEOF. *)
-
 PROCEDURE ReadBlock
   ( file           : File;
     VAR data       : ARRAY OF OCTET );
@@ -465,6 +467,20 @@ BEGIN
   file^.status := { FALSE, IOStatus.Success };
   RETURN
 END ReadBlock;
+
+PROCEDURE insertReady ( file : File ) : BOOLEAN;
+(* Returns FALSE if the insert buffer of <chan> is full, otherwise TRUE. *)
+BEGIN
+  (* TO DO *)
+END insertReady;
+
+PROCEDURE Insert ( stream : File; data : OCTET );
+(* Inserts octet <data> into input stream <stream> to be read by the next read
+   operation on <stream>.  Inserted octets are stored in a FIFO buffer of size
+   InsertBufferSize.  The minimum size of the insert buffer is two octets. *)
+BEGIN
+  (* TO DO *)
+END Insert;
 
 (* Any attempt to read or lookahead read from a file whose read flag is not
    set shall fail with status OperationNotSupported. *)
@@ -513,6 +529,12 @@ BEGIN
   (* TO DO *)
 END WriteBlock;
 
+PROCEDURE isFlushable ( file : File ) : BOOLEAN;
+(* Returns TRUE if <file> is flushable, otherwise FALSE. *)
+BEGIN
+  RETURN FileMode.Write IN file^.mode AND NOT isSpecialFile(file);
+END isFlushable;
+
 PROCEDURE Flush ( file : File );
 (* Writes unwritten data in any buffer of <file> to its associated file. *)
 BEGIN
@@ -522,25 +544,6 @@ END Flush;
 (* Any attempt to write to or flush a file whose write flag is not set shall
    fail with status operationNotSupported. *)
 
-
-(* Closing files *)
-
-PROCEDURE Close ( VAR file : File; VAR status : IOStatus );
-(* Performs Flush on <file>, closes the associated file and passes NIL back
-   in <file>.  The status of the operation is passed back  in <status>. *)
-BEGIN
-  IF FileTable.isPresent(fileTable, file) THEN
-    PtrSet.Remove(fileTable, file);
-    Flush(file);
-    FileDescIO.Close(file^.fd, status);
-    ClearBuffer(file);
-    DeallocBuffer(file);
-    RELEASE(file);
-    status := { FALSE, IOStatus.Success }
-  ELSE
-    status := { TRUE, IOStatus.InvalidFile }
-  END
-END Close;
 
 (* Implementation defined accessors to special files *)
 
