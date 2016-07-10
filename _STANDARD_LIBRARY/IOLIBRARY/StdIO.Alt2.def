@@ -26,14 +26,14 @@ PROCEDURE isValidStream ( stream : Stream ) : BOOLEAN;
 
 (* StdIO Channels *)
 
-PROCEDURE in : ChanIO.Channel;
-(* Returns an IO channel associated with stdin *)
+PROCEDURE in : Stream;
+(* Returns a StdIO stream channel associated with stdin *)
 
-PROCEDURE out : ChanIO.Channel;
-(* Returns an IO channel associated with stdout *)
+PROCEDURE out : Stream;
+(* Returns a StdIO stream channel associated with stdout *)
 
-PROCEDURE err : ChanIO.Channel;
-(* Returns an IO channel associated with stderr *)
+PROCEDURE err : Stream;
+(* Returns a StdIO stream channel associated with stderr *)
 
 
 (* Status operations *)
