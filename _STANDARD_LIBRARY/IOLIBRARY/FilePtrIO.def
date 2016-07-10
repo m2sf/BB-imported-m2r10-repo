@@ -52,10 +52,6 @@ PROCEDURE isSpecialFile ( file : File ) : BOOLEAN;
 
 (* NOT supported on default streams *)
 
-CONST
-  MinBufferSize = 256; (* in octets *)
-  DefaultBufferSize = <implementation defined value>;
-
 PROCEDURE Open
   ( NEW file       : File;
     CONST filename : ARRAY OF CHAR;
@@ -182,14 +178,10 @@ PROCEDURE ReadOctet ( file : File; VAR data : OCTET );
 (* Reads one octet of data at the current position of <file>, passes it back
    in <data> and advances the read/write position of <file> by one. *)
 
-
 PROCEDURE ReadBlock ( file : File; VAR data : ARRAY OF OCTET );
 (* Reads a block of data up to the capacity of <data>, starting at the current
    position  of <file>  and passes it back in <data>.  The read/write position
    of <file> is advanced accordingly. *)
-
-CONST
-  InsertBufferSize = <implementation defined value>;
 
 PROCEDURE insertReady ( file : File ) : BOOLEAN;
 (* Returns FALSE if the insert buffer of <file> is full, otherwise TRUE. *)
@@ -200,8 +192,7 @@ PROCEDURE Insert ( stream : File; data : OCTET );
    InsertBufferSize.  The minimum size of the insert buffer is two octets. *)
 
 (* Any attempt to perform the above I/O operations on any file or stream whose
-   read flag is not set shall fail with status OperationNotSupported. *)
-
+   Read flag is not set shall fail with status NotOpenForReading. *)
 
 PROCEDURE WriteOctet ( file : File; data : OCTET );
 (* Performs a write or append operation depending on the mode of <file>.
@@ -225,6 +216,9 @@ PROCEDURE WriteBlock
    advanced by the number of octets written and the number of octets written
    is passed back in <octetsWritten> after the data has been written. *)
 
+(* Any attempt to perform the above I/O operations on any file or stream whose
+   Write flag is not set will fail with status NotOpenForWriting. *)
+
 
 (* File-Only I/O operations *)
 
@@ -234,7 +228,7 @@ PROCEDURE isFlushable ( file : File ) : BOOLEAN;
 PROCEDURE Flush ( file : File );
 (* Writes any unwritten buffer data to <file> if flushable. *)
 
-(* Any attempt to write to or flush a file whose write flag is not set shall
-   fail with status operationNotSupported. *)
+(* Any attempt  to perform a flush operation on any file or stream that is not
+   flushable will fail with status OperationNotSupported. *)
 
 END FilePtrIO.
