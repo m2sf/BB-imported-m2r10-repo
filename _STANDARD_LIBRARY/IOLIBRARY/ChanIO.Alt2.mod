@@ -64,6 +64,12 @@ BEGIN
   chan^.op^.ReadBlock(chan, data)
 END ReadBlock;
 
+PROCEDURE insertReady ( chan : Channel ) : BOOLEAN;
+(* Returns FALSE if the insert buffer of <chan> is full, otherwise TRUE. *)
+BEGIN
+  RETURN chan^.op^.insertReady(chan)
+END insertReady;
+
 PROCEDURE Insert ( chan : Channel; data : OCTET );
 (* Inserts <data> into <chan> to be read by the next read operation. *)
 BEGIN
@@ -84,14 +90,14 @@ BEGIN
   chan^.op^.WriteBlock(chan, data, written)
 END WriteBlock;
 
-PROCEDURE isBuffered ( chan : Channel ) : BOOLEAN;
-(* Returns TRUE if <chan> is buffered, otherwise FALSE. *)
+PROCEDURE isFlushable ( chan : Channel ) : BOOLEAN;
+(* Returns TRUE if <chan> is flushable, otherwise FALSE. *)
 BEGIN
-  RETURN chan^.op^.isBuffered(chan)
-END isBuffered;
+  RETURN chan^.op^.isFlushable(chan)
+END isFlushable;
 
 PROCEDURE Flush ( chan : Channel );
-(* If <chan> is buffered, writes any unwritten buffer data to <chan>. *)
+(* Writes any unwritten buffer data to the medium of <chan> if flushable. *)
 BEGIN
   chan^.op^.Flush(chan)
 END Flush;
