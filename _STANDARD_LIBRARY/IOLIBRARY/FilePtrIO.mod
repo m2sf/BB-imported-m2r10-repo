@@ -120,16 +120,20 @@ BEGIN
   RETURN
 END Open;
 
-PROCEDURE OpenWithBuffer
-  ( NEW file         : File;
-    CONST filename   : ARRAY OF CHAR;
-    mode             : FileMode;
-    VAR buffer       : ARRAY OF OCTET;
-    VAR status       : IOStatus );
-(* Opens the file <filename> in file mode <mode> using <buffer> as a custom
-   file buffer.  If successful passes a file accessor back in <file>,  other-
-   wise passes NIL back in <file>.  Sets the file position depending on <mode>.
+PROCEDURE OpenWithBufferSize
+  ( NEW file       : File;
+    CONST filename : ARRAY OF CHAR;
+    mode           : FileMode;
+    bufSize        : IOSIZE;
+    VAR status     : IOStatus );
+(* Opens the file <filename> in file mode <mode> using an internal file buffer
+   of size <bufSize>  and passes a file accessor back in <file>.  If <bufSize>
+   is less than MinBufferSize, value MinBufferSize is used instead. Passes NIL
+   back in <file> if unsuccessful. Sets the file position depending on <mode>.
    The status is passed back in <status>. *)
+   
+(* TO DO : Rework after change to buffer size parameter *)
+
 VAR
   fd : FileDescIO.File;
   newFile : File;
@@ -170,7 +174,7 @@ BEGIN
   
   file := newFile;
   RETURN
-END OpenWithBuffer;
+END OpenWithBufferSize;
 
 PROCEDURE ReOpen ( file : File; mode : FileMode );
 (* Flushes the file associated with file accessor <file> and changes its mode
@@ -226,8 +230,8 @@ PROCEDURE SetStatus ( file : File; status : IOStatus; VAR valid : BOOLEAN );
    Where <status.code> is set to Success <status.failed> must be FALSE, other-
    it must be TRUE.  Passes TRUE in <valid> if successful, otherwise FALSE. *)
 BEGIN
-  IF (status.code = IOStatus.Success AND status.failed) OR
-     (status.code # IOStatus.Success AND NOT status.failed) THEN
+  IF (status.code = IOStatus.Success AND NOT status.failed) OR
+     (status.code # IOStatus.Success AND status.failed) THEN
     file^.status := status;
     valid := TRUE
   ELSE
