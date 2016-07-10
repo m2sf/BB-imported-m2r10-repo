@@ -27,9 +27,6 @@ PROCEDURE isValidFile ( file : File ) : BOOLEAN;
 
 (* Opening and Closing a File *)
 
-CONST DefaultBufferSize = FilePtrIO.DefaultBufferSize;
-(* The buffer size used when no buffer size is specified. *)
-
 PROCEDURE Open
   ( NEW file       : File;
     CONST filename : ARRAY OF CHAR;
@@ -159,8 +156,6 @@ PROCEDURE ReadBlock
    of data back in <data>  and  advances  the  current  read/write position of
    <chan> by the number of octets read. *)
 
-CONST InsertBufferSize = FilePtrIO.InsertBufferSize;
-
 PROCEDURE insertReady ( chan : ChanIO.Channel ) : BOOLEAN;
 (* Returns FALSE if the insert buffer of <chan> is full, otherwise TRUE. *)
 
@@ -169,8 +164,8 @@ PROCEDURE Insert ( chan : ChanIO.Channel; data : OCTET );
    operation on <chan>.  Inserted octets are stored in a  FIFO buffer  of size
    InsertBufferSize.  The minimum size of the insert buffer is two octets. *)
 
-(* Any attempt to perform the above I/O operations on any file whose Read flag
-   is not set will fail with status NotOpenForReading. *)
+(* Any attempt  to perform the above I/O operations  on any file channel whose
+   Read flag is not set will fail with status NotOpenForReading. *)
 
 PROCEDURE WriteOctet ( chan : ChanIO.Channel; data : OCTET );
 (* Performs a write or append operation depending on the access mode of <chan>
@@ -188,13 +183,16 @@ PROCEDURE WriteBlock
    atomically sets the current read/write position to the end of the file  and
    appends <data> to the end of <chan>. *)
 
+(* Any attempt  to perform the above I/O operations  on any file channel whose
+   Write flag is not set will fail with status NotOpenForReading. *)
+
 PROCEDURE isFlushable ( chan : ChanIO.Channel ) : BOOLEAN;
 (* Returns TRUE if <chan> is flushable, otherwise FALSE. *)
 
 PROCEDURE Flush ( chan : ChanIO.Channel );
 (* Writes any unwritten buffer data to the file of <chan> if flushable. *)
 
-(* Any attempt  to write to  or flush a file whose Write flag is not set shall
-   fail with status NotOpenForWriting. *)
+(* Any attempt  to perform the flush operation on any file channel that is not
+   flushable will fail with status OperationNotSupported. *)
 
 END FileIO.
