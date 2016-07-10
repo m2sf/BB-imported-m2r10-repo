@@ -1,0 +1,110 @@
+(* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
+
+DEFINITION MODULE StdIO;
+
+(* Channel Based Standard IO Streams *)
+
+IMPORT ChanIO, IOSIZE, IOStatus, FileMode;
+
+(* StdIO Channel *)
+
+TYPE Stream = POINTER TO Descriptor;
+
+TYPE Descriptor = RECORD ( ChanIO.Descriptor )
+* handle : FilePtrIO.File
+END;
+
+
+(* Inspection *)
+
+PROCEDURE isStdIOChannel ( chan : ChanIO.Channel ) : BOOLEAN;
+(* Returns TRUE if <chan> is a valid StdIO channel, else FALSE. *)
+
+PROCEDURE isValidStream ( stream : Stream ) : BOOLEAN;
+(* Returns TRUE if the stream accessor of <stream> is valid, else FALSE. *)
+
+
+(* StdIO Channels *)
+
+PROCEDURE in : ChanIO.Channel;
+(* Returns an IO channel associated with stdin *)
+
+PROCEDURE out : ChanIO.Channel;
+(* Returns an IO channel associated with stdout *)
+
+PROCEDURE err : ChanIO.Channel;
+(* Returns an IO channel associated with stderr *)
+
+
+(* Status operations *)
+
+PROCEDURE statusOf ( chan : IOChan.Channel ) : IOStatus;
+(* Returns the status of the most recent operation on <chan>. *)
+
+PROCEDURE StatusMsg ( chan : IOChan.Channel; status : IOStatus );
+(* Writes a status message for <status> to <chan>. *)
+
+PROCEDURE SetStatus
+  ( chan : ChanIO.Channel; status : IOStatus; VAR valid : BOOLEAN );
+(* Sets  the status of <chan> to <status> if it meets the following condition:
+   Where <status.code> is set to Success <status.failed> must be FALSE, other-
+   wise TRUE.  Passes TRUE in <valid> if successful, otherwise FALSE. *)
+
+
+(* Querying Stream Parameters *)
+
+PROCEDURE modeOf ( chan : ChanIO.Channel ) : FileMode;
+(* Returns the access mode of <chan>. *)
+
+PROCEDURE nameLen ( chan : ChanIO.Channel ) : CARDINAL;
+(* Returns the length of the name associated with <chan>. *)
+
+PROCEDURE GetName ( chan : ChanIO.Channel; VAR name : ARRAY OF CHAR );
+(* Passes the name of the stream associated with <chan> back in <name>. If the
+   name exceeds  the capacity of <name>,  an empty string is passed in <name>.
+   Does not alter the status of <chan>. *)
+
+
+(* I/O operations *)
+
+PROCEDURE dataReady ( chan : ChanIO.Channel; octets : IOSIZE ) : BOOLEAN;
+(* Returns TRUE if <chan> has at least <octets> number of octets available for
+   reading, otherwise FALSE. *)
+
+PROCEDURE ReadOctet ( chan : ChanIO.Channel; VAR data : OCTET );
+(* Reads one octet of data from <chan> and passes it back in <data>. *)
+
+PROCEDURE ReadBlock
+  ( chan : ChanIO.Channel; VAR data : ARRAY OF OCTET );
+(* Reads a block of data from <chan> and passes it back in <data>. *)
+
+CONST InsertBufferSize = FilePtrIO.InsertBufferSize;
+
+PROCEDURE insertReady ( chan : ChanIO.Channel ) : BOOLEAN;
+(* Returns FALSE if the insert buffer of <chan> is full, otherwise TRUE. *)
+
+PROCEDURE Insert ( chan : ChanIO.Channel; data : OCTET );
+(* Inserts octet <data> into input channel <chan>  to be read by the next read
+   operation on <chan>. *)
+
+(* Any attempt to perform the above I/O operations on any file whose Read flag
+   is not set will fail with status NotOpenForReading. *)
+
+PROCEDURE WriteOctet ( chan : ChanIO.Channel; data : OCTET );
+(* Writes <data> to <chan>. *)
+
+PROCEDURE WriteBlock
+  ( chan : ChanIO.Channel; data : BARE ARRAY OF OCTET; VAR written : IOSIZE );
+(* Writes <data> to <chan> and passes the actual number of octets written back
+   in <written>. *)
+
+PROCEDURE isFlushable ( chan : ChanIO.Channel ) : BOOLEAN;
+(* Returns TRUE if <chan> is flushable, otherwise FALSE. *)
+
+PROCEDURE Flush ( chan : ChanIO.Channel );
+(* Writes any unwritten buffer data to the medium of <chan> if flushable. *)
+
+(* Any attempt  to write to  or flush a file whose Write flag is not set shall
+   fail with status NotOpenForWriting. *)
+
+END StdIO.
