@@ -23,7 +23,8 @@ PROCEDURE isValidStream ( stream : Stream ) : BOOLEAN;
 (* Returns TRUE if the stream accessor of <stream> is valid, else FALSE. *)
 BEGIN
   CASE chan OF
-  | Stream : (* TO DO *)
+  | Stream :
+    RETURN FileDescIO.isValidFile(stream^.handle)
   ELSE
     (* invalid channel type *)
   END
