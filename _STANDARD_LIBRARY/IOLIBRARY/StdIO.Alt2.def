@@ -4,14 +4,14 @@ DEFINITION MODULE StdIO;
 
 (* Channel Based Standard IO Streams *)
 
-IMPORT ChanIO, IOSIZE, IOStatus, FileMode;
+IMPORT ChanIO, FileDescIO, IOSIZE, IOStatus, FileMode;
 
 (* StdIO Channel *)
 
 TYPE Stream = POINTER TO Descriptor;
 
 TYPE Descriptor = RECORD ( ChanIO.Descriptor )
-* handle : FilePtrIO.File
+* handle : FileDescIO.File
 END;
 
 
@@ -78,8 +78,6 @@ PROCEDURE ReadBlock
   ( chan : ChanIO.Channel; VAR data : ARRAY OF OCTET );
 (* Reads a block of data from <chan> and passes it back in <data>. *)
 
-CONST InsertBufferSize = FilePtrIO.InsertBufferSize;
-
 PROCEDURE insertReady ( chan : ChanIO.Channel ) : BOOLEAN;
 (* Returns FALSE if the insert buffer of <chan> is full, otherwise TRUE. *)
 
@@ -99,12 +97,9 @@ PROCEDURE WriteBlock
    in <written>. *)
 
 PROCEDURE isFlushable ( chan : ChanIO.Channel ) : BOOLEAN;
-(* Returns TRUE if <chan> is flushable, otherwise FALSE. *)
+(* Always returns FALSE. *)
 
 PROCEDURE Flush ( chan : ChanIO.Channel );
-(* Writes any unwritten buffer data to the medium of <chan> if flushable. *)
-
-(* Any attempt  to write to  or flush a file whose Write flag is not set shall
-   fail with status NotOpenForWriting. *)
+(* Always fails with status OperationNotSupported. *)
 
 END StdIO.
