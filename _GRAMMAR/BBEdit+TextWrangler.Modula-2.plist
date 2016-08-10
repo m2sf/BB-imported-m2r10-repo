@@ -14,6 +14,7 @@
 		<string>AND</string>
 		<string>ARGLIST</string>
 		<string>ARRAY</string>
+		<string>BARE</string>
 		<string>BEGIN</string>
 		<string>BLUEPRINT</string>
 		<string>BY</string>
@@ -34,8 +35,6 @@
 		<string>IMPLEMENTATION</string>
 		<string>IMPORT</string>
 		<string>IN</string>
-		<string>INDETERMINATE</string>
-		<string>LITERAL</string>
 		<string>LOOP</string>
 		<string>MOD</string>
 		<string>MODULE</string>
@@ -60,6 +59,7 @@
 		<string>UNTIL</string>
 		<string>VAR</string>
 		<string>WHILE</string>
+		<string>YIELD</string>
 	</array>
 	<key>BBLMPredefinedNameList</key>
 	<array>
@@ -69,6 +69,7 @@
 		<string>FALSE</string>
 		<string>BOOLEAN</string>
 		<string>OCTET</string>
+		<string>CAST</string>
 		<string>CHAR</string>
 		<string>UNICHAR</string>
 		<string>CARDINAL</string>
@@ -77,40 +78,54 @@
 		<string>LONGINT</string>
 		<string>REAL</string>
 		<string>LONGREAL</string>
-		<string>STORE</string>
-		<string>INSERT</string>
-		<string>REMOVE</string>
-		<string>SORT</string>
-		<string>READ</string>
-		<string>READNEW</string>
-		<string>WRITE</string>
-		<string>WRITEF</string>
+
 		<string>ABS</string>
-		<string>NEG</string>
-		<string>ODD</string>
-		<string>PRED</string>
-		<string>SUCC</string>
-		<string>ORD</string>
+		<string>APPEND</string>
 		<string>CHR</string>
 		<string>COUNT</string>
+		<string>COROUTINE</string>
+		<string>EXISTS</string>
+		<string>INSERT</string>
 		<string>LENGTH</string>
-		<string>PTR</string>
-		<string>RETRIEVE</string>
-		<string>SUBSET</string>
 		<string>MIN</string>
 		<string>MAX</string>
-		<string>TMIN</string>
-		<string>TMAX</string>
-		<string>TSIZE</string>
+		<string>NEG</string>
+		<string>ODD</string>
+		<string>ORD</string>
+		<string>PRED</string>
+		<string>PTR</string>
+		<string>READ</string>
+		<string>READNEW</string>
+		<string>REMOVE</string>
+		<string>SORT</string>
+		<string>SORTNEW</string>
+		<string>SUCC</string>
+		<string>TDYN</string>
+		<string>TFLAGS</string>
 		<string>TLIMIT</string>
-		<string>TNIL</string>
-		<string>TBIDI</string>
-		<string>TSIGNED</string>
-		<string>TBASE</string>
-		<string>TMINEXP</string>
-		<string>TMAXEXP</string>
+		<string>TLITERAL</string>
+		<string>TMAX</string>
+		<string>TMIN</string>
+		<string>TORDERED</string>
+		<string>TREFC</string>
+		<string>TSCALAR</string>
+		<string>TSIZE</string>
+		<string>TSORTED</string>
+		<string>VALUE</string>
+		<string>WRITE</string>
+		<string>WRITEF</string>
+
+		<string>SEEK</string>
+		<string>STORE</string>
+		<string>SUBSET</string>
+		<string>SXF</string>
+		<string>VAL</string>
+
+		<string>ADDRESS</string>
+		<string>BYTE</string>
 		<string>CAST</string>
-		<string>TODO</string>
+		<string>UNSAFE</string>
+		<string>WORD</string>
 	</array>
 	<key>BBLMLanguageCode</key>
 	<string>M2</string>
@@ -140,7 +155,7 @@
 	<key>Language Features</key>
 	<dict>
 		<key>Comment Pattern</key>
-		<string>(//.*$)|(\(\*(?s).*?(?-s)\*\))|(/\*(?s).*?(?-s)\*/)</string>
+		<string>(\!.*$)|(\(\*(?s).*?(?-s)\*\))|(/\*(?s).*?(?-s)\*/)</string>
 		<key>String Pattern</key>
 		<string>&quot;(\\.|[^&quot;])*+&quot;</string>
 		<key>Function Pattern</key>
@@ -174,7 +189,7 @@
 		<key>Open Block Comments 2</key>
 		<string>/*</string>
 		<key>Open Line Comments</key>
-		<string>//</string>
+		<string>!</string>
 		<key>Open Parameter Lists</key>
 		<string>(</string>
 		<key>Open Statement Blocks</key>
