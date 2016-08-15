@@ -1,6 +1,6 @@
 (* (C) 2016 by B.Kowarsch & R.Sutcliffe. All rights reserved. *)
 
-DEFINITION MODULE FileIO;
+DEFINITION MODULE FileIO; (*!m2r10*)
 
 (* File Specific Channel Based IO *)
 
