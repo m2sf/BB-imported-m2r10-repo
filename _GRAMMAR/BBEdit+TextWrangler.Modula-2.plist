@@ -121,16 +121,20 @@
 		<string>SXF</string>
 		<string>VAL</string>
 
+		<string>UNSAFE</string>
 		<string>ADDRESS</string>
 		<string>BYTE</string>
-		<string>CAST</string>
-		<string>UNSAFE</string>
 		<string>WORD</string>
+		<string>ADR</string>
+		<string>CAST</string>
+		<string>DEC</string>
+		<string>INC</string>
+		<string>HALT</string>
 	</array>
 	<key>BBLMLanguageCode</key>
-	<string>M2</string>
+	<string>M2R</string>
 	<key>BBLMLanguageDisplayName</key>
-	<string>Modula-2</string>
+	<string>Modula-2 (R10)</string>
 	<key>BBLMScansFunctions</key>
 	<true/>
 	<key>BBLMSuffixMap</key>
@@ -141,15 +145,7 @@
 		</dict>
 		<dict>
 			<key>BBLMLanguageSuffix</key>
-			<string>.DEF</string>
-		</dict>
-		<dict>
-			<key>BBLMLanguageSuffix</key>
 			<string>.mod</string>
-		</dict>
-		<dict>
-			<key>BBLMLanguageSuffix</key>
-			<string>.MOD</string>
 		</dict>
 	</array>
 	<key>Language Features</key>
@@ -157,7 +153,7 @@
 		<key>Comment Pattern</key>
 		<string>(\!.*$)|(\(\*(?s).*?(?-s)\*\))|(/\*(?s).*?(?-s)\*/)</string>
 		<key>String Pattern</key>
-		<string>&quot;(\\.|[^&quot;])*+&quot;</string>
+		<string>(&quot;(\\.|[^&quot;])*+&quot;)|( &apos;(\\.|[^&apos;])*+&apos;)</string>
 		<key>Function Pattern</key>
 		<string></string>
 		<key>Identifier and Keyword Character Class</key>
