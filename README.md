@@ -5,37 +5,25 @@
 Welcome to the design and development repository of Modula-2 Revision 2010,
 its language report, reference compiler and standard library.
 
-Please also visit our wiki at: http://modula-2.net/m2r10
-
-Latest news:
-
-* 2015-04-05: Work on a [bootstrap compiler](https://bitbucket.org/trijezdci/m2r10/src/tip/bootstrap/m2bst) has begun.
-* 2015-03-31: The language design has been finalised.
-* 2015-02-15: Fund raising efforts have begun.
-
 Quick links:
 
-** o  Finalised Grammar (up-to-date) **
+* Grammar (needs updating)
 
-https://bitbucket.org/trijezdci/m2r10/downloads/SyntaxDiagrams.pdf
+https://github.com/m2sf/BB-imported-m2r10-repo/blob/master/_DOCUMENTS/2015-09-13-SyntaxDiagrams.pdf
 
-** o  Technical Specification (needs updating) **
+* Technical Specification (needs updating)
 
-https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.2014-01-31.tracked.pdf
+https://github.com/m2sf/BB-imported-m2r10-repo/blob/master/_DOCUMENTS/2014-02-05-M2R10.2014-01-31.tracked.pdf
 
-** o  Source Tree (needs updating) **
+* Library Definition Modules
 
-https://bitbucket.org/trijezdci/m2r10/src
+https://github.com/m2sf/BB-imported-m2r10-repo/tree/master/_STANDARD_LIBRARY
 
-** o  Library Definition Modules **
+* Summary of Changes
 
-https://bitbucket.org/trijezdci/m2r10/src/tip/_STANDARD_LIBRARY
+https://github.com/m2sf/BB-imported-m2r10-repo/blob/master/_DOCUMENTS/2014-02-05-M2R10.Changes.Info.txt
 
-** o  Summary of Changes **
-
-https://bitbucket.org/trijezdci/m2r10/downloads/M2R10.Changes.Info.txt
-
-** o  Design Journal **
+* Design blog
 
 http://knightsoftype.blogspot.com
 
@@ -93,7 +81,7 @@ GM2. A [to-do list for the conversion](https://bitbucket.org/trijezdci/m2r10/dow
 This project is a  *private*  and  *self-funded*  effort by the authors who are
 doing this work in their own *spare* *time*.  Further, the authors believe that
 quality design  and proper specification are prerequisites for a quality
-implementation and cannot be rushed.  Work on a [bootstrap compiler](https://bitbucket.org/trijezdci/m2r10/src/tip/bootstrap/m2bst)
+implementation and cannot be rushed.  Work on a [bootstrap compiler](https://github.com/m2sf/m2bsk)
 is now under way but there is *no fixed schedule* for the completion of the compiler.
 
 Please consider [making a donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QA4WRY9TW7GT4) to speed up the development work.
