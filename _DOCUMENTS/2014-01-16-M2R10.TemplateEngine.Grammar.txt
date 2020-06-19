@@ -1,0 +1,112 @@
+/* ========================================================================
+ * Modula-2 R10 Template Engine Grammar, Status 2014-01-15
+ *
+ * Copyright (c) 2013-2014 B.Kowarsch & R.Sutcliffe. All rights reserved.
+ * ======================================================================== */
+
+
+/* ------------------------------------------------------------------------
+ * Non-Terminal Symbols
+ * ------------------------------------------------------------------------ */
+
+templateSource :
+    ( sourceText | templateDirectiveInvocation )* ;
+
+sourceText :
+    ( sourceFragment | dereferencedPlaceholder )+ ;
+
+sourceFragment :
+    ( PrintableCharacter | ASCII_TAB | EndOfLine )+ ;
+
+dereferencedPlaceholder :
+    "##" placeholder "##" |
+    "@@" placeholder "@@" ;
+
+placeholder :
+    Letter ( Letter | Digit )* ;
+
+templateDirectiveInvocation :
+    "<#" directive "#>" ;
+
+/* Whitespace and EndOfLine may occur between tokens within a directive. */
+
+directive :
+    unconditional | conditional | consoleMessage | ELSE | ENDIF ;
+
+unconditional :
+    definition | definitionRemoval ;
+
+definition :
+    DEF placeholder translation ;
+
+translation :
+    templateStringLiteral ;
+
+templateStringLiteral :
+    "'" ( templateQuotableCharacter | '"' )* "'" |
+    '"' ( templateQuotableCharacter | "'" )* '"' ;
+
+templateQuotableCharacter :
+    Digit | Letter | Space | NonAlphaNumQuotable ; /* No escaped characters */
+
+definitionRemoval :
+    UNDEF placeholder ;
+
+conditional :
+    definitionTest | equalityTest ;
+
+definitionTest :
+    ( IFDEF | IFNDEF ) placeholder ( "," placeholder )* ;
+
+equalityTest :
+    ( IFEQ | IFNEQ ) placeholder ( placeholder | templateStringLiteral ) ;
+
+consoleMessage :
+    ( INFO | WARN | ERROR | ABORT ) templateStringLiteral ;
+
+/* further directives will still be added */
+
+
+/* ------------------------------------------------------------------------
+ * Terminal Symbols
+ * ------------------------------------------------------------------------ */
+
+PrintableCharacter :
+    CHR(32) .. CHR(126) ;
+
+Digit :
+    <as defined by the Modula-2 R10 language grammar> ;
+
+Letter :
+    <as defined by the Modula-2 R10 language grammar> ;
+
+NonAlphaNumQuotable :
+    <as defined by the Modula-2 R10 language grammar> ;
+
+Space :
+    <as defined by the Modula-2 R10 language grammar> ;
+
+ASCII_TAB :
+    <as defined by the Modula-2 R10 language grammar> ;
+
+EndOfLine :
+    <as defined by the Modula-2 R10 language grammar> ;
+
+
+/* ------------------------------------------------------------------------
+ * Ignore Symbols
+ * ------------------------------------------------------------------------ */
+
+/* Template comments may appear in place of source fragments  but are  only 
+   recognised *outside* of Modula-2 comments.  Recognised template comments
+   are *not* copied into the output.  Template comments may also appear be-
+   tween tokens within directives. */
+
+TemplateComment :
+    "/*" ( PrintableCharacter | ASCII_TAB | EndOfLine )* "*/" ;
+
+Whitespace :
+    Space | ASCII_TAB ;
+
+
+/* END Grammar */

@@ -1,0 +1,106 @@
+*** Rejected Features, but Possible Future Amendments for Modula-2 R10 ***
+
+As work on the Modula-2 R10 language definition approaches a design freeze,
+this document will be maintained to record features which have been debated
+but were not adopted. Subject to *changing circumstances* some of these
+rejected features might be revisited and adopted in the future.
+
+
+(1) Guillemet Delimited String Literals
+
+Guillemets are the opening and closing quotation marks that resemble two
+consecutive angular brackets << and >>. They are sometimes called French
+quotation marks but they are widely recognised beyond their use in French.
+
+Although guillemets are not part of the ASCII character set, double angular
+bracket digraphs << and >> could in principle be used as opening and closing
+quotation string literal delimiters, representing guillemets.
+
+Some Developers have pointed out that it would be convenient to have a third
+set of string literal delimiters to permit string literals in which both
+single and double quotation marks may appear.
+
+However, Modula-2 R10 permits concatenation of string literals and any such
+concatenation is resolved at compile time.
+
+CONST fooString = "string with '" + 'and "';
+
+String constants with any combination of single and double quotation marks can
+therefore easily be constructed without major loss of readability.
+
+If double angular bracket digraphs were to be used as a third set of string
+delimiters, a string literal containing both single and double quotation marks
+could be constructed without concatenation.
+
+CONST fooString = <<string with ' and ">>;
+
+This would certainly improve readability of string literals which contain both
+single and double quotation marks, but it is questionable just how frequent
+such mixed quotation mark literals will be.
+
+We believe it is probably not frequent enough to justify an additional feature
+in the language. However, if usage shows that mixed quotation mark literals
+are significantly more frequent than we anticipate, then it is conceivable
+that guillemet delimited string literals might be added.
+
+In the meantime, implementors are strongly DISCOURAGED from implementing any
+such extension. It would render an implementation non-compliant.
+
+
+(2) Raw String Literals
+
+A raw string literal is a literal in which all quotable characters represent
+only themselves, that is, none of the quotable characters have any special
+meaning. The desirability of such literals has been debated for some time.
+
+Developers writing for DOS or Windows often point out that it is inconvenient
+to double every backslash in a DOS or Windows filesystem pathname, such as
+
+CONST fooPath = "\\\\foo\\bar\\baz.bam";
+
+This would appear to be the one and only use case for raw string literals.
+
+We argue that it is bad practice to hardcode pathnames because the resulting
+code is not portable. It is preferable to use a platform independent API for
+pathnames. Our standard library provides such an API.
+
+For this reason we have kept raw string literals out of the language. However,
+if a justifiable important use case presents itself in the future, then it is
+conceivable that raw string literals might be added.
+
+The syntax would likely use a leading exclamation mark before the literal.
+
+CONST rawString1 = !'foo\bar\baz';
+CONST rawString2 = !"foo\bar\baz";
+
+In the meantime, implementors are strongly DISCOURAGED from implementing any
+such extension. It would render an implementation non-compliant.
+
+
+(3) FIXME pragma
+
+When a bug is identified within a source file, the first action is often to
+mark the faulty code with a FIXME comment. This allows developers to quickly
+search for sections of code identified as faulty.
+
+It would be even more convenient if a compiler could emit a warning for every
+occurrence of such a FIXME marker. However, in that case, this would more
+appropriately be the job of a pragma.
+
+PROCEDURE foo ( bar : Baz ) : Bam;
+BEGIN <*FIXME*>
+...
+END foo.
+
+However, if the only action to be taken by the compiler is to emit a warning,
+then this can already be done without specifically adopting a new pragma. All
+it requires is to simply use this pseudo-pragma as a matter of convention.
+
+Since the pragma is not known, the compiler will emit a warning for every
+occurrence. Adopting such a pragma is thus not strictly necessary.
+
+Nonetheless, should future practice show that this convention has become
+common use, then it is conceivable that a FIXME pragma might be added.
+
+
+[Status: Jan 5, 2014]

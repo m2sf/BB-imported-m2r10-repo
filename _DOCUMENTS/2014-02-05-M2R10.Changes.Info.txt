@@ -1,0 +1,249 @@
+* Changes in M2 R10 language definition since Q4/2013
+
+latest changes: #25 - #28
+
+1) added detail on subranges, allow subranges of all scalars
+
+2) removed predefined function NEXTV, using FOR IN loop instead
+
+3) added predefined function DUP to allocate dynamic variable from copy
+
+4) removed AssocArray related constants from pseudo-module COMPILER
+
+5) added macro DEFAULT in pseudo-module COMPILER
+
+6) changed binding for TLIMIT from procedure to constant
+
+7) shortened TMINEXPONENT/TMAXEXPONENT to TMINEXP/TMAXEXP
+
+8) ODD no longer bindable since it can be synthesised using MOD
+
+9) added FFI specifier strings "CLR" and "JVM" to pragma FFI
+
+10) added optional pragma FFIDENT for foreign function identifier mapping
+
+11) changed delimiter symbol reserved for template engine utility to &&
+
+12) added syntax for module extension
+
+13) added import mode to disable module extension on import
+
+14) renamed several production rules in grammar for clarity
+
+15) optional feature: architecture specific implementation module selection
+
+16) added syntax to define constants for every element in an enumeration type
+
+17) added marker for private procedures, only available to extension modules
+
+18) reordered productions in the grammar, layout changes to EBNF + diagrams
+
+19) updated symbols reserved for use by the template engine
+
+20) blueprints: simplified proto-literal syntax
+
+21) variadic formal parameters: fixed argument count option
+
+22) variadic formal parameters: variadic terminator now trailing
+
+23) renamed RW VARIADIC to ARGLIST
+
+24) minor errors corrected, example added, formatting
+
+25) adjusted blueprint syntax
+
+26) removed COPY, added INSERT
+
+27) added missing READ, WRITE and WRITEF in diagram for procBindableIdent
+
+28) renamed grammar rules #7.3, #8, #9, #15.1 and #16 for more clarity
+
+
+* Changes in M2 R10 standard library since Q4/2013
+
+1) obsoleted UnsignedRealxx libraries, updated TimeUnits and Time
+
+2) added templates for associative arrays, static arrays and dynamic sets
+
+3) revised all blueprints, added blueprints for IO and math extensions
+
+4) added INSERT binding in ProtoArray, ProtoStaticString and ProtoString
+
+
+* Changes in M2 R10 language definition since Q3/2013
+
+1) added VARGLIST and VARGC to module UNSAFE for foreign C variadic functions
+
+2) SET OF types: base type no longer anonymous, capacity limit 128 (elements)
+
+3) defined value limit for enumeration types: 65536 (enumerated values)
+
+4) added detail: boolean short-circuit evaluation
+
+5) added detail: tail recursion elimination
+
+6) added detail: pointer variables are initialised to NIL
+
+7) added detail: size/range requirements for pervasive numeric types
+
+8) added terminology to glossary: Unsafe Facility Enabler
+
+9) added pragma enablers FFI and ADDR to module UNSAFE
+
+10) added optional language extensions ASM and REG to module ASSEMBLER
+
+11) changed pervasive procedure SIZE into library function in Storage
+
+12) removed pervasive types BITSET and LONGBITSET
+
+13) added alias types in Bitsets: BITSET and LONGBITSET
+
+14) additional pervasive procedures: COPY, CONCAT, SUBSET
+
+15) all ARRAY OF CHAR types are assignment compatible with each other
+
+16) all ARRAY OF UNICHAR types are assignment compatible with each other
+
+17) added string slicing using .. syntax, added binding to ..
+
+18) complete rewrite of pragma section
+
+19) added sections on positioning, scope and availability of pragmas
+
+20) added detail: pragmas INLINE and NOINLINE mutually exclusive
+
+21) pragma ENCODING: ASCII mandatory, UTF8 and encoding verification optional
+
+22) recommendation for minimum supported number of code point samples is 16
+
+23) defined pragma value limits: 32 (octets) for ALIGN, 256 (bits) for PADBITS
+
+24) implementation defined pragmas: new specifier how to treat unknown pragma
+
+25) added section on how to treat incorrect/unsupported pragma use
+
+26) complete rewrite of generics section
+
+27) naming convention: generic templates always plural
+
+28) template engine: placeholder delimiter changed to ##
+
+29) terminology: multi-line => block comment, single-line => line comment
+
+30) formatting of EBNF grammar: suffix symbols in superscript
+
+31) terminology change: pervasive => predefined, PervasiveIO => IOSupport
+
+32) added pragma PTW (promise-to-write), warning if promise not kept
+
+33) added optional pragma LOWLATENCY, NORETURN and DEPRECATED
+
+34) changed pragma value prefix within pragma MSG from ? to @
+
+35) blueprint syntax changed from PIVOTAL to REFERENTIAL
+
+36) changed and added identifiers in CONST bindings
+
+37) grammar change: CONST bindings appear only in blueprints
+
+38) change of description of macro IsOrderedType in module COMPILER
+
+39) added pragma GENERATED, template engine to insert date-time-stamp
+
+40) changed order of components within implementation defined pragmas
+
+
+* Changes in M2 R10 standard library since Q3/2013
+
+latest changes: see #13 and #14
+
+1) updated all ADTs to latest syntax
+
+2) module Storage: added CAST ADDRESS parameter in ALLOCATE, DEALLOCATE
+
+3) module Storage: added function SIZE to replace former pervasive SIZE
+
+4) removed DESCENDING binding
+
+5) FOR binding signature: added boolean parameter for iteration order
+
+6) added boolean constant binding to ORD, enables descending iteration
+
+7) removed procedure binding to assignment symbol :=
+
+8) added boolean constant binding to := to define ADT mutability/immutability
+
+9) pseudo-module COMPILER: added macros IsOrderedType and IsMutableType
+
+10) updated blueprints ProtoCollection, ProtoDictionary, ProtoSet
+
+11) added templates AssocArrays and DynamicSets
+
+12) LegacyISO and LegacyPIM: not officially part of standard library
+
+13) updated scalar blueprints with required CONST bindings
+
+14) updated numeric ADT libraries with required CONST bindings
+
+
+* Changes in M2 R10 language definition since Q1/2013
+
+1) minor modifications to the pragma specification
+
+2) pseudo-module SYSTEM: renamed to UNSAFE
+
+3) pragmas FFI, ADDR and REG require import from UNSAFE
+
+4) optional pseudo-module ASSEMBLER: rescoped and simplified
+
+5) pseudo-module COMPILER: updated feature-availability constants
+
+6) pseudo-module RUNTIME: change in terminology, more runtime faults 
+
+7) READ, WRITE, WRITEF: first parameter defaults to stdIn/stdOut if omitted
+
+8) additional pervasive procedure PTR to yield type checked pointer
+
+9) removal of DISPOSE, extended use cases for RELEASE in its place
+
+10) additional pervasive procedures STORE, RETRIEVE, REMOVE
+
+11) reserved symbols: template engine symbols changed to $, ##, /*, */
+
+12) modified reserved symbols for transliterators, name mangling, future use
+
+13) various typos fixed, examples added, details added, artifacts removed
+
+
+* Changes in M2 R10 standard library since Q1/2013
+
+1) StdIO: added procedures to redirect stdIn, stdOut and stdErr
+
+2) FileIO: added functions to return default stdIn, stdOut and stdErr
+
+3) FileIO: added function LA2 for two-character lookahead
+
+4) FileIO: clarified rules for combining file access mode flags
+
+5) FileIO: changed semantics of ReOpen to keep same file accessor
+
+6) FileIO: changed semantics to raise runtime fault when passing invalid file
+
+7) FileIO: added functions for parameter integrity checks
+
+8) FileIO: added CloseAll
+
+9) ADTs/blueprints: removed DISPOSE, replaced with RELEASE where applicable
+
+10) ADTs/blueprints: replaced ! with STORE, ? with RETRIEVE, ~ with REMOVE
+
+11) removed ABS binding from non-scalar ADTs and their blueprints
+
+12) added function inv in several math libraries
+
+13) ASCII: renamed char code mnemonics to conform to ISO/IEC 646
+
+14) various typos fixed, details in comments added, artifacts removed
+
+
+[Status: January 31, 2014]

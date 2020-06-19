@@ -1,0 +1,192 @@
+ISO to R10 Base-Subset Conversion Roadmap
+
+This document describes the changes that are necessary to derive a
+base-subset of Modula-2 R10 from a working ISO 10514-1 Modula-2 compiler.
+
+
+(1) Comments
+
+Limit nesting to maximum 10 levels, including the outermost comment.
+
+
+(2) Synonyms
+
+Remove: "<>", "&", "@", "~", "!".
+
+
+(3) Operators
+
+Add: "::" for type conversion.
+
+Add: "\" in place of "-" for set difference.
+
+
+(4) Literals
+
+Remove: base-8 literals with suffix B and C.
+
+Remove: base-16 literals with suffix H.
+
+Remove: uppercase E exponent prefix in real literals.
+
+Remove: type identifier prefix before structured literals.
+
+Add: base-2 literals with prefix 0b.
+
+Add: base-16 literals with prefix 0u and 0x.
+
+
+(5) Reserved Words
+
+Remove: EXCEPT, EXPORT, FINALLY, FORWARD, PACKEDSET, QUALIFIED,
+        REM, RETRY, WITH.
+
+Add: ALIAS, OPAQUE, NEW, RELEASE.
+
+
+(6) Predefined Constants
+
+Remove: INTERRUPTIBLE, NONINTERRUPTIBLE.
+
+Add: EMPTY, equivalent to {}.
+
+
+(7) Predefined Types
+
+Remove: BITSET, COMPLEX, LONGCOMPLEX, PROC, PROTECTION.
+
+Add: OCTET, LONGCARD.
+
+
+(8) Predefined Procedures
+
+Remove: INC, DEC, INCL, EXCL, NEW, DISPOSE, HALT.
+
+Add: READ, WRITE, WRITEF, INSERT, REMOVE.
+
+
+(9) Predefined Functions
+
+Remove: CAP, CMPLX, RE, IM, FLOAT, LFLOAT, HIGH, SIZE, TRUNC, VAL.
+
+Rename: MAX to TMAX, MIN to TMIN.
+
+Add: COUNT, PTR, PRED, SUCC, MIN, MAX, TLIMIT, TSIZE.
+
+
+(10) Local Modules
+
+Remove all related syntax and functionality.
+
+
+(11) Variant Records
+
+Remove all related syntax and functionality.
+
+
+(12) WITH Statement
+
+Remove all related syntax and functionality.
+
+
+(13) FOR TO BY Statement
+
+Remove all related syntax and functionality.
+
+
+(14) Exceptions and Termination.
+
+Remove all related syntax and functionality.
+
+
+(15) Enumerated Values
+
+Enumerated values must be qualified with their type identifier.
+
+
+(16) Imported Variables
+
+All imported variables are immutable within the importing scope.
+
+
+(17) Opaque Types
+
+Change syntax to: TYPE T = OPAQUE.
+
+
+(18) Alias Types
+
+Change syntax to: TYPE T1 = ALIAS OF T2.
+
+
+(19) Subrange Types
+
+Change syntax to: [n..m] OF <BaseTypeIdentifier>.
+
+
+(20) Array Types
+
+Array types constructed with ARRAY OF are zero-index based, as in Oberon.
+
+
+(21) Type Regime
+
+Change semantics to strict name equivalence.
+Absolutely no mixing of types in expressions.
+Implement :: type conversion operator for all predefined types.
+NIL is compatible with any pointer type, including opaque pointer types.
+ARRAY OF CHAR types are compatible regardless of their size, including CHAR.
+
+
+(22) Statements
+
+Replace predefined procedure NEW with NEW statement.
+Replace predefined procedure DISPOSE with RELEASE statement.
+Replace predefined procedure INC with ++ suffix statement syntax.
+Replace predefined procedure DEC with -- suffix statement syntax.
+
+
+(23) Module SYSTEM
+
+Rename SYSTEM to UNSAFE.
+Provide at least types WORD and ADDRESS.
+Provide at least functions ADR, CAST and HALT.
+Function CAST permits casting of constant values.
+Implement Auto-casting formal type CAST ARRAY OF OCTET and CAST ADDRESS.
+
+
+(24) Module ASCII
+
+Provide at least functions isUpper, isLower, toUpper and toLower.
+
+
+(25) Module Storage
+
+Provide ALLOCATE and DEALLOCATE.
+NEW statement maps to ALLOCATE, RELEASE statement maps to DEALLOCATE.
+
+
+Stepwise Enhancement of the Base-Subset:
+
+(1) Add FOR IN loop.
+
+(2) Add extensible RECORD types.
+
+(3) Add extensible enumeration types.
+
+
+Non-Essentials to add in later:
+
+Permit: "$" in identifier names.
+
+Add: Re-Export suffix + in IMPORT directive.
+
+Add: Unqualified import of enumerated values from enumeration types.
+
+Add: Wildcard import, essential only when implementing module ASSEMBLER.
+
+Add: Pragmas <*INLINE*> and <*NOINLINE*>;
+     Pragma <*FORWARD*>, essential only for single-pass implementations.
+
+
+END OF DOCUMENT
